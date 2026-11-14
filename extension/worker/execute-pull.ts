@@ -271,11 +271,29 @@ async function localSelfTest() {
   };
 }
 
+// WHY THE DASHBOARD SENDS THE CODE AS A MESSAGE AND NEVER SHOWS IT: a code the person has to read and retype is a code the person can lose or share.
+// The dashboard mints it (same one-time RPC), hands it straight to the extension, which redeems it, and it never lands in a clipboard.
+// The same security gates the popup: a caller from outside the site origins is refused before anything is looked at.
+
 chrome.runtime.onMessageExternal?.addListener((message, sender, sendResponse) => {
-  if (!message || message.type !== 'applyModelConfig') return false;
+  if (!message || (message.type !== 'applyModelConfig' && message.action !== 'pair')) return false;
   const from = String(sender?.origin || sender?.url || '');
   if (!originAllowed(from)) {
-    sendResponse({ ok: false, message: 'That page may not configure this extension.' });
+    sendResponse({ ok: false, message: 'That page may not talk to this extension.' });
+    return true;
+  }
+  if (message.action === 'pair') {
+    const code = String(message.code || '').trim();
+    if (code.length < 8 || code.length > 64) {
+      sendResponse({ ok: false, message: 'Invalid pairing code.' });
+      return true;
+    }
+    (async () => {
+      const data = await pair(code);
+      return { ok: true, deviceName: data?.deviceName || '', deviceId: data?.deviceId || '' };
+    })()
+      .then((reply) => sendResponse(reply))
+      .catch((error) => sendResponse({ ok: false, message: String(error?.message || error).slice(0, 200) }));
     return true;
   }
   (async () => {
