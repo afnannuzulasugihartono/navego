@@ -242,10 +242,12 @@
           <h1 data-i18n="pairing.title">Pairing manual</h1>
           <div class="card">
             <p class="meta" data-i18n="pairing.meta">Kode sekali pakai, berlaku 10 menit, terikat ke akun ini. Tempel di popup extension pada device yang ingin kamu hubungkan.</p>
+            <p class="meta hint" data-i18n="pairing.quickHint">Satu klik saja — kode dibuat di server dan dikirim langsung ke ekstensi di browser ini. Tidak ada yang perlu diketik atau disalin.</p>
             <label for="pairName" data-i18n="pairing.nameLabel">Nama device</label>
             <input id="pairName" type="text" autocomplete="off" spellcheck="false" maxlength="64" placeholder="opera" />
             <div class="row">
-              <button class="btn" id="pairButton" type="button" data-i18n="pairing.button">Buat kode pairing</button>
+              <button class="btn" id="pairQuick" type="button" data-i18n="pairing.quick">Pasangkan browser ini</button>
+              <button class="btn ghost" id="pairButton" type="button" data-i18n="pairing.button">Buat kode pairing</button>
             </div>
             <div class="pairCodeBox" id="pairCodeBox" hidden>
               <code class="pairCode" id="pairCode"></code>
@@ -372,6 +374,8 @@
     "nav.docs": "Docs",
     "nav.download": "Download",
     "nav.features": "Features",
+    "pairing.quick": "Pair this browser",
+    "pairing.quickHint": "One click — the code is created on the server and sent straight to the extension in this browser. Nothing to type or paste.",
     "pairing.button": "Create pairing code",
     "pairing.copy": "Copy code",
     "pairing.meta": "A one-time code, valid for 10 minutes, bound to this account. Paste it into the extension popup on the device you want to connect.",
@@ -453,6 +457,27 @@
     const BILLING_FN = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-billing';
     const AUTH_HOST = 'https://nenmkmtvjremqphfqnfw.supabase.co/auth/v1';
     const PUBLISHABLE_KEY = 'sb_publishable_jAbS_QIQsmXQA-Rj8RWPcg_JVeBedJ6';
+
+    // WHY THE DASHBOARD KNOWS THE EXTENSION ID: the manifest pins it with a key, so the id is the same for every build the update service serves, and this page can send the pairing code to it directly like a bearer token - the person never sees it and never retypes it.
+    const EXTENSION_ID = 'ofgemipoobcnbjkfanmofjbdonjapmgl';
+
+    // WHY THE REPLY IS NEVER TRUSTED AS SUCCESS IF IT SAYS SO: the extension already validates the code (it is single-use and time-limited server-side); this exists to give the caller one answer: paired, or the reason it is not.
+    // A dropped message and an extension that refused are the same thing here: the request did not complete, and the person needs the ordinary manual flow instead.
+    const deliverPairCode = (code) => new Promise((resolve) => {
+      try {
+        if (typeof chrome === 'undefined' || !chrome.runtime || typeof chrome.runtime.sendMessage !== 'function') {
+          resolve({ ok: false, reason: 'no-runtime' });
+          return;
+        }
+        chrome.runtime.sendMessage(EXTENSION_ID, { action: 'pair', code }, (reply) => {
+          const message = chrome.runtime?.lastError?.message;
+          if (message) { resolve({ ok: false, reason: 'no-extension', message }); return; }
+          resolve(reply && typeof reply === 'object' ? reply : { ok: false, reason: 'unreadable-reply' });
+        });
+      } catch (error) {
+        resolve({ ok: false, reason: 'send-threw', message: String(error?.message || error) });
+      }
+    });
 
     const $ = (id) => document.getElementById(id);
     const headersFor = (token) => ({ apikey: PUBLISHABLE_KEY, authorization: `Bearer ${token}`, 'content-type': 'application/json' });
@@ -701,6 +726,10 @@
         thisBrowserChip: '{browser} di browser ini',
         pairWorking: 'Membuat kode…',
         pairCopied: 'Kode disalin. Tempel di popup extension.',
+        pairQuickWorking: 'Memasangkan browser ini.',
+        pairQuickOk: 'Browser ini ter-pairing: {name}.',
+        pairQuickNoExt: 'Ekstensi belum terpasang atau nonaktif di browser ini. Pasang dari Unduh, lalu klik lagi.',
+        pairQuickFailed: 'Gagal memasangkan: {error}',
         runFailedPrefix: 'Gagal:',
         runFailedNet: 'Gagal ({msg})',
         networkWord: 'jaringan',
@@ -798,6 +827,10 @@
         thisBrowserChip: '{browser} in this browser',
         pairWorking: 'Creating the code…',
         pairCopied: 'Code copied. Paste it into the extension popup.',
+        pairQuickWorking: 'Pairing this browser.',
+        pairQuickOk: 'This browser is paired: {name}.',
+        pairQuickNoExt: 'The extension is not installed or not enabled in this browser. Install it from Download, then click this button again.',
+        pairQuickFailed: 'Failed to pair: {error}',
         runFailedPrefix: 'Failed:',
         runFailedNet: 'Failed ({msg})',
         networkWord: 'network',
@@ -1343,6 +1376,43 @@
         }
       }
     })();
+
+    $('pairQuick').addEventListener('click', async () => {
+      const session = await currentSession();
+      if (!session) return;
+      const { token } = session;
+      const name = ($('pairName').value.trim() || 'opera').slice(0, 64);
+      const btn = $('pairQuick');
+      const original = btn.textContent;
+      btn.disabled = true;
+      $('pairStatus').textContent = w('pairQuickWorking');
+      $('pairStatus').className = 'status';
+      hidePairingCode();
+      try {
+        const response = await fetch(`${REST}/rpc/opera_create_pairing_code`, { method: 'POST', headers: headersFor(token), body: JSON.stringify({ p_device_name: name }) });
+        const result = await response.json();
+        if (!result?.ok) throw new Error(say(result?.error || response.status));
+        const delivered = await deliverPairCode(result.code);
+        if (delivered.ok) {
+          $('pairStatus').textContent = fmt(w('pairQuickOk'), { name: delivered.deviceName || result.deviceName || name });
+          $('pairStatus').className = 'status ok';
+          btn.textContent = '✓';
+          window.setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 2400);
+          return;
+        }
+        if (delivered.reason === 'no-extension') {
+          $('pairStatus').textContent = w('pairQuickNoExt');
+          $('pairStatus').className = 'status warn';
+          btn.disabled = false;
+          return;
+        }
+        throw new Error(delivered.message || delivered.reason || 'unknown');
+      } catch (error) {
+        $('pairStatus').textContent = `${w('pairQuickFailed')}: ${error.message}.`;
+        $('pairStatus').className = 'status warn';
+        btn.disabled = false;
+      }
+    });
 
     $('pairButton').addEventListener('click', async () => {
       const session = await currentSession();
