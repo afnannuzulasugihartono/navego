@@ -1,7 +1,11 @@
-# @last-edited: 2026-10-06 02:34 UTC+7.
+# @last-edited: 2026-11-15 06:30 UTC+7.
 # @title: deploy-site — publishes landing/ to Cloudflare Pages when dispatched.
 # @state: manual only; CI runs on every push and this decides when the site moves.
 # @dependencies: wrangler, the landing directory, CF_TOKEN and CF_ACCOUNT_ID secrets.
+
+# WHY THE TOOLCHAIN INSTALLS FIRST.
+# The gates are the repo's own: `npm test` runs biome and compiles the strict TypeScript core at pretest, so a clean runner with no node_modules dies on `biome: not found` (exit 127) before a single test runs, and the dispatch fails with the site still on the old build.
+# The install is `npm ci` against the tracked lockfile, with --ignore-scripts: it is byte-identical every time and never runs lifecycle scripts, exactly as CI does it.
 
 name: Deploy site
 
@@ -33,6 +37,9 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 22.20.0
+
+      - name: Install the toolchain
+        run: npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Unit gate
         run: npm test
