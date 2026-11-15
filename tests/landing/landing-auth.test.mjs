@@ -120,9 +120,9 @@ test('the gate splits brand from form, and stacks on a narrow screen', () => {
 
   assert.match(html, /<div class="split"[^>]*>/, 'brand and gate share one row');
   assert.match(html, /<div class="brand">/, 'the brand panel stands on the left');
-  const mark = 'M5.2 2.2v10.2l2.5-2.3 1.5 3.6 1.9-.8-1.6-3.6h3.1L5.2 2.2Z';
-  assert.ok(html.includes(`<path d="${mark}"`), 'the panel mark reuses the favicon path inline');
-  assert.ok(html.includes(`d='${mark}'`), 'which is the path the favicon carries');
+  const mark = 'M3.6 12.8 8 3.2 12.4 12.8';
+  assert.ok(html.includes(`d="${mark}"`), 'the panel mark reuses the favicon geometry');
+  assert.ok(html.includes(`d='${mark}'`), 'which is the geometry the favicon carries');
   assert.match(authCss, /grid-template-columns: minmax\(0, 1fr\) minmax\(0, 1\.02fr\)/, 'two columns on a wide screen');
   assert.match(authCss, /@media \(max-width: 900px\)[\s\S]*?\.split \{ grid-template-columns: 1fr;/, 'stacked below 900px, where the promise column would squeeze the card');
   assert.doesNotMatch(html, /#1877f2|#0866ff/i, 'no Facebook blue rides along');
