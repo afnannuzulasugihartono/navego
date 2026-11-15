@@ -153,6 +153,14 @@ export { newerThan, servedVersion };
 // The page that asks for the permission is this module loaded as a page script, and the worker imports the same module for the alarm.
 // A page script of its own would be reachable by nothing but itself, because the product reaches a page by its address and not by an import.
 
+// WHY ONE BUTTON THAT BRANCHES.
+// Not granted yet the press picks the folder and finishes the job itself; granted the press writes the build over the folder and restarts the worker.
+// The picker cannot live in the popup; this page is the one place the folder is picked, and after that the button is the update.
+// The words, the frame and the accent are the same ones the first-run page wears; a stranger reading both should not notice two screens.
+
+type GateMode = 'allow' | 'apply';
+let gateMode: GateMode = 'allow';
+
 const pageElement = <T extends HTMLElement>(id: string) => document.getElementById(id) as T | null;
 
 const showPageError = (message: string) => {
@@ -162,45 +170,43 @@ const showPageError = (message: string) => {
   line.textContent = message || '';
 };
 
-const setGateState = (tone: 'ready' | 'pending' | 'idle', main: string, sub: string) => {
-  const dot = document.querySelector('#gateState .statusDot');
-  const mainEl = pageElement('gateStateMain');
-  const subEl = pageElement('gateStateSub');
-  if (dot) dot.className = `statusDot ${tone === 'ready' ? '' : tone === 'pending' ? 'is-pending' : 'is-idle'}`;
-  if (mainEl) mainEl.textContent = main;
-  if (subEl) subEl.textContent = sub;
+const setGateDot = (tone: 'ready' | 'pending') => {
+  const dot = document.querySelector('#gateState .verdictDot');
+  if (dot) dot.className = `verdictDot${tone === 'pending' ? ' is-pending' : ''}`;
 };
 
-const showPageState = async () => {
+const setGateMain = (text: string) => {
+  const main = pageElement('gateStateMain');
+  if (main) main.textContent = text;
+};
+
+const setGateIcon = (mode: GateMode) => {
+  const setHidden = (el: Element | null, hidden: boolean) => {
+    if (!el) return;
+    if (hidden) el.setAttribute('hidden', '');
+    else el.removeAttribute('hidden');
+  };
+  setHidden(document.getElementById('gatePickIconFolder'), mode === 'apply');
+  setHidden(document.getElementById('gatePickIconArrow'), mode !== 'apply');
+};
+
+const showPageState = async (line?: string) => {
   const permission = await folderPermission();
   const pick = pageElement<HTMLButtonElement>('gatePick');
-  const pickLabel = pageElement<HTMLElement>('gatePickText');
-  const update = pageElement<HTMLButtonElement>('gateUpdate');
-  const forget = pageElement<HTMLButtonElement>('gateForget');
-  if (!pick || !update || !forget) return;
-  const setPickLabel = (text: string) => { if (pickLabel) pickLabel.textContent = text; };
-  if (permission === 'granted') {
+  if (!pick) return;
+  const isGranted = permission === 'granted';
+  gateMode = isGranted ? 'apply' : 'allow';
+  if (isGranted) {
     const handle = await folderHandle();
-    const name = handle?.name ? handle.name : 'folder extension';
-    setGateState('ready', t('update.state.granted', { name }), t('doors.updateAutoHint'));
-    pick.hidden = true;
-    update.hidden = false;
-    forget.hidden = false;
-    return;
+    setGateDot('ready');
+    setGateMain(line ?? t('update.state.granted', { name: handle?.name ? handle.name : 'folder extension' }));
+  } else {
+    setGateDot('pending');
+    setGateMain(line ?? t(permission === 'prompt' ? 'update.state.prompt' : 'update.state.none'));
   }
-  if (permission === 'prompt') {
-    setGateState('pending', t('update.state.prompt'), t('update.allowFolderHint'));
-    pick.hidden = false;
-    update.hidden = true;
-    forget.hidden = true;
-    setPickLabel(t('update.pickAgain'));
-    return;
-  }
-  setGateState('idle', t('update.state.none'), t('update.allowFolderHint'));
-  pick.hidden = false;
-  setPickLabel(t('update.pickLabel'));
-  update.hidden = true;
-  forget.hidden = true;
+  setGateIcon(gateMode);
+  const label = pageElement<HTMLElement>('gatePickText');
+  if (label) label.textContent = t(isGranted ? 'doors.updateNow' : 'update.allowFolder');
 };
 
 function wireUpdatePage() {
@@ -211,54 +217,31 @@ function wireUpdatePage() {
     showPageError('');
     pick.disabled = true;
     try {
-      await pickExtensionFolder();
-      // The pick is the hard part; finish the job right here so the reader never has to find a second button.
-      const outcome = await applyNewBuild({ installedVersion: chrome.runtime.getManifest().version });
-      if (outcome.ok && outcome.changed) {
-        chrome.runtime.reload();
-        return;
-      }
-      await showPageState();
-      if (outcome.ok) {
-        setGateState('ready', t('update.upToDate', { v: outcome.version || chrome.runtime.getManifest().version }), t('doors.updateAutoHint'));
-      } else {
-        showPageError(t('update.needsFolder'));
-      }
-    } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        showPageError(t('update.pickAbort'));
-      } else {
-        showPageError(t('update.pickFailed', { message: error instanceof Error ? error.message : String(error) }));
-      }
-    } finally {
-      pick.disabled = false;
-    }
-  });
-  const gateUpdate = pageElement<HTMLButtonElement>('gateUpdate');
-  if (gateUpdate) gateUpdate.addEventListener('click', async () => {
-    showPageError('');
-    gateUpdate.disabled = true;
-    try {
+      if (gateMode === 'allow') await pickExtensionFolder();
+      // The folder is writable in both modes; finish the job right here.
       const outcome = await applyNewBuild({ installedVersion: chrome.runtime.getManifest().version });
       if (outcome.ok && outcome.changed) {
         chrome.runtime.reload();
         return;
       }
       if (outcome.ok) {
-        setGateState('ready', t('update.upToDate', { v: outcome.version || chrome.runtime.getManifest().version }), t('doors.updateAutoHint'));
+        const version = outcome.version || chrome.runtime.getManifest().version;
+        await showPageState(t('update.upToDate', { v: version }));
         return;
       }
       showPageError(t('update.needsFolder'));
     } catch (error) {
-      showPageError(t('update.failed', { message: error instanceof Error ? error.message : String(error) }));
+      const message = error instanceof Error ? error.message : String(error);
+      if (error instanceof Error && error.name === 'AbortError') {
+        showPageError(t('update.pickAbort'));
+      } else {
+        showPageError(gateMode === 'allow'
+          ? t('update.pickFailed', { message })
+          : t('update.failed', { message }));
+      }
     } finally {
-      gateUpdate.disabled = false;
+      pick.disabled = false;
     }
-  });
-  const gateForget = pageElement<HTMLElement>('gateForget');
-  if (gateForget) gateForget.addEventListener('click', async () => {
-    await forgetFolderHandle();
-    await showPageState();
   });
   void showPageState();
 }
