@@ -5,8 +5,7 @@
 
 import './lib/agent-log.js';
 import { userErrorMessage } from './lib/error-messages.js';
-import { SITE_ORIGIN, UPDATE_BASE_URL } from './lib/endpoints.js';
-import { browserFamily } from './lib/browser-id.js';
+import { SITE_ORIGIN } from './lib/endpoints.js';
 import { applyNewBuild, forgetFolderHandle, folderPermission } from './worker/self-update.js';
 import { servedVersion, newerThan } from './lib/self-update.js';
 import { t, applyI18n } from './lib/i18n.js';
@@ -15,7 +14,10 @@ applyI18n(document);
 const log = globalThis.OperaAgentLog;
 if (typeof log?.warn !== 'function') throw new Error('Agent log runtime is unavailable.');
 const $ = (id: string) => document.getElementById(id);
-let servedBuild: string | null = null;
+
+type UpdateDoorMode = 'allow' | 'apply' | 'idle';
+let updateDoorMode: UpdateDoorMode = 'idle';
+let pairedState = false;
 
 // WHY THE ISLAND SPEAKS TWICE.
 // The reader opens the popup to answer two questions in one glance: is it connected, and what is doing the waiting.
@@ -34,60 +36,71 @@ const setStatus = (state: StatusState) => {
 
 setStatus({ main: t('status.starting'), sub: t('status.subStarting'), tone: 'pending' });
 
+// WHY THE PAIR BUTTON IS A STATE, NOT AN ACTION, ONCE PAIRED.
+// The button's promise is pairing; after the pair, the honest thing is to say so and point at where the pairing lives, not to stand there inviting the reader to pair again.
+// Green is the licence of the paired state: this is done, not decorative.
+
+const setPairCta = (paired: boolean) => {
+  const button = $('pairQuickButton');
+  if (!button) return;
+  pairedState = paired;
+  button.classList.toggle('ctaDone', paired);
+  const bolt = button.querySelector('.ctaBolt');
+  const check = button.querySelector('.ctaCheck');
+  const setHidden = (el: Element | null, hidden: boolean) => {
+    if (!el) return;
+    if (hidden) el.setAttribute('hidden', '');
+    else el.removeAttribute('hidden');
+  };
+  setHidden(bolt, paired);
+  setHidden(check, !paired);
+  const label = button.querySelector('.ctaText');
+  if (label) {
+    label.textContent = t(paired ? 'doors.paired' : 'doors.pairQuick');
+    label.setAttribute('data-i18n', paired ? 'doors.paired' : 'doors.pairQuick');
+  }
+};
+
+setPairCta(false);
+
 // WHY THE POPUP ASKS THE SERVER WHICH VERSION IS SERVED.
 // Chrome updates an installed extension on its own, but only when it was installed as a signed package; an extension loaded unpacked never asks the update service, and the person sees a version that simply stands still.
 // The popup therefore asks what the server serves and says so out loud, because a version that does not move is otherwise a mystery with no handle on it.
 
-// WHY THE BUTTON FETCHES THE ARCHIVE AND NOT THE SIGNED PACKAGE.
-// Chromium refuses a hand-installed package that the Web Store did not sign - the reader sees CRX_REQUIRED_PROOF_MISSING and no extension at all - and an extension loaded from a folder is never asked about updates, so its version stands still.
-// The one update that works for that reader is the one the reader can do: take the new build, put it over the folder, and reload.
-// The button fetches the build into the downloads folder and opens the extensions page where the reload button lives, and the page says in one line which way to go.
-
-async function fetchNewBuild() {
-  const browser = browserFamily().toLowerCase();
-  const url = `${UPDATE_BASE_URL}/download/opera-agent.zip${browser ? `?for=${browser}` : ''}`;
-  try {
-    await chrome.downloads.download({ url, filename: `opera-agent-${browser || 'browser'}-${servedBuild || 'latest'}.zip`, saveAs: false });
-  } catch (error) {
-    log?.warn?.('UPDATE_DOWNLOAD_FAILED', error instanceof Error ? error.message : String(error));
-  }
-  await chrome.tabs.create({ url: 'chrome://extensions' });
-}
-
-// WHY THE RELOAD IS OURS TO DO.
-// A browser only reloads an unpacked extension when a person presses the button on the extensions page; the extension can restart itself, and that is the last click of the update.
-
-async function reloadExtension() {
-  try {
-    chrome.runtime.reload();
-  } catch (error) {
-    log?.debug?.('RELOAD_FAILED', error instanceof Error ? error.message : String(error));
-  }
-}
+// WHY ONE DOOR FOR THE UPDATE.
+// Three doors for one job said three different things; the button now either asks to allow the folder once, or writes the new build over the granted folder in one press.
+// The folder picker cannot live in the popup - it takes the focus and the popup closes with it - so the allow path opens the update page, which finishes the job itself once the folder is picked.
+// After the one allow, updates run on the worker's own timer; the button stays for the impatient.
 
 async function showServedVersion(installed: string) {
+  const door = $('updateDoorButton');
+  const title = $('updateDoorTitle');
+  const hint = $('updateDoorHint');
+  const forget = $('forgetFolderButton');
+  if (!door) return;
+  const permission = await folderPermission();
+  if (forget) forget.hidden = permission !== 'granted';
+  if (permission !== 'granted') {
+    updateDoorMode = 'allow';
+    door.hidden = false;
+    door.classList.remove('doorAccent');
+    door.classList.add('rowAmber');
+    if (title) title.textContent = t('update.allowFolder');
+    if (hint) hint.textContent = t('update.allowFolderHint');
+    return;
+  }
   const served = await servedVersion();
-  servedBuild = served;
-  const line = $('updateHint');
-  const button = $('updateButton');
-  const text = $('updateText');
-  if (!line || !button) return;
-  if (!served) {
-    line.hidden = true;
-    button.textContent = 'Perbarui';
+  if (served && newerThan(installed, served)) {
+    updateDoorMode = 'apply';
+    door.hidden = false;
+    door.classList.remove('rowAmber');
+    door.classList.add('doorAccent');
+    if (title) title.textContent = t('update.smartReady', { v: served });
+    if (hint) hint.textContent = t('update.smartReadyHint');
     return;
   }
-  if (newerThan(installed, served ?? undefined)) {
-    line.hidden = false;
-    if (text) text.textContent = t('update.available', { v: served });
-    button.textContent = t('update.download', { v: served });
-    const reload = $('reloadButton');
-    if (reload) reload.hidden = false;
-    return;
-  }
-  line.hidden = true;
-  const reload = $('reloadButton');
-  if (reload) reload.hidden = true;
+  updateDoorMode = 'idle';
+  door.hidden = true;
 }
 
 async function call(action: string, extra: Record<string, unknown> = {}) {
@@ -121,35 +134,16 @@ async function refresh() {
   void showServedVersion(String(reply.version));
   const state = isRecord(reply.state) ? reply.state : {};
   const config = isRecord(reply.config) ? reply.config : {};
-  const status = String(state.status || (config.paired ? 'connecting' : 'unpaired'));
-  const line = statusLine(status, !!config.paired);
+  const paired = !!config.paired;
+  setPairCta(paired);
+  const status = String(state.status || (paired ? 'connecting' : 'unpaired'));
+  const line = statusLine(status, paired);
   setStatus(line);
   const errorEl = $('error');
   if (errorEl) {
     errorEl.hidden = !state.lastError;
     errorEl.textContent = state.lastError ? userErrorMessage(state.lastError) ?? '' : '';
   }
-  void showAutoUpdateState();
-}
-
-// WHY THE POPUP SHOWS WHETHER THE FOLDER IS ALLOWED.
-// The automatic update is a permission the reader gave once; the popup says whether it is still there, so a version that does not move is never a mystery again.
-
-async function showAutoUpdateState() {
-  const allow = $('autoUpdateButton');
-  const now = $('updateNowButton');
-  const forget = $('forgetFolderButton');
-  if (!allow || !now) return;
-  const permission = await folderPermission();
-  if (permission === 'granted') {
-    allow.hidden = true;
-    now.hidden = false;
-    if (forget) forget.hidden = false;
-    return;
-  }
-  allow.hidden = false;
-  now.hidden = true;
-  if (forget) forget.hidden = true;
 }
 
 // WHY THE TOGGLE LIVES IN THE POPUP.
@@ -190,35 +184,21 @@ const openTab = async (url: string) => {
 
 $('dashboardButton')?.addEventListener('click', async () => { void openTab(`${SITE_ORIGIN}/dashboard.html`); });
 $('docsButton')?.addEventListener('click', async () => { void openTab(`${SITE_ORIGIN}/docs.html`); });
-$('pairQuickButton')?.addEventListener('click', async () => { void openTab(`${SITE_ORIGIN}/dashboard.html?pair=1#pairing`); });
+$('pairQuickButton')?.addEventListener('click', async () => { void openTab(pairedState ? `${SITE_ORIGIN}/dashboard.html` : `${SITE_ORIGIN}/dashboard.html?pair=1#pairing`); });
 $('optionsButton')?.addEventListener('click', async () => { void chrome.tabs.create({ url: chrome.runtime.getURL('options.html') }); });
-$('updateButton')?.addEventListener('click', () => { void fetchNewBuild(); });
-$('reloadButton')?.addEventListener('click', () => { void reloadExtension(); });
 
-// WHY THE BUTTON OPENS A PAGE INSTEAD OF A PICKER.
-// The folder picker takes the focus from the extension, and a popup that loses the focus closes with it, so the reader presses the button and sees nothing happen.
-// A tab stays open, holds the picker, and can say what went wrong in words.
+// WHY THE SMART DOOR BRANCHES.
+// Not granted yet: the press opens the update page, which holds the folder picker the popup cannot hold, and finishes the job itself once the pick happens.
+// Granted and a newer build: the press writes it over the folder and restarts the worker, no file explorer involved.
 
-$('autoUpdateButton')?.addEventListener('click', () => {
-  void chrome.tabs.create({ url: chrome.runtime.getURL('update.html') });
-});
-
-$('forgetFolderButton')?.addEventListener('click', async () => {
-  try {
-    await forgetFolderHandle();
-    await showAutoUpdateState();
-  } catch (error) {
-    const errorEl = $('error');
-    if (errorEl) {
-      errorEl.hidden = false;
-      errorEl.textContent = userErrorMessage(error instanceof Error ? error.message : String(error)) ?? '';
-    }
-  }
-});
-
-$('updateNowButton')?.addEventListener('click', async () => {
-  const button = $('updateNowButton');
+$('updateDoorButton')?.addEventListener('click', async () => {
+  const button = $('updateDoorButton');
   if (!(button instanceof HTMLButtonElement)) return;
+  if (updateDoorMode === 'allow') {
+    void chrome.tabs.create({ url: chrome.runtime.getURL('update.html') });
+    return;
+  }
+  if (updateDoorMode !== 'apply') return;
   button.disabled = true;
   try {
     const outcome = await applyNewBuild({ installedVersion: chrome.runtime.getManifest().version });
@@ -226,19 +206,32 @@ $('updateNowButton')?.addEventListener('click', async () => {
       chrome.runtime.reload();
       return;
     }
-    const rowText = button.querySelector('.rowText');
-    const original = rowText ? rowText.textContent : '';
-    if (rowText) {
-      rowText.textContent = outcome.ok
+    const title = $('updateDoorTitle');
+    const original = title ? title.textContent : '';
+    if (title) {
+      title.textContent = outcome.ok
         ? t('update.upToDate', { v: outcome.version || chrome.runtime.getManifest().version })
         : t('update.needsFolder');
-      window.setTimeout(() => { rowText.textContent = original; }, 2400);
+      window.setTimeout(() => { title.textContent = original; }, 2400);
     }
-    await showAutoUpdateState();
+    await showServedVersion(chrome.runtime.getManifest().version);
   } catch (error) {
     log?.warn?.('AUTO_UPDATE_FAILED', error instanceof Error ? error.message : String(error));
   } finally {
     button.disabled = false;
+  }
+});
+
+$('forgetFolderButton')?.addEventListener('click', async () => {
+  try {
+    await forgetFolderHandle();
+    await showServedVersion(chrome.runtime.getManifest().version);
+  } catch (error) {
+    const errorEl = $('error');
+    if (errorEl) {
+      errorEl.hidden = false;
+      errorEl.textContent = userErrorMessage(error instanceof Error ? error.message : String(error)) ?? '';
+    }
   }
 });
 

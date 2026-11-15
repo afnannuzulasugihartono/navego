@@ -1,6 +1,6 @@
 // @last-edited: 2026-11-11 UTC+7.
-// @title: popup-update-hint - the popup says when the version it runs is behind the one the server serves, and offers the door that fixes it.
-// @state: the check the popup makes, the note it shows, the button it offers, and the doors the menu carries.
+// @title: popup-update-hint - the popup says when the version it runs is behind the one the server serves, and offers the one door that fixes it.
+// @state: the check the popup makes, the smart door it offers (allow the folder once, or write the build over it), and the doors the menu carries.
 // @dependencies: node:test, node:assert/strict, node:fs.
 
 // WHY THIS GATE READS THE SOURCE.
@@ -18,7 +18,6 @@ const css = fs.readFileSync(new URL('extension/styles.css', root), 'utf8');
 
 test('the popup asks the update service which version is served', () => {
   assert.match(popup, /import \{ servedVersion, newerThan \} from '\.\/lib\/self-update\.js'/, 'it asks, through the one served-version check the product owns');
-  assert.match(popup, /UPDATE_BASE_URL/, 'and it knows where the update service lives');
   assert.match(popup, /showServedVersion\(String\(reply\.version\)\)/, 'the answer is compared with the version that is running');
 });
 
@@ -32,20 +31,23 @@ test('the one served-version check asks the archive, not the legacy health page'
 
 test('a newer served version is shown, and the same version is not', () => {
   assert.match(popup, /newerThan/, 'the two versions are compared as numbers, not as strings');
-  assert.match(popup, /line\.hidden = true/, 'and nothing is shown when the installed version is the newest');
-  assert.match(popup, /line\.hidden = false/, 'while a note appears when the server serves a newer one');
-  assert.match(popup, /t\('update\.available', \{ v: served \}\)/, 'the note names the version that is waiting, in the reader\'s language');
+  assert.match(popup, /door\.hidden = true/, 'and the door hides when the installed version is the newest');
+  assert.match(popup, /door\.hidden = false/, 'while it appears when the server serves a newer one');
+  assert.match(popup, /t\('update\.smartReady', \{ v: served \}\)/, 'the door names the version that is waiting, in the reader\'s language');
 });
 
-test('the button does the work a browser cannot do from here', () => {
-  assert.match(popup, /chrome\.downloads\.download\(/, 'it fetches the new build into the downloads folder');
-  assert.match(popup, /download\/opera-agent\.zip/, 'and it is the archive, because Chromium refuses a hand-installed package the Web Store did not sign');
-  assert.match(popup, /chrome\.tabs\.create\(\{ url: 'chrome:\/\/extensions' \}\)/, 'then it opens the page where the reload button lives');
-  assert.match(popup, /chrome\.runtime\.reload\(\)/, 'and the extension can restart itself, which is the last click of the update');
-  assert.match(popupHtml, /id="updateButton"/, 'the popup carries that button');
-  assert.match(popupHtml, /id="reloadButton"/, 'and the reload that finishes it');
-  assert.match(popupHtml, /id="updateText"/, 'and the line that names the version');
-  assert.doesNotMatch(popupHtml, /id="updateHow"/, 'the explanation line is gone; the amber row itself says what will happen');
+test('the one door does the work a browser cannot do from here', () => {
+  assert.match(popup, /applyNewBuild\(/, 'the granted folder is written by the same build the alarm applies');
+  assert.match(popup, /chrome\.runtime\.reload\(/, 'and the extension can restart itself, which is the last click of the update');
+  assert.match(popup, /update\.html/, 'the not-granted state opens the page that holds the folder picker, which the popup cannot hold');
+  assert.doesNotMatch(popup, /chrome\.downloads\.download\(/, 'the zip-to-Downloads ritual is gone');
+  assert.doesNotMatch(popup, /chrome:\/\/extensions/, 'and the chrome://extensions detour with it');
+  assert.match(popupHtml, /id="updateDoorButton"/, 'the popup carries the one update door');
+  assert.match(popupHtml, /id="updateDoorTitle"/, 'with the line that names what the press will do');
+  assert.doesNotMatch(popupHtml, /id="updateButton"/, 'the amber download row is gone');
+  assert.doesNotMatch(popupHtml, /id="reloadButton"/, 'the separate reload row is gone');
+  assert.doesNotMatch(popupHtml, /id="autoUpdateButton"/, 'the folder-allow door is folded into the one update door');
+  assert.doesNotMatch(popupHtml, /id="updateNowButton"/, 'and the apply door with it');
 });
 
 test('the popup has the doors out of it, the dashboard among them', () => {

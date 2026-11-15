@@ -444,7 +444,14 @@ body.popup .cta {
 
 body.popup .cta:hover { background: #dcdcfb; }
 body.popup .cta:focus-visible { outline: 2px solid #c3c4ff; outline-offset: -2px; }
-body.popup .cta svg { width: 16px; height: 16px; display: block; }
+body.popup .cta svg { width: 16px; height: 16px; display: block; flex: 0 0 auto; }
+body.popup .ctaDone,
+body.popup .ctaDone:hover {
+  background: rgba(62, 207, 142, .15);
+  color: #3ecf8e;
+}
+body.popup .ctaDone:hover { background: rgba(62, 207, 142, .24); }
+body.popup .ctaDone:focus-visible { outline: 2px solid rgba(62, 207, 142, .6); outline-offset: -2px; }
 
 body.popup .doors {
   display: flex;
@@ -562,6 +569,26 @@ body.popup .footLink svg { width: 13px; height: 13px; display: block; }
 body.popup .hint { color: #8b8bad; font-size: 10px; line-height: 1.45; margin: 0; }
 body.popup .hint strong { color: #eceef2; font-weight: 550; }
 body.popup .hint.explain { padding: 8px 14px; }
+
+/* WHY THE GATE PAGE IS A CARD IN A TAB: the popup is a glance; the folder picker takes focus and the person needs the result right there, not a left-aligned column on an empty page. */
+
+body.popup.gatePage {
+  width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: grid;
+  align-items: start;
+  justify-items: center;
+  padding: 48px 16px;
+  background: #0a0a18;
+}
+
+body.popup.gatePage .shell {
+  width: 400px;
+  max-width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(195, 196, 255, .08);
+}
 
 @media (max-width: 239px) {
   body.popup { width: 100vw; }
