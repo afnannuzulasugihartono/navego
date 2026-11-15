@@ -111,16 +111,12 @@ body.popup.firstPage {
   max-width: 100%;
 }
 
-.verdictDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #3ecf8e;
-  flex: 0 0 auto;
-}
+.verdictIcoWrap { flex: 0 0 auto; display: grid; place-items: center; width: 13px; height: 13px; }
+.verdictIco { width: 13px; height: 13px; display: none; color: #f2c94c; }
 
-.verdictDot.is-pending { background: #f2c94c; }
-.verdictDot.is-idle { background: #454575; }
+.verdict[data-tone="ready"] .icoCheck { display: block; color: #3ecf8e; }
+.verdict[data-tone="ready"] .icoClock { display: none; }
+.verdict[data-tone="pending"] .icoClock { display: block; }
 
 .verdictText { min-width: 0; display: flex; align-items: center; }
 .verdictMain { font-size: 11px; font-weight: 600; line-height: 1.25; color: #8b8bad; letter-spacing: .01em; }

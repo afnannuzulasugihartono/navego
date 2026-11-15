@@ -19,19 +19,20 @@ type UpdateDoorMode = 'allow' | 'apply' | 'idle';
 let updateDoorMode: UpdateDoorMode = 'idle';
 let pairedState = false;
 
-// WHY THE ISLAND SPEAKS TWICE.
-// The reader opens the popup to answer two questions in one glance: is it connected, and what is doing the waiting.
-// One line for the verdict, one line for the why; the dot is the only signal the eye needs to find first.
+// WHY THE ISLAND SPEAKS ONCE.
+// The reader opens the popup to answer one question: is it connected?
+// One line, one icon - no colour shouting, no second line, no dot to hunt.
+// The tone moves the icon; the words carry the meaning.
 
 type StatusState = { tone: 'ready' | 'pending' | 'idle'; main: string; sub: string };
 
 const setStatus = (state: StatusState) => {
   const main = $('statusMain');
   const sub = $('statusSub');
-  const dot = document.querySelector('.statusDot');
+  const host = document.getElementById('status');
   if (main) main.textContent = state.main;
   if (sub) sub.textContent = state.sub;
-  if (dot) dot.className = `statusDot ${state.tone === 'ready' ? '' : state.tone === 'pending' ? 'is-pending' : 'is-idle'}`;
+  if (host) host.dataset.tone = state.tone;
 };
 
 setStatus({ main: t('status.starting'), sub: t('status.subStarting'), tone: 'pending' });
@@ -75,7 +76,6 @@ setPairCta(false);
 async function showServedVersion(installed: string) {
   const door = $('updateDoorButton');
   const title = $('updateDoorTitle');
-  const hint = $('updateDoorHint');
   const forget = $('forgetFolderButton');
   if (!door) return;
   const permission = await folderPermission();
@@ -85,7 +85,6 @@ async function showServedVersion(installed: string) {
     door.hidden = false;
     door.classList.remove('doorAccent', 'rowAmber');
     if (title) title.textContent = t('update.allowFolder');
-    if (hint) hint.textContent = t('update.allowFolderHint');
     return;
   }
   const served = await servedVersion();
@@ -95,7 +94,6 @@ async function showServedVersion(installed: string) {
     door.classList.remove('doorAccent');
     door.classList.add('rowAmber');
     if (title) title.textContent = t('update.smartReady', { v: served });
-    if (hint) hint.textContent = t('update.smartReadyHint');
     return;
   }
   updateDoorMode = 'idle';
@@ -129,7 +127,7 @@ async function refresh() {
   const reply = isRecord(data) ? data : undefined;
   if (!reply?.ok) return;
   const versionEl = $('version');
-  if (versionEl) versionEl.textContent = `${reply.version} \u00b7 Protocol ${reply.protocolVersion}`;
+  if (versionEl) versionEl.textContent = `${reply.version} Protocol ${reply.protocolVersion}`;
   void showServedVersion(String(reply.version));
   const state = isRecord(reply.state) ? reply.state : {};
   const config = isRecord(reply.config) ? reply.config : {};

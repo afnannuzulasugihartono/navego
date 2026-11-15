@@ -170,9 +170,9 @@ const showPageError = (message: string) => {
   line.textContent = message || '';
 };
 
-const setGateDot = (tone: 'ready' | 'pending') => {
-  const dot = document.querySelector('#gateState .verdictDot');
-  if (dot) dot.className = `verdictDot${tone === 'pending' ? ' is-pending' : ''}`;
+const setGateTone = (tone: 'ready' | 'pending') => {
+  const host = document.getElementById('gateState');
+  if (host) host.dataset.tone = tone;
 };
 
 const setGateMain = (text: string) => {
@@ -198,10 +198,10 @@ const showPageState = async (line?: string) => {
   gateMode = isGranted ? 'apply' : 'allow';
   if (isGranted) {
     const handle = await folderHandle();
-    setGateDot('ready');
+    setGateTone('ready');
     setGateMain(line ?? t('update.state.granted', { name: handle?.name ? handle.name : 'folder extension' }));
   } else {
-    setGateDot('pending');
+    setGateTone('pending');
     setGateMain(line ?? t(permission === 'prompt' ? 'update.state.prompt' : 'update.state.none'));
   }
   setGateIcon(gateMode);

@@ -59,7 +59,7 @@ test('the popup has the doors out of it, the dashboard among them', () => {
 
 test('the status is one line, and the popup is a dark surface', () => {
   assert.match(popupHtml, /id="statusMain"/, 'the status is one line');
-  assert.match(css, /body\.popup \.statusDot\.is-pending/, 'the connected state has its own colour');
+  assert.match(css, /body\.popup \.status\[data-tone="pending"\] \.icoClock/, 'the connected state has its own colour');
   assert.match(css, /body\.popup\s*\{[\s\S]*background: #10131c/, 'the popup carries its own dark surface');
   assert.match(css, /body\.popup \.door/, 'and the menu rows are styled as rows');
 });
