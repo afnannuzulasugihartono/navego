@@ -57,7 +57,7 @@ test('writes keys for each detected browser and reports success', async () => {
     });
     assert.equal(report.ok, true);
     assert.deepEqual(report.browsers.map((b) => b.id).sort(), ['brave', 'chrome']);
-    const keys = execCalls.map(([_, ...args]) => args[1]).filter((a) => String(a).includes('ExtensionInstallForcelist'));
+    const keys = execCalls.filter(([, op]) => op === 'add').map(([, , key]) => key).filter((a) => String(a).includes('ExtensionInstallForcelist'));
     assert.deepEqual(keys.sort(), [
       'HKCU\\Software\\Policies\\Google\\Chrome\\ExtensionInstallForcelist',
       'HKCU\\Software\\Policies\\BraveSoftware\\Brave-Browser\\ExtensionInstallForcelist',
