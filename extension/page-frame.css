@@ -30,11 +30,11 @@ body.popup.firstPage {
   padding: 40px 16px 56px;
   background: #10131c;
   color: #f2f2f2;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: 'Instrument Sans', Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .column {
-  width: min(100%, 960px);
+  width: min(100%, 1200px);
   display: grid;
   gap: 14px;
 }
@@ -80,8 +80,8 @@ body.popup.firstPage {
 
 .title {
   margin: 0;
-  font-size: 40px;
-  line-height: 1.12;
+  font-size: 32px;
+  line-height: 1.14;
   font-weight: 650;
   letter-spacing: -.02em;
 }
@@ -227,8 +227,8 @@ body.popup.firstPage {
 }
 
 .mockDot { width: 7px; height: 7px; border-radius: 50%; background: #3ecf8e; flex: 0 0 auto; }
-.mockMain { font-size: 10.5px; font-weight: 650; line-height: 1.2; display: block; }
-.mockSub { font-size: 8px; color: #8b8bad; display: block; line-height: 1.3; margin-top: 1px; }
+.mockMain { font-size: 12px; font-weight: 650; line-height: 1.2; display: block; }
+.mockSub { font-size: 11px; color: #8b8bad; display: block; line-height: 1.3; margin-top: 1px; }
 
 .mockCta {
   display: flex;
@@ -239,7 +239,7 @@ body.popup.firstPage {
   border-radius: 7px;
   background: rgba(62, 207, 142, .15);
   color: #3ecf8e;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 650;
 }
 
@@ -255,21 +255,20 @@ body.popup.firstPage {
 
 .mockRowIco { flex: 0 0 18px; display: grid; place-items: center; color: #c3c4ff; }
 .mockRowIco svg { width: 13px; height: 13px; display: block; }
-.mockRowTitle { font-size: 10px; font-weight: 550; display: block; line-height: 1.3; }
-.mockRowHint { font-size: 7.5px; color: #8b8bad; display: block; line-height: 1.3; }
-.mockChevron { margin-left: auto; color: #565678; font-size: 11px; line-height: 1; }
-
+.mockRowTitle { font-size: 12px; font-weight: 550; display: block; line-height: 1.3; }
+.mockRowHint { font-size: 11px; color: #8b8bad; display: block; line-height: 1.35; }
 .mockFoot {
   display: flex;
   align-items: center;
   gap: 6px;
   padding-top: 8px;
   border-top: 1px solid rgba(195, 196, 255, .10);
-  font-size: 8px;
-  color: #565678;
+  font-size: 11px;
+  color: #8b8bad;
 }
 
 .mockLink { color: inherit; }
+.mockChevron { margin-left: auto; color: #8b8bad; font-size: 11px; line-height: 1; }
 .mockEmpty {
   border: 1px dashed rgba(195, 196, 255, .18);
   border-radius: 8px;
