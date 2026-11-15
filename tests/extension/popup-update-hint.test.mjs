@@ -52,7 +52,7 @@ test('the popup has the doors out of it, the dashboard among them', () => {
   assert.match(popupHtml, /id="dashboardButton"/, 'the dashboard door exists');
   assert.match(popup, /dashboardButton.*dashboard\.html/s, 'and it opens the dashboard');
   assert.match(popupHtml, /id="docsButton"/, 'the documentation door exists');
-  assert.match(popupHtml, /id="pairToggleButton"/, 'and the pairing door exists');
+  assert.match(popupHtml, /id="pairQuickButton"/, 'and the one-click pair door exists');
 });
 
 test('the status is one firm line, and the popup is a dark surface', () => {

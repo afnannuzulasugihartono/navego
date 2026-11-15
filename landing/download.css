@@ -857,18 +857,8 @@ pre {
 .deviceNameLabel { font: 9px/1 var(--mono); color: var(--muted); }
 .deviceNameField { display: block; padding: 8px 10px; border: 1px solid var(--line-strong); border-radius: 7px; background: var(--surface); font: 9.5px/1 var(--mono); color: var(--ink); }
 .pairCreateBtn { justify-self: start; padding: 6px 12px; border: 1px solid var(--line-strong); border-radius: 7px; background: var(--surface); font: 9px/1.3 var(--mono); color: var(--ink); transition: transform .1s var(--ease); }
-.pairCodeRow { display: grid; gap: 3px; padding: 9px 10px; border: 1px solid var(--accent); border-radius: 9px; background: color-mix(in srgb, var(--accent) 12%, transparent); opacity: 0; transform: translateY(6px); transition: opacity .2s var(--ease), transform .35s var(--spring); }
-.pageDash.is-created .pairCodeRow { opacity: 1; transform: none; }
-.pairCodeLabel { font: 8px/1 var(--mono); color: var(--muted); letter-spacing: .06em; }
-.pairCodeValue { font: 600 15px/1 var(--mono); letter-spacing: .12em; color: var(--accent); }
 .pairCodeHint { font: 7.5px/1 var(--mono); color: var(--muted); }
-.pairCodeLine { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
-.pairCopyBtn { position: relative; display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid var(--line-strong); border-radius: 7px; background: var(--surface); color: var(--muted); cursor: pointer; transition: transform .1s var(--ease); }
-.copyIcon,
-.copiedIcon { position: absolute; width: 14px; height: 14px; transition: opacity .15s var(--ease); }
-.copiedIcon { color: var(--accent); opacity: 0; }
-.pageDash.is-copied .copyIcon { opacity: 0; }
-.pageDash.is-copied .copiedIcon { opacity: 1; }
+.pageDash.is-paired .pairCodeHint { color: var(--accent); }
 
 /* the popup opens under the toolbar icon that was clicked */
 
@@ -917,10 +907,6 @@ pre {
 .oaVal.ok { color: var(--accent); }
 .oaSection { font: 7px/1 var(--mono); color: var(--muted); letter-spacing: .12em; }
 .oaFieldLabel { font: 7.5px/1 var(--mono); color: var(--muted); letter-spacing: .09em; }
-.oaFieldEmpty { display: flex; align-items: center; min-height: 30px; padding: 8px 11px; border: 1px dashed var(--line-strong); border-radius: 9px; background: var(--surface); transition: border-color .15s var(--ease), border-style .15s; }
-.oaFieldEmpty.is-focused { border-color: var(--accent); border-style: solid; }
-.oaFieldValue { font: 600 13px/1 var(--mono); letter-spacing: .1em; color: var(--ink); opacity: 0; transition: opacity .12s var(--ease); }
-.oaPopup.is-pasted .oaFieldValue { opacity: 1; }
 .oaHint { font: 8px/1.4 var(--mono); color: var(--muted); }
 .oaBtns { display: grid; gap: 6px; }
 .oaBtn { padding: 7px 9px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); font: 8.5px/1.3 var(--mono); color: var(--ink); text-align: center; }
@@ -1040,16 +1026,14 @@ pre {
 .pickBtn.is-pressed,
 .pickRow.is-pressed,
 .pairCreateBtn.is-pressed,
-.pairCopyBtn.is-pressed,
 .toolItem.is-pressed,
 .chromePillBtn.is-pressed,
 .chromeToggle.is-pressed,
 .extTrigger.is-pressed,
-.oaFieldEmpty.is-pressed,
 .chromeOmnibox.is-pressed,
 .tbItem.is-pressed { transform: scale(.94); }
 
-.demoCursor .cursorArrow, .chromeToggleKnob, .dlFill, .dlShelf, .dlCheck, .typeUrl, .pairCodeRow, .oaPopup, .oaPanelIn, .oaFieldValue, .extActionRow, .expRowNew, .extractDlg, .folderPick, .termLine { will-change: transform, opacity; }
+.demoCursor .cursorArrow, .chromeToggleKnob, .dlFill, .dlShelf, .dlCheck, .typeUrl, .oaPopup, .oaPanelIn, .extActionRow, .expRowNew, .extractDlg, .folderPick, .termLine { will-change: transform, opacity; }
 
 /* Chrome dark UI — same palette as the real Extensions page */
 
@@ -1259,10 +1243,7 @@ pre {
 .demoStage .deviceNameLabel { font-size: 10px; }
 .demoStage .deviceNameField { font-size: 11.5px; padding: 9px 11px; }
 .demoStage .pairCreateBtn { font-size: 11px; padding: 8px 14px; }
-.demoStage .pairCodeValue { font-size: 19px; }
-.demoStage .pairCodeLabel { font-size: 9px; }
 .demoStage .pairCodeHint { font-size: 9px; }
-.demoStage .pairCopyBtn { width: 30px; height: 30px; }
 
 .demoStage .oaName { font-size: 13px; }
 .demoStage .oaPillOn,
@@ -1271,7 +1252,6 @@ pre {
 .demoStage .oaVal { font-size: 11px; }
 .demoStage .oaSection { font-size: 8px; }
 .demoStage .oaFieldLabel { font-size: 8.5px; }
-.demoStage .oaFieldValue { font-size: 14px; }
 .demoStage .oaHint { font-size: 9px; }
 .demoStage .oaBtn { font-size: 10px; padding: 8px 10px; }
 

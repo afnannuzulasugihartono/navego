@@ -2611,9 +2611,10 @@ async def run(port, profile):
             f"chrome.storage.local.set({{bridgeUrl:'http://{HOST}:{port}/bridge'}})"
         )
         await popup.reload()
-        await popup.fill("#pairCode", PAIR_CODE)
-        await popup.click("#pairButton")
-        await popup.locator("#pairSection").wait_for(state="hidden", timeout=10000)
+        pair_reply = await popup.evaluate(
+            f"chrome.runtime.sendMessage({{scope: 'opera-agent-popup', action: 'pair', code: '{PAIR_CODE}'}})"
+        )
+        assert pair_reply.get("ok") is True, pair_reply
         assert harness.STATE.paired
 
         ping = await drive("browser.ping")

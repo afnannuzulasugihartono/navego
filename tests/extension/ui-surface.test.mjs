@@ -230,7 +230,7 @@ const styles = fs.readFileSync(new URL('../../extension/styles.css', import.meta
 test('popup keeps its controls accessible and responsive in narrow Opera panels', () => {
   for (const id of [
     'statusLine',
-    'pairSection', 'pairCode', 'pairButton', 'pairToggleButton',
+    'pairQuickButton',
     'updateHint', 'updateButton', 'dashboardButton', 'docsButton', 'autoUpdateButton'
   ]) {
     assert.match(popup, new RegExp(`id="${id}"`));

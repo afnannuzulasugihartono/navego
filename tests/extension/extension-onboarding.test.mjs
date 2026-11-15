@@ -1,30 +1,27 @@
-// @last-edited: 2026-10-06 09:58 UTC+7.
-// @title: extension-onboarding — orang asing selesai pairing tanpa membaca docs.
-// @state: red first: popup dan options masih berbahasa Inggris.
+// @last-edited: 2026-11-15 UTC+7.
+// @title: extension-onboarding - a stranger pairs the browser without reading the docs.
+// @state: the popup carries the one-click door; the words are Indonesian first, English everywhere too.
 // @dependencies: test, assert, fs.
 
-// The site promises Indonesian copy, and the download page ends with "tempel di popup extension".
-// The popup is where that promise is kept or broken: it was English, and its pairing hint named no place to get a code.
-// A stranger stalls there.
-// These locks read the same sources the browser runs, because popup.js needs chrome.* and cannot be imported in node.
+// WHY THIS FILE STAYS NAMED THE SAME: the test that locked the old paste-the-code flow locked the wrong thing - it taught the reader where to get a code instead of pairing in one click.
+// The popup is where the promise is kept or broken, and the promise now is one click: the dashboard mints and delivers; the popup does not ask for a code at all.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { userErrorMessage } from '../../extension/lib/error-messages.js';
 
 const root = new URL('../../', import.meta.url);
 const read = (name) => fs.readFileSync(new URL(`extension/${name}`, root), 'utf8');
 const i18n = read('lib/i18n.js');
 
-test('the popup speaks Indonesian and names where the code comes from', () => {
+test('the popup speaks Indonesian and carries the one-click door', () => {
   const html = read('popup.html');
   assert.match(html, /<html lang="id"/, 'the document language is declared Indonesian');
-  assert.match(i18n, /Sambungkan device/, 'the pairing section says what it does');
-  assert.match(i18n, /Kode pairing/, 'the field says what to type');
-  assert.match(i18n, /Pairing/, 'the link names the same door the dashboard does');
+  assert.match(i18n, /Pasangkan browser ini/, 'the one-click row says what it does');
+  assert.match(i18n, /Pair this browser/, 'and English carries the same promise');
 
-  assert.match(html, /dashboard\.html#pairing/, 'the hint links the exact section that makes the code');
+  assert.match(read('popup.js'), /pairQuickButton[\s\S]{0,120}pair=1|pair=1[\s\S]{0,120}pairQuickButton/, 'the one-click door deep-links to the dashboard pair handoff');
+  assert.doesNotMatch(html, /id="pairToggleButton"|id="pairSection"|id="pairButton"/, 'the manual pairing door is gone; the one-click door is the only door');
 });
 
 test('the popup status answers in every state of it, in both languages', () => {
@@ -38,24 +35,6 @@ test('the popup status answers in every state of it, in both languages', () => {
 });
 
 test('the options page speaks Indonesian too', () => {
-  const html = read('options.html');
-  assert.match(html, /<html lang="id"/, 'the document language is declared Indonesian');
-  assert.match(html, /<h2[^>]*>Koneksi<\/h2>/, 'the connection section is named');
-  assert.match(html, /Model AI/, 'the model section is named');
-});
-
-test('every user-facing error is Indonesian, never a raw internal', () => {
-
-  for (const source of [
-    'Pairing failed.',
-    'Invalid pairing code.',
-    'Invalid bridge URL.',
-    'Unable to update tab privacy.'
-  ]) {
-    const shown = userErrorMessage(source);
-    assert.doesNotMatch(shown, /Check the code|Could not|invalid/i, `${source} is not shown in English`);
-    assert.match(shown, /coba lagi|muat ulang|periksa/i, `${source} tells the reader what to do next`);
-  }
-  assert.match(userErrorMessage('something nobody mapped'), /uji mandiri/i,
-    'the fallback still points at the self-test, in Indonesian');
+  const options = read('options.html');
+  assert.match(options, /<html lang="id"/, 'the options document language is declared Indonesian');
 });

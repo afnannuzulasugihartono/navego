@@ -40,7 +40,7 @@ test('a missing page helper costs one feature, never the whole content script', 
 test('every popup message lands in a catch the user can read', () => {
   const popup = fs.readFileSync(new URL('../../extension/popup.js', import.meta.url), 'utf8');
 
-  const handlers = [...popup.matchAll(/\$\('(\w+)'\)\??\.addEventListener\('click', (?:async )?\(\) => \{([\s\S]*?)\n\}\);/g)];
+  const handlers = [...popup.matchAll(/\$\('(\w+)'\)\??\.addEventListener\('click', (?:async )?\(\) => \{([\s\S]*?)\}\);/g)];
   assert.ok(handlers.length >= 4, 'no popup click handlers found to check');
 
   for (const [, id, body] of handlers) {

@@ -99,7 +99,7 @@ async function run(page, shape = {}) {
     return nodes[id] ||= el;
   };
 
-  const preCreated = new Set(['status', 'whoami', 'profileCard', 'avatar', 'profileName', 'profileMeta', 'profileProvider', 'factEmail', 'factProvider', 'factLastSignIn', 'factUserId', 'linkedProviders', 'deviceSummary', 'signOutButton', 'runButton', 'runStatus', 'pairButton', 'pairStatus', 'devices', 'sessionStatus', ...CONSENT_ELEMENTS]);
+  const preCreated = new Set(['status', 'whoami', 'profileCard', 'avatar', 'profileName', 'profileMeta', 'profileProvider', 'factEmail', 'factProvider', 'factLastSignIn', 'factUserId', 'linkedProviders', 'deviceSummary', 'signOutButton', 'runButton', 'runStatus', 'pairQuick', 'pairStatus', 'devices', 'sessionStatus', ...CONSENT_ELEMENTS]);
   for (const id of preCreated) element(id);
 
   for (const [id, state] of Object.entries(HOME_ELEMENTS)) Object.assign(element(id), state);
@@ -231,6 +231,19 @@ test('the dashboard confirms the extension once the content script has marked th
     'the installed case is stated, so the line is not a permanent warning');
 });
 
+test('the popup handoff deep-link ?pair=1 fires the one-click action itself, and stops at the missing extension', async () => {
+  const { nodes, rejected } = await run('dashboard.html', { search: '?pair=1' });
+  assert.deepEqual(rejected, [], `the module rejected: ${rejected.join('; ')}`);
+  assert.match(nodes.pairStatus.textContent, /belum terpasang/,
+    'the one-click action ran to the delivery step and honestly reported this browser has no extension');
+});
+
+test('the ?pair=1 handoff stays inert without a session - no silent code mint', async () => {
+  const { nodes, rejected } = await run('dashboard.html', { search: '?pair=1', accessOk: false, refreshStatus: 401 });
+  assert.deepEqual(rejected, [], `the module rejected: ${rejected.join('; ')}`);
+  assert.equal(nodes.pairStatus.textContent, '', 'no session, no action: the status line stays empty rather than minting a code nobody asked for');
+});
+
 test('the dashboard reacts to the marker landing after it has already read the page', async () => {
 
   const { nodes, rejected, context } = await run('dashboard.html', { extensionInstalled: false });
@@ -262,12 +275,6 @@ test('home swaps to member actions on a stored session, and stays put without on
   assert.equal(signed.nodes.ctaOut.hidden, true, 'acquisition actions hide');
   assert.equal(signed.nodes.ctaIn.hidden, false, 'member actions show');
   assert.equal(signed.nodes.quickTiles.hidden, false, 'and the inward tiles show');
-  // WHY THE CLOCK IS PROVED HERE: the pairing panel is only honest if its countdown actually moves, so the stub drives the scheduled tick and reads the clock.
-  const clock = signed.timers.find((timer) => timer.ms === 1000);
-  assert.ok(clock, 'the pairing clock asks for a second');
-  assert.equal(signed.nodes.pairTime.textContent, '10:00', 'and it starts at ten minutes');
-  clock.fn();
-  assert.equal(signed.nodes.pairTime.textContent, '09:59', 'then it ticks down');
   // WHY NO EYEBROW LINE IS ASSERTED: the taste audit removed the label above the headline on the home page, so the session's answer is the member actions and the tiles, not a line of small text.
   const stranger = await run('beranda.html', { stored: {} });
   assert.ok(!stranger.context.document.body.classList.contains('signed-in'), 'no session, no mark');
