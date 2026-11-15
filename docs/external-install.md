@@ -17,7 +17,7 @@ Updates ride the same file in both routes: every start, the browser re-reads `up
 
 # BEFORE YOU START
 
-Check the update URL answers and says the current version (measured 2026-11-15: `1.6.52`):
+Check the update URL answers and carries the version the tree now reads (measured 2026-11-15):
 
 ```
 curl -I "https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"
