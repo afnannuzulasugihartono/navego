@@ -1,6 +1,7 @@
-<!-- @last-edited: 2026-11-11 UTC+7. -->
+<!-- @last-edited: 2026-11-15 UTC+7. -->
 <!-- @title: popup — MV3 runtime. -->
-<!-- @state: one flat list of rows; every word comes from lib/i18n.js; Tampermonkey's shape, twice the width. -->
+<!-- The website island, compressed: electric blue ground, navy island, periwinkle accent, Apex mark. -->
+<!-- @state: one flat list of rows; every word comes from lib/i18n.js; the pairing action is the single full-width accent button. -->
 <!-- @dependencies: lib/i18n.js. -->
 
 <!doctype html>
@@ -14,12 +15,15 @@
 <body class="popup">
   <main class="shell">
     <header class="topbar">
-      <span class="mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="16" rx="3" fill="#0b0d10"/><path d="M5.2 2.2v10.2l2.5-2.3 1.5 3.6 1.9-.8-1.6-3.6h3.1L5.2 2.2Z" fill="#3ecf8e"/></svg></span>
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="14" fill="#232344"/><path stroke="#c3c4ff" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" fill="none" d="M14 50 32 12 50 50"/><path stroke="#c3c4ff" stroke-width="5" stroke-linecap="square" d="M22.5 36h19"/></svg></span>
       <h1 class="topbarName">Opera Agent</h1>
       <span id="version" class="topbarVersion">&nbsp;</span>
+      <button id="optionsButton" class="gearButton" type="button" data-i18n-aria="doors.settings" data-i18n-title="doors.settings" title="Pengaturan" aria-label="Pengaturan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3.2"/><path d="M19.5 15.2a1.8 1.8 0 0 0 .36 2l.07.07a2.1 2.1 0 0 1-2.97 2.97l-.07-.07a1.8 1.8 0 0 0-2-.36 1.8 1.8 0 0 0-1.1 1.66V22a2.1 2.1 0 0 1-4.2 0v-.08a1.8 1.8 0 0 0-1.1-1.66 1.8 1.8 0 0 0-2 .36l-.07.07a2.1 2.1 0 0 1-2.97-2.97l.07-.07a1.8 1.8 0 0 0 .36-2 1.8 1.8 0 0 0-1.64-1.1H1.9a2.1 2.1 0 0 1 0-4.2h.08a1.8 1.8 0 0 0 1.66-1.1 1.8 1.8 0 0 0-.36-2l-.07-.07a2.1 2.1 0 0 1 2.97-2.97l.07.07a1.8 1.8 0 0 0 2 .36h.04a1.8 1.8 0 0 0 1.06-1.64V2a2.1 2.1 0 0 1 4.2 0v.08a1.8 1.8 0 0 0 1.06 1.64h.04a1.8 1.8 0 0 0 2-.36l.07-.07a2.1 2.1 0 0 1 2.97 2.97l-.07.07a1.8 1.8 0 0 0-.36 2v.04a1.8 1.8 0 0 0 1.64 1.06h.08a2.1 2.1 0 0 1 0 4.2h-.04a1.8 1.8 0 0 0-1.66 1.1z"/></svg></button>
     </header>
 
     <p id="statusLine" class="statusLine pending" aria-live="polite"></p>
+
+    <button id="pairQuickButton" class="cta" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13.6 3.4 6.4 13.4h5.4l-2.2 7.2 9.2-11.2h-5.4l2.8-6Z"/></svg><span data-i18n="doors.pairQuick">Pasangkan browser ini</span></button>
 
     <div class="rows" id="doorsSection">
       <p id="updateHint" class="updateHint" hidden>
@@ -38,14 +42,6 @@
       <button id="docsButton" class="menuItem" type="button">
         <span class="rowIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 2h6l3 3v9h-9zM9 2v3h3.5M6 8h4M6 11h4" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg></span>
         <span class="rowBody"><span class="rowText" data-i18n="doors.docs">Dokumentasi</span></span>
-        <span class="rowArrow" aria-hidden="true">&rsaquo;</span>
-      </button>
-    </div>
-
-    <div class="rows">
-      <button id="pairQuickButton" class="menuItem" type="button">
-        <span class="rowIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.5 9.5 4 12a2.1 2.1 0 0 1-3-3l4.2-4.2a2.1 2.1 0 0 1 3 0M9.5 6.5l2.5-2.5a2.1 2.1 0 0 1 3 3l-4.2 4.2a2.1 2.1 0 0 1-3 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 2v3m0 0-1.2-1.2M8 5 9.2 3.8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <span class="rowBody"><span class="rowText" data-i18n="doors.pairQuick">Pasangkan browser ini</span></span>
         <span class="rowArrow" aria-hidden="true">&rsaquo;</span>
       </button>
     </div>
@@ -72,7 +68,7 @@
     <p id="error" class="error" role="alert" hidden></p>
 
     <footer class="footbar">
-      <span class="footBrand" data-i18n="footer.brand">Privasi sejak awal. Berjalan di latar.</span>
+      <span class="footBrand" data-i18n="footer.brand">Privasi dari hari pertama.</span>
       <span class="footText">
         <a class="footLinkText" href="https://opera-agent.pages.dev/docs.html" target="_blank" rel="noreferrer" data-i18n="footer.help">Bantuan</a>
         <span class="footSep" aria-hidden="true">|</span>

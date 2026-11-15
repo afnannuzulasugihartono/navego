@@ -192,6 +192,7 @@ const openTab = async (url: string) => {
 $('dashboardButton')?.addEventListener('click', async () => { void openTab(`${SITE_ORIGIN}/dashboard.html`); });
 $('docsButton')?.addEventListener('click', async () => { void openTab(`${SITE_ORIGIN}/docs.html`); });
 $('pairQuickButton')?.addEventListener('click', async () => { void openTab(`${SITE_ORIGIN}/dashboard.html?pair=1#pairing`); });
+$('optionsButton')?.addEventListener('click', async () => { void chrome.tabs.create({ url: chrome.runtime.getURL('options.html') }); });
 $('updateButton')?.addEventListener('click', () => { void fetchNewBuild(); });
 $('reloadButton')?.addEventListener('click', () => { void reloadExtension(); });
 
