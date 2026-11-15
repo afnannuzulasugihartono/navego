@@ -34,7 +34,7 @@ body.popup.firstPage {
 }
 
 .column {
-  width: min(100%, 840px);
+  width: min(100%, 960px);
   display: grid;
   gap: 14px;
 }
@@ -42,9 +42,9 @@ body.popup.firstPage {
 .brandrow {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 11px;
-  padding: 0 4px;
+  padding: 0 2px;
 }
 
 .brandrow svg { width: 26px; height: 26px; display: block; }
@@ -55,21 +55,40 @@ body.popup.firstPage {
   background: #19192f;
   border: 1px solid rgba(195, 196, 255, .09);
   border-radius: 14px;
-  padding: 44px 48px 26px;
-  text-align: center;
+  padding: 40px 44px 24px;
+  text-align: left;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  grid-template-areas:
+    "title mock"
+    "sub mock"
+    "verdict mock"
+    "actionrow mock"
+    "rule rule"
+    "footrow footrow";
+  column-gap: 44px;
 }
+
+.islandCard > .title { grid-area: title; align-self: end; margin-top: 8px; }
+.islandCard > .sub { grid-area: sub; }
+.islandCard > .verdict { grid-area: verdict; }
+.islandCard > .actionrow { grid-area: actionrow; align-self: end; }
+.islandCard > .mockPanel { grid-area: mock; }
+.islandCard > .rule { grid-area: rule; }
+.islandCard > .footrow { grid-area: footrow; justify-content: flex-start; }
+.islandCard > .islandError { grid-column: 1 / -1; margin-top: 0; }
 
 .title {
   margin: 0;
-  font-size: 34px;
-  line-height: 1.15;
+  font-size: 40px;
+  line-height: 1.12;
   font-weight: 650;
-  letter-spacing: -.015em;
+  letter-spacing: -.02em;
 }
 
 .sub {
-  margin: 10px auto 0;
-  max-width: 52ch;
+  margin: 10px 0 0;
+  max-width: 46ch;
   font-size: 15px;
   line-height: 1.5;
   color: #b9b9e0;
@@ -80,9 +99,9 @@ body.popup.firstPage {
 .verdict {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 10px;
-  margin: 22px auto 0;
+  margin: 20px 0 0;
   padding: 12px 13px;
   border-radius: 8px;
   background: #1d1d34;
@@ -174,7 +193,110 @@ body.popup.firstPage {
   line-height: 1.45;
 }
 
+/* WHY THE RIGHT COLUMN IS THE PRODUCT ITSELF: a first-run page that describes the product loses to one that shows it; the mock is our own popup, drawn with our tokens, not a stock illustration. */
+
+.mockPanel {
+  align-self: center;
+  background: #10131c;
+  border: 1px solid rgba(195, 196, 255, .07);
+  border-radius: 12px;
+  padding: 16px 14px 12px;
+  display: grid;
+  gap: 8px;
+  user-select: none;
+}
+
+.mockTopbar {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 2px 2px 8px;
+  border-bottom: 1px solid rgba(195, 196, 255, .10);
+}
+
+.mockMark svg { width: 26px; height: 26px; display: block; }
+.mockName { font-size: 11px; font-weight: 650; letter-spacing: .005em; }
+
+.mockStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1d1d34;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.mockDot { width: 7px; height: 7px; border-radius: 50%; background: #3ecf8e; flex: 0 0 auto; }
+.mockMain { font-size: 10.5px; font-weight: 650; line-height: 1.2; display: block; }
+.mockSub { font-size: 8px; color: #8b8bad; display: block; line-height: 1.3; margin-top: 1px; }
+
+.mockCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 32px;
+  border-radius: 7px;
+  background: rgba(62, 207, 142, .15);
+  color: #3ecf8e;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.mockCta svg { width: 12px; height: 12px; display: block; }
+
+.mockRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 7px;
+  border-radius: 8px;
+}
+
+.mockRowIco { flex: 0 0 18px; display: grid; place-items: center; color: #c3c4ff; }
+.mockRowIco svg { width: 13px; height: 13px; display: block; }
+.mockRowTitle { font-size: 10px; font-weight: 550; display: block; line-height: 1.3; }
+.mockRowHint { font-size: 7.5px; color: #8b8bad; display: block; line-height: 1.3; }
+.mockChevron { margin-left: auto; color: #565678; font-size: 11px; line-height: 1; }
+
+.mockFoot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(195, 196, 255, .10);
+  font-size: 8px;
+  color: #565678;
+}
+
+.mockLink { color: inherit; }
+.mockEmpty {
+  border: 1px dashed rgba(195, 196, 255, .18);
+  border-radius: 8px;
+  padding: 14px 10px;
+  font-size: 10px;
+  color: #b9b9e0;
+  text-align: center;
+}
+
+@media (max-width: 880px) {
+  .islandCard {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "sub"
+      "verdict"
+      "actionrow"
+      "rule"
+      "footrow";
+    padding: 28px 22px 20px;
+  }
+  .mockPanel { display: none; }
+  .footrow { justify-content: center; }
+  .verdict { margin-left: auto; margin-right: auto; }
+}
+
 @media (max-width: 560px) {
   .islandCard { padding: 20px 18px 16px; }
-  .title { font-size: 22px; }
+  .title { font-size: 28px; }
 }
