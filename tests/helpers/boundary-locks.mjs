@@ -139,10 +139,13 @@
 // WHY these three were re-pinned on 2026-11-15: the 1.6.53 release rode them.
 // The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
 
+// WHY these three were re-pinned on 2026-11-15: the 1.6.54 release rode them.
+// The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
+
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
   ['../extension/content.ts', '02365ade2ed83b234e7056ff51c3b7b41b1cacf66c74fdad41e1009b8f464fa5'],
   ['../extension/background.ts', '8d700859a184591d6377c7f87aa582fe2404eb48e7e86f9c972b44a44771d5f5'],
-  ['../extension/manifest.json', '414632d3b28ddad132415403826c0005694858b342ea4d16e6ab34e7ad6502f4'],
+  ['../extension/manifest.json', 'e3a1f2e64ba7cf9262bbe42adebebacbc8f8c5ae0a0dee5f975eb90e486dc6d8'],
 ]);
 
 export const OBSERVATION_STACK_LOCKS = Object.freeze([
