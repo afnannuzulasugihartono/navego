@@ -10,14 +10,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0000f2" />
-  <title data-i18n="meta.title">Pasang MCP - Opera Agent</title>
-  <meta name="description" content="Pasang driver lokal Opera Agent di mesin Anda: stdio MCP, tanpa login, tanpa biaya per panggilan, 56 tool di atas 36 primitive browser." />
+  <title data-i18n="meta.title">Pasang MCP - Kemudi</title>
+  <meta name="description" content="Pasang driver lokal Kemudi di mesin Anda: stdio MCP, tanpa login, tanpa biaya per panggilan, 56 tool di atas 36 primitive browser." />
   <link rel="stylesheet" href="/site.css" />
   <link rel="stylesheet" href="/docs.css" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3.5' fill='%2319192f'/%3E%3Cpath fill-rule='evenodd' fill='%23c3c4ff' d='M8 1a7 7 0 1 0 0 14 7 7 0 1 0 0-14ZM12 3.9 7.1 8.5l1.9-.2-2 2.4 1.5 1 2-2.4 2.5-.2-1.1-5.4Z'/%3E%3C/svg%3E" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Opera Agent" />
-  <meta property="og:title" content="Pasang MCP - Opera Agent" />
+  <meta property="og:site_name" content="Kemudi" />
+  <meta property="og:title" content="Pasang MCP - Kemudi" />
   <meta property="og:description" content="Satu driver MCP lokal untuk semua harness; 56 tool di atas 36 primitive browser." />
   <meta property="og:url" content="https://opera-agent.pages.dev/mcp" />
   <meta property="og:locale" content="id_ID" />
@@ -30,11 +30,11 @@
         <a href="./fitur.html" data-i18n="nav.features">Fitur</a>
         <a href="./unduh.html" data-i18n="nav.download">Unduh</a><span class="lang" data-lang-toggle></span>
       </nav>
-      <a class="brand" href="/beranda.html"><span class="wordmark">Opera<br/>Agent</span></a>
+      <a class="brand" href="/beranda.html"><span class="wordmark">Kemudi</span></a>
       <nav class="navSide navRight" aria-label="Secondary">
     <span data-portal-toggle></span>
         <a href="./docs.html" data-i18n="nav.docs">Docs</a>
-        <a class="navCta" href="./unduh.html" data-i18n="cta.download">Pasang Opera Agent</a>
+        <a class="navCta" href="./unduh.html" data-i18n="cta.download">Pasang Kemudi</a>
       </nav>
 
 
@@ -46,19 +46,19 @@
   <div class="prose docBody">
     <p class="lang-note">Halaman ini tersedia dalam Bahasa Indonesia. / This page is available in Indonesian.</p>
     <h1>Pasang MCP</h1>
-    <p class="pageSub">Driver lokal Opera Agent berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi; yang dibutuhkan adalah browser yang masuk akun dan ekstensi terpasang.</p>
+    <p class="pageSub">Driver lokal Kemudi berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi; yang dibutuhkan adalah browser yang masuk akun dan ekstensi terpasang.</p>
 
     <section data-reveal>
       <h2 id="pasang">1. Pasang paketnya</h2>
       <div class="copybox">
-        <pre><code id="install">npm install -g opera-agent-mcp</code></pre>
+        <pre><code id="install">npm install -g kemudi</code></pre>
         <button type="button" data-copy="install" data-i18n="copy">Salin</button>
       </div>
       <p>Satu perintah. Paket ini memakai browser yang sudah Anda gunakan; tidak ada proses tambahan yang perlu dijaga.</p>
 
       <h2 id="verifikasi">2. Periksa yang terhubung</h2>
       <div class="copybox">
-        <pre><code id="doctor">opera-agent-mcp doctor</code></pre>
+        <pre><code id="doctor">kemudi doctor</code></pre>
         <button type="button" data-copy="doctor" data-i18n="copy">Salin</button>
       </div>
       <p>Cetakan menyatakan nama device, paket plan, dan sisa quota hari ini. Kalau tidak ada yang terhubung, paket akan mencetak langkah perbaikan yang paling mungkin.</p>
@@ -71,7 +71,7 @@
   "mcp": {
     "opera-agent": {
       "type": "local",
-      "command": "opera-agent-mcp",
+      "command": "kemudi",
       "args": ["local"]
     }
   }
@@ -84,7 +84,7 @@
         <pre><code id="cfg-kilo">{
   "mcpServers": {
     "opera-agent": {
-      "command": "opera-agent-mcp",
+      "command": "kemudi",
       "args": ["local"]
     }
   }
@@ -95,14 +95,14 @@
       <h3>Claude Desktop <span class="muted">— konfigurasi MCP lokal</span></h3>
       <div class="copybox">
         <pre><code id="cfg-claude">command: npx
-args: ["-y", "opera-agent-mcp", "local"]</code></pre>
+args: ["-y", "kemudi", "local"]</code></pre>
         <button type="button" data-copy="cfg-claude" data-i18n="copy">Salin</button>
       </div>
 
       <p>Server lokal itu menambah <strong>56 tool</strong> di atas <strong>36 primitive browser</strong> — daftar lengkap dibawa bersama paket. Tidak ada login, tidak ada quota yang harus dimengerti di website: quota dibaca di lingkungan bridge dan ditampilkan oleh <code>doctor</code>.</p>
 
       <h2 id="pairing">4. Satu kali per peramban</h2>
-      <p>Peramban baru harus memasang ekstensi Opera Agent dulu (lihat <a href="./unduh.html">Unduh</a>), lalu buka <a href="./dashboard.html">Dasbor</a> dan klik <strong>Pasangkan browser ini</strong> — kode dibuat di server dan dikirim langsung ke ekstensi. Setelah itu, driver lokal otomatis mengambil alih — tidak perlu langkah lain setiap sesi.</p>
+      <p>Peramban baru harus memasang ekstensi Kemudi dulu (lihat <a href="./unduh.html">Unduh</a>), lalu buka <a href="./dashboard.html">Dasbor</a> dan klik <strong>Pasangkan browser ini</strong> — kode dibuat di server dan dikirim langsung ke ekstensi. Setelah itu, driver lokal otomatis mengambil alih — tidak perlu langkah lain setiap sesi.</p>
 
       <h2 id="batasan">Batas yang dijaga</h2>
       <ul>
@@ -126,8 +126,8 @@ args: ["-y", "opera-agent-mcp", "local"]</code></pre>
   <script type="application/json" id="i18n-dict">{
   "en": {
     "copy": "Copy",
-    "cta.download": "Install Opera Agent",
-    "meta.title": "Install MCP - Opera Agent",
+    "cta.download": "Install Kemudi",
+    "meta.title": "Install MCP - Kemudi",
     "nav.docs": "Docs",
     "nav.download": "Download",
     "nav.features": "Features"

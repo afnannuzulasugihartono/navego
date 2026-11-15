@@ -14,8 +14,8 @@
 
   var FOOTER_INNER = `    <div class="wrap footGrid simplified">
       <div class="footCol">
-        <span class="footBrand">Opera Agent</span>
-        <span class="footNote" data-i18n="footer.rights">© 2026 Opera Agent. Hak cipta dilindungi.</span>
+        <span class="footBrand">Kemudi</span>
+        <span class="footNote" data-i18n="footer.rights">© 2026 Kemudi. Hak cipta dilindungi.</span>
         <span class="doors"><a href="https://github.com/afnannuzulasugihartono/opera-agent" data-i18n="footer.source">Kode sumber</a></span>
       </div>
       <div class="footCol">

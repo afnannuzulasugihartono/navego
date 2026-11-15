@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Opera Agent",
+  "name": "Kemudi",
   "version": "1.6.59",
-  "description": "Private local Opera bridge for secure browser control through Supabase workflows.",
+  "description": "Kemudi drives your own browser from the AI you already use; the pages never leave this machine.",
   "permissions": [
     "tabs",
     "scripting",
@@ -41,7 +41,7 @@
     }
   ],
   "action": {
-    "default_title": "Opera Agent",
+    "default_title": "Kemudi",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",

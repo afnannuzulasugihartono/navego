@@ -9,15 +9,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0000f2" />
-  <title>Akun — Opera Agent</title>
-  <meta name="description" content="Akun Opera Agent: identitas Anda, penyedia yang tertaut, dan device yang ter-pairing." />
+  <title>Akun — Kemudi</title>
+  <meta name="description" content="Akun Kemudi: identitas Anda, penyedia yang tertaut, dan device yang ter-pairing." />
   <link rel="stylesheet" href="/site.css" />
   <link rel="stylesheet" href="/app.css" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3.5' fill='%2319192f'/%3E%3Cpath fill-rule='evenodd' fill='%23c3c4ff' d='M8 1a7 7 0 1 0 0 14 7 7 0 1 0 0-14ZM12 3.9 7.1 8.5l1.9-.2-2 2.4 1.5 1 2-2.4 2.5-.2-1.1-5.4Z'/%3E%3C/svg%3E" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Opera Agent" />
-  <meta property="og:title" content="Akun — Opera Agent" />
-  <meta property="og:description" content="Akun Opera Agent: identitas Anda, penyedia yang tertaut, dan device yang ter-pairing." />
+  <meta property="og:site_name" content="Kemudi" />
+  <meta property="og:title" content="Akun — Kemudi" />
+  <meta property="og:description" content="Akun Kemudi: identitas Anda, penyedia yang tertaut, dan device yang ter-pairing." />
   <meta property="og:url" content="https://opera-agent.pages.dev/akun" />
   <meta property="og:locale" content="id_ID" />
 </head>
@@ -29,11 +29,11 @@
         <a href="./fitur.html">Fitur</a>
         <a href="./unduh.html">Unduh</a><span class="lang" data-lang-toggle></span>
       </nav>
-      <a class="brand" href="/beranda.html" aria-current="page"><span class="wordmark">Opera<br/>Agent</span></a>
+      <a class="brand" href="/beranda.html" aria-current="page"><span class="wordmark">Kemudi</span></a>
       <nav class="navSide navRight" aria-label="Secondary">
     <span data-portal-toggle></span>
         <a href="./docs.html">Docs</a>
-        <a class="navCta" href="./unduh.html">Pasang Opera Agent</a>
+        <a class="navCta" href="./unduh.html">Pasang Kemudi</a>
       </nav>
 
 
@@ -57,11 +57,11 @@
             <span class="avatar" id="avatar" aria-hidden="true">OA</span>
             <span class="identity">
               <span class="name" id="profileName">Memeriksa sesi…</span>
-              <span class="meta" id="profileMeta">Akun Opera Agent</span>
+              <span class="meta" id="profileMeta">Akun Kemudi</span>
               <span class="meta" id="profileProvider">&nbsp;</span>
             </span>
           </div>
-          <div class="profileFoot"><span>Akun Opera Agent</span><span class="chip good">Aktif</span></div>
+          <div class="profileFoot"><span>Akun Kemudi</span><span class="chip good">Aktif</span></div>
         </div>
 
         <nav class="appCard accountNav" aria-label="Bagian akun">
@@ -118,8 +118,8 @@
         <footer>
     <div class="wrap footGrid simplified">
       <div class="footCol">
-        <span class="footBrand">Opera Agent</span>
-        <span class="footNote">© 2026 Opera Agent. Hak cipta dilindungi.</span>
+        <span class="footBrand">Kemudi</span>
+        <span class="footNote">© 2026 Kemudi. Hak cipta dilindungi.</span>
         <span class="doors"><a href="https://github.com/afnannuzulasugihartono/opera-agent">Kode sumber</a></span>
       </div>
       <div class="footCol">
@@ -253,7 +253,7 @@
 
     function renderIdentity(user) {
       const metadata = user.user_metadata || {};
-      const name = metadata.full_name || metadata.name || metadata.user_name || user.email || 'Akun Opera Agent';
+      const name = metadata.full_name || metadata.name || metadata.user_name || user.email || 'Akun Kemudi';
       const provider = providerOf(user);
       $('avatar').textContent = initialsOf(name, user.email);
       $('profileName').textContent = name;

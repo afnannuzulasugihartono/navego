@@ -97,8 +97,13 @@ test('a live document names no file that is not in the tree', () => {
     if (!file.startsWith('docs/')) return false;
     return !file.startsWith('docs/releases/') && !file.startsWith('docs/superpowers/');
   });
+  // WHY A PICTURE IS NOT A DOCUMENT: this gate reads a file as text and looks for a link in it, and a JPEG's bytes can hold a bracket and a parenthesis by chance - the proof's own screenshot tripped it that way on 2026-11-15.
+  // The claim is about documents: the paths a reader is told to follow.
+  // A picture names nothing.
+  const BINARY = /\.(?:jpg|jpeg|png|gif|pdf|zip|crx|pptx|docx|xlsx|mp4|webp|ico|woff2?)$/i;
   const dead = [];
   for (const file of live) {
+    if (BINARY.test(file)) continue;
     const body = read(file);
     const dir = path.posix.dirname(file);
     for (const match of body.matchAll(/`((?:extension|shared|local|tests|hosted|docs|scripts|landing|proof)\/[A-Za-z0-9_./-]+\.(?:js|mjs|ts|py|sql|html|css|json|md|yml|yaml|toml|cmd|example))`/g)) {

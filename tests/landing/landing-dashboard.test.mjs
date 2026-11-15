@@ -111,8 +111,8 @@ test('the dashboard says whether the extension is installed in this browser', ()
   assert.match(html, /dataset\.operaAgent/, 'the page reads the marker the content script leaves');
   assert.match(html, /id="installState"/, 'and reports it on its own status line');
 
-  assert.match(html, /Opera Agent belum terpasang di browser ini/, 'the missing case names the extension and the browser');
-  assert.match(html, /Opera Agent terpasang di browser ini/, 'and the present case says so too');
+  assert.match(html, /Kemudi belum terpasang di browser ini/, 'the missing case names the extension and the browser');
+  assert.match(html, /Kemudi terpasang di browser ini/, 'and the present case says so too');
 });
 
 test('the content script leaves the marker the dashboard reads', () => {
@@ -230,9 +230,9 @@ test('the page shows each connected device id and can copy it', () => {
 });
 
 test('the dashboard shares the site navigation and footer', () => {
-  // WHY THE PIN READS THE STACKED WORDMARK: the masthead is the Hermes fold, and the brand's two lines are broken by a <br/>, so "Opera\nAgent" is one name printed on two lines, not two strings.
+  // WHY THE PIN READS THE SINGLE-LINE WORDMARK: the masthead carries the brand as one word now — Kemudi, the rebrand's one word — broken by no <br/>; the two-line Hermes fold existed for a two-word name and is gone with it.
   const html = read('dashboard.html');
-  assert.match(html, /class="brand"[^>]*>[\s\S]{0,400}?Agent</, 'the brand is shared');
+  assert.match(html, /class="brand"[^>]*>[\s\S]{0,400}?Kemudi</, 'the brand is shared');
   assert.match(html, /privasi\.html/, 'the privacy policy is linked');
   assert.match(html, /syarat\.html/, 'the terms are linked');
   assert.match(html, /Keluar|akun\.html/, 'the way to the account page is one click away');
@@ -640,7 +640,7 @@ test('the table list opens under the item that asks for it', () => {
 test('the browser tab names the view being read', () => {
   const html = read('dashboard.html');
 
-  assert.match(html, /document\.title = `\$\{heading\} — Opera Agent`/, 'the title is written by the tab controller, from the view it opened');
+  assert.match(html, /document\.title = `\$\{heading\} — Kemudi`/, 'the title is written by the tab controller, from the view it opened');
 });
 
 test('the history can be narrowed without reading every command', () => {

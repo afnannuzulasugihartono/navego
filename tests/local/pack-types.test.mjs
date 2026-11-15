@@ -22,9 +22,9 @@ const walk = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((entry) 
 });
 
 test('the packed tarball carries no .ts source, keeps the generated copies, and its bin runs', () => {
-  const scratch = mkdtempSync(path.join(tmpdir(), 'opera-agent-mcp-pack-'));
+  const scratch = mkdtempSync(path.join(tmpdir(), 'kemudi-pack-'));
   try {
-    // --json names the tarball exactly once; guessing opera-agent-mcp-<version>.tgz breaks on the day the version moves.
+    // --json names the tarball exactly once; guessing kemudi-<version>.tgz breaks on the day the version moves.
     // --ignore-scripts because this test runs inside a suite of tests that import the twins: npm always runs prepack, and prepack recompiles local/*.js in place, which races the readers.
     // Freshness is pretest's job, not this test's; here the tarball is judged as the tree builds it.
     const packed = execFileSync(npm, ['pack', '--json', '--ignore-scripts', '--pack-destination', scratch], {
@@ -48,13 +48,13 @@ test('the packed tarball carries no .ts source, keeps the generated copies, and 
       assert.ok(files.includes(shipped), `the tarball carries ${shipped}`);
     }
 
-    // The shebang must survive packing; without it `npx opera-agent-mcp` dies on a machine that cannot guess the interpreter.
-    const bin = readFileSync(path.join(packageDir, 'bin', 'opera-agent-mcp.js'), 'utf8');
-    assert.equal(bin.split('\n', 1)[0].trim(), '#!/usr/bin/env node', 'bin/opera-agent-mcp.js keeps its shebang on line 1');
+    // The shebang must survive packing; without it `npx kemudi` dies on a machine that cannot guess the interpreter.
+    const bin = readFileSync(path.join(packageDir, 'bin', 'kemudi.js'), 'utf8');
+    assert.equal(bin.split('\n', 1)[0].trim(), '#!/usr/bin/env node', 'bin/kemudi.js keeps its shebang on line 1');
 
-    const help = spawnSync(process.execPath, [path.join(packageDir, 'bin', 'opera-agent-mcp.js'), '--help'], { encoding: 'utf8' });
+    const help = spawnSync(process.execPath, [path.join(packageDir, 'bin', 'kemudi.js'), '--help'], { encoding: 'utf8' });
     assert.equal(help.status, 0, `the packed bin answers --help: ${help.stderr || help.stdout}`);
-    assert.equal((help.stdout.match(/opera-agent-mcp <mode>/g) || []).length, 1, 'the packed bin prints the usage block exactly once');
+    assert.equal((help.stdout.match(/kemudi <mode>/g) || []).length, 1, 'the packed bin prints the usage block exactly once');
   } finally {
     rmSync(scratch, { recursive: true, force: true });
   }

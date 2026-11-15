@@ -95,7 +95,7 @@ test('a session missing every name field still renders something', () => {
   const card = render({ id: 'anon-1', email: '', app_metadata: {}, user_metadata: {} });
 
   assert.match(card.initials, /^[A-Z]{2}$/, `the avatar is never blank, got "${card.initials}"`);
-  assert.equal(card.name, 'Akun Opera Agent', 'a nameless session gets the product name, not undefined');
+  assert.equal(card.name, 'Akun Kemudi', 'a nameless session gets the product name, not undefined');
   assert.equal(card.factEmail, '(tanpa alamat)', 'the missing address is stated, not blank');
   assert.equal(card.factUserId, 'anon-1');
   assert.match(card.provider, /email/, 'a session with no provider metadata still names one');

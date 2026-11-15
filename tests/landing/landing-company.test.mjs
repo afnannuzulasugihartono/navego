@@ -59,7 +59,7 @@ test('a shared link carries a title, not a bare URL', () => {
     const html = read(`landing/${page}`);
     assert.match(html, /<meta property="og:type" content="website"/, `${page} names its share type`);
     assert.match(html, /<meta property="og:title" content="[^"]+"/, `${page} shares a titled card`);
-    assert.match(html, /<meta property="og:site_name" content="Opera Agent"/, `${page} cards carry the brand`);
+    assert.match(html, /<meta property="og:site_name" content="Kemudi"/, `${page} cards carry the brand`);
     assert.match(html, /<meta property="og:locale" content="id_ID"/, `${page} shares in its own language`);
 
     assert.match(html, /<meta property="og:url" content="https:\/\/opera-agent\.pages\.dev\/[^"]*"/, `${page} names the address the card points at`);

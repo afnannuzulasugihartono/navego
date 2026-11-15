@@ -10,7 +10,7 @@
 // That is what makes this testable without a browser installed, which in turn means the concurrency rule is checked on every machine that runs the suite rather than only on one that happens to have Chrome.
 // The real socket lives in transport.js.
 
-// Nothing in this file knows about Opera Agent.
+// Nothing in this file knows about Kemudi.
 // It speaks CDP and nothing else, so it stays small enough to read in one sitting.
 
 const CLOSED = 'CDP client is closed';

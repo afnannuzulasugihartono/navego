@@ -1,7 +1,7 @@
 @last-edited: 2026-11-09 UTC+7.
 @related: [`AGENTS.md`](AGENTS.md) - [`docs/security.md`](docs/security.md) - [`docs/api.md`](docs/api.md)
 
-# Opera Agent
+# Kemudi
 
 A private, local-browser control bridge.
 
@@ -41,19 +41,19 @@ A private, local-browser control bridge.
 ## One command
 
 ```bash
-npm i -g opera-agent-mcp
+npm i -g kemudi
 ```
 
 | | |
 |---|---|
-| `opera-agent-mcp local` | the everyday browser on this machine, over the loopback bridge |
-| `opera-agent-mcp auth` | sign in once; the token stays beside this install |
-| `opera-agent-mcp doctor` | print what is connected and what the plan allows |
-| `opera-agent-mcp install` | register the extension with every Chromium browser on this Windows machine |
-| `opera-agent-mcp uninstall` | remove the keys, the OperaAgent folder, and the package itself |
+| `kemudi local` | the everyday browser on this machine, over the loopback bridge |
+| `kemudi auth` | sign in once; the token stays beside this install |
+| `kemudi doctor` | print what is connected and what the plan allows |
+| `kemudi install` | register the extension with every Chromium browser on this Windows machine |
+| `kemudi uninstall` | remove the keys, the OperaAgent folder, and the package itself |
 
 The local drive is metered where it happens: the local bridge calls the cloud once per session to open the meter and reads the plan from there, then enforces it locally and reports usage into the same daily count the hosted surface reads, so a command past the allowance answers `PLAN_LIMIT_REACHED` with the plan named. The gate lives in the bridge and in the plan's data in the database, never in readable client code. The package is
-on the registry: `npm i -g opera-agent-mcp`, or from a clone with
+on the registry: `npm i -g kemudi`, or from a clone with
 `cd local && npm install -g .`. The full answer: [`docs/agent-call.md`](docs/agent-call.md).
 
 Every number in that table is measured, not typed: `tests/docs/readme.test.mjs` reads the

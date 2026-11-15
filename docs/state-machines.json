@@ -823,7 +823,7 @@
       ],
       "writers": "accessToken, login flow",
       "readers": "hosted-MCP cloud.js, doctor",
-      "wrongIfConfused": "a dead refresh token yields null and every cloud call falls into 'not signed in' with no hint the fix is opera-agent-mcp auth",
+      "wrongIfConfused": "a dead refresh token yields null and every cloud call falls into 'not signed in' with no hint the fix is kemudi auth",
       "decision": "tolerate",
       "why": "printed login instructions exist; the failure names a next step — tolerate, DX last",
       "rank": 5

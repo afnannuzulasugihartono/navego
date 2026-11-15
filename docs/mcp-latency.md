@@ -1,6 +1,6 @@
 # @last-edited: 2026-11-14 UTC+7.
-# @title: mcp latency — the measured cost of the Opera Agent MCP tools, and where the floor really sits.
-# @state: the numbers as measured on 2026-11-14 for the current release on the remote MCP path, the transport floor from docs/api.md, and the two tools that could not be measured. That road is historical: the hosted MCP surface was deleted from the tree on 2026-11-14, the live road is `opera-agent-mcp local`, and every table below holds for the deleted remote surface.
+# @title: mcp latency — the measured cost of the Kemudi MCP tools, and where the floor really sits.
+# @state: the numbers as measured on 2026-11-14 for the current release on the remote MCP path, the transport floor from docs/api.md, and the two tools that could not be measured. That road is historical: the hosted MCP surface was deleted from the tree on 2026-11-14, the live road is `kemudi local`, and every table below holds for the deleted remote surface.
 # @dependencies: none.
 
 # The benchmark
@@ -8,7 +8,7 @@
 Measured 2026-11-14 on the everyday browser, release commit 410658b0: Opera on LAPTOP-6OU03OTB, paired device `opera-9` (plan.firm), driven through the **remote MCP path** that this machine's OpenCode actually uses:
 
 ```
-the deleted hosted MCP surface (see git history for `opera-agent-mcp` in `gates.lock` and the function source)
+the deleted hosted MCP surface (see git history for `kemudi` in `gates.lock` and the function source)
 ```
 
 One call per tool, wall-clock around the call, on a fresh test tab (`example.com`, then `https://httpbin.org/forms/post`) that was created for this run and closed afterwards. Not a controlled lab: latencies include the network, the edge, the change channel and the page's own settle waits. Each number is one sample, indicative not rigorous — reruns move by hundreds of milliseconds.
@@ -71,10 +71,10 @@ The ~380 ms figure for a command through the hosted MCP function is the honest e
 Sub-256 ms for the whole surface is not available on the remote path: the transport alone spends ~380 ms before the page is asked anything, and the README's own figure for the cloud path is ~380 ms per action. The one road that gets there is the local driver on this machine:
 
 ```
-npm i -g opera-agent-mcp@latest  # replaces the stale 1.6.46 install on this machine
+npm i -g kemudi@latest  # replaces the stale 1.6.46 install on this machine
 ```
 
-then point the OpenCode MCP entry for `opera-agent` at `opera-agent-mcp local` instead of the remote URL (as of 2026-11 this machine's `~/.config/opencode/opencode.json` registers the remote one), and restart the session. The README measures the same action as under 1 ms through that road — the remaining milliseconds are the device's settle waits, not the transport.
+then point the OpenCode MCP entry for `opera-agent` at `kemudi local` instead of the remote URL (as of 2026-11 this machine's `~/.config/opencode/opencode.json` registers the remote one), and restart the session. The README measures the same action as under 1 ms through that road — the remaining milliseconds are the device's settle waits, not the transport.
 
 Expectation on that road, tool by tool: state reads and page reads land in the low tens of milliseconds; `open_url`, `navigate_tab`, `capture_page`, `record_stop` and `close_tab` stay above 256 ms because the browser work itself — load, JPEG encode, record finalize, tab teardown — is real work, not overhead. Those can only be batched (`browser_burst`) or avoided, never compressed below the work they do.
 
@@ -97,7 +97,7 @@ Warm-call re-measurement, same machine, same path, multiple samples each (the fi
 | check_update | 2.5 s | 1.8-2.4 s |
 | skill_recall | 0.7 s | 1.0 s |
 
-The honest read: the fix removes the PostgREST tax on every RPC in the request (typically four to five per call), which is real but was never the dominant term on this machine — the OpenCode-to-edge HTTPS hop and the device's own page work are. The 256 ms target is not reachable on the hosted road at all: the floor is HTTPS plus the edge plus the device, and `open_url`, `navigate_tab`, `capture_page`, `record_stop` and `close_tab` carry seconds of real browser work that no transport edit can compress. The sub-second road remains the local loopback driver (`opera-agent-mcp local`); the hosted road is now as fast as its architecture allows.
+The honest read: the fix removes the PostgREST tax on every RPC in the request (typically four to five per call), which is real but was never the dominant term on this machine — the OpenCode-to-edge HTTPS hop and the device's own page work are. The 256 ms target is not reachable on the hosted road at all: the floor is HTTPS plus the edge plus the device, and `open_url`, `navigate_tab`, `capture_page`, `record_stop` and `close_tab` carry seconds of real browser work that no transport edit can compress. The sub-second road remains the local loopback driver (`kemudi local`); the hosted road is now as fast as its architecture allows.
 
 ## The latest complete run (2026-11-14, after the direct-DB warm, same machine)
 

@@ -172,7 +172,7 @@ async function guardTab(id: number) {
 
   if (tab.incognito) throw codedError('CAPTURE_BLOCKED', 'Recordings are blocked in incognito tabs.', { tabId: id, reason: 'INCOGNITO' });
 
-  if (await isPrivateTab(id)) throw codedError('CAPTURE_BLOCKED', 'This tab was marked private in the Opera Agent popup.', { tabId: id, reason: 'USER_PRIVATE' });
+  if (await isPrivateTab(id)) throw codedError('CAPTURE_BLOCKED', 'This tab was marked private in the Kemudi popup.', { tabId: id, reason: 'USER_PRIVATE' });
 
   const policy = await contentCall(id, 'page.capture_policy', {});
 

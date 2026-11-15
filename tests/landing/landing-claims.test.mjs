@@ -31,9 +31,9 @@ const background = await extensionSource();
 test('no page states a version, because a stated version is a promise nothing keeps', () => {
 
   const copy = site.replace(/<!--[\s\S]*?-->/g, '')
-    .replace(/Opera Agent\s*\d+\.\d+\.\d+/g, 'Opera Agent VERSION')
+    .replace(/Kemudi\s*\d+\.\d+\.\d+/g, 'Kemudi VERSION')
     .replace(/opera-agent-\d+\.\d+\.\d+/g, 'opera-agent-VERSION');
-  assert.doesNotMatch(copy, /Opera Agent VERSION|opera-agent-VERSION/,
+  assert.doesNotMatch(copy, /Kemudi VERSION|opera-agent-VERSION/,
     'no page names a build next to the product');
 
   assert.match(manifest.version, /^\d+\.\d+\.\d+$/, 'and the manifest carries a version to check against');
@@ -110,7 +110,7 @@ test('the pricing page states only what the wallet enforces', () => {
 });
 
 // WHY THE GUIDE IS NAMED ON THE PAGE A READER LANDS ON.
-// A reader on the guide asks how to call Opera Agent, and the answer lives in one file in the repository.
+// A reader on the guide asks how to call Kemudi, and the answer lives in one file in the repository.
 // A page that sends nobody there leaves the answer where nobody looks.
 
 test('the docs page points at the guide that names every road', () => {
@@ -121,7 +121,7 @@ test('the docs page points at the guide that names every road', () => {
 
 test('no page calls the product free while every job is prepaid', () => {
   assert.doesNotMatch(site, /Gratis dipakai/i, 'a prepaid job is not free');
-  assert.doesNotMatch(site, /Opera Agent gratis/i, 'the extension installs free; the job is not free');
+  assert.doesNotMatch(site, /Kemudi gratis/i, 'the extension installs free; the job is not free');
   assert.match(site, /harga tetap/i, 'and the site says what a job costs');
 });
 

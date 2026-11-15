@@ -4,7 +4,7 @@
 // @dependencies: node:test, strict, node:fs, node:url, local/tools.js.
 
 // WHY THE GUIDE IS PINNED TO THE CODE.
-// A reader who asks how to call Opera Agent is sent to one file.
+// A reader who asks how to call Kemudi is sent to one file.
 // If that file names a tool the server does not register, or a command that does not exist, the reader finds out from an error.
 
 import test from 'node:test';
@@ -18,9 +18,9 @@ const tools = TOOLS.map((entry) => entry.name);
 
 test('the call guide names the one surface, and no dead one', () => {
   const guide = read('docs/agent-call.md');
-  assert.ok(guide.includes('opera-agent-mcp'), 'the installed command is named');
-  assert.match(guide, /opera-agent-mcp local/, 'the local mode is named');
-  assert.doesNotMatch(guide, /opera-agent-mcp cloud/, 'the deleted cloud mode is not named');
+  assert.ok(guide.includes('kemudi'), 'the installed command is named');
+  assert.match(guide, /kemudi local/, 'the local mode is named');
+  assert.doesNotMatch(guide, /kemudi cloud/, 'the deleted cloud mode is not named');
   assert.match(guide, /extension/, 'the extension road is named');
 });
 
@@ -37,7 +37,7 @@ test('every page a reader is sent to names the install that works today', () => 
     ['the runbook', read('docs/product/pilot-runbook.md')]
   ];
   for (const [name, text] of pages) {
-    assert.match(text, /npm i -g opera-agent-mcp|npm install -g \./, `${name} must name the install that works today`);
+    assert.match(text, /npm i -g kemudi|npm install -g \./, `${name} must name the install that works today`);
   }
 });
 
@@ -60,7 +60,7 @@ test('the guide says the bridge is the one road, with no transport flag left', (
 
 test('the guide names the doctor as the answer for a broken install', () => {
   const guide = read('docs/agent-call.md');
-  assert.match(guide, /opera-agent-mcp doctor/, 'the doctor is named');
+  assert.match(guide, /kemudi doctor/, 'the doctor is named');
   assert.match(guide, /PLAN_LIMIT_REACHED/, 'the meter refusal is named');
   assert.doesNotMatch(guide, /No browser is listening on port 9333/, 'the dead port refusal is gone');
 });

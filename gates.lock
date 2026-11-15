@@ -94,7 +94,7 @@
 #
 #    Copying a competitor's trade dress is infringement, and a page that looks
 #    copied reads as cheap. This repository already did the right version of this —
-#    Opera Agent has a passwordless magic link, which beats the password every
+#    Kemudi has a passwordless magic link, which beats the password every
 #    competitor asks for, and it never copied the thing that beat it.
 #
 # 4. WASH THE STACK. Check the change against every layer, not only the file you
@@ -156,15 +156,15 @@
 #    tests/helpers/canonical-source-hash.mjs strips the comment lines and collapses
 #    the whitespace before hashing a tool schema, so the pin holds the tool's
 #    contract and not its indentation.
-scripts/verify/check.mjs 532acfb37d48eb4e6c5398bf595d13f0a8a71567
+scripts/verify/check.mjs b7c179a1d85c0172de51cf2536e265d622d9bb02
 scripts/verify/scope.mjs f5895703e958e67c79a1f2f4392b037a84c26220
 scripts/verify/scope-check.mjs 2a4ba5563b68a9979c40165363235f72cac0d4df
 
 # --- the pins themselves: editing these is how a drift goes unnoticed ---
-tests/helpers/boundary-locks.mjs 79efc8b26b4be006151f68ad54ad834c9a59c49f
+tests/helpers/boundary-locks.mjs 86b96ebb067994e64fbb9ef0df6afcbfe738b664
 tests/helpers/canonical-source-hash.mjs a4ebaa0d40122afce47a52cba39309d7dfdb1af1
 tests/helpers/comment-format.mjs bced9e4c9b7a58b56e3317067d5e6717dd2040bf
-tests/docs/comment-format.test.mjs f8e65a5d6d50cd5ea609c5ba1646d2cb8bcc487f
+tests/docs/comment-format.test.mjs 5c2dd045fc59efae254498d81b845a6c45c36229
 tests/docs/comment-claims.test.mjs 27e1d1218b036ef7dd028b33cb63236ae325c442
 
 # --- structural rules a human reviewer would otherwise have to remember ---
@@ -179,7 +179,7 @@ shared/secret-pattern.ts 5392a31127fa25df3d9f55d0a9fa87562200418d
 # The one pinned shared edge module moved from .js to .ts unchanged; same bytes, same criterion, new path.`nhosted/functions/_shared/cors.ts dead4552d786ef0fdbaf71ad5bfb3c99e647b575
 
 # --- surfaces an owner, not an agent, should have to look at ---
-extension/manifest.json 980d94455f136fb019f377a94796894150573d40
+extension/manifest.json 8901e5f06fc2655a4004b566ff9d15902c4ff6c9
 .gitleaks.toml c86e2ad6f0f7b76e512fda11f76e533b807dc883
 .github/CODEOWNERS ca0271e08aadabe56f86ae17620b36073df44cfb
 .github/workflows/ci.yml 1a473af40bbc6fe476b2764719f89a552d4eb39e

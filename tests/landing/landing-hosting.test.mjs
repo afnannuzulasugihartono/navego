@@ -67,7 +67,7 @@ test('the pages that talk to Supabase still name only that origin', () => {
   }
 });
 
-// WHY THERE IS NO EXCEPTION LEFT: the unkeyed page this list once carved out was deleted with the merge into unduh.html; mcp.html carries no inline module, so script-src 'self' covers it and no hash is owed.
+// WHY THERE IS NO EXCEPTION LEFT: the unkeyed page this list once carved out was deleted with the merge into unduh.html; the pages that carry an inline module name its hash in their own rule, so every inline script on the site is either hashed or gone.
 
 test('every inline script is named by a hash, and the CSP offers no unsafe-inline', () => {
 
