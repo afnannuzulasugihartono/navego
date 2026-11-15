@@ -1244,9 +1244,10 @@ async def run(port, profile):
             f"chrome.storage.local.set({{bridgeUrl:'http://{HOST}:{port}/bridge'}})"
         )
         await popup.reload()
-        await popup.evaluate(
-            f"chrome.runtime.sendMessage({{action: 'pair', code: '{PAIR_CODE}'}})"
+        pair_reply = await popup.evaluate(
+            f"chrome.runtime.sendMessage({{scope: 'opera-agent-popup', action: 'pair', code: '{PAIR_CODE}'}})"
         )
+        assert pair_reply.get("ok") is True, pair_reply
         assert STATE.paired
 
         refusal = await popup.evaluate(
