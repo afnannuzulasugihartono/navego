@@ -1377,7 +1377,7 @@
       }
     })();
 
-    $('pairQuick').addEventListener('click', async () => {
+    const runPairQuick = async () => {
       const session = await currentSession();
       if (!session) return;
       const { token } = session;
@@ -1412,7 +1412,20 @@
         $('pairStatus').className = 'status warn';
         btn.disabled = false;
       }
-    });
+    };
+
+    $('pairQuick').addEventListener('click', () => { void runPairQuick(); });
+
+    // WHY THE POPUP'S BUTTON LANDS HERE: the extension carries no account of its own, so the one-click pair rides the dashboard session.
+    // A link with ?pair=1 is the popup's handoff; the page fires the same action the button fires, once, and then scrubs the parameter so a refresh can never mint a fresh code by accident.
+    (async () => {
+      const params = new URLSearchParams(globalThis.location?.search ?? '');
+      if (!params.has('pair')) return;
+      const session = await currentSession();
+      if (!session) return;
+      globalThis.history?.replaceState?.(null, '', `${globalThis.location.pathname}${globalThis.location.hash || ''}`);
+      void runPairQuick();
+    })();
 
     $('pairButton').addEventListener('click', async () => {
       const session = await currentSession();
