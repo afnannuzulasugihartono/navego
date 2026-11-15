@@ -13,7 +13,7 @@ const read = (name) => fs.readFileSync(new URL(name, root), 'utf8');
 
 const TOGGLE = '<span class="lang" data-lang-toggle></span>';
 
-const DICT_PAGES = ['beranda.html', 'unduh.html', 'fitur.html', 'studi.html', 'bukti.html', 'dukungan.html', 'docs.html', '404.html', 'privasi.html', 'syarat.html', 'index.html', 'dashboard.html', 'mcp.html'];
+const DICT_PAGES = ['beranda.html', 'unduh.html', 'fitur.html', 'studi.html', 'bukti.html', 'dukungan.html', 'docs.html', '404.html', 'privasi.html', 'syarat.html', 'index.html', 'dashboard.html', 'mcp.html', 'pilot.html'];
 const TOGGLE_PAGES = [...DICT_PAGES, 'akun.html', 'oauth/consent.html'];
 
 function attrKeys(page) {

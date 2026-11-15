@@ -21,7 +21,7 @@ const effectiveFooter = (page) => {
   if (own.includes('data-footer-mount')) return read('landing/footer.js');
   return own;
 };
-const pages = ['beranda.html', 'akun.html', 'index.html', 'dashboard.html', 'unduh.html', 'privasi.html', 'syarat.html', '404.html', 'fitur.html', 'studi.html', 'dukungan.html', 'docs.html'];
+const pages = ['beranda.html', 'akun.html', 'index.html', 'dashboard.html', 'unduh.html', 'privasi.html', 'syarat.html', '404.html', 'fitur.html', 'studi.html', 'dukungan.html', 'docs.html', 'pilot.html'];
 
 test('every head carries the mark, so no tab looks unfinished', () => {
   for (const page of pages) {

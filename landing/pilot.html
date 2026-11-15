@@ -1,0 +1,240 @@
+<!-- @last-edited: 2026-11-15 UTC+7. -->
+<!-- @title: pilot.html - the pilot offer for bookkeeping firms, and the feedback form that asks whether it fits. -->
+<!-- @state: one offer, one price, three questions, and a form that stores what the visitor answers; nothing here claims a bank portal is proven. -->
+<!-- @dependencies: site.css, pilot.css, i18n.js, wayfind.js, palette.js, portal.js, reveal.js, pilot.js. -->
+
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0000f2" />
+  <title data-i18n="meta.title">Pilot statement - Kemudi</title>
+  <meta name="description" content="Ambil e-statement klien dari portal bank yang sudah Anda login: satu file per klien, satu baris bukti, dan invoice setelah batch pertama Anda setujui. Pilot satu bulan Rp 99.000, Rp 0 kalau gagal." />
+  <link rel="stylesheet" href="/site.css" />
+  <link rel="stylesheet" href="/pilot.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3.5' fill='%2319192f'/%3E%3Cpath fill-rule='evenodd' fill='%23c3c4ff' d='M8 1a7 7 0 1 0 0 14 7 7 0 1 0 0-14ZM12 3.9 7.1 8.5l1.9-.2-2 2.4 1.5 1 2-2.4 2.5-.2-1.1-5.4Z'/%3E%3C/svg%3E" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Kemudi" />
+  <meta property="og:title" content="Pilot statement - Kemudi" />
+  <meta property="og:description" content="Ambil e-statement klien dari portal bank yang sudah Anda login. Pilot satu bulan Rp 99.000, Rp 0 kalau gagal." />
+  <meta property="og:url" content="https://opera-agent.pages.dev/pilot" />
+  <meta property="og:locale" content="id_ID" />
+</head>
+<body>
+  <header>
+  <div class="wrap">
+    <div class="navRow">
+      <nav class="navSide navLeft" aria-label="Primary">
+        <a href="./fitur.html" data-i18n="nav.features">Fitur</a>
+        <a href="./unduh.html" data-i18n="nav.download">Unduh</a><span class="lang" data-lang-toggle></span>
+      </nav>
+      <a class="brand" href="/beranda.html"><span class="wordmark">Kemudi</span></a>
+      <nav class="navSide navRight" aria-label="Secondary">
+    <span data-portal-toggle></span>
+        <a href="./docs.html" data-i18n="nav.docs">Docs</a>
+        <a class="navCta" href="#slot" data-i18n="cta.pilot">Ambil slot pilot</a>
+      </nav>
+
+
+    <div data-portal-menu></div>
+  </div>
+</header>
+
+  <main class="wrap prose pilotMain">
+    <header class="pilotHero" data-reveal>
+      <p class="eyebrow" data-i18n="eyebrow">PILOT</p>
+      <h1 data-i18n="hero.title">Ambil e-statement klien tanpa satu per satu</h1>
+      <p class="lede" data-i18n="hero.lede">Satu sesi 20 menit, satu klien, satu bulan. Anda login sendiri di browser Anda; file dan buktinya berhenti di komputer Anda.</p>
+      <p class="pilotPrice"><span class="pilotPriceAmount">Rp99.000</span><span class="pilotPriceUnit" data-i18n="hero.priceUnit">sampai 15 client-month, dibayar setelah batch pertama Anda setujui</span></p>
+      <p class="row pilotCtas">
+        <a class="btn primary" href="#slot" data-i18n="cta.pilot">Ambil slot pilot</a>
+        <a class="btn ghost" href="./harga.html" data-i18n="cta.price">Lihat harga lengkap</a>
+      </p>
+      <p class="pilotNote" data-i18n-html="note.other">Ini pekerjaan yang dikerjakan orang, bukan langganan Kemudi. Kalau Anda mau browser Anda sendiri dikemudikan AI, itu rencana lain: <a href="./harga.html">harga Kemudi</a>.</p>
+    </header>
+
+    <section class="pilotBlock" data-reveal>
+      <div class="sectionHead">
+        <h2 data-i18n="give.title">Yang Anda dapat</h2>
+        <p data-i18n="give.sub">Satu batch statement, satu bukti per file, dan daftar yang gagal disebut apa adanya.</p>
+      </div>
+      <div class="grid">
+        <article class="tile">
+          <h3 data-i18n="give.oneTitle">File per klien</h3>
+          <p data-i18n="give.oneBody">`klien-bank-2026-11.pdf` di folder yang Anda tentukan sendiri.</p>
+        </article>
+        <article class="tile">
+          <h3 data-i18n="give.twoTitle">Satu baris bukti</h3>
+          <p data-i18n="give.twoBody">Ukuran file, jenis file dari isinya, jumlah halaman, dan saldo akhir yang tertulis di portal.</p>
+        </article>
+        <article class="tile">
+          <h3 data-i18n="give.threeTitle">Yang gagal, disebut</h3>
+          <p data-i18n="give.threeBody">Bukan "ok" kosong: file mana yang gagal, kenapa, dan langkah berikutnya.</p>
+        </article>
+        <article class="tile">
+          <h3 data-i18n="give.fourTitle">Invoice setelah Anda bilang ya</h3>
+          <p data-i18n="give.fourBody">Batch pertama diperiksa bersama. Tagihan keluar setelah Anda bilang diterima.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pilotBlock" data-reveal>
+      <div class="sectionHead">
+        <h2 data-i18n="steps.title">Cara kerjanya</h2>
+        <p data-i18n="steps.sub">Tidak ada yang diunggah ke server mana pun.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h3 data-i18n="steps.oneTitle">Anda pilih satu klien dan satu portal</h3>
+          <p data-i18n="steps.oneBody">Nama klien dan banknya saja. Tidak ada daftar akun, tidak ada password.</p>
+        </li>
+        <li>
+          <h3 data-i18n="steps.twoTitle">Anda login sendiri</h3>
+          <p data-i18n="steps.twoBody">Di browser Anda, di sesi screen-share 20 menit. Password dan OTP tidak pernah saya lihat atau minta.</p>
+        </li>
+        <li>
+          <h3 data-i18n="steps.threeTitle">File dan buktinya masuk folder Anda</h3>
+          <p data-i18n="steps.threeBody">Berserta satu baris untuk setiap file: ukuran, jenis, halaman, saldo akhir, dan nama bank.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="pilotBlock" data-reveal>
+      <div class="sectionHead">
+        <h2 data-i18n="privacy.title">Yang tidak pernah saya minta</h2>
+        <p data-i18n="privacy.sub">Empat hal ini tidak keluar dari komputer Anda, dan tidak pernah saya minta.</p>
+      </div>
+      <ul class="pilotRules">
+        <li data-i18n="privacy.one">Password atau kode OTP.</li>
+        <li data-i18n="privacy.two">Akses ke akun Anda.</li>
+        <li data-i18n="privacy.three">Perubahan apa pun di portal bank.</li>
+        <li data-i18n="privacy.four">Pengunggah file ke server mana pun.</li>
+      </ul>
+      <p class="pilotHonest" data-i18n-html="honest.body">Portal asli belum pernah diuji bersama Anda. Kalau portal Anda belum bisa, saya sebutkan apa adanya dan tagihan <strong>Rp 0</strong>. Yang di luar pilot ini: rekapan dan jurnal.</p>
+    </section>
+
+    <section class="pilotBlock" data-reveal>
+      <div class="sectionHead">
+        <h2 data-i18n="questions.title">Tiga pertanyaan, supaya saya tahu portal mana yang Anda pakai</h2>
+        <p data-i18n="questions.sub">Jawab di formulir di bawah. Saya baca sendiri, dan saya balas satu per satu.</p>
+      </div>
+      <ul class="pilotQuestions">
+        <li data-i18n="questions.one">Portal apa yang paling sering Anda pakai: BCA, Mandiri, BNI, BRI, atau yang lain?</li>
+        <li data-i18n="questions.two">Berapa klien yang perlu e-statement tiap bulan?</li>
+        <li data-i18n="questions.three">Bagian mana yang paling melelahkan: login, mencari tombol unduh, atau menamai file?</li>
+      </ul>
+    </section>
+
+    <section class="pilotBlock" id="slot" data-reveal>
+      <div class="sectionHead">
+        <h2 data-i18n="form.title">Ambil slot pilot, atau tulis duluPertanyaan Anda</h2>
+        <p data-i18n="form.sub">Isi seperlunya. Ini feedback untuk saya, bukan pendaftaran berbayar: tidak ada yang ditagih sebelum batch pertama Anda setujui.</p>
+      </div>
+      <form class="pilotForm" id="pilotForm" novalidate>
+        <div class="field">
+          <label for="fName" data-i18n="form.name">Nama Anda</label>
+          <input id="fName" name="name" type="text" autocomplete="name" maxlength="120" required />
+        </div>
+        <div class="field">
+          <label for="fFirm" data-i18n="form.firm">Nama firma atau usaha</label>
+          <input id="fFirm" name="firm" type="text" autocomplete="organization" maxlength="120" />
+        </div>
+        <div class="field">
+          <label for="fContact" data-i18n="form.contact">WhatsApp atau email</label>
+          <input id="fContact" name="contact" type="text" autocomplete="email" maxlength="160" required />
+        </div>
+        <div class="field">
+          <label for="fPortal" data-i18n="form.portal">Portal yang dipakai klien</label>
+          <input id="fPortal" name="portal" type="text" maxlength="160" placeholder="BCA, Mandiri, ..." />
+        </div>
+        <div class="field">
+          <label for="fClients" data-i18n="form.clients">Jumlah klien per bulan</label>
+          <input id="fClients" name="clients" type="text" maxlength="40" placeholder="10-20" />
+        </div>
+        <div class="field fieldWide">
+          <label for="fPain" data-i18n="form.pain">Yang paling melelahkan</label>
+          <textarea id="fPain" name="pain" rows="4" maxlength="600"></textarea>
+        </div>
+        <div class="field fieldWide">
+          <label class="check">
+            <input id="fSlot" name="wantsSlot" type="checkbox" />
+            <span data-i18n="form.slot">Saya mau ikut pilot satu bulan</span>
+          </label>
+        </div>
+        <div class="field fieldWide">
+          <button class="btn primary" id="pilotSend" type="submit" data-i18n="form.send">Kirim</button>
+          <span class="pilotStatus" id="pilotStatus" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+      <p class="pilotAside" data-i18n-html="form.aside">Prefer menambah? <a href="mailto:afnannuzulasugihartono@gmail.com">afnannuzulasugihartono@gmail.com</a> - <a href="./dukungan.html">dukungan</a>.</p>
+    </section>
+  </main>
+
+  <footer data-footer-mount></footer>
+  <script type="application/json" id="i18n-dict">{
+  "en": {
+    "cta.pilot": "Take a pilot slot",
+    "cta.price": "See the full price list",
+    "eyebrow": "PILOT",
+    "form.aside": "Prefer to add more? <a href=\"mailto:afnannuzulasugihartono@gmail.com\">afnannuzulasugihartono@gmail.com</a> - <a href=\"./dukungan.html\">support</a>.",
+    "form.clients": "Clients per month",
+    "form.contact": "WhatsApp or email",
+    "form.firm": "Firm or business name",
+    "form.name": "Your name",
+    "form.pain": "What wears you out most",
+    "form.portal": "Portal your clients use",
+    "form.send": "Send",
+    "form.slot": "I want to join the one-month pilot",
+    "form.sub": "Fill in what you need. This is feedback for me, not a paid sign-up: nothing is charged before you approve the first batch.",
+    "form.title": "Take a pilot slot, or write your question first",
+    "give.fourBody": "The first batch is checked together. The invoice goes out after you say it is received.",
+    "give.fourTitle": "An invoice after you say yes",
+    "give.oneBody": "`klien-bank-2026-11.pdf` in the folder you choose.",
+    "give.oneTitle": "A file per client",
+    "give.sub": "One batch of statements, one proof line per file, and a list of what failed, named.",
+    "give.threeBody": "Not an empty \"ok\": which file failed, why, and what comes next.",
+    "give.threeTitle": "What failed, named",
+    "give.title": "What you get",
+    "give.twoBody": "The file size, the kind of file read from its own bytes, the page count, and the closing balance printed by the portal.",
+    "give.twoTitle": "One proof line",
+    "hero.lede": "One 20-minute session, one client, one month. You sign in yourself in your own browser; the file and its proof stay on your computer.",
+    "hero.priceUnit": "up to 15 client-months, paid after you approve the first batch",
+    "hero.title": "Take your clients' e-statements without one by one",
+    "honest.body": "No real portal has ever been tested with you. If your portal is not covered yet, I say so and the bill is <strong>Rp 0</strong>. Not in this pilot: recaps and journals.",
+    "meta.title": "Statement pilot - Kemudi",
+    "nav.docs": "Docs",
+    "nav.download": "Download",
+    "nav.features": "Features",
+    "note.other": "This is work a person does, not a Kemudi subscription. If you want your own browser driven by AI, that is another plan: <a href=\"./harga.html\">Kemudi's price</a>.",
+    "privacy.four": "Uploading files to any server.",
+    "privacy.one": "Your password or an OTP code.",
+    "privacy.sub": "These four never leave your computer, and I never ask for them.",
+    "privacy.three": "Changing anything in the bank portal.",
+    "privacy.title": "What I never ask for",
+    "privacy.two": "Access to your account.",
+    "questions.one": "Which portal do you use most: BCA, Mandiri, BNI, BRI, or another?",
+    "questions.sub": "Answer them in the form below. I read every one myself, and I answer one by one.",
+    "questions.three": "Which part wears you out most: signing in, finding the download button, or naming the files?",
+    "questions.title": "Three questions, so I know which portal you use",
+    "questions.two": "How many clients need an e-statement every month?",
+    "steps.oneBody": "The client name and the bank, nothing else. No account list, no password.",
+    "steps.oneTitle": "You pick one client and one portal",
+    "steps.sub": "Nothing is uploaded to any server.",
+    "steps.threeBody": "With one line per file: size, kind, pages, closing balance, and the bank's name.",
+    "steps.threeTitle": "The file and its proof land in your folder",
+    "steps.title": "How it works",
+    "steps.twoBody": "In your own browser, in a 20-minute screen-share. Your password and OTP are never seen or asked for.",
+    "steps.twoTitle": "You sign in yourself"
+  }
+}</script>
+  <script src="./i18n.js"></script>
+
+  <script src="/wayfind.js"></script>
+  <script src="/palette.js"></script>
+  <script src="/portal.js" defer></script>
+
+  <script src="/reveal.js"></script>
+  <script src="/pilot.js" defer></script>
+</body>
+</html>

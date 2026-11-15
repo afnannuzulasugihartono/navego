@@ -26,6 +26,11 @@ on:
         required: false
         default: 'opera-agent-bridge'
         type: string
+      no_verify_jwt:
+        description: "Functions deployed with an open door (no JWT), comma-separated. The pilot page's form posts without an account, so its function is one."
+        required: false
+        default: ''
+        type: string
       reason:
         description: What is being deployed and why, for the deployment log.
         required: false
@@ -71,21 +76,31 @@ jobs:
 
       - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13
 
+# WHY ONE FLAG PER FUNCTION.
+# A door the visitor may walk through without an account must be open, and a door the product calls with its own key must stay shut.
+# The dispatch says which is which: the no_verify_jwt input lists the open ones, so the choice is written down where the deploy happens and not in the reader's head.
+
       - name: Deploy
         working-directory: hosted
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           PROJECT_ID: nenmkmtvjremqphfqnfw
           FUNCTIONS: ${{ inputs.functions }}
+          NO_VERIFY_JWT: ${{ inputs.no_verify_jwt }}
         shell: bash
         run: |
           mkdir -p supabase
           rm -rf supabase/functions shared && cp -r functions supabase/functions && cp -r ../shared shared
           IFS=',' read -ra ARRAY <<< "$FUNCTIONS"
+          IFS=',' read -ra OPEN <<< "$NO_VERIFY_JWT"
           for f in "${ARRAY[@]}"; do
             f="$(echo "$f" | xargs)"
             echo "::group::deploying $f"
-            supabase functions deploy "$f" --project-ref "$PROJECT_ID" --yes
+            door=""
+            for o in "${OPEN[@]}"; do
+              if [ "$(echo "$o" | xargs)" = "$f" ]; then door="--no-verify-jwt"; fi
+            done
+            supabase functions deploy "$f" --project-ref "$PROJECT_ID" $door --yes
             echo "::endgroup::"
           done
 

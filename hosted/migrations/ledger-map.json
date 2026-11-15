@@ -10,10 +10,10 @@
     "name": 25,
     "no-ledger-row": 4,
     "part-of-combined": 13,
-    "version-and-name": 48
+    "version-and-name": 49
   },
-  "treeFiles": 126,
-  "resolved": 110,
+  "treeFiles": 127,
+  "resolved": 111,
   "unapplied": 12,
   "map": [
     {
@@ -770,6 +770,12 @@
       "file": "20261113000000_opera_methods_dump.sql",
       "remote": null,
       "evidence": "applied-outside-ledger",
+      "cover": null
+    },
+    {
+      "file": "20261115000000_opera_feedback.sql",
+      "remote": "20261115140429",
+      "evidence": "version-and-name",
       "cover": null
     }
   ]
