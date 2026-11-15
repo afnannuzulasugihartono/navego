@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
-import { Raven } from '../components/Raven';
+
 
 export function meta() {
   return [
@@ -23,8 +23,11 @@ export default function NotFound() {
       <SiteHeader current="/404.html" />
       <main className="wrap">
         <section className="statement" style={{ paddingTop: 56, paddingBottom: 10 }}>
-          <Raven variant="icon" size={54} title="Corbin" />
-          <h1 style={{ fontSize: 'clamp(38px,6vw,64px)', letterSpacing: '-0.03em', margin: '16px 0 10px' }}>Halaman ini tidak ada</h1>
+          <figure className="hero-figure" style={{ maxWidth: 420 }} aria-hidden="true">
+            <img src="/assets/raven-1874.jpg" width={1454} height={852} alt="" loading="eager" />
+            <figcaption><em>Corvus corax</em> — setelah Naumann, 1874 · public domain</figcaption>
+          </figure>
+          <h1 style={{ fontSize: 'clamp(38px,6vw,64px)', letterSpacing: '-0.03em', margin: '22px 0 10px' }}>Halaman ini tidak ada</h1>
           <p style={{ fontSize: 15, color: 'var(--muted-2)', maxWidth: '48ch' }}>Alamatnya mungkin salah ketik, atau halaman itu sudah dipindahkan. Lima jalan keluar:</p>
         </section>
         <ul style={{ listStyle: 'none', display: 'grid', gap: 10, maxWidth: 620, margin: '20px 0 40px' }}>

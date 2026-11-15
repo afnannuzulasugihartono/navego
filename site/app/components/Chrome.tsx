@@ -23,6 +23,15 @@ export function SiteHeader({ current }: { current?: string }) {
           ))}
           <Link className="btn btn-solid btn-sm" to="/unduh.html">Pasang corbin</Link>
         </nav>
+        <details className="nav-menu">
+          <summary aria-label="Menu halaman"><span className="bars" /></summary>
+          <div className="nav-panel">
+            {NAV.map((item) => (
+              <Link key={item.href} to={item.href}>{item.label}</Link>
+            ))}
+            <Link className="btn btn-solid" to="/unduh.html">Pasang corbin</Link>
+          </div>
+        </details>
       </div>
     </header>
   );
@@ -52,7 +61,7 @@ export function SiteFooter() {
               <Raven variant="icon" size={40} />
               <span className="brand-word" style={{ fontSize: 16 }}>corbin</span>
             </div>
-            <p className="footer-tag">Huginn &amp; Muninn — Odin's ravens. Browser Anda, atas perintah Anda.</p>
+            <p className="footer-tag">Huginn &amp; Muninn — Odin&#x27;s ravens. Browser Anda, atas perintah Anda.</p>
           </div>
           <nav aria-label="Produk">
             <h3>Produk</h3>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
-import { Raven } from '../components/Raven';
+
 import { AUTH_HOST, clearSession, getReturnTo, getRefreshToken, getStoredToken, proveSession, renewAccessToken, storeRefreshToken, storeToken, PUBLISHABLE_KEY } from '../lib/auth';
 
 export function meta() {
@@ -120,7 +120,10 @@ export default function Index() {
       <SiteHeader current="/index.html" />
       <main className="wrap auth">
         <div className="auth-brand">
-          <Raven variant="icon" size={46} title="Corbin" />
+          <figure className="hero-figure auth-figure" aria-hidden="true">
+            <img src="/assets/raven-1874.jpg" width={1454} height={852} alt="" loading="eager" />
+            <figcaption><em>Corvus corax</em> — setelah Naumann, 1874 · public domain</figcaption>
+          </figure>
           <h1>Masuk atau daftar</h1>
           <p className="lede" style={{ color: 'var(--muted-2)' }}>Satu akun untuk website dan device Anda. Pendaftaran terbuka — masuk, lalu pasang device.</p>
           <ul className="promises">

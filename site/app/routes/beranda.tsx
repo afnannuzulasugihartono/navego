@@ -17,12 +17,8 @@ const HALAMAN = [
   ['YouTube', 'ambil poin dari video'],
   ['Gmail', 'tulis & kirim balasan'],
   ['Notion', 'buat & rapikan halaman'],
-  ['Figma', 'baca & mutasi desain'],
   ['GitHub', 'ringkas PR & buka issue'],
-  ['Linear', 'buat issue dari catatan'],
-  ['Jira', 'triage & update tiket'],
-  ['Shopee', 'pantau harga & stok'],
-  ['Traveloka', 'cari penerbangan murah']
+  ['Shopee', 'pantau harga & stok']
 ] as const;
 
 const FEATURES = [
@@ -35,8 +31,10 @@ const FEATURES = [
 ] as const;
 
 const FAQ = [
-  ['Biaya', 'Pasang gratis. Setiap pekerjaan dibayar dari saldo.'],
-  ['Data', 'Konten pergi ke endpoint model Anda.'],
+  ['Kenapa bukan ChatGPT / Gemini?', 'ChatGPT dan Gemini adalah teks yang menjawab soal web — bukan yang menjalankannya. Corbin bekerja di browser Anda yang sudah login: mengisi formulir, membuka portal internal, dan menyerahkan hasil sebagai berkas nyata.'],
+  ['Kenapa bukan Operator / Nanobrowser?', 'Operator jalan di cloud browser dan tidak bisa menyentuh portal internal SSO/2FA. Nanobrowser gratis dan open source, tetapi Anda menyusun dan membayar sendiri toolchain-nya. Corbin: browser Anda, model Anda, biaya tetap, QRIS.'],
+  ['Biaya', 'Pasang gratis. Setiap pekerjaan dibayar dari saldo mulai Rp10.000, atau flat 30 hari lewat plan.firm.'],
+  ['Data', 'Konten pergi ke endpoint model Anda. Kunci tidak pernah diunggah.'],
   ['Berhenti', 'Keluar atau cabut pairing kapan saja.']
 ] as const;
 
@@ -69,15 +67,17 @@ export default function Beranda() {
           <div>
             <h1>Corbin.</h1>
             <p className="lede">Asisten AI di browser Anda.</p>
-            <p className="support">Membaca halaman, mengisi formulir, bekerja lintas tab — satu perintah teks.</p>
+            <p className="support" style={{ fontSize: 14, color: 'var(--ink)', fontWeight: 600, marginTop: 8 }}>Chatbot menjawab soal web. Corbin mengerjakan web.</p>
+            <p className="support">Membaca halaman, mengisi formulir, bekerja lintas tab — satu perintah teks. Begitu juga di portal internal yang sudah login: SSO, 2FA, semua ikut bekerja.</p>
             <div className="hero-cta">
               <Link className="btn btn-solid" to="/unduh.html" style={{ fontSize: 14, padding: '14px 26px' }}>Pasang corbin →</Link>
               <span className="plan-note">plan.pilot gratis<br />Rp 249 rb / 30 hari untuk Firm</span>
             </div>
           </div>
-          <div className="hero-card" aria-hidden="true">
-            <Raven size={210} title="Corbin, the raven" />
-          </div>
+          <figure className="hero-figure" aria-hidden="true">
+            <img src="/assets/raven-1874.jpg" width={1454} height={852} alt="" loading="eager" />
+            <figcaption><em>Corvus corax</em> — setelah Naumann, 1874 · public domain</figcaption>
+          </figure>
         </section>
 
         <div className="facts" aria-label="Fakta produk">
@@ -225,6 +225,26 @@ export default function Beranda() {
           </div>
         </section>
 
+        <section className="section" aria-labelledby="whyTitle" style={{ paddingTop: 10 }}>
+          <div className="section-head">
+            <h2 id="whyTitle">Kenapa Corbin.</h2>
+            <p>Empat cara kerja yang sering tertukar di kepala orang.</p>
+          </div>
+          <div className="sheet" role="table" aria-label="Perbandingan Corbin dengan alternatif">
+            {[
+              ['ChatGPT / Gemini', 'Teks yang menjawab soal web — bukan yang menjalankannya.', 'not-a-match'],
+              ['OpenAI Operator / Atlas', 'Cloud browser ($20/bln). Tidak menyentuh portal internal SSO/2FA.', 'not-a-match'],
+              ['Nanobrowser', 'Gratis & open source (14 rb ★), tapi Anda menyusun sendiri toolchain-nya.', 'different'],
+              ['Corbin', 'Browser Anda, model Anda, hasilnya berkas nyata. Harga tetap, QRIS.', 'match']
+            ].map(([name, body, tone]) => (
+              <div key={name as string} role="row" style={{ display: 'grid', gridTemplateColumns: '170px 1fr', padding: '11px 14px', background: tone === 'match' ? 'var(--ink)' : '#fbfaf5', borderBottom: '1px solid #ece8db', color: tone === 'match' ? 'var(--paper)' : 'var(--ink)' }}>
+                <div role="cell" style={{ fontWeight: 800, fontSize: 13.5 }}>{name}</div>
+                <div role="cell" style={{ fontSize: 12.5, lineHeight: 1.5, color: tone === 'match' ? '#d8d3c4' : 'var(--muted-2)' }}>{body}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <section id="fitur" className="section" aria-labelledby="featuresTitle">
           <div className="section-head">
             <h2 id="featuresTitle">Apa yang ia kerjakan.</h2>
@@ -290,6 +310,10 @@ export default function Beranda() {
               </details>
             ))}
           </div>
+        </section>
+
+        <section className="section" aria-labelledby="whoTitle" style={{ padding: '24px 0 0' }}>
+          <p style={{ fontSize: 12, color: 'var(--muted)' }}>Siapa di balik Corbin: <a href="https://github.com/afnannuzulasugihartono" style={{ color: 'inherit', textDecoration: 'underline' }}>AFNAN NUZULA SUGIHARTONO</a> · <a href="mailto:afnannuzulasugihartono@gmail.com" style={{ color: 'inherit', textDecoration: 'underline' }}>afnannuzulasugihartono@gmail.com</a> · <a href="https://github.com/afnannuzulasugihartono/opera-agent" style={{ color: 'inherit', textDecoration: 'underline' }}>kode sumber</a></p>
         </section>
 
         <section className="statement" aria-labelledby="finalTitle" style={{ paddingBottom: 40 }}>

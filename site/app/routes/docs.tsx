@@ -91,6 +91,17 @@ const CONFIGS: Array<{ id: string; title: string; body: string }> = [
   { id: 'cfg-claude', title: 'Claude Desktop', body: 'command: npx\nargs: ["-y", "opera-agent-mcp", "local"]' }
 ];
 
+const SECTIONS = [
+  ['#pasang', 'Pasang extension'],
+  ['#pairing', 'Masuk dan pair device'],
+  ['#tugas', 'Tugas pertama'],
+  ['#berkas', 'Berkas yang jadi'],
+  ['#saldo', 'Saldo dan tagihan'],
+  ['#tools', 'Tools MCP'],
+  ['#mcp', 'Hubungkan AI harness'],
+  ['#batas', 'Batas yang dijaga']
+] as const;
+
 export default function Docs() {
   const [copied, setCopied] = useState<string | null>(null);
   const copy = async (text: string, id: string) => {
@@ -106,10 +117,18 @@ export default function Docs() {
   return (
     <>
       <SiteHeader current="/docs.html" />
-      <main className="wrap" style={{ maxWidth: 880 }}>
+      <main className="wrap" style={{ maxWidth: 1080 }}>
         <h1 className="page-title" style={{ fontSize: 'clamp(36px,5vw,52px)', marginTop: 30 }}>Docs</h1>
         <p className="lede" style={{ marginTop: 8, color: 'var(--muted-2)' }}>Pasang, pair, jalankan, hubungkan.</p>
 
+        <div className="docs-layout">
+          <nav className="docs-rail" aria-label="Di halaman ini">
+            <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--muted)', padding: '4px 10px' }}>Di halaman ini</span>
+            {SECTIONS.map(([href, label]) => (
+              <a key={href} href={href}>{label}</a>
+            ))}
+          </nav>
+          <div>
         <section className="section" aria-labelledby="quickTitle" style={{ paddingTop: 30 }}>
           <h2 id="quickTitle" style={{ fontSize: 20, marginBottom: 12 }}>Mulai cepat</h2>
           <ol style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: 10, listStyle: 'none' }}>
@@ -213,6 +232,8 @@ export default function Docs() {
           <p>Macet? Halaman <Link to="/dukungan.html">Dukungan</Link> punya langkah yang bisa diikuti.</p>
         </section>
         <div style={{ height: 20 }} />
+        </div>
+        </div>
       </main>
       <SiteFooter />
     </>
