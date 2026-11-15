@@ -55,9 +55,9 @@ test('the popup has the doors out of it, the dashboard among them', () => {
   assert.match(popupHtml, /id="pairQuickButton"/, 'and the one-click pair door exists');
 });
 
-test('the status is one firm line, and the popup is a dark surface', () => {
-  assert.match(popupHtml, /id="statusLine"/, 'the status is one line');
-  assert.match(css, /body\.popup \.statusLine\.ready/, 'the connected state has its own colour');
+test('the status is one line, and the popup is a dark surface', () => {
+  assert.match(popupHtml, /id="statusMain"/, 'the status is one line');
+  assert.match(css, /body\.popup \.statusDot\.is-pending/, 'the connected state has its own colour');
   assert.match(css, /body\.popup\s*\{[\s\S]*background: #10131c/, 'the popup carries its own dark surface');
-  assert.match(css, /body\.popup \.menuItem/, 'and the menu rows are styled as rows');
+  assert.match(css, /body\.popup \.door/, 'and the menu rows are styled as rows');
 });

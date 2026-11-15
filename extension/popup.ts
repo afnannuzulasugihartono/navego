@@ -10,7 +10,6 @@ import { browserFamily } from './lib/browser-id.js';
 import { applyNewBuild, forgetFolderHandle, folderPermission } from './worker/self-update.js';
 import { servedVersion, newerThan } from './lib/self-update.js';
 import { t, applyI18n } from './lib/i18n.js';
-import { STATUS_ICONS } from './lib/status-icons.js';
 import { isRecord } from './lib/guards.js';
 applyI18n(document);
 const log = globalThis.OperaAgentLog;
@@ -18,22 +17,22 @@ if (typeof log?.warn !== 'function') throw new Error('Agent log runtime is unava
 const $ = (id: string) => document.getElementById(id);
 let servedBuild: string | null = null;
 
-// WHY A LOCAL SHAPE: the one line of status this file draws is always this triple, and the icons are a known closed set.
+// WHY THE ISLAND SPEAKS TWICE.
+// The reader opens the popup to answer two questions in one glance: is it connected, and what is doing the waiting.
+// One line for the verdict, one line for the why; the dot is the only signal the eye needs to find first.
 
-interface StatusLine {
-  icon: keyof typeof STATUS_ICONS;
-  text: string;
-  tone: string;
-}
+type StatusState = { tone: 'ready' | 'pending' | 'idle'; main: string; sub: string };
 
-const setStatusLine = (line: StatusLine) => {
-  const statusEl = $('statusLine');
-  if (!statusEl) return;
-  statusEl.innerHTML = `${STATUS_ICONS[line.icon] ?? ''}<span>${line.text}</span>`;
-  statusEl.className = `statusLine ${line.tone}`;
+const setStatus = (state: StatusState) => {
+  const main = $('statusMain');
+  const sub = $('statusSub');
+  const dot = document.querySelector('.statusDot');
+  if (main) main.textContent = state.main;
+  if (sub) sub.textContent = state.sub;
+  if (dot) dot.className = `statusDot ${state.tone === 'ready' ? '' : state.tone === 'pending' ? 'is-pending' : 'is-idle'}`;
 };
 
-setStatusLine({ icon: 'clock', text: t('status.starting'), tone: 'pending' });
+setStatus({ main: t('status.starting'), sub: t('status.subStarting'), tone: 'pending' });
 
 // WHY THE POPUP ASKS THE SERVER WHICH VERSION IS SERVED.
 // Chrome updates an installed extension on its own, but only when it was installed as a signed package; an extension loaded unpacked never asks the update service, and the person sees a version that simply stands still.
@@ -95,17 +94,17 @@ async function call(action: string, extra: Record<string, unknown> = {}) {
   return chrome.runtime.sendMessage({ scope: 'opera-agent-popup', action, ...extra });
 }
 
-// WHY THE STATUS IS ONE FIRM LINE.
-// The reader opens the popup to answer one question first: is it connected?
-// Everything else is detail under that answer, so the answer is one line with one colour and no hedging.
+// WHY THE POPUP SPEAKS TWICE.
+// A verdict without a reason is a mystery; a reason without a verdict is noise.
+// One line for each, no third line.
 
-function statusLine(status: unknown, paired: boolean): StatusLine {
-  if (!paired) return { text: t('status.notPaired'), tone: 'idle', icon: 'power' };
-  if (status === 'ready') return { text: t('status.connected'), tone: 'ready', icon: 'check' };
-  if (status === 'connecting') return { text: t('status.connecting'), tone: 'pending', icon: 'clock' };
-  if (status === 'reconnecting') return { text: t('status.reconnecting'), tone: 'pending', icon: 'clock' };
-  if (status === 'starting') return { text: t('status.starting'), tone: 'pending', icon: 'clock' };
-  return { text: t('status.disconnected'), tone: 'idle', icon: 'power' };
+function statusLine(status: unknown, paired: boolean): StatusState {
+  if (!paired) return { main: t('status.notPaired'), sub: t('status.subNotPaired'), tone: 'idle' };
+  if (status === 'ready') return { main: t('status.connected'), sub: t('status.subConnected'), tone: 'ready' };
+  if (status === 'connecting') return { main: t('status.connecting'), sub: t('status.subConnecting'), tone: 'pending' };
+  if (status === 'reconnecting') return { main: t('status.reconnecting'), sub: t('status.subReconnecting'), tone: 'pending' };
+  if (status === 'starting') return { main: t('status.starting'), sub: t('status.subStarting'), tone: 'pending' };
+  return { main: t('status.disconnected'), sub: t('status.subDisconnected'), tone: 'idle' };
 }
 async function refresh() {
   let data: unknown;
@@ -124,7 +123,7 @@ async function refresh() {
   const config = isRecord(reply.config) ? reply.config : {};
   const status = String(state.status || (config.paired ? 'connecting' : 'unpaired'));
   const line = statusLine(status, !!config.paired);
-  setStatusLine(line);
+  setStatus(line);
   const errorEl = $('error');
   if (errorEl) {
     errorEl.hidden = !state.lastError;

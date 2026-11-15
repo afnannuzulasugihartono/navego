@@ -229,7 +229,7 @@ const styles = fs.readFileSync(new URL('../../extension/styles.css', import.meta
 
 test('popup keeps its controls accessible and responsive in narrow Opera panels', () => {
   for (const id of [
-    'statusLine',
+    'statusMain',
     'pairQuickButton',
     'updateHint', 'updateButton', 'dashboardButton', 'docsButton', 'autoUpdateButton'
   ]) {
@@ -242,7 +242,7 @@ test('popup keeps its controls accessible and responsive in narrow Opera panels'
   assert.match(styles, /min-width:\s*400px/, 'the popup may not collapse below the design width, whatever the viewport reports');
   assert.doesNotMatch(styles, /max-width:\s*100vw/, 'and no clamp may shrink an MV3 popup back onto a tiny initial viewport');
   assert.match(styles, /@media \(max-width: 239px\)/);
-  assert.match(styles, /body\.popup \.menuItem/, 'the rows are still styled as rows');
+  assert.match(styles, /body\.popup \.door/, 'the rows are still styled as rows');
   assert.match(script, /statusLine\(status, paired\)/, 'the status passes through the one status function');
   assert.match(script, /applyI18n\(document\)/, 'and the words are applied from the language table');
 });
