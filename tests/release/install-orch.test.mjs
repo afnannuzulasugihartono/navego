@@ -115,7 +115,7 @@ test('partial failure: one denied key does not stop the others', async () => {
     assert.match(chrome.error, /access denied/);
     assert.equal(brave.keyWritten, true);
     assert.equal(report.ok, false);
-    assert.match(report.message, /registry key not written/);
+    assert.match(report.message, /policy entry not written/);
   } finally {
     await rm(root, { recursive: true, force: true });
   }

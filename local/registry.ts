@@ -10,10 +10,12 @@
 // WHY A FORCELIST, NOT THE CLASSIC EXTENSION KEY.
 // The classic key asks the browser to install a build it cannot enforce; the person can turn it off.
 // The forcelist asks the policy system to install and keep it: same signed CRX, same update URL, one numbered entry per browser, the browser's own machinery does the rest.
-// 2026-11-15 owner decision: one route, this one. The classic route is deleted, not hidden behind a flag.
+// 2026-11-15 owner decision: one route, this one.
+// The classic route is deleted, not hidden behind a flag.
 
 // WHY A NUMBERED VALUE.
-// ExtensionInstallForcelist is a numbered list. Our entry names the extension id and the update manifest, so the installer finds its own entry at any number and never touches an entry somebody else created.
+// ExtensionInstallForcelist is a numbered list.
+// Our entry names the extension id and the update manifest, so the installer finds its own entry at any number and never touches an entry somebody else created.
 // Uninstall removes exactly the entries whose data starts with the id, at whatever number they landed.
 
 import { execFileSync } from 'node:child_process';
@@ -24,6 +26,7 @@ const EXTENSION_PREFIX = `${EXTENSION_ID};`;
 const EXTENSION_ENTRY = `${EXTENSION_ID};${UPDATE_URL}`;
 
 // Chrome for Testing is deliberately absent: no verified HKCU policy path exists for it, and writing one would be a guess, not a route.
+
 const policyKeys: Record<string, string> = {
   chrome: `HKCU\\Software\\Policies\\Google\\Chrome\\ExtensionInstallForcelist`,
   brave: `HKCU\\Software\\Policies\\BraveSoftware\\Brave-Browser\\ExtensionInstallForcelist`,
@@ -36,6 +39,7 @@ const defaultExec: Exec = (cmd, args) => execFileSync(cmd, args, { encoding: 'ut
 export interface ForcelistEntry { number: number; data: string; }
 
 // reg query answers with the key path, a blank line and one line per value; only the value lines match.
+
 export function parseForcelistEntries(output: string): ForcelistEntry[] {
   const entries: ForcelistEntry[] = [];
   for (const line of String(output).split(/\r?\n/)) {
