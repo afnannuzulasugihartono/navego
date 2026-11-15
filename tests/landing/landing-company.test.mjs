@@ -21,7 +21,7 @@ const effectiveFooter = (page) => {
   if (own.includes('data-footer-mount')) return read('landing/footer.js');
   return own;
 };
-const pages = ['beranda.html', 'akun.html', 'index.html', 'dashboard.html', 'unduh.html', 'privasi.html', 'syarat.html', '404.html', 'fitur.html', 'studi.html', 'dukungan.html', 'docs.html'];
+const pages = ['beranda.html', 'akun.html', 'index.html', 'dashboard.html', 'unduh.html', 'privasi.html', 'syarat.html', '404.html', 'fitur.html', 'studi.html', 'dukungan.html', 'docs.html', 'pilot.html'];
 
 test('every head carries the mark, so no tab looks unfinished', () => {
   for (const page of pages) {
@@ -59,7 +59,7 @@ test('a shared link carries a title, not a bare URL', () => {
     const html = read(`landing/${page}`);
     assert.match(html, /<meta property="og:type" content="website"/, `${page} names its share type`);
     assert.match(html, /<meta property="og:title" content="[^"]+"/, `${page} shares a titled card`);
-    assert.match(html, /<meta property="og:site_name" content="Opera Agent"/, `${page} cards carry the brand`);
+    assert.match(html, /<meta property="og:site_name" content="Kemudi"/, `${page} cards carry the brand`);
     assert.match(html, /<meta property="og:locale" content="id_ID"/, `${page} shares in its own language`);
 
     assert.match(html, /<meta property="og:url" content="https:\/\/opera-agent\.pages\.dev\/[^"]*"/, `${page} names the address the card points at`);

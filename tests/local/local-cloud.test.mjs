@@ -1,7 +1,7 @@
 // @last-edited: 2026-11-09 UTC+7.
 // @title: local-cloud.test — the same tools, the hosted server, and a bearer token.
 // @state: a tool call round-tripped against a fake hosted endpoint, and the door it closes when there is no token.
-// @dependencies: node:test, strict, node:http, node:os, node:fs, node:child_process, ../local/bin/opera-agent-mcp.js.
+// @dependencies: node:test, strict, node:http, node:os, node:fs, node:child_process, ../local/bin/kemudi.js.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -26,7 +26,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
-const bin = path.join(root, 'local', 'bin', 'opera-agent-mcp.js');
+const bin = path.join(root, 'local', 'bin', 'kemudi.js');
 
 // WHY THE FAKE SPEAKS MCP OVER HTTP.
 // The proxy has no opinions about methods, so a fake that answers initialize, tools/list and tools/call proves the pipe forwards a call intact, which is the only claim worth making about a proxy.
@@ -69,7 +69,7 @@ async function fakeHosted() {
       requests.push({ authorization: req.headers.authorization, provider: req.headers['x-opera-provider'], device: req.headers['x-opera-device'], message });
       if (req.headers.authorization !== 'Bearer test-token') {
         res.writeHead(401, { 'content-type': 'application/json' });
-        res.end(JSON.stringify({ error: 'unauthorized', error_description: 'A valid Opera Agent access token is required.' }));
+        res.end(JSON.stringify({ error: 'unauthorized', error_description: 'A valid Kemudi access token is required.' }));
         return;
       }
       const reply = (result) => {
@@ -119,7 +119,7 @@ test('a tool call round-trips through the cloud proxy to the hosted server', asy
     assert.equal(host.requests.length, 3);
     for (const seen of host.requests) {
       assert.equal(seen.authorization, 'Bearer test-token', 'the proxy carried the account token');
-      assert.equal(seen.provider, 'opera-agent-mcp', 'and said which client it was');
+      assert.equal(seen.provider, 'opera-agent-mcp', 'and said which client it was (the wire pin keeps the legacy identifier)');
       assert.equal(seen.device, 'opera', 'and named the browser it drives, so every call of one session lands on the same one');
     }
   } finally {
@@ -143,7 +143,7 @@ test('without a token, the proxy names the sign-in and opens nothing', async () 
   const code = await new Promise((resolve) => child.on('close', resolve));
   assert.equal(code, 3, 'an install without a token exits named, not half-signed-in');
   assert.equal(out, '', 'and says nothing to the MCP client');
-  assert.match(err, /opera-agent-mcp auth/, 'the sign-in named');
+  assert.match(err, /kemudi auth/, 'the sign-in named');
   assert.match(err, /oauth\/authorize/, 'and the URL is on the page');
   fs.rmSync(configHome, { recursive: true, force: true });
 });
@@ -159,7 +159,7 @@ test('the OAuth helpers size the home and point the sign-in', () => {
     assert.match(url, /code_challenge_method=S256/);
     assert.match(url, /state=state/);
     assert.match(url, /redirect_uri=/);
-    assert.match(loginInstructions({}), /opera-agent-mcp auth/);
+    assert.match(loginInstructions({}), /kemudi auth/);
     assert.match(loginInstructions({}), /oauth\/authorize/);
   } finally {
     fs.rmSync(home, { recursive: true, force: true });
@@ -224,7 +224,7 @@ test('serveCloud without a token answers 3 on an already-closed stream', async (
   try {
     const code = await serveCloud({ env: { OPERA_AGENT_MCP_TOKEN: '', OPERA_AGENT_MCP_CONFIG_HOME: home }, input: Readable.from([]), stderr });
     assert.equal(code, 3);
-    assert.ok(lines.some((line) => /opera-agent-mcp auth/.test(line)));
+    assert.ok(lines.some((line) => /kemudi auth/.test(line)));
   } finally {
     fs.rmSync(home, { recursive: true, force: true });
   }

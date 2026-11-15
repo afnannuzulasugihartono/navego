@@ -32,27 +32,33 @@ Kalau portal pertama belum bisa: sebutkan yang gagal, tidak ada tagihan, dan ses
 - Satu ajakan: 20 menit, layar dibagikan, satu klien, satu bulan.
 - Kalau gagal: sebut sebab dan langkah berikutnya; Rp 0.
 
-## 1. WhatsApp atau DM pertama
+## 1. Postingan yang tenang, di tempat targetnya berkumpul
 
-Kirim satu per satu, bukan broadcast. Ganti `{nama}` dan `{hari}`.
+Satu postings, satu tempat. Bukan DM satu per satu dan bukan broadcast: orang yang belum pernah mendengar kita tidak boleh terbangun karena kita mengetuk pintunya. Ganti `{tautan}` dengan `https://opera-agent.pages.dev/pilot`.
 
-Halo {nama}, saya {nama}, sedang membangun meja statement untuk firma pembukuan. Saya ambil e-statement klien dari portal bank yang sudah Anda login, simpan sebagai `klien-bank-2026-10.pdf`, dan catat buktinya: ukuran file, jumlah halaman, saldo akhir dari halaman portal.
+Bookkeeper di sini masih download e-statement klien satu per satu tiap bulan? Saya sedang menguji meja statement: ambil dari browser yang sudah login (login tetap di tangan Anda), simpan `klien-bank-2026-11.pdf`, dan catat buktinya: ukuran file, jumlah halaman, saldo akhir dari halaman portal.
 
-Saya buka 3 slot pilot: satu bulan, sampai 15 client-month (satu klien di satu portal), Rp 99.000. Bayar setelah batch pertama Anda setujui; kalau gagal, Rp 0. Sesi 20 menit, Anda login sendiri, password/OTP tidak pernah saya sentuh.
+Saya cari 3 firma untuk pilot 1 bulan, sampai 15 client-month, Rp 99.000 — bayar setelah batch pertama Anda setujui, Rp 0 kalau gagal. 20 menit screen-share, satu klien, satu bulan.
 
-Mau saya tunjukkan satu klien dulu minggu ini?
+Yang mau tahu lebih jauh: jawab tiga pertanyaannya di {tautan}. Saya baca sendiri, dan saya balas satu per satu.
 
-## 2. Follow-up setelah 48 jam
+## 2. Postingan kedua, sepekan kemudian
 
-Halo {nama}, menambahkan: kalau portalnya ternyata belum bisa, saya bilang apa adanya dan tidak ada tagihan. Yang saya butuhkan cuma 20 menit dan satu klien. Cocok kalau saya kirim slot {hari}?
+Sudut yang berbeda, bukan pengulangan: bukan lagi "berapa banyak klien", tapi "bagian mana yang paling melelahkan". Satu postings, satu tempat berbeda, dan tidak ada yang disebut secara pribadi.
+
+Bookkeeper yang belum sempat menjawab: bagian mana yang paling melelahkan — login, mencari tombol unduh, atau menamai file? Saya sedang menguji meja statement untuk e-statement klien, dan saya ingin tahu bagian mana yang paling lama Anda habiskan.
+
+Pilot 1 bulan, Rp 99.000 sampai 15 client-month, Rp 0 kalau gagal. Kalau ini pekerjaan Anda, tiga pertanyaannya ada di {tautan}.
 
 ## 3. Grup Facebook atau WhatsApp
 
-Posting satu pertanyaan, tanpa link. Kalau grup melarang promosi, tanya admin dulu atau jawab thread yang sudah ada.
+Satu pertanyaan, satu link ke halaman pilot. Kalau grup melarang promosi, tanya admin dulu atau jawab thread yang sudah ada; kalau tidak boleh, jangan posting — ada tempat lain.
 
-Bookkeeper di sini masih download e-statement klien satu per satu tiap bulan? Saya sedang uji meja statement: ambil dari browser yang sudah login (login tetap di tangan Anda), simpan `klien-bank-bulan.pdf`, catat ukuran, halaman, dan saldo akhir dari portal.
+Posting yang dipakai:
 
-Saya cari 3 firma untuk pilot 1 bulan, sampai 15 client-month, Rp 99.000 — bayar setelah batch pertama Anda setujui, Rp 0 kalau gagal. 20 menit screen-share, satu klien. Yang tertarik boleh DM.
+Bookkeeper di sini masih download e-statement klien satu per satu tiap bulan? Saya sedang menguji meja statement: ambil dari browser yang sudah login (login tetap di tangan Anda), simpan `klien-bank-bulan.pdf`, catat ukuran, halaman, dan saldo akhir dari portal.
+
+Saya cari 3 firma untuk pilot 1 bulan, sampai 15 client-month, Rp 99.000 - bayar setelah batch pertama Anda setujui, Rp 0 kalau gagal. 20 menit screen-share, satu klien. Tiga pertanyaannya di {tautan}.
 
 ## 4. Fastwork atau Sribu
 
@@ -74,22 +80,22 @@ Tidak termasuk: klien tanpa akses portal, portal dengan token perangkat baru, re
 - **"Nanti saja."** → "Slot pilot tinggal {n}; saya butuh 20 menit minggu ini untuk memastikan portal Anda masuk atau tidak."
 - **"Bisa buat jurnal juga?"** → "Pilot ini hanya statement dan buktinya. Rekap atau jurnal belum; saya tidak mau menjanjikan yang belum diuji."
 
-## 6. Sepuluh nama, satu tabel
+## 6. Di mana-posting, satu tabel
 
-Isi sebelum mengirim. Jangan pakai data pribadi hasil scraping; sumbernya kontak hangat, grup, marketplace, atau referral.
+Isi sebelum mengirim. Sumbernya tempat yang memang|Gi tempat targetnya berkumpul: grup, komunitas, marketplace, atau referral. Jangan pakai data pribadi hasil scraping.
 
-| # | Nama | Firma | Sumber | Dikirim | Balasan | Slot |
-|---|---|---|---|---|---|---|
-| 1 |  |  |  |  |  |  |
-| 2 |  |  |  |  |  |  |
-| 3 |  |  |  |  |  |  |
-| 4 |  |  |  |  |  |  |
-| 5 |  |  |  |  |  |  |
-| 6 |  |  |  |  |  |  |
-| 7 |  |  |  |  |  |  |
-| 8 |  |  |  |  |  |  |
-| 9 |  |  |  |  |  |  |
-| 10 |  |  |  |  |  |  |
+| # | Tempat | Tanggal | Balasan | Slot |
+|---|---|---|---|---|
+| 1 |  |  |  |  |
+| 2 |  |  |  |  |
+| 3 |  |  |  |  |
+| 4 |  |  |  |  |
+| 5 |  |  |  |  |
+| 6 |  |  |  |  |
+| 7 |  |  |  |  |
+| 8 |  |  |  |  |
+| 9 |  |  |  |  |
+| 10 |  |  |  |  |
 
 ## 7. Setelah mereka bilang ya
 
@@ -157,4 +163,4 @@ Kalau `OPERA_BILLING_TOKEN` tidak ada di shell, buat yang baru dengan nilai acak
 
 ## 9. Satu tindakan
 
-Kirim pesan pertama ke 10 nama hari ini. Mesinnya sudah siap: harga ada di database, invoice bisa dibuat, transfer bisa dicatat. Yang belum ada hanya pembeli, dan itu tidak bisa dikirim oleh agen atas nama pemilik.
+Posting ke dua tempat hari ini, lalu baca formulir yang masuk di `https://opera-agent.pages.dev/pilot`. Mesinnya sudah siap: harga ada di database, invoice bisa dibuat, transfer bisa dicatat, dan setiap jawaban tersimpan di `opera_feedback`. Yang belum ada hanya pembeli.

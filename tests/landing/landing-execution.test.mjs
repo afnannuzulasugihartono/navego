@@ -219,7 +219,7 @@ test('the dashboard names the extension when the browser does not have it', asyn
   const { nodes, rejected } = await run('dashboard.html', { extensionInstalled: false });
   assert.deepEqual(rejected, [], `the module rejected: ${rejected.join('; ')}`);
 
-  assert.match(nodes.installState.textContent, /Opera Agent belum terpasang di browser ini/,
+  assert.match(nodes.installState.textContent, /Kemudi belum terpasang di browser ini/,
     'the missing extension is named, not left for the reader to infer');
   assert.match(nodes.installState.textContent, /Pasang dulu/, 'and the next step is given');
 });
@@ -227,7 +227,7 @@ test('the dashboard names the extension when the browser does not have it', asyn
 test('the dashboard confirms the extension once the content script has marked the page', async () => {
   const { nodes, rejected } = await run('dashboard.html', { extensionInstalled: true });
   assert.deepEqual(rejected, [], `the module rejected: ${rejected.join('; ')}`);
-  assert.match(nodes.installState.textContent, /Opera Agent terpasang di browser ini/,
+  assert.match(nodes.installState.textContent, /Kemudi terpasang di browser ini/,
     'the installed case is stated, so the line is not a permanent warning');
 });
 
@@ -253,7 +253,7 @@ test('the dashboard reacts to the marker landing after it has already read the p
 
   context.document.documentElement.dataset.operaAgent = 'installed';
   for (const observer of context.observers) observer.callback();
-  assert.match(nodes.installState.textContent, /Opera Agent terpasang di browser ini/,
+  assert.match(nodes.installState.textContent, /Kemudi terpasang di browser ini/,
     'the line corrects itself when the marker arrives, without a reload');
 });
 

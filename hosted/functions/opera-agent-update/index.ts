@@ -177,7 +177,7 @@ Deno.serve(async (req: Request) => {
     if (path.endsWith("/health") || path.endsWith("/opera-agent-update") || path.endsWith("/")) {
       const body = JSON.stringify({
         ok: true,
-        product: "Opera Agent",
+        product: "Kemudi",
         version: release.version,
         extensionId: release.extension_id,
         sha256: release.sha256,

@@ -17,7 +17,7 @@ const seed = fs.readFileSync(new URL('../../hosted/migrations/20260907204248_ope
 const efficiency = fs.readFileSync(new URL('../../hosted/migrations/20260908233759_opera_agent_efficiency_workflows.sql', import.meta.url), 'utf8');
 const sql = core + '\n' + workflow + '\n' + seed + '\n' + efficiency;
 
-test('migration defines clean Opera Agent objects without modifying legacy tables', () => {
+test('migration defines clean Kemudi objects without modifying legacy tables', () => {
   for (const name of ['opera_devices','opera_commands','opera_workflows','opera_workflow_versions','opera_audit']) {
     assert.match(sql, new RegExp(`create table if not exists public\\.${name}`));
   }

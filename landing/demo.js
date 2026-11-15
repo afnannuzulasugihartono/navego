@@ -214,7 +214,7 @@
     const bar = query('.chromeOmnibox');
     bar.querySelector('.typeUrl').textContent = 'opera-agent.pages.dev/unduh';
     bar.classList.remove('is-focused', 'is-enter');
-    query('.chromeTabTitle').textContent = 'unduh - Opera Agent';
+    query('.chromeTabTitle').textContent = 'unduh - Kemudi';
     picker.classList.remove('is-open');
     popup.classList.remove('is-open', 'is-connected');
     stage.classList.remove('is-modal', 'hasWindow');
@@ -285,7 +285,7 @@
     await wait(820, token);
 
     await addressTo(query('.chromeOmnibox').dataset.dashUrl, token);
-    await goTo('.pageDash', 'Pairing - Opera Agent', token);
+    await goTo('.pageDash', 'Pairing - Kemudi', token);
     await wait(480, token);
     const pageDash = query('.pageDash');
     await press(pageDash.querySelector('.pairCreateBtn'), token);

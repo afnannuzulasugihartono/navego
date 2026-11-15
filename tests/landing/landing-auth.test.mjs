@@ -68,8 +68,8 @@ test('the two pages navigate both ways as one site', () => {
   assert.match(landing, /href="[^"]*index\.html|class="navCta" href="\/"/, 'landing links to the sign-in page');
   assert.match(html, /href="[^"]*beranda\.html/, 'the sign-in page links back home');
   assert.match(landing, /id="(install|model|privacy|faq)"/, 'the landing keeps the sections a newcomer comes back for');
-  assert.match(landing, /Opera Agent/, 'both pages carry the same brand');
-  assert.match(html, /Opera Agent/, 'both pages carry the same brand');
+  assert.match(landing, /Kemudi/, 'both pages carry the same brand');
+  assert.match(html, /Kemudi/, 'both pages carry the same brand');
 });
 
 test('the auth page says sign-up is open, because it is', () => {

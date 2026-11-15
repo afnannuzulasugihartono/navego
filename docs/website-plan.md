@@ -37,7 +37,7 @@ Three lines, on every page:
 
 | Page | Job | One action |
 | --- | --- | --- |
-| `beranda.html` | Convince a first-time reader and steer them | Pasang Opera Agent |
+| `beranda.html` | Convince a first-time reader and steer them | Pasang Kemudi |
 | `unduh.html` | Answer "where do I get it" with the least friction | Download the zip file |
 | `fitur.html` | Prove the product works end to end | Unduh |
 | `bukti.html` | Show the measured numbers, nothing else | Unduh |

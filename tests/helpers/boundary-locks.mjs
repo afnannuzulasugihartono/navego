@@ -157,10 +157,14 @@
 // WHY these three were re-pinned on 2026-11-15: the 1.6.59 release rode them.
 // The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
 
+// WHY manifest.json and background.ts were re-pinned on 2026-11-15: the rebrand moved the product name.
+// Opera Agent is Kemudi everywhere a human reads: the manifest carries the new name and default_title, and background.js reports product: 'Kemudi' on browser.ping.
+// The extension ID, the signing key and every wire contract are untouched, so a browser already holding 1.6.59 updates into the new name without a beat; the pins move with the reviewed bytes and nothing else.
+
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
   ['../extension/content.ts', '02365ade2ed83b234e7056ff51c3b7b41b1cacf66c74fdad41e1009b8f464fa5'],
-  ['../extension/background.ts', '8d700859a184591d6377c7f87aa582fe2404eb48e7e86f9c972b44a44771d5f5'],
-  ['../extension/manifest.json', '8974a4506190685e9ca47f1fbb8b7e22c45f8a422f3dfa781768df1eaec853d3'],
+  ['../extension/background.ts', '480d600bed33e228131c69d7a71057b1dca186a40678a8d20be7f829d9b25bea'],
+  ['../extension/manifest.json', '371617e88aa375736cd26d97d4123370f8f6afdb6d658b190999f1c699368010'],
 ]);
 
 export const OBSERVATION_STACK_LOCKS = Object.freeze([

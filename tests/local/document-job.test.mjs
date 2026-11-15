@@ -13,7 +13,7 @@ import { parseDocument, buildDocument, verifyDocument, documentFromFile } from '
 
 const DOC = {
   title: 'Menu inventory',
-  author: 'Opera Agent',
+  author: 'Kemudi',
   sections: [
     {
       heading: 'Insert menu',

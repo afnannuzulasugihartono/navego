@@ -32,7 +32,7 @@
   var host = document.createElement('div');
   host.id = CHIP_ID;
   host.setAttribute('role', 'note');
-  host.setAttribute('aria-label', 'Opera Agent sedang menggunakan tab ini');
+  host.setAttribute('aria-label', 'Kemudi sedang menggunakan tab ini');
   host.style.cssText = [
     'all: initial',
     'position: fixed',
@@ -71,7 +71,7 @@
   dot.className = 'dot';
   var label = document.createElement('span');
   label.className = 'label';
-  label.textContent = 'Opera Agent';
+  label.textContent = 'Kemudi';
   chip.appendChild(dot);
   chip.appendChild(label);
   shadow.appendChild(style);

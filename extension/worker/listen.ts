@@ -31,7 +31,7 @@ export async function listenStart(tabId: number, params: { index?: unknown } = {
   const tab = await chrome.tabs.get(tabId);
   if (!HTTP_URL_RE.test(tab.url || '')) throw codedError('LISTEN_BLOCKED', 'Listening supports HTTP/HTTPS tabs only.', { tabId });
   if (tab.incognito) throw codedError('LISTEN_BLOCKED', 'Listening is blocked in incognito tabs.', { tabId, reason: 'INCOGNITO' });
-  if (await isPrivateTab(tabId)) throw codedError('LISTEN_BLOCKED', 'This tab was marked private in the Opera Agent popup.', { tabId, reason: 'USER_PRIVATE' });
+  if (await isPrivateTab(tabId)) throw codedError('LISTEN_BLOCKED', 'This tab was marked private in the Kemudi popup.', { tabId, reason: 'USER_PRIVATE' });
   const existing = await readListenSession();
   if (existing?.sessionId) throw codedError('LISTEN_ACTIVE', 'A listening session is already live. Stop it first.', { tabId });
   const session = await fetchJson(listenUrlFor(cfg.bridgeUrl), {

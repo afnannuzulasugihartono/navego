@@ -617,7 +617,7 @@ const namedCtx = (tabs) => {
 };
 
 const PAGES = [
-  { id: '111', url: 'https://opera-agent.pages.dev/beranda', title: 'Opera Agent' },
+  { id: '111', url: 'https://opera-agent.pages.dev/beranda', title: 'Kemudi' },
   { id: '222', url: 'https://docs.google.com/document/d/one', title: 'Thesis - Google Docs' },
   { id: '333', url: 'https://docs.google.com/document/d/two', title: 'Notes - Google Docs' }
 ];
@@ -1439,6 +1439,9 @@ test('query_page refuses anything that could act, and says what it may ask', asy
   }
   assert.ok(!c.driver.calls.some((call) => call[0] === 'ask'), 'nothing reached the browser');
 });
+
+// WHY THE TITLE IS STILL THE OLD NAME: the fixture is a captured Bing page, and the card it holds was titled that way when the search engine served it.
+// The parser reads what the page said, so the test reads the same thing; the site's own name today is a different fact, held elsewhere.
 
 test('search_bing answers with the structured results and closes its tab', async () => {
   const c = ctx();

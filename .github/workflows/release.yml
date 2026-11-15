@@ -99,7 +99,7 @@ jobs:
           else
             gh release create "$TAG" "${ASSETS[@]}" \
               --target "$GITHUB_SHA" \
-              --title "Opera Agent ${VERSION}" \
+              --title "Kemudi ${VERSION}" \
               "${NOTES_ARGS[@]}"
           fi
 
