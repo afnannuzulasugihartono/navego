@@ -49,7 +49,7 @@ test('the dashboard reads human time, counts work, and acts on devices', () => {
   assert.match(html, /opera_revoke_my_device/, 'revocation keeps the terms honest');
   assert.match(html, /opera_create_pairing_code/, 'pairing codes are issued bound to the caller');
   assert.match(html, /opera_run_on_my_device/, 'the account can run one action on its own device');
-  assert.match(html, /Buat kode pairing/, 'issuance has a visible control');
+  assert.match(html, /Pasangkan browser ini/, 'the one-click pair has a visible control');
   assert.match(html, /Cabut device ini/, 'revocation has a visible control');
   assert.match(html, /Jalankan/, 'running has a visible control');
 
@@ -146,7 +146,7 @@ test('the dashboard has a rail, because it has five jobs and no divider', () => 
   assert.match(html, /class="rail"/, 'the rail is the element the lock above is about');
   assert.match(html, /aria-label="Bagian dashboard"/, 'and it is labelled, so a screen reader announces what it is');
 
-  for (const heading of ['Ringkasan', 'Device', 'Sesi dengar', 'Pairing manual', 'Jalankan aksi', 'Akun ini']) {
+  for (const heading of ['Ringkasan', 'Device', 'Sesi dengar', 'Pairing', 'Jalankan aksi', 'Akun ini']) {
     assert.match(html, new RegExp(`<h1[^>]*>${heading}</h1>`), `${heading} has a heading of its own`);
   }
 
@@ -206,7 +206,7 @@ test('a refusal on the dashboard answers with a status line, not a silent failur
   assert.match(html, /fmt\(w\('revoked'\), \{ name: button\.dataset\.name \}\)/, 'a successful revoke says so');
   assert.match(html, /w\('copiedId'\)/, 'and a copied id says so too');
   assert.match(html, /\$\{w\('revokeFailed'\)\}: \$\{error\.message\}/, 'a refused revoke says what happened');
-  assert.match(html, /\$\{w\('pairFailed'\)\}: \$\{error\.message\}/, 'a refused pairing code says what happened');
+  assert.match(html, /fmt\(w\('pairQuickFailed'\), \{ error:/, 'a refused one-click pair says what happened');
   assert.match(html, /\$\('status'\)\.className = 'status warn'/, 'and marks the status line as a warning');
 });
 
@@ -448,14 +448,14 @@ test('a new account sees three steps, not a blank console', () => {
   assert.match(html, /Semua langkah selesai/, 'and completion reads as one line');
 });
 
-test('the pairing code is shown, not told', () => {
+test('the one-click pair is wired, not narrated', () => {
 
   const html = read('dashboard.html');
-  assert.match(html, /id="pairCodeBox"/, 'the code has a box, not a sentence');
-  assert.match(html, /id="pairCopy"/, 'with its own copy control');
-  assert.match(html, /id="pairCountdown"/, 'and a countdown');
-  assert.match(html, /result\.expiresAt/, 'counted from the server expiry, never a guess');
-  assert.match(html, /clearInterval\(pairTimer\)/, 'a new code retires the old countdown');
+  assert.match(html, /id="pairQuick"/, 'the pairing card carries the one-click action');
+  assert.match(html, /void runPairQuick\(\)/, 'the click and the popup handoff call the same one action');
+  assert.match(html, /params\.has\('pair'\)/, 'the popup deep-link is recognised, never invented');
+  assert.match(html, /globalThis\.history\?\.replaceState/, 'the handoff parameter is scrubbed so a refresh never re-mints a code');
+  assert.doesNotMatch(html, /id="pairCodeBox"|id="pairButton"/, 'the manual pairing panel is gone; the one-click action stays the only door');
 });
 
 test('the console uses the screen, the prose keeps its measure', () => {

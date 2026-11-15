@@ -75,7 +75,7 @@
           </div>
           <div class="tile">
             <h3 data-i18n="tiles.pairing.title">Pairing</h3>
-            <p data-i18n-html="tiles.pairing.body">Kode sekali pakai untuk device baru. <a href="./dashboard.html#pairing">Buat</a>.</p>
+            <p data-i18n-html="tiles.pairing.body">Satu klik di dasbor. <a href="./dashboard.html#pairing">Pasangkan</a>.</p>
           </div>
           <div class="tile">
             <h3 data-i18n="tiles.model.title">Model Anda</h3>
@@ -145,10 +145,10 @@
             <span class="chip" data-i18n="install.panel.online">daring</span>
           </div>
           <div class="pairRow">
-            <span data-i18n="install.panel.code">Kode pairing</span>
-            <code class="pairCode">4F2K-9Q</code>
-            <span data-i18n="install.panel.left">berlaku</span>
-            <code class="pairTime" id="pairTime">10:00</code>
+            <span data-i18n="install.panel.code">Pairing</span>
+            <span class="pairAction" data-i18n="install.panel.cta">Pasangkan browser ini</span>
+            <span></span>
+            <span class="chip good" data-i18n="install.panel.done">selesai</span>
           </div>
           <div class="pairRow">
             <span data-i18n="install.panel.status">Jejak status</span>
@@ -437,10 +437,10 @@
     "hero.title": "An AI assistant in <span class=\"accent\">your browser.</span>",
     "install.checklist": "Open the checklist",
     "install.panel.body": "One device, one account, one key that stays in this browser.",
-    "install.panel.code": "Pairing code",
+    "install.panel.code": "Pairing",
+    "install.panel.cta": "Pair this browser",
     "install.panel.device": "Office laptop",
     "install.panel.done": "done",
-    "install.panel.left": "valid for",
     "install.panel.online": "online",
     "install.panel.status": "Status trail",
     "install.panel.task": "Fill the onboarding sheet",
@@ -508,7 +508,7 @@
     "tiles.devices.title": "Devices",
     "tiles.model.body": "Keys stay in your browser. <a href=\"#model\">Set up</a>.",
     "tiles.model.title": "Your model",
-    "tiles.pairing.body": "A one-time code. <a href=\"./dashboard.html#pairing\">Create</a>.",
+    "tiles.pairing.body": "One click in the dashboard. <a href=\"./dashboard.html#pairing\">Pair</a>.",
     "tiles.pairing.title": "Pairing"
   }
 }</script>
@@ -669,30 +669,6 @@
     });
 
     const reduceMotion = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // WHY THE PAIRING CLOCK RUNS: a pairing code that never changes is a picture, and the panel is the one place the reader learns that a code expires.
-    // A code that runs out is replaced the way the dashboard replaces it, and a reader who asks for stillness sees the code stand still.
-    const pairTime = $('pairTime');
-    const pairCode = document.querySelector('.pairCode');
-    const codes = ['4F2K-9Q', '7RTM-3X', 'B9WD-52'];
-
-    if (pairTime && !reduceMotion) {
-      let left = 600;
-      let code = 0;
-      const paint = () => {
-        const minutes = String(Math.floor(left / 60)).padStart(2, '0');
-        const seconds = String(left % 60).padStart(2, '0');
-        pairTime.textContent = minutes + ':' + seconds;
-        left -= 1;
-        if (left < 0) {
-          left = 600;
-          code = (code + 1) % codes.length;
-          if (pairCode) pairCode.textContent = codes[code];
-        }
-      };
-      paint();
-      setInterval(paint, 1000);
-    }
 
     const stats = $('heroStats');
 

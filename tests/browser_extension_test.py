@@ -1244,9 +1244,9 @@ async def run(port, profile):
             f"chrome.storage.local.set({{bridgeUrl:'http://{HOST}:{port}/bridge'}})"
         )
         await popup.reload()
-        await popup.fill("#pairCode", PAIR_CODE)
-        await popup.click("#pairButton")
-        await popup.locator("#pairSection").wait_for(state="hidden", timeout=10000)
+        await popup.evaluate(
+            f"chrome.runtime.sendMessage({{action: 'pair', code: '{PAIR_CODE}'}})"
+        )
         assert STATE.paired
 
         refusal = await popup.evaluate(

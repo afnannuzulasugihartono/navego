@@ -207,7 +207,7 @@
     }
     for (const dock of Object.values(docks)) dock.classList.remove('is-active', 'is-running');
     pages.forEach((page) => {
-      page.classList.remove('is-shown', 'is-downloading', 'is-done', 'is-dev', 'is-installed', 'is-created', 'is-copied');
+      page.classList.remove('is-shown', 'is-downloading', 'is-done', 'is-dev', 'is-installed', 'is-paired');
     });
     query('.pageDl').classList.add('is-shown');
     query('.pageExt .extTopRight .chromeToggle').classList.remove('on');
@@ -216,8 +216,7 @@
     bar.classList.remove('is-focused', 'is-enter');
     query('.chromeTabTitle').textContent = 'unduh - Opera Agent';
     picker.classList.remove('is-open');
-    popup.classList.remove('is-open', 'is-pasted', 'is-connected');
-    popup.querySelector('.oaFieldEmpty').classList.remove('is-focused');
+    popup.classList.remove('is-open', 'is-connected');
     stage.classList.remove('is-modal', 'hasWindow');
     demo.querySelectorAll('.is-pressed').forEach((el) => el.classList.remove('is-pressed'));
     demo.querySelectorAll('.termLine').forEach((line) => line.classList.remove('is-typing', 'is-done'));
@@ -286,20 +285,14 @@
     await wait(820, token);
 
     await addressTo(query('.chromeOmnibox').dataset.dashUrl, token);
-    await goTo('.pageDash', 'Manual pairing - Opera Agent', token);
+    await goTo('.pageDash', 'Pairing - Opera Agent', token);
     await wait(480, token);
     const pageDash = query('.pageDash');
     await press(pageDash.querySelector('.pairCreateBtn'), token);
-    pageDash.classList.add('is-created');
-    await wait(620, token);
-    await press(pageDash.querySelector('.pairCopyBtn'), token);
-    pageDash.classList.add('is-copied');
-    await wait(580, token);
+    pageDash.classList.add('is-paired');
+    await wait(900, token);
     await press(query('.extTrigger'), token);
     await openPopup(token);
-    await press(popup.querySelector('.oaFieldEmpty'), token);
-    popup.querySelector('.oaFieldEmpty').classList.add('is-focused');
-    popup.classList.add('is-pasted');
     await wait(320, token);
     popup.classList.add('is-connected');
     await wait(820, token);

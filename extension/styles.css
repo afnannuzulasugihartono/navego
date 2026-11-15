@@ -500,22 +500,6 @@ body.popup .error {
   line-height: 1.45;
 }
 
-body.popup .pairBox {
-  display: grid;
-  gap: 8px;
-  padding: 12px;
-  border-bottom: 1px solid var(--pop-border);
-}
-
-body.popup .pairTitle {
-  margin: 0;
-  color: var(--pop-muted);
-  font-size: 9.5px;
-  font-weight: 650;
-  letter-spacing: .09em;
-  text-transform: uppercase;
-}
-
 body.popup label { color: var(--pop-muted); font-size: 10.5px; }
 
 body.popup input {
@@ -530,22 +514,6 @@ body.popup input {
 }
 
 body.popup input::placeholder { color: var(--pop-faint); }
-
-body.popup button.primary.block {
-  display: block;
-  width: 100%;
-  min-height: 36px;
-  padding: 8px 12px;
-  border: 0;
-  border-radius: 8px;
-  background: var(--pop-ok);
-  color: #04270f;
-  font-size: 12px;
-  font-weight: 650;
-  cursor: pointer;
-}
-
-body.popup button.primary.block:hover:not(:disabled) { background: #4be093; }
 
 body.popup pre {
   margin: 2px 12px;

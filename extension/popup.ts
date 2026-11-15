@@ -16,7 +16,6 @@ applyI18n(document);
 const log = globalThis.OperaAgentLog;
 if (typeof log?.warn !== 'function') throw new Error('Agent log runtime is unavailable.');
 const $ = (id: string) => document.getElementById(id);
-let pairBoxPinned = false;
 let servedBuild: string | null = null;
 
 // WHY A LOCAL SHAPE: the one line of status this file draws is always this triple, and the icons are a known closed set.
@@ -108,13 +107,6 @@ function statusLine(status: unknown, paired: boolean): StatusLine {
   if (status === 'starting') return { text: t('status.starting'), tone: 'pending', icon: 'clock' };
   return { text: t('status.disconnected'), tone: 'idle', icon: 'power' };
 }
-
-
-
-function setBusy(button: HTMLButtonElement, busy: boolean) {
-  button.disabled = busy;
-}
-
 async function refresh() {
   let data: unknown;
   try {
@@ -133,11 +125,6 @@ async function refresh() {
   const status = String(state.status || (config.paired ? 'connecting' : 'unpaired'));
   const line = statusLine(status, !!config.paired);
   setStatusLine(line);
-  const paired = !!config.paired;
-  const pairSection = $('pairSection');
-  if (pairSection) pairSection.hidden = paired && !pairBoxPinned;
-  const toggle = $('pairToggleButton');
-  if (toggle && pairSection) toggle.setAttribute('aria-expanded', String(!pairSection.hidden));
   const errorEl = $('error');
   if (errorEl) {
     errorEl.hidden = !state.lastError;
@@ -189,38 +176,7 @@ chipToggleButton?.addEventListener('click', async () => {
   void showChipState();
 });
 
-$('pairToggleButton')?.addEventListener('click', () => {
-  const section = $('pairSection');
-  if (!section) return;
-  pairBoxPinned = section.hidden;
-  section.hidden = !pairBoxPinned;
-  $('pairToggleButton')?.setAttribute('aria-expanded', String(pairBoxPinned));
-  if (pairBoxPinned) $('pairCode')?.focus();
-});
 
-$('pairButton')?.addEventListener('click', async () => {
-  const pairCode = $('pairCode');
-  const pairButton = $('pairButton');
-  if (!(pairCode instanceof HTMLInputElement) || !(pairButton instanceof HTMLButtonElement)) return;
-  const code = pairCode.value.trim();
-  if (!code) return;
-  setBusy(pairButton, true);
-  try {
-    const result = await call('pair', { code });
-    if (!result?.ok) throw new Error(result?.error || 'Pairing failed.');
-    pairCode.value = '';
-    pairBoxPinned = false;
-    await refresh();
-  } catch (error) {
-    const errorEl = $('error');
-    if (errorEl) {
-      errorEl.hidden = false;
-      errorEl.textContent = userErrorMessage(error instanceof Error ? error.message : String(error)) ?? '';
-    }
-  } finally {
-    setBusy(pairButton, false);
-  }
-});
 
 // WHY THE DOORS OPEN A TAB AND NOT A WINDOW.
 // The person is already in a browser with the tabs they work in; a door that opens a separate window is a second place to look for the same thing.

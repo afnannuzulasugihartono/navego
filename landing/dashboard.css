@@ -607,31 +607,6 @@ dl.facts {
   .duo { grid-template-columns: 1fr; }
 }
 
-.pairCodeBox {
-  margin: 16px 0 0;
-  padding: 16px;
-  border: 1px dashed var(--line-strong);
-  border-radius: 10px;
-  background: var(--surface-soft);
-}
-
-.pairCodeBox[hidden] { display: none; }
-
-.pairCode {
-  display: block;
-  margin: 0 0 10px;
-  overflow-wrap: anywhere;
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 27px;
-  font-weight: 600;
-  letter-spacing: .14em;
-}
-
-.pairCodeBox .row { margin-top: 0; align-items: center; }
-
-#pairCountdown { margin: 0; }
-
 /* ── empty states and command rows ────────────────────────────────────────── */
 
 /*

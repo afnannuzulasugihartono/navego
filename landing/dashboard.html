@@ -239,22 +239,13 @@
 
       <div class="duo">
         <section id="pairing">
-          <h1 data-i18n="pairing.title">Pairing manual</h1>
+          <h1 data-i18n="pairing.title">Pairing</h1>
           <div class="card">
-            <p class="meta" data-i18n="pairing.meta">Kode sekali pakai, berlaku 10 menit, terikat ke akun ini. Tempel di popup extension pada device yang ingin kamu hubungkan.</p>
             <p class="meta hint" data-i18n="pairing.quickHint">Satu klik saja — kode dibuat di server dan dikirim langsung ke ekstensi di browser ini. Tidak ada yang perlu diketik atau disalin.</p>
             <label for="pairName" data-i18n="pairing.nameLabel">Nama device</label>
             <input id="pairName" type="text" autocomplete="off" spellcheck="false" maxlength="64" placeholder="opera" />
             <div class="row">
               <button class="btn" id="pairQuick" type="button" data-i18n="pairing.quick">Pasangkan browser ini</button>
-              <button class="btn ghost" id="pairButton" type="button" data-i18n="pairing.button">Buat kode pairing</button>
-            </div>
-            <div class="pairCodeBox" id="pairCodeBox" hidden>
-              <code class="pairCode" id="pairCode"></code>
-              <div class="row">
-                <button class="btn ghost" type="button" id="pairCopy" data-i18n="pairing.copy">Salin kode</button>
-                <p class="status" id="pairCountdown" role="status" aria-live="polite"></p>
-              </div>
             </div>
             <p class="status" id="pairStatus" role="status" aria-live="polite">&nbsp;</p>
           </div>
@@ -376,11 +367,8 @@
     "nav.features": "Features",
     "pairing.quick": "Pair this browser",
     "pairing.quickHint": "One click — the code is created on the server and sent straight to the extension in this browser. Nothing to type or paste.",
-    "pairing.button": "Create pairing code",
-    "pairing.copy": "Copy code",
-    "pairing.meta": "A one-time code, valid for 10 minutes, bound to this account. Paste it into the extension popup on the device you want to connect.",
     "pairing.nameLabel": "Device name",
-    "pairing.title": "Manual pairing",
+    "pairing.title": "Pairing",
     "plan.cta": "Manage plan",
     "plan.error": "Couldn't read the plan status.",
     "plan.exhausted": "Plan exhausted — resets tomorrow 00:00 UTC.",
@@ -674,8 +662,8 @@
         listenEmptyTitle: 'Belum ada sesi dengar.',
         listenEmptyBody: 'Mulai dari model dengan media_stream_start.',
         emptyDevicesTitle: 'Belum ada device.',
-        emptyDevicesBody: 'Pasang Opera Agent di browser ini, lalu buat kode pairing untuk dihubungkannya ke akun ini.',
-        emptyPairCta: 'Buat kode pairing',
+        emptyDevicesBody: 'Pasang Opera Agent di browser ini, lalu klik Pasangkan browser ini di bagian Pairing.',
+        emptyPairCta: 'Pasangkan browser ini',
         noDeviceBound: 'Belum ada device terikat ke akun ini.',
         devicesOffline: '{names} sedang offline',
         dtStatus: 'Status',
@@ -698,9 +686,6 @@
         runSending: 'Mengirim…',
         queued: '{method} masuk antrean; device mengambilnya dalam hitungan detik. Riwayat di Device akan memperbarui sendiri.',
         runFailed: 'Gagal menjalankan',
-        pairExpired: 'kedaluwarsa — buat kode baru',
-        pairValid: 'berlaku 10 menit',
-        pairFailed: 'Gagal membuat kode',
         walletReloading: 'Memuat saldo…',
         walletTopUpFailed: 'Isi ulang tidak bisa dimulai',
         pricingFailed: 'Belum bisa memuat harga.',
@@ -722,10 +707,8 @@
         konsolGroupOperator: 'Operator',
         konsolReadFailed: 'gagal membaca tabel',
         csvFailedPrefix: 'Ekspor gagal:',
-        countdownActive: 'berlaku {time}',
+
         thisBrowserChip: '{browser} di browser ini',
-        pairWorking: 'Membuat kode…',
-        pairCopied: 'Kode disalin. Tempel di popup extension.',
         pairQuickWorking: 'Memasangkan browser ini.',
         pairQuickOk: 'Browser ini ter-pairing: {name}.',
         pairQuickNoExt: 'Ekstensi belum terpasang atau nonaktif di browser ini. Pasang dari Unduh, lalu klik lagi.',
@@ -733,7 +716,6 @@
         runFailedPrefix: 'Gagal:',
         runFailedNet: 'Gagal ({msg})',
         networkWord: 'jaringan',
-        pairCodeReady: 'Kode untuk {name} siap di atas.',
         konsolLoading: 'Memuat…',
         konsolZeroRows: '0 baris',
         konsolPageLine: 'Halaman {p} dari {c} · {a}–{b} dari {t} baris',
@@ -775,8 +757,8 @@
         listenEmptyTitle: 'No listening sessions yet.',
         listenEmptyBody: 'Start one from the model with media_stream_start.',
         emptyDevicesTitle: 'No devices yet.',
-        emptyDevicesBody: 'Install Opera Agent in this browser, then create a pairing code to connect it to this account.',
-        emptyPairCta: 'Create a pairing code',
+        emptyDevicesBody: 'Install Opera Agent in this browser, then click Pair this browser in the Pairing section.',
+        emptyPairCta: 'Pair this browser',
         noDeviceBound: 'No device is bound to this account.',
         devicesOffline: '{names} offline',
         dtStatus: 'Status',
@@ -799,9 +781,7 @@
         runSending: 'Sending…',
         queued: '{method} queued; the device picks it up within seconds. History on Devices updates itself.',
         runFailed: 'Could not run',
-        pairExpired: 'expired — create a new code',
-        pairValid: 'valid for 10 minutes',
-        pairFailed: 'Could not create the code',
+
         walletReloading: 'Reloading the balance…',
         walletTopUpFailed: 'Could not start the top-up',
         pricingFailed: "Can't load the price list.",
@@ -823,10 +803,7 @@
         konsolGroupOperator: 'Operator',
         konsolReadFailed: 'failed to read the table',
         csvFailedPrefix: 'Export failed:',
-        countdownActive: 'valid {time}',
         thisBrowserChip: '{browser} in this browser',
-        pairWorking: 'Creating the code…',
-        pairCopied: 'Code copied. Paste it into the extension popup.',
         pairQuickWorking: 'Pairing this browser.',
         pairQuickOk: 'This browser is paired: {name}.',
         pairQuickNoExt: 'The extension is not installed or not enabled in this browser. Install it from Download, then click this button again.',
@@ -834,7 +811,6 @@
         runFailedPrefix: 'Failed:',
         runFailedNet: 'Failed ({msg})',
         networkWord: 'network',
-        pairCodeReady: 'The code for {name} is ready above.',
         konsolLoading: 'Loading…',
         konsolZeroRows: '0 rows',
         konsolPageLine: 'Page {p} of {c} · {a}–{b} of {t} rows',
@@ -936,43 +912,6 @@
       }
       cta.href = '#aksi';
       cta.textContent = w('ctaRun');
-    }
-
-    let pairTimer = null;
-
-    function hidePairingCode() {
-      if (pairTimer) { clearInterval(pairTimer); pairTimer = null; }
-      $('pairCodeBox').hidden = true;
-    }
-
-    function showPairingCode(result) {
-      clearInterval(pairTimer);
-      $('pairCodeBox').hidden = false;
-      $('pairCode').textContent = result.code;
-      const expiry = new Date(result.expiresAt).getTime();
-      const tick = () => {
-        const left = expiry - Date.now();
-        if (!Number.isFinite(expiry) || left <= 0) {
-          $('pairCountdown').textContent = Number.isFinite(expiry) ? w('pairExpired') : w('pairValid');
-          if (pairTimer) { clearInterval(pairTimer); pairTimer = null; }
-          return;
-        }
-        const minutes = Math.floor(left / 60000);
-        const seconds = Math.floor((left % 60000) / 1000);
-        $('pairCountdown').textContent = fmt(w('countdownActive'), { time: `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}` });
-      };
-      tick();
-      pairTimer = setInterval(tick, 1000);
-      $('pairCopy').onclick = async () => {
-        try {
-          await navigator.clipboard.writeText(result.code);
-          $('pairStatus').textContent = w('pairCopied');
-          $('pairStatus').className = 'status ok';
-        } catch (error) {
-          $('pairStatus').textContent = `${w('copyManual')}: ${result.code}`;
-          $('pairStatus').className = 'status warn';
-        }
-      };
     }
 
     function paintInstallState() {
@@ -1387,7 +1326,6 @@
       btn.disabled = true;
       $('pairStatus').textContent = w('pairQuickWorking');
       $('pairStatus').className = 'status';
-      hidePairingCode();
       try {
         const response = await fetch(`${REST}/rpc/opera_create_pairing_code`, { method: 'POST', headers: headersFor(token), body: JSON.stringify({ p_device_name: name }) });
         const result = await response.json();
@@ -1400,7 +1338,7 @@
           window.setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 2400);
           return;
         }
-        if (delivered.reason === 'no-extension') {
+        if (delivered.reason === 'no-extension' || delivered.reason === 'no-runtime') {
           $('pairStatus').textContent = w('pairQuickNoExt');
           $('pairStatus').className = 'status warn';
           btn.disabled = false;
@@ -1408,7 +1346,7 @@
         }
         throw new Error(delivered.message || delivered.reason || 'unknown');
       } catch (error) {
-        $('pairStatus').textContent = `${w('pairQuickFailed')}: ${error.message}.`;
+        $('pairStatus').textContent = fmt(w('pairQuickFailed'), { error: error instanceof Error ? error.message : String(error) });
         $('pairStatus').className = 'status warn';
         btn.disabled = false;
       }
@@ -1426,27 +1364,6 @@
       globalThis.history?.replaceState?.(null, '', `${globalThis.location.pathname}${globalThis.location.hash || ''}`);
       void runPairQuick();
     })();
-
-    $('pairButton').addEventListener('click', async () => {
-      const session = await currentSession();
-      if (!session) return;
-      const { token } = session;
-      const name = ($('pairName').value.trim() || 'opera').slice(0, 64);
-      $('pairStatus').textContent = w('pairWorking');
-      $('pairStatus').className = 'status';
-      hidePairingCode();
-      try {
-        const response = await fetch(`${REST}/rpc/opera_create_pairing_code`, { method: 'POST', headers: headersFor(token), body: JSON.stringify({ p_device_name: name }) });
-        const result = await response.json();
-        if (!result?.ok) throw new Error(say(result?.error || response.status));
-        showPairingCode(result);
-        $('pairStatus').textContent = fmt(w('pairCodeReady'), { name: result.deviceName });
-        $('pairStatus').className = 'status ok';
-      } catch (error) {
-        $('pairStatus').textContent = `${w('pairFailed')}: ${error.message}.`;
-        $('pairStatus').className = 'status warn';
-      }
-    });
 
     // WHY the editor reads through opera_konsol_* and never a table path: the ownership
     // filter, the page caps and the masking belong to the server, so a modified client

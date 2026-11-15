@@ -32,7 +32,7 @@
 
 /beranda
   Cache-Control: no-store
-  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-ddhmbA3dgUtpqJaXIdgd2x2iv33prGjfY7ssMKDUYqI='; connect-src 'none'; style-src 'self' 'unsafe-inline'; img-src data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-jw+uBOSJxKgZ+409gHSBtkn4Ab49EFtWWzk/Mnyy06o='; connect-src 'none'; style-src 'self' 'unsafe-inline'; img-src data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
   Referrer-Policy: no-referrer
   X-Content-Type-Options: nosniff
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
@@ -43,7 +43,7 @@
 
 /beranda.html
   Cache-Control: no-store
-  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-ddhmbA3dgUtpqJaXIdgd2x2iv33prGjfY7ssMKDUYqI='; connect-src 'none'; style-src 'self' 'unsafe-inline'; img-src data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-jw+uBOSJxKgZ+409gHSBtkn4Ab49EFtWWzk/Mnyy06o='; connect-src 'none'; style-src 'self' 'unsafe-inline'; img-src data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
   Referrer-Policy: no-referrer
   X-Content-Type-Options: nosniff
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
@@ -288,7 +288,7 @@
 
 /dashboard
   Cache-Control: no-store
-  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-PwI0APG1N7A7q/UU5JgDu1s6eJYHGbtI3lptKnOX61w=' 'sha256-In+NSCvcrBwL/WqfVd0WqQ1NFSnlw5eiCP6H4OVtpnA='; connect-src https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-PZsa2EMWwao2eIruPj8JZxLDw74WCzHP0/68UP5XaZg=' 'sha256-In+NSCvcrBwL/WqfVd0WqQ1NFSnlw5eiCP6H4OVtpnA='; connect-src https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
   Referrer-Policy: no-referrer
   X-Content-Type-Options: nosniff
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
@@ -299,7 +299,7 @@
 
 /dashboard.html
   Cache-Control: no-store
-  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-PwI0APG1N7A7q/UU5JgDu1s6eJYHGbtI3lptKnOX61w=' 'sha256-In+NSCvcrBwL/WqfVd0WqQ1NFSnlw5eiCP6H4OVtpnA='; connect-src https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-PZsa2EMWwao2eIruPj8JZxLDw74WCzHP0/68UP5XaZg=' 'sha256-In+NSCvcrBwL/WqfVd0WqQ1NFSnlw5eiCP6H4OVtpnA='; connect-src https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
   Referrer-Policy: no-referrer
   X-Content-Type-Options: nosniff
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload

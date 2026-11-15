@@ -407,15 +407,11 @@ test('the home page pauses on one statement, and the accent word carries it', ()
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.statementAccent::after \{[^}]*animation: none/s, 'and the motion bows out when asked');
 });
 
-test('the install panel shows a live pairing code', () => {
-  // WHY THE PANEL MOVES: a pairing code that never changes is a picture, and the panel is where the reader learns that a code expires.
-  // WHY THE DRIFT IS GONE: the product visual that once lagged the scroll died with the mock it moved - the ad's motion lives in the canvas film, pinned by the animated-ad gates.
+test('the install panel shows the one-click pair action, not a paste-the-code mock', () => {
   const html = read('beranda.html');
-  assert.match(html, /class="pairCode"/, 'the panel shows a pairing code');
-  assert.match(html, /id="pairTime"/, 'and the time it has left');
-  assert.match(html, /setInterval\(paint, 1000\)/, 'the clock ticks');
-  const css = cssOf('beranda.html');
-  assert.match(css, /\.pairRow \{[^}]*grid-template-columns/s, 'the panel rows line up');
+  assert.match(html, /data-i18n="install\.panel\.cta"/, 'the panel carries the one-click action');
+  assert.match(html, /Pasangkan browser ini/, 'with the same words the popup and dashboard use');
+  assert.doesNotMatch(html, /id="pairTime"|"install\.panel\.left"/, 'the expiring-code mock is gone, and with it its countdown');
 });
 
 test('the shared spotlight script only paints what the pointer names', () => {
