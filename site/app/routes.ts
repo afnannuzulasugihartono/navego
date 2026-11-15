@@ -1,7 +1,8 @@
 import { index, route, type RouteConfig } from '@react-router/dev/routes';
 
-// WHY .html paths: the legacy flat URLs are pinned by sitemap.xml, robots.txt and
-// external backlinks. Every path below prerenders to <path>.html so nothing moves.
+// WHY .html paths: the legacy flat URLs are pinned by sitemap.xml, robots.txt and external backlinks.
+// Every path below prerenders to <path>.html so nothing moves.
+
 export default [
   index('./routes/index.tsx'),
   route('beranda.html', './routes/beranda.tsx'),

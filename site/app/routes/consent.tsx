@@ -220,6 +220,7 @@ export default function Consent() {
 }
 
 // Render-time safe: returns '' outside the browser (prerender) and null when no token is stored.
+
 function getStoredTokenSafe(): boolean {
   if (typeof window === 'undefined') return true;
   return Boolean(getStoredToken() || getRefreshToken());

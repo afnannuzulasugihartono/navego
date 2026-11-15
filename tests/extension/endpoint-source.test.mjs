@@ -26,7 +26,6 @@ test('the consent screen is a page of the site, not a deployment of its own', as
 
   assert.doesNotMatch(consent, /import\s*\(?\s*['"]https?:/, 'the page imports nothing from another origin');
   assert.doesNotMatch(consent, /(?:src|href)=["']https?:/, 'no element points at a remote origin');
-  assert.doesNotMatch(consentCode, /<(script|img|link)[^>]+(src|href)="https?:/i, 'no tag points at a remote origin');
 
   const config = await readFile(new URL('../../hosted/config.toml', import.meta.url), 'utf8');
   const siteUrl = /site_url\s*=\s*"([^"]+)"/.exec(config)?.[1];

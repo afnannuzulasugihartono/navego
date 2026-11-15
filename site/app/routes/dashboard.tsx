@@ -71,6 +71,7 @@ const deviceStatusText = (device: Device) => String(device.status || 'tidak dike
 
 // One-click pair deep-link from the extension popup: ?pair=1 fires the same flow once.
 // The identity cookie is seeded here for the same reason: the extension mirrors it into its own storage, and pairing adopts the legacy identity in place so a reinstall keeps its device.
+
 export default function Dashboard() {
   const [ready, setReady] = useState(false);
   const [view, setView] = useState<View>('ringkasan');

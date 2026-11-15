@@ -1,9 +1,6 @@
 // @last-edited: 2026-11-16 UTC+7.
 // @title: site — the rebuilt Corbin site, gated on its own build.
-// @state: builds site/ (npm ci if cold), type-checks it, then parses build/client:
-//         every prerendered route exists, every page has exactly one h1, no i18n
-//         machinery ships, _worker.js/_headers are intact and consistent, and the
-//         sitemap cannot name a path the build does not carry.
+// @state: builds the site, type-checks it, then parses build/client for the per-page contract.
 // @dependencies: site/ (React Router v7 + TypeScript), node:test, node:child_process.
 
 import assert from 'node:assert/strict';
@@ -63,13 +60,14 @@ test('the build produces every prerendered route', () => {
   }
 });
 
+// WHY the dashboard is the exception: it gates on a client-side session; the static shell says "checking" and the h1 paints after sign-in.
+
 test('every page carries exactly one h1', () => {
   buildSite();
   for (const route of ROUTES) {
     const html = readBuilt(route);
     const count = (html.match(/<h1[\s>]/g) || []).length;
     if (route === '/dashboard.html') {
-      // the dashboard gates on a client-side session: the static shell says "checking", the h1 paints after sign-in
       assert.equal(count, 0, '/dashboard.html ships the pre-session shell');
       assert.ok(html.includes('Memeriksa sesi'));
       continue;
@@ -142,6 +140,8 @@ test('_worker.js ships byte-identical to the checked-in source', () => {
   assert.ok(fromPublic.includes('opera-agent-billing'), 'the invoice proxy is intact');
 });
 
+// WHY robots.txt and sitemap.xml carry no CSP: static policy files, not HTML.
+
 test('_headers covers every route, forbids inline scripts, denies framing everywhere', () => {
   buildSite();
   const rules = siteRules();
@@ -152,7 +152,7 @@ test('_headers covers every route, forbids inline scripts, denies framing everyw
   }
   for (const rule of rules) {
     const policy = rule.headers['Content-Security-Policy'] || '';
-    if (!policy) continue; // robots.txt / sitemap.xml have no CSP by design
+    if (!policy) continue;
     assert.equal(rule.headers['X-Frame-Options'], 'DENY', `${rule.paths[0]} denies framing`);
     assert.match(policy, /script-src 'self'(?=[ ;])/, `${rule.paths[0]} scripts from self`);
     assert.equal(policy.includes("script-src 'self' 'unsafe-inline'"), false, `${rule.paths[0]} carries no unsafe-inline in script-src`);

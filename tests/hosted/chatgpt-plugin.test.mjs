@@ -38,5 +38,5 @@ test('the gateway accepts a user JWT and resolves the caller device', async () =
 
 test('the plugin logo is the shipped mark', async () => {
   const icon = await read('site/public/icon.svg');
-  assert.match(icon, /<svg[^>]*viewBox='0 0 240 210'/);
+  assert.match(icon, /<svg[^>]*viewBox="0 0 240 210"/);
 });

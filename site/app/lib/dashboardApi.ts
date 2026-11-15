@@ -61,6 +61,7 @@ export function say(raw: unknown): string {
 }
 
 // WHY the second pass: an access token ages out in about an hour and a caller's page can be open across that hour.
+
 async function rpc<T = Record<string, unknown>>(name: string, body: Record<string, unknown> = {}): Promise<(T & { ok?: boolean; error?: unknown }) | null> {
   const token = await ensureSession();
   if (!token) return null;

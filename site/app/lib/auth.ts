@@ -1,6 +1,5 @@
-// Corbin's client-side auth + API helpers. No SDK, no secrets: the publishable key is
-// public by design, the session lives in this browser's localStorage, and every call
-// that carries identity goes to the project's Auth or REST host only.
+// Corbin's client-side auth + API helpers.
+// No SDK, no secrets: the publishable key is public by design, the session lives in this browser's localStorage, and every call that carries identity goes to the project's Auth or REST host only.
 
 export const PUBLISHABLE_KEY = 'sb_publishable_jAbS_QIQsmXQA-Rj8RWPcg_JVeBedJ6';
 export const REST = 'https://nenmkmtvjremqphfqnfw.supabase.co/rest/v1';
@@ -13,6 +12,7 @@ const REFRESH_KEY = 'opera-agent-refresh-token';
 const RETURNABLE = /^\.\/[A-Za-z0-9._~/?=&%-]*$/;
 
 // WHY: ?next is attacker-controllable; only same-site relative paths pass.
+
 export function getReturnTo(): string {
   const asked = new URLSearchParams(window.location.search).get('next') || '';
   return RETURNABLE.test(asked) ? asked : './beranda.html';
@@ -68,6 +68,7 @@ export async function proveSession(accessToken: string): Promise<{ email?: strin
 }
 
 // WHY offline and refusal differ: a network failure says nothing about the account and must not clear a stored session; only a refused refresh token is death.
+
 export async function renewAccessToken(): Promise<string | null> {
   const refreshToken = getRefreshToken();
   if (!refreshToken) return null;
@@ -94,6 +95,7 @@ export async function renewAccessToken(): Promise<string | null> {
 }
 
 // Prove the stored session, renewing once via the refresh token when the access token aged out.
+
 export async function ensureSession(): Promise<string | null> {
   const stored = getStoredToken();
   if (stored) {

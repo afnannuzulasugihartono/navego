@@ -1,6 +1,5 @@
 // Injects the CSP hashes of React Router's prerendered boot scripts into build/client/_headers.
-// The checked-in public/_headers carries script-src 'self'; the prerendered pages also ship
-// RR's inline hydration boot, which Cloudflare must allow — by hash, never by 'unsafe-inline'.
+// The checked-in public/_headers carries script-src 'self'; the prerendered pages also ship RR's inline hydration boot, which Cloudflare must allow — by hash, never by 'unsafe-inline'.
 // The rewrite is deterministic per build: same bytes, same hashes.
 
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';

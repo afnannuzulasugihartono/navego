@@ -1,8 +1,6 @@
-// Corbin — the raven. A realistic profile head, drawn flat: unified silhouette
-// (near-flat forehead → culmen → hooked tip, deep gonys), ricti nasal bristles,
-// lanceolate throat hackles, ink on paper with an amber iris.
-// No gradients, no texture fills — the mark survives at 16 px because the hook
-// and the eye carry the read.
+// Corbin — the raven.
+// A realistic profile head, drawn flat: unified silhouette (near-flat forehead → culmen → hooked tip, deep gonys), ricti nasal bristles, lanceolate throat hackles, ink on paper with an amber iris.
+// No gradients, no texture fills — the mark survives at 16 px because the hook and the eye carry the read.
 
 interface RavenProps {
   size?: number;
