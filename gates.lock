@@ -156,12 +156,12 @@
 #    tests/helpers/canonical-source-hash.mjs strips the comment lines and collapses
 #    the whitespace before hashing a tool schema, so the pin holds the tool's
 #    contract and not its indentation.
-scripts/verify/check.mjs 7aea302c6f4a3520c97466391029822b487ef06a
+scripts/verify/check.mjs df5c01daf785f1bcf920dc62d407b1f6cc2cdc9d
 scripts/verify/scope.mjs f5895703e958e67c79a1f2f4392b037a84c26220
 scripts/verify/scope-check.mjs 2a4ba5563b68a9979c40165363235f72cac0d4df
 
 # --- the pins themselves: editing these is how a drift goes unnoticed ---
-tests/helpers/boundary-locks.mjs c37b7d1e0ea847d033f5e587a17fee01e857384d
+tests/helpers/boundary-locks.mjs bf78c57843e00028152b2bff899d59bf4efdefb3
 tests/helpers/canonical-source-hash.mjs a4ebaa0d40122afce47a52cba39309d7dfdb1af1
 tests/helpers/comment-format.mjs bced9e4c9b7a58b56e3317067d5e6717dd2040bf
 tests/docs/comment-format.test.mjs f8e65a5d6d50cd5ea609c5ba1646d2cb8bcc487f
@@ -173,13 +173,13 @@ tests/tooling/structure-gates.test.mjs 9c95d75ddd7e76c8952a75ff2098dce4059bbb32
 tests/tooling/boundary-locks.test.mjs 948f2c0637576bba79f11e526b99cd0b0cf2f644
 
 # --- controls that decide what the product accepts at runtime ---
-extension/lib/protocol.ts d8684ed6b63fd408c1670ec0c0b8b3ed75b7b64f
+extension/lib/protocol.ts c016b80da370ed7cd27eb532fc431a9810d15650
 # The runtime-safety scan moved from shared/secret-pattern.js to shared/secret-pattern.ts when the core became strict TypeScript; the artifact is tsc output and is never committed, so the criterion pins the source.
 shared/secret-pattern.ts 5392a31127fa25df3d9f55d0a9fa87562200418d
 # The one pinned shared edge module moved from .js to .ts unchanged; same bytes, same criterion, new path.`nhosted/functions/_shared/cors.ts dead4552d786ef0fdbaf71ad5bfb3c99e647b575
 
 # --- surfaces an owner, not an agent, should have to look at ---
-extension/manifest.json 72c7fe577dda04b4a45107b3daa0ee9097891ed7
+extension/manifest.json 98f0b32b61ce22613ad01576184594abbadd3d86
 .gitleaks.toml c86e2ad6f0f7b76e512fda11f76e533b807dc883
 .github/CODEOWNERS ca0271e08aadabe56f86ae17620b36073df44cfb
 .github/workflows/ci.yml 1a473af40bbc6fe476b2764719f89a552d4eb39e
