@@ -180,6 +180,6 @@ shared/secret-pattern.ts 5392a31127fa25df3d9f55d0a9fa87562200418d
 
 # --- surfaces an owner, not an agent, should have to look at ---
 extension/manifest.json 98ef9e7fdb677d37c7519e9635fe0ba9c02ee475
-.gitleaks.toml c86e2ad6f0f7b76e512fda11f76e533b807dc883
+.gitleaks.toml 9e2fabe35824000f8e5aeff06616766722637d31
 .github/CODEOWNERS ca0271e08aadabe56f86ae17620b36073df44cfb
 .github/workflows/ci.yml 1a473af40bbc6fe476b2764719f89a552d4eb39e

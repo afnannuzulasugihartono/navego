@@ -21,7 +21,7 @@ Observed hero grammar:
   (blue for online, green-yellow for playing now), one big number each.
 - "Also available on" row with platform marks under the button.
 
-Adopted on `landing/unduh.html`: the layout order (title, value, stats,
+Adopted on `site/app/routes/unduh.tsx`: the layout order (title, value, stats,
 button, also-available), the button grammar (uppercase, letterspaced,
 glyph-right, sliding gradient, shadow), and the stat shape (dot plus caps
 label plus big number). Kept brand green instead of Steam blue, and a pure
@@ -40,7 +40,7 @@ Observed card grammar:
 - Primary buttons are filled rectangles with small radius; the page accent
   sampled at `#0078d4`.
 
-Adopted on `landing/unduh.html`: one card per browser (five, so the grid wraps),
+Adopted on `site/app/routes/unduh.tsx`: one card per browser (five, so the grid wraps),
 detected-browser badge plus highlight, zip as the filled primary button and CRX
 as the ghost secondary, one requirement line per card. Site radius and green
 accent stay as the house style.
@@ -57,7 +57,7 @@ Observed split grammar:
   and a language list naming each language in itself ("Bahasa Indonesia",
   "English") instead of codes.
 
-Adopted on `landing/index.html` (the site root, the sign-in page): the split
+Adopted on `site/app/routes/index.tsx` (the site root, the sign-in page): the split
 (brand panel plus gate card, stacked
 below 860px), the card order (tabs, magic-link form, divider, providers,
 resend line, note), and the in-itself language list wired to the shared
