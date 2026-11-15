@@ -123,6 +123,18 @@ test('the fields are cut to the length the table holds, so a long answer cannot 
   assert.equal(stored[0].row.pain.length, 600);
 });
 
+test('the preflight answers 204 with no body, because a 204 with a body is refused by the runtime', async () => {
+  const { raw } = harness();
+  const preflight = await raw(new Request('https://x.test/functions/v1/opera-agent-feedback', {
+    method: 'OPTIONS',
+    headers: { origin: 'https://opera-agent.pages.dev', 'access-control-request-method': 'POST' }
+  }));
+  assert.equal(preflight.status, 204);
+  assert.equal(preflight.headers.get('access-control-allow-origin'), 'https://opera-agent.pages.dev');
+  assert.equal(preflight.headers.get('access-control-allow-methods'), 'POST, OPTIONS');
+  assert.equal(await preflight.text(), '', 'a 204 carries no body at all');
+});
+
 test('the migration keeps the answers closed to every role but the service role', () => {
   const sql = readFileSync(new URL('../../hosted/migrations/20261115000000_opera_feedback.sql', import.meta.url), 'utf8');
   assert.match(sql, /create table if not exists public\.opera_feedback/);
