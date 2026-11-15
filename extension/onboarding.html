@@ -1,7 +1,7 @@
 <!-- @last-edited: 2026-11-15 UTC+7. -->
 <!-- @title: onboarding - the first-run page: one question, one button, the dashboard's one-click flow does the rest. -->
-<!-- @state: static page, no scripts; the CTA lands on the dashboard with pair=1, which fires the one-click pair itself. -->
-<!-- @dependencies: onboarding.css, icons/icon48.png. -->
+<!-- @state: static page, no scripts; the CTA lands on the dashboard with pair=1, which fires the one-click pair itself; the frame is the island family: full-height canvas, mark above a wide card. -->
+<!-- @dependencies: onboarding.css. -->
 
 <!doctype html>
 <html lang="id">
@@ -10,21 +10,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Opera Agent — Hampir selesai</title>
   <link rel="icon" href="icons/icon48.png" />
+  <link rel="stylesheet" href="page-frame.css" />
   <link rel="stylesheet" href="onboarding.css" />
 </head>
-<body class="onboarding">
-  <main class="card">
-    <div class="mark" aria-hidden="true">
-      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="16" rx="3.5" fill="#232344"/><path fill-rule="evenodd" fill="#c3c4ff" d="M8 1a7 7 0 1 0 0 14 7 7 0 1 0 0-14ZM12 3.9 7.1 8.5l1.9-.2-2 2.4 1.5 1 2-2.4 2.5-.2-1.1-5.4Z"/></svg>
-    </div>
-    <p class="wordmark">Opera Agent</p>
-    <p class="statusLine"><span class="statusDot" aria-hidden="true"></span>Terpasang di browser ini</p>
-    <h1>Tinggal satu klik.</h1>
-    <p class="sub">Hubungkan browser ini ke akun Opera Agent-mu. Tidak ada kode yang perlu diketik — dashboard yang mengurus sisanya.</p>
-    <a class="cta" href="https://opera-agent.pages.dev/dashboard.html?pair=1#pairing" target="_blank" rel="noreferrer">Pasangkan browser ini</a>
-    <p class="later">Nanti saja — tombolnya ada di popup ekstensi, di baris <strong>Pasangkan browser ini</strong>.</p>
-    <hr class="rule" />
-    <p class="foot">Privasi dari hari pertama. Akun mengikat browser ini ke perangkatmu, bukan sebaliknya.</p>
-  </main>
+<body class="firstPage popup">
+  <div class="column">
+    <header class="brandrow">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1d1d34"/><path fill-rule="evenodd" fill="#c3c4ff" d="M32 2a30 30 0 1 0 0 60 30 30 0 1 0 0-60ZM48.6 14.9 27 33.5l8-.9-8.2 9.5 5.9 4.1 8.1-9.5 10.2-.8-3.3-21.9Z"/></svg>
+      <span class="brandname">Opera Agent</span>
+    </header>
+
+    <main class="islandCard">
+      <h1 class="title">Sisa satu langkah<span class="titleState"> · Menunggu pair</span></h1>
+      <p class="sub">Hubungkan browser ini ke akun Opera Agent-mu. Tombol di bawah membuka dashboard dengan <strong>kode sekali pakai</strong> — browser ini tersambung sendiri, tidak ada yang perlu diketik.</p>
+
+      <div class="actionrow">
+        <a class="cta" href="https://opera-agent.pages.dev/dashboard.html?pair=1#pairing" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13.6 3.4 6.4 13.4h5.4l-2.2 7.2 9.2-11.2h-5.4l2.8-6Z"/></svg>Pasangkan browser ini</a>
+        <span class="actionnote">Satu klik, browser ini langsung terhubung ke akunmu.</span>
+      </div>
+
+      <hr class="rule" />
+
+      <div class="footrow">
+        <a class="ghost" href="https://opera-agent.pages.dev/docs.html" target="_blank" rel="noreferrer">Cara kerja Opera Agent</a>
+        <p class="foot">Nanti saja juga boleh — tombolnya selalu ada di popup ekstensi, baris <strong>Pasangkan browser ini</strong>.</p>
+      </div>
+    </main>
+  </div>
 </body>
 </html>
