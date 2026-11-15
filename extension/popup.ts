@@ -83,8 +83,7 @@ async function showServedVersion(installed: string) {
   if (permission !== 'granted') {
     updateDoorMode = 'allow';
     door.hidden = false;
-    door.classList.remove('doorAccent');
-    door.classList.add('rowAmber');
+    door.classList.remove('doorAccent', 'rowAmber');
     if (title) title.textContent = t('update.allowFolder');
     if (hint) hint.textContent = t('update.allowFolderHint');
     return;
@@ -93,8 +92,8 @@ async function showServedVersion(installed: string) {
   if (served && newerThan(installed, served)) {
     updateDoorMode = 'apply';
     door.hidden = false;
-    door.classList.remove('rowAmber');
-    door.classList.add('doorAccent');
+    door.classList.remove('doorAccent');
+    door.classList.add('rowAmber');
     if (title) title.textContent = t('update.smartReady', { v: served });
     if (hint) hint.textContent = t('update.smartReadyHint');
     return;
@@ -157,7 +156,7 @@ async function showChipState() {
   const stored = await chrome.storage.local.get(['oa_chip_enabled']) as { oa_chip_enabled?: unknown };
   const on = stored.oa_chip_enabled !== false;
   chipToggleButton.setAttribute('aria-checked', String(on));
-  if (chipToggleText) chipToggleText.textContent = on ? 'Tandai tab yang dipegang agent' : 'Jangan tandai tab agent';
+  if (chipToggleText) chipToggleText.textContent = on ? t('chip.labelOn') : t('chip.labelOff');
 }
 
 void showChipState();

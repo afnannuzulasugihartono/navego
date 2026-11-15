@@ -1,0 +1,302 @@
+/* @last-edited: 2026-11-15 UTC+7. */
+/* @title: page-frame - the one full-height frame both extension pages link. */
+/* @state: static; the canvas, the column, the brand row, the card, the title/sub, the status panel, the one accent action, and the foot row are declared once and nowhere else. */
+/* @dependencies: none. */
+/*
+ * WHY THE TWO FULL-HEIGHT PAGES SHARE ONE FILE.
+ * A page rendered twice from two copies of the same rules drifts twice as fast as anyone notices; the frame is declared once, here, and both pages link it.
+ * The words differ; the frame does not.
+ * One card, one accent button, one status line, one foot row.
+ */
+
+/* WHY THE RESET CARRIES !important: the shared stylesheet clamps html and body to the popup's 400px for the popup's sake, and a full-height page cannot out-specify the root element, so the one explicit override is the point of the file. */
+
+html {
+  width: 100vw !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  overflow-x: auto !important;
+}
+
+body.popup.firstPage {
+  margin: 0;
+  width: 100vw;
+  min-width: 0;
+  max-width: none;
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  padding: 40px 16px 56px;
+  background: #10131c;
+  color: #f2f2f2;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.column {
+  width: min(100%, 960px);
+  display: grid;
+  gap: 14px;
+}
+
+.brandrow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 11px;
+  padding: 0 2px;
+}
+
+.brandrow svg { width: 26px; height: 26px; display: block; }
+.brandname { font-size: 15px; font-weight: 600; letter-spacing: .005em; }
+
+.islandCard {
+  box-sizing: border-box;
+  background: #19192f;
+  border: 1px solid rgba(195, 196, 255, .09);
+  border-radius: 14px;
+  padding: 40px 44px 24px;
+  text-align: left;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  grid-template-areas:
+    "title mock"
+    "sub mock"
+    "verdict mock"
+    "actionrow mock"
+    "rule rule"
+    "footrow footrow";
+  column-gap: 44px;
+}
+
+.islandCard > .title { grid-area: title; align-self: end; margin-top: 8px; }
+.islandCard > .sub { grid-area: sub; }
+.islandCard > .verdict { grid-area: verdict; }
+.islandCard > .actionrow { grid-area: actionrow; align-self: end; }
+.islandCard > .mockPanel { grid-area: mock; }
+.islandCard > .rule { grid-area: rule; }
+.islandCard > .footrow { grid-area: footrow; justify-content: flex-start; }
+.islandCard > .islandError { grid-column: 1 / -1; margin-top: 0; }
+
+.title {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.12;
+  font-weight: 650;
+  letter-spacing: -.02em;
+}
+
+.sub {
+  margin: 10px 0 0;
+  max-width: 46ch;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #b9b9e0;
+}
+
+.sub strong { color: #f2f2f2; font-weight: 600; }
+
+.verdict {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  margin: 20px 0 0;
+  padding: 12px 13px;
+  border-radius: 8px;
+  background: #1d1d34;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.verdictDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #3ecf8e;
+  flex: 0 0 auto;
+}
+
+.verdictDot.is-pending { background: #f2c94c; }
+.verdictDot.is-idle { background: #454575; }
+
+.verdictText { min-width: 0; display: flex; align-items: center; }
+.verdictMain { font-size: 13px; font-weight: 600; line-height: 1.25; }
+
+.actionrow { margin-top: 18px; }
+
+.islandCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 8px;
+  background: #c3c4ff;
+  color: #0a0a24;
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: .005em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.islandCta:hover { background: #dcdcfb; }
+.islandCta:focus-visible { outline: 2px solid #c3c4ff; outline-offset: 2px; }
+.islandCta svg { width: 17px; height: 17px; display: block; }
+
+.rule {
+  border: 0;
+  border-top: 1px solid rgba(195, 196, 255, .10);
+  margin: 22px 0 14px;
+}
+
+.footrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 13px;
+  border: 1px solid rgba(195, 196, 255, .22);
+  border-radius: 8px;
+  background: transparent;
+  color: #c3c4ff;
+  font-size: 12px;
+  font-weight: 550;
+  text-decoration: none;
+  transition: background .15s, border-color .15s;
+}
+
+.ghost:hover { background: rgba(195, 196, 255, .08); border-color: rgba(195, 196, 255, .35); }
+.ghost:focus-visible { outline: 2px solid #c3c4ff; outline-offset: 2px; }
+
+.foot { margin: 0; font-size: 12px; color: #8b8bad; }
+
+.islandError {
+  margin: 12px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 107, 107, .14);
+  color: #ff8484;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+/* WHY THE RIGHT COLUMN IS THE PRODUCT ITSELF: a first-run page that describes the product loses to one that shows it; the mock is our own popup, drawn with our tokens, not a stock illustration. */
+
+.mockPanel {
+  align-self: center;
+  background: #10131c;
+  border: 1px solid rgba(195, 196, 255, .07);
+  border-radius: 12px;
+  padding: 16px 14px 12px;
+  display: grid;
+  gap: 8px;
+  user-select: none;
+}
+
+.mockTopbar {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 2px 2px 8px;
+  border-bottom: 1px solid rgba(195, 196, 255, .10);
+}
+
+.mockMark svg { width: 26px; height: 26px; display: block; }
+.mockName { font-size: 11px; font-weight: 650; letter-spacing: .005em; }
+
+.mockStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1d1d34;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.mockDot { width: 7px; height: 7px; border-radius: 50%; background: #3ecf8e; flex: 0 0 auto; }
+.mockMain { font-size: 10.5px; font-weight: 650; line-height: 1.2; display: block; }
+.mockSub { font-size: 8px; color: #8b8bad; display: block; line-height: 1.3; margin-top: 1px; }
+
+.mockCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 32px;
+  border-radius: 7px;
+  background: rgba(62, 207, 142, .15);
+  color: #3ecf8e;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.mockCta svg { width: 12px; height: 12px; display: block; }
+
+.mockRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 7px;
+  border-radius: 8px;
+}
+
+.mockRowIco { flex: 0 0 18px; display: grid; place-items: center; color: #c3c4ff; }
+.mockRowIco svg { width: 13px; height: 13px; display: block; }
+.mockRowTitle { font-size: 10px; font-weight: 550; display: block; line-height: 1.3; }
+.mockRowHint { font-size: 7.5px; color: #8b8bad; display: block; line-height: 1.3; }
+.mockChevron { margin-left: auto; color: #565678; font-size: 11px; line-height: 1; }
+
+.mockFoot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(195, 196, 255, .10);
+  font-size: 8px;
+  color: #565678;
+}
+
+.mockLink { color: inherit; }
+.mockEmpty {
+  border: 1px dashed rgba(195, 196, 255, .18);
+  border-radius: 8px;
+  padding: 14px 10px;
+  font-size: 10px;
+  color: #b9b9e0;
+  text-align: center;
+}
+
+@media (max-width: 880px) {
+  .islandCard {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "sub"
+      "verdict"
+      "actionrow"
+      "rule"
+      "footrow";
+    padding: 28px 22px 20px;
+  }
+  .mockPanel { display: none; }
+  .footrow { justify-content: center; }
+  .verdict { margin-left: auto; margin-right: auto; }
+}
+
+@media (max-width: 560px) {
+  .islandCard { padding: 20px 18px 16px; }
+  .title { font-size: 28px; }
+}
