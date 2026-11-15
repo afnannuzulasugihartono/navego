@@ -110,7 +110,7 @@ test('one drive downloads the CSV and leaves the four files the site ships', { s
 
     for (const row of result.hashes) {
       const name = path.basename(row.file);
-      assert.equal(row.sha256, sha256(path.join(root, 'landing', 'contoh', name)), `${name} is not the file the site ships`);
+      assert.equal(row.sha256, sha256(path.join(root, 'site', 'public', 'contoh', name)), `${name} is not the file the site ships`);
       assert.equal(row.bytes, fs.statSync(path.join(work, 'out', name)).size, `${name} is the file the run made`);
     }
 

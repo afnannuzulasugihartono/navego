@@ -168,7 +168,7 @@ tests/docs/comment-format.test.mjs f8e65a5d6d50cd5ea609c5ba1646d2cb8bcc487f
 tests/docs/comment-claims.test.mjs 27e1d1218b036ef7dd028b33cb63236ae325c442
 
 # --- structural rules a human reviewer would otherwise have to remember ---
-tests/tooling/hygiene.test.mjs da2fc709635d0f8bc3c95320a26745a314f0b739
+tests/tooling/hygiene.test.mjs f16a3723bdbd3cae93b4f2d798470cd602cf773e
 tests/tooling/structure-gates.test.mjs 9c95d75ddd7e76c8952a75ff2098dce4059bbb32
 tests/tooling/boundary-locks.test.mjs 948f2c0637576bba79f11e526b99cd0b0cf2f644
 

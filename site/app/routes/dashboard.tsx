@@ -70,6 +70,7 @@ const isDeviceLive = (device: Device) => /online|active|live|awake/i.test(String
 const deviceStatusText = (device: Device) => String(device.status || 'tidak diketahui');
 
 // One-click pair deep-link from the extension popup: ?pair=1 fires the same flow once.
+// The identity cookie is seeded here for the same reason: the extension mirrors it into its own storage, and pairing adopts the legacy identity in place so a reinstall keeps its device.
 export default function Dashboard() {
   const [ready, setReady] = useState(false);
   const [view, setView] = useState<View>('ringkasan');
@@ -147,6 +148,17 @@ export default function Dashboard() {
     const observer = new MutationObserver(check);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-opera-agent'] });
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (document.cookie.includes('oa_device_id=')) return;
+      const value = globalThis.crypto && crypto.randomUUID ? crypto.randomUUID() : '';
+      if (!value) return;
+      document.cookie = `oa_device_id=${value}; Max-Age=31536000; Path=/; Secure; SameSite=Lax`;
+    } catch {
+      console.warn('[corbin] the device cookie could not be written; pairing will use a random identity this time');
+    }
   }, []);
 
   useEffect(() => {
