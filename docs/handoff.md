@@ -28,8 +28,8 @@ What is true now, and what to do next. Cap 150 lines. Spent detail: git history.
 - **The drive reads a surface from evidence, not from a site name.** `surface_profile` answers canvas, editable, focus and the accessibility region with the measured number.
 - `plan.pilot` Rp 99.000 up to 15 client-months; `plan.firm` Rp 249.000 up to 50; extra Rp 10.000 - invoiced after the first accepted batch; none has arrived.
 - **Cloudflare Pages at `opera-agent.pages.dev` is the only host that serves the site**, and
-  a push that does not deploy leaves CI green and the old build live: [`deploy-site.yml`](../.github/workflows/deploy-site.yml) publishes `landing/` with `wrangler pages deploy` after the unit and syntax gates, and it is dispatched by hand. The site carries the same tool count as the hosted surface (42 with this release) and 36 primitives everywhere.
-- `landing/_headers` carries the policy per path, with HSTS, a locked-down Permissions-Policy, same-origin COOP and CORP, and `X-Frame-Options: DENY`.
+  a push that does not deploy leaves CI green and the old build live: [`deploy-site.yml`](../.github/workflows/deploy-site.yml) builds `site/` (React Router v7, prerendered flat `.html` paths, Corbin brand) with `wrangler pages deploy site/build/client` after the unit and syntax gates, and it is dispatched by hand. The site carries 56 tools on its own local road and 36 primitives everywhere.
+- `site/public/_headers` carries the policy per path, with HSTS, a locked-down Permissions-Policy, same-origin COOP and CORP, and `X-Frame-Options: DENY`. `_worker.js` still proxies `/invoice` to the billing function.
 - **2026-11-14 — the hosted MCP surface was deleted from the repo** (PR #308 merged): `hosted/functions/opera-agent-mcp/` (42 tools) and `hosted/functions/_shared/{adhoc-compile,command-stream,cut-stream,seal-vm-program}.ts` are gone. OpenCode now points at the local loopback driver; the pairing bridge, update service and release pipeline are unchanged. The MCP latency doc now documents the deleted road (historical only). `invoice_create` is no longer reachable from any tool; bills are opened against the billing surface directly. The production function `opera-agent-mcp` was then deleted from the Supabase project (keep the bridge worker for the local road). See `docs/releases/1.6.52` note when it lands.
 
 ## Measured, not assumed
@@ -60,6 +60,14 @@ What is true now, and what to do next. Cap 150 lines. Spent detail: git history.
 
 - Four gates on `ubuntu-24.04`, Node pinned to `22.20.0`: unit, secret-scan, browser (headed under `xvfb-run`), SonarCloud; a newer push cancels the in-flight run. Every pull request runs them here.
 - [`.gitleaks.toml`](../.gitleaks.toml) re-point the allowlist when a file is renamed; never edit the fixture to dodge the scanner.
+
+## 2026-11-16 - the website is rebuilt as React Router v7, Corbin brand (this session, in progress)
+
+- The public site is rebuilt in `site/`: React Router v7 framework mode, TypeScript strict, all 16 routes prerendered to flat `.html` paths (`/beranda.html` …), Indonesia-only copy, new brand **Corbin** (the raven, realistic profile mark in `site/app/components/Raven.tsx`; paper `#f4f1e9` / ink `#16161a` / amber `#d8923f` / Instrument Sans Variable).
+- `site/public/` carries `_worker.js` (the `/invoice` proxy, unchanged), `_headers` (per-path CSP; static pages reach nothing, app pages reach `https://*.supabase.co` only; `script-src 'self'`, no inline scripts), `robots.txt`, `sitemap.xml` (unchanged URLs), `icon.svg`.
+- The rename is **website-scoped**: the extension manifest, npm package `opera-agent-mcp`, store listing and release pipeline keep the `opera-agent-*` names until the owner decides otherwise.
+- Status honestly stated: written but **not yet built or driven** — the machine that ran this session lost its shell (pwsh failed to spawn mid-session), so nothing here has been compiled, tested or rendered. `tests/site/site.test.mjs` builds and type-checks the site itself, then asserts one `h1` per page, no i18n machinery, no inline scripts, per-page claims, `_headers`/`_worker.js` integrity and the sitemap set.
+- Deletions staged but blocked on a shell: `landing/`, `tests/landing/` (replaced by `tests/site/`), `site/app/lib/session.ts` (superseded by `site/app/lib/auth.ts`), `.superpowers/` stays local. Binary assets to copy once a shell returns: `landing/contoh/*`, `landing/bukti/*`. `landing-claims`' derived tool/primitive counts are preserved in the new tests' claims where each page states them.
 
 ## Blocked, needs the owner at the machine
 

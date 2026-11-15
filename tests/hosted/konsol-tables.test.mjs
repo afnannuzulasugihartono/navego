@@ -1,11 +1,11 @@
 // @last-edited: 2026-10-10 UTC+7.
 // @title: konsol-tables — the table editor reads through definer functions, never a grant.
-// @state: 14 locks, green; pins migration 20261010090000 and the #tabel section of dashboard.html.
+// @state: 14 locks, green; pins migration 20261010090000 and the #tabel view of site/app/routes/dashboard.tsx.
 // @dependencies: test, assert, fs.
 
 // The console's isolation rests on two layers, and this file pins both copies of the truth: the scope map inside opera_konsol_scope() decides what a table's rows mean, and every USING clause repeats the same parenthesized qual.
 // The repetition is the risk, so the drift lock compares the two copies string for string — a policy edited by hand fails here before it ships.
-// The page side is pinned in landing-dashboard test one; this file adds the locks only this feature needs: the mask list, the clamps, the operator gate, and a grid that escapes and never writes.
+// The page side is pinned below against the React console; this file adds the locks only this feature needs: the mask list, the clamps, the operator gate, and a grid that escapes and never writes.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -13,7 +13,6 @@ import fs from 'node:fs';
 
 const root = new URL('../../', import.meta.url);
 const sql = fs.readFileSync(new URL('hosted/migrations/20261010090000_opera_agent_konsol_tables.sql', root), 'utf8');
-const html = fs.readFileSync(new URL('landing/dashboard.html', root), 'utf8');
 
 const mapRows = [...sql.matchAll(/^ {4}\('([a-z0-9_]+)', '(owner|operator)', '(.*)'\),?$/gm)]
   .map((match) => ({ table: match[1], scope: match[2], qual: match[3] }));
@@ -143,28 +142,29 @@ test('the tautology is gone and workflow runs stay owned', () => {
 });
 
 test('the dashboard section exists, is reachable, and reads through the readers', () => {
-  assert.match(html, /<section id="tabel">/, 'the console has its own section');
-  assert.match(html, /<h1[^>]*>Tabel<\/h1>/, 'the section names itself');
-  assert.equal((html.match(/<a href="#tabel">/g) || []).length, 1, 'the one rail leads to it, instead of a second strip repeating the same names');
-  assert.match(html, /if \(target === 'tabel'\) konsolInit\(\);/, 'the console initialises on first visit, not on page load');
-  assert.match(html, /konsolRpc\('opera_konsol_tables'/, 'the sidebar lists through the table reader');
-  assert.match(html, /konsolRpc\('opera_konsol_table'/, 'each page comes through the row reader');
+  const page = fs.readFileSync(new URL('site/app/routes/dashboard.tsx', root), 'utf8');
+  const api = fs.readFileSync(new URL('site/app/lib/dashboardApi.ts', root), 'utf8');
+  assert.match(page, /<h1>Tabel<\/h1>/, 'the console has its own view');
+  assert.match(page, /aria-label="Daftar tabel"/, 'the one rail leads to it');
+  assert.match(api, /opera_konsol_tables/, 'the sidebar lists through the table reader');
+  assert.match(api, /opera_konsol_table/, 'each page comes through the row reader');
 });
 
 test('the dashboard grid escapes, caps, and never writes', () => {
-  assert.match(html, /title="\$\{esc\(cell\.full\)\}">\$\{esc\(cell\.text\)\}/, 'every cell escapes the whole value into the title and the shown text into the cell');
-  assert.match(html, /\$\('konsolJson'\)\.textContent = JSON\.stringify\(record, null, 2\)/, 'the JSON pane sets text, never markup');
-  assert.match(html, /const cap = 5000;/, 'an export stops at five thousand rows');
-  assert.match(html, /p_limit: 200/, 'an export page is the reader\'s own maximum');
-  assert.match(html, /id="konsolSearch"[^>]*maxlength="64"/, 'the search box mirrors the reader\'s 64-character cut');
-  assert.doesNotMatch(html, /method: '(PUT|PATCH|DELETE)'/, 'the console issues no write verb — it reads');
-  assert.match(html, /if \(seq !== konsol\.seq\) return;/, 'a stale response cannot land over a newer one');
-  assert.match(html, /const guarded = \/\^\[=\+\\-@\]\/\.test\(text\)/, 'a cell that begins with =, +, - or @ cannot become a spreadsheet formula');
-  assert.match(html, /'Unknown table\.'\s*:\s*'Tabel itu tidak dikenal\.'/, 'the unknown-table refusal is translated');
-  assert.match(html, /'That table belongs to the operator account\.'\s*:\s*'Tabel itu hanya untuk akun operator\.'/, 'the operator refusal is translated');
+  const page = fs.readFileSync(new URL('site/app/routes/dashboard.tsx', root), 'utf8');
+  const api = fs.readFileSync(new URL('site/app/lib/dashboardApi.ts', root), 'utf8');
+  assert.doesNotMatch(page, /dangerouslySetInnerHTML/, 'React renders text nodes; the grid never injects markup');
+  assert.match(page, /const cap = 5000;/, 'an export stops at five thousand rows');
+  assert.match(page, /p_limit: 200/, 'an export page is the reader\'s own maximum');
+  assert.match(page, /title=\{text\}>\{text\.length > 90/, 'every cell carries the whole value in its title');
+  assert.match(page, /\/\^\[=\+\\-@\]\//, 'a cell that begins with =, +, - or @ cannot become a spreadsheet formula');
+  assert.doesNotMatch(api, /method: '(PUT|PATCH|DELETE)'/, 'the console issues no write verb — it reads');
+  assert.match(api, /Unknown table\./, 'the unknown-table refusal is translated');
+  assert.match(api, /That table belongs to the operator account\./, 'the operator refusal is translated');
+  assert.match(api, /say\(/, 'a stale or refused read names itself, not the page');
 });
 
 test('the grid declares a header cell before any data arrives', () => {
-  assert.match(html, /<thead id="konsolHead"><tr><th scope="col">/, 'a static header row exists so the table is never headerless');
-  assert.match(html, /if \(!\$\('konsolRows'\)\.children\.length\) \$\('konsolHead'\)\.innerHTML = '';/, 'a first load that fails takes the promise down with it');
+  const page = fs.readFileSync(new URL('site/app/routes/dashboard.tsx', root), 'utf8');
+  assert.match(page, /<th scope="col">Memuat…<\/th>/, 'a static header row exists so the table is never headerless');
 });

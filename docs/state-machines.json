@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generated": "2026-11-14T00:00:00+07:00",
-  "source": "Two read-only sweeps, 2026-11-09 UTC: extension/|local/|shared/ (~200 files) and hosted/|landing/|scripts/|docs/store/|.github/",
+  "source": "Two read-only sweeps, 2026-11-09 UTC: extension/|local/|shared/ (~200 files) and hosted/|site/|scripts/|docs/store/|.github/ (site/ rebuilt 2026-11-16; the five site entries follow their files to site/)",
   "why": "An implicit state machine is code whose behavior hangs on state nobody declared. It is the shape of every silent failure in this product: the 'connected but dead' bridge, the ghost listen session, the command that completes after its timeout, the plan that runs out mid-run. The register names each one, and the gate (tests/tooling/implicit-state-machines.test.mjs) refuses hidden state nobody can point at. The decision order is fixed: UX > DX > AX — a failure the user can feel is fixed before a convenience for either of us.",
   "machines": [
     {
@@ -362,7 +362,7 @@
     {
       "id": "landing-auth-session",
       "kind": "site",
-      "where": "landing/index.html:212",
+      "where": "site/app/lib/auth.ts (proveSession/renewAccessToken)",
       "states": [
         "unprobed",
         "signed-in",
@@ -380,7 +380,7 @@
     {
       "id": "landing-install-marker",
       "kind": "site",
-      "where": "landing/dashboard.html (installState/checklist)",
+      "where": "site/app/routes/dashboard.tsx (checklist)",
       "states": [
         "unknown",
         "not-installed",
@@ -398,7 +398,7 @@
     {
       "id": "landing-plan-hero-state",
       "kind": "site",
-      "where": "landing/dashboard.html (planCard)",
+      "where": "site/app/routes/dashboard.tsx (plan card)",
       "states": [
         "loading",
         "ok",
@@ -464,7 +464,7 @@
     {
       "id": "landing-listen-session-lifecycle",
       "kind": "site",
-      "where": "landing/dashboard.html (#dengar)",
+      "where": "site/app/routes/dashboard.tsx (#dengar)",
       "states": [
         "live",
         "ended",
@@ -480,7 +480,7 @@
     {
       "id": "landing-wallet-reservation-lifecycle",
       "kind": "site",
-      "where": "landing/dashboard.html (#saldo)",
+      "where": "site/app/routes/dashboard.tsx (#saldo)",
       "states": [
         "open",
         "settled",
@@ -527,6 +527,28 @@
       "wrongIfConfused": "interrupted download + conflictAction overwrite leaves a file on disk whose delivery was never recorded in the manifest — the client-month the billing cannot see is the estate's standing joke",
       "decision": "model",
       "why": "one manifest verdict shared with the local twin — the two stores never agree, so the same client-month can be delivered on one surface and missing on the other",
+      "rank": 3
+    },
+    {
+      "id": "site-dashboard-view-router",
+      "kind": "site",
+      "where": "site/app/routes/dashboard.tsx (view + location.hash)",
+      "states": [
+        "ringkasan",
+        "device",
+        "riwayat",
+        "tabel",
+        "dengar",
+        "saldo",
+        "pairing",
+        "aksi",
+        "akun"
+      ],
+      "writers": "go() (writes hash + state together), the hashchange listener (writes state from hash)",
+      "readers": "the rail nav, every view section, document.title (via the section heading, kept implicitly by view)",
+      "wrongIfConfused": "the two writers drift: the rail shows one view while the hash says another, the back button jumps sections, and a deep link lands on an empty door with nothing saying how to open it",
+      "decision": "model",
+      "why": "hash is the shareable source and state is the render truth, one listener reconciles them on pop events and go() writes both for ordinary clicks — deep links must land on the view they name, UX first",
       "rank": 3
     },
     {

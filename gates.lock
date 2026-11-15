@@ -52,7 +52,7 @@
 # them can compute. This is the one rule that is not a gate, and it is the one that
 # catches what the gates cannot.
 #
-# 1. OPEN IT. A change to landing/ is finished when the page has been rendered in a
+# 1. OPEN IT. A change to site/ is finished when the page has been rendered in a
 #    real browser and looked at, not when the suite is green. Screenshot it. A
 #    change that was never opened has not been made.
 #
@@ -68,7 +68,7 @@
 #
 #    THE BENCHMARK FOR THE DOWNLOAD TAB IS https://code.visualstudio.com/Download
 #    and it is the one that decides that tab, every time, until this line changes.
-#    Open it before touching landing/unduh*.html and hold it to these four:
+#    Open it before touching site/app/routes/unduh.tsx and hold it to these four:
 #      - IT GIVES THE MATCHING PLATFORM THE ONLY FILLED BUTTON. Windows, macOS and
 #        Linux each get one; the other builds live behind a closed "Select a
 #        download…" list. A card with two equal buttons has not learned this.

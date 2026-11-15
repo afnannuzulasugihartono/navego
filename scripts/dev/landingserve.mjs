@@ -1,56 +1,56 @@
-// @last-edited: 2026-11-03 UTC+7.
-// @title: landingserve — serve landing/ on 127.0.0.1 so the redesign can be looked at before it ships.
-// @state: one throwaway server for the review step; it reads files and answers, and holds no state.
+// @last-edited: 2026-11-16 UTC+7.
+// @title: site-serve — serve site/build/client/ on 127.0.0.1 so the rebuild can be looked at before it ships.
+// @state: one throwaway server for the review step; it reads the build output and answers, and holds no state.
 // @dependencies: node:http, node:fs, node:path.
 
 // WHY THIS EXISTS.
 // A redesign is judged by looking at it, and the shipped site is deployed by a manual dispatch.
-// This serves the same bytes the site would, so the screenshots are of the change and not of the last deploy.
+// This serves the exact bytes the build produced, so the screenshots are of the change and not of the last deploy.
+// Run `npm run build --prefix site` first.
 
 import { createServer } from 'node:http';
-import { readFile } from 'node:fs/promises';
-import { extname, resolve, sep } from 'node:path';
+import { readdir, readFile } from 'node:fs/promises';
+import { extname, join, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = new URL('../../landing/', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1').replace(/\//g, sep);
+const root = fileURLToPath(new URL('../../site/build/client/', import.meta.url));
 const rootWithSep = root.endsWith(sep) ? root : root + sep;
-const types = { '.css': 'text/css', '.js': 'text/javascript', '.html': 'text/html; charset=utf-8', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg' };
+const types = { '.css': 'text/css', '.js': 'text/javascript', '.html': 'text/html; charset=utf-8', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.xml': 'application/xml', '.txt': 'text/plain; charset=utf-8' };
 const port = Number(process.argv[2] || 8777);
 
 // WHY THE PATH IS BUILT FROM A WHITELIST, NOT JOINED FROM THE REQUEST: joining user input into a filesystem path is the shape the traversal checks flag, whatever guard follows it.
-// The request names a file, the whitelist decides whether it exists, and the only names that exist are the keys below.
+// The request names a file, the whitelist decides whether it exists, and only files inside the build output are servable.
 
-const FILES = new Set([
-  'beranda.html', 'index.html', 'akun.html', 'dashboard.html', 'unduh.html',
-  'privasi.html', 'syarat.html', '404.html', 'fitur.html',
-  'studi.html', 'bukti.html', 'dukungan.html', 'docs.html', 'harga.html', 'site.css', 'beranda.css',
-  'features.css', 'studi.css', 'bukti.css', 'download.css', 'auth.css', 'app.css', 'dashboard.css',
-  'harga.css', 'docs.css', 'support.css', 'notfound.css', 'i18n.js', 'spotlight.js', 'docs.js', 'reveal.js',
-  'wayfind.js', 'palette.js', 'markdown.js', 'demo.js', 'demo-kit.js', 'verify.js', 'run.js', 'copy.js', 'paint.js', 'term.js', 'portal.js', 'mcp.html', 'oauth/consent.html', 'fonts/instrument-sans-latin.woff2',
-  'fonts/playfair-display-latin.woff2', 'fonts/anton-latin.woff2',
-  'bukti/portal.jpg'
-]);
+const entries = new Set();
+async function walk(dir, prefix) {
+  for (const entry of await readdir(dir, { withFileTypes: true })) {
+    const rel = prefix ? `${prefix}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) await walk(join(dir, entry.name), rel);
+    else entries.add(rel);
+  }
+}
+await walk(root, '');
 
 createServer(async (req, res) => {
   const raw = (req.url || '/').split('?')[0];
-  // WHY ENCODED CHARACTERS DIE HERE: the whitelist below is matched after decoding, so %2F must die before the match — otherwise /a%2Fb and /a%2fb name the same file and the set answers a question it was never asked.
   if (/%|\\/.test(raw) || /\0|\.\./.test(raw)) {
     res.writeHead(403);
     res.end();
     return;
   }
   const path = decodeURIComponent(raw);
-  const name = path === '/' ? 'beranda.html' : path.replace(/^\//, '');
-  if (!/^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+\.(html|woff2|jpg|png|svg)$|^[A-Za-z0-9._-]+\.(html|css|js|svg|woff2)$/.test(name)) {
+  const name = path === '/' ? 'index.html' : path.replace(/^\//, '');
+  if (!/^[A-Za-z0-9._/-]+\.(html|css|js|svg|woff2|jpg|xml|txt)$|^(oauth\/consent|index|404)\.html$/.test(name)) {
     res.writeHead(404);
     res.end();
     return;
   }
-  if (!FILES.has(name)) {
+  if (!entries.has(name) && !entries.has(`${name}.html`)) {
     res.writeHead(404);
     res.end();
     return;
   }
-  const file = resolve(root, name);
+  const file = entries.has(name) ? resolve(root, name) : resolve(root, `${name}.html`);
   if (!file.startsWith(rootWithSep)) {
     res.writeHead(403);
     res.end();
@@ -64,4 +64,4 @@ createServer(async (req, res) => {
     res.writeHead(404);
     res.end();
   }
-}).listen(port, '127.0.0.1', () => console.log(`landing served on http://127.0.0.1:${port}`));
+}).listen(port, '127.0.0.1', () => console.log(`site served on http://127.0.0.1:${port}`));

@@ -314,7 +314,7 @@ export async function runProof({
 
   const compared = (name, file, extra = {}) => {
     const hash = sha256(file);
-    const shipped = sha256(path.join(root, 'landing', 'contoh', name));
+    const shipped = sha256(path.join(root, 'site', 'public', 'contoh', name));
     if (hash !== shipped) throw new Error(`${name} came out as ${hash}, and the site ships ${shipped}`);
     return note({
       ...extra,
@@ -322,7 +322,7 @@ export async function runProof({
       file: relative(root, file),
       bytes: fs.statSync(file).size,
       sha256: hash,
-      matches: `landing/contoh/${name}`
+      matches: `site/public/contoh/${name}`
     });
   };
 
@@ -459,7 +459,7 @@ export function recordMarkdown({ steps, browser, slides }) {
   return [
     '# Proof run: one browser, four files',
     '',
-    'The local MCP server drove a throwaway Chrome over stdio: it opened the fixture portal, read the page, downloaded the CSV, and built the four files the site offers. Each file was hashed and compared with the same-named file in `landing/contoh/`.',
+    'The local MCP server drove a throwaway Chrome over stdio: it opened the fixture portal, read the page, downloaded the CSV, and built the four files the site offers. Each file was hashed and compared with the same-named file in `site/public/contoh/`.',
     '',
     `Browser: ${browser}. Deck slides: ${slides}.`,
     '',
@@ -471,7 +471,7 @@ export function recordMarkdown({ steps, browser, slides }) {
     '| --- | --- | --- | --- |',
     ...files,
     '',
-    'The hashes in `run.jsonl` are rechecked against `landing/contoh/` by `tests/tooling/proof-run.test.mjs`, so this record cannot drift away from what the code makes.',
+    'The hashes in `run.jsonl` are rechecked against `site/public/contoh/` by `tests/tooling/proof-run.test.mjs`, so this record cannot drift away from what the code makes.',
     ''
   ].join('\n');
 }

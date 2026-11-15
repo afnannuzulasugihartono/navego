@@ -134,8 +134,8 @@ test('the recorded run still leaves the files the site ships', () => {
 
   for (const row of artifacts) {
     const name = path.basename(row.file);
-    assert.equal(row.matches, `landing/contoh/${name}`, `${name} says what it was compared with`);
-    assert.equal(sha256(path.join(root, 'landing', 'contoh', name)), row.sha256, `${name} on the site moved away from the record`);
+    assert.ok(row.matches === `landing/contoh/${name}` || row.matches === `site/public/contoh/${name}`, `${name} names where it was compared with (historical landing/contoh or current site/public/contoh)`);
+    assert.equal(sha256(path.join(root, 'site', 'public', 'contoh', name)), row.sha256, `${name} on the site moved away from the record`);
     assert.ok(!path.isAbsolute(row.file), 'the record carries a repository path, not a machine path');
   }
 
