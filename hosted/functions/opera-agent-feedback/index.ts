@@ -32,10 +32,13 @@ const LIMITS = Object.freeze({ name: 120, contact: 160, firm: 120, portal: 160, 
 
 function response(req: Request, body: unknown, status: number, headers: Record<string, string> = {}) {
   const origin = resolveAllowedOrigin(req, CORS_DEFAULT_ORIGINS);
-  return new Response(JSON.stringify(body), {
+  // WHY A 204 CARRIES NO BODY: the browser's preflight is answered with 204, and a 204 with a body is not a 204 - the edge runtime refuses to build it and the preflight answers 500, so the browser never sends the POST at all.
+  // Measured on 2026-11-15: the pilot page's form failed in a real browser with "Gagal terkirim" while the same POST from a command line answered 201 - the preflight was the only thing between the visitor and the row.
+  const empty = status === 204 || body === null;
+  return new Response(empty ? null : JSON.stringify(body), {
     status,
     headers: {
-      "content-type": "application/json; charset=utf-8",
+      ...(empty ? {} : { "content-type": "application/json; charset=utf-8" }),
       ...(origin === null ? {} : { "access-control-allow-origin": origin, "access-control-allow-headers": "content-type", "access-control-allow-methods": "POST, OPTIONS" }),
       "x-content-type-options": "nosniff",
       ...headers
@@ -50,7 +53,7 @@ function text(value: unknown, limit: number): string {
 }
 
 Deno.serve(async (req: Request) => {
-  if (req.method === "OPTIONS") return response(req, { ok: true }, 204);
+  if (req.method === "OPTIONS") return response(req, null, 204);
   if (req.method !== "POST") return response(req, { ok: false, error: "This door takes a POST." }, 405);
 
   const length = Number(req.headers.get("content-length") ?? 0);
