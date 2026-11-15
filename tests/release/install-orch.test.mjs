@@ -57,10 +57,10 @@ test('writes keys for each detected browser and reports success', async () => {
     });
     assert.equal(report.ok, true);
     assert.deepEqual(report.browsers.map((b) => b.id).sort(), ['brave', 'chrome']);
-    const keys = execCalls.map(([_, ...args]) => args[1]).filter((a) => String(a).includes('Extensions'));
+    const keys = execCalls.map(([_, ...args]) => args[1]).filter((a) => String(a).includes('ExtensionInstallForcelist'));
     assert.deepEqual(keys.sort(), [
-      'HKCU\\Software\\Google\\Chrome\\Extensions\\ofgemipoobcnbjkfanmofjbdonjapmgl',
-      'HKCU\\Software\\BraveSoftware\\Brave-Browser\\Extensions\\ofgemipoobcnbjkfanmofjbdonjapmgl',
+      'HKCU\\Software\\Policies\\Google\\Chrome\\ExtensionInstallForcelist',
+      'HKCU\\Software\\Policies\\BraveSoftware\\Brave-Browser\\ExtensionInstallForcelist',
     ].sort());
     for (const id of ['Chrome', 'Brave']) {
       assert.equal((await stat(path.join(root, id, 'opera-agent.zip'))).size, bytes.length);
