@@ -120,7 +120,7 @@ test('the gate splits brand from form, and stacks on a narrow screen', () => {
 
   assert.match(html, /<div class="split"[^>]*>/, 'brand and gate share one row');
   assert.match(html, /<div class="brand">/, 'the brand panel stands on the left');
-  const mark = 'M3.6 12.8 8 3.2 12.4 12.8';
+  const mark = 'M8 1a7 7 0 1 0 0 14 7 7 0 1 0 0-14ZM12 3.9 7.1 8.5l1.9-.2-2 2.4 1.5 1 2-2.4 2.5-.2-1.1-5.4Z';
   assert.ok(html.includes(`d="${mark}"`), 'the panel mark reuses the favicon geometry');
   assert.ok(html.includes(`d='${mark}'`), 'which is the geometry the favicon carries');
   assert.match(authCss, /grid-template-columns: minmax\(0, 1fr\) minmax\(0, 1\.02fr\)/, 'two columns on a wide screen');
