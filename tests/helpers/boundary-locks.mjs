@@ -133,10 +133,13 @@
 // The hosted MCP server is gone from the tree: the opencode entrypoint moved to the local driver, and the driver carries the paywall through the paired device + the bridge's session open/report pair.
 // The extension's own pins stay; the tool surface verification is the local TOOLS table, which the local-side gates read, not a frozen digest of a file that no longer exists.
 
+// WHY these three were re-pinned on 2026-11-15: the 1.6.52 release rode them.
+// The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
+
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
   ['../extension/content.ts', '02365ade2ed83b234e7056ff51c3b7b41b1cacf66c74fdad41e1009b8f464fa5'],
   ['../extension/background.ts', '8d700859a184591d6377c7f87aa582fe2404eb48e7e86f9c972b44a44771d5f5'],
-  ['../extension/manifest.json', 'f1644ef85f8a0eeb4fd7e8a13d4d48719fc800664a8860126f005cf2b5109ba0'],
+  ['../extension/manifest.json', 'a7cdbc0be68d0aadb273d43c4f6703c2183f0cbe918814d02c7ecec9d88005b0'],
 ]);
 
 export const OBSERVATION_STACK_LOCKS = Object.freeze([
