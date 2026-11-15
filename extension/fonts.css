@@ -1,0 +1,14 @@
+/* @last-edited: 2026-11-15 UTC+7. */
+/* @title: fonts - the product's own face, bundled so the extension carries it offline. */
+/* @state: static; Instrument Sans (SIL OFL, see fonts/OFL.txt) is the site's display face, shipped beside the pages that wear it. */
+/* @dependencies: fonts/OFL.txt, fonts/InstrumentSans-Variable.ttf. */
+
+/* WHY THE EXTENSION BUNDLES ITS TYPEFACE: the site walks in wearing Instrument Sans; any screen that wears system-ui instead walks in wearing nothing. */
+
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('fonts/InstrumentSans-Variable.ttf') format('truetype-variations');
+}
