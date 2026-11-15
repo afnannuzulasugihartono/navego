@@ -14,7 +14,6 @@
 
 import { applyBuild, newerThan, servedVersion } from '../lib/self-update.js';
 import { t, applyI18n } from '../lib/i18n.js';
-import { STATUS_ICONS } from '../lib/status-icons.js';
 import { isRecord } from '../lib/guards.js';
 
 const DB_NAME = 'opera-agent-self-update';
@@ -163,38 +162,41 @@ const showPageError = (message: string) => {
   line.textContent = message || '';
 };
 
+const setGateState = (tone: 'ready' | 'pending' | 'idle', main: string, sub: string) => {
+  const dot = document.querySelector('#gateState .statusDot');
+  const mainEl = pageElement('gateStateMain');
+  const subEl = pageElement('gateStateSub');
+  if (dot) dot.className = `statusDot ${tone === 'ready' ? '' : tone === 'pending' ? 'is-pending' : 'is-idle'}`;
+  if (mainEl) mainEl.textContent = main;
+  if (subEl) subEl.textContent = sub;
+};
+
 const showPageState = async () => {
   const permission = await folderPermission();
-  const state = pageElement<HTMLElement>('gateState');
   const pick = pageElement<HTMLButtonElement>('gatePick');
   const pickLabel = pageElement<HTMLElement>('gatePickText');
   const update = pageElement<HTMLButtonElement>('gateUpdate');
   const forget = pageElement<HTMLButtonElement>('gateForget');
-  if (!state || !pick || !update || !forget) return;
-  const setTone = (tone: string) => { state.className = `statusLine ${tone}`; };
-  const setLine = (tone: string, icon: keyof typeof STATUS_ICONS, text: string) => {
-    setTone(tone);
-    state.innerHTML = `${STATUS_ICONS[icon] ?? ''}<span>${text}</span>`;
-  };
+  if (!pick || !update || !forget) return;
   const setPickLabel = (text: string) => { if (pickLabel) pickLabel.textContent = text; };
   if (permission === 'granted') {
     const handle = await folderHandle();
     const name = handle?.name ? handle.name : 'folder extension';
-    setLine('ready', 'check', t('update.state.granted', { name }));
+    setGateState('ready', t('update.state.granted', { name }), t('doors.updateAutoHint'));
     pick.hidden = true;
     update.hidden = false;
     forget.hidden = false;
     return;
   }
   if (permission === 'prompt') {
-    setLine('pending', 'clock', t('update.state.prompt'));
+    setGateState('pending', t('update.state.prompt'), t('update.allowFolderHint'));
     pick.hidden = false;
     update.hidden = true;
     forget.hidden = true;
     setPickLabel(t('update.pickAgain'));
     return;
   }
-  setLine('idle', 'power', t('update.state.none'));
+  setGateState('idle', t('update.state.none'), t('update.allowFolderHint'));
   pick.hidden = false;
   setPickLabel(t('update.pickLabel'));
   update.hidden = true;
@@ -210,7 +212,18 @@ function wireUpdatePage() {
     pick.disabled = true;
     try {
       await pickExtensionFolder();
+      // The pick is the hard part; finish the job right here so the reader never has to find a second button.
+      const outcome = await applyNewBuild({ installedVersion: chrome.runtime.getManifest().version });
+      if (outcome.ok && outcome.changed) {
+        chrome.runtime.reload();
+        return;
+      }
       await showPageState();
+      if (outcome.ok) {
+        setGateState('ready', t('update.upToDate', { v: outcome.version || chrome.runtime.getManifest().version }), t('doors.updateAutoHint'));
+      } else {
+        showPageError(t('update.needsFolder'));
+      }
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
         showPageError(t('update.pickAbort'));
@@ -232,8 +245,7 @@ function wireUpdatePage() {
         return;
       }
       if (outcome.ok) {
-        const stateLine = pageElement<HTMLElement>('gateState');
-        if (stateLine) stateLine.innerHTML = `${STATUS_ICONS.check}<span>${t('update.upToDate', { v: outcome.version || chrome.runtime.getManifest().version })}</span>`;
+        setGateState('ready', t('update.upToDate', { v: outcome.version || chrome.runtime.getManifest().version }), t('doors.updateAutoHint'));
         return;
       }
       showPageError(t('update.needsFolder'));

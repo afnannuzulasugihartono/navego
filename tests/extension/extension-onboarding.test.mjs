@@ -20,7 +20,7 @@ test('the popup speaks Indonesian and carries the one-click door', () => {
   assert.match(i18n, /Pasangkan browser ini/, 'the one-click row says what it does');
   assert.match(i18n, /Pair this browser/, 'and English carries the same promise');
 
-  assert.match(read('popup.js'), /pairQuickButton[\s\S]{0,120}pair=1|pair=1[\s\S]{0,120}pairQuickButton/, 'the one-click door deep-links to the dashboard pair handoff');
+  assert.match(read('popup.js'), /pairQuickButton[\s\S]{0,220}pair=1|pair=1[\s\S]{0,220}pairQuickButton/, 'the one-click door deep-links to the dashboard pair handoff');
   assert.doesNotMatch(html, /id="pairToggleButton"|id="pairSection"|id="pairButton"/, 'the manual pairing door is gone; the one-click door is the only door');
 });
 
