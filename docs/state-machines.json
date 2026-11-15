@@ -511,25 +511,6 @@
       "rank": 3
     },
     {
-      "id": "statement-manifest-extension",
-      "kind": "extension",
-      "where": "extension/worker/statement.js:22",
-      "states": [
-        "downloading",
-        "complete",
-        "interrupted",
-        "verified",
-        "duplicate-refused",
-        "replace"
-      ],
-      "writers": "statementDownload, waitForDownload, verifyInPage",
-      "readers": "statement.manifest, delivery billing",
-      "wrongIfConfused": "interrupted download + conflictAction overwrite leaves a file on disk whose delivery was never recorded in the manifest — the client-month the billing cannot see is the estate's standing joke",
-      "decision": "model",
-      "why": "one manifest verdict shared with the local twin — the two stores never agree, so the same client-month can be delivered on one surface and missing on the other",
-      "rank": 3
-    },
-    {
       "id": "site-dashboard-view-router",
       "kind": "site",
       "where": "site/app/routes/dashboard.tsx (view + location.hash)",
@@ -549,6 +530,25 @@
       "wrongIfConfused": "the two writers drift: the rail shows one view while the hash says another, the back button jumps sections, and a deep link lands on an empty door with nothing saying how to open it",
       "decision": "model",
       "why": "hash is the shareable source and state is the render truth, one listener reconciles them on pop events and go() writes both for ordinary clicks — deep links must land on the view they name, UX first",
+      "rank": 3
+    },
+    {
+      "id": "statement-manifest-extension",
+      "kind": "extension",
+      "where": "extension/worker/statement.js:22",
+      "states": [
+        "downloading",
+        "complete",
+        "interrupted",
+        "verified",
+        "duplicate-refused",
+        "replace"
+      ],
+      "writers": "statementDownload, waitForDownload, verifyInPage",
+      "readers": "statement.manifest, delivery billing",
+      "wrongIfConfused": "interrupted download + conflictAction overwrite leaves a file on disk whose delivery was never recorded in the manifest — the client-month the billing cannot see is the estate's standing joke",
+      "decision": "model",
+      "why": "one manifest verdict shared with the local twin — the two stores never agree, so the same client-month can be delivered on one surface and missing on the other",
       "rank": 3
     },
     {
