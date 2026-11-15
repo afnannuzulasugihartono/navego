@@ -358,8 +358,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true;
 });
 
-chrome.runtime.onInstalled.addListener(async () => {
+chrome.runtime.onInstalled.addListener(async (details) => {
   await chrome.alarms.create(WAKE_ALARM, { periodInMinutes: 0.5 });
+  // WHY THE FIRST RUN OPENS A PAGE: an extension a person installed silence does not know what to do next.
+  // The page answers exactly one question - how this browser ties itself to the account - and hands the rest to the dashboard's one-click flow.
+  // Only install reason fires it; an update must never hijack a tab.
+  if (details.reason === 'install') {
+    await chrome.tabs.create({ url: chrome.runtime.getURL('onboarding.html') }).catch(() => {});
+  }
   scheduleSelfUpdate();
 
   await listenStop().catch(() => {});
