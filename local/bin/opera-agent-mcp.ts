@@ -16,7 +16,7 @@ const USAGE = `opera-agent-mcp <mode>
   auth       sign in with a browser and keep the token beside this install
   doctor     print what is connected, the plan, and what the plan allows
   install    detect this machine's browsers, register the extension, keep a verified CRX backup
-  uninstall  remove the extension's registry keys, the OperaAgent folder, and this package; prints what it cannot remove
+  uninstall  remove the extension's policy entries, the OperaAgent folder, and this package; prints what it cannot remove
 
   --help     print this
 `;

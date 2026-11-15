@@ -31,16 +31,16 @@ export function crxReadme(browser: unknown): string {
   return `Opera Agent for ${name}
 
 This folder keeps a verified copy of the extension build (opera-agent.zip) in
-case the browser cannot install it from the registry. To install manually:
+case the browser cannot install it from the policy. To install manually:
 extract opera-agent.zip, then chrome://extensions (edge: edge://extensions,
 brave: brave://extensions) -> Developer mode -> Load unpacked -> the extracted folder.
 
-How the automatic install works: the browser reads HKCU\\Software\\...\\Extensions\\${EXTENSION_ID},
-fetches the update manifest, downloads the same build from the update endpoint, and installs it. Deleting the
-key removes the extension on next start.
+How the automatic install works: the browser reads HKCU\\Software\\Policies\\...\\ExtensionInstallForcelist,
+finds the entry whose data names ${EXTENSION_ID}, fetches the update manifest, downloads the same build from the
+update endpoint, installs it, and keeps it there. Deleting the policy entry removes your protection of it;
+the installed copy stays until you remove it at chrome://extensions (edge: edge://extensions, brave: brave://extensions).
 
-Uninstall: run \`opera-agent-mcp uninstall\`, or double-click
-docs/store/extension-registry-uninstall.reg from the repository.
+Uninstall: run \`opera-agent-mcp uninstall\`. It removes exactly this extension's policy entries, nothing else.
 Pairing: run \`opera-agent-mcp auth\` to sign in, then open the extension and pair the device.
 `;
 }
@@ -83,7 +83,7 @@ export interface InstallOptions {
 export interface BrowserInstallRow {
   id: string;
   keyWritten: boolean;
-  crx: 'written' | 'failed';
+  crx: 'written' | 'failed' | 'skipped';
   destination?: string | undefined;
   error?: string | undefined;
 }
@@ -103,6 +103,10 @@ export async function install({
 
   const results: BrowserInstallRow[] = [];
   for (const browser of found) {
+    if (browser.id === 'chromeForTesting') {
+      results.push({ id: browser.id, keyWritten: false, crx: 'skipped', error: 'not force-installed - no verified policy path for the test binary; use Load unpacked' });
+      continue;
+    }
     const key = writeExtensionKey({ vendor: browser.id, exec });
     if (!key.ok) {
       results.push({ id: browser.id, keyWritten: false, crx: 'failed', error: key.error });
@@ -122,12 +126,13 @@ export async function install({
     results.push({ id: browser.id, keyWritten: true, crx, destination, error });
   }
 
-  const ok = results.every((entry) => entry.keyWritten && entry.crx === 'written');
+  const ok = results.filter((entry) => entry.crx !== 'skipped').every((entry) => entry.keyWritten && entry.crx === 'written');
   const message = [
     ...results.map((entry) => {
-      if (!entry.keyWritten) return `${entry.id}: registry key not written (${entry.error})`;
-      if (entry.crx === 'written') return `${entry.id}: registered for automatic install; backup written to ${entry.destination}`;
-      return `${entry.id}: registered for automatic install (restart the browser to pick it up); the backup ZIP failed: ${entry.error}`;
+      if (entry.crx === 'skipped') return `${entry.id}: ${entry.error}`;
+      if (!entry.keyWritten) return `${entry.id}: policy entry not written (${entry.error})`;
+      if (entry.crx === 'written') return `${entry.id}: force-installed on the next browser start; backup written to ${entry.destination}`;
+      return `${entry.id}: force-installed on the next browser start (the backup ZIP failed: ${entry.error})`;
     }),
     'Sign in with `opera-agent-mcp auth`, then open the extension and pair the device.',
   ].join('\n');
@@ -170,10 +175,11 @@ export async function uninstall({
   print = () => {},
 }: UninstallOptions = {}) {
   const steps: Array<{ step: string; result: string }> = [];
-  for (const vendor of ['chrome', 'brave', 'edge', 'chromeForTesting']) {
+  for (const vendor of ['chrome', 'brave', 'edge']) {
     const result = deleteExtensionKey({ vendor, exec });
-    steps.push({ step: `registry key for ${vendor}`, result: result.ok ? 'deleted; the registry-installed extension removes itself on next browser start' : `not removed (${result.error})` });
+    steps.push({ step: `policy entry for ${vendor}`, result: result.ok ? `deleted ${result.deleted ?? 0} entr${(result.deleted ?? 0) === 1 ? 'y' : 'ies'}; the browser stops forcing it and will not reinstall it` : `not removed (${result.error})` });
   }
+  steps.push({ step: 'chromeForTesting', result: 'not force-installed - no verified policy path for the test binary; use Load unpacked there' });
   if (platform === 'win32') {
     try {
       if (existsSync(root)) {
@@ -208,9 +214,9 @@ export async function uninstall({
     steps.push({ step: 'npm package', result: `could not spawn the uninstall (${String((error as Error)?.message ?? error)}); run \`npm uninstall -g opera-agent-mcp\` yourself` });
   }
   const instructions = [
-    'A registry-installed extension leaves the browser on its next start.',
-    'Copies installed the manual developer-mode way (Load unpacked) stay until you remove them in the browser itself:',
-    'chrome://extensions, brave://extensions, edge://extensions -> Remove (Chrome for Testing: chrome://extensions in the testing browser).',
+    'The policy entries are gone; the browser no longer forces the extension.',
+    'The installed copy stays until you remove it yourself: chrome://extensions, brave://extensions, edge://extensions -> Remove (Chrome for Testing: chrome://extensions in the testing browser).',
+    'Copies installed the manual developer-mode way (Load unpacked) stay until you remove them the same way.',
   ].join('\n');
   const message = [...steps.map((entry) => `${entry.step}: ${entry.result}`), instructions].join('\n');
   print(message);

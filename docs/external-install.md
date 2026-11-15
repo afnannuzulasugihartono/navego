@@ -1,19 +1,17 @@
 # @last-edited: 2026-11-15 UTC+7.
-# @title: external install - the extension installs and updates without the Chrome Web Store, on Windows, macOS and Linux.
-# @state: paths and flags are written to the vendor documentation as of 2026-11-15; Windows forcelist route verified as data only - no throwaway profile has been driven since this file was written. The 2026-11-12 measurement in `docs/registry-install.md` is the evidence for the classic external route.
-# @dependencies: `docs/store/extension-forceinstall.reg`, `docs/store/extension-forceinstall-remove.reg`, `docs/store/ofgemipoobcnbjkfanmofjbdonjapmgl.json`, `docs/store/opera-agent-managed.json`, `docs/registry-install.md`, `docs/install.md`.
+# @title: external install - the extension installs and stays, without the Chrome Web Store, on Windows, macOS and Linux.
+# @state: paths and flags are written to the vendor documentation as of 2026-11-15; the same day the route was chosen (owner decision, single route), and nothing here has been driven end to end on any machine yet.
+# @dependencies: `docs/store/extension-forceinstall.reg`, `docs/store/extension-forceinstall-remove.reg`, `docs/store/opera-agent-managed.json`, `docs/install.md`.
 
 # WHAT THIS IS
 
-Three ways to get the extension into a browser without a store review, all of them riding the same signed CRX behind one URL:
+One route, one story: the extension is **force-installed by policy** and cannot be disabled while the policy stands. It rides the same signed CRX behind one URL:
 
 `https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl`
 
-- **Route A, external extension** - the browser installs what the metadata says to install and keeps it up to date from the same URL. The person keeps control: the extension can be disabled or removed, exactly like a normal install.
-- **Route B, force install policy** - the browser installs it silently, the person cannot turn it off, and it reinstalls on the next start. For machines the person owns, where they want zero steps after one double-click.
-- **Route C, stores** - Edge Add-ons (free) or the Chrome Web Store (one-time $5), if an account is ever created there. Out of scope for this file.
+There is no second, gentler path in this repository. The classic external-key route was retired on 2026-11-15 by the owner's decision; the artifacts live in git history, not in the tree.
 
-Updates ride the same file in both routes: every start, the browser re-reads `update.xml`, and a newly published build arrives without anyone asking. **No route on this page involves choosing a folder** - the folder flow is the developer-mode fallback and lives in `docs/install.md`.
+Updates ride the same URL: every browser start, the browser re-reads `update.xml`, and a newly published build arrives without anyone asking. **No path on this page involves choosing a folder** - the folder flow is the developer-mode fallback in `docs/install.md`.
 
 # BEFORE YOU START
 
@@ -27,47 +25,35 @@ If it does not answer `200` with an `X-Opera-Version` header, nothing on this pa
 
 # WINDOWS
 
-**Route A (classic, no policy, user keeps control)** - `docs/store/extension-registry-install.reg` writes the external-extension keys; see `docs/registry-install.md` for the measured evidence.
-
-**Route B (force install, silent)** - double-click `docs/store/extension-forceinstall.reg`, or:
+**Force install, no admin, per user** - double-click `docs/store/extension-forceinstall.reg`, or:
 
 ```
 reg import extension-forceinstall.reg
 ```
 
-It writes one string value, `1`, under `ExtensionInstallForcelist` for Chrome, Edge and Brave, each carrying `id;update-url`. Then restart the browser. Verify:
+It writes one numbered `ExtensionInstallForcelist` entry per browser (Chrome, Edge, Brave) under HKCU, each carrying `id;update-url`. The number is whatever is next free at the time; on a fresh machine that is `1`. Then restart the browser. Verify:
 
 - `chrome://extensions` shows Opera Agent, installed, enabled, and the button to remove it is greyed out.
-- `chrome://policy` (or `brave://policy`, `edge://policy`) lists the `ExtensionInstallForcelist` policy with the entry above, marked as set by the user.
+- `chrome://policy` (or `brave://policy`, `edge://policy`) lists the `ExtensionInstallForcelist` policy, set by the user.
 
-What Route B costs you, stated once and honestly:
+If you already had your own forcelisted extension(s), do not double-click an unmodified copy blindly - the file writes `1`, and if somebody else already owns `1` it gets overwritten. In that case run `opera-agent-mcp install` instead: it finds the next free number and never touches a foreign entry.
 
-1. The browser starts reporting itself as managed - by you, via your own registry. `chrome://policy` says `ExtensionInstallForcelist` is set. That is the policy system doing exactly what it was designed for.
-2. The extension cannot be disabled or removed while the policy stands. Removing the policy (below) does not remove the extension; it removes the protection. The extension then stays until you remove it at `chrome://extensions`.
-3. On a machine that is actually managed (school, company), the administrator's policy wins: your HKCU write is either refused or overridden, and no file in this repository will override an administrator. That is the wall you hit at school, not a bug to fix.
-4. Value `1` is used. If `ExtensionInstallForcelist` already carries entries of your own, merge them into a single list instead of overwriting - one value per entry, next free number.
+Removal, in order of least to most surgical:
 
-Removal: double-click `docs/store/extension-forceinstall-remove.reg` (deletes exactly value `1`, never your own), restart the browser, then remove the extension at `chrome://extensions` if you want it gone.
+1. `opera-agent-mcp uninstall` - finds this extension's own entries by their id at whatever number they landed and deletes exactly those.
+2. `docs/store/extension-forceinstall-remove.reg` - deletes exactly value `1` of the three policies. Only correct when `1` is ours (a fresh machine), as installed by the `.reg` file unmodified.
+3. Then restart the browser and, if you want the installed copy gone too, remove it at `chrome://extensions` (`edge://`, `brave://`).
+
+What the route costs you, stated once and honestly:
+
+1. The browser starts reporting itself as managed - by you, via your own registry. `chrome://policy` says `ExtensionInstallForcelist` is set.
+2. The extension cannot be disabled or removed while the policy stands. Removing the policy does not remove the installed copy; it removes the protection.
+3. On a machine that is actually managed (school, company), the administrator's policy wins. Your HKCU write is either refused or overridden, and no file in this repository will override an administrator. That is what the school profile case is.
+4. Chrome for Testing is not covered: no verified HKCU policy path exists for the test binary, and writing one would be a guess. Load it unpacked instead.
 
 # MACOS
 
-`defaults` writes user-level preferences; no administrator rights are needed for Route B. Route A needs a folder copy the user owns.
-
-**Route A (external extension, no admin):**
-
-```
-DIR_CHROME="$HOME/Library/Application Support/Google/Chrome/External Extensions"
-DIR_EDGE="$HOME/Library/Application Support/Microsoft Edge/External Extensions"
-mkdir -p "$DIR_CHROME" "$DIR_EDGE"
-cp docs/store/ofgemipoobcnbjkfanmofjbdonjapmgl.json "$DIR_CHROME/"
-cp docs/store/ofgemipoobcnbjkfanmofjbdonjapmgl.json "$DIR_EDGE/"
-```
-
-The filename must stay exactly `ofgemipoobcnbjkfanmofjbdonjapmgl.json`; the browser reads the id from the filename. Restart Chrome or Edge.
-
-For all users on one machine (administrator password required): copy the same file into `/Library/Application Support/Google/Chrome/External Extensions/` or `/Library/Application Support/Microsoft Edge/External Extensions/`, with the directory owned by `root`, group `admin` or `wheel`, not group/world writable, and free of symbolic links - and keep the file itself read-only.
-
-**Route B (force install, no admin):**
+`defaults` writes user-level preferences; no administrator rights are needed.
 
 ```
 U="ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"
@@ -78,26 +64,13 @@ defaults write com.brave.Browser ExtensionInstallForcelist -array "$U"
 
 Restart the browser. Verify with `defaults read com.google.Chrome ExtensionInstallForcelist` and at `chrome://policy`.
 
-Removal: `defaults delete com.google.Chrome ExtensionInstallForcelist` (deletes the whole array), restart, then remove the extension at `chrome://extensions` if you want it gone.
+Removal: `defaults delete com.google.Chrome ExtensionInstallForcelist` (deletes the whole array - if you had your own entries, write them back afterwards), restart, then remove the extension at `chrome://extensions` if you want it gone.
 
-Notes on Route B for macOS, honestly: the browser reports managed while the array stands; Chrome's documented behavior is to reinstall the extension at every start; the array carries only this extension, and `defaults delete` restores the prior state. Brave honors the same defaults mechanism; verify at `brave://policy` rather than trusting the default domain of a fork.
+Notes, honestly: the browser reports managed while the array stands; Brave honors the same defaults mechanism but verify at `brave://policy` rather than trusting the default domain of a fork; on company Macs under a configuration profile, the administrator's profile wins.
 
 # LINUX
 
-**Route A (external extension):** the system directory requires root; there is no per-user external-extensions folder for Chrome on Linux (Edge has one).
-
-```
-sudo mkdir -p /opt/google/chrome/extensions
-sudo cp docs/store/ofgemipoobcnbjkfanmofjbdonjapmgl.json /opt/google/chrome/extensions/
-# Edge, user-level, no root:
-mkdir -p "$HOME/.config/microsoft-edge/External Extensions"
-cp docs/store/ofgemipoobcnbjkfanmofjbdonjapmgl.json "$HOME/.config/microsoft-edge/External Extensions/"
-# Edge, all users, root:
-sudo mkdir -p /usr/share/microsoft-edge/extensions
-sudo cp docs/store/ofgemipoobcnbjkfanmofjbdonjapmgl.json /usr/share/microsoft-edge/extensions/
-```
-
-**Route B (force install, root):** managed policy files are JSON in a directory the browser reads at start.
+Managed policy files are JSON in a directory the browser reads at start; this route needs root. There is no per-user forcelist directory for Chrome on Linux.
 
 ```
 sudo mkdir -p /etc/opt/chrome/policies/managed
@@ -107,15 +80,15 @@ sudo mkdir -p /etc/opt/microsoft/edge/policies/managed
 sudo cp docs/store/opera-agent-managed.json /etc/opt/microsoft/edge/policies/managed/opera-agent.json
 ```
 
-Restart the browser; verify at `chrome://policy`. Brave's policy directory varies by distribution (`/etc/brave/policies/managed` on most); verify with `brave://policy` rather than guessing.
+The file carries `ExtensionInstallForcelist` with the same `id;update-url` entry. Restart the browser; verify at `chrome://policy`. Brave's policy directory varies by distribution (`/etc/brave/policies/managed` on most); verify with `brave://policy` rather than guessing.
 
-Removal: delete the placed file (`sudo rm /etc/opt/chrome/policies/managed/opera-agent.json` or remove the `.json` from the external extensions folder), restart, then remove the extension at `chrome://extensions`.
+Removal: `sudo rm /etc/opt/chrome/policies/managed/opera-agent.json` (or the Edge equivalent), restart, then remove the extension at `chrome://extensions`.
 
 # WHAT IS TRUE, AND WHAT IS NOT
 
-- Both routes ride the same signed CRX and the same update URL; nothing here trusts a third party, and the CRX is checked by the browser itself against the key baked into the manifest.
-- Route A on Windows is measured (throwaway profiles, 2026-11-12); everything else on this page is written from vendor documentation and has not been driven end to end by this project yet. Brave's per-user behavior on everyday profiles is known to be stricter than Chrome's - if the extension shows installed but disabled on Brave, that is the browser asking, and the person enabling it in `brave://extensions` is the supported answer.
-- Neither route works on a machine whose administrator policy forbids external installs. The school profile case is that case. Route around it with a personal profile, or not at all - do not expect a file to win that fight.
-- Updates are re-checked at browser start, not live. A published CRX reaches a machine on its next restart cycle, and the extension pull flow (`extension.update`) reaches an already-running browser when the machine asks for it.
-- Removing Route B's policy stops the protection, not the extension. That asymmetry is the point of the route.
-- Chrome for Testing is a test binary and is deliberately absent from Route B; the registry installer covers it as it covers the rest, because test binaries are what it exists for.
+- One route exists here, and it is the strict one: force install, enforced reinstall, no disable button while the policy stands. The gentle route does not exist in this repository anymore.
+- Route choice was the owner's decision on 2026-11-15; the reason is one story to document, one thing to test, one command that cannot half-work.
+- Nothing on this page has been driven end to end. The mechanism is documented by the vendors (Chrome "Use alternative installation methods", Microsoft Learn "Alternate distribution options"); this file repeats their instructions, not measurements.
+- Neither route works on a machine whose administrator policy forbids external installs - the school profile case. A personal profile, or not at all.
+- Updates are re-checked at browser start, not live. A published CRX reaches a machine on its next restart cycle.
+- Removing the policy stops the protection, not the extension. The installed copy stays until you remove it in the browser.

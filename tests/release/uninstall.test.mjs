@@ -1,6 +1,6 @@
-// @last-edited: 2026-11-12 UTC+7.
+// @last-edited: 2026-11-15 UTC+7.
 // @title: uninstall - every step reported, nothing thrown, exit always 0.
-// @state: honest scrubbing: registry copies disappear with a browser restart; developer-mode copies still ask for one click each.
+// @state: honest scrubbing: the forcelist entries are removed, and the installed copy stays until the person removes it.
 // @dependencies: test, assert, node:fs/promises, node:os, node:path, ../local/install.js.
 
 import test from 'node:test';
@@ -39,27 +39,33 @@ test('clean machine reports nothing removed and exits ok', async () => {
     });
     assert.equal(result.ok, true);
     assert.equal(spawned.yes, true, 'npm uninstall was spawned anyway');
-    for (const vendor of ['chrome', 'chromeForTesting', 'brave', 'edge']) assert.match(result.message, new RegExp(`registry key for ${vendor}`));
+    for (const vendor of ['chrome', 'brave', 'edge']) assert.match(result.message, new RegExp(`policy entry for ${vendor}`));
+    assert.match(result.message, /chromeForTesting/);
     assert.match(result.message, /OperaAgent folder: not found/);
     assert.match(result.message, /device pairing: not found/);
   });
 });
 
-test('deletes all three registry keys', async () => {
+test('deletes our entries from the three policy lists, chromeForTesting untouched', async () => {
   await withRoots(async ({ root, home }) => {
     const calls = [];
     const result = await uninstall({
       platform: 'win32',
       env: env(root, home),
-      exec: (cmd, args) => calls.push(args),
+      exec: (cmd, args) => {
+        calls.push([cmd, ...args]);
+        if (args[0] === 'query') return '    2    REG_SZ    ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl\r\n';
+        return '';
+      },
       spawnImpl: noSpawn,
       root: path.join(home, 'OperaAgent'),
       home,
     });
-    const vendors = calls.map(([op, key]) => String(key).includes('Google\\Chrome for Testing') ? 'chromeForTesting' : String(key).includes('Google') ? 'chrome' : String(key).includes('Brave') ? 'brave' : 'edge');
-    assert.deepEqual(new Set(vendors), new Set(['chrome', 'brave', 'edge', 'chromeForTesting']));
-    assert.match(result.message, /registry key for chrome/);
-    assert.match(result.message, /registry key for edge/);
+    const vendors = calls.filter(([cmd, op]) => op === 'delete').map(([, , key]) => String(key).includes('Google\\Chrome\\') ? 'chrome' : String(key).includes('Brave') ? 'brave' : String(key).includes('Microsoft\\Edge') ? 'edge' : '??');
+    assert.deepEqual(new Set(vendors), new Set(['chrome', 'brave', 'edge']));
+    assert.match(result.message, /policy entry for chrome/);
+    assert.match(result.message, /policy entry for edge/);
+    assert.match(result.message, /chromeForTesting/);
   });
 });
 
