@@ -28,7 +28,7 @@
     <button id="pairQuickButton" class="cta" type="button"><svg class="ctaBolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13.6 3.4 6.4 13.4h5.4l-2.2 7.2 9.2-11.2h-5.4l2.8-6Z"/></svg><svg class="ctaCheck" hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg><span class="ctaText" data-i18n="doors.pairQuick">Pasangkan browser ini</span></button>
 
     <div class="doors" id="doorsSection">
-      <button id="updateDoorButton" class="door rowAmber" type="button" hidden>
+      <button id="updateDoorButton" class="door" type="button" hidden>
         <span class="doorIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v8m0 0 3-3m-3 3L5 7M3 13h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         <span class="doorBody"><span class="doorTitle" id="updateDoorTitle">Izinkan folder sekali</span><span class="doorHint" id="updateDoorHint">Lalu sekali klik selamanya - update jalan sendiri</span></span>
       </button>
@@ -47,8 +47,8 @@
 
     <div class="doors">
       <button id="chipToggleButton" class="door" type="button" role="switch" aria-checked="true">
-        <span class="doorIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5.6" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="1.9" fill="currentColor"/></svg></span>
         <span class="doorBody"><span class="doorTitle" id="chipToggleText">Tandai tab yang dipegang agent</span><span class="doorHint" data-i18n="doors.chipToggleHint">Chip kecil di pojok tab yang sedang bekerja</span></span>
+        <span class="switchUI" aria-hidden="true"><span class="switchKnob"></span></span>
       </button>
       <button id="forgetFolderButton" class="door doorDanger" type="button" hidden>
         <span class="doorIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4h12M6.5 4V2.5h3V4M4 4l.8 9.5A1.4 1.4 0 0 0 6.2 14.5h3.6a1.4 1.4 0 0 0 1.4-1.5L12 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
