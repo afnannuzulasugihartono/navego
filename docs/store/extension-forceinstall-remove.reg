@@ -1,0 +1,16 @@
+; Opera Agent - remove the force install policy, Windows, per-user.
+; @last-edited: 2026-11-15 UTC+7.
+; @title: extension force install removal - deletes exactly the value the install file wrote.
+; @state: per-user policy (HKCU). Removes only value "1", never the ExtensionInstallForcelist key itself and never your own entries under other numbers.
+; @dependencies: it undoes extension-forceinstall.reg; the extension itself then stays until you remove it at chrome://extensions (or brave://, edge://extensions).
+
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\Policies\Google\Chrome\ExtensionInstallForcelist]
+"1"=-
+
+[HKEY_CURRENT_USER\Software\Policies\Microsoft\Edge\ExtensionInstallForcelist]
+"1"=-
+
+[HKEY_CURRENT_USER\Software\Policies\BraveSoftware\Brave-Browser\ExtensionInstallForcelist]
+"1"=-

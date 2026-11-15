@@ -5,7 +5,7 @@
 
 # WHAT IT DOES
 
-**The interactive path lives in [`docs/install.md`](./install.md)** — this page is the `.reg` route for people who want the keys without the npm package (or whose package is unreachable).
+**The interactive path lives in [`docs/install.md`](./install.md)** - this page is the `.reg` route for people who want the keys without the npm package (or whose package is unreachable). For the force-install policy variant (silent, not user-removable) and the macOS/Linux equivalents, see [`docs/external-install.md`](./external-install.md).
 
 `docs/store/extension-registry-install.reg` writes four keys, one per browser
 (Windows `HKCU`, per-user, no administrator rights):
