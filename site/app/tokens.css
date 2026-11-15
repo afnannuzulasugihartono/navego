@@ -148,14 +148,7 @@ h3.card-title { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
 .sheet-rows .k { color: var(--muted-2); }
 .sheet-rows .v { font-weight: 800; }
 
-/* grid tiles for halaman strip */
 
-.logo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px 16px; list-style: none; }
-.logo-tile { padding: 14px 13px 12px; display: grid; gap: 6px; align-content: start; }
-.logo-tile svg { width: 20px; height: 20px; color: var(--ink); }
-.logo-name { font-weight: 700; font-size: 12.5px; }
-.logo-do { font-size: 10.5px; color: var(--muted); line-height: 1.4; }
-.strip-label { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
 
 /* statement lines */
 
@@ -168,6 +161,20 @@ h3.card-title { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
 .steps { list-style: none; counter-reset: step; display: grid; gap: 14px; margin: 18px 0; }
 .steps li { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: baseline; font-size: 14.5px; }
 .steps li::before { counter-increment: step; content: counter(step); font-weight: 800; font-size: 12px; background: var(--ink); color: var(--paper); width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; }
+
+/* steps-brief — the 3-beat promise band */
+
+.steps-brief { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 10px; }
+.steps-brief li { display: grid; gap: 12px; padding: 18px 20px 16px; background: var(--card); border-radius: 12px; }
+.steps-brief li b { font-size: 44px; font-weight: 800; line-height: 1; color: var(--muted-2); font-variant-numeric: tabular-nums; }
+.steps-brief li span { font-size: 13.5px; color: var(--muted-2); line-height: 1.5; }
+.steps-brief li strong { color: var(--ink); font-weight: 800; }
+
+@media (max-width: 860px) {
+  .steps-brief { grid-template-columns: 1fr; gap: 8px; }
+  .steps-brief li { grid-template-columns: auto 1fr; align-items: baseline; padding: 14px 16px; }
+  .steps-brief li b { font-size: 36px; }
+}
 
 /* feature grid */
 
