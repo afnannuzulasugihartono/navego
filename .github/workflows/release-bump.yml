@@ -4,7 +4,7 @@
 # @dependencies: scripts/release/bump-version.mjs, tests/release/bump-version.test.mjs, .github/workflows/publish-*.yml for the deliberate dispatches after merge.
 
 # WHY THE TOOLCHAIN INSTALLS FIRST.
-# The bump engine runs `npm test` against the tree it just rewrote, and pretest dies on `biome: not found` (exit 127) on a clean runner with no node_modules - exactly what release 1.6.52 died on (run 43656685470), after deploy-site and publish-npm had already learned the same lesson.
+# The bump engine runs `npm test` against the tree it just rewrote, and pretest dies on `biome: not found` (exit 127) on a clean runner with no node_modules - exactly what the previous dispatch died on (run 43656685470), after deploy-site and publish-npm had already learned the same lesson.
 # The install is `npm ci` against the tracked lockfile, with --ignore-scripts: it is byte-identical every time and never runs lifecycle scripts, exactly as CI does it.
 
 name: Release bump
