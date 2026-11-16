@@ -13,12 +13,12 @@ This era is deliberate. The owner asked for the site whole in the millennium sty
 - **Corbin** — from the Latin *corvus*, raven; the Germanic given name meaning raven. Short, spellable, one syllable.
 - **The raven** — Odin's Huginn and Muninn: thought and memory, the two birds that fly across the world each day and return with what they saw. The product is the same animal in code: it flies out, it flies back, it acts. Every visual decision descends from that one bird — even the millennium chrome is the light the bird flies through.
 
-## The mark — the chrome raven
+## The mark — the chrome C
 
-- **The medallion** (`components/Raven.tsx`, `public/icon.svg`) — the 1874 Naumann silhouette rebuilt as polished metal inside an iridescent ring: aqua → violet → magenta → lime. Around it, a dark indigo disc lit from the upper left, one lens flare, and the eye as the single warm point (amber, with a lit halo). It is the era's favourite object — the atomic-age medallion — carrying the only animal the brand has ever had.
+- **The monogram** (`components/CorbinMark.tsx`, `public/corbin-mark.svg`) — a C drawn from one geometric arc in brushed chrome, its short bar ending in an amber cursor. The circle is the old medallion reduced to its shape, not its ornament; one raven-free mark for the site, the badge, the favicon and the extension icons.
 - **The head variant** — the same silhouette in chrome for the console rail: metal on indigo, eye lit, one cyan rim line.
 - **The 1874 Naumann plate** (`public/assets/raven-1874.jpg`) — the bird as naturalists measured it, still the picture on beranda, index and notfound. It is *borrowed*, so it carries its credit line wherever it lands. The mark is the bird rendered in chrome; the plate is the bird drawn in ink.
-- **Why the mark is an orb and not a doodle**: 2001 identity design was built on light — spheres, rings, glass, reflections. A raven in an orb is the same sentence in that language, and it survives 16 pixels because the ring, the hook and the eye carry the read.
+- **Why the mark is a circle and not a doodle**: the 2001 language of light survives in the brushed chrome and the navy disc, but nothing decorative remains. The open arc, the bar and the amber cursor are legible at 16 px — the favicon and the toolbar icon read before the wordmark does.
 
 ## The palette — liquid light
 
@@ -28,7 +28,7 @@ This era is deliberate. The owner asked for the site whole in the millennium sty
 - **Aqua `#00b8e6` (hi `#7ff0ff`)** — the millennium's signature liquid light. It marks the live state: active nav, focus halo, progress fill, links on dark, the eye's halo. It never fills a large surface.
 - **Magenta `#e0219b` (hi `#ff7ad9`)** — the second liquid: primary buttons, the numerals in the facts ticker, the starburst, the "»" bullets. One accent per role, never both at once in the same component.
 - **Lime `#86e800`** — the Y2K green, used exactly twice: the free-plan line in the hero and the success pulse on the facts ticker. More than that is vomit.
-- **Amber `#d8923f`** — the raven's eye, and only the eye: the mark, the film lines, the amber data. The one warm point in a cold system.
+- **Amber `#d8923f`** — the cursor at the end of the C's bar, and only that: the mark, the film lines, the amber data. The one warm point in a cold system.
 - **Iridescent rule** (`aqua → violet → magenta → lime → aqua`) — the era's one indulgence: a 3px rule at the top of the footer, the auth divider, the glow edge on chrome. One per screen.
 - **Shadows `rgba(18,34,64,…)`** — cool, below 30px, always paired with an inset white highlight. Warm shadows and grey haze are the failure mode this palette exists to avoid.
 
