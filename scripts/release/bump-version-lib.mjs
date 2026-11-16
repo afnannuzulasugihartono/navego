@@ -49,6 +49,7 @@ export function buildEnumeration(current, newVersion) {
     { file: 'tests/extension/protocol.test.mjs', from: q(current), to: q(newVersion), expect: 1 },
     { file: 'tests/extension/role-reconcile.test.mjs', from: q(current), to: q(newVersion), expect: 1 },
     { file: 'tests/extension/timeout-retry-popup-parity.test.mjs', from: q(current), to: q(newVersion), expect: 1 },
+    { file: 'site/app/components/Chrome.tsx', from: `v${current}`, to: `v${newVersion}`, expect: 1 },
     { file: 'docs/handoff.md', from: `at the ${current} release commit`, to: `at the ${newVersion} release commit`, expect: 1 },
     { file: 'docs/handoff.md', from: `everything ${current}`, to: `everything ${newVersion}`, expect: 1 },
     { file: 'docs/handoff.md', from: `releases/${current}.md`, to: `releases/${newVersion}.md`, expect: 2 },
