@@ -48,13 +48,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background-color: var(--page);
-  background-image:
-    var(--paper),
-    var(--paper),
-    repeating-var(--paper),
-    var(--paper);
-
+  background-color: var(--cf-ground);
   color: var(--ink);
   font-family: Tahoma, Verdana, Geneva, sans-serif;
   font-size: 13.5px;
