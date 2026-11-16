@@ -37,11 +37,11 @@ const SKIP_DIRS = new Set([
   '.next', '.vercel', '__pycache__', '.temp',
 ]);
 
-// WHY landing/_headers IS NOT HERE.
+// WHY site/public/_headers IS NOT HERE.
 // Cloudflare parses that file block by block, and a blank line inside a rule block is the host's business, not ours.
 // Its comments are written in the canonical shape by hand, and the file stays out of the formatter's reach.
 
-const SKIP_FILES = new Set(['LICENSE', 'landing/_headers']);
+const SKIP_FILES = new Set(['LICENSE', 'site/public/_headers']);
 
 async function walk(dir, prefix = '') {
   const files = [];

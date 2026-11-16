@@ -17,7 +17,7 @@ Keputusan yang mengikat (hasil brainstorming 2026-11-08):
 
 - **`MAX_RESULT_BYTES` 512 KiB dihapus.** Tidak ada lagi plafon hasil yang berdiri sendiri.
 - **Bingkai menjadi plafonnya.** Anggaran hasil diturunkan dari anggaran bingkai, jadi mengubah satu angka menggerakkan seluruh rantai.
-- **Pemangkasan tetap ada, tapi di-key ke anggaran bingkai.** Guard `read_page` dan pangkas ekor tarik kelas peta tidak dibuang; keduanya memakai angka yang sama dengan bingkai. Di atas anggaran, hasil dipangkas dengan `truncated: true` dan alasannya, bukan mati.
+- **Pemangkasan tetap ada, tapi di-key ke anggaran bingkai.** Guard `read` dan pangkas ekor tarik kelas peta tidak dibuang; keduanya memakai angka yang sama dengan bingkai. Di atas anggaran, hasil dipangkas dengan `truncated: true` dan alasannya, bukan mati.
 - **`boundedResult` tetap menolak**, karena jalur yang tidak punya bentuk pangkas (mis. `run_program`) harus gagal cepat dengan pesan yang bisa dibaca, bukan mengirim bingkai yang akan ditolak bridge.
 
 ## Angka
@@ -31,7 +31,7 @@ Keputusan yang mengikat (hasil brainstorming 2026-11-08):
 
 Alasan angkanya, bukan selera:
 
-- **4 MiB bingkai** cukup untuk semua yang permukaannya bisa hasilkan. Jawaban terbesar yang nyata adalah tarik satu kelas peta dengan `limit` maksimum: 1000 elemen x ±500 byte ≈ 500 KB. Teks `read_page` maksimum 12.000 karakter, kerangka peta belasan KB, screenshot dibatasi 220 KiB. Jadi 4 MiB memberi ruang delapan kali jawaban terbesar.
+- **4 MiB bingkai** cukup untuk semua yang permukaannya bisa hasilkan. Jawaban terbesar yang nyata adalah tarik satu kelas peta dengan `limit` maksimum: 1000 elemen x ±500 byte ≈ 500 KB. Teks `read` maksimum 12.000 karakter, kerangka peta belasan KB, screenshot dibatasi 220 KiB. Jadi 4 MiB memberi ruang delapan kali jawaban terbesar.
 - **Bingkai dikompresi** di atas 2048 karakter (`socket-protocol.js`, `GZIP_THRESHOLD_BYTES`), dan JSON halaman menyusut 5-50 kali. Bingkai 4 MiB karena itu membawa hasil 3,75 MiB tanpa bergantung pada rasio kompresi: anggaran hasil sengaja di bawah ukuran bingkai, bukan di atasnya.
 - **Dekompresi tetap 8 MiB** karena ia mengikuti aturan `>= 2 x bingkai`, dan angka itu sudah memenuhinya.
 - **Anggaran hasil 3,75 MiB** menyisakan 256 KiB untuk amplop perintah, id, dan field di sekitar hasil, sehingga hasil yang pas di anggaran tidak ditolak bingkai karena amplopnya.
@@ -41,7 +41,7 @@ Alasan angkanya, bukan selera:
 - `extension/lib/socket-protocol.js`: `FRAME_MAX_BYTES` 1 MiB → 4 MiB. Tidak ada perubahan bentuk frame.
 - `extension/lib/serialize.js`: `MAX_RESULT_BYTES` dihapus; `RESULT_BUDGET_BYTES = FRAME_MAX_BYTES - 256 * 1024` diekspor, diturunkan dari `FRAME_MAX_BYTES` yang diimpor. `oversized(value)` membandingkan ke `RESULT_BUDGET_BYTES`. `boundedResult(value)` melempar `Result exceeds ${RESULT_BUDGET_BYTES} bytes. Use bounded/chunked reads.` seperti sekarang, dengan angka baru.
 - `supabase/functions/opera-agent-bridge/bridge-socket.ts`: `MAX_FRAME_BYTES` 1 MiB → 4 MiB. `MAX_DECOMPRESSED_BYTES` tidak berubah.
-- `extension/background.js`: guard `page.read` memakai `RESULT_BUDGET_BYTES` apa adanya untuk pemangkasan `read_page` dan pangkas ekor tarik kelas peta — anggaran itu sudah menyisakan 256 KiB untuk amplop, jadi guard tidak memotong dua kali. Tidak ada lagi rujukan ke `MAX_RESULT_BYTES`.
+- `extension/background.js`: guard `page.read` memakai `RESULT_BUDGET_BYTES` apa adanya untuk pemangkasan `read` dan pangkas ekor tarik kelas peta — anggaran itu sudah menyisakan 256 KiB untuk amplop, jadi guard tidak memotong dua kali. Tidak ada lagi rujukan ke `MAX_RESULT_BYTES`.
 - `extension/worker/capture-page.js`: anggaran irisan tile (`TILE_SLICE_BYTES`) menjadi `RESULT_BUDGET_BYTES - 256 * 1024`, menyisakan ruang untuk metadata tile (`index`, `sha256`, `y`, `width`, `height`, `bytes`) yang mengelilingi blok gambarnya.
 
 ## Kontrak dan pin
@@ -76,5 +76,5 @@ Alasan angkanya, bukan selera:
 
 - `tests/serialize-budget.test.mjs`: `RESULT_BUDGET_BYTES` sama dengan `FRAME_MAX_BYTES - 256 KiB`; hasil 3 MiB diterima; hasil di atas anggaran ditolak dengan pesan yang menyebut anggaran itu.
 - `tests/bridge-socket.test.mjs`, `tests/device-socket-protocol.test.mjs`: rantai angka tetap terkunci.
-- `tests/browser_extension_test.py`: tarik satu kelas peta dan `read_page` pada halaman uji tidak memangkas apa pun.
+- `tests/browser_extension_test.py`: tarik satu kelas peta dan `read` pada halaman uji tidak memangkas apa pun.
 - Uji perangkat nyata: tarik `class: "link"` `limit: 1000` di artikel Wikipedia, bandingkan jumlah elemen dengan kerangka.

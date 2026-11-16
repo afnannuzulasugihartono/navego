@@ -24,7 +24,7 @@ them:
   itself measured **p50 1.4 ms**. It now polls a Node settle: **p50 46.3 ms** on
   the same job and machine, with the page watching itself through a
   `MutationObserver`.
-- `read_page()` used to always sleep 100 ms for a second read. It measured
+- `read()` used to always sleep 100 ms for a second read. It measured
   **p50 106.77 ms** on the small page before, and **p50 45.34 ms** after the
   second sample began waiting on the same Node-polled settle.
 - `append`, `caret_line`, and menu walks used fixed 120/300/260/90 ms gaps. Those
@@ -47,7 +47,7 @@ them:
   settles on the page's own `MutationObserver`, proves row stability with a 120 ms
   quiet window, and tells the page look it already settled: **p50 139.14 ms** on
   the fixture, down from **p50 584.33 ms** on the same requested job.
-- A chord-only `stream_keys` used to settle inside the stream and then settle
+- A chord-only `stream` used to settle inside the stream and then settle
   again in `afterAction`. It now reports `settled: true`, so the page look trusts
   it: **p50 107.60 ms**, down from **p50 153.90 ms**.
 - When the page reports no focus, the OS window query used to measure **p50
@@ -135,9 +135,9 @@ serialization are not included; the browser and `afterAction` work is.
 | Tool call | p50 | p95 | What dominates |
 |---|---:|---:|---|
 | `click` | 137.87 ms | 140.11 ms | 120 ms settle + snapshot/pageState |
-| `click_row` | 138.75 ms | 141.46 ms | 120 ms settle + snapshot/pageState |
-| `press_key` | 183.73 ms | 186.80 ms | 50 ms key beat + 120 ms settle |
-| `read_page` | 107.13 ms | 109.45 ms | 100 ms second-read sleep |
+| `tap` | 138.75 ms | 141.46 ms | 120 ms settle + snapshot/pageState |
+| `press` | 183.73 ms | 186.80 ms | 50 ms key beat + 120 ms settle |
+| `read` | 107.13 ms | 109.45 ms | 100 ms second-read sleep |
 | `wait_for` (found) | 230.39 ms | 232.50 ms | 100 ms read + 120 ms settle |
 | `wait_still` | 632.57 ms | 634.82 ms | 400 ms quiet + 120 ms settle |
 | `ax_snapshot` | 1.01 ms | 1.13 ms | no afterAction |
@@ -161,7 +161,7 @@ grows. The fixed sleeps still dominate both.
 
 Same machine, same 100-row fixture, same headless Chrome launch, same job. The
 `before` column is the tree immediately before that row's change; the `after`
-column is the current tree. The three-call job is `click_row` -> `press_key Tab`
+column is the current tree. The three-call job is `tap` -> `press Tab`
 -> `hover`. The text-stream job focuses the fixture input first, so the signature
 actually moves; the chord-stream job is `Ctrl+A` then `Ctrl+B`; the unfocused
 text-stream job clicks the Run button first, so nothing can receive the text.
@@ -170,12 +170,12 @@ text-stream job clicks the Run button first, so nothing can receive the text.
 |---|---:|---:|---:|---:|---|
 | `driver.settle()` | n/a | n/a | 46.06 ms | 47.53 ms | Node polls a `MutationObserver`; 32 ms quiet, 120 ms cap |
 | MCP `click` | 136.82 ms | 139.34 ms | 45.73 ms | 47.40 ms | one settle instead of `sleep(120)` |
-| MCP `click_row` | 137.78 ms | 139.13 ms | 46.04 ms | 47.20 ms | same |
-| MCP `press_key` | 107.24 ms | 108.39 ms | 76.43 ms | 77.88 ms | key beat is one frame, not fifty milliseconds |
-| MCP `stream_keys` text | 168.55 ms | 172.02 ms | 76.46 ms | 77.58 ms | one beat per chord, and the text wait ends on the first moved signature |
-| MCP `stream_keys` chords | 153.90 ms | 157.19 ms | 107.60 ms | 109.38 ms | the stream reports `settled: true`, so `afterAction` does not settle twice |
-| MCP `stream_keys` text unfocused | 1,857.97 ms | 1,867.83 ms | 76.22 ms | 79.69 ms | text sent to a non-editable focus fails fast instead of polling for a signature |
-| MCP `read_page` | 106.77 ms | 108.18 ms | 45.34 ms | 47.06 ms | second sample waits on settle, not `sleep(100)` |
+| MCP `tap` | 137.78 ms | 139.13 ms | 46.04 ms | 47.20 ms | same |
+| MCP `press` | 107.24 ms | 108.39 ms | 76.43 ms | 77.88 ms | key beat is one frame, not fifty milliseconds |
+| MCP `stream` text | 168.55 ms | 172.02 ms | 76.46 ms | 77.58 ms | one beat per chord, and the text wait ends on the first moved signature |
+| MCP `stream` chords | 153.90 ms | 157.19 ms | 107.60 ms | 109.38 ms | the stream reports `settled: true`, so `afterAction` does not settle twice |
+| MCP `stream` text unfocused | 1,857.97 ms | 1,867.83 ms | 76.22 ms | 79.69 ms | text sent to a non-editable focus fails fast instead of polling for a signature |
+| MCP `read` | 106.77 ms | 108.18 ms | 45.34 ms | 47.06 ms | second sample waits on settle, not `sleep(100)` |
 | MCP `wait_for` (found) | 92.09 ms | 94.15 ms | 46.15 ms | 47.01 ms | one cheap page read plus the final settle, not a full read per poll |
 | MCP `wait_still` | 183.83 ms | 187.17 ms | 139.14 ms | 141.92 ms | settle on mutations, prove row stability, and skip the second settle |
 | MCP `caret_line` | 708.17 ms | 716.70 ms | 183.71 ms | 186.95 ms | selection and restore steps settle instead of 300/120/180 ms gaps |
@@ -204,7 +204,7 @@ left the document text at 6,230 characters; Sheets completed the same burst in
 44/32/30 ms and left the page text unchanged. Both temporary tabs were closed.
 
 The cheaper wait was driven on the already-open real tabs, with no text edited:
-Docs `wait_for` found `References` in 660 ms and `wait_for_row` found `Insert`
+Docs `wait_for` found `References` in 660 ms and `wait` found `Insert`
 on the first check; Sheets `wait_for` found `Sum: 34,974.00` immediately and the
 row wait also succeeded on the first check. The new `wait_still` returned
 `still:true` in 143 ms on Docs and 144 ms on Sheets. Both pages read back with
@@ -212,7 +212,7 @@ unchanged text.
 
 The settle-based caret path was driven on the already-open real tabs, with no
 text edited: Docs `caret_line` completed in 276 ms and Sheets in 275 ms, both
-with `caretRestored: true` and unchanged page text. A real Docs `open_menu` walk
+with `caretRestored: true` and unchanged page text. A real Docs `menu` walk
 to `Insert` -> `Image` also succeeded without clicking the leaf, but its wall
 time was 3,925 ms, so the menu speed gain is **[UNVERIFIED]** on a real page.
 
@@ -235,12 +235,12 @@ running and a page that is already still answers in one round trip.
 | `driver.settle()` | 41.55 ms | 48.24 ms | 0.47 ms | 1.45 ms | one read of a watcher that is already running |
 | `driver.read()` | 40.42 ms | 55.56 ms | 1.51 ms | 2.33 ms | the second sample waits on the page, not on a fresh quiet window |
 | MCP `click` | 42.62 ms | 50.58 ms | 5.21 ms | 6.32 ms | the settle after the click is one round trip |
-| MCP `click_row` | 47.81 ms | 57.49 ms | 8.30 ms | 9.55 ms | same |
-| MCP `press_key` | 70.61 ms | 83.18 ms | 28.15 ms | 40.88 ms | the key beat stays; the settle does not |
-| MCP `read_page` | 41.43 ms | 50.38 ms | 2.30 ms | 2.96 ms | the page look reads a still page |
+| MCP `tap` | 47.81 ms | 57.49 ms | 8.30 ms | 9.55 ms | same |
+| MCP `press` | 70.61 ms | 83.18 ms | 28.15 ms | 40.88 ms | the key beat stays; the settle does not |
+| MCP `read` | 41.43 ms | 50.38 ms | 2.30 ms | 2.96 ms | the page look reads a still page |
 | MCP `caret_line` | 154.71 ms | 172.00 ms | 62.54 ms | 93.60 ms | two settles become two reads |
 | MCP `append` | 111.09 ms | 119.10 ms | 27.95 ms | 32.79 ms | the end key is followed by a read, not a quiet window |
-| MCP `stream_keys` text | 75.79 ms | 93.26 ms | 28.21 ms | 40.57 ms | one beat per chord, and the settle is free |
+| MCP `stream` text | 75.79 ms | 93.26 ms | 28.21 ms | 40.57 ms | one beat per chord, and the settle is free |
 | MCP `browser_burst` (3 steps) | 44.37 ms | 54.51 ms | 10.06 ms | 11.36 ms | one settle at the end of the burst |
 | MCP `wait_for` (found) | 3.23 ms | 4.48 ms | 3.48 ms | 4.78 ms | the text was already there; nothing to wait for |
 | MCP `wait_still` | 128.78 ms | 165.53 ms | 131.83 ms | 139.24 ms | stillness is two identical reads, not a settle |
@@ -303,7 +303,7 @@ reached. The 120 ms path remains only as a fallback for a driver with no
 `settle()`.
 
 Measured on the same job and machine, MCP `click` fell from **p50 136.82 ms** to
-**p50 46.26 ms**, and MCP `click_row` from **p50 137.78 ms** to **p50 46.06 ms**.
+**p50 46.26 ms**, and MCP `tap` from **p50 137.78 ms** to **p50 46.06 ms**.
 
 The caveat is the one that matters on real pages: a page-side `setTimeout` is
 not a safe clock for a hidden tab. The first settle shape waited in the page and
@@ -311,7 +311,7 @@ a hidden Google Doc clamped it to **p50 998.93 ms**. The shipped shape keeps the
 observer in the page but reads it from Node; the same hidden Doc settles at
 **p50 45.78 ms**. Any future settle must keep its clock off the page.
 
-### 2. `read_page` always pays 100 ms — fixed
+### 2. `read` always pays 100 ms — fixed
 
 `read()` used to read the page, sleep 100 ms, then read again to say `settled`
 and `grewBy`. The second sample is still there, because `readyState` is not a
@@ -320,7 +320,7 @@ characters at `complete` and 8,478 two seconds later. The fixed sleep is gone:
 the second sample now waits on the same Node-polled settle, so a settled page
 pays one beat instead of a hundred milliseconds.
 
-Measured on the same fixture and machine: MCP `read_page` fell from **p50
+Measured on the same fixture and machine: MCP `read` fell from **p50
 106.77 ms / p95 108.18 ms** to **p50 45.34 ms / p95 47.06 ms**. The Google Docs
 path still reports `settled: null`, because a second selection copy would move
 the caret twice; that is a correctness cost, not a latency one.
@@ -333,12 +333,12 @@ coalescing window, not the smallest thing past it. It is now **16 ms**, one 60 H
 frame, and a stream no longer pays that beat a second time.
 
 Measured on the same fixture and machine against the previous commit: MCP
-`press_key` fell from **p50 107.24 ms** to **p50 76.43 ms**. A three-step burst
+`press` fell from **p50 107.24 ms** to **p50 76.43 ms**. A three-step burst
 that contains a key fell from **p50 107.40 ms** to **p50 76.83 ms**. Real Docs
 and Sheets bursts with `Alt+/` and `Escape` completed with 26-44 ms steps and no
 text change.
 
-The bigger key win was in `stream_keys`: a chord-only stream used to wait twelve
+The bigger key win was in `stream`: a chord-only stream used to wait twelve
 150 ms polls for a text signature that a menu chord never moves. It now settles
 once and reads the signature once. That stream fell from **p50 1,987.43 ms** to
 **p50 152.83 ms**. A text stream with the input focused fell from **p50 168.55
@@ -356,17 +356,17 @@ fell from **p50 92.09 ms** to **p50 46.15 ms**. On a real Google Doc it still
 pays the document copy — 660 ms for `References` — because the words live in a
 canvas; on Google Sheets it found the text immediately.
 
-`wait_for_row` now waits on the mutation settle between checks instead of
+`wait` now waits on the mutation settle between checks instead of
 sleeping a fixed interval. Its found case was already one snapshot plus the final
 settle, so the gain is in the absent case, which was not measured here.
 
-`wait_for` and `wait_for_row` now share the same settle-based polling shape; the
+`wait_for` and `wait` now share the same settle-based polling shape; the
 remaining fixed-delay wait is the 400 ms quiet window in `wait_still`'s default
 contract, reduced to 120 ms for a settled page.
 
-The double settle is gone: a chord-only `stream_keys` and `wait_still` now report
+The double settle is gone: a chord-only `stream` and `wait_still` now report
 `settled: true`, and `afterAction` trusts that instead of watching the page a
-second time. On the same requested job, `stream_keys` chords fell from **p50
+second time. On the same requested job, `stream` chords fell from **p50
 153.90 ms** to **p50 107.60 ms**, and `wait_still` from **p50 183.83 ms** to
 **p50 139.14 ms**.
 
@@ -434,7 +434,7 @@ audit, not for the hot loop.
 - **Real minimized-window focus.** The CDP window state was measured on a
   maximized real Chrome; restoring an actually minimized window was not driven
   because it changes the user's desktop.
-- **The absent-row wait gain.** `wait_for_row` now polls every 50 ms, but only
+- **The absent-row wait gain.** `wait` now polls every 50 ms, but only
   its found case was measured on the fixture and real pages.
 - **A moving-page stillness regression.** `wait_still` was validated on settled
   real Docs/Sheets and on a fixture; a page that keeps changing was not driven
@@ -450,13 +450,13 @@ audit, not for the hot loop.
 2. **Event-driven settle — done.** The 120 ms sleep is replaced by a Node-polled
    `MutationObserver` settle. The clock must stay in Node; a hidden tab clamps a
    page-side timer.
-3. **Local watch/wait - mostly done.** `wait_for` and `wait_for_row` now wait on
+3. **Local watch/wait - mostly done.** `wait_for` and `wait` now wait on
    the mutation settle instead of a fixed gap, and `wait_still` settles between
    row reads. They are still per-primitive waits, not one shared in-page watch,
    and the OS focus tail is unchanged.
 4. **Read second-sample settle — done.** `read()` still takes two samples, but
    the gap between them is the settle, not a fixed 100 ms sleep. A caller that
-   wants one read can still take `ax_snapshot` or `read_page` and read the
+   wants one read can still take `ax_snapshot` or `read` and read the
    `settled` field it is given.
 5. **Reduce the key beat — done.** The beat is one 60 Hz frame, 16 ms, and a
    stream does not pay it twice. Docs and Sheets were driven with `Alt+/` and
@@ -492,14 +492,14 @@ change must not cost a round trip.
 | `session.windowState()` | 1,139.55 ms (PowerShell) | 0.19 ms | 0.27 ms |
 | `driver.clickRow` | 5.27 ms | 4.92 ms | 6.36 ms |
 | MCP `click` | 45.73 ms | 46.45 ms | 47.03 ms |
-| MCP `click_row` | 46.04 ms | 46.32 ms | 47.64 ms |
-| MCP `press_key` | 76.43 ms | 77.39 ms | 80.03 ms |
-| MCP `read_page` | 45.34 ms | 46.21 ms | 47.08 ms |
+| MCP `tap` | 46.04 ms | 46.32 ms | 47.64 ms |
+| MCP `press` | 76.43 ms | 77.39 ms | 80.03 ms |
+| MCP `read` | 45.34 ms | 46.21 ms | 47.08 ms |
 | MCP `ax_snapshot` | 1.01 ms | 1.37 ms | 1.92 ms |
 | MCP `wait_for` (found) | 46.15 ms | 46.17 ms | 47.09 ms |
 | MCP `wait_still` | 139.14 ms | 138.85 ms | 140.59 ms |
-| MCP `stream_keys` text | 76.46 ms | 76.89 ms | 78.20 ms |
-| MCP `stream_keys` chords | 107.60 ms | 107.70 ms | 109.19 ms |
+| MCP `stream` text | 76.46 ms | 76.89 ms | 78.20 ms |
+| MCP `stream` chords | 107.60 ms | 107.70 ms | 109.19 ms |
 | MCP `caret_line` | 183.71 ms | 184.26 ms | 186.76 ms |
 | MCP `append` | 123.33 ms | 123.39 ms | 124.37 ms |
 | MCP `browser_burst` (3 steps) | 76.83 ms | 45.92 ms | 47.23 ms |

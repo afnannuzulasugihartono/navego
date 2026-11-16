@@ -26,10 +26,10 @@ export function parseDocument(text: string): JsonRecord {
   try {
     doc = JSON.parse(String(text ?? ''));
   } catch (error: unknown) {
-    throw new Error(`document_write needs JSON source: ${String((error as Error)?.message ?? error)}`);
+    throw new Error(`doc needs JSON source: ${String((error as Error)?.message ?? error)}`);
   }
   if (!doc || typeof doc !== 'object' || Array.isArray(doc)) {
-    throw new Error('document_write needs a JSON object with a title and sections.');
+    throw new Error('doc needs a JSON object with a title and sections.');
   }
   return doc;
 }
@@ -204,15 +204,15 @@ function validateGraph(graph: JsonRecord, sectionIndex: number, graphIndex: numb
 export function buildDocument(options?: { doc?: JsonRecord }) {
   const doc: JsonRecord = options?.doc ?? {};
   if (!doc || typeof doc !== 'object' || Array.isArray(doc)) {
-    throw new Error('document_write needs a document object.');
+    throw new Error('doc needs a document object.');
   }
   if (!nonEmptyString(doc.title)) {
-    throw new Error('document_write needs a title.');
+    throw new Error('doc needs a title.');
   }
 
   const sections = asArray(doc.sections) as JsonRecord[];
   if (sections.length === 0) {
-    throw new Error('document_write needs at least one section.');
+    throw new Error('doc needs at least one section.');
   }
 
   const figures: JsonRecord[] = [];
@@ -359,7 +359,7 @@ function readPaperSource(source: unknown, toolName: string) {
 }
 
 export function documentFromFile({ source, out = null }: { source?: unknown; out?: string | null } = {}): JsonRecord {
-  const from = readPaperSource(source, 'document_write');
+  const from = readPaperSource(source, 'doc');
 
   const doc = parseDocument(fs.readFileSync(from, 'utf8'));
   const built = buildDocument({ doc });
@@ -410,7 +410,7 @@ function imageBytes(source: unknown) {
 }
 
 export function documentDocxFromFile({ source, out = null }: { source?: unknown; out?: string | null } = {}): JsonRecord {
-  const from = readPaperSource(source, 'document_write');
+  const from = readPaperSource(source, 'doc');
 
   const doc = parseDocument(fs.readFileSync(from, 'utf8'));
   const built = buildDocument({ doc });

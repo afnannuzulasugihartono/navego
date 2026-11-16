@@ -11,7 +11,7 @@
 // It is separate so the protocol stays testable without a browser.
 //
 // WHY the session is made lazily.
-// browser_status has to answer on a machine where no browser is listening, which is exactly when someone needs to be told that.
+// status has to answer on a machine where no browser is listening, which is exactly when someone needs to be told that.
 // Connecting eagerly would turn a useful diagnosis into a crash.
 //
 // WHY the port comes from the environment.

@@ -52,7 +52,7 @@
 # them can compute. This is the one rule that is not a gate, and it is the one that
 # catches what the gates cannot.
 #
-# 1. OPEN IT. A change to landing/ is finished when the page has been rendered in a
+# 1. OPEN IT. A change to site/ is finished when the page has been rendered in a
 #    real browser and looked at, not when the suite is green. Screenshot it. A
 #    change that was never opened has not been made.
 #
@@ -68,7 +68,7 @@
 #
 #    THE BENCHMARK FOR THE DOWNLOAD TAB IS https://code.visualstudio.com/Download
 #    and it is the one that decides that tab, every time, until this line changes.
-#    Open it before touching landing/unduh*.html and hold it to these four:
+#    Open it before touching site/app/routes/unduh.tsx and hold it to these four:
 #      - IT GIVES THE MATCHING PLATFORM THE ONLY FILLED BUTTON. Windows, macOS and
 #        Linux each get one; the other builds live behind a closed "Select a
 #        download…" list. A card with two equal buttons has not learned this.
@@ -168,7 +168,7 @@ tests/docs/comment-format.test.mjs 5c2dd045fc59efae254498d81b845a6c45c36229
 tests/docs/comment-claims.test.mjs 27e1d1218b036ef7dd028b33cb63236ae325c442
 
 # --- structural rules a human reviewer would otherwise have to remember ---
-tests/tooling/hygiene.test.mjs da2fc709635d0f8bc3c95320a26745a314f0b739
+tests/tooling/hygiene.test.mjs f16a3723bdbd3cae93b4f2d798470cd602cf773e
 tests/tooling/structure-gates.test.mjs 9c95d75ddd7e76c8952a75ff2098dce4059bbb32
 tests/tooling/boundary-locks.test.mjs 948f2c0637576bba79f11e526b99cd0b0cf2f644
 
@@ -179,7 +179,8 @@ shared/secret-pattern.ts 5392a31127fa25df3d9f55d0a9fa87562200418d
 # The one pinned shared edge module moved from .js to .ts unchanged; same bytes, same criterion, new path.`nhosted/functions/_shared/cors.ts dead4552d786ef0fdbaf71ad5bfb3c99e647b575
 
 # --- surfaces an owner, not an agent, should have to look at ---
+# The merge took main's Kemudi manifest for the file and this branch's .gitleaks.toml bytes; both pins match what the merged tree actually holds.
 extension/manifest.json 8901e5f06fc2655a4004b566ff9d15902c4ff6c9
-.gitleaks.toml c86e2ad6f0f7b76e512fda11f76e533b807dc883
+.gitleaks.toml 9e2fabe35824000f8e5aeff06616766722637d31
 .github/CODEOWNERS ca0271e08aadabe56f86ae17620b36073df44cfb
 .github/workflows/ci.yml 1a473af40bbc6fe476b2764719f89a552d4eb39e

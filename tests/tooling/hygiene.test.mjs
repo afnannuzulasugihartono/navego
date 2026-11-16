@@ -395,7 +395,7 @@ test('a module with its own code is reached by the product, not only by its own 
     }
     return out;
   };
-  const present = ['extension', 'shared', 'local', 'scripts', 'hosted', 'tests', 'landing'].flatMap(walk);
+  const present = ['extension', 'shared', 'local', 'scripts', 'hosted', 'tests'].flatMap(walk);
   const codeFiles = present.filter((file) => /\.(js|mjs|cjs|ts)$/.test(file));
   const edgeFiles = present.filter((file) => /\.(js|mjs|cjs|ts|html)$/.test(file));
   const textOf = new Map(edgeFiles.map((file) => [file, fsSync.readFileSync(path.join(dir, file), 'utf8')]));
@@ -468,7 +468,9 @@ test('a module with its own code is reached by the product, not only by its own 
   if (manifest.background?.service_worker) roots.add(`extension/${manifest.background.service_worker}`);
   if (manifest.action?.default_popup) roots.add(`extension/${manifest.action.default_popup}`);
   if (manifest.options_page) roots.add(`extension/${manifest.options_page}`);
-  for (const file of present) if (/^landing\/.*\.html$/.test(file)) roots.add(file);
+  // WHY THE SITE IS NOT IN THE CENSUS.
+  // The site is one bundled app shipped as one artefact; the bundler and tests/site enforce reachability there.
+  // Flat HTML pages were separate entry points; bundled hashed chunks cannot be resolved statically, so the old landing/ roots scan has no equivalent here.
   // WHY THE PACKAGE'S LIFECYCLE SCRIPTS ARE ROOTS.
   // npm runs `postinstall` and `prepack` on the user's machine; the import graph cannot follow a subprocess, so the gate must be told the package.json scripts count as entry points - otherwise a wired lifecycle hook reads as dead code.
   const localManifestPath = path.join(dir, 'local', 'package.json');
@@ -557,7 +559,7 @@ test('every source file carries a header that says what the file is and what it 
     }
     return out;
   };
-  const roots = ['extension', 'shared', 'local', 'scripts', 'hosted', 'tests', 'landing', '.github'];
+  const roots = ['extension', 'shared', 'local', 'scripts', 'hosted', 'tests', '.github'];
   const files = roots.flatMap(walk)
     .filter((file) => /\.(?:js|mjs|cjs|ts|py|html|css|yml|yaml|toml|cmd|example)$/.test(file))
     .filter((file) => !file.startsWith('hosted/migrations/'));

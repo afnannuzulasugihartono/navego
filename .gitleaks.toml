@@ -1,6 +1,6 @@
 # @last-edited: 2026-10-05 19:45 UTC+7.
 # @title: .gitleaks — path-scoped allow exceptions for known synthetic fixtures.
-# @state: every allowlisted path exists; the landing pages carry a publishable key, which is public by design.
+# @state: every allowlisted path exists; the dashboard app carries a publishable key, which is public by design.
 # @dependencies: none stated.
 
 # Path-scoped gitleaks allow exceptions.
@@ -52,9 +52,9 @@ id = "generic-api-key"
 
   [[rules.allowlists]]
 
-  description = "Supabase publishable key, public by design and required in a client-side page; the secret key and the management token are not in the tree."
+  description = "Supabase publishable key, public by design and required in the client-side app; the secret key and the management token are not in the tree."
   condition = "AND"
-  paths = ['''^landing/.*\.html$''']
+  paths = ['''^site/app/lib/auth\.ts$''']
   regexTarget = "line"
   regexes = [
     '''PUBLISHABLE_KEY\s*=\s*.sb_publishable_''',

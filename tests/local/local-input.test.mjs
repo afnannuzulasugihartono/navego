@@ -194,7 +194,7 @@ test('append admits it cannot see where the text went rather than claiming the e
 
   assert.equal(out.landed, true);
   assert.equal(out.atEnd, false, 'a page that cannot be seen into cannot be claimed for');
-  assert.match(out.atEndWhy, /read_page\(\) is the proof/);
+  assert.match(out.atEndWhy, /read\(\) is the proof/);
 });
 
 // WHY A SCROLL TOOL AND NOT A KEY.
@@ -351,7 +351,7 @@ test('a page with no caret fails the edit instead of counting the characters it 
     }
   };
 
-  await assert.rejects(() => createPrimitives(cdp).type('GUARD'), /typed 5 characters and nothing on the page changed: nothing on the page held focus - click_row the field that should receive it/);
+  await assert.rejects(() => createPrimitives(cdp).type('GUARD'), /typed 5 characters and nothing on the page changed: nothing on the page held focus - browser_click\(\{role, name\}\) the field that should receive it/);
 });
 
 // WHY A TYPE THAT LANDS NOWHERE MUST NAME WHAT HAD FOCUS.
@@ -376,12 +376,12 @@ test('a type that lands nowhere names the element that had focus', async () => {
 
   await assert.rejects(
     () => createPrimitives(cdp).type('GUARD'),
-    /nothing on the page changed: focus was on button#button, which takes no text - click_row the field that should receive it, or press Escape if a dialog is over it/
+    /nothing on the page changed: focus was on button#button, which takes no text - browser_click\(\{role, name\}\) the field that should receive it, or press Escape if a dialog is over it/
   );
 });
 
 // WHY A CLICK ASKS WHO OWNS THE POINT.
-// A cookie wall over a page turns a click_row into a success report for a click that reached nothing: measured live, the row answered with its own name and point while focus never left the wall's button.
+// A cookie wall over a page turns a tap into a success report for a click that reached nothing: measured live, the row answered with its own name and point while focus never left the wall's button.
 // The point has one owner, and saying which is cheaper than the guess that follows.
 
 test('a page with nothing to type into says so in the words of that fact', async () => {

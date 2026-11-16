@@ -16,19 +16,16 @@ test('extension background has exactly one endpoint source', async () => {
 });
 
 test('the consent screen is a page of the site, not a deployment of its own', async () => {
-  const consent = await readFile(new URL('../../landing/oauth/consent.html', import.meta.url), 'utf8');
+  const consent = await readFile(new URL('../../site/app/routes/consent.tsx', import.meta.url), 'utf8');
+  const auth = await readFile(new URL('../../site/app/lib/auth.ts', import.meta.url), 'utf8');
   const endpoints = await import('../../extension/lib/endpoints.js');
 
   assert.equal(endpoints.CONSENT_CONFIG_URL, `${CONSENT_CONFIG_URL.split('/functions')[0]}/functions/v1/opera-agent-auth/config`);
   assert.equal(endpoints.CONSENT_CONFIG_URL, CONSENT_CONFIG_URL, 'the shared constant is the one the extension uses');
-  assert.match(consent, /AUTH_HOST = 'https:\/\/nenmkmtvjremqphfqnfw\.supabase\.co\/auth\/v1'/, 'the page reads the project Auth host');
+  assert.match(auth, /AUTH_HOST = 'https:\/\/nenmkmtvjremqphfqnfw\.supabase\.co\/auth\/v1'/, 'the page reads the project Auth host');
 
-  const consentCode = consent
-    .split('\n')
-    .filter((line) => !/^\s*(\/\/|\/\*|\*|<!--)/.test(line))
-    .join('\n');
-  assert.doesNotMatch(consentCode, /esm\.sh|unpkg|jsdelivr|cdn\./i, 'the page loads no library from another origin');
-  assert.doesNotMatch(consentCode, /<(script|img|link)[^>]+(src|href)="https?:/i, 'no tag points at a remote origin');
+  assert.doesNotMatch(consent, /import\s*\(?\s*['"]https?:/, 'the page imports nothing from another origin');
+  assert.doesNotMatch(consent, /(?:src|href)=["']https?:/, 'no element points at a remote origin');
 
   const config = await readFile(new URL('../../hosted/config.toml', import.meta.url), 'utf8');
   const siteUrl = /site_url\s*=\s*"([^"]+)"/.exec(config)?.[1];

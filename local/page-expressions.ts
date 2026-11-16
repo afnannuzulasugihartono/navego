@@ -111,7 +111,7 @@ const SNAPSHOT_ROLES = new Set([
 // A wrong guess types into the wrong paragraph.
 // The caret therefore rides every snapshot as a final row, so the next keystroke's landing is read, not remembered.
 // A collapsed selection reports its point; a ranged one reports nothing, because a selection's focus end has no honest single point and reads collapse selections anyway.
-// The row carries no line text: the mirror a copy reads from only holds what a selection put there, so a line is read by selecting it first, and that dance lives in read_caret_line rather than in every map.
+// The row carries no line text: the mirror a copy reads from only holds what a selection put there, so a line is read by selecting it first, and that dance lives in caret rather than in every map.
 
 // WHY THE DRAWN CARET IS NOT READ.
 // The caret a canvas editor draws as an element was the only per-site selector this expression ever carried, and it is removed: on a shared document the page holds several carets, this client's and its collaborators', and picking the wrong one measured and clicked somebody else's cursor, which never moves - so every restore reported success while the real caret went to the end of the document.
@@ -306,7 +306,7 @@ export function snapshotExpression(limit: number): string {
 }
 
 // WHY A GOOGLE DOC IS READ THROUGH ITS OWN COPY PATH.
-// Docs draws the document on a canvas, so body.innerText holds the toolbar chrome and none of the content: read_page on a Doc reported an empty document that was not empty, and the only thing that could see the text was a screenshot.
+// Docs draws the document on a canvas, so body.innerText holds the toolbar chrome and none of the content: read on a Doc reported an empty document that was not empty, and the only thing that could see the text was a screenshot.
 // Docs keeps a hidden iframe for text events, and dispatching a copy event there makes Docs itself populate a div with the selected text — Zotero's production technique, proven on this machine at thirteen milliseconds for a full document read.
 // One adaptation: Zotero clears with innerHTML, which this document's Trusted Types policy refuses outright, so the div is emptied with replaceChildren instead.
 // Same clearing, no string sink.
@@ -739,7 +739,7 @@ export const scrollExpression = (probe: unknown) => `(() => {
 // This replaces a format-specific reader: nothing here knows what a document is.
 
 // WHY A POINT OFF THE PAGE IS REFUSED RATHER THAN SENT.
-// Measured live: a click_row on an outline row below the fold answered with a click at x 150, y -139 - a success, on a coordinate no pixel holds.
+// Measured live: a tap on an outline row below the fold answered with a click at x 150, y -139 - a success, on a coordinate no pixel holds.
 // The click lands in nothing and the answer says it landed, which is the worst kind of answer this product can give.
 // A row outside the viewport now names the road that reaches it: scroll({text}) or scroll({y}), then click again.
 

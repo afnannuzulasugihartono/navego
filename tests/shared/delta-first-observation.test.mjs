@@ -553,7 +553,7 @@ test('does not synthesize completion or foreground/browser authority', () => {
   assert.doesNotMatch(encoded, /activate_tab|executionMode|foreground|page\.click|page\.fill|pointer/i);
 });
 
-test('keeps the R4-authorized read_page projection inside the frozen public boundary', async () => {
+test('keeps the R4-authorized read projection inside the frozen public boundary', async () => {
 
   const files = new Map(PUBLIC_SURFACE_LOCKS);
   for (const [relativePath, expected] of files) {
@@ -561,8 +561,8 @@ test('keeps the R4-authorized read_page projection inside the frozen public boun
     assert.equal(sha256Blob(bytes), expected, `${relativePath} must remain byte-for-byte unchanged in P2`);
   }
   const tools = readFileSync(new URL('../../local/tools.ts', import.meta.url), 'utf8');
-  assert.match(tools, /name: 'read_page'/);
-  assert.match(tools, /name: 'snapshot_page'/);
+  assert.match(tools, /name: 'browser_read'/);
+  assert.match(tools, /name: 'browser_find'/);
   assert.doesNotMatch(tools, /delta-first-observation/);
 });
 

@@ -36,7 +36,7 @@ function figuresOf(artifact: unknown): Map<string, CheckedFigure> {
 
 export function deckFromFile({ source, out = null, report = null }: { source?: unknown; out?: unknown; report?: unknown } = {}) {
   if (source === null || source === undefined || String(source).trim() === '') {
-    throw new Error('deck_build needs source: the JSON file describing the deck.');
+    throw new Error('deck needs source: the JSON file describing the deck.');
   }
   const from = path.resolve(String(source));
   let stat: import('node:fs').Stats;
@@ -53,16 +53,16 @@ export function deckFromFile({ source, out = null, report = null }: { source?: u
   try {
     spec = JSON.parse(fs.readFileSync(from, 'utf8')) as { title?: unknown; slides?: unknown[] };
   } catch (error: unknown) {
-    throw new Error(`deck_build needs JSON source: ${String((error as Error)?.message ?? error)}`);
+    throw new Error(`deck needs JSON source: ${String((error as Error)?.message ?? error)}`);
   }
   if (!spec || typeof spec !== 'object' || Array.isArray(spec)) {
-    throw new Error('deck_build needs a JSON object with a title and slides.');
+    throw new Error('deck needs a JSON object with a title and slides.');
   }
   const title = String(spec.title ?? '').trim();
-  if (title === '') throw new Error('deck_build needs a title.');
+  if (title === '') throw new Error('deck needs a title.');
 
   const rawSlides = Array.isArray(spec.slides) ? spec.slides : [];
-  if (rawSlides.length === 0) throw new Error('deck_build needs at least one slide.');
+  if (rawSlides.length === 0) throw new Error('deck needs at least one slide.');
 
   let figures = new Map<string, CheckedFigure>();
   if (report !== null && report !== undefined && String(report).trim() !== '') {

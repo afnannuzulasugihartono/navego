@@ -1,12 +1,12 @@
 /*
  * @last-edited: 2026-11-13 UTC+7.
  * @title: dump-page - the whole page's content as one readable object: text, headings, links, scripts, styles; agent-native.
- * @state: page.dump primitive; mirrors what read_page shows but reads the whole page, not one viewport, and returns no bytes.
+ * @state: page.dump primitive; mirrors what `read` shows but reads the whole page, not one viewport, and returns no bytes.
  * @dependencies: tab-content.js, capture.js.
  */
 
 // WHY THIS EXISTS.
-// The agent today can see the page in viewports (read_page) or as an offline copy on disk (save_page).
+// The agent today can see the page in viewports (`read`) or as an offline copy on disk (save_page).
 // Neither is the tool for “answer a question about the whole page”: the dump is the page reduced to the facts an agent needs to reason - title, text, headings, links, scripts, styles - with no images, fonts or assets.
 
 import { codedError, assertCaptureFramesSafe } from './capture.js';

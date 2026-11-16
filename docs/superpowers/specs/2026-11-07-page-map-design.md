@@ -7,9 +7,9 @@ Disetujui sebagai arah pada 2026-11-07. Spec ini mendefinisikan satu jalur baca 
 
 ## Intent
 
-Sebuah model yang membaca halaman Wikipedia hari ini harus berjalan seperti orang buta yang membaca koran: satu layar, lalu digeser, lalu digeser lagi. Yang didapat dari `read_page` sekarang adalah 16 elemen interaktif milik viewport dan 6.000 karakter pertama dari 67.674 karakter teks. Sisanya tidak pernah terlihat.
+Sebuah model yang membaca halaman Wikipedia hari ini harus berjalan seperti orang buta yang membaca koran: satu layar, lalu digeser, lalu digeser lagi. Yang didapat dari `read` sekarang adalah 16 elemen interaktif milik viewport dan 6.000 karakter pertama dari 67.674 karakter teks. Sisanya tidak pernah terlihat.
 
-Tujuan spec ini: satu panggilan memberi **peta** halaman itu — kerangkanya dulu (berapa elemen per kelas, di mana bagian-bagiannya), lalu model menarik isi kelas yang ia perlukan. Peta menggantikan pengguliran. Sibling-nya: `capture_page` harus bisa memotret **halaman penuh**, yaitu seluruh dokumen dari atas sampai bawah, bukan jendela yang sedang tampil.
+Tujuan spec ini: satu panggilan memberi **peta** halaman itu — kerangkanya dulu (berapa elemen per kelas, di mana bagian-bagiannya), lalu model menarik isi kelas yang ia perlukan. Peta menggantikan pengguliran. Sibling-nya: `shot` harus bisa memotret **halaman penuh**, yaitu seluruh dokumen dari atas sampai bawah, bukan jendela yang sedang tampil.
 
 Keputusan yang mengikat (hasil brainstorming 2026-11-07):
 
@@ -17,13 +17,13 @@ Keputusan yang mengikat (hasil brainstorming 2026-11-07):
 - **Kelas semantik saja.** Elemen = simpul yang punya makna. Wrapper seperti `span`, `div`, `i`, `b` tidak dihitung kalau isinya sudah dibawa elemen di dalamnya. Di artikel Wikipedia `id`: ±3.500–4.500 elemen dari 8.121 node DOM.
 - **Kerangka dulu, tarik per kelas.** Panggilan pertama murah dan memberi bentuk halaman; panggilan berikutnya hanya membawa kelas yang diminta.
 - **Peta standar per elemen.** `class`, `ref`, `tag`, `role`, teks, kotak dokumen, urutan baca, level, status, identitas, konteks, plus field khas per kelas.
-- **Tool baru.** `read_page_map` berdiri sendiri; `read_page` lama tidak berubah bentuk.
+- **Tool baru.** `read_map` berdiri sendiri; `read` lama tidak berubah bentuk.
 - **Full capture utama, tile fallback.** Gambar halaman penuh dicoba dulu; kalau gagal atau tak terbaca, dokumen dipotong jadi tile.
 - **K&R JSON untuk semua output.** State sekali, di depan. Koleksi = array. Tidak ada field yang mengulang informasi field lain, tidak ada field kosong yang tidak dibaca siapa pun.
 
 ## Non-goals V1
 
-- Tidak mengganti `read_page` yang ada, tidak mengubah `find_elements`, `click_element`, `fill_element`, atau 30 primitive browser lainnya.
+- Tidak mengganti `read` yang ada, tidak mengubah `find`, `click_element`, `fill_element`, atau 30 primitive browser lainnya.
 - Tidak menarik peta per region (sidebar, artikel, infobox). V1 menarik per kelas; elemen membawa `regionId` supaya model bisa mengelompokkan sendiri.
 - Tidak scroll-and-stitch. Gambar diambil lewat clip koordinat dokumen, jadi layar yang sedang dilihat pengguna tidak pernah digeser dan header lengket tidak terulang.
 - Tidak menyimpan atribut HTML mentah (`id`, `class`, `aria-*`, `data-*`) per elemen.
@@ -59,7 +59,7 @@ Satu elemen satu kelas. Kalau satu simpul cocok beberapa aturan, aturan yang leb
 
 ## Bentuk keluaran
 
-### Kerangka — `read_page_map` tanpa `class`
+### Kerangka — `read_map` tanpa `class`
 
 ```json
 { "ok": true, "tabId": 1517046936,
@@ -85,7 +85,7 @@ Ukuran gambar ada di `bbox`, jadi tidak diulang sebagai `width` dan `height`.
 
 Kerangka tidak punya amplop: fakta halaman di atas, koleksi di bawah, semuanya satu tingkat. `classes[]` adalah array; tiap butir menyebut jumlah dan kotak pembatas seluruh kelas itu, supaya model tahu di mana kelas itu berada tanpa menarik isinya.
 
-### Tarik satu kelas — `read_page_map { class: "link", offset: 0, limit: 200 }`
+### Tarik satu kelas — `read_map { class: "link", offset: 0, limit: 200 }`
 
 ```json
 { "ok": true, "tabId": 1517046936, "class": "link",
@@ -110,7 +110,7 @@ Kerangka tidak punya amplop: fakta halaman di atas, koleksi di bawah, semuanya s
 
 ## Aturan K&R untuk semua output
 
-Berlaku ke 34 tool hosted yang ada dan ke `read_page_map`:
+Berlaku ke 34 tool hosted yang ada dan ke `read_map`:
 
 - Bentuk: `{ ok, ...fakta }`. Tidak ada amplop yang isinya satu payload (`result`, `data`, `output`), dan tidak ada lapisan yang menggandakan isi.
 - Setiap koleksi adalah array di bawah field bernama (`tabs`, `items`, `elements`, `classes`, `events`, `rows`, `skills`, `segments`). Tidak ada map yang isinya daftar.
@@ -118,12 +118,12 @@ Berlaku ke 34 tool hosted yang ada dan ke `read_page_map`:
 - Setiap fakta disebut sekali. `tabId` tidak boleh muncul dua kali di level berbeda.
 - Tidak ada field yang isinya `null` atau array kosong tanpa alasan; array kosong berarti "tidak ada", dan itu tidak dihapus.
 - **Nama field tidak berubah dan field yang sedang dipakai tidak dicabut.** `previousHash`, `sessionId`, `watcherId`, `ref`, `tabId`, dan semua field yang dibaca klien lain tetap. Yang dicabut hanya field yang benar-benar duplikat atau tidak pernah dibaca.
-- Pengecualian yang diketahui: `read_page` lama tetap punya objek `page` (nama field tidak boleh berubah). Isinya dirapikan — koleksinya jadi array, fakta yang kembar dengan level atas dicabut satu kali.
+- Pengecualian yang diketahui: `read` lama tetap punya objek `page` (nama field tidak boleh berubah). Isinya dirapikan — koleksinya jadi array, fakta yang kembar dengan level atas dicabut satu kali.
 - Audit 34 tool adalah bagian dari perubahan ini, bukan pekerjaan terpisah.
 
 ## Halaman penuh (screenshot)
 
-`capture_page { fullPage: true }` sudah ada di perangkat: CDP `Page.captureScreenshot` dengan `captureBeyondViewport: true` dan clip ke `contentSize`. Yang ditambahkan adalah **fallback tile**.
+`shot { fullPage: true }` sudah ada di perangkat: CDP `Page.captureScreenshot` dengan `captureBeyondViewport: true` dan clip ke `contentSize`. Yang ditambahkan adalah **fallback tile**.
 
 Fallback menyala kalau full capture:
 
@@ -143,7 +143,7 @@ Mode tile memotong dokumen menjadi strip pada koordinat dokumen (tanpa scroll), 
 
 Setiap tile menjadi satu blok gambar di `content[]`. `previousHash` tetap berlaku: pada mode tile, hash yang dibandingkan adalah hash gabungan tile-tile pada irisan itu.
 
-**Tile dikirim per irisan, bukan semua sekali.** Hasil perintah perangkat dibatasi 512 KiB (`extension/lib/serialize.js`, `MAX_RESULT_BYTES`), dan 33 tile halaman Wikipedia sekitar 5 MB — lebih besar dari yang boleh melewati kabel. Jadi perangkat mengembalikan irisan tile yang muat di anggaran byte (biasanya 2-4 tile), dan `capture_page` menerima satu parameter baru: `tileOffset` (bilangan bulat >= 0, bawaan 0). Panggilan pertama mengambil irisan pertama; panggilan berikutnya memakai `tileOffset` untuk mengambil sisanya. `tileCount` adalah jumlah tile yang dibutuhkan seluruh dokumen, `coveredHeight` adalah tinggi yang sudah tercakup, dan `hasMore`/`nextTileOffset` memberi tahu jalan sisanya.
+**Tile dikirim per irisan, bukan semua sekali.** Hasil perintah perangkat dibatasi 512 KiB (`extension/lib/serialize.js`, `MAX_RESULT_BYTES`), dan 33 tile halaman Wikipedia sekitar 5 MB — lebih besar dari yang boleh melewati kabel. Jadi perangkat mengembalikan irisan tile yang muat di anggaran byte (biasanya 2-4 tile), dan `shot` menerima satu parameter baru: `tileOffset` (bilangan bulat >= 0, bawaan 0). Panggilan pertama mengambil irisan pertama; panggilan berikutnya memakai `tileOffset` untuk mengambil sisanya. `tileCount` adalah jumlah tile yang dibutuhkan seluruh dokumen, `coveredHeight` adalah tinggi yang sudah tercakup, dan `hasMore`/`nextTileOffset` memberi tahu jalan sisanya.
 
 Dengan begitu satu halaman penuh tetap satu perjalanan per potongan, dan peta JSON tetap sumber kebenaran untuk bagian yang belum dipotret.
 
@@ -153,7 +153,7 @@ Tiga bagian, satu arah:
 
 1. **`extension/lib/page-map.js` (baru).** Tabel aturan klasifikasi (tag/role ke kelas) dan aturan field per kelas, murni data dan fungsi tanpa DOM, supaya bisa diuji di Node tanpa DOM — pola yang sama seperti `extension/lib/protocol.js`. Modul ini tidak tahu apa pun soal transport.
 2. **`extension/content.js`.** Pemindaian: satu lintasan seluruh dokumen, klasifikasi per node, pengukuran kotak, urutan baca, kedalaman daftar, posisi sel tabel. Hasil di-cache per `documentId` + `mutationVersion`, jadi menarik kelas berikutnya adalah cache-hit, bukan scan ulang. `pageRead` mendapat cabang ketiga: `view` = `compact` (sekarang), `map` (baru), atau default.
-3. **`supabase/functions/opera-agent-mcp/tools.ts`.** Tool baru `read_page_map`; `capture_page` menerima hasil tile; `read_page` tetap.
+3. **`supabase/functions/opera-agent-mcp/tools.ts`.** Tool baru `read_map`; `shot` menerima hasil tile; `read` tetap.
 
 Aliran data: MCP -> `page.read` dengan `view: "map"` -> content script -> peta -> balik ke MCP -> bentuk datar K&R.
 
@@ -176,14 +176,14 @@ Aliran data: MCP -> `page.read` dengan `view: "map"` -> content script -> peta -
 - Pada artikel `id.wikipedia.org/wiki/Bahasa_Indonesia`: kerangka melaporkan minimal 3 kelas dengan jumlah lebih dari 0, `classes[]` memuat tepat 17 entri, dan `totalElements` sama dengan jumlah simpul yang cocok tabel klasifikasi pada DOM statis halaman itu (dihitung terpisah saat verifikasi, bukan jumlah semua node DOM yang 8.121).
 - Menarik `class: "link"` dengan `offset` dan `limit` berjalan sampai habis: jumlah yang diterima = `total` dari kerangka, tanpa duplikat dan tanpa lompatan (offset 0, 200, 400, ...).
 - `rect` pada elemen yang ada di bawah fold memakai koordinat dokumen: nilainya lebih besar dari tinggi viewport, dan `click_element` dengan `ref` dari peta tetap berhasil setelah halaman digeser.
-- `capture_page { fullPage: true }` pada artikel yang sama: hasilnya satu gambar, atau `tiles[]` yang jumlah `y` terakhir + tinggi strip minimal `documentHeight`.
+- `shot { fullPage: true }` pada artikel yang sama: hasilnya satu gambar, atau `tiles[]` yang jumlah `y` terakhir + tinggi strip minimal `documentHeight`.
 - Tidak ada `console.log` baru; komentar mengikuti aturan repo: satu kalimat per aturan, tanpa blok "WHY" baru.
 - `npm test` dan `npm run check` hijau di worktree.
 
 ## Risiko yang diterima
 
 - **Chrome merender ulang area di bawah fold saat full capture.** Gambar lazy-load yang belum ter-render bisa kosong. Diterima: tile juga memakai clip dokumen, jadi limitation-nya sama, dan model punya peta JSON sebagai sumber kebenaran kedua.
-- **DOM bilang visible, mata orang tidak.** Pada 2026-11-07, `read_page` melaporkan dua tautan site-notice Wikipedia sebagai `visible: true, inViewport: true`, sementara teksnya tidak terbaca di tangkapan layar. Peta memakai definisi visible yang sama dengan `read_page` sekarang, jadi ketidaksesuaian ini terbawa, bukan diperbaiki.
+- **DOM bilang visible, mata orang tidak.** Pada 2026-11-07, `read` melaporkan dua tautan site-notice Wikipedia sebagai `visible: true, inViewport: true`, sementara teksnya tidak terbaca di tangkapan layar. Peta memakai definisi visible yang sama dengan `read` sekarang, jadi ketidaksesuaian ini terbawa, bukan diperbaiki.
 - **Kelas `text` mengulang isi anak-anaknya.** Sebuah `li` yang memuat satu tautan memuat teks tautan itu juga. Diterima: model sering butuh kalimat utuh sebuah item, dan `tag` plus `ref` anak sudah menunjuk ke sumbernya.
 - **Cache bisa basi pada halaman yang berubah terus.** `mutationVersion` membatalkan cache; pemindaian ulang 200-600 ms. Diterima.
 - **Tambah satu tool ke kontrak hosted.** Klien lain (Cline, Claude, dan lain-lain) akan melihat satu tool baru. Tool lama tidak berubah, jadi tidak ada yang rusak.
@@ -193,7 +193,7 @@ Aliran data: MCP -> `page.read` dengan `view: "map"` -> content script -> peta -
 
 - Tarik peta per region (sidebar, artikel, infobox) — kalau model sering butuh satu bagian saja.
 - Peta diff antar waktu (snapshot halaman lalu bandingkan) — `semanticDelta` hari ini hanya sepotong.
-- Peta untuk canvas atau remote screen — `capture_page` sudah menjadi jawabannya, dan `axSummary` hanya read-only.
+- Peta untuk canvas atau remote screen — `shot` sudah menjadi jawabannya, dan `axSummary` hanya read-only.
 - Scan PDF dan dokumen non-DOM.
 - Peta multi-tab (gabungan beberapa tab) — setiap tab punya `documentId` sendiri.
 

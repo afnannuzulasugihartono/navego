@@ -4,7 +4,7 @@
 
 **Goal:** Delete the 512 KiB result cap and make the frame budget the one ceiling: 4 MiB frames on both runtimes, a 3.75 MiB result budget derived from them, and every trim keyed to that budget.
 
-**Architecture:** `extension/lib/socket-protocol.js` owns `FRAME_MAX_BYTES`; `extension/lib/serialize.js` derives `RESULT_BUDGET_BYTES` from it, so one number moves the chain. The bridge keeps its own constant, and the existing chain tests compare the two. The trims that already exist (`read_page`'s element list, the map pull's tail, the tile slice) keep their shapes and change only their number.
+**Architecture:** `extension/lib/socket-protocol.js` owns `FRAME_MAX_BYTES`; `extension/lib/serialize.js` derives `RESULT_BUDGET_BYTES` from it, so one number moves the chain. The bridge keeps its own constant, and the existing chain tests compare the two. The trims that already exist (`read`'s element list, the map pull's tail, the tile slice) keep their shapes and change only their number.
 
 **Tech Stack:** MV3 service worker modules, Deno edge function (`bridge-socket.ts`), `node:test`, Python browser harness.
 
@@ -16,7 +16,7 @@
 - One ceiling: `FRAME_MAX_BYTES = 4 MiB` (device) and `MAX_FRAME_BYTES = 4 MiB` (bridge); `RESULT_BUDGET_BYTES = FRAME_MAX_BYTES - 256 KiB` = 3.75 MiB.
 - `MAX_DECOMPRESSED_BYTES` stays 8 MiB.
 - `boundedResult` still refuses above the budget, with the new number in the message; it is the fail-fast for paths with no graceful form.
-- Trims stay: `read_page`'s element list, the map pull's tail, and the tile slice, all keyed to `RESULT_BUDGET_BYTES`.
+- Trims stay: `read`'s element list, the map pull's tail, and the tile slice, all keyed to `RESULT_BUDGET_BYTES`.
 - No primitive, tool, or parameter changes.
 - Headers and comment rules as usual; gates `npm test`, `npm run check`, the browser harness; re-pins only through `npm run gates:refresh` with the reason in the commit.
 
@@ -24,7 +24,7 @@
 
 - A result just under the budget with a command envelope around it: it must still fit the 4 MiB frame.
 - A result over the budget on a path with no trim (`run_program`): it must fail fast with the new number, not hang to `AWAIT_OUTCOME_UNKNOWN`.
-- A `read_page` on a long page: the element list must trim with `truncated: true` and a reason at the new budget, not before.
+- A `read` on a long page: the element list must trim with `truncated: true` and a reason at the new budget, not before.
 - A full-page tile walk: a slice must now carry more tiles than before, and the walk must still end at `documentHeight`.
 - The chain tests: raising one runtime without the other must turn them red.
 
@@ -148,7 +148,7 @@ git commit -m "Delete the 512 KiB cap: the frame is the ceiling, and every trim 
 
 ### Task 3: The proof
 
-- [ ] **Step 1:** Run the browser harness; expect the map pull and `read_page` on the fixture to carry no `truncated`.
+- [ ] **Step 1:** Run the browser harness; expect the map pull and `read` on the fixture to carry no `truncated`.
 - [ ] **Step 2:** Merge to `main`, reload the extension, and on the Wikipedia article pull `class: "link"` with `limit: 1000`; expect every element of the class' first thousand, no `truncated`, and a frame the bridge accepts.
 - [ ] **Step 3:** Report the element count, the answer size, and the latency.
 
@@ -158,4 +158,4 @@ git commit -m "Delete the 512 KiB cap: the frame is the ceiling, and every trim 
 
 - **Spec coverage:** the constant deleted (Task 2), the derived budget (Task 2), both frames raised (Task 1), decompression unchanged (Task 1's test), the trims re-keyed (Task 2), `boundedResult`'s new number (Task 2), the chain tests kept (Tasks 1-2), the proof (Task 3).
 - **Type consistency:** `RESULT_BUDGET_BYTES` is the name every consumer uses; nothing keeps importing `MAX_RESULT_BYTES`; `TILE_SLICE_BYTES` derives from the budget.
-- **Review Focus:** the envelope reserve covers a result just under the budget (Task 2's 3 MiB test); a refused path fails fast with the number (Task 2's throw test); `read_page` trims at the new budget (the harness in Task 3); the tile walk still ends at `documentHeight` (the harness's existing assertion); one runtime raised alone turns the chain red (Task 1's tests).
+- **Review Focus:** the envelope reserve covers a result just under the budget (Task 2's 3 MiB test); a refused path fails fast with the number (Task 2's throw test); `read` trims at the new budget (the harness in Task 3); the tile walk still ends at `documentHeight` (the harness's existing assertion); one runtime raised alone turns the chain red (Task 1's tests).

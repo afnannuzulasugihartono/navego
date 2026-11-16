@@ -1,6 +1,6 @@
 // @last-edited: 2026-11-05 UTC+7.
 // @title: sample-artifacts — the four business artifacts the site hands a visitor, built from the mock company.
-// @state: writes landing/contoh/ so the download is a real file and a test can prove the bytes on disk are a fresh build.
+// @state: writes site/public/contoh/ so the download is a real file and a test can prove the bytes on disk are a fresh build.
 // @dependencies: node:fs, node:path, local/spreadsheets.js, local/decks.js, local/documents.js.
 
 // WHY THE SITE SHIPS REAL FILES AND NOT A SCREENSHOT.
@@ -18,7 +18,7 @@ import { deckFromFile } from '../../local/decks.js';
 import { documentDocxFromFile } from '../../local/documents.js';
 
 const company = path.resolve('tests/fixtures/mock-company');
-const outDir = path.resolve(process.argv[2] ?? 'landing/contoh');
+const outDir = path.resolve(process.argv[2] ?? 'site/public/contoh');
 fs.mkdirSync(outDir, { recursive: true });
 
 const workbook = spreadsheetFromFile({

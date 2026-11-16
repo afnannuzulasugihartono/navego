@@ -17,8 +17,8 @@ This is the "correct way" the owner asked for: files are `.ts`, the types are re
 |---|---|---|---|
 | Shape drift inside one road | a tool reads `result.dump.text` when the dump has no `dump` | nothing until a live call | **yes** — the field does not exist on the type |
 | Path drift across files | 15 broken `../` imports after `scripts/` moved one level deeper | the suite, after a full run | **yes** — an unresolved import is a compile error |
-| Contract drift between roads | `search_bing`'s description differs between `local/tools.js` and `hosted/.../tools.ts` | nothing (only names and counts are pinned) | **no** — this is a duplication problem; it is PR #3's job (one schema source → types on both roads) |
-| Duplicate implementation | `search_bing` implemented twice, once per road | architecture + parity tests (#289, #291) | **no** — a language cannot forbid a second copy |
+| Contract drift between roads | `search`'s description differs between `local/tools.js` and `hosted/.../tools.ts` | nothing (only names and counts are pinned) | **no** — this is a duplication problem; it is PR #3's job (one schema source → types on both roads) |
+| Duplicate implementation | `search` implemented twice, once per road | architecture + parity tests (#289, #291) | **no** — a language cannot forbid a second copy |
 
 So TypeScript is the right tool for classes 1 and 2, it is not the tool for 3, and it is not the tool for 4. This spec does 1 and 2; PR #3 does 3; #289/#291 did 4.
 

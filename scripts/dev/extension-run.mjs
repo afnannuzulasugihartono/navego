@@ -198,28 +198,28 @@ async function runExtensionProof({
     }
     note({ kind: 'call', tool: 'browser_status', ok: true, ms: status.ms, note: `the bridge on ${bridgePort} is the road in use` });
 
-    process.stderr.write('extension run: browser_status done\n');
-    const opened = await mcp.tool('open_url', { url: portal.url });
+    process.stderr.write('extension run: status done\n');
+    const opened = await mcp.tool('browser_goto', { url: portal.url });
     const tabId = opened.answer?.action?.id;
-    if (!tabId) throw new Error('open_url returned no tab id');
-    note({ kind: 'call', tool: 'open_url', ok: true, ms: opened.ms, note: `tab ${tabId} opened the fixture portal` });
+    if (!tabId) throw new Error('goto returned no tab id');
+    note({ kind: 'call', tool: 'browser_goto', ok: true, ms: opened.ms, note: `tab ${tabId} opened the fixture portal` });
 
-    process.stderr.write('extension run: open_url done\n');
-    const read = await mcp.tool('read_page', { tabId });
+    process.stderr.write('extension run: goto done\n');
+    const read = await mcp.tool('browser_read', { tabId });
     const text = String(read.answer?.text ?? '');
     for (const mark of MARKS) {
-      if (!text.includes(mark)) throw new Error(`read_page did not show ${mark}`);
+      if (!text.includes(mark)) throw new Error(`read did not show ${mark}`);
     }
-    note({ kind: 'call', tool: 'read_page', ok: true, ms: read.ms, note: `${text.length} characters read from the portal` });
+    note({ kind: 'call', tool: 'browser_read', ok: true, ms: read.ms, note: `${text.length} characters read from the portal` });
 
-    process.stderr.write('extension run: read_page done\n');
-    const found = await mcp.tool('find_elements', { tabId, query: 'Unduh CSV' });
+    process.stderr.write('extension run: read done\n');
+    const found = await mcp.tool('browser_find', { tabId, text: 'Unduh CSV' });
     const matches = Array.isArray(found.answer) ? found.answer : [];
-    if (!matches.length) throw new Error('find_elements did not find the download control');
-    note({ kind: 'call', tool: 'find_elements', ok: true, ms: found.ms, note: `${matches.length} match for "Unduh CSV"` });
+    if (!matches.length) throw new Error('find did not find the download control');
+    note({ kind: 'call', tool: 'browser_find', ok: true, ms: found.ms, note: `${matches.length} match for "Unduh CSV"` });
 
-    process.stderr.write('extension run: find_elements done\n');
-    const grabbed = await mcp.tool('download', {
+    process.stderr.write('extension run: find done\n');
+    const grabbed = await mcp.tool('browser_download', {
       tabId,
       ...CONTROL,
       dir: work,
@@ -243,7 +243,7 @@ async function runExtensionProof({
     }
     note({
       kind: 'download',
-      tool: 'download',
+      tool: 'browser_download',
       ok: true,
       ms: grabbed.ms,
       file: path.basename(csv),
@@ -260,12 +260,12 @@ async function runExtensionProof({
       note: `pressed the download control "${CONTROL.name}" at ${Math.round(Number(pressed.x))},${Math.round(Number(pressed.y))}; ${grabbed.answer.bytes} bytes landed, armed through ${grabbed.answer.armedVia}`
     });
 
-    const shot = await mcp.tool('capture_page', { tabId });
-    if (!shot.image) throw new Error('capture_page returned no picture');
-    note({ kind: 'call', tool: 'capture_page', ok: true, ms: shot.ms, note: `${Math.round((shot.image.length * 3) / 4)} picture bytes` });
+    const shot = await mcp.tool('browser_screenshot', { tabId });
+    if (!shot.image) throw new Error('shot returned no picture');
+    note({ kind: 'call', tool: 'browser_screenshot', ok: true, ms: shot.ms, note: `${Math.round((shot.image.length * 3) / 4)} picture bytes` });
 
-    const closed = await mcp.tool('close_tab', { tabId });
-    note({ kind: 'call', tool: 'close_tab', ok: true, ms: closed.ms, note: `tab ${closed.answer?.id ?? tabId} closed` });
+    const closed = await mcp.tool('browser_close', { tabId });
+    note({ kind: 'call', tool: 'browser_close', ok: true, ms: closed.ms, note: `tab ${closed.answer?.id ?? tabId} closed` });
 
     return { rows, jpeg: shot.image, browser: browser?.name ?? 'the browser the extension was linked to', extensionId: id };
   } finally {

@@ -93,8 +93,8 @@ test('the local guidance teaches the same refusal instead of a fresh snapshot ea
   const guide = await readFile(new URL('../../local/agent-guide.ts', import.meta.url), 'utf8');
   const tools = await readFile(new URL('../../local/tools.ts', import.meta.url), 'utf8');
 
-  assert.match(guide, /resolved and clicked in the same call/);
-  assert.match(tools, /a handle cannot go stale at all/i);
+  assert.match(guide, /resolved and clicked centred in one call/);
+  assert.match(tools, /never stale/i);
 
   assert.doesNotMatch(guide, /increase the geometry tolerance|widen the tolerance/);
 });

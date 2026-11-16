@@ -42,7 +42,7 @@ function fakeSession() {
 
 // WHY THE DIALOG VERBS ARE SPOKEN HERE.
 // The MCP server calls driver.dialogState(), and the driver is this adapter: a primitive that exists but is not spoken here answers a tool call with "not a function" on a real browser, which is exactly what shipped.
-// Measured: dialog_state, dialog_type and dialog_press failed against a live browser while every unit test passed, because no test drove the adapter with a dialog call.
+// Measured: dialog, dialog and dialog failed against a live browser while every unit test passed, because no test drove the adapter with a dialog call.
 // So the dialog verbs are driven through the adapter like every other verb, and the fake session has to carry the primitives for the calls to reach them.
 
 test('the adapter speaks the dialog verbs too', async () => {
@@ -62,7 +62,7 @@ test('the adapter speaks the dialog verbs too', async () => {
 
 // WHY surfaceProfile IS DRIVEN HERE.
 // The MCP server calls driver.surfaceProfile(), and the driver is this adapter: a primitive that exists but is not spoken here answers a tool call with "not a function" on a real browser, which is exactly what shipped.
-// Measured: scan_page failed against a live Google Doc while every unit test passed, because no test drove the adapter with a profile call.
+// Measured: probe failed against a live Google Doc while every unit test passed, because no test drove the adapter with a profile call.
 // So the profile is driven through the adapter like every other verb, and the fake session has to carry the primitive for the call to reach it.
 
 test('the adapter speaks driver verbs over primitive nouns', async () => {
@@ -90,7 +90,7 @@ test('the adapter speaks driver verbs over primitive nouns', async () => {
 
 // WHY THE CLICK'S PROOF IS PINNED HERE.
 // The row is what was asked for; what the click hit belongs to the click.
-// Measured live: a click_row answered with its row and its point while a dialog owned the point and took the click, and the adapter's rebuilt answer had thrown that fact away before anyone could read it.
+// Measured live: a tap answered with its row and its point while a dialog owned the point and took the click, and the adapter's rebuilt answer had thrown that fact away before anyone could read it.
 
 test('a deaf page asks the session window, not the operating system shell', async () => {
   const session = fakeSession();

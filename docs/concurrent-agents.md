@@ -46,7 +46,7 @@ Some things exist once per machine, and a worktree does not copy them. Handle th
 
 | Shared thing | Rule |
 |---|---|
-| The everyday browser | One profile, one bridge port. Claim the tab you drive: a call on a tab another agent holds is refused with the claim named, so take a separate tab rather than fight over one caret. `list_tabs` shows what is open, `close_tab` releases your claim, and a claim lapses on its own after a minute of silence. |
+| The everyday browser | One profile, one bridge port. Claim the tab you drive: a call on a tab another agent holds is refused with the claim named, so take a separate tab rather than fight over one caret. `tabs` shows what is open, `close` releases your claim, and a claim lapses on its own after a minute of silence. |
 | The bridge port | One driver owns it; the rest reach it through the door. Do not kill another agent's driver to take it. |
 | Database migrations | Applied one at a time — two sessions applying migrations reorder them, and the reorder is a production incident. |
 | Edge function deploys | Deployed one at a time, for the same reason. |

@@ -78,32 +78,31 @@ not who drives.
 
 ## Tools
 
-The server advertises 56 tools; `guide()` returns them as tasks rather than a list.
+The server advertises 40 tools, every one prefixed `browser_` for the job it does:
 
-`browser_status`, `focus_window`, `dialog_state`, `dialog_type`, `dialog_press`,
-`use_browser`, `list_tabs`, `open_url`, `close_tab`, `scan_page`, `read_page`, `search_bing`,
-`find_elements`, `click`, `resolve_row`, `click_row`, `hover`, `press_key`,
-`type`, `get_computed`, `scroll`, `append_text`, `stream_keys`, `run_steps`,
-`wait_for_text`, `query_page`, `wait_for_row`, `wait_for_url`, `wait_for_stable`, `read_caret_line`, `upload`,
-`drop_file`, `intercept_file_chooser`, `download`, `list_menus`, `open_menu`,
-`guide`, `capture_page`, `snapshot_page`, `statement_card`, `statement_delivered`,
-`document_write`, `report_build`, `spreadsheet_build`, `deck_build`,
-`gate_detect`, `gate_wait`, `login`, `captcha_solve`,
-`wallet_pair`, `wallet_balance`, `wallet_quote`, `wallet_top_up`,
-`task_reserve`, `task_settle`, `task_refund`.
+`browser_status`, `browser_front`, `browser_dialog`,
+`browser_pin`, `browser_tabs`, `browser_goto`, `browser_close`,
+`browser_read`, `browser_search`, `browser_find`, `browser_click`, `browser_hover`,
+`browser_press`, `browser_type`, `browser_scroll`, `browser_run`, `browser_wait`,
+`browser_upload`, `browser_drop`, `browser_chooser`, `browser_download`,
+`browser_menu`, `browser_guide`, `browser_screenshot`, `browser_card`, `browser_delivered`,
+`browser_report`, `browser_sheet`, `browser_deck`, `browser_doc`,
+`browser_portal`, `browser_login`, `browser_captcha`,
+`browser_pair`, `browser_balance`, `browser_quote`, `browser_topup`,
+`browser_reserve`, `browser_settle`, `browser_refund`.
 
-`browser_status` names the paired browsers and `use_browser` pins tab-less calls
-(`open_url` is the one that matters) to one of them until another switch says
+`browser_status` names the paired browsers and `browser_pin` pins tab-less calls
+(`browser_goto` is the one that matters) to one of them until another switch says
 otherwise; pass a slot number, a device name, or `any` to follow the first ready
 browser again. Tab-scoped calls keep routing by their tab id either way.
 
-`run_steps` runs 1-8 dependent steps on one tab in a single call and reads the page
+`browser_run` runs 1-8 dependent steps on one tab in a single call and reads the page
 once at the end; the first failure stops the burst and keeps the steps that finished.
-`open_url` always opens its own tab, so a drive never navigates a page someone is
-already reading. `capture_page` is clipped to the viewport at one pixel per
+`browser_goto` always opens its own tab, so a drive never navigates a page someone is
+already reading. `browser_screenshot` is clipped to the viewport at one pixel per
 clickable coordinate, so a coordinate read off a screenshot can be clicked as-is.
-Actions answer with where the page stands and the rows that changed; `snapshot_page`
-is the deliberate look at every row.
+Actions answer with where the page stands and the rows that changed; `browser_find`
+is the deliberate look at every row for a role.
 
 Every answer is one flat document: `{ ok: true, ...facts }`, with the cost of the
 call under `elapsedMs`. A refused tool answers the same way - `{ ok: false, error:

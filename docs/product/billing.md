@@ -78,7 +78,7 @@ priced lines (the price list)  ->  an invoice (one per customer per month)
   provider's own answer when the signature does not match, writes every notification
   down, opens a new link when the customer asks for one, and records a transfer with the
   operator's note.
-- `landing/_worker.js` — the site's path to the page: a proxy for `/invoice` that keeps
+- `site/public/_worker.js` — the site's path to the page: a proxy for `/invoice` that keeps
   the page's headers, labels the HTML as HTML, and rewrites the refresh redirect back to
   `/invoice`; every other path goes to the static site unchanged.
 - the invoice door that rode the hosted MCP function — its one tool, `invoice_create`, taking the manifest rows for a per-delivery invoice or a `plan` (`plan.pilot` or `plan.firm`) for a plan month — is not in the tree (2026-11-14): the remote MCP surface was deleted, and the door closed with it until a replacement is built
@@ -148,7 +148,7 @@ The page is served from the product's own domain, not from the function's. Measu
 live on 2026-10-26: the shared function domain answered the function's HTML as
 `text/plain` under `default-src 'none'; sandbox`, so the browser showed the page as
 source and the refresh form could not be submitted. `https://opera-agent.pages.dev/invoice`
-proxies the function through `landing/_worker.js`, and the operator's link is built from
+proxies the function through `site/public/_worker.js`, and the operator's link is built from
 `BILLING_PAGE_URL`, falling back to the function URL when that setting is absent.
 Driven live on 2026-10-26: the site answered `text/html` with `no-store`,
 `no-referrer` and `noindex`, the page rendered the amount and the deadline, and the

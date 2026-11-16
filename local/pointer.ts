@@ -26,7 +26,7 @@
 // The move is sent and the mark awaited; the effect is proven by the snapshot read that follows every hover, which is also what makes a dead tab fail loudly one call later instead of silently now.
 
 // WHY A CLICK ASKS WHO OWNS THE POINT BEFORE IT PRESSES.
-// Measured live on YouTube: a cookie wall covered the page, click_row on the search box answered with the row's name and its point as if the click had reached it, focus never left the wall's button, and the type that followed had nothing to say but a guess.
+// Measured live on YouTube: a cookie wall covered the page, tap on the search box answered with the row's name and its point as if the click had reached it, focus never left the wall's button, and the type that followed had nothing to say but a guess.
 // The point either belongs to the row or to something laid over it, and that is one question with one answer.
 // When the page cannot answer, nothing is claimed.
 

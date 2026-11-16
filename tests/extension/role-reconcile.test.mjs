@@ -5,7 +5,7 @@
 
 // Role reconciliation contracts.
 
-// Root cause under test: `serialize()` reported `role: clean(el.getAttribute ('role'), 80)`, so any control without an explicit role attribute reported `role: ''` and was invisible to a role-filtered find_elements.
+// Root cause under test: `serialize()` reported `role: clean(el.getAttribute ('role'), 80)`, so any control without an explicit role attribute reported `role: ''` and was invisible to a role-filtered find.
 // These tests lock the repair: implicit roles from markup, AX fallback for custom widgets, and the safety properties that keep reconciliation read-only.
 
 import test from 'node:test';

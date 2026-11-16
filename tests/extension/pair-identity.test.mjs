@@ -67,7 +67,7 @@ test('the mirror only fires on the paired site and only reads the one cookie', (
 });
 
 test('the dashboard writes the identity cookie with the pairing-safe flags', () => {
-  const html = fs.readFileSync(new URL('../../landing/dashboard.html', import.meta.url), 'utf8');
+  const html = fs.readFileSync(new URL('../../site/app/routes/dashboard.tsx', import.meta.url), 'utf8');
   assert.match(html, /oa_device_id=/);
   assert.match(html, /Secure/);
   assert.match(html, /SameSite=Lax/);

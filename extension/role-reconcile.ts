@@ -11,7 +11,7 @@
 
 // Why this exists.
 // `serialize()` read the role straight off the DOM attribute: `role: clean(el.getAttribute('role'), 80)`.
-// A plain <button>Send</button> therefore reported `role: ''`, and any control the author did not annotate was invisible to a role-filtered find_elements.
+// A plain <button>Send</button> therefore reported `role: ''`, and any control the author did not annotate was invisible to a role-filtered find.
 // That is not a Google Docs quirk, it is most of the web — and it is why the Page numbers dialog reported `Footer` and `Show on first page` as text but never as a radio or a checkbox.
 
 // Two layers, deliberately separated:

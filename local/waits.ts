@@ -191,13 +191,13 @@ export function createWaits({ cdp, sleep, readState, readRows, read, primitives,
   async function waitForUrl({ contains, matches, timeoutMs = 10000, now: clock = now }: { contains?: string | null; matches?: string | null; timeoutMs?: number; now?: () => number } = {}) {
     const want = String(contains ?? '').trim();
     const pattern = String(matches ?? '').trim();
-    if (!want && !pattern) throw new Error('wait_for_url needs contains (substring) or matches (regular expression)');
+    if (!want && !pattern) throw new Error('wait needs contains (substring) or matches (regular expression)');
     let regex: RegExp | null = null;
     if (pattern) {
       try {
         regex = new RegExp(pattern);
       } catch {
-        throw new Error(`wait_for_url: matches is not a valid regular expression: ${pattern}`);
+        throw new Error(`wait: matches is not a valid regular expression: ${pattern}`);
       }
     }
     const urlOf = (state: Record<string, unknown>): string => String(state.url ?? '');

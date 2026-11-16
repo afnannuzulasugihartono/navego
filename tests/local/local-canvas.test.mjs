@@ -115,7 +115,7 @@ test('a canvas surface no read can answer names the picture instead of returning
   const out = await createPrimitives(cdp, { sleep: async () => {} }).read();
 
   assert.equal(out.strategy, 'vision');
-  assert.match(out.visionWhy, /capture_page/);
+  assert.match(out.visionWhy, /shot/);
   assert.equal(out.text, '');
 });
 
@@ -179,7 +179,7 @@ test('the accessibility answer carries the page it stands on', async () => {
   assert.equal(out.title, 'Doc', 'a read that answers with no title looks like a read that failed');
   assert.equal(out.url, DOC_URL);
   assert.equal(out.settled, null, 'one sample of a tree cannot say the text stopped moving');
-  assert.match(out.settledWhy, /wait_for_stable/, 'and the answer names what can');
+  assert.match(out.settledWhy, /wait/, 'and the answer names what can');
 });
 
 // WHY AN EMPTY COPY IS NOT AN EMPTY DOCUMENT.

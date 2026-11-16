@@ -1,6 +1,6 @@
 // @last-edited: 2026-11-13 UTC+7.
 // @title: bing-serp - the Bing SERP as data: external results, in order, with their snippets.
-// @state: the one SERP parser behind search_bing, on both roads; the local package reads a generated copy of this file, written by scripts/pack/pack-mcp.mjs and never committed.
+// @state: the one SERP parser behind search, on both roads; the local package reads a generated copy of this file, written by scripts/pack/pack-mcp.mjs and never committed.
 // @dependencies: none.
 
 // WHY THIS FILE LIVES IN shared/.

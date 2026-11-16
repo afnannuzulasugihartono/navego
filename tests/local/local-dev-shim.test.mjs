@@ -98,7 +98,7 @@ const bodies = (pipe) => pipe.written.join('').split('\n').filter((line) => line
 
 test('a round trip crosses the proxy untouched in both directions', async () => {
   const h = harness();
-  const call = { jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'list_tabs' } };
+  const call = { jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'tabs' } };
   const answer = { jsonrpc: '2.0', id: 1, result: [] };
 
   h.input.emit(frame(call));
@@ -187,7 +187,7 @@ test('a worker that keeps dying names itself on every call and a save rebuilds i
   }
 
   assert.equal(h.children.length, 4, 'three rebuilds, then it stops spending processes');
-  h.input.emit(frame({ jsonrpc: '2.0', id: 7, method: 'tools/call', params: { name: 'list_tabs' } }));
+  h.input.emit(frame({ jsonrpc: '2.0', id: 7, method: 'tools/call', params: { name: 'tabs' } }));
   const answered = bodies(h.output).filter((line) => line.id === 7);
   assert.equal(answered.length, 1, 'the client still gets an answer');
   assert.match(answered[0].error?.message ?? '', /keeps dying/);
@@ -197,7 +197,7 @@ test('a worker that keeps dying names itself on every call and a save rebuilds i
   h.fireWatch();
   await h.sleep(80);
   assert.equal(h.children.length, 5, 'saving the fix rebuilds the worker');
-  h.input.emit(frame({ jsonrpc: '2.0', id: 8, method: 'tools/call', params: { name: 'list_tabs' } }));
+  h.input.emit(frame({ jsonrpc: '2.0', id: 8, method: 'tools/call', params: { name: 'tabs' } }));
   assert.equal(bodies({ written: h.children[4].written }).some((line) => line.id === 8), true,
     'and the tools work again without a toggle');
   at += 31000;

@@ -83,7 +83,7 @@ Pekerjaan yang layak dijual punya lima ciri:
   Harga Rp99–249 rb sudah masuk akal untuk retrieval saja `[ESTIMATE]`. Nilai yang
   lebih besar datang dari laporan dan kepastian, bukan dari download.
 - **Lapisan laporan adalah tempat uangnya.** Nexius menjual Rp129.000/laporan; jasa
-  laporan keuangan Rp2,25–5,5 jt/klien/bulan. Tapi `report_build` sekarang hanya CSV,
+  laporan keuangan Rp2,25–5,5 jt/klien/bulan. Tapi `report` sekarang hanya CSV,
   sementara statement bank sering PDF. Gap berikutnya adalah jalur data PDF/Excel yang
   bisa dipercaya, bukan menambah verb browser.
 - **Paket pajak adalah tetangga terdekat.** Pembelinya sama (KJA/konsultan), siklusnya

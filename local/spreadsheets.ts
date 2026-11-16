@@ -43,7 +43,7 @@ export function spreadsheetFromFile({
   out?: unknown;
 } = {}) {
   if (source === null || source === undefined || String(source).trim() === '') {
-    throw new Error('spreadsheet_build needs source: the CSV exported from the workbook.');
+    throw new Error('sheet needs source: the CSV exported from the workbook.');
   }
   const from = path.resolve(String(source));
   let stat: import('node:fs').Stats;

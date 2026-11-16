@@ -76,7 +76,7 @@ export async function pairDevice({ code, deviceName, home = null, bridgeUrl = DE
 
 async function call(action: string, body: Record<string, unknown> = {}, { home = null, billingUrl = BILLING_URL, fetchImpl = fetch, device = null }: WalletCallOptions = {}): Promise<Record<string, unknown>> {
   const held = device || readDevice({ home });
-  if (!held) throw new Error('this machine is not paired: run wallet_pair with the code from the dashboard');
+  if (!held) throw new Error('this machine is not paired: run pair with the code from the dashboard');
   const response = await fetchImpl(billingUrl, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },

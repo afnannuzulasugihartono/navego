@@ -139,7 +139,7 @@ export function createInputMethods({ cdp, primitives, sleep, chunkSize = 2000 }:
         : 'nothing on the page held focus';
       const typed = `typed ${out.chars} characters`;
       throw new Error(seen.after.holds
-        ? `${typed} and nothing on the page changed: ${where} - click_row the field that should receive it, or press Escape if a dialog is over it`
+        ? `${typed} and nothing on the page changed: ${where} - browser_click({role, name}) the field that should receive it, or press Escape if a dialog is over it`
         : `${typed} into a page that holds no text and no field to receive them`);
     }
     return { ...out, landed: true, placed: await locateInsertion(text, before, seen.after) };
@@ -168,7 +168,7 @@ export function createInputMethods({ cdp, primitives, sleep, chunkSize = 2000 }:
       atEnd,
       atEndWhy: typed.placed.found
         ? (atEnd ? 'nothing follows the inserted text' : `text follows it: "${String(typed.placed.after).trim().slice(0, 40)}"`)
-        : 'the page could not say where the text went - read_page() is the proof on a canvas page'
+        : 'the page could not say where the text went - read() is the proof on a canvas page'
     };
   }
 

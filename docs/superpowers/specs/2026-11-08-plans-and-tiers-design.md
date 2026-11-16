@@ -71,7 +71,7 @@ Perbedaannya dengan hosted: drive lokal tetap milidetik ✓✓ (perintahnya tida
 
 ## Gerbang di MCP hosted
 
-- `browser_status` menjawab paket dan kuota yang tersisa ✓ (`plan`, `planQuota`, `planUsed` ✓) — jadi agent tahu batasnya sebelum menabrak ✓✓.
+- `status` menjawab paket dan kuota yang tersisa ✓ (`plan`, `planQuota`, `planUsed` ✓) — jadi agent tahu batasnya sebelum menabrak ✓✓.
 - Panggilan yang melewati kuota dijawab `PLAN_LIMIT_REACHED` ✓ dengan nama paket ✓ (peta jalan lain sudah punya bentuk kegagalan yang sama ✓✓).
 - Mode `all` di hosted: hanya `plan.firm` ✓ (satu fitur yang jelas bernilai ✓).
 
@@ -86,7 +86,7 @@ Perbedaannya dengan hosted: drive lokal tetap milidetik ✓✓ (perintahnya tida
 - **Handshake bridge.** Unit: device tanpa paket → ditolak dengan menyebut paket ✓; device dengan `plan.pilot` → diterima ✓.
 - **Kuota.** Unit: perintah ke-N pada kuota → ditolak ✓; hari berikutnya kuota kembali ✓ (dihitung per hari ✓).
 - **Paket=firm.** `all: true` diizinkan ✓; di pilot → ditolak ✓.
-- **Status.** `browser_status` melaporkan paket dan kuota ✓ dari akun yang benar ✓ (akun lain tidak terlihat ✓✓).
+- **Status.** `status` melaporkan paket dan kuota ✓ dari akun yang benar ✓ (akun lain tidak terlihat ✓✓).
 - **Kuotanya tidak terlihat dari akun lain** ✓ (RPC-nya scoped ✓).
 
 ## Risiko yang diterima

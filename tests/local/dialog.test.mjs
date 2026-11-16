@@ -44,15 +44,13 @@ test('a type that reports success also reads back what it typed', async () => {
 // Driving an operating system dialog is the first thing this driver does outside the browser, so it is visible by name rather than hidden behind a flag: a caller reading the catalogue can see it before it happens, and an agent can find it without being told.
 
 test('the catalogue names the dialog road, and says it is outside the browser', () => {
-  const names = ['dialog_state', 'dialog_type', 'dialog_press'].map((name) => TOOLS.find((tool) => tool.name === name));
+  const tool = TOOLS.find((candidate) => candidate.name === 'browser_dialog');
 
-  for (const tool of names) assert.ok(tool, `${tool} is in the catalogue`);
-  assert.match(names[1].description, /dialog/i);
-  assert.match(names[2].description, /button/i);
-  assert.match(names[2].description, /outside the browser|cannot be answered from the browser/i);
-  assert.deepEqual(Object.keys(names[0].inputSchema.properties), []);
-  assert.deepEqual(Object.keys(names[1].inputSchema.properties), ['text']);
-  assert.deepEqual(Object.keys(names[2].inputSchema.properties), ['name']);
+  assert.ok(tool, 'dialog is in the catalogue');
+  assert.match(tool.description, /dialog/i);
+  assert.match(tool.description, /outside the browser|cannot be answered from the browser/i);
+  assert.deepEqual(Object.keys(tool.inputSchema.properties).sort(), ['action', 'name', 'text']);
+  assert.deepEqual(tool.inputSchema.required, ['action']);
 });
 
 test('the guide says a dialog is answerable now, not only avoidable', () => {
@@ -60,14 +58,13 @@ test('the guide says a dialog is answerable now, not only avoidable', () => {
   const chooser = recipes.find((recipe) => /chooser has no input/i.test(recipe.task));
 
   assert.ok(chooser, 'the recipe for a chooser with no input is there');
-  assert.match(chooser.note, /dialog_state/, 'and it names the road that answers one that is already open');
+  assert.match(chooser.note, /dialog/, 'and it names the road that answers one that is already open');
 });
 
-test('the guide declares what the dialog calls do to the machine', () => {
+test('the guide declares what the dialog call does to the machine', () => {
   const { sideEffects } = guide();
   const byTool = Object.fromEntries(sideEffects.map((entry) => [entry.tool, entry.effects]));
 
-  assert.ok(byTool.dialog_type.some((line) => /outside the browser/.test(line)));
-  assert.ok(byTool.dialog_press.some((line) => /outside the browser/.test(line)));
-  assert.deepEqual(byTool.dialog_state, [], 'reading a dialog changes nothing');
+  assert.ok(byTool.browser_dialog.some((line) => /outside the browser/.test(line)), 'and names the outside browser');
+  assert.equal(byTool.browser_dialog.length, 3, 'state reads, type writes, press presses - all three are declared');
 });

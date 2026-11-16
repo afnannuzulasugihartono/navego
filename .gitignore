@@ -59,7 +59,7 @@ hosted/.temp/
 
 .spec-kit-venv/
 
-# The proof run writes its own copies beside its record; the same bytes already ship in landing/contoh/.
+# The proof run writes its own copies beside its record; the same bytes already ship in site/public/contoh/.
 
 docs/proof/out/
 docs/proof/downloads/

@@ -1,6 +1,7 @@
 // @last-edited: 2026-10-09 UTC+7.
 // @title: external-origins — the origin allowlist for chrome.runtime.onMessageExternal.
-// @state: exports EXTERNAL_CONFIG_ORIGINS and originAllowed; the site origin matches exactly, localhost matches by port prefix.
+// @state: exports originAllowed; the site origin matches exactly, localhost matches by port prefix.
+// The list stays module-local: nothing outside this file may widen it silently.
 // @dependencies: endpoints.
 
 // The origins allowed to push model config into the extension through chrome.runtime.onMessageExternal (applyModelConfig).
@@ -8,7 +9,7 @@
 
 import { SITE_ORIGIN } from './endpoints.js';
 
-export const EXTERNAL_CONFIG_ORIGINS = Object.freeze(['http://localhost:', 'https://localhost:', SITE_ORIGIN]);
+const EXTERNAL_CONFIG_ORIGINS = Object.freeze(['http://localhost:', 'https://localhost:', SITE_ORIGIN]);
 
 export function originAllowed(from: unknown) {
   const value = String(from || '');

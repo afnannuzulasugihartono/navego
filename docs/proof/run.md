@@ -1,6 +1,6 @@
 # Proof run: one browser, four files
 
-The local MCP server drove a throwaway Chrome over stdio: it opened the fixture portal, read the page, downloaded the CSV, and built the four files the site offers. Each file was hashed and compared with the same-named file in `landing/contoh/`.
+The local MCP server drove a throwaway Chrome over stdio: it opened the fixture portal, read the page, downloaded the CSV, and built the four files the site offers. Each file was hashed and compared with the same-named file in `site/public/contoh/`.
 
 One part of the run is answered locally: the cloud meter that opens a session knows an account and its plan, and a throwaway browser has neither, so the meter was pointed at a loopback stub granting a pilot session. The drive, the extension, the bridge and the files are the shipped ones; only the plan check is stood in for.
 
@@ -24,9 +24,9 @@ Browser: Proof Chrome. Deck slides: 5.
 | file | bytes | sha256 | equals |
 | --- | --- | --- | --- |
 | `docs/proof/downloads/transaksi-2026-09.csv` | 1109 | `8e0f64810fd70e91101051afb85a814df12a87b1eafde048272049ed6a3667a2` | `tests/fixtures/mock-company/transaksi-2026-09.csv` |
-| `docs/proof/out/laporan-keuangan-2026-09.xlsx` | 21066 | `a4f12765b77329eb5ec37dae3ad4323ac1d1d6659cd6261bb689c2736c931922` | `landing/contoh/laporan-keuangan-2026-09.xlsx` |
-| `docs/proof/out/rencana-strategis-2027.pptx` | 32866 | `90711468da9fe6319dea39aaeb86c49e37206410de88a18f176cf924b58294cb` | `landing/contoh/rencana-strategis-2027.pptx` |
-| `docs/proof/out/riset-promo.docx` | 23485 | `1758824cd0cf0b15a6f9531cd13ff5d42de277776b8a0cd87b8d927184ba38e1` | `landing/contoh/riset-promo.docx` |
-| `docs/proof/out/rencana-pemasaran-2027.docx` | 18509 | `104e43eac8e80e1860e1bc52c61414e81dcac43a1bea2f424537e4754517b8b6` | `landing/contoh/rencana-pemasaran-2027.docx` |
+| `docs/proof/out/laporan-keuangan-2026-09.xlsx` | 21066 | `a4f12765b77329eb5ec37dae3ad4323ac1d1d6659cd6261bb689c2736c931922` | `site/public/contoh/laporan-keuangan-2026-09.xlsx` |
+| `docs/proof/out/rencana-strategis-2027.pptx` | 32866 | `90711468da9fe6319dea39aaeb86c49e37206410de88a18f176cf924b58294cb` | `site/public/contoh/rencana-strategis-2027.pptx` |
+| `docs/proof/out/riset-promo.docx` | 23485 | `1758824cd0cf0b15a6f9531cd13ff5d42de277776b8a0cd87b8d927184ba38e1` | `site/public/contoh/riset-promo.docx` |
+| `docs/proof/out/rencana-pemasaran-2027.docx` | 18509 | `104e43eac8e80e1860e1bc52c61414e81dcac43a1bea2f424537e4754517b8b6` | `site/public/contoh/rencana-pemasaran-2027.docx` |
 
-The hashes in `run.jsonl` are rechecked against `landing/contoh/` by `tests/tooling/proof-run.test.mjs`, so this record cannot drift away from what the code makes.
+The hashes in `run.jsonl` are rechecked against `site/public/contoh/` by `tests/tooling/proof-run.test.mjs`, so this record cannot drift away from what the code makes.

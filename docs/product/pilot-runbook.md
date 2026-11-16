@@ -37,16 +37,16 @@ waktunya jadi tidak bisa dibandingkan.
 
 ## Sesi (operator drive, klien menonton)
 
-1. `statement_card` — client, portal, period (YYYY-MM), url bila diberikan, root folder.
+1. `browser_card` — client, portal, period (YYYY-MM), url bila diberikan, root folder.
    Baca `steps`, `proof`, `refuse` keras-keras ke klien: ini aturan mainnya.
-2. `open_url` portal. Kalau halaman minta login: berhenti, klien login, lanjut
-   `read_page` yang sama.
-3. `read_page` — cocokkan akun dan bulan di layar dengan kartu. Kalau tidak cocok,
+2. `browser_goto` portal. Kalau halaman minta login: berhenti, klien login, lanjut
+   `browser_read` yang sama.
+3. `browser_read` — cocokkan akun dan bulan di layar dengan kartu. Kalau tidak cocok,
    jangan lanjut; catat dan ganti bulan.
-4. `find_elements` untuk tombol unduh dengan kata yang portal pakai.
-5. `download` dengan `dir` dan `saveAs` dari kartu. Bertindak hanya pada
+4. `browser_find` untuk tombol unduh dengan kata yang portal pakai.
+5. `browser_download` dengan `dir` dan `saveAs` dari kartu. Bertindak hanya pada
    `downloaded:true`. Kalau `downloaded:false`, baca `why` dan catat sebabnya.
-6. Baca saldo akhir dari halaman, lalu `statement_delivered` dengan path dan saldo.
+6. Baca saldo akhir dari halaman, lalu `browser_delivered` dengan path dan saldo.
 7. Baca balik: `duplicate:true` kalau diulang, `duplicate:false` pertama kali.
 8. `manifest.json` dibuka untuk klien: satu baris, ukuran file, halaman, saldo,
    sumber saldo ("halaman portal").
@@ -63,11 +63,11 @@ waktunya jadi tidak bisa dibandingkan.
 ## Kalau gagal
 
 - Halaman login tidak terdeteksi tapi tidak ada tombol unduh: kemungkinan portal
-  memakai iframe atau menu. Coba `find_elements` dengan kata lain; kalau tetap
+  memakai iframe atau menu. Coba `browser_find` dengan kata lain; kalau tetap
   kosong, catat "kontrol unduh tidak ditemukan" dan hentikan.
-- `download` menjawab `downloaded:false` dengan `navigated`: portal membuka viewer,
+- `browser_download` menjawab `downloaded:false` dengan `navigated`: portal membuka viewer,
   bukan file. Catat, jangan klaim berhasil.
-- `statement_delivered` menolak file: baca pesan (`.crdownload`, 0 byte, path salah).
+- `browser_delivered` menolak file: baca pesan (`.crdownload`, 0 byte, path salah).
   Perbaiki, jangan bypass.
 - Saldo tidak terbaca dari halaman: catat `balance: null`, jangan mengarang angka.
   Manifest tetap jujur.

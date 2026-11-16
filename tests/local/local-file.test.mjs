@@ -523,7 +523,7 @@ test('a click that downloads nothing says what it saw, and names the next move',
 
   assert.equal(out.downloaded, false);
   assert.match(out.why, /no file appeared/);
-  assert.match(out.why, /dialog_state/);
+  assert.match(out.why, /dialog/);
   assert.ok(out.clicked, 'the answer still says where the click landed');
 });
 

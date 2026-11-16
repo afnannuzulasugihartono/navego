@@ -54,7 +54,7 @@ const canvasProbe = {
   focused: { value: true, evidence: 'document.hasFocus() is true' }
 };
 
-test('scan_page answers without reading the document', async () => {
+test('probe answers without reading the document', async () => {
   const cdp = fakeCdp({ probe: canvasProbe, ax: richAx, copy: '' });
   const primitives = createPrimitives(cdp, { sleep: async () => {} });
   const out = await primitives.surfaceProfile();
@@ -129,6 +129,6 @@ test('a surface no read can answer names the picture instead of returning nothin
   const primitives = createPrimitives(cdp, { sleep: async () => {} });
   const out = await primitives.read();
   assert.equal(out.strategy, 'vision');
-  assert.match(out.visionWhy, /capture_page/);
+  assert.match(out.visionWhy, /shot/);
   assert.equal(out.text, '');
 });

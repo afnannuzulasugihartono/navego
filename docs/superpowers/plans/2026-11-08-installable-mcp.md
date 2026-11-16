@@ -234,11 +234,11 @@ git commit -m "Ask the bridge who is calling, and what their plan allows"
 
 **Interfaces:**
 - Consumes: Task 4's RPC and limits.
-- Produces: `browser_status` answers `plan`, `planQuota` and `planUsed`; a command past the quota is refused with `PLAN_LIMIT_REACHED`; the whole-page map is `plan.firm` only.
+- Produces: `status` answers `plan`, `planQuota` and `planUsed`; a command past the quota is refused with `PLAN_LIMIT_REACHED`; the whole-page map is `plan.firm` only.
 
 - [ ] **Step 1: Write the failing test**
 
-A test asserts `browser_status` carries the plan fields, that the quota refusal names the plan, and that the whole-page map is refused for a pilot account.
+A test asserts `status` carries the plan fields, that the quota refusal names the plan, and that the whole-page map is refused for a pilot account.
 
 - [ ] **Step 2: Run it to verify it fails**
 

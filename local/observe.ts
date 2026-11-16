@@ -20,11 +20,11 @@
 // Measured on a real job: eight calls spent 34,974 characters, most of it the same sixty rows and the same page text riding along after every click.
 // An agent does not read that; it pays for it in tokens and in attention.
 // So an action reports where the page is and what moved - url, title, how much text it holds, which element has focus - and the rows that changed.
-// The rest stays one deliberate snapshot_page away.
+// The rest stays one deliberate scan away.
 
 // WHY THE TEXT IS COUNTED AND NOT RETURNED.
 // The count answers "did this action change what the page says", which is the question an action's answer owes.
-// The words themselves belong to read_page, where the caller asked for them.
+// The words themselves belong to read, where the caller asked for them.
 
 import { findNode, menuTreeExpression, nearestNames, revealOf, stateOf } from './menu-tree.js';
 import type { CdpResult } from './cdp.js';
@@ -130,11 +130,11 @@ const recordOf = (value: unknown): Record<string, unknown> => (typeof value === 
 function scrollWhy({ seen, wanted, end }: { seen: ScrollSeen; wanted: unknown; end: boolean }) {
   if (wanted && !seen.target?.found) {
     const named = JSON.stringify(String(wanted).slice(0, 40));
-    return `found nothing on this page for ${named} - read_page() to see what the page holds`;
+    return `found nothing on this page for ${named} - read() to see what the page holds`;
   }
   if (end && !seen.atEnd) {
     if (seen.exhausted) {
-      return `${seen.root} is as far as it goes, and this page cannot show that its last words are on screen - the text it reports is not the text it draws, so capture_page() or read_page() is the proof`;
+      return `${seen.root} is as far as it goes, and this page cannot show that its last words are on screen - the text it reports is not the text it draws, so shot() or read() is the proof`;
     }
     return `moved ${seen.movedPx} of the way and the page still has text below`;
   }
@@ -410,7 +410,7 @@ export function createObserveMethods({ cdp, primitives, capped, sleep = () => Pr
         found: false,
         why: probe.selector
           ? `no element on this page matches ${JSON.stringify(String(selector).slice(0, 40))}`
-          : `nothing at ${probe.x},${probe.y} - snapshot_page() to see what is on screen`
+          : `nothing at ${probe.x},${probe.y} - scan() to see what is on screen`
       };
     }
     return { found: true, ...seen };
