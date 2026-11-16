@@ -76,19 +76,19 @@ test('the server opens the portal tab and reads the page', { skip: noExtensionBr
     const ready = await mcp.initialize();
     assert.equal(ready?.serverInfo?.name, 'corbin');
     const names = await mcp.listTools();
-    for (const wanted of ['goto', 'read', 'download', 'sheet', 'deck', 'doc', 'shot', 'close']) {
+    for (const wanted of ['browser_goto', 'browser_read', 'browser_download', 'browser_sheet', 'browser_deck', 'browser_doc', 'browser_screenshot', 'browser_close']) {
       assert.ok(names.includes(wanted), `the server offers ${wanted}`);
     }
 
-    const opened = await mcp.tool('goto', { url: portal.url });
+    const opened = await mcp.tool('browser_goto', { url: portal.url });
     const tabId = opened.answer?.action?.id;
     assert.ok(tabId, 'goto names the tab it opened');
 
-    const read = await mcp.tool('read', { tabId });
+    const read = await mcp.tool('browser_read', { tabId });
     assert.match(String(read.answer?.text ?? ''), /Portal Mitra/);
     assert.match(String(read.answer?.text ?? ''), /Unduh CSV/);
 
-    await mcp.tool('close', { tabId });
+    await mcp.tool('browser_close', { tabId });
   } finally {
     await mcp.close();
     browser.close();
@@ -114,7 +114,7 @@ test('one drive downloads the CSV and leaves the four files the site ships', { s
       assert.equal(row.bytes, fs.statSync(path.join(work, 'out', name)).size, `${name} is the file the run made`);
     }
 
-    const downloaded = result.steps.find((step) => step.tool === 'download');
+    const downloaded = result.steps.find((step) => step.tool === 'browser_download');
     assert.equal(downloaded.ok, true);
     assert.equal(downloaded.sha256, sha256(path.join(company, 'transaksi-2026-09.csv')), 'the CSV came off the portal unchanged');
     assert.ok(result.jpeg && result.jpeg.length > 1000, 'the run captured the portal it read');
@@ -139,6 +139,7 @@ test('the recorded run still leaves the files the site ships', () => {
     assert.ok(!path.isAbsolute(row.file), 'the record carries a repository path, not a machine path');
   }
 
+  // The record is historical: at the time it was taken the deck tool was named `deck`.
   const deck = rows.find((row) => row.tool === 'deck');
   assert.ok(deck, 'the record carries the deck step');
   const written = fs.readFileSync(path.join(root, 'docs', 'proof', 'run.md'), 'utf8');

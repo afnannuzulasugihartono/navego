@@ -5,7 +5,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 export function meta() {
   return [
     { title: 'Docs — Corbin' },
-    { name: 'description', content: 'Pasang, pair, jalankan, hubungkan. 50 tool satu kata di atas 36 primitive browser — langkah yang bisa diikuti.' }
+    { name: 'description', content: 'Pasang, pair, jalankan, hubungkan. 40 tool MCP di atas 36 primitive browser - langkah yang bisa diikuti.' }
   ];
 }
 
@@ -13,101 +13,91 @@ const TOOLS: Array<{ group: string; items: Array<[string, string]> }> = [
   {
     group: 'Peramban',
     items: [
-      ['status', 'Cek perangkat ter-pairing, port yang hidup, dan paket plan masing-masing. Jawab pertama waktu klik dan tombol tidak bekerja.'],
-      ['front', 'Bawa window browser ke depan; ajukan judulnya. Tanpa jawaban, semua klik dan tombol lain bekerja buta.'],
-      ['dialog', 'Baca, isi, atau tekan dialog OS (file picker). action=state: baca. action=type: isi bagiannya. action=press: tekan tombolnya.'],
-      ['pin', 'Kunci provider ke satu browser untuk panggilan berikutnya; lepas dengan "any". Tab-scoped tetap ikut tabId.'],
-      ['tabs', 'Daftar tab yang terbuka, dengan id, judul, URL, dan slot browsernya.'],
-      ['goto', 'Buka URL di tab baru; tab yang sedang terbuka tidak pernah dihapus isinya.'],
-      ['close', 'Tutup tab berdasarkan id; lepas cache sesi tab itu.']
+      ['browser_status', 'Cek perangkat ter-pairing, port yang hidup, dan paket plan masing-masing. Jawab pertama waktu klik dan tombol tidak bekerja.'],
+      ['browser_front', 'Bawa window browser ke depan; ajukan judulnya. Tanpa jawaban, semua klik dan tombol lain bekerja buta.'],
+      ['browser_dialog', 'Baca, isi, atau tekan dialog OS (file picker). action=state: baca. action=type: isi bagiannya. action=press: tekan tombolnya.'],
+      ['browser_pin', 'Kunci provider ke satu browser untuk panggilan berikutnya; lepas dengan "any". Tab-scoped tetap ikut tabId.'],
+      ['browser_tabs', 'Daftar tab yang terbuka, dengan id, judul, URL, dan slot browsernya.'],
+      ['browser_goto', 'Buka URL di tab baru; tab yang sedang terbuka tidak pernah dihapus isinya.'],
+      ['browser_close', 'Tutup tab berdasarkan id; lepas cache sesi tab itu.']
     ]
   },
   {
     group: 'Membaca halaman',
     items: [
-      ['probe', 'Ukur halaman sebelum dibaca: teksnya di DOM atau canvas, berfokus, jumlah karakter — selalu aman, tanpa menyentuh teks.'],
-      ['read', 'Baca halaman: url, judul, teks, dan apakah teksnya sudah berhenti bergerak. Ladder: a11y tree → DOM → selection → foto.'],
-      ['search', 'Cari di Bing sebagai data terstruktur (peringkat, judul, URL, situs, cuplikan), bukan halaman yang harus dibaca.'],
-      ['find', 'Cari teks terlihat, balik tiap kecocokan dengan kotak viewport — bisa langsung diklik.'],
-      ['inspect', 'Baca satu elemen seperti yang dirender: tag, peran, nama, kotak, font, warna, visibilitas. Tidak mengubah apa-apa.'],
-      ['scan', 'Peta halaman: peran, nama, x, y tiap tombol, tautan, baris menu — dengan nilai field.'],
-      ['shot', 'JPEG halaman; viewport × device scale factor. fullPage untuk halaman penuh (canvas tetap viewport).'],
-      ['caret', 'Baris tempat caret berdiri; akan dikirim selection-nya dan dikembalikan apa adanya.']
+      ['browser_read', 'Baca halaman: url, judul, teks, dan apakah teksnya sudah berhenti bergerak. Ladder: a11y tree → DOM → selection → foto.'],
+      ['browser_search', 'Cari di Bing sebagai data terstruktur (peringkat, judul, URL, situs, cuplikan), bukan halaman yang harus dibaca.'],
+      ['browser_find', 'Cocokkan teks terlihat, atau — dengan role — daftar semua baris peran itu; dengan role dan name — satu baris dengan handle.'],
+      ['browser_screenshot', 'JPEG halaman; viewport × device scale factor. fullPage untuk halaman penuh (canvas tetap viewport).']
     ]
   },
   {
     group: 'Aksi',
     items: [
-      ['click', 'Klik titik viewport (x, y) atau handle elemen. Jawaban: di mana halaman sekarang.'],
-      ['grab', 'Pegang elemen (role + nama) tanpa klik; handle-nya untuk klik nanti.'],
-      ['tap', 'Cari baris berdasarkan peran dan nama, klik pusatnya dalam satu panggilan.'],
-      ['hover', 'Gerakkan pointer ke koordinat tanpa menekan; menu dan submenu muncul.'],
-      ['press', 'Kirim tombol ke elemen terfokus: Enter, Tab, Escape, panah, atau satu karakter.'],
-      ['type', 'Ketik teks ke permukaan terfokus; newline jadi paragraf nyata.'],
-      ['append', 'Tambah teks di paling akhir tab; pengembalian mengukur apakah ada yang mengikutinya.'],
-      ['scroll', 'Geser {y: pixel}, {end: true}, atau ke teks/selector tertentu. Jawaban: container mana yang bergerak.'],
-      ['stream', 'Rangkaian chord dan teks berurutan, seperti melintasi menu.'],
-      ['run', '1–8 langkah tergantung dalam satu panggilan; gagal pertama menghentikan yang tersisa.']
+      ['browser_click', 'Klik titik viewport (x, y), handle dari browser_find, atau baris berdasar role dan name — dicari lalu diklik. Jawaban: di mana halaman sekarang.'],
+      ['browser_hover', 'Gerakkan pointer ke koordinat tanpa menekan; menu dan submenu muncul.'],
+      ['browser_press', 'Kirim tombol ke elemen terfokus: Enter, Tab, Escape, panah, atau satu karakter.'],
+      ['browser_type', 'Ketik teks ke permukaan terfokus; newline jadi paragraf nyata. atEnd: true untuk menambah di paling akhir dokumen.'],
+      ['browser_scroll', 'Geser {y: pixel}, {end: true}, atau ke teks/selector tertentu. Jawaban: container mana yang bergerak.'],
+      ['browser_run', '1–8 langkah tergantung dalam satu panggilan — klik, find, tekan, ketik, scroll — gagal pertama menghentikan yang tersisa.']
     ]
   },
   {
     group: 'Menunggu',
     items: [
-      ['wait', 'until=text: teks muncul/pergi. until=row: baris menu muncul/pergi. until=url: tiba di halaman. until=stable: halaman berhenti bergerak.']
+      ['browser_wait', 'until=text: teks muncul/pergi. until=row: baris menu muncul/pergi. until=url: tiba di halaman. until=stable: halaman berhenti bergerak.']
     ]
   },
   {
     group: 'Berkas',
     items: [
-      ['upload', 'Isi file input dengan bytes atau path; halaman mengunggah sendiri via change yang sudah didengarkan.'],
-      ['drop', 'Lepas file di titik viewport; untuk site yang tidak punya input file (Docs, dll.).'],
-      ['chooser', 'Sembunyikan file picker supaya unggahan selesai tanpa UI OS; enable → upload → disable.'],
-      ['download', 'Klik kontrol unduh, tunggu sampai berkas jadi, kembalikan path dan byte-nya.']
+      ['browser_upload', 'Isi file input dengan bytes atau path; halaman mengunggah sendiri via change yang sudah didengarkan.'],
+      ['browser_drop', 'Lepas file di titik viewport; untuk site yang tidak punya input file (Docs, dll.).'],
+      ['browser_chooser', 'Sembunyikan file picker supaya unggahan selesai tanpa UI OS; enable → upload → disable.'],
+      ['browser_download', 'Klik kontrol unduh, tunggu sampai berkas jadi, kembalikan path dan byte-nya.']
     ]
   },
   {
     group: 'Menu',
     items: [
-      ['menus', 'Baca apa yang bisa dilakukan aplikasi halaman, dari markup-nya sendiri — tanpa klik.'],
-      ['menu', 'Telusuri path menu (mis. ["Insert","Image"]) dan berhenti di sana; clickLeaf untuk menekan ujungnya.']
+      ['browser_menu', 'action=list: baca apa yang bisa dilakukan aplikasi halaman dari markup-nya sendiri. action=walk: telusuri path (mis. ["Insert","Image"]) dan berhenti di sana; clickLeaf untuk menekan ujungnya.']
     ]
   },
   {
     group: 'Berkas keluaran',
     items: [
-      ['card', 'Kartu untuk satu pengiriman: nama file, folder, manifest, halaman untuk dibuka — tanpa browser.'],
-      ['delivered', 'Catat statement sebagai terkirim: cek file di disk, hitung halaman PDF, tambah ke manifest.'],
-      ['report', 'CSV → rencana laporan dengan tiap angka menyebut kolom dan baris asalnya; dicek ulang.'],
-      ['sheet', 'CSV → Excel workbook: baris laporan, baris sumber, ledger yang menyebut baris penghasil tiap angka.'],
-      ['deck', 'JSON → PowerPoint; slide yang menyebut angka yang tidak ada di laporan ditolak.'],
-      ['doc', 'JSON → Word; tiap graph menyebut bagian dan baris asalnya; dicek ulang sebelum ditulis.']
+      ['browser_card', 'Kartu untuk satu pengiriman: nama file, folder, manifest, halaman untuk dibuka — tanpa browser.'],
+      ['browser_delivered', 'Catat statement sebagai terkirim: cek file di disk, hitung halaman PDF, tambah ke manifest.'],
+      ['browser_report', 'CSV → rencana laporan dengan tiap angka menyebut kolom dan baris asalnya; dicek ulang.'],
+      ['browser_sheet', 'CSV → Excel workbook: baris laporan, baris sumber, ledger yang menyebut baris penghasil tiap angka.'],
+      ['browser_deck', 'JSON → PowerPoint; slide yang menyebut angka yang tidak ada di laporan ditolak.'],
+      ['browser_doc', 'JSON → Word; tiap graph menyebut bagian dan baris asalnya; dicek ulang sebelum ditulis.']
     ]
   },
   {
     group: 'Sistem dan keamanan',
     items: [
-      ['portal', 'Baca gate (masuk, kode sekali pakai, captcha) di tab, atau tunggu sampai clear. Tidak mengetik.'],
-      ['login', 'Isi username/password dari file kredensial yang Anda tulis; rahasia tidak pernah masuk ke jawaban.'],
-      ['captcha', 'Opt-in: baca gambar captcha lewat solver yang Anda konfigurasikan, ketik jawabannya. Domain Anda yang memutuskan.']
+      ['browser_portal', 'Baca gate (masuk, kode sekali pakai, captcha) di tab, atau tunggu sampai clear. Tidak mengetik.'],
+      ['browser_login', 'Isi username/password dari file kredensial yang Anda tulis; rahasia tidak pernah masuk ke jawaban.'],
+      ['browser_captcha', 'Opt-in: baca gambar captcha lewat solver yang Anda konfigurasikan, ketik jawabannya. Domain Anda yang memutuskan.']
     ]
   },
   {
     group: 'Kas',
     items: [
-      ['pair', 'Pasangkan mesin ini dengan akun yang membayar pekerjaannya; kode dari dashboard. token = otoritas penuh mesin ini ke wallet Anda.'],
-      ['balance', 'Baca saldo wallet, dan tersedia setelah hold tugas berjalan.'],
-      ['quote', 'Harga satu pekerjaan sebelum mulai; tampilkan ke pemiliknya, minta persetujuan.'],
-      ['topup', 'Buka halaman isi ulang; saldo bertambah saat provider mengonfirmasi, bukan saat panggilan kembali.'],
-      ['reserve', 'Tahan harga satu pekerjaan sebelum mulai; gagal = ditolak.'],
-      ['settle', 'Tagih harga pekerjaan yang selesai; hash sha256 artefak adalah satu-satunya yang keluar dari mesin ini.'],
-      ['refund', 'Kembalikan seluruh harga pekerjaan yang tidak selesai, dengan satu baris alasan.']
+      ['browser_pair', 'Pasangkan mesin ini dengan akun yang membayar pekerjaannya; kode dari dashboard. token = otoritas penuh mesin ini ke wallet Anda.'],
+      ['browser_balance', 'Baca saldo wallet, dan tersedia setelah hold tugas berjalan.'],
+      ['browser_quote', 'Harga satu pekerjaan sebelum mulai; tampilkan ke pemiliknya, minta persetujuan.'],
+      ['browser_topup', 'Buka halaman isi ulang; saldo bertambah saat provider mengonfirmasi, bukan saat panggilan kembali.'],
+      ['browser_reserve', 'Tahan harga satu pekerjaan sebelum mulai; gagal = ditolak.'],
+      ['browser_settle', 'Tagih harga pekerjaan yang selesai; hash sha256 artefak adalah satu-satunya yang keluar dari mesin ini.'],
+      ['browser_refund', 'Kembalikan seluruh harga pekerjaan yang tidak selesai, dengan satu baris alasan.']
     ]
   },
   {
     group: 'Bimbingan',
     items: [
-      ['guide', 'Bacaan ringkas tentang server ini, ditulis sebagai tugas: untuk tiap tugas, panggilan yang dikenal bekerja. Mulai dari sini kalau belum tahu harus pakai yang mana.'],
-      ['trace', 'Pertanyaan terstruktur hanya-baca ke browser: frame tree, node, box, outerHTML, screenshot.']
+      ['browser_guide', 'Bacaan ringkas tentang server ini, ditulis sebagai tugas: untuk tiap tugas, panggilan yang dikenal bekerja. Mulai dari sini kalau belum tahu harus pakai yang mana.']
     ]
   }
 ];
@@ -214,7 +204,7 @@ export default function Docs() {
           <p>Isi saldo lewat QRIS dari Dashboard, tanpa langganan. Saldo yang kurang membuat pekerjaan ditolak sebelum mulai, dengan tautan isi ulang. Harga tetap, pengembalian, dan masa berlaku saldo ada di halaman <Link to="/harga.html">Harga</Link>.</p>
 
           <h2 id="tools">Tools MCP</h2>
-          <p>50 tool, satu kata per tool, di atas 36 primitive browser. Tugas masing-masing:</p>
+          <p>40 tool, semuanya berawalan <code>browser_</code>, di atas 36 primitive browser. Tugas masing-masing:</p>
           {TOOLS.map(({ group, items }) => (
             <div key={group}>
               <h3>{group}</h3>

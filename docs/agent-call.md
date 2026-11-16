@@ -51,22 +51,22 @@ session ends, so the local road and the pairing account share one daily count �
 readable client code. `opera-agent-mcp doctor` prints the bridge, the device,
 the extension version, the plan, and the quota.
 
-`status` answers with the port the drive is really on, so read it
+`browser_status` answers with the port the drive is really on, so read it
 first: `port: 9451` means the extension road. When a linked device's daily
 quota is spent the device card carries `planExhaustedDevices` with the device
 names, so a driver sees it before the next call is refused.
 
-The server advertises 50 tools, one bare word each. `guide()` returns them as tasks rather than a
+The server advertises 40 tools, every one prefixed `browser_` and named for the job it does. `browser_guide()` returns them as tasks rather than a
 list, and the full list is in [`local/README.md`](../local/README.md).
 
 ### The capture ladder
 
-`read` answers with measured text, and everything it says about the page
+`browser_read` answers with measured text, and everything it says about the page
 carries the number it measured, never an assumption: `settled` is true only
 when two reads a beat apart agree the text has stopped moving (`settled: null`
-means one sample cannot say; `wait()` is the companion), and
+means one sample cannot say; `browser_wait()` is the companion), and
 `grewBy` names how many characters arrived between reads. The read walks a
-ladder chosen from what `probe()` measured: the accessibility tree
+ladder chosen from what the page measures as: the accessibility tree
 first where a canvas covers the viewport, then the DOM, then a selection copy
 (only with `allowCaretMove: true`), then a picture. Every step but the
 selection copy asks nothing of the page, the answer names which step it used,
@@ -102,8 +102,8 @@ node --test tests/extension/extension-run.test.mjs
 - [`docs/proof/extension-run.jsonl`](../docs/proof/extension-run.jsonl) — one line per call.
 - [`docs/proof/extension-portal.jpg`](../docs/proof/extension-portal.jpg) — the picture the run took.
 
-The last recorded run carried seven calls over the bridge — `status`,
-`goto`, `read`, `find`, `download`, `shot`,
-`close` — and the CSV it pulled down hashed equal to the file the portal
+The last recorded run carried seven calls over the bridge — `browser_status`,
+`browser_goto`, `browser_read`, `browser_find`, `browser_download`, `browser_screenshot`,
+`browser_close` — and the CSV it pulled down hashed equal to the file the portal
 served. `tests/extension/extension-run.test.mjs` re-hashes that fixture and compares it
 with the hash in the record; it does not drive a browser again.

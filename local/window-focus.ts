@@ -312,7 +312,7 @@ async function x11(match: string | null, run_: ExecFunction): Promise<WindowStat
   const active = await run_('xdotool', ['getactivewindow', 'getwindowname']);
   const foreground = lines(active.stdout)[0] ?? '';
   if (match === null) return { platform: 'linux', foreground, windows: [], minimized: [] };
-  const out = await run_('xdotool', ['search', '--name', match, 'windowactivate', '--sync']);
+  const out = await run_('xdotool', ['browser_search', '--name', match, 'windowactivate', '--sync']);
   return { platform: 'linux', foreground: lines(out.stdout)[0] ?? foreground, windows: [], minimized: [] };
 }
 
@@ -359,7 +359,7 @@ export async function focusWindow(match: unknown = '', { platform = process.plat
       : platform === 'darwin'
         ? (await exec('osascript', ['-e', APPLE_FOCUS(wanted)])).stdout
         : platform === 'linux'
-          ? (await exec('xdotool', ['search', '--name', wanted, 'windowactivate', '--sync'])).stdout
+          ? (await exec('xdotool', ['browser_search', '--name', wanted, 'windowactivate', '--sync'])).stdout
           : null;
     if (text === null) return unsupported(platform, `window focus is not implemented on ${platform}`);
     const all = lines(text);

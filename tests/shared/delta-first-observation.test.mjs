@@ -561,8 +561,8 @@ test('keeps the R4-authorized read projection inside the frozen public boundary'
     assert.equal(sha256Blob(bytes), expected, `${relativePath} must remain byte-for-byte unchanged in P2`);
   }
   const tools = readFileSync(new URL('../../local/tools.ts', import.meta.url), 'utf8');
-  assert.match(tools, /name: 'read'/);
-  assert.match(tools, /name: 'scan'/);
+  assert.match(tools, /name: 'browser_read'/);
+  assert.match(tools, /name: 'browser_find'/);
   assert.doesNotMatch(tools, /delta-first-observation/);
 });
 

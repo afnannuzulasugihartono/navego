@@ -331,25 +331,25 @@ export async function runProof({
     note({ tool: 'initialize', ok: true, note: `server ${ready?.serverInfo?.name ?? 'unknown'}` });
 
     const names = await mcp.listTools();
-    for (const wanted of ['goto', 'read', 'download', 'sheet', 'deck', 'doc', 'shot', 'close']) {
+    for (const wanted of ['browser_goto', 'browser_read', 'browser_download', 'browser_sheet', 'browser_deck', 'browser_doc', 'browser_screenshot', 'browser_close']) {
       if (!names.includes(wanted)) throw new Error(`the server no longer offers ${wanted}`);
     }
     note({ tool: 'tools/list', ok: true, note: `${names.length} tools` });
 
-    const opened = await mcp.tool('goto', { url: portal.url });
+    const opened = await mcp.tool('browser_goto', { url: portal.url });
     const tabId = opened.answer?.action?.id;
     if (!tabId) throw new Error('goto returned no tab id');
-    note({ tool: 'goto', ms: opened.ms, ok: true, note: `tab ${tabId} · ${portal.url}` });
+    note({ tool: 'browser_goto', ms: opened.ms, ok: true, note: `tab ${tabId} · ${portal.url}` });
 
-    const read = await mcp.tool('read', { tabId });
+    const read = await mcp.tool('browser_read', { tabId });
     const pageText = String(read.answer?.text ?? '');
     for (const mark of MARKS) {
       if (!pageText.includes(mark)) throw new Error(`read did not show ${mark}`);
     }
-    note({ tool: 'read', ms: read.ms, ok: true, note: `${pageText.length} characters read` });
+    note({ tool: 'browser_read', ms: read.ms, ok: true, note: `${pageText.length} characters read` });
 
     fs.mkdirSync(downloads, { recursive: true });
-    const grabbed = await mcp.tool('download', {
+    const grabbed = await mcp.tool('browser_download', {
       tabId,
       role: 'link',
       name: 'Unduh CSV',
@@ -363,7 +363,7 @@ export async function runProof({
     const fixtureHash = sha256(path.join(company, 'transaksi-2026-09.csv'));
     if (csvHash !== fixtureHash) throw new Error(`the downloaded CSV is not the fixture: ${csvHash} versus ${fixtureHash}`);
     note({
-      tool: 'download',
+      tool: 'browser_download',
       ms: grabbed.ms,
       ok: true,
       note: `${grabbed.answer.bytes} bytes landed`,
@@ -382,7 +382,7 @@ export async function runProof({
 
     fs.mkdirSync(out, { recursive: true });
 
-    const workbook = await mcp.tool('sheet', {
+    const workbook = await mcp.tool('browser_sheet', {
       source: csv,
       client: 'Sinar Jaya',
       title: 'Laporan Keuangan September 2026',
@@ -395,12 +395,12 @@ export async function runProof({
     const workbookFile = workbook.answer?.out;
     if (!workbookFile) throw new Error('sheet returned no file');
     compared('laporan-keuangan-2026-09.xlsx', workbookFile, {
-      tool: 'sheet',
+      tool: 'browser_sheet',
       ms: workbook.ms,
       note: `${workbook.answer.sheets?.length ?? 0} sheets, ${workbook.answer.verified?.checked ?? 0} figures checked`
     });
 
-    const deck = await mcp.tool('deck', {
+    const deck = await mcp.tool('browser_deck', {
       source: papers['strategi.json'],
       report: workbook.answer.plan,
       out: path.join(out, 'rencana-strategis-2027.pptx')
@@ -408,30 +408,30 @@ export async function runProof({
     const deckFile = deck.answer?.out;
     if (!deckFile) throw new Error('deck returned no file');
     compared('rencana-strategis-2027.pptx', deckFile, {
-      tool: 'deck',
+      tool: 'browser_deck',
       ms: deck.ms,
       note: `${deck.answer.slides ?? 0} content slides and a cover`
     });
 
     for (const [source, name] of [['riset-promo.json', 'riset-promo.docx'], ['pemasaran.json', 'rencana-pemasaran-2027.docx']]) {
-      const paper = await mcp.tool('doc', {
+      const paper = await mcp.tool('browser_doc', {
         source: papers[source],
         out: path.join(out, name)
       });
       if (!paper.answer?.out) throw new Error(`doc returned no file for ${source}`);
       compared(name, paper.answer.out, {
-        tool: 'doc',
+        tool: 'browser_doc',
         ms: paper.ms,
         note: `${paper.answer.blocks ?? 0} blocks, ${paper.answer.title ?? ''}`
       });
     }
 
-    const shot = await mcp.tool('shot', { tabId });
+    const shot = await mcp.tool('browser_screenshot', { tabId });
     if (!shot.image) throw new Error('shot returned no picture');
-    note({ tool: 'shot', ms: shot.ms, ok: true, note: `${Math.round((shot.image.length * 3) / 4)} picture bytes` });
+    note({ tool: 'browser_screenshot', ms: shot.ms, ok: true, note: `${Math.round((shot.image.length * 3) / 4)} picture bytes` });
 
-    const closed = await mcp.tool('close', { tabId });
-    note({ tool: 'close', ms: closed.ms, ok: true, note: `tab ${closed.answer?.id ?? tabId} closed` });
+    const closed = await mcp.tool('browser_close', { tabId });
+    note({ tool: 'browser_close', ms: closed.ms, ok: true, note: `tab ${closed.answer?.id ?? tabId} closed` });
 
     return {
       steps,

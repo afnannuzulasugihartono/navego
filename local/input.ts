@@ -139,7 +139,7 @@ export function createInputMethods({ cdp, primitives, sleep, chunkSize = 2000 }:
         : 'nothing on the page held focus';
       const typed = `typed ${out.chars} characters`;
       throw new Error(seen.after.holds
-        ? `${typed} and nothing on the page changed: ${where} - tap the field that should receive it, or press Escape if a dialog is over it`
+        ? `${typed} and nothing on the page changed: ${where} - browser_click({role, name}) the field that should receive it, or press Escape if a dialog is over it`
         : `${typed} into a page that holds no text and no field to receive them`);
     }
     return { ...out, landed: true, placed: await locateInsertion(text, before, seen.after) };

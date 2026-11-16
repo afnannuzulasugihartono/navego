@@ -43,7 +43,7 @@ import { leaseTab, releaseTab, preferBridgeDevice } from './bridge.js';
 // The copy is written at pack time (scripts/pack/pack-mcp.mjs) because a path outside the package does not exist on the machine that runs the install: reading ../supabase at run time died with ENOENT for every installed user.
 
 import { tidyForAi } from './tidy.js';
-import { TOOLS, ASKABLE, askParams, STRAY_FILE_TAB } from './tools.js';
+import { TOOLS, STRAY_FILE_TAB } from './tools.js';
 import { SERP_EXPRESSION } from './page-expressions.js';
 import { parseBingSerp } from './bing-serp.js';
 import { pairDevice, taskRefund, taskReserve, taskSettle, walletBalance, walletQuote, walletTopUp } from './wallet-client.js';
@@ -383,7 +383,7 @@ const livePort = async (context: { port?: unknown }): Promise<unknown> => (typeo
 // Measured live on this product's own author: an agent that copies an eight-digit id wrong is told "No page target", and the number is the one thing it cannot check - it cannot read a digit back off a screenshot, but it can read a title.
 // So a tabId that is not a number is looked for by title or address, and a name that fits two tabs is refused with both of them, because picking one and saying nothing is how a drive ends up typing into the wrong document.
 
-const INPUT_TOOLS = new Set(['click', 'tap', 'hover', 'type', 'stream', 'press', 'upload', 'drop', 'menu', 'download', 'login', 'captcha']);
+const INPUT_TOOLS = new Set(['browser_click', 'browser_hover', 'browser_type', 'browser_press', 'browser_upload', 'browser_drop', 'browser_menu', 'browser_download', 'browser_login', 'browser_captcha']);
 
 // WHY THE OWNER IS A LABEL AND A NUMBER.
 // The label is what a refusal reads back to an agent that can go and drive another tab, and the number keeps two agents that share a label from sharing one claim.
@@ -507,9 +507,9 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
     requireArguments(args, TOOLS.find((t) => t.name === name)?.inputSchema.required ?? []);
 
     // The burst is checked before a tab is resolved, so a malformed step list cannot touch a browser, and a caller learns which step was wrong before any page is changed.
-    const burst = name === 'run' ? normalizeBurst(args) : null;
+    const burst = name === 'browser_run' ? normalizeBurst(args) : null;
 
-    if (name === 'card') {
+    if (name === 'browser_card') {
       return asText(statementCard({
         client: args.client,
         portal: args.portal,
@@ -519,7 +519,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         ext: args.ext ?? 'pdf'
       }));
     }
-    if (name === 'delivered') {
+    if (name === 'browser_delivered') {
       return asText(statementDelivered({
         client: args.client,
         portal: args.portal,
@@ -530,7 +530,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         replace: args.replace === true
       }));
     }
-    if (name === 'report') {
+    if (name === 'browser_report') {
       return asText(reportFromFile({
         source: args.source,
         client: args.client,
@@ -542,7 +542,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         out: args.out ?? null
       }));
     }
-    if (name === 'sheet') {
+    if (name === 'browser_sheet') {
       return asText(spreadsheetFromFile({
         source: args.source,
         client: args.client,
@@ -554,14 +554,14 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         out: args.out ?? null
       }));
     }
-    if (name === 'deck') {
+    if (name === 'browser_deck') {
       return asText(deckFromFile({
         source: args.source,
         out: args.out ?? null,
         report: args.report ?? null
       }));
     }
-    if (name === 'doc') {
+    if (name === 'browser_doc') {
       const plan = documentFromFile({
         source: args.source,
         out: null
@@ -577,26 +577,26 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
     // A wallet lives on the server, so a wallet call that needed a tab would refuse to answer with the browser closed — which is exactly when a person checks their balance or pays for the last job.
     // The plan is assembled from named fields rather than passed through, so a caller cannot smuggle a price or an owner into the object the server prices.
 
-    if (name === 'pair') {
+    if (name === 'browser_pair') {
       return asText(await pairDevice({ code: args.code, deviceName: args.deviceName, version: context.version }));
     }
-    if (name === 'balance') return asText(await walletBalance());
-    if (name === 'topup') return asText(await walletTopUp());
-    if (name === 'quote') return asText(await walletQuote(planFrom(args)));
-    if (name === 'reserve') return asText(await taskReserve(planFrom(args)));
-    if (name === 'settle') {
+    if (name === 'browser_balance') return asText(await walletBalance());
+    if (name === 'browser_topup') return asText(await walletTopUp());
+    if (name === 'browser_quote') return asText(await walletQuote(planFrom(args)));
+    if (name === 'browser_reserve') return asText(await taskReserve(planFrom(args)));
+    if (name === 'browser_settle') {
       return asText(await taskSettle({
         reservationId: args.reservationId,
         artifactHash: args.artifactHash,
         actionsActual: typeof args.actionsActual === 'number' ? args.actionsActual : null
       }));
     }
-    if (name === 'refund') {
+    if (name === 'browser_refund') {
       return asText(await taskRefund({ reservationId: args.reservationId, reason: args.reason ?? null }));
     }
 
-    const tab = name === 'close' ? null : await resolvedTab(args?.tabId);
-    const driver = await driverFor(name === 'close' ? null : (tab ? tab.id : args?.tabId));
+    const tab = name === 'browser_close' ? null : await resolvedTab(args?.tabId);
+    const driver = await driverFor(name === 'browser_close' ? null : (tab ? tab.id : args?.tabId));
     const wantsFront = INPUT_TOOLS.has(name)
       || (burst?.steps.some((step: JsonRecord) => BURST_INPUT_ACTIONS.includes(step.action)) ?? false);
     const front = wantsFront && typeof driver.ensureFront === 'function'
@@ -614,7 +614,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
     tabSaid.set(driver, tab);
 
     switch (name) {
-      case 'status': {
+      case 'browser_status': {
         const window = await driver.windowState();
         const pages = await driver.tabs().then((list) => (list as JsonRecord[])).catch(() => [] as JsonRecord[]);
         const live = Number(await livePort(context));
@@ -630,9 +630,9 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           window: windowTruth(isObject(window) ? window : {}, context.browsers, pages)
         });
       }
-      case 'front':
+      case 'browser_front':
         return asText(await driver.focusWindow(args.match ?? ''));
-      case 'dialog': {
+      case 'browser_dialog': {
         const action = String(args.action ?? 'state');
         if (action === 'state') return asText(await driver.dialogState());
         if (action === 'type') {
@@ -645,11 +645,11 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         }
         throw new Error(`dialog action must be state, type or press — got: ${action}`);
       }
-      case 'tabs':
+      case 'browser_tabs':
         return asText(await driver.tabs());
-      case 'pin':
+      case 'browser_pin':
         return asText(await preferBridgeDevice(args.device));
-      case 'goto': {
+      case 'browser_goto': {
         if (tab) {
           return afterAction(driver, { navigated: await driver.navigate(args.url), tab: args.tabId });
         }
@@ -661,21 +661,19 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         const openedDriver = openedId === null || openedId === undefined ? driver : await driverFor(String(openedId));
         return afterAction(openedDriver, opened);
       }
-      case 'close': {
+      case 'browser_close': {
         const out = await driver.close(args.tabId);
         void sessions.get(args.tabId)?.close?.();
         sessions.delete(args.tabId);
         await lease.release(args.tabId, OWNER).catch(() => null);
         return asText(out);
       }
-      case 'probe':
-        return asText(await driver.surfaceProfile());
-      case 'read':
+      case 'browser_read':
         return asText(await driver.read({ allowCaretMove: args.allowCaretMove === true }));
       // WHY THE SETTLE IS ASKED FOR, BOUNDED AND OPTIONAL.
       // tabs.open already waits for the tab's load event, but load and settled-for-readers are different facts: Bing renders its cards server-side, and the first innerText read is only as fresh as whatever the page did after DOMContentLoaded.
       // The optional call keeps a fake session in the tests working while the real one measures quiet before the read.
-      case 'search': {
+      case 'browser_search': {
         const query = String(args.query ?? '').trim();
         if (!query) throw new Error('search needs a non-empty query string.');
         const pages = Math.min(3, Math.max(1, Math.floor(Number(args.pages) || 1)));
@@ -762,7 +760,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
             seen.add(result.url);
             results.push({ ...result, rank: results.length + 1 });
           }
-          answer = { ok: true, kind: 'search', page: { url: pageUrl, title: pageTitle }, search: { query, engine: 'bing', pages: fetched, count: results.length, truncated, ...(textTruncated ? { textTruncated: true } : {}), results } };
+          answer = { ok: true, kind: 'browser_search', page: { url: pageUrl, title: pageTitle }, search: { query, engine: 'bing', pages: fetched, count: results.length, truncated, ...(textTruncated ? { textTruncated: true } : {}), results } };
         } catch (error: unknown) {
           failure = error;
         } finally {
@@ -783,43 +781,47 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         if (closeFailed && answer) answer.tabClosed = false;
         return asText(answer);
       }
-      case 'find':
-        return asText(await driver.find(args.query));
-      case 'click':
+      case 'browser_find': {
+        if (args.role) {
+          if (args.name) return asText({ row: await driver.resolve(args.role, args.name) });
+          const snapshot = await driver.snapshot(args.limit) as Array<Record<string, unknown>>;
+          return asText({ rows: snapshot.filter((row) => row.role === args.role) });
+        }
+        const text = args.text ?? args.query;
+        if (!text) throw new Error('browser_find needs text (text mode), or role (row modes), or role and name (single row)');
+        return asText(await driver.find(String(text)));
+      }
+      case 'browser_click': {
+        if (args.role || args.name) {
+          if (!args.role) throw new Error('click by row needs role — e.g. menuitem');
+          if (!args.name) throw new Error('click by row needs name — the row name, exact first, substring after');
+          return afterAction(driver, await driver.clickRow(args.role, args.name));
+        }
         return afterAction(driver, args.at
           ? await driver.clickFraction(args.at)
           : await driver.click(args.x, args.y, args.handle ?? null));
-      case 'grab':
-        return asText({ action: await driver.resolve(args.role, args.name) });
-      case 'tap':
-        return afterAction(driver, await driver.clickRow(args.role, args.name));
-      case 'hover':
+      }
+      case 'browser_hover':
         return afterAction(driver, await driver.hover(args.x, args.y));
-      case 'press':
+      case 'browser_press':
         return afterAction(driver, await driver.key(args.key, args.modifiers ?? []));
-      case 'type':
-        return afterAction(driver, await driver.type(args.text));
-      case 'append':
-        return afterAction(driver, await driver.append(args.text));
-      case 'inspect':
-        return asText(await driver.computed({ x: args.x, y: args.y, selector: args.selector }));
-      case 'scroll':
+      case 'browser_type':
+        return afterAction(driver, args.atEnd === true ? await driver.append(args.text) : await driver.type(args.text));
+      case 'browser_scroll':
         return afterAction(driver, await driver.scroll({
           y: args.y,
           end: args.end === true,
           text: args.text,
           selector: args.selector
         }));
-      case 'stream':
-        return afterAction(driver, await driver.keys(args.events));
-      case 'run':
+      case 'browser_run':
         if (!burst) throw new Error('run reached the run without its normalized steps');
         return afterAction(driver, await runLocalBurst({
           driver,
           steps: burst.steps,
           timeoutMs: burst.timeoutMs
         }));
-      case 'wait': {
+      case 'browser_wait': {
         const until = String(args.until ?? 'text');
         if (until === 'text') {
           if (!args.text) throw new Error('wait until=text needs text — the text to watch for');
@@ -862,38 +864,31 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         }
         throw new Error(`wait until must be text, row, url or stable — got: ${until}`);
       }
-      case 'trace': {
-        const method = String(args.method ?? '');
-        if (!ASKABLE.includes(method)) {
-          throw new Error(`trace is read-only. Allowed: ${ASKABLE.join(', ')}. Asked for: ${method || '(none)'}`);
-        }
-        return asText({ method, result: await driver.ask(method, askParams(args)) });
-      }
-      case 'guide':
+
+      case 'browser_guide':
         return asText(await driver.guide(args.topic));
-      case 'menus':
-        return asText(await driver.menuTree({ limit: args.limit }));
-      case 'menu': {
-        const path = Array.isArray(args.path) ? args.path : [];
-        if (path.length === 0) throw new Error('menu needs a path of menu names, e.g. ["Insert","Image"]');
-        return afterAction(driver, await driver.openMenu({
-          path,
-          clickLeaf: args.clickLeaf === true,
-          limit: args.limit
-        }));
+      case 'browser_menu': {
+        const action = String(args.action ?? 'list');
+        if (action === 'list') return asText(await driver.menuTree({ limit: args.limit }));
+        if (action === 'walk') {
+          const path = Array.isArray(args.path) ? args.path : [];
+          if (path.length === 0) throw new Error('menu action=walk needs a path of menu names, e.g. ["Insert","Image"]');
+          return afterAction(driver, await driver.openMenu({
+            path,
+            clickLeaf: args.clickLeaf === true,
+            limit: args.limit
+          }));
+        }
+        throw new Error(`menu action must be list or walk — got: ${action}`);
       }
-      case 'scan':
-        return asText({ rows: await driver.snapshot(args.limit) });
-      case 'caret':
-        return asText(await driver.caretLine());
-      case 'upload': {
+      case 'browser_upload': {
         const uploaded = await driver.upload({ filename: args.filename, data: args.data ?? null, path: args.path ?? null });
         if (isObject(uploaded) && uploaded.inputFound === false) {
           throw new Error(`upload: inputFound: false - ${args.filename} went nowhere: the page has no file input to fill`);
         }
         return afterAction(driver, uploaded);
       }
-      case 'drop': {
+      case 'browser_drop': {
         const browser = fallback ?? driver;
         const before = new Set((await browser.tabs() as JsonRecord[]).map((tab) => String(tab.id)));
         const dropped = await driver.dropFile({
@@ -912,9 +907,9 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         }
         return afterAction(driver, { ...(isObject(dropped) ? dropped : {}), openedInstead });
       }
-      case 'chooser':
+      case 'browser_chooser':
         return asText(await driver.interceptFileChooser(args.enabled === true));
-      case 'download':
+      case 'browser_download':
         return asText(await driver.download({
           handle: args.handle ?? null,
           role: args.role ?? null,
@@ -925,7 +920,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           saveAs: args.saveAs ?? null,
           timeoutMs: args.timeoutMs
         }));
-      case 'shot': {
+      case 'browser_screenshot': {
         const shotRaw = await driver.captureSized(args.fullPage === true ? { fullPage: true } : {});
         const shot: JsonRecord = isObject(shotRaw) ? shotRaw : {};
         return {
@@ -935,12 +930,12 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           ]
         };
       }
-      case 'portal': {
+      case 'browser_portal': {
         const action = String(args.action ?? 'detect');
         if (action === 'detect') {
           return asText(await detectGate(driver as unknown as import('./gates.js').GateDriver));
         }
-        if (action === 'wait') {
+        if (action === 'browser_wait') {
           // The drive's verbs accept unknown arguments; the gate driver's narrow surface is the same object at runtime.
           const out = await waitForGateClear(driver as unknown as import('./gates.js').GateDriver, {
             timeoutMs: budgetOf(args.timeoutMs, 30000),
@@ -950,7 +945,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         }
         throw new Error(`portal action must be detect or wait — got: ${action}`);
       }
-      case 'login': {
+      case 'browser_login': {
         const out = await loginWithCredentials(driver as unknown as import('./gates.js').GateDriver, {
           credentialsPath: args.credentialsPath,
           timeoutMs: budgetOf(args.timeoutMs, 30000),
@@ -958,7 +953,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         });
         return afterAction(driver, out);
       }
-      case 'captcha': {
+      case 'browser_captcha': {
         const settings = solverSettings(process.env);
         if (!settings.configured) {
           throw new Error('captcha is opt-in and no solver is configured: set OPERA_CAPTCHA_API_URL, OPERA_CAPTCHA_API_KEY and OPERA_CAPTCHA_DOMAINS, or let the person solve it and use portal.');

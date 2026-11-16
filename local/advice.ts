@@ -53,30 +53,30 @@ const rowAdvice = (role: string, name: unknown, rows: AdviceRow[]) => {
   const looks = [...new Set(sameRole.map((row) => row.name))]
     .filter((text) => wanted !== '' && (String(text).toLowerCase().includes(wanted.slice(0, 6)) || wanted.includes(String(text).toLowerCase().slice(0, 6))))
     .slice(0, 3);
-  if (begins) return [`the page has "${trim(begins.name)}" — tap(role: "${role}", name: "${trim(begins.name, 40)}")`];
+  if (begins) return [`the page has "${trim(begins.name)}" — browser_click({role: "${role}", name: "${trim(begins.name, 40)}"})`];
   if (looks.length) return [`the page has: ${looks.map((text) => `"${trim(text, 34)}"`).join(', ')}`];
   if (MENU_ROLES.includes(String(role))) {
     return [
-      'menus() to see what this application can do',
-      'menu({path: [...]}) to walk into the menu that holds it',
-      `wait({role: "${role}", name: "..."}) if it has not appeared yet`
+      'browser_menu({action: "list"}) to see what this application can do',
+      'browser_menu({action: "walk", path: [...]}) to walk into the menu that holds it',
+      `browser_wait({until: "row", role: "${role}", name: "..."}) if it has not appeared yet`
     ];
   }
-  return [`scan() to see what is on the page now`];
+  return [`browser_find({role: "${role}"}) to see what is on the page now`];
 };
 
 const HANDLE_GONE = [
-  'grab() again — the element it named is gone, and the row may now be somewhere else',
-  'scan() to find the row under its new name or place'
+  'browser_find({role: "element-role", name: "element-name"}) again — the element it named is gone, and the row may now be somewhere else',
+  'browser_find({role: "element-role"}) to find the row under its new name or place'
 ];
 
 const NOT_A_HANDLE = [
-  'a handle comes from grab or tap and looks like "opera-1234"',
-  'click({x, y}) for a point, click({handle}) for an element'
+  'a handle comes from browser_find and looks like "opera-1234"',
+  'browser_click({x, y}) for a point, browser_click({handle}) for an element'
 ];
 
 const BRIDGE_GONE = [
-  'the extension has to be connected: reload it in chrome://extensions, then status() to confirm',
+  'the extension has to be connected: reload it in chrome://extensions, then browser_status() to confirm',
   'nothing that touches a page can succeed until this is fixed'
 ];
 
@@ -85,22 +85,22 @@ const WRONG_PIPE = [
 ];
 
 const NO_TARGET = [
-  'tabs() for the ids that exist now',
-  'goto() if the page is not open yet'
+  'browser_tabs() for the ids that exist now',
+  'browser_goto() if the page is not open yet'
 ];
 
 // WHY A CLICK OFF THE PAGE GETS ITS OWN MOVES.
-// Measured live: a tap on a row below the fold answered with a click at y -139 - success, on a coordinate no pixel holds.
+// Measured live: a click on a row below the fold answered with a click at y -139 - success, on a coordinate no pixel holds.
 // The only roads that change the outcome are scrolling the thing into view and clicking it again, and each is one call.
 
 const CLICK_OFF_PAGE = [
-  'scroll({text}) or scroll({y}) to bring it into the viewport, then click again',
-  'tap() answers coordinates: a row above the fold is clickable as it is, one below it is not'
+  'browser_scroll({text}) or browser_scroll({y}) to bring it into the viewport, then click again',
+  'browser_click({role, name}) answers coordinates — a row above the fold is clickable as it is, one below it is not'
 ];
 
 const EMPTY_FILE_INPUT = [
-  'the page has no file input to fill — drop({x, y, filename, path}) instead, which is the road into a picker with no input behind it',
-  'shot() after the drop to see whether the page took it'
+  'the page has no file input to fill — browser_drop({x, y, filename, path}) instead, which is the road into a picker with no input behind it',
+  'browser_screenshot() after the drop to see whether the page took it'
 ];
 
 // WHY TEXT THAT WENT NOWHERE GETS ITS OWN MOVES.
@@ -108,15 +108,10 @@ const EMPTY_FILE_INPUT = [
 // The next move is always the same two - put a caret in the page, then type again - and both are one call each.
 
 const EDIT_GONE = [
-  'the failure names the element that had focus: if it is not a field, tap({role, name}) that field and type again',
-  'if a dialog or overlay is over the page, press({key: \u201cEscape\u201d}) or click its dismiss button first - measured live, a cookie wall sat over a search box and swallowed the click',
-  'caret() to see where the caret is, or read() to see what the page holds',
-  'read() before typing again on a canvas page - the text may have landed after the check, and retyping duplicates it'
-];
-
-const READ_ONLY = [
-  'guide("ask") for the roads to what you were trying to do',
-  'anything that changes the page is a named tool, not a question'
+  'the failure names the element that had focus: if it is not a field, browser_click({role, name}) that field and type again',
+  'if a dialog or overlay is over the page, browser_press({key: \u201cEscape\u201d}) or click its dismiss button first - measured live, a cookie wall sat over a search box and swallowed the click',
+  'browser_find({role: "menuitem", name: "..."}) to see where the caret is, or browser_read() to see what the page holds',
+  'browser_read() before typing again on a canvas page - the text may have landed after the check, and retyping duplicates it'
 ];
 
 // WHY AN EXTENSION PAGE GETS ITS OWN MOVES.
@@ -124,18 +119,14 @@ const READ_ONLY = [
 // That is a wall, not a failure - no move on that tab can ever succeed - so the moves point at the tabs that can be driven instead of at the one that cannot.
 
 const EXTENSION_PAGE = [
-  'tabs() for the tabs that can be driven - a chrome:// page refuses every move',
-  'goto() if the page belongs in a new tab instead'
+  'browser_tabs() for the tabs that can be driven - a chrome:// page refuses every move',
+  'browser_goto() if the page belongs in a new tab instead'
 ];
 
 // WHY THE FIRST RULE THAT FITS WINS.
-// A refusal and a missing row can both be true at once — trace refusing a method it does not allow is also "no such thing" — and a caller is better served by the most specific thing that is wrong, which is the first rule in this order.
+// A refusal and a missing row can both be true at once — a page that refuses the method it was asked for is also "no such thing" — and a caller is better served by the most specific thing that is wrong, which is the first rule in this order.
 
 export const RULES: ReadonlyArray<AdviceRule> = Object.freeze([
-  {
-    when: (text: string) => /trace is read-only/.test(text),
-    next: READ_ONLY
-  },
   {
     when: (text: string) => /was still in flight when the device disconnected|extension is not connected/.test(text),
     next: BRIDGE_GONE

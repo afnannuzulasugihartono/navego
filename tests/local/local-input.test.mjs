@@ -351,7 +351,7 @@ test('a page with no caret fails the edit instead of counting the characters it 
     }
   };
 
-  await assert.rejects(() => createPrimitives(cdp).type('GUARD'), /typed 5 characters and nothing on the page changed: nothing on the page held focus - tap the field that should receive it/);
+  await assert.rejects(() => createPrimitives(cdp).type('GUARD'), /typed 5 characters and nothing on the page changed: nothing on the page held focus - browser_click\(\{role, name\}\) the field that should receive it/);
 });
 
 // WHY A TYPE THAT LANDS NOWHERE MUST NAME WHAT HAD FOCUS.
@@ -376,7 +376,7 @@ test('a type that lands nowhere names the element that had focus', async () => {
 
   await assert.rejects(
     () => createPrimitives(cdp).type('GUARD'),
-    /nothing on the page changed: focus was on button#button, which takes no text - tap the field that should receive it, or press Escape if a dialog is over it/
+    /nothing on the page changed: focus was on button#button, which takes no text - browser_click\(\{role, name\}\) the field that should receive it, or press Escape if a dialog is over it/
   );
 });
 

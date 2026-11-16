@@ -6,7 +6,7 @@ import { Reveal } from '../components/Reveal';
 export function meta() {
   return [
     { title: 'Corbin — Asisten AI di browser Anda' },
-    { name: 'description', content: 'Corbin menjalankan browser Anda dari satu perintah teks: membaca halaman, mengisi formulir, menyimpan hasilnya sebagai berkas. 50 tool satu kata, 36 primitive browser, 6 izin.' }
+    { name: 'description', content: 'Corbin menjalankan browser Anda dari satu perintah teks: membaca halaman, mengisi formulir, menyimpan hasilnya sebagai berkas. 40 tool MCP, 36 primitive browser, 6 izin.' }
   ];
 }
 
@@ -57,7 +57,7 @@ export default function Beranda() {
         </section>
 
         <div className="facts facts--center" aria-label="Angka produk">
-          <span><b>50</b> tool satu kata diukur dari source</span>
+          <span><b>40</b> tool MCP diukur dari source</span>
           <span><b>36</b> primitive browser</span>
           <span><b>6</b> izin, semua dijelaskan</span>
         </div>

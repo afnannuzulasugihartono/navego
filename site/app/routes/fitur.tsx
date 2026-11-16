@@ -4,12 +4,12 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 export function meta() {
   return [
     { title: 'Fitur — Corbin' },
-    { name: 'description', content: 'Yang dikerjakan Corbin: 50 tool satu kata di atas 36 primitive browser, enam izin yang dijelaskan satu per satu, model milik Anda, pairing device yang bisa dicabut, dan empat berkas contoh yang bisa diunduh.' }
+    { name: 'description', content: 'Yang dikerjakan Corbin: 40 tool MCP di atas 36 primitive browser, enam izin yang dijelaskan satu per satu, model milik Anda, pairing device yang bisa dicabut, dan empat berkas contoh yang bisa diunduh.' }
   ];
 }
 
 const BENTO = [
-  ['50 tool satu kata, 36 primitive', 'Membaca, mengisi, menavigasi, dan memverifikasi halaman. Peta, YouTube, dan Docs adalah contoh yang paling sering.'],
+  ['40 tool MCP, 36 primitive', 'Membaca, mengisi, menavigasi, dan memverifikasi halaman. Peta, YouTube, dan Docs adalah contoh yang paling sering.'],
   ['Enam izin, satu alasan masing-masing', 'Setiap izin dijelaskan di halaman Unduh: untuk apa, dan apa yang ditolak.'],
   ['Model milik Anda', 'Endpoint dan kunci tetap di browser ini. Isi halaman hanya pergi ke model yang Anda pilih.'],
   ['Pairing device', 'Kode sekali pakai mengikat device ke akun Anda. Cabut dari dashboard kapan saja.'],
@@ -41,7 +41,7 @@ export default function Fitur() {
         </header>
 
         <div className="facts" aria-label="Angka produk" style={{ fontSize: 12 }}>
-          <span><b>50</b> tool</span>
+          <span><b>40</b> tool MCP</span>
           <span><b>36</b> primitive</span>
           <span><b>6</b> izin</span>
         </div>

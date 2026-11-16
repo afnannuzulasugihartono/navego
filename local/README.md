@@ -78,32 +78,31 @@ not who drives.
 
 ## Tools
 
-The server advertises 50 tools; `guide()` returns them as tasks rather than a list.
+The server advertises 40 tools, every one prefixed `browser_` for the job it does:
 
-`status`, `front`, `dialog`,
-`pin`, `tabs`, `goto`, `close`, `probe`, `read`, `search`,
-`find`, `click`, `grab`, `tap`, `hover`, `press`,
-`type`, `inspect`, `scroll`, `append`, `stream`, `run`,
-`wait`, `trace`, `caret`, `upload`,
-`drop`, `chooser`, `download`, `menus`, `menu`,
-`guide`, `shot`, `scan`, `card`, `delivered`,
-`report`, `sheet`, `deck`, `doc`,
-`portal`, `login`, `captcha`,
-`pair`, `balance`, `quote`, `topup`,
-`reserve`, `settle`, `refund`.
+`browser_status`, `browser_front`, `browser_dialog`,
+`browser_pin`, `browser_tabs`, `browser_goto`, `browser_close`,
+`browser_read`, `browser_search`, `browser_find`, `browser_click`, `browser_hover`,
+`browser_press`, `browser_type`, `browser_scroll`, `browser_run`, `browser_wait`,
+`browser_upload`, `browser_drop`, `browser_chooser`, `browser_download`,
+`browser_menu`, `browser_guide`, `browser_screenshot`, `browser_card`, `browser_delivered`,
+`browser_report`, `browser_sheet`, `browser_deck`, `browser_doc`,
+`browser_portal`, `browser_login`, `browser_captcha`,
+`browser_pair`, `browser_balance`, `browser_quote`, `browser_topup`,
+`browser_reserve`, `browser_settle`, `browser_refund`.
 
-`status` names the paired browsers and `pin` pins tab-less calls
-(`goto` is the one that matters) to one of them until another switch says
+`browser_status` names the paired browsers and `browser_pin` pins tab-less calls
+(`browser_goto` is the one that matters) to one of them until another switch says
 otherwise; pass a slot number, a device name, or `any` to follow the first ready
 browser again. Tab-scoped calls keep routing by their tab id either way.
 
-`run` runs 1-8 dependent steps on one tab in a single call and reads the page
+`browser_run` runs 1-8 dependent steps on one tab in a single call and reads the page
 once at the end; the first failure stops the burst and keeps the steps that finished.
-`goto` always opens its own tab, so a drive never navigates a page someone is
-already reading. `shot` is clipped to the viewport at one pixel per
+`browser_goto` always opens its own tab, so a drive never navigates a page someone is
+already reading. `browser_screenshot` is clipped to the viewport at one pixel per
 clickable coordinate, so a coordinate read off a screenshot can be clicked as-is.
-Actions answer with where the page stands and the rows that changed; `scan`
-is the deliberate look at every row.
+Actions answer with where the page stands and the rows that changed; `browser_find`
+is the deliberate look at every row for a role.
 
 Every answer is one flat document: `{ ok: true, ...facts }`, with the cost of the
 call under `elapsedMs`. A refused tool answers the same way - `{ ok: false, error:

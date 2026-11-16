@@ -195,7 +195,7 @@ test('the surface covers what the driver can actually do', async () => {
   const { result } = await server.handle({ jsonrpc: '2.0', id: 3, method: 'tools/list', params: {} });
   const names = result.tools.map((t) => t.name).sort();
 
-  for (const required of ['status', 'goto', 'close', 'tabs', 'read', 'search', 'find', 'click', 'tap', 'hover', 'press', 'type', 'append', 'scroll', 'inspect', 'stream', 'wait', 'caret', 'upload', 'drop', 'chooser', 'download', 'shot', 'scan', 'run', 'pin', 'trace']) {
+  for (const required of ['browser_status', 'browser_goto', 'browser_close', 'browser_tabs', 'browser_read', 'browser_search', 'browser_find', 'browser_click', 'browser_hover', 'browser_press', 'browser_type', 'browser_scroll', 'browser_wait', 'browser_upload', 'browser_drop', 'browser_chooser', 'browser_download', 'browser_screenshot', 'browser_run', 'browser_pin', 'browser_front', 'browser_dialog', 'browser_guide', 'browser_menu', 'browser_card', 'browser_delivered', 'browser_report', 'browser_sheet', 'browser_deck', 'browser_doc', 'browser_portal', 'browser_login', 'browser_captcha', 'browser_pair', 'browser_balance', 'browser_quote', 'browser_topup', 'browser_reserve', 'browser_settle', 'browser_refund']) {
     assert.ok(names.includes(required), `missing ${required}`);
   }
 });
@@ -214,7 +214,7 @@ test('status carries the meter of every linked device', async () => {
   };
   return withHealthBridge(health, async (ephemeral) => {
     const server = createMcpServer({ ...ctx(), port: async () => ephemeral });
-    const res = await server.handle({ jsonrpc: '2.0', id: 91, method: 'tools/call', params: { name: 'status', arguments: {} } });
+    const res = await server.handle({ jsonrpc: '2.0', id: 91, method: 'tools/call', params: { name: 'browser_status', arguments: {} } });
     const payload = JSON.parse(res.result.content[0].text);
     const now = new Date();
     const expectedReset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)).toISOString();
@@ -240,7 +240,7 @@ test('status stays quiet when every linked device has headroom', async () => {
   };
   return withHealthBridge(health, async (ephemeral) => {
     const server = createMcpServer({ ...ctx(), port: async () => ephemeral });
-    const res = await server.handle({ jsonrpc: '2.0', id: 92, method: 'tools/call', params: { name: 'status', arguments: {} } });
+    const res = await server.handle({ jsonrpc: '2.0', id: 92, method: 'tools/call', params: { name: 'browser_status', arguments: {} } });
     const payload = JSON.parse(res.result.content[0].text);
     assert.equal(payload.planExhausted, undefined, 'no device at zero means no exhaustion claim');
     assert.equal(payload.planExhaustedDevices, undefined);
@@ -252,7 +252,7 @@ test('status names the port the drive is on', async () => {
   const server = createMcpServer({ ...ctx(), port: async () => 9451 });
   const res = await server.handle({
     jsonrpc: '2.0', id: 9, method: 'tools/call',
-    params: { name: 'status', arguments: {} }
+    params: { name: 'browser_status', arguments: {} }
   });
   const payload = JSON.parse(res.result.content[0].text);
   assert.equal(payload.port, 9451);
@@ -271,7 +271,7 @@ test('report turns an exported sheet into a checked report without a browser', a
     const res = await server.handle({
       jsonrpc: '2.0', id: 7, method: 'tools/call',
       params: {
-        name: 'report',
+        name: 'browser_report',
         arguments: {
           source,
           client: 'Toko Sinar Jaya',
@@ -307,7 +307,7 @@ test('doc turns a JSON paper into a checked Word file and its plan in one call',
     const res = await server.handle({
       jsonrpc: '2.0', id: 71, method: 'tools/call',
       params: {
-        name: 'doc',
+        name: 'browser_doc',
         arguments: { source }
       }
     });
@@ -337,7 +337,7 @@ test('doc refuses a graph with no source and writes nothing', async () => {
     const res = await server.handle({
       jsonrpc: '2.0', id: 72, method: 'tools/call',
       params: {
-        name: 'doc',
+        name: 'browser_doc',
         arguments: { source }
       }
     });
@@ -356,30 +356,30 @@ test('doc refuses a graph with no source and writes nothing', async () => {
 // The description states the boundary so the plan is paging, not hoping.
 
 test('the capture says fullPage stops at the viewport on canvas pages', () => {
-  const capture = TOOLS.find((tool) => tool.name === 'shot');
+  const capture = TOOLS.find((tool) => tool.name === 'browser_screenshot');
 
   assert.match(capture.description, /canvas/i);
   assert.match(capture.description, /viewport/i);
 });
 
 test('type says where the proof lives when its own placement check cannot see it', () => {
-  const type = TOOLS.find((tool) => tool.name === 'type');
+  const type = TOOLS.find((tool) => tool.name === 'browser_type');
 
   assert.match(type.description, /placed/);
   assert.match(type.description, /read\(\)/);
 });
 
-// WHY THE APPEND'S DESCRIPTION CARRIES ITS OWN SCAR.
-// An agent reads descriptions to decide whether to call a tool, and this one exists because a batch landed in a table cell: the measured failure is the argument for calling append instead of the click-then-End road, and a description without it is a description nobody trusts.
+// WHY THE TYPE-WITH-ATEND PATH IS DESCRIBED BY WHAT IT SETTLES.
+// An agent needs to know it does not land in a table cell — it lands at the end of the document, and it says so.
 
-test('the append says how it decides it reached the end, and when it cannot know', () => {
-  const append = TOOLS.find((tool) => tool.name === 'append');
+test('the type description says how atEnd decides it reached the end, and when it cannot know', () => {
+  const tool = TOOLS.find((entry) => entry.name === 'browser_type');
 
-  assert.match(append.description, /atEnd is measured, not assumed/);
-  assert.match(append.description, /found:false/);
-  assert.match(append.description, /table cell/);
-  assert.deepEqual(Object.keys(append.inputSchema.properties).sort(), ['tabId', 'text']);
-  assert.deepEqual(append.inputSchema.required, ['text']);
+  assert.match(tool.description, /atEnd is measured, not assumed/);
+  assert.match(tool.description, /found:false/);
+  assert.match(tool.description, /table cell/);
+  assert.deepEqual(Object.keys(tool.inputSchema.properties).sort(), ['atEnd', 'tabId', 'text']);
+  assert.deepEqual(tool.inputSchema.required, ['text']);
 });
 
 // WHY THE SCROLL'S ARGUMENTS ARE FOUR AND NOT ONE.
@@ -389,32 +389,22 @@ test('the append says how it decides it reached the end, and when it cannot know
 // WHY THE COMPUTED READ IS DESCRIBED BY WHAT IT ANSWERS.
 // An agent reads a tool description to decide whether a call can settle a question, so the description names the questions it settles - a button that turned blue, a modal that opened, text past the viewport - rather than the properties it returns.
 
-test('the computed read is described by the questions it settles, not by its fields', () => {
-  const tool = TOOLS.find((one) => one.name === 'inspect');
-
-  assert.match(tool.description, /turned blue/);
-  assert.match(tool.description, /on screen/);
-  assert.match(tool.description, /never changes anything/);
-  assert.deepEqual(Object.keys(tool.inputSchema.properties).sort(), ['selector', 'tabId', 'x', 'y']);
-  assert.equal(tool.inputSchema.required, undefined);
-});
-
-test('the computed read reaches the driver and answers what it read', async () => {
+test('browser_type atEnd=true reaches the driver as one call with the text intact', async () => {
   const c = ctx();
   const server = createMcpServer(c);
-  c.driver.computed = async (options) => { c.driver.calls.push(['computed', options]); return { found: true, tag: 'BUTTON', name: 'Bold', background: 'rgb(26, 115, 232)', rect: { onScreen: true } }; };
+  c.driver.append = async (text) => { c.driver.calls.push(['append', text]); return { chars: text.length, landed: true, atEnd: true, placed: { found: true, index: 9 } }; };
 
   const res = await server.handle({
-    jsonrpc: '2.0', id: 99, method: 'tools/call',
-    params: { name: 'inspect', arguments: { selector: 'button.bold' } }
+    jsonrpc: '2.0', id: 97, method: 'tools/call',
+    params: { name: 'browser_type', arguments: { text: 'one more line', atEnd: true } }
   });
 
-  assert.deepEqual(c.driver.calls.filter(([name]) => name === 'computed'), [['computed', { selector: 'button.bold', x: undefined, y: undefined }]]);
-  assert.match(res.result.content[0].text, /"name":\s*"Bold"/);
+  assert.deepEqual(c.driver.calls.filter(([name]) => name === 'append'), [['append', 'one more line']]);
+  assert.match(res.result.content[0].text, /"atEnd":\s*true/);
 });
 
 test('scroll takes pixels, the end, a target text or a selector, and nothing is required', () => {
-  const scroll = TOOLS.find((tool) => tool.name === 'scroll');
+  const scroll = TOOLS.find((tool) => tool.name === 'browser_scroll');
 
   assert.deepEqual(Object.keys(scroll.inputSchema.properties).sort(), ['end', 'selector', 'tabId', 'text', 'y']);
   assert.equal(scroll.inputSchema.required, undefined, 'a scroll needs no argument to be refused: it must be answerable either way');
@@ -441,25 +431,24 @@ test('scroll reaches the driver with the arguments it was given', async () => {
 
   const res = await server.handle({
     jsonrpc: '2.0', id: 98, method: 'tools/call',
-    params: { name: 'scroll', arguments: { y: 1400 } }
+    params: { name: 'browser_scroll', arguments: { y: 1400 } }
   });
 
   assert.deepEqual(c.driver.calls.filter(([name]) => name === 'scroll'), [['scroll', { y: 1400, end: false, text: undefined, selector: undefined }]]);
   assert.match(res.result.content[0].text, /"movedPx":\s*1400/);
 });
 
-test('append reaches the driver as one call with the text intact', async () => {
+test('a stream reaches the driver as one call with its events intact via browser_run', async () => {
   const c = ctx();
   const server = createMcpServer(c);
-  c.driver.append = async (text) => { c.driver.calls.push(['append', text]); return { chars: text.length, landed: true, atEnd: true, placed: { found: true, index: 9 } }; };
-
+  const events = [{ key: '1', modifiers: ['Control', 'Alt'] }, { text: 'Hi' }];
   const res = await server.handle({
-    jsonrpc: '2.0', id: 97, method: 'tools/call',
-    params: { name: 'append', arguments: { text: 'one more line' } }
+    jsonrpc: '2.0', id: 9, method: 'tools/call',
+    params: { name: 'browser_run', arguments: { steps: [{ action: 'stream', events }] } }
   });
 
-  assert.deepEqual(c.driver.calls.filter(([name]) => name === 'append'), [['append', 'one more line']]);
-  assert.match(res.result.content[0].text, /"atEnd":\s*true/);
+  assert.match(res.result.content[0].text, /"completedSteps":\s*1/);
+  assert.deepEqual(c.driver.calls.filter(([name]) => !['ensureFront', 'settle'].includes(name)), [['keys', events]]);
 });
 
 test('a call runs the tool and returns its result as text content', async () => {
@@ -467,31 +456,18 @@ test('a call runs the tool and returns its result as text content', async () => 
   const server = createMcpServer(c);
   const res = await server.handle({
     jsonrpc: '2.0', id: 4, method: 'tools/call',
-    params: { name: 'goto', arguments: { url: 'https://sheets.google.com/' } }
+    params: { name: 'browser_goto', arguments: { url: 'https://sheets.google.com/' } }
   });
 
   assert.ok(res.result.content[0].text.includes('sheets.google.com'));
   assert.deepEqual(c.driver.calls[0], ['open', 'https://sheets.google.com/']);
 });
 
-test('a stream reaches the driver as one call with its events intact', async () => {
-  const c = ctx();
-  const server = createMcpServer(c);
-  const events = [{ key: '1', modifiers: ['Control', 'Alt'] }, { text: 'Hi' }];
-  const res = await server.handle({
-    jsonrpc: '2.0', id: 9, method: 'tools/call',
-    params: { name: 'stream', arguments: { events } }
-  });
-
-  assert.match(res.result.content[0].text, /"events":\s*2/);
-  assert.deepEqual(c.driver.calls.filter(([name]) => !['ensureFront', 'settle'].includes(name)), [['keys', events]]);
-});
-
-test('a snapshot reaches the driver and comes back as readable text', async () => {
+test('browser_find row-less returns every row of that role as readable text', async () => {
   const server = createMcpServer(ctx());
   const res = await server.handle({
     jsonrpc: '2.0', id: 10, method: 'tools/call',
-    params: { name: 'scan', arguments: {} }
+    params: { name: 'browser_find', arguments: { role: 'menuitem' } }
   });
 
   assert.match(res.result.content[0].text, /Insert/);
@@ -512,7 +488,7 @@ test('an input action brings the window forward and says so', async () => {
 
   const res = await server.handle({
     jsonrpc: '2.0', id: 81, method: 'tools/call',
-    params: { name: 'click', arguments: { x: 100, y: 200 } }
+    params: { name: 'browser_click', arguments: { x: 100, y: 200 } }
   });
 
   assert.ok(c.driver.calls.some(([name]) => name === 'ensureFront'), 'the click asked about the window first');
@@ -536,12 +512,12 @@ test('an input action is refused when the window came forward but the page is st
 
   const res = await server.handle({
     jsonrpc: '2.0', id: 97, method: 'tools/call',
-    params: { name: 'type', arguments: { text: 'hello' } }
+    params: { name: 'browser_type', arguments: { text: 'hello' } }
   });
 
   assert.match(failureOf(res), /refused: brought Paper - Google Chrome back from the taskbar, but the page still cannot hear input/);
   assert.match(failureOf(res), /Nothing was sent/);
-  assert.ok(!c.driver.calls.some(([name]) => name === 'type'), 'and not one character was typed into a window that cannot hear it');
+  assert.ok(!c.driver.calls.some(([name]) => name === 'browser_type'), 'and not one character was typed into a window that cannot hear it');
 });
 
 test('a read pays nothing for the window, because it changes nothing about it', async () => {
@@ -550,7 +526,7 @@ test('a read pays nothing for the window, because it changes nothing about it', 
 
   await server.handle({
     jsonrpc: '2.0', id: 82, method: 'tools/call',
-    params: { name: 'read', arguments: {} }
+    params: { name: 'browser_read', arguments: {} }
   });
 
   assert.ok(!c.driver.calls.some(([name]) => name === 'ensureFront'), 'reading does not steal the human attention');
@@ -569,7 +545,7 @@ const statusCtx = (foreground, titles) => {
 
 const statusOf = async (context) => {
   const server = createMcpServer(context);
-  const res = await server.handle({ jsonrpc: '2.0', id: 90, method: 'tools/call', params: { name: 'status', arguments: {} } });
+  const res = await server.handle({ jsonrpc: '2.0', id: 90, method: 'tools/call', params: { name: 'browser_status', arguments: {} } });
   return JSON.parse(res.result.content[0].text).window;
 };
 
@@ -626,7 +602,7 @@ const clickOn = async (context, tabId) => {
   const server = createMcpServer(context);
   const res = await server.handle({
     jsonrpc: '2.0', id: 95, method: 'tools/call',
-    params: { name: 'click', arguments: { tabId, x: 10, y: 20 } }
+    params: { name: 'browser_click', arguments: { tabId, x: 10, y: 20 } }
   });
   if (res.result?.isError) return { failed: failureOf(res) };
   return JSON.parse(res.result.content[0].text);
@@ -656,7 +632,7 @@ test('a name that fits two tabs is refused with both, rather than one of them', 
 
   assert.match(out.failed, /"Google Docs" is 2 tabs: 222 Thesis - Google Docs \| 333 Notes - Google Docs/);
   assert.match(out.failed, /Name it more closely, or use its id/);
-  assert.ok(!c.driver.calls.some(([name]) => name === 'click'), 'and nothing was clicked in either of them');
+  assert.ok(!c.driver.calls.some(([name]) => name === 'browser_click'), 'and nothing was clicked in either of them');
 });
 
 test('a number that is not a tab fails as a number, because a wrong id is not a name', async () => {
@@ -716,7 +692,7 @@ test('goto with a named tab navigates that tab instead of opening another one', 
 
   const res = await server.handle({
     jsonrpc: '2.0', id: 96, method: 'tools/call',
-    params: { name: 'goto', arguments: { tabId: '333', url: 'https://example.com/beranda' } }
+    params: { name: 'browser_goto', arguments: { tabId: '333', url: 'https://example.com/beranda' } }
   });
 
   const out = JSON.parse(res.result.content[0].text);
@@ -730,7 +706,7 @@ test('a capture comes back as image content a model can see, not base64 text', a
   const server = createMcpServer(ctx());
   const res = await server.handle({
     jsonrpc: '2.0', id: 11, method: 'tools/call',
-    params: { name: 'shot', arguments: {} }
+    params: { name: 'browser_screenshot', arguments: {} }
   });
 
   assert.deepEqual(res.result.content[0], { type: 'image', data: 'BASE64JPEG', mimeType: 'image/jpeg' });
@@ -746,7 +722,7 @@ test('a full-page capture reaches the driver as a flag, not a second tool', asyn
   const server = createMcpServer(c);
   const res = await server.handle({
     jsonrpc: '2.0', id: 12, method: 'tools/call',
-    params: { name: 'shot', arguments: { fullPage: true } }
+    params: { name: 'browser_screenshot', arguments: { fullPage: true } }
   });
 
   assert.deepEqual(c.driver.calls[0], ['capture', { fullPage: true }]);
@@ -755,12 +731,12 @@ test('a full-page capture reaches the driver as a flag, not a second tool', asyn
   assert.equal(typeof geometry.elapsedMs, 'number', 'the answer carries the cost of the call');
 });
 
-test('a row click resolves and clicks in one call', async () => {
+test('a row click by role and name resolves and clicks in one call', async () => {
   const c = ctx();
   const server = createMcpServer(c);
   const res = await server.handle({
     jsonrpc: '2.0', id: 12, method: 'tools/call',
-    params: { name: 'tap', arguments: { role: 'menuitem', name: 'Insert' } }
+    params: { name: 'browser_click', arguments: { role: 'menuitem', name: 'Insert' } }
   });
 
   assert.match(res.result.content[0].text, /Insert/);
@@ -772,7 +748,7 @@ test('a hover reaches the driver without pressing anything', async () => {
   const server = createMcpServer(c);
   const res = await server.handle({
     jsonrpc: '2.0', id: 13, method: 'tools/call',
-    params: { name: 'hover', arguments: { x: 10, y: 20 } }
+    params: { name: 'browser_hover', arguments: { x: 10, y: 20 } }
   });
 
   assert.match(res.result.content[0].text, /10/);
@@ -784,7 +760,7 @@ test('closing a tab drives the browser and drops the cached session', async () =
   const server = createMcpServer(c);
   const res = await server.handle({
     jsonrpc: '2.0', id: 14, method: 'tools/call',
-    params: { name: 'close', arguments: { tabId: 't9' } }
+    params: { name: 'browser_close', arguments: { tabId: 't9' } }
   });
 
   assert.match(res.result.content[0].text, /t9/);
@@ -807,7 +783,7 @@ test('a missing required argument is refused before the driver is touched', asyn
   const server = createMcpServer(c);
   const res = await server.handle({
     jsonrpc: '2.0', id: 6, method: 'tools/call',
-    params: { name: 'type', arguments: {} }
+    params: { name: 'browser_type', arguments: {} }
   });
 
   assert.ok(res.result?.isError);
@@ -823,13 +799,13 @@ test('every action hands back the page it acted on, so looking costs no extra ca
   const server = createMcpServer(ctx());
 
   for (const [name, args, url] of [
-    ['click', { x: 10, y: 20 }, 'https://docs.google.com/document/d/1'],
-    ['tap', { role: 'menuitem', name: 'Insert' }, 'https://docs.google.com/document/d/1'],
-    ['hover', { x: 30, y: 40 }, 'https://docs.google.com/document/d/1'],
-    ['press', { key: 'Enter' }, 'https://docs.google.com/document/d/1'],
-    ['type', { text: 'hi' }, 'https://docs.google.com/document/d/1'],
-    ['stream', { events: [{ key: 'a' }] }, 'https://docs.google.com/document/d/1'],
-    ['goto', { url: 'https://sheets.google.com/' }, 'https://sheets.google.com/']
+    ['browser_click', { x: 10, y: 20 }, 'https://docs.google.com/document/d/1'],
+    ['browser_click', { role: 'menuitem', name: 'Insert' }, 'https://docs.google.com/document/d/1'],
+    ['browser_hover', { x: 30, y: 40 }, 'https://docs.google.com/document/d/1'],
+    ['browser_press', { key: 'Enter' }, 'https://docs.google.com/document/d/1'],
+    ['browser_type', { text: 'hi' }, 'https://docs.google.com/document/d/1'],
+    ['browser_run', { steps: [{ action: 'stream', events: [{ key: 'a' }] }] }, 'https://docs.google.com/document/d/1'],
+    ['browser_goto', { url: 'https://sheets.google.com/' }, 'https://sheets.google.com/']
   ]) {
     const res = await server.handle({ jsonrpc: '2.0', id: 9, method: 'tools/call', params: { name, arguments: args } });
     const payload = JSON.parse(res.result.content[0].text);
@@ -850,7 +826,7 @@ test('an action on a sixty-row page answers in a thousand characters, not five t
   c.driver.snapshot = async () => rows;
   const server = createMcpServer(c);
 
-  const res = await server.handle({ jsonrpc: '2.0', id: 91, method: 'tools/call', params: { name: 'click', arguments: { x: 1, y: 1 } } });
+  const res = await server.handle({ jsonrpc: '2.0', id: 91, method: 'tools/call', params: { name: 'browser_click', arguments: { x: 1, y: 1 } } });
   const text = res.result.content[0].text;
   const out = JSON.parse(text);
 
@@ -866,8 +842,8 @@ test('the page that rides along is smaller than the page you ask for', async () 
   c.driver.snapshot = async (limit) => { asked.push(limit); return [{ role: 'button', name: 'b', x: 1, y: 1 }]; };
   const server = createMcpServer(c);
 
-  await server.handle({ jsonrpc: '2.0', id: 10, method: 'tools/call', params: { name: 'click', arguments: { x: 1, y: 1 } } });
-  await server.handle({ jsonrpc: '2.0', id: 11, method: 'tools/call', params: { name: 'scan', arguments: { limit: 120 } } });
+  await server.handle({ jsonrpc: '2.0', id: 10, method: 'tools/call', params: { name: 'browser_click', arguments: { x: 1, y: 1 } } });
+  await server.handle({ jsonrpc: '2.0', id: 11, method: 'tools/call', params: { name: 'browser_find', arguments: { role: 'menuitem', limit: 120 } } });
 
   assert.ok(asked[0] < asked[1], `an action asks for fewer rows (${asked[0]}) than a deliberate read (${asked[1]})`);
 });
@@ -878,7 +854,7 @@ test('a driver that throws becomes an error result, not a dead server', async ()
   const server = createMcpServer(c);
   const res = await server.handle({
     jsonrpc: '2.0', id: 7, method: 'tools/call',
-    params: { name: 'read', arguments: {} }
+    params: { name: 'browser_read', arguments: {} }
   });
 
   assert.ok(res.result?.isError);
@@ -889,7 +865,7 @@ test('a driver that is still pending is awaited, or its result serialises as {}'
   const server = createMcpServer(ctx());
   const res = await server.handle({
     jsonrpc: '2.0', id: 8, method: 'tools/call',
-    params: { name: 'read', arguments: {} }
+    params: { name: 'browser_read', arguments: {} }
   });
 
   const text = res.result.content[0].text;
@@ -922,7 +898,7 @@ test('a tab another agent holds is refused, with the holder and the expiry named
 
   const res = await server.handle({
     jsonrpc: '2.0', id: 31, method: 'tools/call',
-    params: { name: 'scan', arguments: { tabId: 't1' } }
+    params: { name: 'browser_read', arguments: { tabId: 't1' } }
   });
 
   assert.match(failureOf(res), /agent-b/, 'the refusal names who holds the tab');
@@ -934,14 +910,14 @@ test('the claim is renewed by every call, and released when the tab is closed', 
   const c = ctx();
   const server = createMcpServer(c);
 
-  await server.handle({ jsonrpc: '2.0', id: 32, method: 'tools/call', params: { name: 'scan', arguments: { tabId: 't1' } } });
-  await server.handle({ jsonrpc: '2.0', id: 33, method: 'tools/call', params: { name: 'scan', arguments: { tabId: 't1' } } });
+  await server.handle({ jsonrpc: '2.0', id: 32, method: 'tools/call', params: { name: 'browser_read', arguments: { tabId: 't1' } } });
+  await server.handle({ jsonrpc: '2.0', id: 33, method: 'tools/call', params: { name: 'browser_read', arguments: { tabId: 't1' } } });
 
   assert.deepEqual(c.lease.claims.map((entry) => entry[0]), ['t1', 't1'], 'each call asks again, which is the renewal');
   assert.ok(c.lease.claims.every((entry) => /^driver-/.test(entry[1])), 'and names this agent, by label and number');
   assert.ok(c.lease.claims.every((entry) => entry[2] === undefined), 'and asks for the default window unless one was configured');
 
-  await server.handle({ jsonrpc: '2.0', id: 34, method: 'tools/call', params: { name: 'close', arguments: { tabId: 't1' } } });
+  await server.handle({ jsonrpc: '2.0', id: 34, method: 'tools/call', params: { name: 'browser_close', arguments: { tabId: 't1' } } });
   assert.equal(c.lease.claims.at(-1)[0], 'release', 'and closing the tab gives it up');
   assert.equal(c.lease.claims.at(-1)[1], 't1');
 });
@@ -953,7 +929,7 @@ test('a configured window is the one the claim asks for', async () => {
     const c = ctx();
     const server = createMcpServer(c);
 
-    await server.handle({ jsonrpc: '2.0', id: 35, method: 'tools/call', params: { name: 'scan', arguments: { tabId: 't1' } } });
+    await server.handle({ jsonrpc: '2.0', id: 35, method: 'tools/call', params: { name: 'browser_read', arguments: { tabId: 't1' } } });
 
     assert.equal(c.lease.claims[0][2], 1234, 'the claim carries the configured window');
   } finally {
@@ -971,7 +947,7 @@ test('a tab id is found whether the caller sends a number or a string', async ()
 
     const res = await server.handle({
       jsonrpc: '2.0', id: 12, method: 'tools/call',
-      params: { name: 'scan', arguments: { tabId } }
+      params: { name: 'browser_read', arguments: { tabId } }
     });
 
     assert.ok(res.result, `an id sent as ${typeof tabId} was refused: ${failureOf(res)}`);
@@ -988,13 +964,13 @@ test('a wait ends on the same evidence a read would show', async () => {
   c.driver.read = async () => ({ url: 'https://x/', title: 't', text: texts.shift() ?? '' });
   const server = createMcpServer(c);
 
-  const res = await server.handle({ jsonrpc: '2.0', id: 20, method: 'tools/call', params: { name: 'wait', arguments: { text: 'Heading', timeoutMs: 2000, intervalMs: 100 } } });
+  const res = await server.handle({ jsonrpc: '2.0', id: 20, method: 'tools/call', params: { name: 'browser_wait', arguments: { text: 'Heading', timeoutMs: 2000, intervalMs: 100 } } });
   const payload = JSON.parse(res.result.content[0].text);
 
   assert.equal(payload.action.found, true);
   assert.ok(payload.page && payload.changed, 'the page state comes back with the verdict');
   assert.equal(c.driver.calls.filter(([name]) => name === 'waitForText').length, 1, 'the wait asks the wait primitive, not a full read');
-  assert.ok(!c.driver.calls.some(([name]) => name === 'read'), 'and it does not pay a second read before the page state');
+  assert.ok(!c.driver.calls.some(([name]) => name === 'browser_read'), 'and it does not pay a second read before the page state');
 });
 
 test('a wait that runs out of budget reports instead of failing', async () => {
@@ -1006,7 +982,7 @@ test('a wait that runs out of budget reports instead of failing', async () => {
   };
   const server = createMcpServer(c);
 
-  const res = await server.handle({ jsonrpc: '2.0', id: 21, method: 'tools/call', params: { name: 'wait', arguments: { text: 'Heading', timeoutMs: 500, intervalMs: 100 } } });
+  const res = await server.handle({ jsonrpc: '2.0', id: 21, method: 'tools/call', params: { name: 'browser_wait', arguments: { text: 'Heading', timeoutMs: 500, intervalMs: 100 } } });
   const payload = JSON.parse(res.result.content[0].text);
 
   assert.equal(payload.action.found, false);
@@ -1021,7 +997,7 @@ test('a wait with nothing to wait for is refused before the first read', async (
   c.driver.waitForText = async () => { waits += 1; return { url: 'u', title: 't', text: '' }; };
   const server = createMcpServer(c);
 
-  const res = await server.handle({ jsonrpc: '2.0', id: 22, method: 'tools/call', params: { name: 'wait', arguments: {} } });
+  const res = await server.handle({ jsonrpc: '2.0', id: 22, method: 'tools/call', params: { name: 'browser_wait', arguments: {} } });
 
   assert.ok(res.result?.isError);
   assert.equal(waits, 0, 'a refused wait touches nothing');
@@ -1030,7 +1006,7 @@ test('a wait with nothing to wait for is refused before the first read', async (
 test('every call reports how long the browser took', async () => {
   const server = createMcpServer(ctx());
 
-  const res = await server.handle({ jsonrpc: '2.0', id: 23, method: 'tools/call', params: { name: 'scan', arguments: {} } });
+  const res = await server.handle({ jsonrpc: '2.0', id: 23, method: 'tools/call', params: { name: 'browser_find', arguments: { role: 'menuitem' } } });
   const payload = JSON.parse(res.result.content.at(-1).text);
 
   assert.equal(typeof payload.elapsedMs, 'number', 'the answer names the cost as a fact');
@@ -1043,9 +1019,8 @@ test('key vocabularies are enumerated so a misspelling fails before the browser'
   const { result } = await server.handle({ jsonrpc: '2.0', id: 24, method: 'tools/list', params: {} });
   const byName = Object.fromEntries(result.tools.map((t) => [t.name, t]));
 
-  assert.deepEqual(byName.press.inputSchema.properties.modifiers.items.enum, ['Control', 'Alt', 'Shift', 'Meta']);
-  assert.deepEqual(byName.stream.inputSchema.properties.events.items.properties.modifiers.items.enum, ['Control', 'Alt', 'Shift', 'Meta']);
-  assert.match(byName.press.inputSchema.properties.key.description, /Enter.*ArrowLeft.*ArrowRight.*single printable ASCII/s);
+  assert.deepEqual(byName.browser_press.inputSchema.properties.modifiers.items.enum, ['Control', 'Alt', 'Shift', 'Meta']);
+  assert.match(byName.browser_press.inputSchema.properties.key.description, /Enter.*ArrowLeft.*ArrowRight.*single printable ASCII/s);
 });
 
 // WHY THE CHANGE SET IS TESTED AS A HINT, NOT A TRUTH.
@@ -1057,7 +1032,7 @@ const ROW_INSERT = { role: 'menuitem', name: 'Insert', x: 204, y: 46 };
 const ROW_TABLE = { role: 'menuitem', name: 'Table', x: 312, y: 180 };
 
 async function actOn(server, pages) {
-  const res = await server.handle({ jsonrpc: '2.0', id: 30, method: 'tools/call', params: { name: 'click', arguments: { x: 1, y: 1 } } });
+  const res = await server.handle({ jsonrpc: '2.0', id: 30, method: 'tools/call', params: { name: 'browser_click', arguments: { x: 1, y: 1 } } });
   return JSON.parse(res.result.content[0].text);
 }
 
@@ -1146,7 +1121,7 @@ test('an action that already settled does not pay for a second settle', async ()
   };
   const server = createMcpServer(c);
 
-  await server.handle({ jsonrpc: '2.0', id: 36, method: 'tools/call', params: { name: 'stream', arguments: { events: [{ key: 'a', modifiers: ['Control'] }] } } });
+  await server.handle({ jsonrpc: '2.0', id: 36, method: 'tools/call', params: { name: 'browser_run', arguments: { steps: [{ action: 'stream', events: [{ key: 'a', modifiers: ['Control'] }] }] } } });
 
   assert.equal(c.driver.calls.filter(([name]) => name === 'settle').length, 0, 'the action settled once, and the page look trusts it');
 });
@@ -1157,9 +1132,9 @@ test('an action that already settled does not pay for a second settle', async ()
 
 test('a wait trusts the settle it already paid', async () => {
   for (const [name, args] of [
-    ['wait', { text: 'Row 7' }],
-    ['wait', { role: 'row', name: 'Row 7' }],
-    ['wait', {}]
+    ['browser_wait', { text: 'Row 7' }],
+    ['browser_wait', { role: 'row', name: 'Row 7' }],
+    ['browser_wait', {}]
   ]) {
     const c = ctx();
     c.driver.waitForText = async () => ({ text: 'Row 7' });
@@ -1179,7 +1154,7 @@ test('an action settles on the page before looking, not on a timer', async () =>
   c.driver.snapshot = async () => { order.push('snapshot'); return []; };
   const server = createMcpServer(c);
 
-  await server.handle({ jsonrpc: '2.0', id: 31, method: 'tools/call', params: { name: 'click', arguments: { x: 1, y: 1 } } });
+  await server.handle({ jsonrpc: '2.0', id: 31, method: 'tools/call', params: { name: 'browser_click', arguments: { x: 1, y: 1 } } });
 
   assert.deepEqual(order.slice(0, 2), ['settle', 'snapshot']);
 });
@@ -1197,12 +1172,12 @@ test('a burst runs dependent steps in one call and looks at the page once', asyn
   const res = await server.handle({
     jsonrpc: '2.0', id: 32, method: 'tools/call',
     params: {
-      name: 'run',
+      name: 'browser_run',
       arguments: {
         steps: [
-          { action: 'resolve', role: 'menuitem', name: 'Insert' },
-          { action: 'click', refFromStep: 0 },
-          { action: 'type', text: 'hello' }
+          { action: 'browser_find', role: 'menuitem', name: 'Insert' },
+          { action: 'browser_click', refFromStep: 0 },
+          { action: 'browser_type', text: 'hello' }
         ]
       }
     }
@@ -1228,8 +1203,8 @@ test('a burst that fails keeps its finished steps and still reports the page', a
   const res = await server.handle({
     jsonrpc: '2.0', id: 33, method: 'tools/call',
     params: {
-      name: 'run',
-      arguments: { steps: [{ action: 'tap', role: 'menuitem', name: 'Insert' }, { action: 'type', text: 'no' }] }
+      name: 'browser_run',
+      arguments: { steps: [{ action: 'browser_click', role: 'menuitem', name: 'Insert' }, { action: 'browser_type', text: 'no' }] }
     }
   });
 
@@ -1238,7 +1213,7 @@ test('a burst that fails keeps its finished steps and still reports the page', a
   assert.equal(out.action.ok, false);
   assert.equal(out.action.failedAt, 0);
   assert.match(out.action.error.message, /menu is gone/);
-  assert.ok(!c.driver.calls.some(([name]) => name === 'type'), 'the failed burst did not type');
+  assert.ok(!c.driver.calls.some(([name]) => name === 'browser_type'), 'the failed burst did not type');
   assert.ok(out.page, 'the page is still reported after the failure');
 });
 
@@ -1252,7 +1227,7 @@ test('a read-only burst does not take the window away from the person', async ()
 
   await server.handle({
     jsonrpc: '2.0', id: 34, method: 'tools/call',
-    params: { name: 'run', arguments: { steps: [{ action: 'resolve', role: 'menuitem', name: 'Insert' }] } }
+    params: { name: 'browser_run', arguments: { steps: [{ action: 'browser_find', role: 'menuitem', name: 'Insert' }] } }
   });
 
   assert.ok(!c.driver.calls.some(([name]) => name === 'ensureFront'));
@@ -1264,29 +1239,13 @@ test('an invalid burst is refused before the browser is touched', async () => {
 
   const res = await server.handle({
     jsonrpc: '2.0', id: 35, method: 'tools/call',
-    params: { name: 'run', arguments: { steps: [] } }
+    params: { name: 'browser_run', arguments: { steps: [] } }
   });
 
   assert.match(failureOf(res), /1-8 steps/);
   assert.deepEqual(c.driver.calls, []);
 });
 
-test('caret reports the line without moving past it', async () => {
-  const server = createMcpServer(ctx());
-
-  const res = await server.handle({ jsonrpc: '2.0', id: 32, method: 'tools/call', params: { name: 'caret', arguments: {} } });
-
-  const payload = JSON.parse(res.result.content[0].text);
-  const { elapsedMs, ...facts } = payload;
-
-  assert.equal(typeof elapsedMs, 'number', 'the answer carries the cost of the call');
-  assert.deepEqual(facts, {
-    line: 'Kajian pustaka mencakup',
-    caretMoved: true,
-    caretRestored: true,
-    ok: true
-  });
-});
 
 // WHY A PAGE WITH NO FILE INPUT IS A FAILURE.
 // Measured live on Google Docs: upload answered inputFound: false as a successful tool call, so an agent reading it as done moved on with nothing in the document, and the road in - a drop - was fill.
@@ -1301,7 +1260,7 @@ test('upload on a page with no file input fails and says which road is left', as
     jsonrpc: '2.0',
     id: 71,
     method: 'tools/call',
-    params: { name: 'upload', arguments: { filename: 'a.png', data: 'x' } }
+    params: { name: 'browser_upload', arguments: { filename: 'a.png', data: 'x' } }
   });
 
   assert.match(failureOf(res), /inputFound: false/);
@@ -1313,7 +1272,7 @@ test('upload carries a file without touching the native dialog', async () => {
   c.driver.upload = async (options) => ({ inputFound: true, filename: options.filename, bytes: 5 });
   const server = createMcpServer(c);
 
-  const res = await server.handle({ jsonrpc: '2.0', id: 33, method: 'tools/call', params: { name: 'upload', arguments: { filename: 'pic.png', path: '/files/pic.png' } } });
+  const res = await server.handle({ jsonrpc: '2.0', id: 33, method: 'tools/call', params: { name: 'browser_upload', arguments: { filename: 'pic.png', path: '/files/pic.png' } } });
   const payload = JSON.parse(res.result.content[0].text);
 
   assert.deepEqual(payload.action, { inputFound: true, filename: 'pic.png', bytes: 5 });
@@ -1325,7 +1284,7 @@ test('chooser toggles without touching the page', async () => {
   c.driver.interceptFileChooser = async (enabled) => ({ intercepting: enabled });
   const server = createMcpServer(c);
 
-  const res = await server.handle({ jsonrpc: '2.0', id: 34, method: 'tools/call', params: { name: 'chooser', arguments: { enabled: true } } });
+  const res = await server.handle({ jsonrpc: '2.0', id: 34, method: 'tools/call', params: { name: 'browser_chooser', arguments: { enabled: true } } });
 
   const payload = JSON.parse(res.result.content[0].text);
   const { elapsedMs, ...facts } = payload;
@@ -1358,7 +1317,7 @@ test('a drop Chrome answered by opening the file closes that tab and says so', a
 
   const res = await server.handle({
     jsonrpc: '2.0', id: 41, method: 'tools/call',
-    params: { name: 'drop', arguments: { tabId: 't1', x: 1, y: 2, filename: 'pic.png', path: '/files/pic.png' } }
+    params: { name: 'browser_drop', arguments: { tabId: 't1', x: 1, y: 2, filename: 'pic.png', path: '/files/pic.png' } }
   });
   const payload = JSON.parse(res.result.content[0].text);
 
@@ -1376,68 +1335,12 @@ test('a drop the page took leaves no tab and reports a clean drop', async () => 
 
   const res = await server.handle({
     jsonrpc: '2.0', id: 42, method: 'tools/call',
-    params: { name: 'drop', arguments: { tabId: 't1', x: 1, y: 2, filename: 'pic.png', path: '/files/pic.png' } }
+    params: { name: 'browser_drop', arguments: { tabId: 't1', x: 1, y: 2, filename: 'pic.png', path: '/files/pic.png' } }
   });
   const payload = JSON.parse(res.result.content[0].text);
 
   assert.equal(payload.action.openedInstead, false);
   assert.ok(!c.driver.calls.some((call) => call[0] === 'close'), 'nothing to close, nothing closed');
-});
-
-// WHY THE ALLOWLIST IS PINNED AS A REFUSAL.
-// The whole value of asking the browser a question is lost the moment the question can also be an action, so the boundary is tested by what it refuses: no script in the page, no input, no navigation, no storage.
-// A method outside the list must be refused by name and with the list, because an agent that is told "no" can act on it and an agent that is told "unknown" can only guess.
-
-test('trace returns a raw read and hands the method its own params', async () => {
-  const c = ctx();
-  c.driver.ask = async (method, params) => ({ asked: method, params });
-  c.resolveTab = async () => ['t1'];
-  c.open = async () => c.driver;
-  const server = createMcpServer(c);
-
-  const res = await server.handle({
-    jsonrpc: '2.0', id: 51, method: 'tools/call',
-    params: { name: 'trace', arguments: { tabId: 't1', method: 'Page.getFrameTree' } }
-  });
-  const payload = JSON.parse(res.result.content[0].text);
-  const { elapsedMs, ...facts } = payload;
-
-  assert.equal(typeof elapsedMs, 'number', 'the answer carries the cost of the call');
-  assert.deepEqual(facts, { method: 'Page.getFrameTree', asked: 'Page.getFrameTree', params: {}, ok: true });
-});
-
-test('trace defaults a screenshot to png, which is how a test image is made', async () => {
-  const c = ctx();
-  c.driver.ask = async (method, params) => ({ asked: method, params });
-  c.resolveTab = async () => ['t1'];
-  c.open = async () => c.driver;
-  const server = createMcpServer(c);
-
-  const res = await server.handle({
-    jsonrpc: '2.0', id: 52, method: 'tools/call',
-    params: { name: 'trace', arguments: { tabId: 't1', method: 'Page.captureScreenshot' } }
-  });
-  const payload = JSON.parse(res.result.content[0].text);
-
-  assert.equal(payload.params.format, 'png');
-});
-
-test('trace refuses anything that could act, and says what it may ask', async () => {
-  const c = ctx();
-  c.driver.ask = async () => ({ never: true });
-  c.resolveTab = async () => ['t1'];
-  c.open = async () => c.driver;
-  const server = createMcpServer(c);
-
-  for (const method of ['Runtime.evaluate', 'Input.dispatchKeyEvent', 'Page.navigate', 'DOM.setFileInputFiles']) {
-    const res = await server.handle({
-      jsonrpc: '2.0', id: 53, method: 'tools/call',
-      params: { name: 'trace', arguments: { tabId: 't1', method } }
-    });
-    assert.match(failureOf(res), /read-only/, `${method} must be refused as an action`);
-    assert.match(failureOf(res), /Page.getFrameTree/, 'and the refusal lists what is allowed');
-  }
-  assert.ok(!c.driver.calls.some((call) => call[0] === 'ask'), 'nothing reached the browser');
 });
 
 test('search answers with the structured results and closes its tab', async () => {
@@ -1446,12 +1349,12 @@ test('search answers with the structured results and closes its tab', async () =
 
   const res = await server.handle({
     jsonrpc: '2.0', id: 60, method: 'tools/call',
-    params: { name: 'search', arguments: { query: 'opera agent mcp' } }
+    params: { name: 'browser_search', arguments: { query: 'opera agent mcp' } }
   });
   const payload = JSON.parse(res.result.content[0].text);
 
   assert.equal(payload.ok, true);
-  assert.equal(payload.kind, 'search');
+  assert.equal(payload.kind, 'browser_search');
   assert.equal(payload.search.engine, 'bing');
   assert.equal(payload.search.pages, 1);
   assert.equal(payload.search.count, 10);
@@ -1471,7 +1374,7 @@ test('search across two pages navigates to the next first, merges and re-numbers
 
   const res = await server.handle({
     jsonrpc: '2.0', id: 61, method: 'tools/call',
-    params: { name: 'search', arguments: { query: 'opera agent mcp', pages: 2 } }
+    params: { name: 'browser_search', arguments: { query: 'opera agent mcp', pages: 2 } }
   });
   const payload = JSON.parse(res.result.content[0].text);
 
@@ -1490,7 +1393,7 @@ test('search refuses an empty query with the reason named', async () => {
 
   const res = await server.handle({
     jsonrpc: '2.0', id: 62, method: 'tools/call',
-    params: { name: 'search', arguments: { query: '   ' } }
+    params: { name: 'browser_search', arguments: { query: '   ' } }
   });
 
   assert.match(failureOf(res), /non-empty query/);
@@ -1513,7 +1416,7 @@ test('search refuses loudly when the tab never reaches Bing', async () => {
 
   const res = await server.handle({
     jsonrpc: '2.0', id: 63, method: 'tools/call',
-    params: { name: 'search', arguments: { query: 'anything', timeoutMs: 1500 } }
+    params: { name: 'browser_search', arguments: { query: 'anything', timeoutMs: 1500 } }
   });
 
   assert.ok(res.result?.isError, 'a tab that never renders Bing is refused, not answered with silence');

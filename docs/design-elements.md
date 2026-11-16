@@ -31,7 +31,7 @@ Two house rules do the audit's heavy lifting: no element may sell what the produ
 - Plan note `plan.pilot gratis: 200 perintah per hari, 50 per sesi.` — priced honestly from the published pilot quota; the cost before the click — K.
 - Starburst `Pasang gratis!` — one per page; the claim is the pricing FAQ's own first sentence (`Pasang gratis`), nothing invented — K.
 - Framed plate `Corvus corax — setelah Naumann, 1874 · public domain` — chrome frame with aqua rim light around an ink engraving — K.
-- Facts ticker pill `56 tool · 36 primitive · 6 izin` — the three pinned numbers, chrome with magenta numerals — K.
+- Facts ticker pill `40 tool · 36 primitive · 6 izin` — the three pinned numbers, chrome with magenta numerals — K.
 - `Contoh nyata.` + `Satu perintah, satu berkas.` + the Sinar Jaya line — the demo framed by what it really shows: 23 rows in, Rp 65.310.000 out as three sheets — K.
 - `Contoh berkas.` + `Laporan keuangan September.` — the four files, openable now, linked to the study — replaces the old slogan band that said nothing — K (replaced).
 - `Lima hal yang dikerjakan Corbin.` + 5 feature rows (endpoint, reading, files, rejected secrets, pairing) — each row names a capability the suite pins — K.
@@ -43,7 +43,7 @@ Two house rules do the audit's heavy lifting: no element may sell what the produ
 
 - h1 `Yang bisa dikerjakan Corbin.` — the page's one promise, named as a thing — K.
 - Lede `Anda menulis satu perintah. Corbin membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.` — the loop, in one sentence, no borrowed word — K.
-- Stats strip (`56`, `36`, `6`) — the same three pinned numbers — K.
+- Stats strip (`40`, `36`, `6`) — the same three pinned numbers — K.
 - Four-step rail (Tulis/Baca/Isi/Simpan) — the ritual of one job, with a real example command — K.
 - 8 tiles (tool, izin, model, pairing, rahasia, MCP, berkas, login) — each names a capability with a number or a rule, none of them slogan — K.
 - Sample-file download row — four real files, openable now — K.

@@ -44,7 +44,7 @@ test('a type that reports success also reads back what it typed', async () => {
 // Driving an operating system dialog is the first thing this driver does outside the browser, so it is visible by name rather than hidden behind a flag: a caller reading the catalogue can see it before it happens, and an agent can find it without being told.
 
 test('the catalogue names the dialog road, and says it is outside the browser', () => {
-  const tool = TOOLS.find((candidate) => candidate.name === 'dialog');
+  const tool = TOOLS.find((candidate) => candidate.name === 'browser_dialog');
 
   assert.ok(tool, 'dialog is in the catalogue');
   assert.match(tool.description, /dialog/i);
@@ -65,6 +65,6 @@ test('the guide declares what the dialog call does to the machine', () => {
   const { sideEffects } = guide();
   const byTool = Object.fromEntries(sideEffects.map((entry) => [entry.tool, entry.effects]));
 
-  assert.ok(byTool.dialog.some((line) => /outside the browser/.test(line)), 'and names the outside browser');
-  assert.equal(byTool.dialog.length, 3, 'state reads, type writes, press presses — all three are declared');
+  assert.ok(byTool.browser_dialog.some((line) => /outside the browser/.test(line)), 'and names the outside browser');
+  assert.equal(byTool.browser_dialog.length, 3, 'state reads, type writes, press presses - all three are declared');
 });

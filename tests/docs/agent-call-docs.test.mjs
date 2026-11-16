@@ -90,7 +90,7 @@ test('the guide teaches the capture ladder and the settled flag', () => {
   assert.match(guide, /settled/, 'the settled flag is named');
   assert.match(guide, /allowCaretMove/, 'the consented borrow for canvas editors is named');
   assert.match(guide, /grewBy/, 'the two-reads growth bound is named');
-  assert.match(guide, /probe/, 'the measuring call is named');
+  assert.match(guide, /what the page measures as/, 'the read measures the ladder itself, not a prior call');
 });
 
 test('the guide says how a device out of quota answers', () => {

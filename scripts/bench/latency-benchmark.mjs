@@ -123,49 +123,19 @@ const add = async (label, fn, n) => {
 
 console.log(`\nLocal road latency - bridge 9451, tab ${tab.id}, ${RUNS} runs each\n`);
 
-const runRef = async (query) => (await call('find', { query })).item?.ref;
-
-await add('status', () => call('status', { tabId: undefined }));
-await add('tabs', () => call('tabs'));
-await add('read', () => call('read'));
-await add('read (view map)', () => call('read', { view: 'map', limit: 5 }));
-await add('find', () => call('find', { query: 'Row 42' }));
-await add('shot', () => call('shot'), 5);
-await add('scroll_page', () => call('scroll_page', { y: 120 }));
-await add('activate_tab', () => call('activate_tab'));
-await add('click_element', async () => call('click_element', { ref: await runRef('Run') }));
-await add('fill_element', async () => call('fill_element', { ref: await runRef('the field'), value: 'x' }));
-await add('press', () => call('press', { key: 'a' }));
-await add('stream', () => call('stream', { events: [{ type: 'key', key: 'b' }] }));
-await add('pointer', () => call('pointer', { x: 200, y: 160, pointerAction: 'move' }));
-await add('run_browser_burst', () => call('run_browser_burst', { steps: [{ action: 'read' }] }));
-await add('skill_recall', () => call('skill_recall', { query: 'browser' }));
-await add('statement_manifest', () => call('statement_manifest'));
-await add('media_state', () => call('media_state'));
-await add('media_play', () => call('media_play'));
-await add('run_workflow', () => call('run_workflow', { name: 'browser.status', input: {} }));
-await add('run_program', () => call('run_program', {
-  requestId: 'latency-1',
-  program: {
-    schemaVersion: 'OA_REACTIVE_VM_V1',
-    programId: 'latency',
-    goalId: 'latency',
-    goalRevision: 1,
-    target: { deviceId: 'x', tabId: tab.id },
-    root: { id: 'r', type: 'SEQUENCE', children: [{ id: 'c', type: 'COMMAND', method: 'page.read', params: { tabId: tab.id } }] }
-  }
-}));
-await add('run_adhoc', () => call('run_adhoc', {
-  requestId: 'latency-2',
-  graph: { nodes: [{ id: 'n1', type: 'command', method: 'page.read', params: { tabId: tab.id } }] }
-}));
-await add('start_watch', () => call('start_watch', { rule: { ruleId: 'latency', trigger: { kind: 'selectorPresence', selector: 'h1' }, action: { kind: 'noop' } } }));
-await add('wait_events', () => call('wait_events', { timeoutMs: 400 }));
-await add('stop_watch', () => call('stop_watch'));
-await add('navigate_tab', () => call('navigate_tab', { url: URL_FIXTURE }));
-await add('goto', () => call('goto', { url: URL_FIXTURE }));
-await add('close', () => call('close', { tabId: tab.id }), 3);
-await add('invoice_create', () => call('invoice_create', { client: 'latency-none', period: '2026-01' }), 3);
+await add('browser_status', () => call('browser_status'));
+await add('browser_tabs', () => call('browser_tabs'));
+await add('browser_read', () => call('browser_read'));
+await add('browser_find', () => call('browser_find', { text: 'Row 42' }));
+await add('browser_find (role only)', () => call('browser_find', { role: 'row' }));
+await add('browser_screenshot', () => call('browser_screenshot'), 5);
+await add('browser_scroll', () => call('browser_scroll', { y: 120 }));
+await add('browser_click (textbox)', () => call('browser_click', { role: 'textbox', name: 'the field' }));
+await add('browser_type', () => call('browser_type', { text: 'x' }));
+await add('browser_press', () => call('browser_press', { key: 'a' }));
+await add('browser_run (wait stable)', () => call('browser_run', { steps: [{ action: 'browser_wait', until: 'stable', timeoutMs: 100 }] }));
+await add('browser_goto', () => call('browser_goto', { url: URL_FIXTURE }));
+await add('browser_close', () => call('browser_close', { tabId: tab.id }), 3);
 
 console.log('\nJSON\n' + JSON.stringify(results));
 fixtureServer.close();

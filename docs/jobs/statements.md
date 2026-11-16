@@ -8,7 +8,7 @@ looks at what is on screen and decides from that.
 ## The card
 
 ```
-card { client: "Toko Sinar Jaya", portal: "BCA", period: "2026-09", url: "…" }
+browser_card { client: "Toko Sinar Jaya", portal: "BCA", period: "2026-09", url: "…" }
 ```
 
 returns:
@@ -27,17 +27,17 @@ the folder sorts as one family and the manifest cannot grow near-duplicates.
 
 ## What the agent does, in order
 
-1. `goto` the portal, or the statement page the person gave.
-2. `read` — if it asks to sign in, **stop and ask the person to sign in in their
+1. `browser_goto` the portal, or the statement page the person gave.
+2. `browser_read` — if it asks to sign in, **stop and ask the person to sign in in their
    own browser**. The drive never types a password and never answers a one-time code.
-3. `read` again and check the account and the month on screen against the card.
-4. `find` for the download control by the words the portal actually uses.
-5. `download` with `dir` and `saveAs`, and act only on `downloaded:true`.
-6. Read the closing balance off the page, then `delivered` with the path.
+3. `browser_read` again and check the account and the month on screen against the card.
+4. `browser_find` for the download control by the words the portal actually uses.
+5. `browser_download` with `dir` and `saveAs`, and act only on `downloaded:true`.
+6. Read the closing balance off the page, then `browser_delivered` with the path.
 
 ## What a delivery claims
 
-`delivered` checks the file itself, so the claim does not rest on the agent's
+`browser_delivered` checks the file itself, so the claim does not rest on the agent's
 word:
 
 | Claim | How it is known |
