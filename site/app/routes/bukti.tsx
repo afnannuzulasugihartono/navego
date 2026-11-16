@@ -67,7 +67,7 @@ export default function Bukti() {
             <thead><tr><th scope="col">Berkas</th><th scope="col" className="num">Ukuran (byte)</th><th scope="col">sha256</th></tr></thead>
             <tbody>
               {BUILDS.map(([name, size, hash]) => (
-                <tr key={name}><td><code>{name}</code></td><td className="num">{size}</td><td><code style={{ fontSize: 9.5 }}>{hash}</code></td></tr>
+                <tr key={name}><td><code>{name}</code></td><td className="num">{size}</td><td><code >{hash}</code></td></tr>
               ))}
             </tbody>
           </table>
@@ -85,7 +85,7 @@ export default function Bukti() {
           <table className="table" style={{ maxWidth: 860, marginTop: 14 }}>
             <thead><tr><th scope="col">Berkas</th><th scope="col" className="num">Ukuran (byte)</th><th scope="col">sha256</th></tr></thead>
             <tbody>
-              <tr><td><code>transaksi-2026-09.csv</code></td><td className="num">1109</td><td><code style={{ fontSize: 9.5 }}>8e0f64810fd70e91101051afb85a814df12a87b1eafde048272049ed6a3667a2</code></td></tr>
+              <tr><td><code>transaksi-2026-09.csv</code></td><td className="num">1109</td><td><code >8e0f64810fd70e91101051afb85a814df12a87b1eafde048272049ed6a3667a2</code></td></tr>
             </tbody>
           </table>
           <p className="note" style={{ marginTop: 10 }}>Berkas itu sama persis dengan CSV yang jadi sumber keempat berkas di atas. Bandingkan sha256-nya: sama, byte per byte.</p>
