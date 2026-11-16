@@ -82,7 +82,8 @@ test('a missing menu row is sent to the menu tools, which know what a menu is', 
   const out = withAdvice(new Error('no menuitem matching "Image". Visible: none'), { rows: [] });
 
   assert.match(out, /browser_list_menu\(/);
-  assert.match(out, /action: "walk"/);
+  assert.match(out, /browser_walk_menu\(\{/);
+  assert.match(out, /path: \[\.\.\.\]/);
 });
 
 test('a missing button is not sent to the menu tools', () => {

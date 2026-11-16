@@ -57,8 +57,8 @@ const rowAdvice = (role: string, name: unknown, rows: AdviceRow[]) => {
   if (looks.length) return [`the page has: ${looks.map((text) => `"${trim(text, 34)}"`).join(', ')}`];
   if (MENU_ROLES.includes(String(role))) {
     return [
-      'browser_list_menu({(list the menu with browser_list_menu)}) to see what this application can do',
-      'browser_list_menu({action: "walk", path: [...]}) to walk into the menu that holds it',
+      'browser_list_menu({}) to see what this application can do',
+      'browser_walk_menu({path: [...]}) to walk into the menu that holds it',
       `browser_wait_until({until: "row", role: "${role}", name: "..."}) if it has not appeared yet`
     ];
   }

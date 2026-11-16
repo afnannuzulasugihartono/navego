@@ -632,8 +632,22 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
       }
       case 'browser_focus_tab': {
         const tab = await resolvedTab(args.tabId);
-        const tabDriver = await driverFor(tab ? tab.id : args.tabId);
-        return asText(await tabDriver.front());
+        if (!tab) throw new Error(`no tab matching ${args.tabId}`);
+        const tabDriver = await driverFor(tab.id);
+        const fronted = await tabDriver.front().catch(() => false);
+        const win = typeof tabDriver.windowState === 'function'
+          ? await tabDriver.windowState().catch(() => null)
+          : null;
+        const truth = windowTruth(isObject(win) ? win : {}, context.browsers, [tab]);
+        return asText({
+          tabId: tab.id,
+          title: String(tab.title ?? ''),
+          fronted: fronted === true,
+          focused: truth.focused,
+          browser: truth.browser,
+          why: truth.why,
+          ok: fronted === true
+        });
       }
       case 'browser_focus_window':
         return asText(await driver.focusWindow(args.match ?? ''));

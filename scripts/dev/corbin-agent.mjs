@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-// @last-edited: 2026-11-16 UTC+7.
+// @last-edited: 2026-11-17 UTC+7.
 // @title: corbin-agent — the thin harness I drive Corbin through from an agent with a shell.
-// @state: one process owns one driver lease, explicit tabId on every write, list/tabs/open/read/shot/batch commands.
-// @dependencies: node:fs, node:path, node:url, ../proof/proof-run.mjs (speakMcp).
+// @state: one process owns one driver lease; `serve` keeps it alive on loopback for interactive drives; explicit tabId on every write.
+// @dependencies: node:fs, node:http, node:path, node:url, ../proof/proof-run.mjs (speakMcp).
 // Every write needs an explicit tabId; a separate process per call would collide on the tab claim.
-// Usage: node scripts/dev/corbin-agent.mjs list | tabs | open <url> | read <tabId> | shot <tabId> [file] | call <tool> '<json>' | batch <file.json>
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { createServer } from 'node:http';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { speakMcp } from '../proof/proof-run.mjs';
@@ -60,9 +60,8 @@ async function execute(cmd, args) {
     const name = args[0];
     if (!name) throw new Error('call needs a tool name');
     const callArgs = args[1] ? JSON.parse(args[1]) : {};
-    if (needsTab.has(name) && callArgs.tabId === undefined && !callArgs.role && !callArgs.text) {
-      throw new Error(`${name} needs an explicit tabId — run "tabs" first. No default tab in this harness.`);
-    }
+    const denied = needsTab.has(name) && callArgs.tabId === undefined && !callArgs.role && !callArgs.text;
+    if (denied) throw new Error(`${name} needs an explicit tabId — run "tabs" first. No default tab in this harness.`);
     show(await mcp.tool(name, callArgs));
   } else if (cmd === 'open-and-read') {
     if (!args[0]) throw new Error('open-and-read needs a url');
@@ -70,8 +69,7 @@ async function execute(cmd, args) {
     const tabId = tabOf(opened.text);
     if (!tabId) throw new Error(`open answered no tab id: ${opened.text}`);
     process.stdout.write(`tabId ${tabId}\n`);
-    const waited = await mcp.tool('browser_wait_until', { tabId, until: 'text', text: args[1] ?? 'Corbin', timeoutMs: 15000 });
-    show(waited);
+    show(await mcp.tool('browser_wait_until', { tabId, until: 'text', text: args[1] ?? 'Corbin', timeoutMs: 15000 }));
     show(await mcp.tool('browser_read_page', { tabId }));
     if (args[2]) {
       const shot = await mcp.tool('browser_screenshot', { tabId });
@@ -82,20 +80,50 @@ async function execute(cmd, args) {
       process.stdout.write(`${target}\n`);
     }
   } else {
-    throw new Error('commands: list | tabs | open <url> | read <tabId> | shot <tabId> [file] | call <tool> <json> | open-and-read <url> [text] [file]');
+    throw new Error('commands: list | tabs | open <url> | read <tabId> | shot <tabId> [file] | call <tool> <json> | open-and-read <url> [text] [file] | serve');
   }
 }
 
-try {
-  if (command === 'batch') {
-    const steps = JSON.parse(readFileSync(rest[0], 'utf8'));
-    for (const step of steps) {
-      process.stdout.write(`\n> ${step.join(' ')}\n`);
-      await execute(step[0], step.slice(1));
+// `serve` holds one lease across independent shell calls: POST /call {"name","args"} -> answer.
+
+if (command === 'serve') {
+  const port = Number(rest[0] || 9478);
+  const server = createServer((req, res) => {
+    let body = '';
+    req.on('data', (chunk) => { body += chunk; });
+    req.on('end', async () => {
+      res.setHeader('content-type', 'application/json');
+      try {
+        if (req.method === 'GET' && req.url === '/health') {
+          res.end(JSON.stringify({ ok: true, port }));
+          return;
+        }
+        const payload = JSON.parse(body || '{}');
+        const name = payload.name;
+        const args = payload.args ?? {};
+        if (needsTab.has(name) && args.tabId === undefined && !args.role && !args.text) {
+          throw new Error(`${name} needs an explicit tabId — no default tab.`);
+        }
+        const call = await mcp.tool(name, args);
+        res.end(JSON.stringify({ ok: true, text: call.text, image: call.image, ms: call.ms }));
+      } catch (error) {
+        res.end(JSON.stringify({ ok: false, error: String(error?.message ?? error) }));
+      }
+    });
+  });
+  server.listen(port, '127.0.0.1', () => process.stdout.write(`corbin-agent listening on ${port}\n`));
+} else {
+  try {
+    if (command === 'batch') {
+      const steps = JSON.parse(readFileSync(rest[0], 'utf8'));
+      for (const step of steps) {
+        process.stdout.write(`\n> ${step.join(' ')}\n`);
+        await execute(step[0], step.slice(1));
+      }
+    } else {
+      await execute(command, rest);
     }
-  } else {
-    await execute(command, rest);
+  } finally {
+    await mcp.close();
   }
-} finally {
-  await mcp.close();
 }

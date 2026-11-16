@@ -50,8 +50,8 @@ export const RECIPES = Object.freeze([
   },
   {
     task: 'Walk a menu by path, not by guessing',
-    do: ['browser_list_menu'],
-    note: 'action=walk with a path like ["Insert","Image"] opens each level and stops; branches are hovered, never clicked into blindly.'
+    do: ['browser_walk_menu'],
+    note: 'browser_walk_menu({path: ["Insert","Image"]}) opens each level and stops; branches are hovered, never clicked into blindly.'
   },
   {
     task: 'Do several dependent moves in one call',
