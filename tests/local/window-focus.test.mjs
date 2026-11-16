@@ -273,7 +273,7 @@ test('a driver that cannot see the page says so rather than pretending the windo
 
 test('the catalogue offers the window state inside status and a call that moves it', () => {
   const status = TOOLS.find((tool) => tool.name === 'browser_status');
-  const focus = TOOLS.find((tool) => tool.name === 'browser_front');
+  const focus = TOOLS.find((tool) => tool.name === 'browser_focus_window');
 
   assert.ok(status, 'status is there');
   assert.match(status.description, /front/i, 'and it says whether a browser window is in front');
@@ -285,5 +285,5 @@ test('the catalogue offers the window state inside status and a call that moves 
 test('every tool the advice can name still exists after this', () => {
   const names = new Set(TOOLS.map((tool) => tool.name));
 
-  assert.ok(names.has('browser_front'), 'the advice below points at front, so it has to be there');
+  assert.ok(names.has('browser_focus_window'), 'the advice below points at front, so it has to be there');
 });

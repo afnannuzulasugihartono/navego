@@ -44,7 +44,7 @@ test('a side effect says something or is honestly empty', () => {
 // The declaration is the fix, and a declaration nobody reads is decoration - so this test fails if the moving read ever loses it.
 
 test('the reads that move the page say so', () => {
-  assert.ok(SIDE_EFFECTS.browser_read.some((effect) => /caret/i.test(effect)));
+  assert.ok(SIDE_EFFECTS.browser_read_page.some((effect) => /caret/i.test(effect)));
 });
 
 test('a topic returns the roads for that task and nothing else', () => {

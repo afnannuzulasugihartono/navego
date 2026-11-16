@@ -124,18 +124,18 @@ const add = async (label, fn, n) => {
 console.log(`\nLocal road latency - bridge 9451, tab ${tab.id}, ${RUNS} runs each\n`);
 
 await add('browser_status', () => call('browser_status'));
-await add('browser_tabs', () => call('browser_tabs'));
-await add('browser_read', () => call('browser_read'));
-await add('browser_find', () => call('browser_find', { text: 'Row 42' }));
-await add('browser_find (role only)', () => call('browser_find', { role: 'row' }));
+await add('browser_list_tabs', () => call('browser_list_tabs'));
+await add('browser_read_page', () => call('browser_read_page'));
+await add('browser_find_element', () => call('browser_find_element', { text: 'Row 42' }));
+await add('browser_find_element (role only)', () => call('browser_find_element', { role: 'row' }));
 await add('browser_screenshot', () => call('browser_screenshot'), 5);
 await add('browser_scroll', () => call('browser_scroll', { y: 120 }));
 await add('browser_click (textbox)', () => call('browser_click', { role: 'textbox', name: 'the field' }));
-await add('browser_type', () => call('browser_type', { text: 'x' }));
-await add('browser_press', () => call('browser_press', { key: 'a' }));
-await add('browser_run (wait stable)', () => call('browser_run', { steps: [{ action: 'browser_wait', until: 'stable', timeoutMs: 100 }] }));
-await add('browser_goto', () => call('browser_goto', { url: URL_FIXTURE }));
-await add('browser_close', () => call('browser_close', { tabId: tab.id }), 3);
+await add('browser_type_text', () => call('browser_type_text', { text: 'x' }));
+await add('browser_press_key', () => call('browser_press_key', { key: 'a' }));
+await add('browser_run_steps (wait stable)', () => call('browser_run_steps', { steps: [{ action: 'browser_wait_until', until: 'stable', timeoutMs: 100 }] }));
+await add('browser_open_url', () => call('browser_open_url', { url: URL_FIXTURE }));
+await add('browser_close_tab', () => call('browser_close_tab', { tabId: tab.id }), 3);
 
 console.log('\nJSON\n' + JSON.stringify(results));
 fixtureServer.close();

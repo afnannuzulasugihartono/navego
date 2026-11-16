@@ -63,7 +63,7 @@ test('the local guidance teaches the atomic find+click burst pattern', () => {
 
 test('the local surface exposes the burst tool with dependent steps', () => {
   const tools = fs.readFileSync(new URL('../../local/tools.ts', import.meta.url), 'utf8');
-  assert.match(tools, /name: 'browser_run'/);
+  assert.match(tools, /name: 'browser_run_steps'/);
 });
 
 test('the local surface exposes run only, never a cloud-side run_workflow', () => {

@@ -383,7 +383,7 @@ const livePort = async (context: { port?: unknown }): Promise<unknown> => (typeo
 // Measured live on this product's own author: an agent that copies an eight-digit id wrong is told "No page target", and the number is the one thing it cannot check - it cannot read a digit back off a screenshot, but it can read a title.
 // So a tabId that is not a number is looked for by title or address, and a name that fits two tabs is refused with both of them, because picking one and saying nothing is how a drive ends up typing into the wrong document.
 
-const INPUT_TOOLS = new Set(['browser_click', 'browser_hover', 'browser_type', 'browser_press', 'browser_upload', 'browser_drop', 'browser_menu', 'browser_download', 'browser_login', 'browser_captcha']);
+const INPUT_TOOLS = new Set(['browser_click', 'browser_hover', 'browser_type_text', 'browser_press_key', 'browser_upload_file', 'browser_drop_file', 'browser_list_menu', 'browser_walk_menu', 'browser_download_file', 'browser_login', 'browser_solve_captcha']);
 
 // WHY THE OWNER IS A LABEL AND A NUMBER.
 // The label is what a refusal reads back to an agent that can go and drive another tab, and the number keeps two agents that share a label from sharing one claim.
@@ -507,9 +507,9 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
     requireArguments(args, TOOLS.find((t) => t.name === name)?.inputSchema.required ?? []);
 
     // The burst is checked before a tab is resolved, so a malformed step list cannot touch a browser, and a caller learns which step was wrong before any page is changed.
-    const burst = name === 'browser_run' ? normalizeBurst(args) : null;
+    const burst = name === 'browser_run_steps' ? normalizeBurst(args) : null;
 
-    if (name === 'browser_card') {
+    if (name === 'delivery_plan') {
       return asText(statementCard({
         client: args.client,
         portal: args.portal,
@@ -519,7 +519,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         ext: args.ext ?? 'pdf'
       }));
     }
-    if (name === 'browser_delivered') {
+    if (name === 'delivery_record') {
       return asText(statementDelivered({
         client: args.client,
         portal: args.portal,
@@ -530,7 +530,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         replace: args.replace === true
       }));
     }
-    if (name === 'browser_report') {
+    if (name === 'artifact_build_report') {
       return asText(reportFromFile({
         source: args.source,
         client: args.client,
@@ -542,7 +542,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         out: args.out ?? null
       }));
     }
-    if (name === 'browser_sheet') {
+    if (name === 'artifact_build_workbook') {
       return asText(spreadsheetFromFile({
         source: args.source,
         client: args.client,
@@ -554,14 +554,14 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         out: args.out ?? null
       }));
     }
-    if (name === 'browser_deck') {
+    if (name === 'artifact_build_slides') {
       return asText(deckFromFile({
         source: args.source,
         out: args.out ?? null,
         report: args.report ?? null
       }));
     }
-    if (name === 'browser_doc') {
+    if (name === 'artifact_build_document') {
       const plan = documentFromFile({
         source: args.source,
         out: null
@@ -577,26 +577,26 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
     // A wallet lives on the server, so a wallet call that needed a tab would refuse to answer with the browser closed — which is exactly when a person checks their balance or pays for the last job.
     // The plan is assembled from named fields rather than passed through, so a caller cannot smuggle a price or an owner into the object the server prices.
 
-    if (name === 'browser_pair') {
+    if (name === 'wallet_pair_device') {
       return asText(await pairDevice({ code: args.code, deviceName: args.deviceName, version: context.version }));
     }
-    if (name === 'browser_balance') return asText(await walletBalance());
-    if (name === 'browser_topup') return asText(await walletTopUp());
-    if (name === 'browser_quote') return asText(await walletQuote(planFrom(args)));
-    if (name === 'browser_reserve') return asText(await taskReserve(planFrom(args)));
-    if (name === 'browser_settle') {
+    if (name === 'wallet_get_balance') return asText(await walletBalance());
+    if (name === 'wallet_add_funds') return asText(await walletTopUp());
+    if (name === 'wallet_get_price') return asText(await walletQuote(planFrom(args)));
+    if (name === 'wallet_hold_price') return asText(await taskReserve(planFrom(args)));
+    if (name === 'wallet_charge') {
       return asText(await taskSettle({
         reservationId: args.reservationId,
         artifactHash: args.artifactHash,
         actionsActual: typeof args.actionsActual === 'number' ? args.actionsActual : null
       }));
     }
-    if (name === 'browser_refund') {
+    if (name === 'wallet_refund') {
       return asText(await taskRefund({ reservationId: args.reservationId, reason: args.reason ?? null }));
     }
 
-    const tab = name === 'browser_close' ? null : await resolvedTab(args?.tabId);
-    const driver = await driverFor(name === 'browser_close' ? null : (tab ? tab.id : args?.tabId));
+    const tab = name === 'browser_close_tab' ? null : await resolvedTab(args?.tabId);
+    const driver = await driverFor(name === 'browser_close_tab' ? null : (tab ? tab.id : args?.tabId));
     const wantsFront = INPUT_TOOLS.has(name)
       || (burst?.steps.some((step: JsonRecord) => BURST_INPUT_ACTIONS.includes(step.action)) ?? false);
     const front = wantsFront && typeof driver.ensureFront === 'function'
@@ -630,26 +630,25 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           window: windowTruth(isObject(window) ? window : {}, context.browsers, pages)
         });
       }
-      case 'browser_front':
-        return asText(await driver.focusWindow(args.match ?? ''));
-      case 'browser_dialog': {
-        const action = String(args.action ?? 'state');
-        if (action === 'state') return asText(await driver.dialogState());
-        if (action === 'type') {
-          if (!args.text) throw new Error('dialog action=type needs text');
-          return asText(await driver.dialogType(String(args.text)));
-        }
-        if (action === 'press') {
-          if (!args.name) throw new Error('dialog action=press needs name — the button, e.g. Open or Cancel');
-          return asText(await driver.dialogPress(String(args.name)));
-        }
-        throw new Error(`dialog action must be state, type or press — got: ${action}`);
+      case 'browser_focus_tab': {
+        const tab = await resolvedTab(args.tabId);
+        const tabDriver = await driverFor(tab ? tab.id : args.tabId);
+        return asText(await tabDriver.front());
       }
-      case 'browser_tabs':
+      case 'browser_focus_window':
+        return asText(await driver.focusWindow(args.match ?? ''));
+      case 'browser_read_dialog':
+        return asText(await driver.dialogState());
+      case 'browser_type_into_dialog':
+        if (!args.text) throw new Error('browser_type_into_dialog needs text');
+        return asText(await driver.dialogType(String(args.text)));
+      case 'browser_press_dialog_button':
+        if (!args.name) throw new Error('browser_press_dialog_button needs name — the button, e.g. Open or Cancel');
+        return asText(await driver.dialogPress(String(args.name)));      case 'browser_list_tabs':
         return asText(await driver.tabs());
-      case 'browser_pin':
+      case 'browser_select_browser':
         return asText(await preferBridgeDevice(args.device));
-      case 'browser_goto': {
+      case 'browser_open_url': {
         if (tab) {
           return afterAction(driver, { navigated: await driver.navigate(args.url), tab: args.tabId });
         }
@@ -661,19 +660,19 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         const openedDriver = openedId === null || openedId === undefined ? driver : await driverFor(String(openedId));
         return afterAction(openedDriver, opened);
       }
-      case 'browser_close': {
+      case 'browser_close_tab': {
         const out = await driver.close(args.tabId);
         void sessions.get(args.tabId)?.close?.();
         sessions.delete(args.tabId);
         await lease.release(args.tabId, OWNER).catch(() => null);
         return asText(out);
       }
-      case 'browser_read':
+      case 'browser_read_page':
         return asText(await driver.read({ allowCaretMove: args.allowCaretMove === true }));
       // WHY THE SETTLE IS ASKED FOR, BOUNDED AND OPTIONAL.
       // tabs.open already waits for the tab's load event, but load and settled-for-readers are different facts: Bing renders its cards server-side, and the first innerText read is only as fresh as whatever the page did after DOMContentLoaded.
       // The optional call keeps a fake session in the tests working while the real one measures quiet before the read.
-      case 'browser_search': {
+      case 'browser_search_web': {
         const query = String(args.query ?? '').trim();
         if (!query) throw new Error('search needs a non-empty query string.');
         const pages = Math.min(3, Math.max(1, Math.floor(Number(args.pages) || 1)));
@@ -760,7 +759,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
             seen.add(result.url);
             results.push({ ...result, rank: results.length + 1 });
           }
-          answer = { ok: true, kind: 'browser_search', page: { url: pageUrl, title: pageTitle }, search: { query, engine: 'bing', pages: fetched, count: results.length, truncated, ...(textTruncated ? { textTruncated: true } : {}), results } };
+          answer = { ok: true, kind: 'browser_search_web', page: { url: pageUrl, title: pageTitle }, search: { query, engine: 'bing', pages: fetched, count: results.length, truncated, ...(textTruncated ? { textTruncated: true } : {}), results } };
         } catch (error: unknown) {
           failure = error;
         } finally {
@@ -781,17 +780,16 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         if (closeFailed && answer) answer.tabClosed = false;
         return asText(answer);
       }
-      case 'browser_find': {
-        if (args.role) {
-          if (args.name) return asText({ row: await driver.resolve(args.role, args.name) });
-          const snapshot = await driver.snapshot(args.limit) as Array<Record<string, unknown>>;
-          return asText({ rows: snapshot.filter((row) => row.role === args.role) });
-        }
-        const text = args.text ?? args.query;
-        if (!text) throw new Error('browser_find needs text (text mode), or role (row modes), or role and name (single row)');
-        return asText(await driver.find(String(text)));
+      case 'browser_find_text': {
+        if (!args.text) throw new Error('browser_find_text needs text');
+        return asText(await driver.find(String(args.text)));
       }
-      case 'browser_click': {
+      case 'browser_find_element': {
+        if (!args.role) throw new Error('browser_find_element needs role — e.g. menuitem');
+        if (args.name) return asText({ row: await driver.resolve(args.role, args.name) });
+        const snapshot = await driver.snapshot(args.limit) as Array<Record<string, unknown>>;
+        return asText({ rows: snapshot.filter((row) => row.role === args.role) });
+      }      case 'browser_click': {
         if (args.role || args.name) {
           if (!args.role) throw new Error('click by row needs role — e.g. menuitem');
           if (!args.name) throw new Error('click by row needs name — the row name, exact first, substring after');
@@ -803,9 +801,9 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
       }
       case 'browser_hover':
         return afterAction(driver, await driver.hover(args.x, args.y));
-      case 'browser_press':
+      case 'browser_press_key':
         return afterAction(driver, await driver.key(args.key, args.modifiers ?? []));
-      case 'browser_type':
+      case 'browser_type_text':
         return afterAction(driver, args.atEnd === true ? await driver.append(args.text) : await driver.type(args.text));
       case 'browser_scroll':
         return afterAction(driver, await driver.scroll({
@@ -814,14 +812,14 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           text: args.text,
           selector: args.selector
         }));
-      case 'browser_run':
+      case 'browser_run_steps':
         if (!burst) throw new Error('run reached the run without its normalized steps');
         return afterAction(driver, await runLocalBurst({
           driver,
           steps: burst.steps,
           timeoutMs: burst.timeoutMs
         }));
-      case 'browser_wait': {
+      case 'browser_wait_until': {
         const until = String(args.until ?? 'text');
         if (until === 'text') {
           if (!args.text) throw new Error('wait until=text needs text — the text to watch for');
@@ -865,30 +863,26 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         throw new Error(`wait until must be text, row, url or stable — got: ${until}`);
       }
 
-      case 'browser_guide':
+      case 'browser_get_guide':
         return asText(await driver.guide(args.topic));
-      case 'browser_menu': {
-        const action = String(args.action ?? 'list');
-        if (action === 'list') return asText(await driver.menuTree({ limit: args.limit }));
-        if (action === 'walk') {
-          const path = Array.isArray(args.path) ? args.path : [];
-          if (path.length === 0) throw new Error('menu action=walk needs a path of menu names, e.g. ["Insert","Image"]');
-          return afterAction(driver, await driver.openMenu({
-            path,
-            clickLeaf: args.clickLeaf === true,
-            limit: args.limit
-          }));
-        }
-        throw new Error(`menu action must be list or walk — got: ${action}`);
-      }
-      case 'browser_upload': {
+      case 'browser_list_menu':
+        return asText(await driver.menuTree({ limit: args.limit }));
+      case 'browser_walk_menu': {
+        const path = Array.isArray(args.path) ? args.path : [];
+        if (path.length === 0) throw new Error('browser_walk_menu needs a path of menu names, e.g. ["Insert","Image"]');
+        return afterAction(driver, await driver.openMenu({
+          path,
+          clickLeaf: args.clickLeaf === true,
+          limit: args.limit
+        }));
+      }      case 'browser_upload_file': {
         const uploaded = await driver.upload({ filename: args.filename, data: args.data ?? null, path: args.path ?? null });
         if (isObject(uploaded) && uploaded.inputFound === false) {
           throw new Error(`upload: inputFound: false - ${args.filename} went nowhere: the page has no file input to fill`);
         }
         return afterAction(driver, uploaded);
       }
-      case 'browser_drop': {
+      case 'browser_drop_file': {
         const browser = fallback ?? driver;
         const before = new Set((await browser.tabs() as JsonRecord[]).map((tab) => String(tab.id)));
         const dropped = await driver.dropFile({
@@ -907,9 +901,9 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         }
         return afterAction(driver, { ...(isObject(dropped) ? dropped : {}), openedInstead });
       }
-      case 'browser_chooser':
+      case 'browser_intercept_picker':
         return asText(await driver.interceptFileChooser(args.enabled === true));
-      case 'browser_download':
+      case 'browser_download_file':
         return asText(await driver.download({
           handle: args.handle ?? null,
           role: args.role ?? null,
@@ -930,12 +924,12 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           ]
         };
       }
-      case 'browser_portal': {
+      case 'browser_check_gate': {
         const action = String(args.action ?? 'detect');
         if (action === 'detect') {
           return asText(await detectGate(driver as unknown as import('./gates.js').GateDriver));
         }
-        if (action === 'browser_wait') {
+        if (action === 'wait') {
           // The drive's verbs accept unknown arguments; the gate driver's narrow surface is the same object at runtime.
           const out = await waitForGateClear(driver as unknown as import('./gates.js').GateDriver, {
             timeoutMs: budgetOf(args.timeoutMs, 30000),
@@ -943,7 +937,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           });
           return afterAction(driver, { ...out, settled: true });
         }
-        throw new Error(`portal action must be detect or wait — got: ${action}`);
+        throw new Error(`check_gate action must be detect or wait — got: ${action}`);
       }
       case 'browser_login': {
         const out = await loginWithCredentials(driver as unknown as import('./gates.js').GateDriver, {
@@ -953,7 +947,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         });
         return afterAction(driver, out);
       }
-      case 'browser_captcha': {
+      case 'browser_solve_captcha': {
         const settings = solverSettings(process.env);
         if (!settings.configured) {
           throw new Error('captcha is opt-in and no solver is configured: set OPERA_CAPTCHA_API_URL, OPERA_CAPTCHA_API_KEY and OPERA_CAPTCHA_DOMAINS, or let the person solve it and use portal.');

@@ -43,14 +43,17 @@ test('a type that reports success also reads back what it typed', async () => {
 // WHY THE THREE CALLS ARE NAMED IN THE CATALOGUE.
 // Driving an operating system dialog is the first thing this driver does outside the browser, so it is visible by name rather than hidden behind a flag: a caller reading the catalogue can see it before it happens, and an agent can find it without being told.
 
-test('the catalogue names the dialog road, and says it is outside the browser', () => {
-  const tool = TOOLS.find((candidate) => candidate.name === 'browser_dialog');
+test('the catalogue names the dialog roads, and says they are outside the browser', () => {
+  const read = TOOLS.find((candidate) => candidate.name === 'browser_read_dialog');
+  const type = TOOLS.find((candidate) => candidate.name === 'browser_type_into_dialog');
+  const press = TOOLS.find((candidate) => candidate.name === 'browser_press_dialog_button');
 
-  assert.ok(tool, 'dialog is in the catalogue');
-  assert.match(tool.description, /dialog/i);
-  assert.match(tool.description, /outside the browser|cannot be answered from the browser/i);
-  assert.deepEqual(Object.keys(tool.inputSchema.properties).sort(), ['action', 'name', 'text']);
-  assert.deepEqual(tool.inputSchema.required, ['action']);
+  assert.ok(read && type && press, 'all three dialog tools are in the catalogue');
+  assert.match(read.description, /outside the browser/i);
+  assert.deepEqual(Object.keys(type.inputSchema.properties), ['text']);
+  assert.deepEqual(type.inputSchema.required, ['text']);
+  assert.deepEqual(Object.keys(press.inputSchema.properties), ['name']);
+  assert.deepEqual(press.inputSchema.required, ['name']);
 });
 
 test('the guide says a dialog is answerable now, not only avoidable', () => {
@@ -65,6 +68,7 @@ test('the guide declares what the dialog call does to the machine', () => {
   const { sideEffects } = guide();
   const byTool = Object.fromEntries(sideEffects.map((entry) => [entry.tool, entry.effects]));
 
-  assert.ok(byTool.browser_dialog.some((line) => /outside the browser/.test(line)), 'and names the outside browser');
-  assert.equal(byTool.browser_dialog.length, 3, 'state reads, type writes, press presses - all three are declared');
+  assert.ok(byTool.browser_read_dialog.some((line) => /outside the browser/.test(line)), 'and names the outside browser');
+  assert.ok(byTool.browser_type_into_dialog.some((line) => /writes text/.test(line)), 'type writes');
+  assert.ok(byTool.browser_press_dialog_button.some((line) => /presses a button/.test(line)), 'press presses');
 });

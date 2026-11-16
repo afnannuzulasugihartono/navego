@@ -81,15 +81,15 @@ test('a row the page nearly has is offered by its real name', () => {
 test('a missing menu row is sent to the menu tools, which know what a menu is', () => {
   const out = withAdvice(new Error('no menuitem matching "Image". Visible: none'), { rows: [] });
 
-  assert.match(out, /browser_menu\(/);
+  assert.match(out, /browser_list_menu\(/);
   assert.match(out, /action: "walk"/);
 });
 
 test('a missing button is not sent to the menu tools', () => {
   const out = withAdvice(new Error('no button matching "Save". Visible: none'), { rows: [] });
 
-  assert.ok(!/browser_menu/.test(out), 'a button is not a menu row');
-  assert.match(out, /browser_find\(/);
+  assert.ok(!/browser_list_menu/.test(out), 'a button is not a menu row');
+  assert.match(out, /browser_find_element\(/);
 });
 
 // WHY THE FILE-CHOOSER RULE EXISTED.
@@ -98,7 +98,7 @@ test('a missing button is not sent to the menu tools', () => {
 test('an input that could not be filled is sent to the drop', () => {
   const out = withAdvice(new Error('upload: inputFound: false'), { rows: [] });
 
-  assert.match(out, /drop\(/);
+  assert.match(out, /browser_drop_file\(/);
   assert.match(out, /no file input/i);
 });
 
@@ -127,7 +127,7 @@ test('an off-page click names the scroll that would reach the point', () => {
 test('an extension page refusal is sent to the tab list, which is all an agent can do about it', () => {
   const out = withAdvice(new Error('Cannot access a chrome:// URL'), { rows: [] });
 
-  assert.match(out, /browser_tabs\(\)/);
+  assert.match(out, /browser_list_tabs\(\)/);
   assert.match(out, /chrome:\/\//);
 });
 
@@ -141,15 +141,15 @@ test('text the page did not take leads with the element that had focus', () => {
 
   assert.match(out, /browser_click/);
   assert.match(out, /Escape/, 'because a dialog over the field is the case that looks like a lost caret');
-  assert.match(out, /browser_find\(\{role: "menuitem"/);
-  assert.match(out, /browser_read\(\) before typing again/, 'because on a canvas page the text may have landed after the check');
+  assert.match(out, /browser_find_element\(\{role: "menuitem"/);
+  assert.match(out, /browser_read_page\(\) before typing again/, 'because on a canvas page the text may have landed after the check');
 });
 
 test('a page with nothing to type into gets the same moves', () => {
   const out = withAdvice(new Error('typed 5 characters into a page that holds no text and no field to receive them'), { rows: [] });
 
   assert.match(out, /browser_click/);
-  assert.match(out, /browser_find\(\{role: "menuitem"/);
+  assert.match(out, /browser_find_element\(\{role: "menuitem"/);
 });
 
 // WHY THE LINK RULES ARE SEPARATE.

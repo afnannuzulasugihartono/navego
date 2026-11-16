@@ -146,5 +146,5 @@ test('the local guidance documents the accessibility surface without new tools',
   const tools = fs.readFileSync(new URL('../../local/tools.ts', import.meta.url), 'utf8');
   assert.match(guide, /list every row of that role/);
   assert.doesNotMatch(tools, /name: '(read_ax|ax_summary|accessibility)'/);
-  assert.match(tools, /name: 'browser_find'/);
+  assert.match(tools, /name: 'browser_find_element'/);
 });

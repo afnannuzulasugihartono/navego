@@ -104,8 +104,8 @@ test('every inline script is covered by the CSP hashes in build/client/_headers'
 });
 
 const CLAIMS = {
-  '/beranda.html': ['Corbin.', '40', 'primitive browser'],
-  '/fitur.html': ['40', 'primitive', 'debugger'],
+  '/beranda.html': ['Corbin.', '45', 'primitive browser'],
+  '/fitur.html': ['45', 'primitive', 'debugger'],
   '/harga.html': ['Rp10.000', 'Rp249.000', 'QRIS'],
   '/unduh.html': ['opera-agent-update', 'chrome', 'SHA-256'],
   '/docs.html': ['browser_status', 'opera-agent-mcp'],
