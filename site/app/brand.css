@@ -127,3 +127,87 @@ button, input { font: inherit; }
   .cf-enter, .cf-crossfade { animation: none; opacity: 1; transform: none; }
   html { scroll-behavior: auto; }
 }
+
+/* Peran sebagai pintu masuk (Siebel 2002), bukan deretan kartu ikon. */
+
+.role-tabs { display: grid; grid-template-columns: 260px 1fr; gap: 12px; }
+.role-list { display: grid; gap: 12px; align-content: start; }
+.role-tab { min-height: 56px; padding: 14px 20px; text-align: left; border: 0; background: #e8edf5; color: var(--cf-ink); font-weight: 700; cursor: pointer; }
+.role-tab.is-active { background: var(--cf-navy); color: #ffffff; }
+.role-detail { background: #ffffff; padding: 28px; color: var(--cf-ink); }
+.role-detail h3 { font-family: 'Arial Black', Arial, sans-serif; font-size: 24px; margin-bottom: 12px; }
+.role-detail code { display: block; background: #e8edf5; padding: 10px 14px; margin-bottom: 16px; font-size: 14px; }
+.role-detail p { color: var(--cf-muted); }
+@media (max-width: 900px) { .role-tabs { grid-template-columns: 1fr; } }
+
+/* Dashboard — data-terminal (seed 386500148): one rail, named panels, numbers with a baseline. */
+
+.app { display: grid; grid-template-columns: 208px 1fr; gap: 24px; align-items: start; background: #0d1338; color: #dce5f7; padding: 20px; min-height: 78vh; }
+.rail { display: grid; gap: 6px; align-content: start; background: #0d1338; color: #b9c8e4; }
+.rail a, .rail button, .rail-item { color: #b9c8e4; text-decoration: none; background: transparent; border: 0; border-left: 1px solid transparent; padding: 9px 12px; text-align: left; cursor: pointer; }
+.rail a.is-active, .rail .rail-item.is-active { color: #ffffff; border-left-color: var(--cf-amber); }
+.rail .who { color: #8a98b8; font-size: 12px; margin-top: 24px; }
+.app-main { min-width: 0; }
+.app-main h1 { font-family: 'Arial Black', Arial, sans-serif; font-size: 28px; line-height: 1.1; margin-bottom: 20px; color: #ffffff; }
+.app-main h2 { font-size: 15px; color: #dce5f7; }
+.metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.metrics > div { background: transparent; padding: 12px 0; }
+.metrics dt { color: #9eabc9; font-size: 13px; }
+.metrics dd { font-size: 30px; font-variant-numeric: tabular-nums; color: #ffffff; }
+.app-main .panel { background: #182248; color: #dce5f7; padding: 18px 20px; }
+.app-main .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.app-main .chip { background: #26345f; color: #dce5f7; padding: 3px 10px; }
+.app-main table { width: 100%; border-collapse: collapse; }
+.app-main th { font-size: 12px; color: #9eabc9; text-align: left; font-weight: 400; }
+.app-main td { font-size: 13px; font-variant-numeric: tabular-nums; border-top: 1px solid #26345f; padding: 9px 0; }
+.app-main .status { color: #e7c389; }
+.app-main .input-sm, .app-main input { background: #182248; color: #ffffff; border: 1px solid #33436f; padding: 8px 12px; }
+.konsol-split { display: grid; grid-template-columns: 200px 1fr; gap: 20px; }
+@media (max-width: 900px) { .app { grid-template-columns: 1fr; } .metrics { grid-template-columns: repeat(2, 1fr); } .konsol-split { grid-template-columns: 1fr; } }
+
+/*
+ * Shared frame for every route.
+ * One pair of margins, one light canvas, one navy field.
+ */
+
+.site-header { background: #ffffff; color: var(--cf-ink); }
+.site-header a, .site-header a:any-link { color: var(--cf-ink); }
+.site-header .nav > a[aria-current='page'] { background: var(--cf-navy); color: #ffffff; border: 0; border-radius: 4px; }
+.site-header .btn, .site-header .btn-solid, .site-header .btn-ghost { background: var(--cf-amber); color: #14110d; border: 0; border-radius: 4px; min-height: 44px; padding: 10px 20px; font-weight: 700; text-decoration: none; }
+.site-header .btn:hover, .site-header .btn-solid:hover { background: #f0b96b; }
+.brand-version { background: #e8edf5; color: #16205a; font-size: 12px; }
+.chapter.dark .chapter-note, .chapter.dark .chapter-note.light-title { color: var(--cf-ink); }
+.chapter pre, .chapter code, .chapter .cf-copy { max-width: 100%; min-width: 0; overflow-wrap: anywhere; white-space: pre-wrap !important; }
+.chapter .cf-copy { flex-shrink: 0; }
+.chapter > div { max-width: 100%; }
+.site-footer { background: var(--cf-navy-deep); color: #e7eefb; }
+.site-footer a, .site-footer a:any-link { color: #e7eefb; }
+.site-footer .footer-tag, .site-footer .footer-bar, .site-footer h3 { color: #b9c8e4; }
+.page-head h1, .section-head h2 { font-family: 'Arial Black', Arial, sans-serif; line-height: 1.08; letter-spacing: -0.01em; }
+.page-head h1 { font-size: clamp(36px, 4.2vw, 58px); }
+.section-head h2 { font-size: clamp(28px, 3vw, 40px); }
+.lede { font-size: 19px; color: var(--cf-muted); max-width: 52ch; }
+.facts { background: var(--cf-navy); color: #f4f1e9; }
+.facts b { color: var(--cf-amber); }
+.feature, .panel, .card, .legal, .auth-card, .docs-rail { background: #ffffff; color: var(--cf-ink); border: 0; }
+.feature h3, .card-title { font-size: 18px; }
+.btn, .btn-solid, .btn-ghost { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 20px; border: 0; border-radius: 4px; font-weight: 700; text-decoration: none; }
+.btn-solid { background: var(--cf-amber); color: #14110d; }
+.btn-ghost { background: var(--cf-navy); color: #ffffff; }
+.btn-solid:any-link, .btn-ghost:any-link { color: #14110d; }
+.btn-ghost:any-link { color: #ffffff; }
+.plan.is-primary { background: var(--cf-navy); color: #e7eefb; }
+.plan.is-primary .plan-name, .plan.is-primary .plan-meta { color: #e7eefb; }
+.plan.is-primary .btn { background: var(--cf-amber); color: #14110d; }
+.page-foot p { color: var(--cf-muted); }
+.page-foot h2 { color: var(--cf-ink); }
+.table th { color: #11162c; background: #e8edf5; letter-spacing: 0; text-transform: none; font-size: 13px; }
+.chapter-title.light-title { color: var(--cf-ink); }
+.chapter-note.light-title { color: var(--cf-muted); }
+.cf-copy { background: var(--cf-amber); color: #14110d; border: 0; border-radius: 4px; padding: 7px 12px; font-size: 13px; cursor: pointer; max-width: 100%; }
+code, pre { max-width: 100%; overflow-wrap: anywhere; white-space: pre-wrap; }
+@media (max-width: 520px) { .page-head h1 { font-size: 30px; } }
+pre, pre code { background: transparent; color: #e7eefb; }
+code { background: #e8edf5; color: #11162c; }
+.sheet { background: transparent; }
+section.section { margin-top: 72px; }

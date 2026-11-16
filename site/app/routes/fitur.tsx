@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 
@@ -8,15 +9,10 @@ export function meta() {
   ];
 }
 
-const BENTO = [
-  ['40 tool MCP, 36 primitive', 'Membaca, mengisi, menavigasi, dan memverifikasi halaman. Peta, YouTube, dan Docs adalah contoh yang paling sering.'],
-  ['Enam izin, satu alasan masing-masing', 'Setiap izin dijelaskan di halaman Unduh: untuk apa, dan apa yang ditolak.'],
-  ['Model milik Anda', 'Endpoint dan kunci tetap di browser ini. Isi halaman hanya pergi ke model yang Anda pilih.'],
-  ['Pairing device', 'Kode sekali pakai mengikat device ke akun Anda. Cabut dari dashboard kapan saja.'],
-  ['Kolom rahasia ditolak', 'Password, kode sekali pakai, token, dan kolom pembayaran selalu ditolak.'],
-  ['MCP untuk harness apa pun', 'OpenCode, Kilo Code, dan Claude Code memakai satu endpoint yang sama.'],
-  ['Empat berkas dari satu perintah', 'Laporan keuangan, rencana strategis, riset promo, dan rencana pemasaran — semuanya berkas.'],
-  ['Halaman yang minta login tidak memblokir', 'Corbin membaca dulu, lalu menunggu Anda menyelesaikan login atau captcha sendiri, lalu lanjut di tab yang sama.']
+const ROLES = [
+  ['Operator', 'Buka portal, cari data, unduh CSV', 'browser_open_url · browser_find_text · browser_download_file'],
+  ['Analis', 'Rangkai laporan, cek asal tiap angka', 'artifact_build_report · artifact_build_workbook'],
+  ['Pengembang', 'Pasang driver lokal, panggil dari harness', 'browser_status · browser_run_steps · browser_wait_until']
 ] as const;
 
 const STEPS = [
@@ -25,6 +21,25 @@ const STEPS = [
   ['Isi', 'Formulir dan sel diisi sesuai instruksi, bukan diklik asal.'],
   ['Simpan', 'Berkas hasil kerja tersimpan, dengan jejaknya di dashboard.']
 ] as const;
+
+function RoleTabs() {
+  const [active, setActive] = useState(0);
+  const [role, task, tools] = ROLES[active] ?? ROLES[0];
+  return (
+    <div className="role-tabs" data-ui>
+      <div className="role-list" role="tablist" aria-label="Jalur pengguna">
+        {ROLES.map(([name], index) => (
+          <button key={name} type="button" role="tab" aria-selected={index === active} className={index === active ? 'role-tab is-active' : 'role-tab'} onClick={() => setActive(index)}>{name}</button>
+        ))}
+      </div>
+      <div className="role-detail" role="tabpanel">
+        <h3>{task}</h3>
+        <code>{tools}</code>
+        <p>Contoh berkas nyata: <a href="/contoh/laporan-keuangan-2026-09.xlsx" download>Laporan (.xlsx)</a> · <a href="/contoh/rencana-strategis-2027.pptx" download>Rencana (.pptx)</a> · <Link to="/studi.html">studi kasus</Link>.</p>
+      </div>
+    </div>
+  );
+}
 
 export default function Fitur() {
   return (
@@ -60,18 +75,12 @@ export default function Fitur() {
           </ol>
         </section>
 
-        <section className="section" aria-label="Kemampuan utama" style={{ paddingTop: 0 }}>
-          <div className="feature-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
-            {BENTO.map(([title, body]) => (
-              <article key={title} className="feature">
-                <h3>{title}</h3>
-                <p>{body}</p>
-              </article>
-            ))}
+        <section className="section" aria-labelledby="roleTitle" style={{ paddingTop: 0 }}>
+          <div className="section-head">
+            <h2 id="roleTitle">Pilih jalur Anda.</h2>
+            <p>Satu produk, tiga pintu masuk. Tiap jalur memakai primitive yang sama.</p>
           </div>
-          <p style={{ marginTop: 16, fontSize: 12, color: 'var(--muted)' }}>
-            Contoh berkas hasil kerja: <a href="/contoh/laporan-keuangan-2026-09.xlsx" download>Laporan (.xlsx)</a> · <a href="/contoh/rencana-strategis-2027.pptx" download>Rencana (.pptx)</a> · <a href="/contoh/riset-promo.docx" download>Riset (.docx)</a> — <Link to="/studi.html">studi kasus lengkapnya</Link>.
-          </p>
+          <RoleTabs />
         </section>
 
         <section className="section" aria-labelledby="permTitle" style={{ paddingTop: 0 }}>
@@ -91,7 +100,7 @@ export default function Fitur() {
         <div className="page-foot">
           <div>
             <h2>Mulai dari satu perintah.</h2>
-            <p>Buka akun, pair device ini, lalu jalankan satu pekerjaan — hasilnya bisa Anda buka di halaman <Link to="/studi.html" style={{ color: '#9ff3ff' }}>Studi kasus</Link>.</p>
+            <p>Buka akun, pair device ini, lalu jalankan satu pekerjaan — hasilnya bisa Anda buka di halaman <Link to="/studi.html">Studi kasus</Link>.</p>
           </div>
           <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
         </div>

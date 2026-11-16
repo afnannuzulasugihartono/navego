@@ -224,14 +224,14 @@ export default function Docs() {
           <p>Koneksi driver lokal:</p>
           <div style={{ background: 'var(--ink)', borderRadius: 8, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 12, maxWidth: 640 }}>
             <code style={{ background: 'transparent', color: '#d8f4ff' }}>npx -y opera-agent-mcp local</code>
-            <button onClick={() => copy('npx -y opera-agent-mcp local', 'mcp-url')} style={{ background: 'var(--paper)', color: '#ffffff', border: '1px solid #061c4e', borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit' }}>{copied === 'mcp-url' ? 'Tersalin' : 'Salin'}</button>
+            <button onClick={() => copy('npx -y opera-agent-mcp local', 'mcp-url')} className="cf-copy">{copied === 'mcp-url' ? 'Tersalin' : 'Salin'}</button>
           </div>
           {CONFIGS.map(({ id, title, body }) => (
             <div key={id}>
               <h3>{title}</h3>
               <div style={{ background: 'var(--ink)', borderRadius: 8, padding: '10px 12px', maxWidth: 640, position: 'relative' }}>
                 <pre style={{ color: '#d8f4ff', fontSize: 11.5, overflowX: 'auto' }}><code>{body}</code></pre>
-                <button onClick={() => copy(body, id)} style={{ position: 'absolute', top: 8, right: 8, background: 'var(--paper)', color: '#ffffff', border: '1px solid #061c4e', borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit' }}>{copied === id ? 'Tersalin' : 'Salin'}</button>
+                <button onClick={() => copy(body, id)} className="cf-copy">{copied === id ? 'Tersalin' : 'Salin'}</button>
               </div>
             </div>
           ))}
