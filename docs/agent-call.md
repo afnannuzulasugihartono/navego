@@ -74,6 +74,10 @@ and a missing-but-needed step is reported as skipped with the reason. On a
 canvas-rendered page the tree is cut at a depth cap, and `surface.truncated`
 says so.
 
+### The harness I use myself
+
+`scripts/dev/corbin-agent.mjs` is the thin client I drive Corbin through from an agent harness that has a shell but no Corbin tool in its own catalog. `list` and `tabs` are lookups; `open-and-read <url> [text] [file]` opens one tab, waits for a real text, reads it and writes a screenshot in the **same process**, because a tab claim belongs to one driver lease — separate CLI processes collide on the claim. `batch <file.json>` runs a list of commands in one lease. Every write tool takes an explicit `tabId`: no default tab, because the everyday browser carries private tabs.
+
 ## The extension road
 
 The extension in `extension/` opens a socket to this machine and carries CDP
