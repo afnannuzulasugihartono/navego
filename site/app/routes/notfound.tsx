@@ -22,14 +22,11 @@ export default function NotFound() {
     <>
       <SiteHeader current="/404.html" />
       <main className="wrap">
-        <section className="statement" style={{ paddingTop: 56, paddingBottom: 10 }}>
-          <figure className="hero-frame" style={{ maxWidth: 400 }} aria-hidden="true">
-            <img src="/assets/raven-1874.jpg" width={1454} height={852} alt="" loading="eager" />
-            <figcaption><em>Corvus corax</em> — setelah Naumann, 1874 · public domain</figcaption>
-          </figure>
-          <h1 style={{ fontSize: 'clamp(38px,6vw,64px)', letterSpacing: '-0.03em', margin: '22px 0 10px' }}>Halaman ini tidak ada</h1>
-          <p style={{ fontSize: 15, color: 'var(--muted-2)', maxWidth: '48ch' }}>Alamatnya mungkin salah ketik, atau halaman itu sudah dipindahkan. Lima jalan keluar:</p>
-        </section>
+        <header className="page-head" style={{ paddingBottom: 4 }}>
+          <p className="kicker">404</p>
+          <h1>Halaman ini tidak ada</h1>
+          <p className="lede">Alamatnya mungkin salah ketik, atau halaman itu sudah dipindahkan. Lima jalan keluar:</p>
+        </header>
         <ul style={{ listStyle: 'none', display: 'grid', gap: 10, maxWidth: 620, margin: '20px 0 40px' }}>
           {EXITS.map(([href, title, body]) => (
             <li key={href}>

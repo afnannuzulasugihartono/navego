@@ -20,15 +20,15 @@ export default function Studi() {
     <>
       <SiteHeader current="/studi.html" />
       <main className="wrap">
-        <section className="section" style={{ paddingBottom: 20 }}>
-
-          <h1 className="page-title" style={{ fontSize: 'clamp(36px,5.5vw,58px)' }}>Satu bulan kas jadi empat berkas.</h1>
-          <p className="lede" style={{ marginTop: 10, maxWidth: '60ch' }}>Sinar Jaya, September 2026. Satu file CSV jadi laporan keuangan, rencana strategis, riset promosi, dan rencana pemasaran. Setiap angka menyebut baris asalnya, jadi bisa diperiksa.</p>
-          <div className="hero-cta">
+        <header className="page-head" style={{ paddingBottom: 6 }}>
+          <p className="kicker">Studi kasus</p>
+          <h1>Satu bulan kas jadi empat berkas.</h1>
+          <p className="lede">Sinar Jaya, September 2026. Satu file CSV jadi laporan keuangan, rencana strategis, riset promosi, dan rencana pemasaran. Setiap angka menyebut baris asalnya, jadi bisa diperiksa.</p>
+          <div className="page-head-actions">
             <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
             <Link className="btn btn-ghost" to="/fitur.html">Lihat kemampuan</Link>
           </div>
-        </section>
+        </header>
 
         <section className="section" aria-labelledby="inputTitle" style={{ paddingTop: 10 }}>
           <div className="section-head">
@@ -74,11 +74,13 @@ export default function Studi() {
           <p className="note" style={{ marginTop: 10 }}>Sumber: 23 baris transaksi-2026-09.csv. Tujuh angka diperiksa, tidak ada selisih.</p>
         </section>
 
-        <section className="statement" aria-labelledby="finalTitle" style={{ paddingBottom: 40 }}>
-          <h2 id="finalTitle" style={{ fontSize: 'clamp(30px,4.5vw,48px)', letterSpacing: '-0.03em' }}>Buka berkasnya sekarang.</h2>
-          <p style={{ fontSize: 15, color: 'var(--muted-2)', margin: '10px 0 20px' }}>Keempat berkas di halaman ini dibuat dari data tiruan, dan bisa dibuka di aplikasi Anda sendiri. Pekerjaan Anda berikutnya dimulai dari file yang sama.</p>
+        <div className="page-foot">
+          <div>
+            <h2>Buka berkasnya sekarang.</h2>
+            <p>Keempat berkas di halaman ini dibuat dari data tiruan, dan bisa dibuka di aplikasi Anda sendiri. Pekerjaan Anda berikutnya dimulai dari file yang sama.</p>
+          </div>
           <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
-        </section>
+        </div>
       </main>
       <SiteFooter />
     </>

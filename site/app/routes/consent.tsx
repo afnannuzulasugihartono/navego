@@ -150,7 +150,10 @@ export default function Consent() {
     <>
       <SiteHeader current="/oauth/consent.html" />
       <main className="wrap" style={{ maxWidth: 760, padding: '36px 0 40px' }}>
-        <h1 className="page-title" style={{ fontSize: 'clamp(30px,4.5vw,42px)' }}>Izin aplikasi</h1>
+        <header className="page-head" style={{ padding: '8px 0 6px' }}>
+          <p className="kicker">OAuth</p>
+          <h1>Izin aplikasi</h1>
+        </header>
         <p className={warn ? 'status warn' : 'status'} role="status" aria-live="polite" style={{ marginTop: 8, fontSize: 13.5 }}>{status}</p>
 
         {details ? (

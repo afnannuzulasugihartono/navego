@@ -128,8 +128,11 @@ export default function Akun() {
       <main className="wrap" style={{ padding: '28px 0 40px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
           <div>
-            <h1 className="page-title" style={{ fontSize: 'clamp(30px,4vw,40px)' }}>Akun Anda</h1>
-            <p className="lede" style={{ marginTop: 6, color: 'var(--muted-2)' }}>Akun ini yang dipakai device dan perintah Anda.</p>
+          <header className="page-head" style={{ padding: '8px 0' }}>
+            <p className="kicker">Akun</p>
+            <h1>Akun Anda</h1>
+            <p className="lede">Akun ini yang dipakai device dan perintah Anda.</p>
+          </header>
           </div>
           <Link className="btn btn-solid" to="/dashboard.html">Buka Dashboard</Link>
         </div>

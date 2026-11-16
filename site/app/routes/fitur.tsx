@@ -31,14 +31,15 @@ export default function Fitur() {
     <>
       <SiteHeader current="/fitur.html" />
       <main className="wrap">
-        <section className="section" style={{ paddingBottom: 30 }}>
-          <h1 className="page-title" style={{ fontSize: 'clamp(38px,6vw,64px)' }}>Yang bisa dikerjakan Corbin.</h1>
-          <p className="lede" style={{ marginTop: 12, maxWidth: '58ch' }}>Anda menulis satu perintah. Corbin membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.</p>
-          <div className="hero-cta">
+        <header className="page-head">
+          <p className="kicker">Fitur</p>
+          <h1>Yang bisa dikerjakan Corbin.</h1>
+          <p className="lede">Anda menulis satu perintah. Corbin membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.</p>
+          <div className="page-head-actions">
             <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
             <Link className="btn btn-ghost" to="/beranda.html">Lihat contoh kerja</Link>
           </div>
-        </section>
+        </header>
 
         <div className="facts" aria-label="Angka produk" style={{ fontSize: 12 }}>
           <span><b>56</b> tool</span>
@@ -48,7 +49,7 @@ export default function Fitur() {
 
         <section className="section" aria-labelledby="taskTitle">
           <div className="section-head">
-            <h2 id="taskTitle">Dari satu kalimat ke berkas.</h2>
+            <h2 id="taskTitle">Satu pekerjaan, empat langkah.</h2>
           </div>
           <ol style={{ listStyle: 'none', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14 }}>
             {STEPS.map(([title, body]) => (
@@ -88,11 +89,13 @@ export default function Fitur() {
           </div>
         </section>
 
-        <section className="statement" aria-labelledby="finalTitle" style={{ paddingBottom: 40 }}>
-          <h2 id="finalTitle" style={{ fontSize: 'clamp(30px,4.5vw,48px)', letterSpacing: '-0.03em' }}>Mulai dari satu perintah.</h2>
-          <p style={{ fontSize: 15, color: 'var(--muted-2)', margin: '10px 0 20px' }}>Buka akun, pair device ini, lalu jalankan satu pekerjaan. Hasilnya bisa Anda buka di halaman <Link to="/studi.html">Studi kasus</Link>. Aturan biayanya ada di halaman <Link to="/harga.html">Harga</Link>.</p>
+        <div className="page-foot">
+          <div>
+            <h2>Mulai dari satu perintah.</h2>
+            <p>Buka akun, pair device ini, lalu jalankan satu pekerjaan — hasilnya bisa Anda buka di halaman <Link to="/studi.html" style={{ color: '#9ff3ff' }}>Studi kasus</Link>.</p>
+          </div>
           <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
-        </section>
+        </div>
       </main>
       <SiteFooter />
     </>

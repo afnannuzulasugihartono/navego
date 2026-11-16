@@ -39,15 +39,15 @@ export default function Bukti() {
     <>
       <SiteHeader current="/bukti.html" />
       <main className="wrap">
-        <section className="section" style={{ paddingBottom: 20 }}>
-
-          <h1 className="page-title" style={{ fontSize: 'clamp(36px,5.5vw,58px)' }}>Empat berkas, sama persis.</h1>
-          <p className="lede" style={{ marginTop: 10, maxWidth: '62ch' }}>Corbin menjalankan peramban sungguhan di portal contoh, mengunduh CSV-nya, lalu membangun ulang empat berkas yang ada di halaman studi kasus. Setiap berkas dicocokkan dengan berkas yang bisa Anda unduh: sha256-nya sama, byte per byte.</p>
-          <div className="hero-cta">
+        <header className="page-head" style={{ paddingBottom: 6 }}>
+          <p className="kicker">Bukti</p>
+          <h1>Empat berkas, sama persis.</h1>
+          <p className="lede">Corbin menjalankan peramban sungguhan di portal contoh, mengunduh CSV-nya, lalu membangun ulang empat berkas yang ada di halaman studi kasus. Setiap berkas dicocokkan dengan berkas yang bisa Anda unduh: sha256-nya sama, byte per byte.</p>
+          <div className="page-head-actions">
             <Link className="btn btn-solid" to="/studi.html">Lihat keempat berkasnya</Link>
             <a className="btn btn-ghost" href="https://github.com/afnannuzulasugihartono/opera-agent/blob/main/proof/run.md">Buka catatannya</a>
           </div>
-        </section>
+        </header>
 
         <section className="section" aria-labelledby="stepsTitle" style={{ paddingTop: 10 }}>
           <div className="section-head">
@@ -104,7 +104,13 @@ export default function Bukti() {
             <img src="/bukti/portal.jpg" width={1295} height={939} alt="Portal contoh Sinar Jaya: tabel transaksi September 2026 dan tombol Unduh CSV" loading="lazy" style={{ width: '100%', borderRadius: 10, border: '2px solid var(--ink)' }} />
           </figure>
         </section>
-        <div style={{ height: 20 }} />
+        <div className="page-foot">
+          <div>
+            <h2>Berhasil? Bawa ke pekerjaan Anda.</h2>
+            <p>Gunakan file CSV yang sama dengan halaman Studi kasus, lalu jalankan perintah yang sama di browser Anda sendiri.</p>
+          </div>
+          <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
+        </div>
       </main>
       <SiteFooter />
     </>

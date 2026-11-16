@@ -12,6 +12,8 @@ Two house rules do the audit's heavy lifting: no element may sell what the produ
 
 - Brand mark (chrome raven medallion: metal silhouette, iridescent ring, lit amber eye, one lens flare) + wordmark `corbin` in chrome gradient — the identity; one raven, one name, drawn in the millennium's own metal — K.
 - Version pill `v1.6.54` — the era's "beta" tag carrying the true version; pinned by the suite, never invented — K.
+- Page head (`.page-head`): kicker, one h1 (Arial Black, navy), one lede sentence, optional actions — every document page opens the same way; nothing else invents its own header rhythm — K (added).
+- Page foot (`.page-foot`): navy band, one h2, one supporting line, one filled CTA — every document page closes with one door, never two; it is the one place a page asks for a click — K (added).
 - Nav: `Fitur` `Harga` `Docs` — the three doors a new reader needs before installing; everything else reachable from those three or the footer — K.
 - Nav CTA `Pasang corbin` — one action, always visible, the product's reason to exist — K.
 - Footer `Produk` (Fitur/Harga/Unduh/Docs/MCP) — deep links a curious reader wants after the fold — K.
@@ -130,6 +132,7 @@ Two house rules do the audit's heavy lifting: no element may sell what the produ
 10. Focus ring: 2px indigo outline plus an aqua halo — visible on chrome panels and midnight indigo alike.
 11. Dead CSS deleted along the way: `.steps-brief`, `.proof-panel`, `.chapter-link`, `.promises`, `.hero-corner`/`.hero-hud`, `full-bleed`/`hero-veil`, and the whole mission/XP/reward block.
 12. Copy pass — the owner called the words slop, and slop is a design failure. Metaphors, borrowed English, moods-as-headings, and lines that repeated themselves were rewritten across beranda, fitur, unduh, docs, dashboard, dukungan, mcp, privasi, consent, akun: "Detak jantung yang tetap segar" → "Menjadwalkan pemeriksaan berkala"; "Tiga perintah berikut" → "Dua perintah berikut" (the text miscounted its own block); "device milikmu sendiri" → "milik Anda sendiri"; "Semuanya di sini" → "Tiga yang paling sering". The rules now live in `design-language.md` under "The words".
+13. Structure pass — one page skeleton for every document page: `.page-head` (kicker, one h1, one lede, optional actions) and `.page-foot` (navy band, one h2, one line, one CTA). Every route now opens and closes the same way; the ad-hoc section intros, end-of-page dead ends, and mismatched margins are gone. `.statement` was deleted (no page used it), the unduh verification block moved to the indigo palette, and `.dl-letter` (browser letter badge) is styled.
 
 Nothing functional was removed. Every surviving element answers a question the reader actually asks, or proves a claim the product actually makes.
 

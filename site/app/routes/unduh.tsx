@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
@@ -56,12 +57,11 @@ export default function Unduh() {
     <>
       <SiteHeader current="/unduh.html" />
       <main>
-
-        <section className="chapter" aria-labelledby="dlTitle" style={{ paddingTop: 40 }}>
-          <p className="chapter-eyebrow">Unduh.</p>
-          <h1 id="dlTitle" className="chapter-title">Pasang corbin.<br />Pair. Kerja.</h1>
-          <p className="chapter-note">Satu build untuk lima browser. Extension tidak pernah memperbarui dirinya sendiri: setiap rilis Anda muat ulang sendiri dari halaman ini.</p>
-        </section>
+        <header className="page-head wrap">
+          <p className="kicker">Unduh</p>
+          <h1 id="dlTitle">Pasang corbin.<br />Pair. Kerja.</h1>
+          <p className="lede">Satu build untuk lima browser. Extension tidak pernah memperbarui dirinya sendiri: setiap rilis Anda muat ulang sendiri dari halaman ini.</p>
+        </header>
 
         <section className="chapter warm" aria-labelledby="browserTitle" style={{ paddingTop: 0 }}>
           <div className="dl-grid">
@@ -133,6 +133,13 @@ export default function Unduh() {
           </table>
           <p className="note" style={{ marginTop: 12 }}>Extension yang dipasang dari Web Store sedang dalam proses review. Sementara itu Anda memuat arsip yang sama dengan tangan.</p>
         </section>
+        <div className="page-foot wrap" style={{ marginTop: 44, marginBottom: 56 }}>
+          <div>
+            <h2>Sudah pasang?</h2>
+            <p>Buka Dashboard, lalu klik “Pasangkan browser ini” — satu klik, tidak ada kode yang perlu diketik.</p>
+          </div>
+          <Link className="btn btn-solid" to="/dashboard.html">Buka Dashboard</Link>
+        </div>
       </main>
       <SiteFooter />
     </>

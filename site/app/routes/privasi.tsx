@@ -13,8 +13,11 @@ export default function Privasi() {
     <>
       <SiteHeader current="/privasi.html" />
       <main className="wrap legal">
-        <h1>Kebijakan Privasi</h1>
-        <p className="updated" style={{ color: 'var(--muted)', fontSize: 13 }}>Terakhir diperbarui: 5 Oktober 2026.</p>
+        <header className="page-head" style={{ paddingBottom: 6 }}>
+          <p className="kicker">Legal</p>
+          <h1>Kebijakan Privasi</h1>
+          <p className="lede" style={{ fontSize: 13 }}>Terakhir diperbarui: 5 Oktober 2026.</p>
+        </header>
         <section>
           <p><strong>Hanya pergi ke endpoint model milik Anda.</strong> Konten dari halaman yang Anda setujui untuk dibaca asisten hanya dikirim ke endpoint model yang Anda konfigurasi sendiri. Kami tidak memilihkan model untuk Anda dan tidak menerima konten itu untuk dibaca manusia.</p>
         </section>

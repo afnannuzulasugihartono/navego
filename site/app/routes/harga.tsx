@@ -73,10 +73,11 @@ export default function Harga() {
     <>
       <SiteHeader current="/harga.html" />
       <main className="wrap">
-        <section className="section" style={{ paddingBottom: 10 }}>
-          <h1 className="page-title" style={{ fontSize: 'clamp(40px,6vw,58px)' }}>Harga</h1>
-          <p className="lede" style={{ marginTop: 10 }}>Dua cara membayar, satu aturan: <strong>tidak ada yang terpotong sampai hasilnya ada.</strong></p>
-        </section>
+        <header className="page-head" style={{ paddingBottom: 6 }}>
+          <p className="kicker">Harga</p>
+          <h1>Harga</h1>
+          <p className="lede">Dua cara membayar, satu aturan: <strong>tidak ada yang terpotong sampai hasilnya ada.</strong></p>
+        </header>
 
         <div className="plans" role="list" style={{ marginTop: 8 }}>
           <section className="plan" role="listitem" aria-labelledby="cardWalletTitle">
@@ -126,7 +127,13 @@ export default function Harga() {
             </details>
           ))}
         </div>
-        <div style={{ height: 30 }} />
+        <div className="page-foot">
+          <div>
+            <h2>Harga yang jalan.</h2>
+            <p>Pasang gratis, jalankan satu pekerjaan pertama Anda, dan bayar hanya setelah hasilnya ada.</p>
+          </div>
+          <Link className="btn btn-solid" to="/unduh.html">Pasang corbin</Link>
+        </div>
       </main>
       <SiteFooter />
     </>

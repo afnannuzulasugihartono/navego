@@ -36,8 +36,11 @@ export default function Mcp() {
     <>
       <SiteHeader current="/mcp.html" />
       <main className="wrap" style={{ maxWidth: 880 }}>
-        <h1 className="page-title" style={{ fontSize: 'clamp(34px,5vw,50px)', marginTop: 30 }}>Pasang MCP</h1>
-        <p className="lede" style={{ marginTop: 8 }}>Driver lokal Corbin berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi; yang dibutuhkan adalah browser yang masuk akun dan ekstensi terpasang.</p>
+        <header className="page-head" style={{ paddingBottom: 6 }}>
+          <p className="kicker">Pasang MCP</p>
+          <h1>Pasang MCP</h1>
+          <p className="lede">Driver lokal Corbin berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi; yang dibutuhkan adalah browser yang masuk akun dan ekstensi terpasang.</p>
+        </header>
 
         {BLOCKS.map(({ id, title, body, note }) => (
           <section key={id} style={{ marginTop: 26 }}>
@@ -55,7 +58,7 @@ export default function Mcp() {
           {HARNESS.map(({ id, title, body }) => (
             <div key={id} style={{ marginBottom: 14 }}>
               <h3 style={{ fontSize: 13, color: 'var(--muted-2)', marginBottom: 6 }}>{title}</h3>
-              <div style={{ background: '#101014', borderRadius: 8, padding: '10px 12px', maxWidth: 640, position: 'relative' }}>
+              <div style={{ background: 'var(--ink)', borderRadius: 8, padding: '10px 12px', maxWidth: 640, position: 'relative' }}>
                 <pre style={{ color: '#d8f4ff', fontSize: 11.5, overflowX: 'auto' }}><code>{body}</code></pre>
                 <button onClick={() => copy(body, id)} style={{ position: 'absolute', top: 8, right: 8, background: 'linear-gradient(to bottom, #2a6ae0, #123fb8)', color: '#ffffff', border: '1px solid #061c4e', borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit' }}>{copied === id ? 'Tersalin' : 'Salin'}</button>
               </div>
@@ -78,7 +81,13 @@ export default function Mcp() {
           </ul>
           <p style={{ color: 'var(--muted-2)', fontSize: 13, marginTop: 10 }}>Butuh detail teknis? Panduan pemanggilan di <a href="https://github.com/afnannuzulasugihartono/opera-agent/blob/main/docs/agent-call.md">docs/agent-call.md</a> menyebut semua jalur secara persis.</p>
         </section>
-        <div style={{ height: 20 }} />
+        <div className="page-foot">
+          <div>
+            <h2>Operator menunggu.</h2>
+            <p>Satu perintah <code style={{ color: '#9ff3ff', background: 'transparent', border: 0, padding: 0 }}>opera-agent-mcp local</code>, lalu harness Anda langsung bisa menjalankan browser.</p>
+          </div>
+          <Link className="btn btn-solid" to="/docs.html">Baca Docs</Link>
+        </div>
       </main>
       <SiteFooter />
     </>

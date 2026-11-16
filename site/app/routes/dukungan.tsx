@@ -36,8 +36,11 @@ export default function Dukungan() {
     <>
       <SiteHeader current="/dukungan.html" />
       <main className="wrap" style={{ maxWidth: 880 }}>
-        <h1 className="page-title" style={{ fontSize: 'clamp(34px,5vw,50px)', marginTop: 30 }}>Dukungan</h1>
-        <p className="lede" style={{ marginTop: 8 }}>Lima perbaikan paling sering. Kalau jawaban Anda tidak ada di sini, gunakan tiga pintu di bawah.</p>
+        <header className="page-head" style={{ paddingBottom: 6 }}>
+          <p className="kicker">Dukungan</p>
+          <h1>Dukungan</h1>
+          <p className="lede">Lima perbaikan paling sering. Kalau jawaban Anda tidak ada di sini, gunakan tiga pintu di bawah.</p>
+        </header>
 
         <div className="faq" style={{ marginTop: 24 }}>
           {FIXES.map((fix) => (
@@ -60,7 +63,13 @@ export default function Dukungan() {
             <li><span style={{ display: 'inline-block', width: 86, color: 'var(--muted)' }}>Keamanan</span> <a href="https://github.com/afnannuzulasugihartono/opera-agent/security/advisories/new">Laporkan secara privat</a></li>
           </ul>
         </section>
-        <div style={{ height: 20 }} />
+        <div className="page-foot">
+          <div>
+            <h2>Macet di tengah?</h2>
+            <p>Catat apa yang terjadi, lalu buka isu publik — atau laporkan secara privat kalau menyangkut keamanan.</p>
+          </div>
+          <a className="btn btn-solid" href="https://github.com/afnannuzulasugihartono/opera-agent/issues/new">Laporkan</a>
+        </div>
       </main>
       <SiteFooter />
     </>

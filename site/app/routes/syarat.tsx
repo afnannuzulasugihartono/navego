@@ -12,8 +12,11 @@ export default function Syarat() {
     <>
       <SiteHeader current="/syarat.html" />
       <main className="wrap legal">
-        <h1>Syarat Layanan</h1>
-        <p className="updated" style={{ color: 'var(--muted)', fontSize: 13 }}>Terakhir diperbarui: 5 Oktober 2026.</p>
+        <header className="page-head" style={{ paddingBottom: 6 }}>
+          <p className="kicker">Legal</p>
+          <h1>Syarat Layanan</h1>
+          <p className="lede" style={{ fontSize: 13 }}>Terakhir diperbarui: 5 Oktober 2026.</p>
+        </header>
         <h2 id="akses">Akses terbuka</h2>
         <p><strong>Pendaftaran terbuka</strong> untuk siapa pun; tidak ada daftar tunggu. Kami dapat menutup pendaftaran kapan pun tanpa kehilangan hak Anda atas data yang sudah ada.</p>
         <h2 id="model">Bawa model sendiri</h2>

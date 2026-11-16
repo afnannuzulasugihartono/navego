@@ -118,8 +118,11 @@ export default function Docs() {
     <>
       <SiteHeader current="/docs.html" />
       <main className="wrap" style={{ maxWidth: 1080 }}>
-        <h1 className="page-title" style={{ fontSize: 'clamp(36px,5vw,52px)', marginTop: 30 }}>Docs</h1>
-        <p className="lede" style={{ marginTop: 8, color: 'var(--muted-2)' }}>Pasang, masuk, jalankan, hubungkan.</p>
+        <header className="page-head" style={{ paddingBottom: 6 }}>
+          <p className="kicker">Docs</p>
+          <h1>Docs</h1>
+          <p className="lede">Pasang, masuk, jalankan, hubungkan.</p>
+        </header>
 
         <div className="docs-layout">
           <nav className="docs-rail" aria-label="Di halaman ini">
@@ -146,7 +149,7 @@ export default function Docs() {
           <h2 id="pasang">Pasang extension</h2>
           <ol className="steps">
             <li><span><strong>Unduh.</strong> Ambil arsip <code>.zip</code> dari halaman <Link to="/unduh.html">Unduh</Link>.</span></li>
-            <li><span><strong>Ekstrak.</strong> Ke folder yang tidak akan kamu rapikan lagi, misalnya <code>C:\Corbin\</code>.</span></li>
+            <li><span><strong>Ekstrak.</strong> Ke folder yang tidak akan dirapikan lagi, misalnya <code>C:\Corbin\</code>.</span></li>
             <li><span><strong>Muat.</strong> Buka <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>, Brave: <code>brave://extensions</code>, Opera: <code>opera://extensions</code>), nyalakan Mode Pengembang, lalu muat folder tadi.</span></li>
             <li><span><strong>Periksa.</strong> Corbin muncul di daftar extension.</span></li>
           </ol>
@@ -210,13 +213,12 @@ export default function Docs() {
           {CONFIGS.map(({ id, title, body }) => (
             <div key={id}>
               <h3>{title}</h3>
-              <div style={{ background: '#101014', borderRadius: 8, padding: '10px 12px', maxWidth: 640, position: 'relative' }}>
+              <div style={{ background: 'var(--ink)', borderRadius: 8, padding: '10px 12px', maxWidth: 640, position: 'relative' }}>
                 <pre style={{ color: '#d8f4ff', fontSize: 11.5, overflowX: 'auto' }}><code>{body}</code></pre>
                 <button onClick={() => copy(body, id)} style={{ position: 'absolute', top: 8, right: 8, background: 'linear-gradient(to bottom, #2a6ae0, #123fb8)', color: '#ffffff', border: '1px solid #061c4e', borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit' }}>{copied === id ? 'Tersalin' : 'Salin'}</button>
               </div>
             </div>
           ))}
-          <p>Server lokal menambah 56 tool di atas 36 primitive browser.</p>
           <p>Tidak perlu login atau langganan untuk memakai driver lokal. Meter plan tetap jalan di bridge — sisa quota Anda bisa dilihat dengan <code>opera-agent-mcp doctor</code> kapan pun. Semua jalur dijelaskan di satu panduan: <a href="https://github.com/afnannuzulasugihartono/opera-agent/blob/main/docs/agent-call.md">docs/agent-call.md</a>.</p>
           <h3>ChatGPT dan konektor lain</h3>
           <p>Konektor mereka bicara remote-over-HTTP; itu sudah berhenti eksis — kami tidak menyediakan jalur hosted lagi. Untuk ChatGPT dan harness serupa, gunakan harness lokal (atau Claude Desktop/OpenCode yang menerima MCP stdio).</p>
@@ -225,13 +227,19 @@ export default function Docs() {
           <h2 id="batas">Batas yang dijaga</h2>
           <ul>
             <li>Password, kode sekali pakai, PIN, kartu, dan CVV selalu ditolak. Pekerjaan yang berhenti di situ gagal.</li>
-            <li>Tab private: screenshot ditolak. Tab non-http(s): primitive menolak.</li>
+            <li>Tab pribadi: tangkapan layar ditolak. Tab non-http(s): primitive menolak.</li>
             <li>Enam izin: <code>tabs</code>, <code>scripting</code>, <code>storage</code>, <code>alarms</code>, <code>debugger</code>, <code>downloads</code>. Satu alasan untuk tiap izin ada di halaman <Link to="/unduh.html">Unduh</Link>.</li>
             <li>Yang masuk ke server untuk penagihan hanya: id reservasi, jenis tugas, status, dan hash artefak. Isi halaman tidak pernah ikut.</li>
           </ul>
           <p>Macet? Halaman <Link to="/dukungan.html">Dukungan</Link> punya langkah yang bisa diikuti.</p>
         </section>
-        <div style={{ height: 20 }} />
+        <div className="page-foot" style={{ marginTop: 36 }}>
+          <div>
+            <h2>Macet di tengah dokumen?</h2>
+            <p>Langkah yang bisa diikuti ada di Dukungan — atau lihat studi kasus untuk jalannya yang berhasil.</p>
+          </div>
+          <Link className="btn btn-solid" to="/dukungan.html">Dukungan</Link>
+        </div>
         </div>
         </div>
       </main>
