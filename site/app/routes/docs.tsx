@@ -114,7 +114,7 @@ export default function Docs() {
           <p>Isi saldo lewat QRIS dari Dashboard, tanpa langganan. Saldo yang kurang membuat pekerjaan ditolak sebelum mulai, dengan tautan isi ulang. Harga tetap, pengembalian, dan masa berlaku saldo ada di halaman <Link to="/harga.html">Harga</Link>.</p>
 
           <h2 id="tools">Tools MCP</h2>
-          <p>45 tool, semuanya berawalan <code>browser_</code>, di atas 36 primitive browser. Tugas masing-masing:</p>
+          <p>45 tool dalam empat keluarga — <code>browser_</code>, <code>artifact_</code>, <code>delivery_</code>, dan <code>wallet_</code> — di atas 36 primitive browser. Tugas masing-masing:</p>
           {TOOLS.map(({ group, items }) => (
             <div key={group}>
               <h3>{group}</h3>
@@ -134,14 +134,14 @@ export default function Docs() {
           <p>Koneksi driver lokal:</p>
           <div style={{ background: 'var(--ink)', borderRadius: 8, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 12, maxWidth: 640 }}>
             <code style={{ background: 'transparent', color: '#d8f4ff' }}>npx -y opera-agent-mcp local</code>
-            <button onClick={() => copy('npx -y opera-agent-mcp local', 'mcp-url')} style={{ background: 'linear-gradient(to bottom, #2a6ae0, #123fb8)', color: '#ffffff', border: '1px solid #061c4e', borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit' }}>{copied === 'mcp-url' ? 'Tersalin' : 'Salin'}</button>
+            <button onClick={() => copy('npx -y opera-agent-mcp local', 'mcp-url')} style={{ background: 'var(--paper)', color: '#ffffff', border: '1px solid #061c4e', borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit' }}>{copied === 'mcp-url' ? 'Tersalin' : 'Salin'}</button>
           </div>
           {CONFIGS.map(({ id, title, body }) => (
             <div key={id}>
               <h3>{title}</h3>
               <div style={{ background: 'var(--ink)', borderRadius: 8, padding: '10px 12px', maxWidth: 640, position: 'relative' }}>
                 <pre style={{ color: '#d8f4ff', fontSize: 11.5, overflowX: 'auto' }}><code>{body}</code></pre>
-                <button onClick={() => copy(body, id)} style={{ position: 'absolute', top: 8, right: 8, background: 'linear-gradient(to bottom, #2a6ae0, #123fb8)', color: '#ffffff', border: '1px solid #061c4e', borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit' }}>{copied === id ? 'Tersalin' : 'Salin'}</button>
+                <button onClick={() => copy(body, id)} style={{ position: 'absolute', top: 8, right: 8, background: 'var(--paper)', color: '#ffffff', border: '1px solid #061c4e', borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit' }}>{copied === id ? 'Tersalin' : 'Salin'}</button>
               </div>
             </div>
           ))}

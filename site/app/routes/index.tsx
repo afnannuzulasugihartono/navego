@@ -134,7 +134,7 @@ export default function Index() {
               <form onSubmit={(event) => { event.preventDefault(); void sendMagicLink(); }}>
                 <div className="field">
                   <label htmlFor="magicEmail">Email</label>
-                  <input id="magicEmail" type="email" autoComplete="email" spellCheck={false} maxLength={254} placeholder="anda@example.com" value={email} onChange={(event) => setEmail(event.target.value)} />
+                  <input id="magicEmail" type="email" autoComplete="email" spellCheck={false} maxLength={254} placeholder="anda@anda@perusahaan.id" value={email} onChange={(event) => setEmail(event.target.value)} />
                 </div>
                 <button type="submit" className="btn btn-solid" style={{ width: '100%', justifyContent: 'center' }}>{tab === 'login' ? 'Kirim magic link' : 'Buat akun'}</button>
               </form>

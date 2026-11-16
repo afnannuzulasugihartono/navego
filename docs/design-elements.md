@@ -10,7 +10,7 @@ Two house rules do the audit's heavy lifting: no element may sell what the produ
 
 ## Site chrome (all pages)
 
-- Brand mark (chrome raven medallion: metal silhouette, iridescent ring, lit amber eye, one lens flare) + wordmark `corbin` in chrome gradient — the identity; one raven, one name, drawn in the millennium's own metal — K.
+- Brand mark (monogram C in restrained chrome: an open arc and a short bar ending in an amber cursor on a navy disc) + wordmark `corbin` drawn from the same round stroke — the identity; professional without losing the millennium metal — K.
 - Version pill `v1.6.54` — the era's "beta" tag carrying the true version; pinned by the suite, never invented — K.
 - Page head (`.page-head`): one h1 (Arial Black, navy), one lede sentence, optional actions — no eyebrow labels anywhere; every document page opens the same way — K (added, eyebrows removed).
 - Page foot (`.page-foot`): navy band, one h2, one supporting line, one filled CTA — every document page closes with one door, never two; it is the one place a page asks for a click — K (added).
@@ -120,7 +120,7 @@ Two house rules do the audit's heavy lifting: no element may sell what the produ
 
 ## Y2K pass — what changed
 
-1. The mark is new: chrome raven inside an iridescent ring (`components/Raven.tsx` + `public/icon.svg`) — metal, aqua rim, lit amber eye, one lens flare; the console rail gets the chrome head variant.
+1. The mark is the same everywhere: open-arc C in brushed chrome with an amber cursor (`components/CorbinMark.tsx`, `public/corbin-mark.svg`, `public/icon.svg`, `public/assets/badge-88x31.svg`, `extension/icons/*`); one mark, one wordmark, no raven silhouette in the identity.
 2. Palette became liquid light: silver-blue page with scanline texture, chrome panels, midnight indigo for console/footer/hero, aqua `#00b8e6` for live state, magenta `#e0219b` for the one CTA, lime `#86e800` used exactly twice.
 3. The hero became a lit midnight splash panel with auras, sparkle points and a chrome frame around the plate.
 4. Typography: Arial Black (display, italic for the big line) + Tahoma (body) + Lucida Console (code, the film's terminal) — all system faces, zero font requests.

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useRouteError } from 'react-router';
 import './tokens.css';
+import './brand.css';
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
