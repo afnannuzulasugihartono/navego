@@ -85,7 +85,7 @@ test('a ref can only point at an earlier step', () => {
 });
 
 test('the whole burst is capped at twelve seconds', () => {
-  const normalized = normalizeBurst({ steps: [{ action: 'press_key', key: 'Enter' }], timeoutMs: 999999 });
+  const normalized = normalizeBurst({ steps: [{ action: 'press', key: 'Enter' }], timeoutMs: 999999 });
 
   assert.equal(normalized.timeoutMs, 12000);
 });
@@ -140,8 +140,8 @@ test('a row that the click raises, and text that lands, happen in one call', asy
   const driver = fakeDriver();
   const normalized = normalizeBurst({
     steps: [
-      { action: 'click_row', role: 'button', name: 'Add row' },
-      { action: 'wait_for_row', role: 'row', name: 'Row 101', timeoutMs: 2000 },
+      { action: 'tap', role: 'button', name: 'Add row' },
+      { action: 'wait', role: 'row', name: 'Row 101', timeoutMs: 2000 },
       { action: 'wait', text: 'Row 101' }
     ]
   });
@@ -159,8 +159,8 @@ test('a row that never appears stops the burst where it did', async () => {
   driver.waitForRow = async () => ({ found: false, rows: [] });
   const normalized = normalizeBurst({
     steps: [
-      { action: 'click_row', role: 'button', name: 'Add row' },
-      { action: 'wait_for_row', role: 'row', name: 'Row 101', timeoutMs: 500 }
+      { action: 'tap', role: 'button', name: 'Add row' },
+      { action: 'wait', role: 'row', name: 'Row 101', timeoutMs: 500 }
     ]
   });
 
@@ -175,7 +175,7 @@ test('the first failure stops the burst and keeps the steps that finished', asyn
   driver.clickRow = async () => { throw new Error('menu is gone'); };
   const normalized = normalizeBurst({
     steps: [
-      { action: 'click_row', role: 'menuitem', name: 'Insert' },
+      { action: 'tap', role: 'menuitem', name: 'Insert' },
       { action: 'type', text: 'must not run' }
     ]
   });
@@ -216,7 +216,7 @@ test('a wait that never sees its text fails the step instead of walking into the
 
   const out = await runLocalBurst({
     driver,
-    steps: [{ action: 'wait', text: 'Total' }, { action: 'press_key', key: 'Enter' }],
+    steps: [{ action: 'wait', text: 'Total' }, { action: 'press', key: 'Enter' }],
     timeoutMs: 12000
   });
 

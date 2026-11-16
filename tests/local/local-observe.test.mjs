@@ -63,7 +63,7 @@ test('a scroll that reached no end says so, and names what it moved instead', as
   assert.equal(out.movedPx, 0);
   assert.equal(out.root, 'div.kix-canvas-tile-content', 'and the scroller it found is named');
   assert.match(out.why, /as far as it goes/);
-  assert.match(out.why, /capture_page\(\) or read_page\(\) is the proof/, 'and it names the call that can actually confirm what the page said');
+  assert.match(out.why, /shot\(\) or read\(\) is the proof/, 'and it names the call that can actually confirm what the page said');
 });
 
 
@@ -219,7 +219,7 @@ test('a computed read that finds nothing says so, with the call that would find 
   const out = await createPrimitives(cdp).computed({ x: 5, y: 5 });
 
   assert.equal(out.found, false);
-  assert.match(out.why, /snapshot_page\(\)/);
+  assert.match(out.why, /scan\(\)/);
 });
 
 
@@ -231,7 +231,7 @@ test('a computed read without a target is refused before it costs a round trip',
 });
 
 // WHY A CLICK OFF THE PAGE IS REFUSED.
-// Measured live: a click_row on an outline row below the fold answered with a click at x 150, y -139.
+// Measured live: a tap on an outline row below the fold answered with a click at x 150, y -139.
 // A success, on a coordinate no pixel holds - the click landed in nothing and the answer said it landed.
 // That is the one class of silence this product cannot be allowed to have, so the click is refused and the refusal names the road that reaches the row.
 
@@ -406,7 +406,7 @@ test('the text caret rides the snapshot so the next keystroke lands knowingly', 
   assert.ok(expression.includes('getSelection'), 'the caret row comes from this client\'s own selection');
   assert.ok(expression.includes("role: 'caret'"), 'rides as a final row, past the limit');
   assert.ok(expression.includes('isCollapsed'), 'a ranged selection reports nothing rather than a dishonest point');
-  assert.ok(!expression.includes('docs-texteventtarget-iframe'), 'the line lives behind read_caret_line, which selects first; the map carries coordinates only');
+  assert.ok(!expression.includes('docs-texteventtarget-iframe'), 'the line lives behind caret, which selects first; the map carries coordinates only');
 });
 
 // WHY THE BEAT IS PINNED, NOT THE TIMING.

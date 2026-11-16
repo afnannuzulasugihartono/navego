@@ -1,6 +1,6 @@
 # @last-edited: 2026-11-13 UTC+7.
-# @title: search_bing - one call, the Bing SERP, in one structured object an agent can act on.
-# @state: the design for the search_bing tool; the task this pins, the guarantees, and the refusal cases.
+# @title: search - one call, the Bing SERP, in one structured object an agent can act on.
+# @state: the design for the search tool; the task this pins, the guarantees, and the refusal cases.
 # @dependencies: `supabase/functions/opera-agent-mcp/tools.ts`, `tests/fixtures/mcp-contract-v1.json`, `tests/fixtures/bing-serp-page1.json`.
 
 # WHAT THIS IS FOR
@@ -50,7 +50,7 @@ The shortest possible round-trip from "I know what to search for" to "here are t
 
 # IMPLEMENTATION SKETCH
 
-Tools.ts gains one tool, `search_bing`, implemented in a new module `search-bing.ts`. Each page is one `browser.burst` (navigate → wait for `.b_algo` → read → find anchors) with `includeElements: true, maxElements: 200`. The server then parses the three streams (headings, anchors, paragraphs) into `results`, filtering Bing self-links and zipping by display order. If zip counts mismatch the tool ships `results` with what it has and `truncated: true`, rather than fabricating.
+Tools.ts gains one tool, `search`, implemented in a new module `search-bing.ts`. Each page is one `browser.burst` (navigate → wait for `.b_algo` → read → find anchors) with `includeElements: true, maxElements: 200`. The server then parses the three streams (headings, anchors, paragraphs) into `results`, filtering Bing self-links and zipping by display order. If zip counts mismatch the tool ships `results` with what it has and `truncated: true`, rather than fabricating.
 
 # RELEASE
 

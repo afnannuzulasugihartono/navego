@@ -20,7 +20,7 @@ devices: [{ name, id, instanceId, extensionVersion, slot, port,
             plan: { plan, allowance, dailyQuota, usedToday, remaining, resetsAt } }]
 ```
 
-- `browser_status` membawa `planExhausted: true` dan `planExhaustedDevices: [<nama device>]` bila ada device linked dengan `remaining <= 0`.
+- `status` membawa `planExhausted: true` dan `planExhaustedDevices: [<nama device>]` bila ada device linked dengan `remaining <= 0`.
 - `resetsAt` = tengah malam UTC berikutnya (ISO string), dihitung sisi klien MCP.
 - Refusal per command tidak berubah (sudah `PLAN_LIMIT_REACHED` dengan nama paket).
 
@@ -29,7 +29,7 @@ devices: [{ name, id, instanceId, extensionVersion, slot, port,
 Gap nyata: `executeStatus` hanya menggabungkan `planInfo` bila jawaban command **sukses** (`if (answer.isError) return answer`) — persis saat paket habis dan command gagal, info paket justru tidak terlihat.
 
 - `planInfo` (`plan-info.ts`) menambah `planRemaining` (`dailyQuota - planUsed`) dan `planExhausted` (`planUsed >= dailyQuota`).
-- `executeStatus` menggabungkan `planInfo` **juga** pada jawaban `isError` (browser_status selalu membawa plan), dan menambah `planRemaining` / `planExhausted` pada kedua jalur.
+- `executeStatus` menggabungkan `planInfo` **juga** pada jawaban `isError` (status selalu membawa plan), dan menambah `planRemaining` / `planExhausted` pada kedua jalur.
 - Tidak ada perubahan pada gate, kuota, atau `browser.ping`.
 
 ## Perubahan 3: Dashboard di-rebuild (`landing/dashboard.html` + `landing/dashboard.css`)
@@ -73,7 +73,7 @@ Batas yang disetujui in-chat: **rebuild penuh, evolusi brand situs, app shell (r
 
 - `tests/landing-dashboard.test.mjs` diperbarui untuk bentuk baru (pin panggilan RPC yang sama + `opera_my_plan`).
 - Test baru: `planInfo` mengembalikan `planRemaining`/`planExhausted`; `executeStatus` menggabungkan plan pada jalur `isError`; `linkedDevices` meneruskan `meter` (termasuk `resetsAt`).
-- Verifikasi live: `browser_status` lokal via stdio MCP menampilkan plan; dashboard di-render di browser (signed-out flow dan struktur); state signed-in diverifikasi user setelah deploy (saya tidak bisa login ke akun user).
+- Verifikasi live: `status` lokal via stdio MCP menampilkan plan; dashboard di-render di browser (signed-out flow dan struktur); state signed-in diverifikasi user setelah deploy (saya tidak bisa login ke akun user).
 
 ## Keputusan yang diambil in-chat
 

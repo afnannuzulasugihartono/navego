@@ -1,6 +1,6 @@
 // @last-edited: 2026-11-14 UTC+7.
 // @title: code-standard - explicit tools and one flat output shape for the local surface.
-// @state: the local stdio surface tidied its output through tidyForAi, every advertised tool carries description and argument docs, and the tab argument accepts anything list_tabs answers with.
+// @state: the local stdio surface tidied its output through tidyForAi, every advertised tool carries description and argument docs, and the tab argument accepts anything tabs answers with.
 // @dependencies: node:test, strict, ../local/tools.js.
 
 // WHY THIS FILE IS A GATE.
@@ -38,7 +38,7 @@ test('the local tool table advertises explicit descriptions and argument docs', 
   assert.deepEqual(undocumented, [], `\n${undocumented.join('\n')}`);
 });
 
-test('the tab argument accepts every shape list_tabs answers with', () => {
+test('the tab argument accepts every shape tabs answers with', () => {
   const tools = source('local/tools.js');
-  assert.match(tools, /const tabArg = \{ type: \['string', 'number'\]/, 'tabId accepts both strings and numbers - list_tabs and the bridge both answer with either');
+  assert.match(tools, /const tabArg = \{ type: \['string', 'number'\]/, 'tabId accepts both strings and numbers - tabs and the bridge both answer with either');
 });

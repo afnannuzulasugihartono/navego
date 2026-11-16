@@ -631,7 +631,7 @@
         "released-owner-only"
       ],
       "writers": "bridge /lease door, the driver's leaseTab",
-      "readers": "driverFor, close_tab",
+      "readers": "driverFor, close",
       "wrongIfConfused": "an agent that crashes mid-call leaves the tab claimed for 60s and every later agent on that tab gets 'driven by … until …Z'; renewal-per-call holds the tab for a stuck-but-alive agent",
       "decision": "tolerate",
       "why": "expiry is the model and it is honest; the refusal names owner and expiry — a bounded wait, not silent loss — AX second",
@@ -713,10 +713,10 @@
         "closed"
       ],
       "writers": "open (create-on-first-touch), closeTab",
-      "readers": "every tool call, close_tab",
-      "wrongIfConfused": "two Maps keyed by the same tabId with different lifetimes; the cached driver outlives close_tab by process exit; a dead-tab driver surfaces 60s later as 'no answer from the tab'",
+      "readers": "every tool call, close",
+      "wrongIfConfused": "two Maps keyed by the same tabId with different lifetimes; the cached driver outlives close by process exit; a dead-tab driver surfaces 60s later as 'no answer from the tab'",
       "decision": "tolerate",
-      "why": "bounded by close_tab hygiene and process lifetime; the cached-front behavior is the point and it works — DX second",
+      "why": "bounded by close hygiene and process lifetime; the cached-front behavior is the point and it works — DX second",
       "rank": 4
     },
     {

@@ -14,7 +14,7 @@ import fs from 'node:fs';
 import { TOOLS } from '../../local/tools.js';
 
 const server = fs.readFileSync(new URL('../../local/mcp-server.js', import.meta.url), 'utf8');
-const WALLET_TOOLS = ['wallet_pair', 'wallet_balance', 'wallet_quote', 'wallet_top_up', 'task_reserve', 'task_settle', 'task_refund'];
+const WALLET_TOOLS = ['pair', 'balance', 'quote', 'topup', 'reserve', 'settle', 'refund'];
 
 test('every wallet tool is declared once', () => {
   const names = TOOLS.map((tool) => tool.name);
@@ -31,16 +31,16 @@ test('every declared wallet tool has a branch in the server', () => {
 
 test('a tool that spends money states what it needs', () => {
   const required = Object.fromEntries(TOOLS.map((tool) => [tool.name, tool.inputSchema.required || []]));
-  assert.deepEqual(required.task_reserve, ['artifact', 'estSteps']);
-  assert.deepEqual(required.task_settle, ['reservationId', 'artifactHash']);
-  assert.deepEqual(required.task_refund, ['reservationId', 'reason']);
-  assert.deepEqual(required.wallet_pair, ['code', 'deviceName']);
-  assert.deepEqual(required.wallet_balance, []);
+  assert.deepEqual(required.reserve, ['artifact', 'estSteps']);
+  assert.deepEqual(required.settle, ['reservationId', 'artifactHash']);
+  assert.deepEqual(required.refund, ['reservationId', 'reason']);
+  assert.deepEqual(required.pair, ['code', 'deviceName']);
+  assert.deepEqual(required.balance, []);
 });
 
 test('the wallet answers before a tab is resolved, because a wallet has no tab', () => {
-  const walletBranch = server.indexOf("name === 'wallet_balance'");
-  const tab = server.indexOf('const tab = name === \'close_tab\'');
+  const walletBranch = server.indexOf("name === 'balance'");
+  const tab = server.indexOf('const tab = name === \'close\'');
   assert.ok(walletBranch > 0 && tab > 0, 'both the wallet branch and the tab resolution must exist');
   assert.ok(walletBranch < tab, 'a wallet call that needed a tab would fail with the browser closed');
 });

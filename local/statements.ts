@@ -124,12 +124,12 @@ export function statementCard({ client, portal, period, root = null, url = null,
     manifest: path.join(base, String(period), 'manifest.json'),
     exists: fs.existsSync(file),
     steps: [
-      'open_url the portal page the person named, or the statement page if they gave one directly',
+      'goto the portal page the person named, or the statement page if they gave one directly',
       'if the page asks to sign in, stop and ask the person to sign in in this browser - never type a password',
-      'read_page and check the account and the month on screen against this card before going further',
-      'find_elements for the download control by the words the portal uses (Unduh, Download, PDF, Statement) - the words are the site\'s, so this is a look and not a guess',
+      'read and check the account and the month on screen against this card before going further',
+      'find for the download control by the words the portal uses (Unduh, Download, PDF, Statement) - the words are the site\'s, so this is a look and not a guess',
       'download with dir and saveAs, and act only on downloaded:true',
-      'read the closing balance off the page, then statement_delivered with the path and that balance'
+      'read the closing balance off the page, then delivered with the path and that balance'
     ],
     proof: [
       'download answered downloaded:true and named this path',
@@ -197,7 +197,7 @@ export function statementDelivered({
 }: StatementDeliveredInput) {
   jobShape({ client, portal, period });
   if (!file || String(file).trim() === '') {
-    throw new Error('statement_delivered needs path: the file download answered with. Without it there is nothing to verify.');
+    throw new Error('delivered needs path: the file download answered with. Without it there is nothing to verify.');
   }
   const where = path.resolve(String(file));
   if (where.endsWith('.crdownload') || where.endsWith('.tmp')) {

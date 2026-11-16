@@ -18,31 +18,31 @@ One call per tool, wall-clock around the call, on a fresh test tab (`example.com
 | Tool | Latency | Note |
 |---|---|---|
 | `skill_recall` | 0.7 s | one sample |
-| `press_key` | 1.3 s | |
-| `stream_keys` | 1.3 s | three events |
+| `press` | 1.3 s | |
+| `stream` | 1.3 s | three events |
 | `switch_device` | 1.3 s | read-only mode (no arguments) |
-| `read_page` | 1.4 s | `view: "brief"` |
+| `read` | 1.4 s | `view: "brief"` |
 | `dump_page` | 1.4 s | 3,000 char budget |
 | `start_watch` | 1.5 s | arms a device-side watcher |
 | `save_page` | 1.6 s | wrote a 1.478 byte scan to Downloads, deleted after |
 | `record_start` | 1.7 s | warm; 10.9 s on the first ever arm |
-| `list_tabs` | 1.9 s | 47 tabs |
+| `tabs` | 1.9 s | 47 tabs |
 | `media_state` | 6.4 s | page without a media element; answered `count: 0` |
 | `check_update` | 2.5 s | installed equals served, no update available |
-| `find_elements` (role) | 1.9 s | five textboxes |
-| `find_elements` (text) | 2.1 s | |
+| `find` (role) | 1.9 s | five textboxes |
+| `find` (text) | 2.1 s | |
 | `fill_element` | 2.4 s | |
 | `scroll_page` | 2.4 s | `moved: false` (short page) |
 | `run_browser_burst` | 2.2 s | read + find, two steps |
 | `wait_events` | 2.7 s | 1,000 ms timeout, zero events, cursor 0 |
 | `click_element` | 3.6 s | `stabilizationMs` 920 |
-| `open_url` | 3.8 s | new tab |
-| `browser_status` | 5.5 s | reported `bridge degraded`; the tools still worked |
-| `capture_page` | 6.7 s | JPEG, 48 KB |
+| `goto` | 3.8 s | new tab |
+| `status` | 5.5 s | reported `bridge degraded`; the tools still worked |
+| `shot` | 6.7 s | JPEG, 48 KB |
 | `pointer` (wheel) | 6.1 s | |
 | `navigate_tab` | 11.1 s | example.com to httpbin.org/forms/post |
 | `stop_watch` | 11.2 s | slowest successful call |
-| `close_tab` | 11.7 s | test tab |
+| `close` | 11.7 s | test tab |
 
 ## What could not be measured
 
@@ -76,7 +76,7 @@ npm i -g opera-agent-mcp@latest  # replaces the stale 1.6.46 install on this mac
 
 then point the OpenCode MCP entry for `opera-agent` at `opera-agent-mcp local` instead of the remote URL (as of 2026-11 this machine's `~/.config/opencode/opencode.json` registers the remote one), and restart the session. The README measures the same action as under 1 ms through that road — the remaining milliseconds are the device's settle waits, not the transport.
 
-Expectation on that road, tool by tool: state reads and page reads land in the low tens of milliseconds; `open_url`, `navigate_tab`, `capture_page`, `record_stop` and `close_tab` stay above 256 ms because the browser work itself — load, JPEG encode, record finalize, tab teardown — is real work, not overhead. Those can only be batched (`browser_burst`) or avoided, never compressed below the work they do.
+Expectation on that road, tool by tool: state reads and page reads land in the low tens of milliseconds; `goto`, `navigate_tab`, `shot`, `record_stop` and `close` stay above 256 ms because the browser work itself — load, JPEG encode, record finalize, tab teardown — is real work, not overhead. Those can only be batched (`browser_burst`) or avoided, never compressed below the work they do.
 
 Two further notes the record should keep:
 
@@ -91,13 +91,13 @@ Warm-call re-measurement, same machine, same path, multiple samples each (the fi
 
 | Tool | Before | After |
 |---|---|---|
-| browser_status | 5.5 s cold, 1.8-4.0 s warm | 1.5-2.2 s warm |
-| list_tabs | 1.9-2.1 s | 2.1-2.1 s |
+| status | 5.5 s cold, 1.8-4.0 s warm | 1.5-2.2 s warm |
+| tabs | 1.9-2.1 s | 2.1-2.1 s |
 | switch_device | 1.3 s | 0.75-0.88 s |
 | check_update | 2.5 s | 1.8-2.4 s |
 | skill_recall | 0.7 s | 1.0 s |
 
-The honest read: the fix removes the PostgREST tax on every RPC in the request (typically four to five per call), which is real but was never the dominant term on this machine — the OpenCode-to-edge HTTPS hop and the device's own page work are. The 256 ms target is not reachable on the hosted road at all: the floor is HTTPS plus the edge plus the device, and `open_url`, `navigate_tab`, `capture_page`, `record_stop` and `close_tab` carry seconds of real browser work that no transport edit can compress. The sub-second road remains the local loopback driver (`opera-agent-mcp local`); the hosted road is now as fast as its architecture allows.
+The honest read: the fix removes the PostgREST tax on every RPC in the request (typically four to five per call), which is real but was never the dominant term on this machine — the OpenCode-to-edge HTTPS hop and the device's own page work are. The 256 ms target is not reachable on the hosted road at all: the floor is HTTPS plus the edge plus the device, and `goto`, `navigate_tab`, `shot`, `record_stop` and `close` carry seconds of real browser work that no transport edit can compress. The sub-second road remains the local loopback driver (`opera-agent-mcp local`); the hosted road is now as fast as its architecture allows.
 
 ## The latest complete run (2026-11-14, after the direct-DB warm, same machine)
 
@@ -107,34 +107,34 @@ All tools that had been measured before were measured again; failures from the f
 |---|---|---|
 | skill_recall | 0.64 s | |
 | switch_device | 0.78 s | |
-| close_tab | 1.39 s | |
+| close | 1.39 s | |
 | run_browser_burst | 1.26 s | |
 | start_watch | 1.58 s | |
 | wait_events | 1.68 s | 1,000 ms timeout |
 | media_state | 1.63 s | |
 | stop_watch | 1.36 s | was 11.2 s before the fix |
-| capture_page | 2.01 s | |
+| shot | 2.01 s | |
 | dump_page | 2.11 s | |
-| list_tabs | 2.30 s | |
+| tabs | 2.30 s | |
 | check_update | 2.01 s | installed == served |
-| browser_status | 2.08 s | |
+| status | 2.08 s | |
 | dump_page | 2.11 s | |
-| press_key | 1.73 s | |
-| stream_keys | 2.55 s | |
+| press | 1.73 s | |
+| stream | 2.55 s | |
 | save_page | 2.01 s | 1,871 byte scan |
-| find_elements (text) | 1.43 s | |
-| find_elements (role) | 1.43 s | |
+| find (text) | 1.43 s | |
+| find (role) | 1.43 s | |
 | fill_element | 1.56 s | |
 | navigate_tab | 11.03 s | page load dominates; VPN jitter |
 | record_start | 11.62 s | warm call was 1.7 s |
 | record_stop | 3.58 s | first run failed with SESSION_NOT_ARMED / timeout |
 | click_element | 4.10 s | stabilization 509 ms |
-| read_page | 11.66 s | was 1.4 s pre-fix; VPN jitter |
+| read | 11.66 s | was 1.4 s pre-fix; VPN jitter |
 | scroll_page | 8.30 s | was 2.4 s pre-fix; VPN jitter |
 | pointer (wheel) | 10.37 s | was 6.1 s pre-fix; VPN jitter |
 | fill_element | 1.56 s | |
 
-The pattern from the earlier tables holds and now has one more data point: the sub-2 s tools are stable, and the slow tail is the network path and page load, not the code. `record_stop` works. `read_page` and the interactive tools are at the mercy of the tunnel's jitter; treat those samples as an upper bound, not a floor.
+The pattern from the earlier tables holds and now has one more data point: the sub-2 s tools are stable, and the slow tail is the network path and page load, not the code. `record_stop` works. `read` and the interactive tools are at the mercy of the tunnel's jitter; treat those samples as an upper bound, not a floor.
 
 ## Reproducing this table
 

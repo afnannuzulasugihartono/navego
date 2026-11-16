@@ -63,7 +63,7 @@ export default function Mcp() {
               </div>
             </div>
           ))}
-          <p style={{ color: 'var(--muted-2)', fontSize: 13 }}>Server lokal itu menambah <strong>56 tool</strong> di atas <strong>36 primitive browser</strong>. Tidak ada login, tidak ada quota yang harus dimengerti di website: quota dibaca di lingkungan bridge dan ditampilkan oleh <code>doctor</code>.</p>
+          <p style={{ color: 'var(--muted-2)', fontSize: 13 }}>Server lokal itu menambah <strong>50 tool satu kata</strong> di atas <strong>36 primitive browser</strong>. Tidak ada login, tidak ada quota yang harus dimengerti di website: quota dibaca di lingkungan bridge dan ditampilkan oleh <code>doctor</code>.</p>
         </section>
 
         <section style={{ marginTop: 26 }}>

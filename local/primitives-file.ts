@@ -157,11 +157,11 @@ export function filePrimitives(primitives: import('./types.js').JsonRecord, { cd
 
     async dropFile({ x, y, filename, data = null, path: filePath = null }: { x?: unknown; y?: unknown; filename?: unknown; data?: unknown; path?: unknown } = {}) {
       if (!Number.isFinite(Number(x)) || !Number.isFinite(Number(y))) {
-        throw new Error('drop_file needs x and y in the viewport.');
+        throw new Error('drop needs x and y in the viewport.');
       }
-      if (!filename || typeof filename !== 'string') throw new Error('drop_file needs a filename.');
+      if (!filename || typeof filename !== 'string') throw new Error('drop needs a filename.');
       const { target, bytes, cleanup } = materialize({
-        data, filePath, filename, verb: 'drop_file', prefix: 'opera-drop-'
+        data, filePath, filename, verb: 'drop', prefix: 'opera-drop-'
       });
       const mimeType = dragMimeType(filename);
       const payload = {
@@ -389,8 +389,8 @@ export function filePrimitives(primitives: import('./types.js').JsonRecord, { cd
             const why = partial
               ? `a download started but ${partial} was still being written after ${limit} ms; call again with a longer timeoutMs`
               : navigated
-                ? `the click navigated to ${after.url} instead of downloading; that page may render the file, so capture_page() it or use the page's own download control`
-                : `no file appeared in ${watchedLabel} within ${limit} ms; the clicked control may open a viewer or a menu, or Chrome may be showing a save dialog - dialog_state() says which`;
+                ? `the click navigated to ${after.url} instead of downloading; that page may render the file, so shot() it or use the page's own download control`
+                : `no file appeared in ${watchedLabel} within ${limit} ms; the clicked control may open a viewer or a menu, or Chrome may be showing a save dialog - dialog() says which`;
             return {
               downloaded: false,
               why,

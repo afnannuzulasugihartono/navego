@@ -49,7 +49,7 @@ const isRecord = (value: unknown): value is JsonRecord => typeof value === 'obje
 
 // WHY THE CLICK'S OWN ANSWER IS PASSED THROUGH RATHER THAN REBUILT.
 // The row is what the caller asked for; the proof of what the click hit belongs to the click.
-// Rebuilding the answer here threw that proof away - measured live, a click_row reported its row and its point while a dialog owned that point and took the click, and the answer could not say so.
+// Rebuilding the answer here threw that proof away - measured live, a tap reported its row and its point while a dialog owned that point and took the click, and the answer could not say so.
 // Anything the click measured now travels with the row it was aimed at.
 
 export type SessionDriver = Omit<Driver, 'open' | 'tabs'>;

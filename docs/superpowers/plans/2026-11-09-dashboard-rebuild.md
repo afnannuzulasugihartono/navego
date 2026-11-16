@@ -6,7 +6,7 @@
 
 **Goal:** Make an exhausted plan visible in opencode tools and rebuild the dashboard around a plan hero, in release 1.6.35.
 
-**Architecture:** Three code changes (hosted MCP plan info merged on every answer incl. failure; local MCP `browser_status` passes `/health` meter through; dashboard rebuilt as an app shell with a Pelanggan group and a disclosure-separated Operator group) plus the release plumbing. No gate, quota, billing, or wallet logic changes.
+**Architecture:** Three code changes (hosted MCP plan info merged on every answer incl. failure; local MCP `status` passes `/health` meter through; dashboard rebuilt as an app shell with a Pelanggan group and a disclosure-separated Operator group) plus the release plumbing. No gate, quota, billing, or wallet logic changes.
 
 **Tech Stack:** Vanilla JS/TS edge function, static HTML/CSS (no framework), node:test.
 
@@ -15,7 +15,7 @@
 ## Global Constraints
 
 - Version 1.6.35 everywhere a version is named (spec — "Perubahan 4: Rilis 1.6.35").
-- `OPERA_AGENT_MCP_RAW` handling and the `browser_status` tool **description bytes stay unchanged** (`tests/hosted-mcp.test.mjs`, `tests/mcp-surface.test.mjs`, `tests/fixtures/mcp-contract-v1.json` all pin it). Do not touch the description strings.
+- `OPERA_AGENT_MCP_RAW` handling and the `status` tool **description bytes stay unchanged** (`tests/hosted-mcp.test.mjs`, `tests/mcp-surface.test.mjs`, `tests/fixtures/mcp-contract-v1.json` all pin it). Do not touch the description strings.
 - All dashboard reads go through `opera_*` RPCs; never a raw `/rest/v1/<table>` path (pinned in `tests/landing-dashboard.test.mjs`).
 - One language per string only via the `id`/`en` dictionary pair; every `data-i18n` key must resolve in **both** languages.
 - No new dependencies, no CSS framework, no build step. Site brand is dark-only (`#0b0d10` background, `#3ecf8e` accent).
@@ -58,28 +58,28 @@ The spec implies these input classes but pins none of them; each gets a test in 
 
 **Interfaces:**
 - Consumes: `planInfo` from Task 1 (adds `planRemaining`/`planExhausted`).
-- Produces: `browser_status` structuredContent always carrying `plan`/`planStatus`/`planQuota`/`planUsed`/`planRemaining`/`planExhausted` when userId is known — also when the command failed. `isError:true` and the `{ ok:false, error:{ code, message } }` shape survive untouched; only additive plan fields.
+- Produces: `status` structuredContent always carrying `plan`/`planStatus`/`planQuota`/`planUsed`/`planRemaining`/`planExhausted` when userId is known — also when the command failed. `isError:true` and the `{ ok:false, error:{ code, message } }` shape survive untouched; only additive plan fields.
 
-- [ ] **Step 1: Write the failing pin** — in `tests/mcp-surface.test.mjs` add `test('browser_status answers its plan even when the command failed', ...)` asserting from source: `executeStatus` merges `plan` before returning an `isError` answer — assert the isError branch (or a shared merge helper) references `planInfo(` **and** that the old early `if (answer.isError) return answer;` line no longer exists (`assert.doesNotMatch(source, /if \(answer\.isError\) return answer;/)`).
+- [ ] **Step 1: Write the failing pin** — in `tests/mcp-surface.test.mjs` add `test('status answers its plan even when the command failed', ...)` asserting from source: `executeStatus` merges `plan` before returning an `isError` answer — assert the isError branch (or a shared merge helper) references `planInfo(` **and** that the old early `if (answer.isError) return answer;` line no longer exists (`assert.doesNotMatch(source, /if \(answer\.isError\) return answer;/)`).
 - [ ] **Step 2: Run it to verify it fails** — `node --test tests/mcp-surface.test.mjs` → FAIL on the new pin.
 - [ ] **Step 3: Implement** — restructure `executeStatus`: always `const [presence, plan] = await Promise.all([devicePresence(userId), planInfo(await db(), userId)])`; if `answer.isError`, merge `...(plan ?? {})` into the existing error structuredContent (keeping `ok:false`, `error`, every existing key), keep `isError:true`, return re-serialized text with the same shape; else merge as today. Also spread `planRemaining`/`planExhausted` via `plan` (already in the Task 1 object — no extra code).
 - [ ] **Step 4: Run tests** — `node --test tests/mcp-surface.test.mjs tests/hosted-mcp.test.mjs tests/mcp-output-tidy.test.mjs tests/mcp-output-kr.test.mjs` → PASS (descriptions unchanged so `mcp-contract-v1.json` needs no re-pin; if `mcp-output-tidy.test.mjs` reshapes merged output unexpectedly, extend its expectation minimally and say so).
 - [ ] **Step 5: Re-pin the boundary in the same commit** — compute `git hash-object supabase/functions/opera-agent-mcp/index.ts` (LF-normalized via the helper — check `boundary-locks.mjs` header for the exact normalization; if the gate normalizes CRLF→LF, hash after `sed -i` equivalent or `git hash-object --stdin < file` with contents normalized). Replace the entry `'../supabase/functions/opera-agent-mcp/index.ts', '09f854c4ca203b3c1f076a663fa94841847e08f0'` with the new hash and say in the commit message why: `executeStatus now merges plan info on the failure path; the tool description and schemas are byte-identical`.
-- [ ] **Step 6: Commit** — message like `browser_status tells the plan also when the command it carried failed`.
+- [ ] **Step 6: Commit** — message like `status tells the plan also when the command it carried failed`.
 
-### Task 3: local MCP `browser_status` passes the meter through
+### Task 3: local MCP `status` passes the meter through
 
 **Files:**
-- Modify: `local/mcp-server.js` (`linkedDevices`, ~line 263; `browser_status` case, ~line 500)
+- Modify: `local/mcp-server.js` (`linkedDevices`, ~line 263; `status` case, ~line 500)
 - Test: `tests/local-mcp-server.test.mjs`
 
 **Interfaces:**
 - Produces: `linkedDevices(port) → [{ name, id, instanceId, extensionVersion, slot, port, plan: null | { plan, allowance, dailyQuota, usedToday, remaining, resetsAt } }]`. `resetsAt` = next UTC midnight ISO string, computed locally.
-- Produces: `browser_status` top-level `planExhausted?: true` and `planExhaustedDevices?: string[]` — present only when the loopback bridge answered (remote road omits both; never invented).
+- Produces: `status` top-level `planExhausted?: true` and `planExhaustedDevices?: string[]` — present only when the loopback bridge answered (remote road omits both; never invented).
 
-- [ ] **Step 1: Write the failing tests** — in `tests/local-mcp-server.test.mjs` add `test('browser_status carries the meter of every linked device', ...)` and `test('browser_status flags an exhausted plan and names the device', ...)`. Drive deterministically: start a `node:http` server on an ephemeral port in the test; serve `/health` with two devices — `opera-a` (`meter: { plan:'plan.firm', allowance:500, dailyQuota:5000, usedToday:300, sent:0, remaining:4700 }`) and `opera-b` (`usedToday:5000, remaining:0`) — `createMcpServer({ ...ctx(), port: async () => ephemeralPort })`, call `browser_status`, assert: `payload.devices.length === 2`, `payload.devices[0].plan.remaining === 4700`, `payload.planExhausted === true`, `payload.planExhaustedDevices` deep-equals `['opera-b']`, and `devices[0].plan.resetsAt` equals the expected next-UTC-midnight string (compute in the test the same way; also assert `payload.devices[0].plan.resetsAt.endsWith('00:00:00.000Z')`). Then a second fixture with `remaining: 4700` only → `planExhausted` absent or false. Use `server.close()` in `finally`.
+- [ ] **Step 1: Write the failing tests** — in `tests/local-mcp-server.test.mjs` add `test('status carries the meter of every linked device', ...)` and `test('status flags an exhausted plan and names the device', ...)`. Drive deterministically: start a `node:http` server on an ephemeral port in the test; serve `/health` with two devices — `opera-a` (`meter: { plan:'plan.firm', allowance:500, dailyQuota:5000, usedToday:300, sent:0, remaining:4700 }`) and `opera-b` (`usedToday:5000, remaining:0`) — `createMcpServer({ ...ctx(), port: async () => ephemeralPort })`, call `status`, assert: `payload.devices.length === 2`, `payload.devices[0].plan.remaining === 4700`, `payload.planExhausted === true`, `payload.planExhaustedDevices` deep-equals `['opera-b']`, and `devices[0].plan.resetsAt` equals the expected next-UTC-midnight string (compute in the test the same way; also assert `payload.devices[0].plan.resetsAt.endsWith('00:00:00.000Z')`). Then a second fixture with `remaining: 4700` only → `planExhausted` absent or false. Use `server.close()` in `finally`.
 - [ ] **Step 2: Run to verify it fails** — `node --test tests/local-mcp-server.test.mjs` → FAIL (`plan` undefined on device rows).
-- [ ] **Step 3: Implement** — in `linkedDevices`, extend the mapping to carry `plan: d?.meter ? { plan, allowance, dailyQuota, usedToday, remaining, resetsAt: nextUtcMidnight() } : null`; add module-private `const nextUtcMidnight = () => { const d = new Date(); return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1)).toISOString(); }`. In the `browser_status` case, after `linkedDevices`, compute `const exhausted = devices?.filter((d) => d.plan && Number(d.plan.remaining) <= 0).map((d) => d.name)` and spread `...(exhausted?.length ? { planExhausted: true, planExhaustedDevices: exhausted } : {})` into the answer object. Non-loopback (`devices` null) → nothing added.
+- [ ] **Step 3: Implement** — in `linkedDevices`, extend the mapping to carry `plan: d?.meter ? { plan, allowance, dailyQuota, usedToday, remaining, resetsAt: nextUtcMidnight() } : null`; add module-private `const nextUtcMidnight = () => { const d = new Date(); return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1)).toISOString(); }`. In the `status` case, after `linkedDevices`, compute `const exhausted = devices?.filter((d) => d.plan && Number(d.plan.remaining) <= 0).map((d) => d.name)` and spread `...(exhausted?.length ? { planExhausted: true, planExhaustedDevices: exhausted } : {})` into the answer object. Non-loopback (`devices` null) → nothing added.
 - [ ] **Step 4: Run tests** — `node --test tests/local-mcp-server.test.mjs` → PASS; then `node --test tests/mcp-package.test.mjs tests/local-bridge-plan.test.mjs tests/plans.test.mjs` → PASS.
 - [ ] **Step 5: Commit** — `git add local/mcp-server.js tests/local-mcp-server.test.mjs && git commit -m "The local status line carries the plan meter of every linked browser"`.
 
@@ -130,7 +130,7 @@ main.console > .layout
 **Files:** `package.json`, `local/package.json`, `extension/manifest.json`, `extension/lib/protocol.js`, `store/store-manifest.json`, `scripts/check.mjs` (its version pin), `supabase/functions/opera-agent-mcp/index.ts` (PRODUCT_VERSION), `tests/{protocol,mcp-surface,burst-atomic-actions,hover-settle,role-reconcile,timeout-retry-popup-parity}.test.mjs` (their 1.6.34 pins), `CHANGELOG.md`, `docs/releases/1.6.35.md` (new), `docs/handoff.md`, `package-lock.json`, `gates.lock` (only if a gated file moved — check `node scripts/gates.mjs --refresh` output, with reasons in the commit message), `tests/helpers/boundary-locks.mjs` (already re-pinned in Task 2)
 
 - [ ] **Step 1: Bump every 1.6.34 → 1.6.35** — `git grep -l '1.6.34' -- . ':!node_modules' ':!docs/releases/1.6.34.md'` minus the spec. Keep each file's surrounding format.
-- [ ] **Step 2: Write `docs/releases/1.6.35.md` and CHANGELOG entry** — what changed (plan visible in both roads' `browser_status`; dashboard rebuilt with plan hero; operator group; id+en complete), how it was proven, explicit limits (signed-in verification by account owner; no quota change).
+- [ ] **Step 2: Write `docs/releases/1.6.35.md` and CHANGELOG entry** — what changed (plan visible in both roads' `status`; dashboard rebuilt with plan hero; operator group; id+en complete), how it was proven, explicit limits (signed-in verification by account owner; no quota change).
 - [ ] **Step 3: `npm test` + `npm run check` + `py tests/browser_extension_test.py`** → all green; fix anything the bump broke (tests that hard-pin the version).
 - [ ] **Step 4: `npm run gates:refresh` if and only if `check` says a gated file moved** — print what moved; re-pin with stated reasons; otherwise leave `gates.lock` untouched.
 - [ ] **Step 5: PR** — `gh pr create` (branch pushed) with the same title style as recent PRs (`gh pr list --state merged --limit 5` for tone); CI must pass; squash-merge to `main` when green.
@@ -146,6 +146,6 @@ main.console > .layout
 
 **Review Focus → tasks:** (1) → Task 4 Step 3 failure path + Step 4 pins; (2) → Task 3 Step 1 resetsAt assertions; (3) → Task 2 Steps 1–3; (4) → Task 4 IA + Step 4 pin (`showSection` auto-opens disclosure); (5) → Task 4 Step 4 dict/key-set pin.
 
-**Type consistency:** `planInfo` object (Task 1) is spread verbatim by `executeStatus` (Task 2) — same keys; local `browser_status` emits snake/camel as pinned (`planExhaustedDevices`, `resetsAt`) in Task 3 and asserted in Task 4's pins only via the local MCP path — no cross-road shape claims are made.
+**Type consistency:** `planInfo` object (Task 1) is spread verbatim by `executeStatus` (Task 2) — same keys; local `status` emits snake/camel as pinned (`planExhaustedDevices`, `resetsAt`) in Task 3 and asserted in Task 4's pins only via the local MCP path — no cross-road shape claims are made.
 
 **Proportion:** 5 tasks; code blocks are test assertions and markup contracts, not bodies.

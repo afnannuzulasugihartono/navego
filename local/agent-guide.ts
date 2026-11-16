@@ -25,119 +25,119 @@
 export const RECIPES = Object.freeze([
   {
     task: 'See what is on the page',
-    do: ['read_page'],
+    do: ['read'],
     note: 'On a Google Doc this reads the document itself, not the toolbar around it.'
   },
   {
     task: 'Meet a site you have never seen',
-    do: ['scan_page', 'read_page'],
-    note: 'scan_page costs one call and moves nothing, so it is the safe first step anywhere. Read the strategy it returns before paying for a read.'
+    do: ['probe', 'read'],
+    note: 'probe costs one call and moves nothing, so it is the safe first step anywhere. Read the strategy it returns before paying for a read.'
   },
   {
     task: 'See what can be clicked, with coordinates',
-    do: ['snapshot_page'],
+    do: ['scan'],
     note: 'Menus and dialogs come first, so a menu the agent just opened is never past the cap.'
   },
   {
     task: 'Click a row by what it is called',
-    do: ['click_row'],
+    do: ['tap'],
     note: 'One round trip: resolved and clicked in the same call, so no stale coordinates.'
   },
   {
     task: 'Click something you looked at earlier',
-    do: ['resolve_row', 'click'],
-    note: 'resolve_row hands back a handle; click with that handle measures the element again at the click, so a row that moved is still the row that gets clicked.'
+    do: ['grab', 'click'],
+    note: 'grab hands back a handle; click with that handle measures the element again at the click, so a row that moved is still the row that gets clicked.'
   },
   {
     task: 'Open a menu and walk into a submenu',
-    do: ['click_row', 'wait_for_row', 'hover', 'wait_for_row'],
+    do: ['tap', 'wait', 'hover', 'wait'],
     note: 'Submenus need the pointer to leave and come back. Wait for the row, never for a guessed number of milliseconds.'
   },
   {
     task: 'Do several dependent moves in one call',
-    do: ['run_steps'],
+    do: ['run'],
     note: 'Up to eight steps on one tab, in order. The first failure stops the burst and keeps the steps that finished; the page is settled and read once at the end instead of after every move. A refFromStep carries a handle from an earlier resolve into a later click.'
   },
   {
     task: 'Wait for something to arrive or to go',
-    do: ['wait_for_row'],
+    do: ['wait'],
     note: 'Add absent:true to wait for a row to leave. Returns found:false with the page rather than hanging.'
   },
   {
     task: 'Wait until a navigation has happened',
-    do: ['wait_for_url'],
+    do: ['wait'],
     note: 'Follows a submit or a sign-in by waiting for the url to contain a string (or match a regular expression) instead of polling the text. A text wait cannot see a url move.'
   },
   {
     task: 'Wait until the page has stopped moving',
-    do: ['wait_for_stable'],
+    do: ['wait'],
     note: 'For anything that moves on its own: a menu animating, a save running, an upload landing.'
   },
   {
     task: 'Put a file into a page that has a file input',
-    do: ['intercept_file_chooser', 'click_row', 'upload', 'intercept_file_chooser'],
+    do: ['chooser', 'tap', 'upload', 'chooser'],
     note: 'Enable interception first, click the chooser, call upload with the path or the bytes, then disable it. If upload reports inputFound:false, the site has no input — use the drop below.'
   },
   {
     task: 'Put a file into a page whose chooser has no input',
-    do: ['drop_file'],
-    note: 'A drop needs no dialog at all: the page takes the file on the drop it already listens for. If the chooser is already open - Google Docs opens it through the File System Access API - answer it with dialog_state, dialog_type and dialog_press, which reach it from the machine.'
+    do: ['drop'],
+    note: 'A drop needs no dialog at all: the page takes the file on the drop it already listens for. If the chooser is already open - Google Docs opens it through the File System Access API - answer it with dialog, dialog and dialog, which reach it from the machine.'
   },
   {
     task: 'Take a file out of a page',
-    do: ['resolve_row', 'download'],
+    do: ['grab', 'download'],
     note: 'Resolve the control that starts the download, then hand its handle to download with the folder you want. The file landing and stopping growing is the proof; a still-writing file, a viewer that opened instead, and a click that produced nothing each come back downloaded:false with the reason.'
   },
   {
     task: 'Deliver a client statement',
-    do: ['statement_card', 'open_url', 'read_page', 'find_elements', 'download', 'statement_delivered'],
-    note: 'One client, one portal, one month. The card names the file and the folder before anything is clicked; the drive gets the file; statement_delivered checks it on disk and adds the client-month to the manifest. Never type a password: if the portal asks to sign in, the person signs in in their own browser and the same tab is used again. The answer is the proof another agent can hand to its own user: bytes, the kind of file sniffed from its bytes, the page count, and the closing balance as the portal printed it with the page named as its source. A balance that was not read is reported missing, never invented.'
+    do: ['card', 'goto', 'read', 'find', 'download', 'delivered'],
+    note: 'One client, one portal, one month. The card names the file and the folder before anything is clicked; the drive gets the file; delivered checks it on disk and adds the client-month to the manifest. Never type a password: if the portal asks to sign in, the person signs in in their own browser and the same tab is used again. The answer is the proof another agent can hand to its own user: bytes, the kind of file sniffed from its bytes, the page count, and the closing balance as the portal printed it with the page named as its source. A balance that was not read is reported missing, never invented.'
   },
   {
     task: 'Ask the page a question instead of guessing',
-    do: ['query_page'],
+    do: ['trace'],
     note: 'Frames, the node behind a row, a frame document, a selector, a box, a screenshot as png. Reads only — anything that acts stays a named tool.'
   },
   {
     task: 'Build a report from an exported sheet',
-    do: ['report_build'],
+    do: ['report'],
     note: 'CSV in, a checked report out, written beside the source. No browser is touched: month-end reports must not depend on a tab being open. Every figure names the column and the exact rows it came from, and the plan is rechecked against those rows before the file exists.'
   },
   {
     task: 'Build a paper from JSON tables, images, and graphs',
-    do: ['document_write'],
+    do: ['doc'],
     note: 'JSON in, a .docx out in one call: the checked plan (written beside the source) and the Word file built from it. Every graph names its table and columns, and the graph is recomputed from those rows before the file exists - a graph without a source, or one whose number disagrees with the table, stops the paper instead of reaching a reader.'
   },
   {
     task: 'Turn an exported sheet into an Excel workbook',
-    do: ['spreadsheet_build'],
+    do: ['sheet'],
     note: 'CSV in, an .xlsx out: the report lines, the source rows, and the ledger of which rows produced each figure. The totals are numbers, so the customer can use them in another sheet. The plan is rechecked against those rows before the file exists, and the plan is written beside the workbook for the next artifact that needs the same figures.'
   },
   {
     task: 'Turn a written plan into slides',
-    do: ['deck_build'],
+    do: ['deck'],
     note: 'JSON in, a .pptx out. A slide names a figure from the checked report and carries its value; a name the report does not hold stops the deck. The provenance of every figure is written beside the presentation, so the author can answer "where did this number come from" without opening the slide.'
   },
 
   {
     task: 'Sign in to a portal',
-    do: ['gate_detect', 'login', 'gate_wait'],
-    note: 'One read says whether the page wants a password, a one-time code, or a captcha. login fills the fields from a credential file the person wrote, matched by the page\'s own domain, and never returns the secret. A one-time code is never answered: gate_wait waits while the person signs in in their own browser, and the same tab is used again. Without a credentials file the default stands - the person signs in and gate_wait waits for them.'
+    do: ['portal', 'login', 'portal'],
+    note: 'One read says whether the page wants a password, a one-time code, or a captcha. login fills the fields from a credential file the person wrote, matched by the page\'s own domain, and never returns the secret. A one-time code is never answered: portal waits while the person signs in in their own browser, and the same tab is used again. Without a credentials file the default stands - the person signs in and portal waits for them.'
   },
   {
     task: 'Solve a captcha',
-    do: ['gate_detect', 'captcha_solve', 'gate_wait'],
-    note: 'gate_detect names the captcha and which kind it is. captcha_solve is opt-in: it reads the image through the solver the person configured, only on a host they allowlisted, and types the answer. A token widget cannot be solved this way - let the person click it and use gate_wait. With no solver configured, captcha_solve refuses and types nothing.'
+    do: ['portal', 'captcha', 'portal'],
+    note: 'portal names the captcha and which kind it is. captcha is opt-in: it reads the image through the solver the person configured, only on a host they allowlisted, and types the answer. A token widget cannot be solved this way - let the person click it and use portal. With no solver configured, captcha refuses and types nothing.'
   },
   {
     task: 'Prove it worked',
-    do: ['capture_page', 'read_page'],
+    do: ['shot', 'read'],
     note: 'A picture and the text, compared against what you expected. A tool saying it succeeded is not proof; the page saying so is.'
   },
   {
     task: 'Bring a window forward',
-    do: ['browser_status', 'focus_window'],
-    note: 'browser_status names the browser in front and whether it is ours; focus_window takes a piece of the window title. With no match, focus_window answers the state without moving anything — pass a piece of the title to bring one forward. Never an empty match: that used to bring an arbitrary window forward.'
+    do: ['status', 'front'],
+    note: 'status names the browser in front and whether it is ours; front takes a piece of the window title. With no match, front answers the state without moving anything — pass a piece of the title to bring one forward. Never an empty match: that used to bring an arbitrary window forward.'
   }
 ]);
 
@@ -146,64 +146,58 @@ export const RECIPES = Object.freeze([
 // The two roads that replaced it are above, and a recipe that teaches guessing is worse than no recipe.
 
 export const SIDE_EFFECTS = Object.freeze({
-  wallet_pair: ['writes a device token to this machine\'s disk, which is the whole authority of the machine over the wallet'],
-  wallet_balance: [],
-  wallet_quote: [],
-  wallet_top_up: ['opens a payable invoice at the provider, which costs nothing until the person pays it'],
-  task_reserve: ['arms a hold of the quoted price, which the next settle or refund will close'],
-  task_settle: ['takes the held price from the wallet, once, for a job that was reported finished'],
-  task_refund: ['returns the whole held price to the wallet, once, for a job that did not finish'],
-  browser_status: [],
-  focus_window: ['brings a browser window to the front of the machine, which takes the keyboard away from whatever was in front'],
-  dialog_state: [],
-  dialog_type: ['writes text into an operating system dialog outside the browser'],
-  dialog_press: ['presses a button on an operating system dialog outside the browser'],
+  pair: ['writes a device token to this machine\'s disk, which is the whole authority of the machine over the wallet'],
+  balance: [],
+  quote: [],
+  topup: ['opens a payable invoice at the provider, which costs nothing until the person pays it'],
+  reserve: ['arms a hold of the quoted price, which the next settle or refund will close'],
+  settle: ['takes the held price from the wallet, once, for a job that was reported finished'],
+  refund: ['returns the whole held price to the wallet, once, for a job that did not finish'],
+  status: [],
+  front: ['brings a browser window to the front of the machine, which takes the keyboard away from whatever was in front'],
+  dialog: ['reads the dialog\'s title, buttons and field text — changes nothing', 'writes text into an operating system dialog outside the browser', 'presses a button on an operating system dialog outside the browser'],
   guide: [],
-  list_menus: [],
-  open_menu: ['opens menus by hovering and clicking levels on the way to the path you gave'],
-  use_browser: ['pins tab-less commands to the named browser until another switch says otherwise; moves no tab by itself and steers no running drive'],
-  list_tabs: [],
-  open_url: ['opens a new tab in the same browser'],
-  close_tab: ['closes a tab the caller may still be holding'],
-  search_bing: ['opens one background tab on the Bing results on the bridged path (the direct CDP fallback opens it in the foreground) and closes it before the answer returns - nothing is left on the browser, and the machine\'s own window is never brought forward'],
-  read_page: ['with allowCaretMove, borrows the selection on a canvas editor to read the text through it, and answers caretRestored as what was measured rather than what was hoped', 'without it, that step is skipped and the reason is reported, because a canvas caret is not in the DOM and cannot be promised back'],
-  scan_page: [],
-  find_elements: [],
+  menus: [],
+  menu: ['opens menus by hovering and clicking levels on the way to the path you gave'],
+  pin: ['pins tab-less commands to the named browser until another switch says otherwise; moves no tab by itself and steers no running drive'],
+  tabs: [],
+  goto: ['opens a new tab in the same browser'],
+  close: ['closes a tab the caller may still be holding'],
+  search: ['opens one background tab on the Bing results on the bridged path (the direct CDP fallback opens it in the foreground) and closes it before the answer returns - nothing is left on the browser, and the machine\'s own window is never brought forward'],
+  read: ['with allowCaretMove, borrows the selection on a canvas editor to read the text through it, and answers caretRestored as what was measured rather than what was hoped', 'without it, that step is skipped and the reason is reported, because a canvas caret is not in the DOM and cannot be promised back'],
+  probe: [],
+  find: [],
   click: ['moves the pointer and presses'],
-  resolve_row: ['leaves the page alone'],
-  click_row: ['moves the pointer and presses'],
+  grab: ['leaves the page alone'],
+  tap: ['moves the pointer and presses'],
   hover: ['moves the pointer'],
-  press_key: ['sends a key to whatever is focused'],
+  press: ['sends a key to whatever is focused'],
   type: ['inserts text into whatever is focused'],
-  append_text: ['moves the caret to the end before inserting, so text lands at the end instead of wherever the caret was left'],
+  append: ['moves the caret to the end before inserting, so text lands at the end instead of wherever the caret was left'],
   scroll: ['moves the view, which can load more of a lazy page and move the page out from under coordinates you already hold'],
-  get_computed: [],
+  inspect: [],
 
 
-  stream_keys: ['sends a key sequence to whatever is focused'],
-  run_steps: ['runs every step in order and stops at the first failure', 'settles and reads the page once at the end, not after each step'],
-  wait_for_url: [],
-  wait_for_text: [],
-  query_page: [],
-  wait_for_row: [],
-  wait_for_stable: [],
-  read_caret_line: ['selects the caret line to read it, and answers caretRestored as what was measured rather than what was hoped'],
+  stream: ['sends a key sequence to whatever is focused'],
+  run: ['runs every step in order and stops at the first failure', 'settles and reads the page once at the end, not after each step'],
+  wait: ['waits until text appears, a row matches, a url matches, or the page stops changing — whatever until= says'],
+  trace: [],
+  caret: ['selects the caret line to read it, and answers caretRestored as what was measured rather than what was hoped'],
   upload: ['fills a file input, which fires the change the page listens for'],
-  drop_file: ['brings the tab to front and drops a file on it'],
-  intercept_file_chooser: ['changes whether the native file picker appears on this tab'],
+  drop: ['brings the tab to front and drops a file on it'],
+  chooser: ['changes whether the native file picker appears on this tab'],
   download: ['brings the tab to front, clicks, and writes a file into the download folder it names'],
-  statement_card: [],
-  statement_delivered: ['writes the client-month into the manifest on disk, replacing the record only when asked'],
-  report_build: ['writes a checked report file beside the source; no page is touched'],
-  document_write: ['writes a checked document plan and the Word file built from it beside the source; no page is touched'],
-  spreadsheet_build: ['writes an Excel workbook and a checked report plan beside the source; no page is touched'],
-  deck_build: ['writes a PowerPoint presentation and the provenance of its figures beside the source; no page is touched'],
-  gate_detect: [],
-  gate_wait: [],
+  card: [],
+  delivered: ['writes the client-month into the manifest on disk, replacing the record only when asked'],
+  report: ['writes a checked report file beside the source; no page is touched'],
+  doc: ['writes a checked document plan and the Word file built from it beside the source; no page is touched'],
+  sheet: ['writes an Excel workbook and a checked report plan beside the source; no page is touched'],
+  deck: ['writes a PowerPoint presentation and the provenance of its figures beside the source; no page is touched'],
+  portal: ['reads the gate on the page and names it — sign-in, one-time code, captcha, or nothing; types nothing', 'waits for the person to clear the gate in their own browser, then answers with the page as it stands'],
   login: ['fills the username and password fields from the credential file and submits; the secret never returns in the answer'],
-  captcha_solve: ['reads a captcha image through the configured solver, which spends the person\'s money at that service, then types the answer into the captcha field'],
-  capture_page: [],
-  snapshot_page: []
+  captcha: ['reads a captcha image through the configured solver, which spends the person\'s money at that service, then types the answer into the captcha field'],
+  shot: [],
+  scan: []
 });
 
 // WHY THE GUIDE ANSWERS ONE QUESTION AND NOT SEVERAL.
@@ -220,11 +214,11 @@ export function guide(topic: unknown) {
     sideEffects: Object.entries(SIDE_EFFECTS).map(([tool, effects]) => ({ tool, effects })),
     refusals: [
       'A native operating-system dialog cannot be opened, closed or filled from here — it is outside the browser.',
-      'query_page refuses anything that could change the page; the list is in its description.',
+      'trace refuses anything that could change the page; the list is in its description.',
       'A tool that reports success is not proof. The page saying so is.',
-      'A page cannot see whether the window in front of it is the one the machine has in front. Clicks and keys go nowhere while browser_status says the window is not focused.',
-      'focus_window with no match answers the state without moving anything — pass a piece of the window title. An empty match used to bring an arbitrary window forward.',
-      'A complex document or report is built as a plan on disk (report_build, document_write, spreadsheet_build, deck_build) before it reaches a page, not by driving cells one by one.'
+      'A page cannot see whether the window in front of it is the one the machine has in front. Clicks and keys go nowhere while status says the window is not focused.',
+      'front with no match answers the state without moving anything — pass a piece of the window title. An empty match used to bring an arbitrary window forward.',
+      'A complex document or report is built as a plan on disk (report, doc, sheet, deck) before it reaches a page, not by driving cells one by one.'
     ]
   };
 }

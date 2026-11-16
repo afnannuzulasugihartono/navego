@@ -9,15 +9,15 @@ Disetujui sebagai arah pada 2026-11-08. Spec ini membuat ekstensi menangkap erro
 
 Hari ini sebuah error tak tertangkap di service worker hanya muncul di `chrome://extensions` → Errors, dan hanya orang yang membuka halaman itu yang melihatnya. Agent tidak bisa membacanya sama sekali. Padahal fault yang paling sering terjadi justru fault yang dilempar ke kanal itu: `TypeError` dari baris yang salah, promise yang menolak tanpa penangkap, dan kegagalan Chrome API yang sudah ditangkap kode lalu dicatat di level debug — di bawah ambang `warn`, jadi tidak pernah tercetak dan hanya tersimpan di ring buffer yang tidak dibaca siapa pun.
 
-Tujuan spec ini: satu tempat yang menampung fault worker, dibaca manusia lewat popup dan dibaca agent lewat `browser_status`, dengan pesan utuh dan tanpa banjir duplikat.
+Tujuan spec ini: satu tempat yang menampung fault worker, dibaca manusia lewat popup dan dibaca agent lewat `status`, dengan pesan utuh dan tanpa banjir duplikat.
 
 Keputusan yang mengikat (hasil brainstorming 2026-11-08):
 
-- **Dua jendela, satu sumber.** Popup membaca ring buffer yang sudah ada; agent membaca daftar fault lewat `browser_status`.
+- **Dua jendela, satu sumber.** Popup membaca ring buffer yang sudah ada; agent membaca daftar fault lewat `status`.
 - **Yang ditangkap:** error tak tertangkap, promise rejection tak tertangani, dan kegagalan API yang hari ini sudah dinamai lalu ditelan di level debug.
 - **Pesan utuh, tanpa stack.** Tidak ada potongan panjang buatan. Stack trace tidak disimpan.
 - **Daftar terpisah dari ring log.** Ring 200 entri bercampur level, jadi churn debug bisa menggusur fault yang dicari.
-- **Tanpa tool baru.** `browser_status` bertambah field; tidak ada tool atau parameter baru.
+- **Tanpa tool baru.** `status` bertambah field; tidak ada tool atau parameter baru.
 
 ## Non-goals
 
@@ -50,7 +50,7 @@ Hanya kegagalan yang berarti ada yang rusak, bukan jalur normal:
 
 | Kode | Berkas | Alasan |
 |---|---|---|
-| `AX_SUMMARY_COLLECTION_FAILED` | `extension/background.js` | probe aksesibilitas gagal; `read_page` kehilangan bukti, bukan sekadar lewat |
+| `AX_SUMMARY_COLLECTION_FAILED` | `extension/background.js` | probe aksesibilitas gagal; `read` kehilangan bukti, bukan sekadar lewat |
 | `TAB_ZOOM_PROBE_FAILED` | `extension/background.js` | zoom tab tidak terbaca; geometri yang dilaporkan bisa salah |
 | `USER_STATE_PROBE_FAILED` | `extension/background.js` | status tab/jendela tidak terbaca |
 | `RESPONSE_BODY_PARSE_FAILED` | `extension/worker/tab-content.js` | balasan bridge bukan JSON; jalur itu sedang rusak |
@@ -75,7 +75,7 @@ log.errorCount() -> number                                     // total fault se
 
 ## Yang dibaca agent
 
-`browser.ping` (tool `browser_status`) bertambah dua field:
+`browser.ping` (tool `status`) bertambah dua field:
 
 ```json
 { "ok": true, "paired": true, "errors": [{ "code": "WORKER_UNHANDLED_REJECTION", "message": "…", "count": 2, "firstAt": "…", "lastAt": "…" }], "errorCount": 2 }
@@ -83,14 +83,14 @@ log.errorCount() -> number                                     // total fault se
 
 - `errors[]` berisi daftar fault di atas, terbaru dulu.
 - `errorCount` adalah total fault sejak worker hidup — ia tidak mengecil saat entri dibuang atau daftar dibersihkan, jadi ia menjawab "apakah ada yang pernah gagal", sementara `errors[]` menjawab "apa yang gagal sekarang".
-- **Anggaran jawaban.** Pesan tidak dipotong, jadi jawaban bisa besar. Kalau `browser_status` akan melampaui anggaran hasil perangkat, `background.js` membuang entri **tertua** sampai muat dan menambahkan `errorsTruncated: true` serta `omittedErrors: n`. Ini pola yang sama dengan pemangkasan peta halaman: pemangkasan disengaja, alasannya terbaca, bukan kegagalan.
+- **Anggaran jawaban.** Pesan tidak dipotong, jadi jawaban bisa besar. Kalau `status` akan melampaui anggaran hasil perangkat, `background.js` membuang entri **tertua** sampai muat dan menambahkan `errorsTruncated: true` serta `omittedErrors: n`. Ini pola yang sama dengan pemangkasan peta halaman: pemangkasan disengaja, alasannya terbaca, bukan kegagalan.
 - Field lama (`paired`, `product`, `version`, `protocolVersion`, `deviceName`, `bridge`, `capabilities`, `time`) tidak berubah.
 
 ## Batas dan performa
 
 - Daftar fault maksimum 20 entri; dedup membuat error yang berulang tidak menambah baris.
 - Tidak ada I/O tambahan: daftar hidup di memori worker, seperti ring buffer.
-- `browser_status` tanpa fault tidak bertambah berat secara berarti (`errors: []`, `errorCount: 0`).
+- `status` tanpa fault tidak bertambah berat secara berarti (`errors: []`, `errorCount: 0`).
 
 ## Risiko yang diterima
 
@@ -103,8 +103,8 @@ log.errorCount() -> number                                     // total fault se
 
 - `tests/worker-error-capture.test.mjs` (baru): kedua listener terpasang pada target palsu; `error` menghasilkan satu `log.error('WORKER_UNCAUGHT_ERROR', …)`; `unhandledrejection` menghasilkan satu `log.error('WORKER_UNHANDLED_REJECTION', …)`; `event.error` yang bukan Error tetap menghasilkan pesan yang terbaca; `preventDefault` tidak dipanggil.
 - `tests/agent-log-errors.test.mjs` (baru): dedup menambah `count` dan tidak menambah baris; `firstAt`/`lastAt` benar; batas 20 entri membuang yang terlama; `clearErrors()` mengosongkan daftar tapi tidak `errorCount`; `entries()` tidak terpengaruh.
-- `tests/mcp-surface.test.mjs`: deskripsi `browser_status` menyebut `errors` dan `errorCount`; digest permukaan diperbarui.
-- Uji perangkat nyata: `browser_status` menjawab `errors: []` dan `errorCount: 0` pada worker yang sehat.
+- `tests/mcp-surface.test.mjs`: deskripsi `status` menyebut `errors` dan `errorCount`; digest permukaan diperbarui.
+- Uji perangkat nyata: `status` menjawab `errors: []` dan `errorCount: 0` pada worker yang sehat.
 
 ## Di luar spec ini
 

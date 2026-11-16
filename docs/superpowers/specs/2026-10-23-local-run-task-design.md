@@ -71,7 +71,7 @@ kosakata lain:
 |---|---|
 | `BURST_MAX_STEPS` | 8 |
 | `BURST_MAX_TIMEOUT_MS` | 12000 |
-| `BURST_ACTIONS` | `click`, `click_row`, `hover`, `press_key`, `type`, `append`, `scroll`, `stream_keys`, `resolve`, `wait` |
+| `BURST_ACTIONS` | `click`, `tap`, `hover`, `press`, `type`, `append`, `scroll`, `stream`, `resolve`, `wait` |
 
 **Konsekuensinya: `adhoc-compile.js` tidak bisa dipakai verbatim.** Output-nya
 adalah node `command` bernama method bertitik; input burst adalah nama aksi
@@ -83,9 +83,9 @@ Ada lapisan terjemahan yang harus ditulis, atau runner graph lokal sendiri.
 Pemetaan yang nyata hampir satu-ke-satu, dengan dua pengecualian yang harus
 disebut jujur:
 
-- `click_row` dan `append` adalah **komposisi lokal** — resolve lalu klik, dan
+- `tap` dan `append` adalah **komposisi lokal** — resolve lalu klik, dan
   end-key lalu isi — tanpa satu method bertitik yang padanan. Cloud menyelesaikan
-  pekerjaan yang sama dengan `find_elements` + `click_element` by ref.
+  pekerjaan yang sama dengan `find` + `click_element` by ref.
 - `page.query`, `page.collect_links`, `media.state`, dan `tabs.find` adalah
   method cloud tanpa verba lokal yang persis padanan. Stage 1 tidak memakainya.
 
@@ -135,7 +135,7 @@ Node Stage 1 hanya `command`. Bentuknya:
   "tabId": "t1",
   "nodes": [
     { "type": "command", "action": "resolve", "role": "row", "name": "Total" },
-    { "type": "command", "action": "click_row", "role": "button", "name": "Run" },
+    { "type": "command", "action": "tap", "role": "button", "name": "Run" },
     { "type": "command", "action": "wait", "text": "Done", "timeoutMs": 5000 }
   ],
   "timeoutMs": 8000
@@ -177,8 +177,8 @@ Ini sudah menutup mayoritas job harian: resolve, klik, tunggu, baca.
 tengah jalan, dan itu bukan burst. Tahap ini memakai `extension/lib/goal-plan.js`
 sebagai gate, dan hanya dimulai setelah Tahap 1 terbukti pada job nyata.
 
-**Tahap 3 — observasi berbasis ref.** `read_page` lokal mengembalikan ref stabil
-seperti `read_page` cloud, dan `click` menerima ref. Ini yang membuat node
+**Tahap 3 — observasi berbasis ref.** `read` lokal mengembalikan ref stabil
+seperti `read` cloud, dan `click` menerima ref. Ini yang membuat node
 `resolve` tidak perlu ditulis harness sama sekali.
 
 Tahap 3 sengaja terakhir: tanpa Tahap 1, ref hanyalah fitur lain yang harus
@@ -208,7 +208,7 @@ Semua di `npm test`, tanpa browser hidup:
 - **Terminasi**: burst yang berhenti di tengah menghasilkan status parsial yang
   menamai node mana yang lolos dan mana yang gagal.
 - **Gate keamanan**: sebuah aksi konsekuensial ditolak di Stage 1.
-- **Integrasi**: graph `resolve -> click_row -> wait` lulus dalam satu eksekusi
+- **Integrasi**: graph `resolve -> tap -> wait` lulus dalam satu eksekusi
   lokal, dengan bukti per langkah.
 - **Benchmark**: job tiga langkah bergantung diukur sebelum dan sesudah, pada
   mesin dan halaman yang sama, lewat `npm run benchmark:latency`.

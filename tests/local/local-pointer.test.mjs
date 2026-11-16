@@ -68,7 +68,7 @@ test('a click on the edge of the viewport is still allowed', async () => {
 });
 
 
-test('a click_row says when something else owns the point it clicked', async () => {
+test('a tap says when something else owns the point it clicked', async () => {
   const cdp = {
     calls: [],
     send: async (method, params = {}) => {
@@ -92,7 +92,7 @@ test('a click_row says when something else owns the point it clicked', async () 
 });
 
 
-test('a click_row whose point belongs to the row says so, and one that belongs to nothing claims nothing', async () => {
+test('a tap whose point belongs to the row says so, and one that belongs to nothing claims nothing', async () => {
   const owned = {
     calls: [],
     send: async (method, params = {}) => {

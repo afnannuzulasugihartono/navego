@@ -36,7 +36,7 @@ test('focusing names the window it brought and whether the machine allowed it', 
   }
 });
 
-test('focus_window with no match reads the machine and moves nothing', async () => {
+test('front with no match reads the machine and moves nothing', async () => {
   const calls = [];
   const exec = async (command, args) => {
     calls.push([command, args[args.length - 1]]);
@@ -271,13 +271,13 @@ test('a driver that cannot see the page says so rather than pretending the windo
   assert.match(out.window, /cannot tell/);
 });
 
-test('the catalogue offers the window state inside browser_status and a call that moves it', () => {
-  const status = TOOLS.find((tool) => tool.name === 'browser_status');
-  const focus = TOOLS.find((tool) => tool.name === 'focus_window');
+test('the catalogue offers the window state inside status and a call that moves it', () => {
+  const status = TOOLS.find((tool) => tool.name === 'status');
+  const focus = TOOLS.find((tool) => tool.name === 'front');
 
-  assert.ok(status, 'browser_status is there');
+  assert.ok(status, 'status is there');
   assert.match(status.description, /front/i, 'and it says whether a browser window is in front');
-  assert.ok(focus, 'focus_window is there');
+  assert.ok(focus, 'front is there');
   assert.match(focus.description, /title/, 'and it says which window to bring forward');
   assert.deepEqual(Object.keys(focus.inputSchema.properties), ['match']);
 });
@@ -285,5 +285,5 @@ test('the catalogue offers the window state inside browser_status and a call tha
 test('every tool the advice can name still exists after this', () => {
   const names = new Set(TOOLS.map((tool) => tool.name));
 
-  assert.ok(names.has('focus_window'), 'the advice below points at focus_window, so it has to be there');
+  assert.ok(names.has('front'), 'the advice below points at front, so it has to be there');
 });

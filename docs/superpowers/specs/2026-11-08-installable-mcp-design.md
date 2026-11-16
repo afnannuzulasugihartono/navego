@@ -64,13 +64,13 @@ CRX yang terbit pada 2026-11-08 memakai versi yang sama dengan build sebelumnya 
 | | hosted | local |
 |---|---|---|
 | jumlah tool | 35 ✓ | 54 ✓ |
-| peta halaman | ada ✓ (`read_page_map`) ✓ | ikut, lewat bridge ✓ (satu implementasi ✓) |
+| peta halaman | ada ✓ (`read_map`) ✓ | ikut, lewat bridge ✓ (satu implementasi ✓) |
 | latensi | 9-14 detik (cacat jalur baca API, terpisah) ✓ | localhost ✓ |
 
 ## Uji
 
 - **Paketnya utuh.** Uji yang mengemas paket (tanpa menerbitkan) dan memeriksa: `files` paket memuat dua modul lintas-pohon ✓, tidak ada impor ke luar paket ✓, dan `node bin/opera-agent-mcp.js --help` jalan dari hasil unpack ✓.
-- **Mode local dari paket.** Uji yang menjalankan server dari direktori paket hasil unpack ✓ dan menjawab `browser_status` lewat bridge ✓.
+- **Mode local dari paket.** Uji yang menjalankan server dari direktori paket hasil unpack ✓ dan menjawab `status` lewat bridge ✓.
 - **Mode cloud.** Uji yang mengarahkan proksi ke endpoint hosted dan memeriksa satu panggilan tool ✓ (dijalankan terhadap deployment ✓).
 - **Jalan tunggal.** Uji yang menyatakan `OPERA_LOCAL_TRANSPORT=cdp` **tidak lagi** memaksa jalan port ✓ dan `local/driver.js` tidak lagi memuatNasc client port ✓.
 - `npm test`, `npm run check`, dan `py tests/browser_extension_test.py` ✓.

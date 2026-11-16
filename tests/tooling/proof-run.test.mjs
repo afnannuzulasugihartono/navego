@@ -76,19 +76,19 @@ test('the server opens the portal tab and reads the page', { skip: noExtensionBr
     const ready = await mcp.initialize();
     assert.equal(ready?.serverInfo?.name, 'corbin');
     const names = await mcp.listTools();
-    for (const wanted of ['open_url', 'read_page', 'download', 'spreadsheet_build', 'deck_build', 'document_write', 'capture_page', 'close_tab']) {
+    for (const wanted of ['goto', 'read', 'download', 'sheet', 'deck', 'doc', 'shot', 'close']) {
       assert.ok(names.includes(wanted), `the server offers ${wanted}`);
     }
 
-    const opened = await mcp.tool('open_url', { url: portal.url });
+    const opened = await mcp.tool('goto', { url: portal.url });
     const tabId = opened.answer?.action?.id;
-    assert.ok(tabId, 'open_url names the tab it opened');
+    assert.ok(tabId, 'goto names the tab it opened');
 
-    const read = await mcp.tool('read_page', { tabId });
+    const read = await mcp.tool('read', { tabId });
     assert.match(String(read.answer?.text ?? ''), /Portal Mitra/);
     assert.match(String(read.answer?.text ?? ''), /Unduh CSV/);
 
-    await mcp.tool('close_tab', { tabId });
+    await mcp.tool('close', { tabId });
   } finally {
     await mcp.close();
     browser.close();
@@ -139,7 +139,7 @@ test('the recorded run still leaves the files the site ships', () => {
     assert.ok(!path.isAbsolute(row.file), 'the record carries a repository path, not a machine path');
   }
 
-  const deck = rows.find((row) => row.tool === 'deck_build');
+  const deck = rows.find((row) => row.tool === 'deck');
   assert.ok(deck, 'the record carries the deck step');
   const written = fs.readFileSync(path.join(root, 'docs', 'proof', 'run.md'), 'utf8');
   assert.match(written, /Deck slides: 5/, 'the record states the slide count the file holds');

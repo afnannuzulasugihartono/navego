@@ -62,7 +62,7 @@ L0  BUILD & RELEASE       scripts/{release,pack,verify} - bump, pack (byte-copy)
 - hosted adapter: `caps = { openTab: w('tabs.open'), navigate: w('tabs.navigate'), dump: w('page.dump'), closeTab: w('tabs.close'), ... }` where `w(method)` sends the wire call through the relay
 - local adapter: `caps = { openTab: driver.open, dump: t => driver.evaluate(SERP_EXPRESSION), closeTab: driver.close, ... }` - and the CDP-vs-bridge branch of the local road collapses into this one driver object instead of forking orchestration
 
-Example of the complete unification (search_bing, the tool that already diverged once):
+Example of the complete unification (search, the tool that already diverged once):
 
 ```js
 // shared/tools/search-bing.mjs - ONE implementation, both roads
@@ -74,7 +74,7 @@ export async function searchBing(params, caps) { /* open -> read <=3 pages -> de
 
 **Parity that cannot rot.** `tests/tool-surface-parity.test.mjs` (L3) plus per-tool-family parity tests (L4): each tool's `run(params, capsFake)` is exercised against one shared fake driver and its contract output is compared road-agnostically. Drift is a red suite, not a remark.
 
-**Staging (sizing is deliberately honest):** PR #3 unifies L3 (contract). PR #4a unifies L4 for search_bing and pays the parity apparatus once. PR #4b unifies the read ladder (read-strategy, surface-profile). PR #4c unifies the input verbs and waits (click, type, key, wait_for, burst steps). PR #4d finishes the rest family by family, measuring parity as it goes. 1.6.51 ships first, on the #289 + PR #2 state; #4 stages follow, each suite-green.
+**Staging (sizing is deliberately honest):** PR #3 unifies L3 (contract). PR #4a unifies L4 for search and pays the parity apparatus once. PR #4b unifies the read ladder (read-strategy, surface-profile). PR #4c unifies the input verbs and waits (click, type, key, wait_for, burst steps). PR #4d finishes the rest family by family, measuring parity as it goes. 1.6.51 ships first, on the #289 + PR #2 state; #4 stages follow, each suite-green.
 
 # TARGET TREE
 
@@ -308,11 +308,11 @@ Everything else in AGENTS.md stays as it is. The owner reviews this diff in the 
 | S7 | `supabase/` -> `hosted/`; `hosted/README.md`; `deploy-functions.yml` (`working-directory: hosted`, path greps); living docs path sweep (~33 files; historical specs untouched); `CODEOWNERS` (`/hosted/migrations/`, `/shared/`, `/scripts/verify/gates.mjs`) | npm test, npm run check |
 | S8 | `ARCHITECTURE.md` + `tests/architecture.test.mjs` + `shared/README.md` + `docs/README.md` + delete `docs/agent-map.md` + `AGENTS.md` section + `README.md` tree + `docs/handoff.md` bullet (this bullet lands after merge) + `docs/state-machines.json` prose (`tidy.ts` -> `shared/tidy.js`) | the new gate passes; whole suite green; one `gates:refresh` with reasons in the commit |
 | S9 | Full CI (unit, browser, secret-scan, SonarCloud) on the PR; merge | CI matrix all green |
-| S10 | Release 1.6.51 as usual: release-bump -> prose -> merge -> publish-crx -> tag -> release.yml -> deploy-functions -> publish-npm -> deploy-site -> live `search_bing` call -> handoff bullet | the live call answers 42 tools and a real Bing SERP |
+| S10 | Release 1.6.51 as usual: release-bump -> prose -> merge -> publish-crx -> tag -> release.yml -> deploy-functions -> publish-npm -> deploy-site -> live `search` call -> handoff bullet | the live call answers 42 tools and a real Bing SERP |
 
 **PR #3 - the tool surface, one source (the owner ruling of 2026-11-13; replaces the last meaningful duplication).** Branched from `main` after PR #2 merges.
 
-The two roads advertise the same 42 tools today by writing them independently: `local/tools.js` exports a plain-JS `TOOLS` (JSON-Schema descriptors; consumed by `local/mcp-server.js`), and `hosted/functions/opera-agent-mcp/tools.ts` registers the same 42 with zod. The names and counts are pinned by `mcp-surface.test.mjs`; the descriptions are not, and they have already drifted (search_bing's wording differs between the two roads). The owner wants them synchronized; this stage makes them one source, not two copies that are checked or not.
+The two roads advertise the same 42 tools today by writing them independently: `local/tools.js` exports a plain-JS `TOOLS` (JSON-Schema descriptors; consumed by `local/mcp-server.js`), and `hosted/functions/opera-agent-mcp/tools.ts` registers the same 42 with zod. The names and counts are pinned by `mcp-surface.test.mjs`; the descriptions are not, and they have already drifted (search's wording differs between the two roads). The owner wants them synchronized; this stage makes them one source, not two copies that are checked or not.
 
 1. New `shared/tool-surface.mjs`: `export const TOOLS` - the 42 tools verbatim in the local JSON-Schema shape (name, title, description, inputSchema with `pattern`/`minLength`/`maxLength`/`minimum`/`maximum`/`enum`/`const`/`default`, nested `properties`, `required`). Moved out of `local/tools.js` essentially unchanged; the hosted wording of any drifted description wins (the hosted text is the fuller one).
 2. `local/tools.js` becomes a thin re-export: `export { TOOLS, ASKABLE, askParams, STRAY_FILE_TAB }` - ASKABLE/askParams logic moves unchanged; nothing about the call path changes for local.
@@ -332,7 +332,7 @@ The ports-and-adapters shape (see THE REDESIGNED LAYERS):
 |---|---|---|
 | S11 | The parity apparatus: a shared fake driver plus `tests/tool-parity.test.mjs` harness (contract-output comparison, run identically from either road's adapter); no tool moved yet | parity harness green against one moved tool |
 | S12 | `shared/tools/search-bing.mjs` unified (the tool that already diverged once); both roads become thin `caps` providers; the hosted and local search tests pin the same golden outputs | golden tests equal on both roads; mcp-surface green; browser harness green |
-| S13 | The read ladder unified (`shared/tools/read-page.mjs`, `surface-profile.mjs`, strategy tables); local read-strategy.js and hosted read path both derive | parity golden tests green; `read_page`/`surface_profile` behave identically |
+| S13 | The read ladder unified (`shared/tools/read-page.mjs`, `surface-profile.mjs`, strategy tables); local read-strategy.js and hosted read path both derive | parity golden tests green; `read`/`surface_profile` behave identically |
 | S14 | Input verbs + waits unified (`shared/tools/input.mjs`, `wait-for.mjs`, burst step logic); `click`/`type`/`key`/`wait_for`/`browser.burst` one source | parity green; burst perf unchanged (benchmarked) |
 | S15 | The remaining 42, family by family; each PR small enough to review, each green; families whose I/O genuinely cannot unify (e.g. install verbs, device pairing) are documented as adapter-heavy but keep the contract parity from PR #3 | parity per family; release discipline per stage |
 

@@ -329,7 +329,7 @@ export function reportFromFile({
   out?: unknown;
 } = {}): { source: string; out: string; verified: ReturnType<typeof verifyReport>; report: ReturnType<typeof buildReport> } {
   if (source === null || source === undefined || String(source).trim() === '') {
-    throw new Error('report_build needs source: the CSV exported from the workbook.');
+    throw new Error('report needs source: the CSV exported from the workbook.');
   }
   const from = path.resolve(String(source));
   let stat: import('node:fs').Stats;

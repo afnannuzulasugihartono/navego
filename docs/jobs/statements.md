@@ -8,7 +8,7 @@ looks at what is on screen and decides from that.
 ## The card
 
 ```
-statement_card { client: "Toko Sinar Jaya", portal: "BCA", period: "2026-09", url: "…" }
+card { client: "Toko Sinar Jaya", portal: "BCA", period: "2026-09", url: "…" }
 ```
 
 returns:
@@ -27,17 +27,17 @@ the folder sorts as one family and the manifest cannot grow near-duplicates.
 
 ## What the agent does, in order
 
-1. `open_url` the portal, or the statement page the person gave.
-2. `read_page` — if it asks to sign in, **stop and ask the person to sign in in their
+1. `goto` the portal, or the statement page the person gave.
+2. `read` — if it asks to sign in, **stop and ask the person to sign in in their
    own browser**. The drive never types a password and never answers a one-time code.
-3. `read_page` again and check the account and the month on screen against the card.
-4. `find_elements` for the download control by the words the portal actually uses.
+3. `read` again and check the account and the month on screen against the card.
+4. `find` for the download control by the words the portal actually uses.
 5. `download` with `dir` and `saveAs`, and act only on `downloaded:true`.
-6. Read the closing balance off the page, then `statement_delivered` with the path.
+6. Read the closing balance off the page, then `delivered` with the path.
 
 ## What a delivery claims
 
-`statement_delivered` checks the file itself, so the claim does not rest on the agent's
+`delivered` checks the file itself, so the claim does not rest on the agent's
 word:
 
 | Claim | How it is known |
@@ -63,7 +63,7 @@ portal that asks for a password, lists two months, and serves an attachment:
 - sign-in gate detected: **yes** — the drive stopped rather than typing a password
 - `download`: landed as `statement-2026-09.pdf`, renamed to
   `toko-sinar-jaya-bca-2026-09.pdf`, **178 bytes, 460 ms**
-- `statement_delivered`: `kind: pdf`, **pages: 2**, balance `Rp 8.900.000` → `8900000`
+- `delivered`: `kind: pdf`, **pages: 2**, balance `Rp 8.900.000` → `8900000`
 - manifest: **1 row**, `delivered: 1`, one period, one client
 - a second delivery of the same client-month: `duplicate: true`, still one row
 - whole run: **10 calls, 6,997 characters, 1,170 ms** of tool time — ten because the

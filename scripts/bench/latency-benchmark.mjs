@@ -123,20 +123,20 @@ const add = async (label, fn, n) => {
 
 console.log(`\nLocal road latency - bridge 9451, tab ${tab.id}, ${RUNS} runs each\n`);
 
-const runRef = async (query) => (await call('find_elements', { query })).item?.ref;
+const runRef = async (query) => (await call('find', { query })).item?.ref;
 
-await add('browser_status', () => call('browser_status', { tabId: undefined }));
-await add('list_tabs', () => call('list_tabs'));
-await add('read_page', () => call('read_page'));
-await add('read_page (view map)', () => call('read_page', { view: 'map', limit: 5 }));
-await add('find_elements', () => call('find_elements', { query: 'Row 42' }));
-await add('capture_page', () => call('capture_page'), 5);
+await add('status', () => call('status', { tabId: undefined }));
+await add('tabs', () => call('tabs'));
+await add('read', () => call('read'));
+await add('read (view map)', () => call('read', { view: 'map', limit: 5 }));
+await add('find', () => call('find', { query: 'Row 42' }));
+await add('shot', () => call('shot'), 5);
 await add('scroll_page', () => call('scroll_page', { y: 120 }));
 await add('activate_tab', () => call('activate_tab'));
 await add('click_element', async () => call('click_element', { ref: await runRef('Run') }));
 await add('fill_element', async () => call('fill_element', { ref: await runRef('the field'), value: 'x' }));
-await add('press_key', () => call('press_key', { key: 'a' }));
-await add('stream_keys', () => call('stream_keys', { events: [{ type: 'key', key: 'b' }] }));
+await add('press', () => call('press', { key: 'a' }));
+await add('stream', () => call('stream', { events: [{ type: 'key', key: 'b' }] }));
 await add('pointer', () => call('pointer', { x: 200, y: 160, pointerAction: 'move' }));
 await add('run_browser_burst', () => call('run_browser_burst', { steps: [{ action: 'read' }] }));
 await add('skill_recall', () => call('skill_recall', { query: 'browser' }));
@@ -163,8 +163,8 @@ await add('start_watch', () => call('start_watch', { rule: { ruleId: 'latency', 
 await add('wait_events', () => call('wait_events', { timeoutMs: 400 }));
 await add('stop_watch', () => call('stop_watch'));
 await add('navigate_tab', () => call('navigate_tab', { url: URL_FIXTURE }));
-await add('open_url', () => call('open_url', { url: URL_FIXTURE }));
-await add('close_tab', () => call('close_tab', { tabId: tab.id }), 3);
+await add('goto', () => call('goto', { url: URL_FIXTURE }));
+await add('close', () => call('close', { tabId: tab.id }), 3);
 await add('invoice_create', () => call('invoice_create', { client: 'latency-none', period: '2026-01' }), 3);
 
 console.log('\nJSON\n' + JSON.stringify(results));

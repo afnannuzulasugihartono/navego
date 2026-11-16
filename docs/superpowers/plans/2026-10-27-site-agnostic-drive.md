@@ -712,7 +712,7 @@ An ordinary page leads with its elements because it has them."
 **Files:**
 - Modify: `local/primitives.js:21` (import), `local/primitives.js:118-119` (assembly)
 - Modify: `local/canvas.js` (consume the guard instead of owning the Docs path)
-- Modify: `local/tools.js` (add `surface_profile`; extend `read_page` schema)
+- Modify: `local/tools.js` (add `surface_profile`; extend `read` schema)
 - Modify: `local/mcp-server.js:414-415` (dispatch both)
 - Test: `tests/surface-drive.test.mjs`
 
@@ -979,7 +979,7 @@ Replace `async function read()` with a version that walks the ladder:
           harm: step.harm,
           skipped,
           description: describeProfile(surface),
-          visionWhy: 'this surface offers no text to any read that asks nothing of it; call capture_page for the picture'
+          visionWhy: 'this surface offers no text to any read that asks nothing of it; call shot for the picture'
         };
       }
     }
@@ -1030,7 +1030,7 @@ import { SURFACE_PROBE_EXPRESSION, measureAx, buildProfile, describeProfile } fr
 import { createCaretGuard } from './caret-guard.js';
 ```
 
-Modify `local/tools.js`. Add this entry to `TOOLS` immediately after the `read_page` entry:
+Modify `local/tools.js`. Add this entry to `TOOLS` immediately after the `read` entry:
 
 ```javascript
   {
@@ -1040,7 +1040,7 @@ Modify `local/tools.js`. Add this entry to `TOOLS` immediately after the `read_p
   },
 ```
 
-Extend the `read_page` entry's schema:
+Extend the `read` entry's schema:
 
 ```javascript
     inputSchema: {
@@ -1056,7 +1056,7 @@ Extend the `read_page` entry's schema:
 Modify `local/mcp-server.js`. Replace lines 414-415:
 
 ```javascript
-      case 'read_page':
+      case 'read':
         return asText(await driver.read());
 ```
 
@@ -1065,7 +1065,7 @@ with:
 ```javascript
       case 'surface_profile':
         return asText(await driver.surfaceProfile());
-      case 'read_page':
+      case 'read':
         return asText(await driver.read({ allowCaretMove: args.allowCaretMove === true }));
 ```
 
@@ -1086,7 +1086,7 @@ git add local/primitives.js local/canvas.js local/tools.js local/mcp-server.js t
 git commit -m "feat: the driver walks the ladder, and the surface is a tool of its own
 
 surface_profile answers what a surface is for one cheap call and moves nothing,
-so an agent learns an unseen site before it pays for a read. read_page takes
+so an agent learns an unseen site before it pays for a read. read takes
 consent on the call and reports what it skipped, so a caret-moving read is
 never silent."
 ```

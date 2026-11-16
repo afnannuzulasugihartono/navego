@@ -61,7 +61,7 @@ const lines = (text: unknown): string[] => String(text ?? '')
 // WHY A NO-OP ALT GOES OUT BEFORE THE WINDOW IS BROUGHT FORWARD.
 // Windows refuses a foreground change while another application is taking input, and a drive that only calls SetForegroundWindow loses every time the user is typing somewhere else — measured live on this machine, with a typing app in another browser in front: the window came forward and the answer said it had.
 // The operating system's own documented way round that is a no-op ALT, which makes the calling process eligible to come forward; it presses nothing and types nothing.
-// With it, focus_window answered focused true while the typing app was still running.
+// With it, front answered focused true while the typing app was still running.
 
 const WINDOWS_CLASS = `using System;
 using System.Text;

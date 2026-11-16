@@ -26,7 +26,7 @@ const sha256 = (file) => crypto.createHash('sha256').update(fs.readFileSync(file
 test('the recorded extension run drove the browser through the extension', () => {
   const calls = rows().filter((entry) => entry.kind === 'call' || entry.kind === 'download');
   assert.deepEqual(calls.map((entry) => entry.tool), [
-    'browser_status', 'open_url', 'read_page', 'find_elements', 'download', 'capture_page', 'close_tab'
+    'status', 'goto', 'read', 'find', 'download', 'shot', 'close'
   ]);
   assert.equal(rows().find((entry) => entry.kind === 'header').transport, 'bridge');
   assert.ok(calls.every((entry) => entry.ok === true), 'every recorded call said ok');

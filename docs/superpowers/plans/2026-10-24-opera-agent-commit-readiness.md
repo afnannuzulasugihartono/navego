@@ -466,7 +466,7 @@ git commit -m "Fix document_build graph verification against named tables"
 
 - [ ] **Step 1: Add the valid MCP test**
 
-Add after the `report_build turns an exported sheet into a checked report without a browser` test:
+Add after the `report turns an exported sheet into a checked report without a browser` test:
 
 ```js
 test('document_build turns a JSON paper into a checked document without a browser', async () => {
@@ -557,7 +557,7 @@ git commit -m "Test document_build through the local MCP surface"
 
 ---
 
-### Task 3: Lock the `focus_window` no-match refusal
+### Task 3: Lock the `front` no-match refusal
 
 **Files:**
 - Modify: `tests/window-focus.test.mjs`
@@ -572,7 +572,7 @@ git commit -m "Test document_build through the local MCP surface"
 Add after `focusing names the window it brought and whether the machine allowed it`:
 
 ```js
-test('focus_window with no match reads the machine and moves nothing', async () => {
+test('front with no match reads the machine and moves nothing', async () => {
   const calls = [];
   const exec = async (command, args) => {
     calls.push([command, args[args.length - 1]]);
@@ -602,7 +602,7 @@ Expected: PASS. The empty-match behavior is already implemented in `local/window
 
 ```bash
 git add tests/window-focus.test.mjs
-git commit -m "Lock focus_window no-match refusal"
+git commit -m "Lock front no-match refusal"
 ```
 
 ---
@@ -635,13 +635,13 @@ In `local/agent-guide.js`, insert after the `Build a report from an exported she
 Replace:
 
 ```js
-      'A complex document or report is built as a plan on disk (report_build) before it reaches a page, not by driving cells one by one.'
+      'A complex document or report is built as a plan on disk (report) before it reaches a page, not by driving cells one by one.'
 ```
 
 with:
 
 ```js
-      'A complex document or report is built as a plan on disk (report_build, document_build) before it reaches a page, not by driving cells one by one.'
+      'A complex document or report is built as a plan on disk (report, document_build) before it reaches a page, not by driving cells one by one.'
 ```
 
 - [ ] **Step 3: Correct the local tool count**

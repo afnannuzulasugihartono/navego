@@ -20,16 +20,16 @@ same calls through that client.
 
 | Tool | p50 | p95 |
 | --- | --- | --- |
-| `read_page` | 13 | 14 |
-| `find_elements` | 3 | 4 |
+| `read` | 13 | 14 |
+| `find` | 3 | 4 |
 | `click_element` | 4 | 5 |
 | `fill_element` | 4 | 5 |
-| `press_key` | 47 | 48 |
-| `stream_keys` | 46 | 48 |
+| `press` | 47 | 48 |
+| `stream` | 46 | 48 |
 | `pointer` | 1 | 2 |
 | `scroll_page` | 1 | 1 |
 | `activate_tab` | 1 | 2 |
-| `capture_page` | 61 | 8023 |
+| `shot` | 61 | 8023 |
 | `run_browser_burst` | 1 | 1 |
 | `run_workflow` | 1 | 1 |
 | `run_program` | 1 | 1 |
@@ -38,32 +38,32 @@ same calls through that client.
 | `wait_events` | 1 | 1 |
 | `stop_watch` | 1 | 1 |
 | `navigate_tab` | 1 | 1 |
-| `open_url` | 201 | 204 |
-| `close_tab` | 1 | 1 |
-| `browser_status` | 5 | 7 |
-| `list_tabs` | 1 | 1 |
+| `goto` | 201 | 204 |
+| `close` | 1 | 1 |
+| `status` | 5 | 7 |
+| `tabs` | 1 | 1 |
 | `statement_manifest` | 1 | 1 |
 | `invoice_create` | 1 | 1 |
 
-Two numbers are worth reading twice. `capture_page` has a p50 of 61 ms and a p95
+Two numbers are worth reading twice. `shot` has a p50 of 61 ms and a p95
 of 8.0 s, because the first capture attaches the debugger and the rest do not.
-`press_key` and `stream_keys` sit at ~47 ms because the key is sent and then the
+`press` and `stream` sit at ~47 ms because the key is sent and then the
 page is asked whether it landed.
 
 # THE HOSTED ROAD (p50 / p95, 5 runs each, milliseconds)
 
 | Tool | p50 | p95 |
 | --- | --- | --- |
-| `read_page` | 1322 | 8549 |
-| `find_elements` | 1408 | 1561 |
-| `list_tabs` | 1335 | 3326 |
-| `browser_status` | 1325 | 1396 |
+| `read` | 1322 | 8549 |
+| `find` | 1408 | 1561 |
+| `tabs` | 1335 | 3326 |
+| `status` | 1325 | 1396 |
 | `scroll_page` | 2092 | 3182 |
 | `activate_tab` | 1315 | 1739 |
-| `capture_page` | 2627 | 11914 |
+| `shot` | 2627 | 11914 |
 | `fill_element` | 1473 | 1516 |
-| `press_key` | 1425 | 1883 |
-| `stream_keys` | 1404 | 2015 |
+| `press` | 1425 | 1883 |
+| `stream` | 1404 | 2015 |
 | `pointer` | 1447 | 1533 |
 | `run_browser_burst` | 1708 | 1968 |
 | `skill_recall` | 727 | 945 |
@@ -74,7 +74,7 @@ page is asked whether it landed.
 | `start_watch` | 1522 | 2513 |
 | `stop_watch` | 1228 | 1246 |
 | `navigate_tab` | 1281 | 1538 |
-| `open_url` | 1263 | 1455 |
+| `goto` | 1263 | 1455 |
 
 # WHAT THE MEASURING FOUND
 

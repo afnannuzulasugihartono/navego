@@ -49,7 +49,7 @@ test('the recorded extension run drove the browser through the extension', () =>
     .split('\n').filter(Boolean).map((line) => JSON.parse(line));
   const calls = lines.filter((entry) => entry.kind === 'call');
   assert.deepEqual(calls.map((entry) => entry.tool), [
-    'browser_status', 'open_url', 'read_page', 'find_elements', 'download', 'capture_page', 'close_tab'
+    'status', 'goto', 'read', 'find', 'download', 'shot', 'close'
   ]);
   assert.ok(lines.find((entry) => entry.kind === 'header').transport === 'bridge');
 });
@@ -90,10 +90,10 @@ export function speakMcp({ port, cwd = process.cwd(), env = process.env, transpo
 3. Wait for `GET http://127.0.0.1:<bridgePort>/health` to answer `ok: true`.
 4. Launch Chrome with the shipped extension: `--load-extension=<repo>/extension`, `--disable-extensions-except=<repo>/extension`, `--remote-debugging-port=<port>`, `--user-data-dir=<temp>`, `--headless=new`.
 5. Wait for the bridge health to report `linked: true`, which is the extension's own socket. A timeout names the port and the extension id.
-6. Call, over MCP stdio, in this order: `browser_status`, `open_url` (the portal), `read_page`, `find_elements` (the download button), `download` (into a temp folder), `capture_page`, `close_tab`.
+6. Call, over MCP stdio, in this order: `status`, `goto` (the portal), `read`, `find` (the download button), `download` (into a temp folder), `shot`, `close`.
 7. Write `proof/extension-run.jsonl` (one line per call with tool, arguments, answer summary and answer text), `proof/extension-portal.jpg` (the capture) and `proof/extension-run.md` (the readable record with the tool count, the download hash and the capture size).
 
-The runner refuses to continue when `browser_status` does not report the bridge as the road in use, so a run that fell back to CDP cannot be recorded as an extension run.
+The runner refuses to continue when `status` does not report the bridge as the road in use, so a run that fell back to CDP cannot be recorded as an extension run.
 
 - [ ] **Step 5: Run the runner and the test**
 

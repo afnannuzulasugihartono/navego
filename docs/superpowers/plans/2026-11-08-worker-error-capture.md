@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** The extension catches its own service-worker faults — uncaught errors, unhandled rejections, and four named API failures — and shows them in the popup's log and in `browser_status`.
+**Goal:** The extension catches its own service-worker faults — uncaught errors, unhandled rejections, and four named API failures — and shows them in the popup's log and in `status`.
 
 **Architecture:** `extension/worker/error-capture.js` installs two listeners on a target it is handed, so it can be tested without a worker. Faults land in a second list inside `extension/lib/agent-log.js` (20 unique, deduped), separate from the 200-entry ring the popup already renders, and `background.js` answers `browser.ping` with that list, trimmed to the result budget when it would not fit.
 
@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- No new MCP tool and no new parameter; `browser_status` gains `errors`, `errorCount`, and (only when trimmed) `errorsTruncated` and `omittedErrors`.
+- No new MCP tool and no new parameter; `status` gains `errors`, `errorCount`, and (only when trimmed) `errorsTruncated` and `omittedErrors`.
 - A fault keeps its whole message: no 300-character slice, no stack.
 - The fault list holds at most 20 unique entries, deduped on `code` + `message`; a repeat adds `count` and moves `lastAt`.
 - Only `log.error(...)` fills the fault list; `debug` and `warn` do not.
@@ -25,7 +25,7 @@
 
 ## Review Focus
 
-- A worker fault repeating in a loop: the list must stay at 20 unique rows with a rising `count`, and `browser_status` must not grow.
+- A worker fault repeating in a loop: the list must stay at 20 unique rows with a rising `count`, and `status` must not grow.
 - A fault thrown before the capture is installed: it is not captured, and the empty list must not be read as "nothing ever failed" — `errorCount` starts at 0 too.
 - A page-side error (content script): it must not appear in the worker list, because the two runtimes have separate globals.
 - An error message of hundreds of kilobytes: carried whole, and the answer trims with `errorsTruncated` instead of failing the tool.
@@ -255,11 +255,11 @@ git commit -m "Catch the worker's own faults, and stop hiding four of them at de
 
 ---
 
-### Task 3: `browser_status` carries the faults
+### Task 3: `status` carries the faults
 
 **Files:**
 - Modify: `extension/background.js` (`browser.ping`)
-- Modify: `supabase/functions/opera-agent-mcp/tools.ts` (the `browser_status` description)
+- Modify: `supabase/functions/opera-agent-mcp/tools.ts` (the `status` description)
 - Modify: `tests/mcp-surface.test.mjs`, `tests/fixtures/mcp-contract-v1.json`, `tests/helpers/boundary-locks.mjs`
 - Modify: `docs/agent-call.md`, `tests/agent-call-docs.test.mjs`
 
@@ -269,12 +269,12 @@ git commit -m "Catch the worker's own faults, and stop hiding four of them at de
 
 - [ ] **Step 1: Write the failing tests**
 
-In `tests/mcp-surface.test.mjs`, extend the existing browser_status checks: the description must contain `errors` and `errorCount`. In `tests/agent-call-docs.test.mjs`:
+In `tests/mcp-surface.test.mjs`, extend the existing status checks: the description must contain `errors` and `errorCount`. In `tests/agent-call-docs.test.mjs`:
 
 ```js
 test('the guide says where the worker faults are read', () => {
   const guide = read('docs/agent-call.md');
-  assert.match(guide, /browser_status/);
+  assert.match(guide, /status/);
   assert.match(guide, /errors/);
   assert.match(guide, /errorCount/);
 });
@@ -300,7 +300,7 @@ return {
 
 `fitWithinBudget` drops from the end, and `errors()` is newest first, so the oldest rows go first — which is the order the spec asks for.
 
-Update the `browser_status` description so it says what it returns: `... Returns: ok, paired, product, version, deviceName, capabilities, protocolVersion and time, plus bridge.lastError when the bridge has failed, and the worker's own faults as errors with errorCount.` Re-freeze the contract (`sourceSha256`, digests if moved) and the boundary pins.
+Update the `status` description so it says what it returns: `... Returns: ok, paired, product, version, deviceName, capabilities, protocolVersion and time, plus bridge.lastError when the bridge has failed, and the worker's own faults as errors with errorCount.` Re-freeze the contract (`sourceSha256`, digests if moved) and the boundary pins.
 
 Add a short paragraph to `docs/agent-call.md` under the hosted section: the worker catches its own uncaught errors and unhandled rejections, `log.error` faults live in `errors`, `errorCount` is the total since the worker started, the list holds 20 unique rows, and a trimmed answer says so.
 
@@ -315,7 +315,7 @@ Expected: PASS. Commit says which pins moved and why.
 git add extension/background.js supabase/functions/opera-agent-mcp/tools.ts tests/mcp-surface.test.mjs \
   tests/fixtures/mcp-contract-v1.json tests/helpers/boundary-locks.mjs gates.lock docs/agent-call.md \
   tests/agent-call-docs.test.mjs
-git commit -m "Answer browser_status with the worker's own faults, and say when they were trimmed"
+git commit -m "Answer status with the worker's own faults, and say when they were trimmed"
 ```
 
 ---
@@ -323,13 +323,13 @@ git commit -m "Answer browser_status with the worker's own faults, and say when 
 ### Task 4: The live check
 
 - [ ] **Step 1:** Merge to `main` from the main checkout and reload the unpacked extension (the human's step).
-- [ ] **Step 2:** Call `browser_status`; expect `errors: []` and `errorCount: 0` on a healthy worker, with `bridge.lastError` absent.
+- [ ] **Step 2:** Call `status`; expect `errors: []` and `errorCount: 0` on a healthy worker, with `bridge.lastError` absent.
 - [ ] **Step 3:** Report the numbers, and say plainly that the capture path itself is proven by the unit test, not by a deliberate crash.
 
 ---
 
 ## Self-Review
 
-- **Spec coverage:** the two worker channels (Task 2), the four promoted codes (Task 2), the fault list and its API (Task 1), the `browser_status` fields and the trimmed answer (Task 3), the popup left alone (Task 1 keeps `entries()`), the live check (Task 4).
-- **Type consistency:** `errors()` returns the rows `browser_status` sends; `errorCount()` is the number it sends; `fitWithinBudget` takes the array `errors()` returns; `captureWorkerErrors` takes the `log` object Task 1 extends.
+- **Spec coverage:** the two worker channels (Task 2), the four promoted codes (Task 2), the fault list and its API (Task 1), the `status` fields and the trimmed answer (Task 3), the popup left alone (Task 1 keeps `entries()`), the live check (Task 4).
+- **Type consistency:** `errors()` returns the rows `status` sends; `errorCount()` is the number it sends; `fitWithinBudget` takes the array `errors()` returns; `captureWorkerErrors` takes the `log` object Task 1 extends.
 - **Review Focus:** a loop stays at 20 rows (Task 1's cap test), a pre-install fault is honestly absent (no test fakes history), a page error cannot appear (separate globals; the spec's non-goal), an enormous message trims the answer (Task 3's `fitWithinBudget`), and the healthy device has no `errorsTruncated` key (Task 3's conditional spread).

@@ -8,16 +8,16 @@ Browser: Google Chrome. Deck slides: 5.
 | --- | --- | --- | --- |
 | 1 | `initialize` | - | server opera-local |
 | 2 | `tools/list` | - | 54 tools |
-| 3 | `open_url` | 176 | tab D2C222B207AE26C168F6322844A94F55 · http://127.0.0.1:53548/portal.html |
-| 4 | `read_page` | 28 | 423 characters read |
+| 3 | `goto` | 176 | tab D2C222B207AE26C168F6322844A94F55 · http://127.0.0.1:53548/portal.html |
+| 4 | `read` | 28 | 423 characters read |
 | 5 | `download` | 712 | 1109 bytes landed |
 | 6 | `stage` | - | 3 paper sources copied beside the CSV |
-| 7 | `spreadsheet_build` | 31 | 3 sheets, 7 figures checked |
-| 8 | `deck_build` | 7 | 4 content slides and a cover |
-| 9 | `document_write` | 5 | 13 blocks, Dampak Promosi terhadap Kinerja Kanal Sinar Jaya |
-| 10 | `document_write` | 3 | 13 blocks, Rencana Pemasaran 2027 - Sinar Jaya |
-| 11 | `capture_page` | 39 | 48210 picture bytes |
-| 12 | `close_tab` | 8 | tab D2C222B207AE26C168F6322844A94F55 closed |
+| 7 | `sheet` | 31 | 3 sheets, 7 figures checked |
+| 8 | `deck` | 7 | 4 content slides and a cover |
+| 9 | `doc` | 5 | 13 blocks, Dampak Promosi terhadap Kinerja Kanal Sinar Jaya |
+| 10 | `doc` | 3 | 13 blocks, Rencana Pemasaran 2027 - Sinar Jaya |
+| 11 | `shot` | 39 | 48210 picture bytes |
+| 12 | `close` | 8 | tab D2C222B207AE26C168F6322844A94F55 closed |
 
 | file | bytes | sha256 | equals |
 | --- | --- | --- | --- |

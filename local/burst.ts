@@ -18,16 +18,15 @@ export const BURST_MAX_STEPS = 8;
 export const BURST_MAX_TIMEOUT_MS = 12000;
 export const BURST_ACTIONS = Object.freeze([
   'click',
-  'click_row',
+  'tap',
   'hover',
-  'press_key',
+  'press',
   'type',
-  'append_text',
+  'append',
   'scroll',
-  'stream_keys',
+  'stream',
   'resolve',
-  'wait',
-  'wait_for_row'
+  'wait'
 ]);
 
 // A read-only burst must not bring a window forward.
@@ -35,27 +34,26 @@ export const BURST_ACTIONS = Object.freeze([
 
 export const BURST_INPUT_ACTIONS = Object.freeze([
   'click',
-  'click_row',
+  'tap',
   'hover',
-  'press_key',
+  'press',
   'type',
-  'append_text',
+  'append',
   'scroll',
-  'stream_keys'
+  'stream'
 ]);
 
 const STEP_KEYS: Record<string, readonly string[]> = Object.freeze({
   click: ['action', 'x', 'y', 'handle', 'refFromStep'],
-  click_row: ['action', 'role', 'name'],
+  tap: ['action', 'role', 'name'],
   hover: ['action', 'x', 'y', 'refFromStep'],
-  press_key: ['action', 'key', 'modifiers'],
+  press: ['action', 'key', 'modifiers'],
   type: ['action', 'text'],
-  append_text: ['action', 'text'],
+  append: ['action', 'text'],
   scroll: ['action', 'y', 'end', 'text', 'selector'],
-  stream_keys: ['action', 'events'],
+  stream: ['action', 'events'],
   resolve: ['action', 'role', 'name'],
-  wait: ['action', 'text', 'role', 'name', 'absent', 'timeoutMs', 'intervalMs'],
-  wait_for_row: ['action', 'role', 'name', 'absent', 'timeoutMs']
+  wait: ['action', 'text', 'role', 'name', 'absent', 'timeoutMs', 'intervalMs']
 });
 
 const MODIFIERS = new Set(['Control', 'Alt', 'Shift', 'Meta']);
@@ -185,37 +183,24 @@ function normalizeStep(value: unknown, index: number): BurstStep {
       ...(target.ref !== null ? { refFromStep: target.ref } : {})
     };
   }
-  if (action === 'click_row' || action === 'resolve') {
+  if (action === 'tap' || action === 'resolve') {
     return {
       action,
       role: textOf(step.role, `${where} role`),
       name: textOf(step.name, `${where} name`)
     };
   }
-  if (action === 'press_key') {
+  if (action === 'press') {
     return { action, key: textOf(step.key, `${where} key`), modifiers: modifiersOf(step.modifiers) };
   }
-  if (action === 'type' || action === 'append_text') {
+  if (action === 'type' || action === 'append') {
     if (typeof step.text !== 'string') throw new Error(`${where} text must be a string`);
     return { action, text: step.text };
   }
-  if (action === 'stream_keys') {
+  if (action === 'stream') {
     return { action, events: streamEvents(step.events, where) };
   }
   if (action === 'wait') return waitStep(step, where);
-  if (action === 'wait_for_row') {
-    const out: BurstStep = { action, role: textOf(step.role, `${where} role`), name: textOf(step.name, `${where} name`) };
-    if (step.absent !== undefined) {
-      if (typeof step.absent !== 'boolean') throw new Error(`${where} absent must be true or false`);
-      out.absent = step.absent;
-    }
-    if (step.timeoutMs !== undefined) {
-      const value = Number(step.timeoutMs);
-      if (!Number.isFinite(value) || value < 0) throw new Error(`${where} timeoutMs must be a finite number`);
-      out.timeoutMs = value;
-    }
-    return out;
-  }
 
   const out: BurstStep = { action };
   if (step.y !== undefined) {
@@ -238,7 +223,7 @@ function normalizeStep(value: unknown, index: number): BurstStep {
 export function normalizeBurst(args: unknown): { steps: BurstStep[]; timeoutMs: number } {
   const bag = (typeof args === 'object' && args !== null ? args : {}) as { steps?: unknown; timeoutMs?: unknown };
   if (!Array.isArray(bag.steps) || bag.steps.length < 1 || bag.steps.length > BURST_MAX_STEPS) {
-    throw new Error(`run_steps needs 1-${BURST_MAX_STEPS} steps`);
+    throw new Error(`run needs 1-${BURST_MAX_STEPS} steps`);
   }
   const asked = Number(bag.timeoutMs ?? BURST_MAX_TIMEOUT_MS);
   const timeoutMs = Number.isFinite(asked)
@@ -263,7 +248,7 @@ async function runStep(driver: JsonRecord, step: BurstStep, results: BurstResult
     if (!ref.handle) throw new Error('refFromStep did not hand back a handle; resolve the row first');
     return driver.click(null, null, ref.handle);
   }
-  if (step.action === 'click_row') return driver.clickRow(step.role, step.name);
+  if (step.action === 'tap') return driver.clickRow(step.role, step.name);
   if (step.action === 'hover') {
     const ref = refAt(step, results);
     if (!ref) return driver.hover(step.x, step.y);
@@ -273,10 +258,10 @@ async function runStep(driver: JsonRecord, step: BurstStep, results: BurstResult
     if (!Number.isFinite(x) || !Number.isFinite(y)) throw new Error('refFromStep did not hand back a point to hover');
     return driver.hover(x, y);
   }
-  if (step.action === 'press_key') return driver.key(step.key, step.modifiers ?? []);
+  if (step.action === 'press') return driver.key(step.key, step.modifiers ?? []);
   if (step.action === 'type') return driver.type(step.text);
-  if (step.action === 'append_text') return driver.append(step.text);
-  if (step.action === 'stream_keys') return driver.keys(step.events);
+  if (step.action === 'append') return driver.append(step.text);
+  if (step.action === 'stream') return driver.keys(step.events);
   if (step.action === 'resolve') return driver.resolve(step.role, step.name);
   if (step.action === 'scroll') {
     const options: Record<string, unknown> = {};
@@ -310,10 +295,6 @@ async function runStep(driver: JsonRecord, step: BurstStep, results: BurstResult
       };
     }
     return waitForRowStep(driver, step, absent, options);
-  }
-
-  if (step.action === 'wait_for_row') {
-    return waitForRowStep(driver, step, step.absent === true, { timeoutMs: Math.max(0, Math.min(remaining, Number(step.timeoutMs ?? remaining) || remaining)) });
   }
 
   throw new Error(`${step.action} is not a step this burst can run`);
@@ -358,7 +339,7 @@ export async function runLocalBurst({ driver, steps, timeoutMs = BURST_MAX_TIMEO
     const step = steps[index] as BurstStep;
     const remaining = deadline - clock();
     if (remaining < 50) {
-      return failure(index, step, new Error(`run_steps ran out of its ${timeoutMs} ms budget before step ${index}`), true);
+      return failure(index, step, new Error(`run ran out of its ${timeoutMs} ms budget before step ${index}`), true);
     }
     const stepStarted = clock();
     // WHY THE STEP'S OWN ANSWER IS NOT BOXED IN ANOTHER BOX.
@@ -374,7 +355,7 @@ export async function runLocalBurst({ driver, steps, timeoutMs = BURST_MAX_TIMEO
   // WHY A BURST THAT SETTLED TELLS THE LOOK.
   // A wait step ends on a settled page, and a chord-only stream returns a verdict that it watched the page go quiet.
   // The look after the burst would settle the same page again, which is one round trip billed twice, so the burst passes the verdict it already has.
-  const settledStep = results.some((entry) => entry.action === 'wait' || entry.action === 'wait_for_row' || (entry.action === 'stream_keys' && entry.settled === true));
+  const settledStep = results.some((entry) => entry.action === 'wait' || (entry.action === 'stream' && entry.settled === true));
 
   return { ok: true, completedSteps: results.length, results, timingMs: Math.max(0, clock() - started), ...(settledStep ? { settled: true } : {}) };
 }

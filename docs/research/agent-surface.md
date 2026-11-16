@@ -64,21 +64,21 @@ All numbers from this repository, today.
 |---|---|
 | Tools on the default surface | **33** |
 | Characters of name + description + schema, loaded every request | **23,916** (~5,979 tokens) |
-| Longest descriptions | `read_page` 856, `capture_page` 824, `scroll` 780 |
+| Longest descriptions | `read` 856, `shot` 824, `scroll` 780 |
 | Average description | 372 characters |
 | One search task, cold | **7 calls**, 7,611 chars, 897 ms |
-| `read_page` on a settled YouTube results page | **11,574–13,483 chars** |
+| `read` on a settled YouTube results page | **11,574–13,483 chars** |
 | What each action returns (the `elements` list) | **1,392–1,852 chars** |
 | `sleep()` written by the agent in one drive | **5** |
 | Silent-failure classes found in one day | **3** |
-| `read_page` blind window during navigation | ~1.2 s (text `0` → 3,984 → 13,483) |
+| `read` blind window during navigation | ~1.2 s (text `0` → 3,984 → 13,483) |
 | `readyState` reliability as a "ready" signal | said `complete` at 1.9 s with 871 of 8,478 chars |
 
 The three silences, all fixed today, are the useful part:
 
-1. `read_page` answered `text: ""` for the first ~1.2 s with no signal that the page was
+1. `read` answered `text: ""` for the first ~1.2 s with no signal that the page was
    still filling in. Fixed with two samples: `settled`, `grewBy`, `ready`.
-2. `click_row` reported a click on a row while a dialog owned the point. Fixed with
+2. `tap` reported a click on a row while a dialog owned the point. Fixed with
    `covered`, `coveredBy`, `coveredText` — and the fix itself failed silently for an hour
    because `DOM.resolveNode` needs `DOM.enable` and the `catch` swallowed it.
 3. `type` that inserted nothing offered two guesses instead of naming the focused element.
@@ -100,9 +100,9 @@ falsifies one.
 | `guide("here")`: one call says what this page is and what to do | **Keep, first.** The measured discovery loop was 6 calls; Anthropic's consolidation advice and Chrome DevTools' "progressive complexity" both point the same way |
 | Settle by default, report the delta | **Keep, first — and it is table stakes.** Both competitors already do the waiting half. Acting behind them is not a design choice, it is a gap |
 | Machine-readable `next` moves | **Keep.** Neither competitor offers executable next calls; both only advise. This is a real differentiator, and the advice engine already exists |
-| `read_page` outline/diff modes | **Keep.** 13,483 chars per read, against Playwright's `--snapshot-mode none` and `browser_find` |
+| `read` outline/diff modes | **Keep.** 13,483 chars per read, against Playwright's `--snapshot-mode none` and `browser_find` |
 | One-command browser bootstrap | **Keep — table stakes.** Chrome DevTools starts the browser itself. Ours answered `not reachable` and named no road |
-| `list_tabs` on both roads | **Keep, small bug.** It returned empty over the debug port while `/json/list` had the target |
+| `tabs` on both roads | **Keep, small bug.** It returned empty over the debug port while `/json/list` had the target |
 | Tab hygiene | **Keep, small.** 15 tabs from one drive |
 | No silent `catch` | **Keep, principle.** Today's three silences are the proof |
 | Collapse the surface to ~6 verbs | **Revise. I was wrong in form.** Both competitors ship 20–30 tools and add slim/caps modes instead of collapsing; the lever is a small *default* surface plus opt-in capabilities and cheap answers, not a hard six. Charging toward six would cost coverage the product needs |
@@ -141,7 +141,7 @@ Ordered by effect on the choice, not by ease.
 
 ### P1 — the cost of every answer
 
-3. **`read_page` modes**: `outline` (headings, landmarks, actionable rows) and `since`
+3. **`read` modes**: `outline` (headings, landmarks, actionable rows) and `since`
    (a token from the last read, returning only what moved).
    *Gate:* outline ≤ 2,000 chars on the YouTube results page (today 13,483); idle `since`
    ≤ 200 chars.
@@ -149,8 +149,8 @@ Ordered by effect on the choice, not by ease.
    *Gate:* a test that pins the shape, and one live failure replayed by an agent with no
    reading of prose.
 5. **Bootstrap and tabs**: `npm run browser`; the "not reachable" error names it;
-   `list_tabs` answers on the debug-port road.
-   *Gate:* from a cold machine, first successful `read_page` in ≤ 2 calls.
+   `tabs` answers on the debug-port road.
+   *Gate:* from a cold machine, first successful `read` in ≤ 2 calls.
 
 ### P2 — the surface and the trust
 

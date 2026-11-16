@@ -211,7 +211,7 @@ interpretasi kedua.
 
 - Nama file: kebab-case, seperti `local/page-expressions.js`.
 - Nama tool MCP: `snake_case`. Dua nama baru: `surface_profile` dan
-  `read_page` yang diperluas.
+  `read` yang diperluas.
 - Parameter tool: camelCase, seperti `tabId` dan `timeoutMs` yang sudah ada.
   Parameter konsent dinamai `allowCaretMove`.
 - Wire method: **tidak ada yang baru.** Driver lokal mengirim CDP langsung,
@@ -231,7 +231,7 @@ Masukan: `tabId` saja. Keluaran: profil dari `surface-profile.js` plus
 `strategy`, yaitu tangga yang akan dipakai `read-strategy.js` untuk profil itu.
 Ia tidak membaca isi dokumen dan tidak menyentuh caret.
 
-### `read_page`
+### `read`
 
 Tool yang ada, diperluas.
 

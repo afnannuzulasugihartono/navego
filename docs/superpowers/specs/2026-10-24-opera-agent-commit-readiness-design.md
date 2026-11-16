@@ -37,7 +37,7 @@ Target keberhasilan yang dapat diukur:
 - Tidak deploy ke produksi dan tidak apply migration ke Supabase.
 - Tidak membuat file DOCX atau PDF.
 - Tidak menambah dependency baru.
-- Tidak mengganti `report_build`; spec ini hanya menyamakan disiplin verifikasinya
+- Tidak mengganti `report`; spec ini hanya menyamakan disiplin verifikasinya
   untuk `document_build`.
 - Tidak melakukan refactor besar `local/` di luar file yang perlu disentuh untuk
   mencapai Definition of Done.
@@ -179,9 +179,9 @@ menyebut field yang kurang.
 
 4. **Tambahkan test MCP.**
    - `tests/local-mcp-server.test.mjs` mendapat test `document_build`, sejajar
-     dengan test `report_build`, tanpa browser hidup.
+     dengan test `report`, tanpa browser hidup.
 
-5. **Kunci regression focus_window.**
+5. **Kunci regression front.**
    - `focusWindow('')` tetap menjawab state tanpa memindahkan window.
    - tambah test untuk jalur no-match yang sudah diperbaiki.
 
@@ -201,7 +201,7 @@ menyebut field yang kurang.
 
 9. **Commit lokal terpisah.**
    - fix graph dan tests.
-   - test focus_window.
+   - test front.
    - docs sync.
    - migration final.
    - cleanup scratch.
