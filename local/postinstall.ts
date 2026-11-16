@@ -18,11 +18,11 @@ try {
   const { install } = await import('./install.js');
   const report = await install({ print: () => {} });
   if (report.browsers.length > 0) {
-    process.stdout.write(`opera-agent-mcp: extension registered for ${report.browsers.map((b) => b.id).join(', ')}; restart the browser to use it, then \`opera-agent-mcp install\` for the full report.\n`);
+    process.stdout.write(`kemudi: extension registered for ${report.browsers.map((b) => b.id).join(', ')}; restart the browser to use it, then \`kemudi install\` for the full report.\n`);
   } else {
-    process.stdout.write(`opera-agent-mcp: ${report.message}\n`);
+    process.stdout.write(`kemudi: ${report.message}\n`);
   }
 } catch (error: unknown) {
-  process.stdout.write(`opera-agent-mcp: postinstall skipped (${String((error as Error)?.message || error)})\n`);
+  process.stdout.write(`kemudi: postinstall skipped (${String((error as Error)?.message || error)})\n`);
 }
 process.exit(0);

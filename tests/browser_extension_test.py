@@ -192,9 +192,9 @@ LONG_TEXT = "BEGIN " + ("civil-engineering-semantic-reader " * 695) + " END"
 EXTRA_CONTROLS = "".join(
     f'<button aria-label="Synthetic action {index}"></button>' for index in range(100)
 )
-PAGE = f"""<!doctype html><html><head><title>Opera Agent Test Page</title></head>
+PAGE = f"""<!doctype html><html><head><title>Kemudi Test Page</title></head>
 <body>
-<h1>Opera Agent Browser Test</h1>
+<h1>Kemudi Browser Test</h1>
 <p id="long">{LONG_TEXT}</p>
 <button id="toggle" aria-pressed="false" onclick="this.setAttribute('aria-pressed', this.getAttribute('aria-pressed')==='true'?'false':'true')">Toggle</button>
 <button id="rerender" onclick="this.replaceWith(this.cloneNode(true))">Rerender target</button>
@@ -236,7 +236,7 @@ document.getElementById('scrollbox').addEventListener('scroll', (event) => {{
 </script>
 </body></html>"""
 
-VISUAL_PAGE = """<!doctype html><html><head><title>Opera Agent Visual Test</title></head>
+VISUAL_PAGE = """<!doctype html><html><head><title>Kemudi Visual Test</title></head>
 <body style="margin:0;background:#eef2ff;color:#172554;font-family:sans-serif">
 <main style="padding:32px"><h1>Adaptive screenshot</h1><canvas id="visual" width="640" height="320"></canvas></main>
 <script>
@@ -245,13 +245,13 @@ const ctx = canvas.getContext('2d');
 const gradient = ctx.createLinearGradient(0, 0, 640, 320);
 gradient.addColorStop(0, '#2563eb'); gradient.addColorStop(1, '#7c3aed');
 ctx.fillStyle = gradient; ctx.fillRect(0, 0, 640, 320);
-ctx.fillStyle = 'white'; ctx.font = 'bold 38px sans-serif'; ctx.fillText('Opera Agent Vision', 110, 175);
+ctx.fillStyle = 'white'; ctx.font = 'bold 38px sans-serif'; ctx.fillText('Kemudi Vision', 110, 175);
 </script></body></html>"""
 
-BLANK_PAGE = """<!doctype html><html><head><title>Opera Agent Blank Test</title>
+BLANK_PAGE = """<!doctype html><html><head><title>Kemudi Blank Test</title>
 <style>html,body{margin:0;width:100%;height:100%;background:#fff}</style></head><body></body></html>"""
 
-IFRAME_PAGE = """<!doctype html><html><head><title>Opera Agent Iframe Privacy Test</title></head>
+IFRAME_PAGE = """<!doctype html><html><head><title>Kemudi Iframe Privacy Test</title></head>
 <body><h1>Safe-looking parent</h1><iframe src="/page?embedded-sensitive=1" width="500" height="300"></iframe></body></html>"""
 
 ACTIONABILITY_PAGE = (
@@ -685,7 +685,7 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         if self.path.startswith("/pre8e-xml"):
-            payload = b'<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title>Opera Agent XML Feed</title><entry><title>first</title></entry></feed>'
+            payload = b'<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title>Kemudi XML Feed</title><entry><title>first</title></entry></feed>'
             self.send_response(200)
             self.send_header("Content-Type", "application/xml; charset=utf-8")
             self.send_header("Content-Length", str(len(payload)))
@@ -1293,7 +1293,7 @@ async def run(port, profile):
         )
         result = assert_completed_ok(await asyncio.to_thread(STATE.wait, cid))
         tab_id = result["tab"]["id"]
-        assert result["tab"]["title"] == "Opera Agent Test Page"
+        assert result["tab"]["title"] == "Kemudi Test Page"
 
         cid = STATE.push(
             "tabs.open",
@@ -1434,7 +1434,7 @@ async def run(port, profile):
         page = result["page"]
         assert page["textChars"] > 2400, page["textChars"]
         assert page["totalTextChars"] > 2400
-        assert page["text"].startswith("Opera Agent Browser Test")
+        assert page["text"].startswith("Kemudi Browser Test")
         assert page["semanticState"]["schemaVersion"] == 1
         assert page["semanticState"]["documentGeneration"] == 1
         assert page["semanticState"]["ambiguityCount"] >= 2
@@ -3405,7 +3405,7 @@ async def run(port, profile):
         ]
         cid = STATE.push("page.read", {"tabId": xml_tab, "includeElements": False})
         xml_read = assert_completed_ok(await asyncio.to_thread(STATE.wait, cid))["page"]
-        assert "Opera Agent XML Feed" in xml_read["text"], (
+        assert "Kemudi XML Feed" in xml_read["text"], (
             "the content script survives a document whose root has no dataset"
         )
         cid = STATE.push("tabs.close", {"tabId": xml_tab})

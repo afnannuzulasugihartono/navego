@@ -5,7 +5,7 @@
 
 # One product, one driver, one browser half
 
-Opera Agent is one product: one local stdio driver on the machine, one
+Kemudi is one product: one local stdio driver on the machine, one
 browser half it drives, and one tool surface. The 56 tools live once, in the
 local driver. Anything the browser half and the meter both need lives once in
 `shared/` — never copied by hand.

@@ -52,9 +52,9 @@ export function configDir(env: NodeJS.ProcessEnv = process.env): string {
   if (env.OPERA_AGENT_MCP_CONFIG_HOME) return String(env.OPERA_AGENT_MCP_CONFIG_HOME);
   const home = os.homedir();
   if (process.platform === 'win32') {
-    return path.join(process.env.APPDATA || path.join(home, 'AppData', 'Roaming'), 'opera-agent-mcp');
+    return path.join(process.env.APPDATA || path.join(home, 'AppData', 'Roaming'), 'kemudi');
   }
-  return path.join(home, '.config', 'opera-agent-mcp');
+  return path.join(home, '.config', 'kemudi');
 }
 
 export function tokenPath(env: NodeJS.ProcessEnv = process.env): string {
@@ -133,7 +133,7 @@ function waitForCode({ url, state, open }: { url: string; state: string; open: (
       }
       clearTimeout(timer);
       res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
-      res.end('<h1>Opera Agent is signed in.</h1><p>You can close this window.</p>');
+      res.end('<h1>Kemudi is signed in.</h1><p>You can close this window.</p>');
       done(null, code);
     });
     server.on('error', (error: Error) => {
@@ -218,8 +218,8 @@ export async function login({ env = process.env, fetchImpl = fetch, open = openB
 
 export function loginInstructions(_env?: unknown): string {
   return [
-    'No Opera Agent token yet. Sign in once with a browser:',
-    '  opera-agent-mcp auth',
+    'No Kemudi token yet. Sign in once with a browser:',
+    '  kemudi auth',
     '',
     'which opens this URL and stores the token beside this install:',
     `  ${AUTHZ_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${encodeURIComponent(SCOPE)}`,

@@ -1,7 +1,7 @@
 <!-- @last-edited: 2026-11-15 UTC+7. -->
 <!-- @title: popup — MV3 runtime. -->
-<!-- The website island, compressed: electric blue ground, navy island, periwinkle accent, Apex mark. -->
-<!-- @state: one flat list of rows; every word comes from lib/i18n.js; the pairing action is the single full-width accent button. -->
+<!-- One panel, one identity, one list of doors. -->
+<!-- @state: a menu, not a page; the site's tokens, the island's ground; the accent carries the one action; icons, never dots, say what a row is. -->
 <!-- @dependencies: lib/i18n.js. -->
 
 <!doctype html>
@@ -9,66 +9,65 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title data-i18n="popup.title">Opera Agent</title>
+  <title data-i18n="popup.title">Kemudi</title>
+  <link rel="stylesheet" href="fonts.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="popup">
   <main class="shell">
     <header class="topbar">
-      <span class="mark" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="14" fill="#232344"/><path fill-rule="evenodd" fill="#c3c4ff" d="M32 2a30 30 0 1 0 0 60 30 30 0 1 0 0-60ZM48.6 14.9 27 33.5l8-.9-8.2 9.5 5.9 4.1 8.1-9.5 10.2-.8-3.3-21.9Z"/></svg></span>
-      <h1 class="topbarName">Opera Agent</h1>
-      <span id="version" class="topbarVersion">&nbsp;</span>
-      <button id="optionsButton" class="gearButton" type="button" data-i18n-aria="doors.settings" data-i18n-title="doors.settings" title="Pengaturan" aria-label="Pengaturan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3.2"/><path d="M19.5 15.2a1.8 1.8 0 0 0 .36 2l.07.07a2.1 2.1 0 0 1-2.97 2.97l-.07-.07a1.8 1.8 0 0 0-2-.36 1.8 1.8 0 0 0-1.1 1.66V22a2.1 2.1 0 0 1-4.2 0v-.08a1.8 1.8 0 0 0-1.1-1.66 1.8 1.8 0 0 0-2 .36l-.07.07a2.1 2.1 0 0 1-2.97-2.97l.07-.07a1.8 1.8 0 0 0 .36-2 1.8 1.8 0 0 0-1.64-1.1H1.9a2.1 2.1 0 0 1 0-4.2h.08a1.8 1.8 0 0 0 1.66-1.1 1.8 1.8 0 0 0-.36-2l-.07-.07a2.1 2.1 0 0 1 2.97-2.97l.07.07a1.8 1.8 0 0 0 2 .36h.04a1.8 1.8 0 0 0 1.06-1.64V2a2.1 2.1 0 0 1 4.2 0v.08a1.8 1.8 0 0 0 1.06 1.64h.04a1.8 1.8 0 0 0 2-.36l.07-.07a2.1 2.1 0 0 1 2.97 2.97l-.07.07a1.8 1.8 0 0 0-.36 2v.04a1.8 1.8 0 0 0 1.64 1.06h.08a2.1 2.1 0 0 1 0 4.2h-.04a1.8 1.8 0 0 0-1.66 1.1z"/></svg></button>
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="14" fill="#1d1d34"/><path fill-rule="evenodd" fill="#c3c4ff" d="M32 2a30 30 0 1 0 0 60 30 30 0 1 0 0-60ZM48.6 14.9 27 33.5l8-.9-8.2 9.5 5.9 4.1 8.1-9.5 10.2-.8-3.3-21.9Z"/></svg></span>
+      <span class="topbarText">
+        <h1 class="topbarName">Kemudi</h1>
+        <span id="version" class="topbarVersion">&nbsp;</span>
+      </span>
+      <button id="optionsButton" class="gearButton" type="button" data-i18n-aria="doors.settings" data-i18n-title="doors.settings" title="Pengaturan" aria-label="Pengaturan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3.2"/><path d="M19.5 15.2a1.8 1.8 0 0 0 .36 2l.07.07a2.1 2.1 0 0 1-2.97 2.97l-.07-.07a1.8 1.8 0 0 0-2-.36 1.8 1.8 0 0 0-1.1 1.66V22a2.1 2.1 0 0 1-4.2 0v-.08a1.8 1.8 0 0 0-1.1-1.66 1.8 1.8 0 0 0-2 .36l-.07.07a2.1 2.1 0 0 1-2.97-2.97l.07-.07a1.8 1.8 0 0 0 .36-2 1.8 1.8 0 0 0-1.64-1.1H1.9a2.1 2.1 0 0 1 0-4.2h.08a1.8 1.8 0 0 0 1.66-1.1 1.8 1.8 0 0 0-.36-2l-.07-.07a1.8 1.8 0 0 0 2.97-2.97l.07.07a1.8 1.8 0 0 0 2 .36h.04a1.8 1.8 0 0 0 1.06-1.64V2a2.1 2.1 0 0 1 4.2 0v.08a1.8 1.8 0 0 0 1.06 1.64h.04a1.8 1.8 0 0 0 2-.36l.07-.07a2.1 2.1 0 0 1 2.97 2.97l-.07.07a1.8 1.8 0 0 0-.36 2v.04a1.8 1.8 0 0 0 1.64 1.06h.08a2.1 2.1 0 0 1 0 4.2h-.04a1.8 1.8 0 0 0-1.66 1.1z"/></svg></button>
     </header>
 
-    <p id="statusLine" class="statusLine pending" aria-live="polite"></p>
+    <div class="status" id="status" role="status" aria-live="polite" data-tone="pending">
+      <span class="statusIcoWrap" aria-hidden="true">
+        <svg class="statusIco icoCheck" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8.5l3.3 3.3L13 4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg class="statusIco icoClock" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5.2v3l2.1 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg class="statusIco icoPower" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2.5v5.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4.6 5.7a5 5 0 1 0 6.8 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </span>
+      <span class="statusText"><span class="statusMain" id="statusMain">Terhubung</span><span class="statusSub" id="statusSub">bridge di mesin ini, menunggu perintah</span></span>
+    </div>
 
-    <button id="pairQuickButton" class="cta" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13.6 3.4 6.4 13.4h5.4l-2.2 7.2 9.2-11.2h-5.4l2.8-6Z"/></svg><span data-i18n="doors.pairQuick">Pasangkan browser ini</span></button>
+    <button id="pairQuickButton" class="cta" type="button"><svg class="ctaBolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13.6 3.4 6.4 13.4h5.4l-2.2 7.2 9.2-11.2h-5.4l2.8-6Z"/></svg><svg class="ctaCheck" hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg><span class="ctaText" data-i18n="doors.pairQuick">Pasangkan browser ini</span></button>
 
-    <div class="rows" id="doorsSection">
-      <p id="updateHint" class="updateHint" hidden>
-        <button id="updateButton" class="rowAmber" type="button">
-          <span class="rowIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v8m0 0 3-3m-3 3L5 7M3 13h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          <span class="rowBody"><span id="updateText">Versi baru tersedia.</span></span>
-        </button>
-        <button id="reloadButton" class="rowGhost" type="button" hidden data-i18n="reload.extension">Muat ulang ekstensi</button>
-      </p>
-
-      <button id="dashboardButton" class="menuItem" type="button">
-        <span class="rowIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8a6 6 0 1 1 10.5 4M2 8 1.5 4.5M2 8h4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <span class="rowBody"><span class="rowText" data-i18n="doors.dashboard">Buka Dashboard</span></span>
-        <span class="rowArrow" aria-hidden="true">&rsaquo;</span>
+    <div class="doors" id="doorsSection">
+      <button id="updateDoorButton" class="door" type="button" hidden>
+        <span class="doorIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v8m0 0 3-3m-3 3L5 7M3 13h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="doorBody"><span class="doorTitle" id="updateDoorTitle">Izinkan folder sekali</span></span>
       </button>
-      <button id="docsButton" class="menuItem" type="button">
-        <span class="rowIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 2h6l3 3v9h-9zM9 2v3h3.5M6 8h4M6 11h4" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg></span>
-        <span class="rowBody"><span class="rowText" data-i18n="doors.docs">Dokumentasi</span></span>
-        <span class="rowArrow" aria-hidden="true">&rsaquo;</span>
+
+      <button id="dashboardButton" class="door" type="button">
+        <span class="doorIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8a6 6 0 1 1 10.5 4M2 8 1.5 4.5M2 8h4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="doorBody"><span class="doorTitle" data-i18n="doors.dashboard">Buka Dashboard</span></span>
+        <span class="doorChevron" aria-hidden="true">&rsaquo;</span>
+      </button>
+      <button id="docsButton" class="door" type="button">
+        <span class="doorIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 2h6l3 3v9h-9zM9 2v3h3.5M6 8h4M6 11h4" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg></span>
+        <span class="doorBody"><span class="doorTitle" data-i18n="doors.docs">Dokumentasi</span></span>
+        <span class="doorChevron" aria-hidden="true">&rsaquo;</span>
       </button>
     </div>
 
-    <div class="rows">
-      <button id="autoUpdateButton" class="menuItem" type="button">
-        <span class="rowIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 5.5A1.5 1.5 0 0 1 3 4h3l1.5 2h5.5A1.5 1.5 0 0 1 14.5 7.5v5A1.5 1.5 0 0 1 13 14H3a1.5 1.5 0 0 1-1.5-1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
-        <span class="rowBody"><span class="rowText" data-i18n="doors.updateAuto">Update otomatis</span></span>
+    <div class="doors">
+      <button id="chipToggleButton" class="door" type="button" role="switch" aria-checked="true">
+        <span class="doorBody"><span class="doorTitle" id="chipToggleText">Tandai tab yang dipegang agent</span></span>
+        <span class="switchUI" aria-hidden="true"><span class="switchKnob"></span></span>
       </button>
-      <button id="chipToggleButton" class="menuItem" type="button" role="switch" aria-checked="true">
-        <span class="rowIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5.6" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="1.9" fill="currentColor"/></svg></span>
-        <span class="rowBody"><span class="rowText" id="chipToggleText">Tandai tab yang dipegang agent</span></span>
-      </button>
-      <button id="updateNowButton" class="menuItem accentRow" type="button" hidden>
-        <span class="rowIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 1.5v8m0 0L5 6.8M8 9.5l3-2.7M3 13.5h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <span class="rowBody"><span class="rowText" data-i18n="doors.updateNow">Perbarui sekarang</span></span>
-      </button>
-      <button id="forgetFolderButton" class="menuItem dangerRow" type="button" hidden>
-        <span class="rowIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4h12M6.5 4V2.5h3V4M4 4l.8 9.5A1.4 1.4 0 0 0 6.2 14.5h3.6a1.4 1.4 0 0 0 1.4-1.5L12 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <span class="rowBody"><span class="rowText" data-i18n="doors.forgetFolder">Lupakan folder</span></span>
+      <button id="forgetFolderButton" class="door doorDanger" type="button" hidden>
+        <span class="doorIcon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4h12M6.5 4V2.5h3V4M4 4l.8 9.5A1.4 1.4 0 0 0 6.2 14.5h3.6a1.4 1.4 0 0 0 1.4-1.5L12 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="doorBody"><span class="doorTitle" data-i18n="doors.forgetFolder">Lupakan folder</span></span>
       </button>
     </div>
 
     <p id="error" class="error" role="alert" hidden></p>
 
     <footer class="footbar">
-      <span class="footBrand" data-i18n="footer.brand">Privasi dari hari pertama.</span>
+      <span class="footBrand" data-i18n="footer.brand">Privasi sejak awal.</span>
       <span class="footText">
         <a class="footLinkText" href="https://opera-agent.pages.dev/docs.html" target="_blank" rel="noreferrer" data-i18n="footer.help">Bantuan</a>
         <span class="footSep" aria-hidden="true">|</span>

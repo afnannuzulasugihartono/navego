@@ -114,12 +114,12 @@ const CASES = [
     ext: '.cmd',
     lines: [
       '@echo off',
-      'REM Opera Agent dedicated Chrome: persistent profile, debugging port, extension always loaded.',
+      'REM Kemudi dedicated Chrome: persistent profile, debugging port, extension always loaded.',
       'REM Run this instead of opening Chrome normally. Sign in to Google once; the',
       'REM profile keeps the login and the flag keeps the extension across restarts.',
       'setlocal',
     ],
-    expected: '@echo off\n\nREM Opera Agent dedicated Chrome: persistent profile, debugging port, extension always loaded.\n'
+    expected: '@echo off\n\nREM Kemudi dedicated Chrome: persistent profile, debugging port, extension always loaded.\n'
       + 'REM Run this instead of opening Chrome normally.\n'
       + 'REM Sign in to Google once; the profile keeps the login and the flag keeps the extension across restarts.\n\n'
       + 'setlocal\n',

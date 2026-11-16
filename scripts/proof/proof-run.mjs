@@ -1,7 +1,7 @@
-// @last-edited: 2026-11-06 UTC+7.
+// @last-edited: 2026-11-15 UTC+7.
 // @title: proof-run — one real drive: a browser reads a portal, the CSV lands, and four office files come out with the bytes the site ships.
 // @state: the fixture portal, a throwaway Chrome, the MCP client over stdio, the five steps, and the record the suite rechecks.
-// @dependencies: node:child_process, node:crypto, node:fs, node:http, node:os, node:path, node:url, ../local/browsers.js, ../local/transport.js.
+// @dependencies: node:child_process, node:crypto, node:fs, node:http, node:os, node:path, node:url, ../local/browsers.js, ../local/transport.js, ../../tests/helpers/fake-cloud.mjs.
 
 // WHY THIS FILE EXISTS.
 // The product claims it drives a browser and hands back designed office files, and until this run the claim rested on separate tests: one drove a fake page, another wrote a workbook.
@@ -17,6 +17,14 @@ import { fileURLToPath } from 'node:url';
 
 import { launchArgs } from '../../local/browsers.js';
 import { waitForBrowser } from '../../local/transport.js';
+import { startFakeCloud } from '../../tests/helpers/fake-cloud.mjs';
+
+// WHY THE CLOUD METER IS ANSWERED BY A LOCAL STUB IN THIS RUN.
+// The bridge opens every session against the cloud meter, which knows an account and its plan; a throwaway Chrome with a throwaway profile has neither, so the meter refuses it with "Unauthorized device" and the extension is dropped before the first command.
+// Measured on 2026-11-15: the proof's first open_url came back empty, then the bridge's own health answered linked:false with meterRefusal "Unauthorized device." - the drive was refused, not slow.
+// So the proof points OPERA_CLOUD_URL at a loopback stub that grants a pilot session, exactly the way the local suite proves the bridge's own side of that conversation.
+// Everything else in the run is the product: the shipped extension, the shipped bridge, the shipped MCP server, and the shipped bytes.
+// The record says this out loud, because a receipt that hid the stub would be a receipt of something nobody runs.
 
 // WHY THE SERVER ANSWERS FROM A WHITELIST.
 // The portal is two files, and a server that joined the request into a folder would be a door nothing needs.
@@ -114,6 +122,53 @@ function findExtensionBrowser() {
 // WHY THE PROFILE IS TEMPORARY AND ITS REMOVAL IS FORGIVING.
 // The cookies and history the run makes must die with it, and a profile folder Chrome still holds for a moment is cleared by the operating system later.
 // A cleanup that could throw would mask the step that actually failed.
+
+// WHY THE PROOF WAITS FOR THE BRIDGE TO NAME THE DEVICE.
+// The browser answers its debugging port long before its extension is awake: the worker starts, probes the bridge, and dials in, and a command that lands in that gap is answered by nobody.
+// Measured on 2026-11-15: the first open_url of a fresh throwaway Chrome came back empty, because the call raced the worker's wake-up; the run before it, minutes earlier, had passed.
+// So the proof waits for the fact it needs - the bridge naming a device - instead of racing the extension to the first command.
+// WHY THE WAIT CANNOT LIVE INSIDE launchProofBrowser: the bridge socket belongs to the local server, and that server is spawned by speakMcp, after the browser is up.
+// A wait placed before the server exists waits for a port nobody will ever open.
+
+async function waitForBridgeDevice(bridgePort, timeoutMs = 30000) {
+  const deadline = Date.now() + timeoutMs;
+  let last = 'the bridge never answered';
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(`http://127.0.0.1:${bridgePort}/health`, { method: 'GET', cache: 'no-store' });
+      if (response.ok) {
+        const body = await response.json();
+        last = JSON.stringify(body);
+        if (body && body.ok === true && Array.isArray(body.devices) && body.devices.length > 0) return true;
+      }
+    } catch {
+      last = 'the bridge did not answer';
+    }
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  throw new Error(`the proof extension never linked the loopback bridge on ${bridgePort}; the bridge said: ${last}`);
+}
+
+// WHY THE BRIDGE IS WAITED FOR BEFORE THE BROWSER IS LAUNCHED.
+// The extension probes the bridge once when its worker wakes, and a bridge that is not there yet is a probe that fails: the worker then waits for its next wake - the alarm, half a minute away - before it looks again.
+// Measured on 2026-11-15: with the browser launched first, the proof waited thirty seconds for a link that came only when the alarm woke the worker; with the bridge up first, the extension linked in its first second.
+// So the local server starts first, the bridge answers, and the browser joins a bridge that is already there.
+
+async function waitForBridge(bridgePort, timeoutMs = 15000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(`http://127.0.0.1:${bridgePort}/health`, { method: 'GET', cache: 'no-store' });
+      if (response.ok) {
+        const body = await response.json();
+        if (body && body.ok === true) return true;
+      }
+    } catch {
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  return false;
+}
 
 export async function launchProofBrowser({ port = Number(process.env.OPERA_PROOF_PORT || 9444), bridgePort = Number(process.env.OPERA_PROOF_BRIDGE_PORT || PROOF_BRIDGE_PORT), root = process.cwd(), env = process.env, extraArgs = [] } = {}) {
   if (port === SHARED_PORT || bridgePort === SHARED_PORT) throw new Error(`${SHARED_PORT} is the shared browser; the proof run refuses to drive it.`);
@@ -216,16 +271,19 @@ export function speakMcp({ port, cwd = process.cwd(), env = process.env, bridgeP
     child.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', id, method, params })}\n`);
   });
 
+  // WHY THE ANSWER IS ONE DOCUMENT: the server puts the cost inside the answer, under elapsedMs, and never in a block of its own.
+  // Measured on 2026-11-15: this reader still expected a second text block reading "123ms", so every body it parsed was empty and open_url looked like it had returned nothing at all.
   const tool = async (name, args = {}) => {
     const result = await call('tools/call', { name, arguments: args });
     const blocks = Array.isArray(result?.content) ? result.content : [];
     const texts = blocks.filter((block) => block.type === 'text').map((block) => block.text);
-    const ms = Number(String(texts.at(-1) ?? '').replace(/\s*ms$/, ''));
-    const body = texts.slice(0, Math.max(0, texts.length - 1)).join('\n');
+    const body = texts.join('\n');
+    const answer = parseAnswer(body);
+    const elapsed = Number(answer?.elapsedMs);
     return {
       name,
-      ms: Number.isFinite(ms) ? ms : null,
-      answer: parseAnswer(body),
+      ms: Number.isFinite(elapsed) ? elapsed : null,
+      answer,
       text: body,
       image: blocks.find((block) => block.type === 'image')?.data ?? null
     };
@@ -299,12 +357,22 @@ const PAPERS = ['strategi.json', 'riset-promo.json', 'pemasaran.json'];
 export async function runProof({
   root = process.cwd(),
   out = path.join(root, 'docs', 'proof', 'out'),
-  downloads = path.join(root, 'docs', 'proof', 'downloads')
+  downloads = path.join(root, 'docs', 'proof', 'downloads'),
+  env = process.env
 } = {}) {
   const company = path.join(root, 'tests', 'fixtures', 'mock-company');
   const portal = await serveCompany(company);
-  const browser = await launchProofBrowser();
-  const mcp = speakMcp({ port: browser.port, bridgePort: browser.bridgePort, cwd: root });
+  const cloud = await startFakeCloud();
+  const port = Number(process.env.OPERA_PROOF_PORT || 9444);
+  const bridgePort = Number(process.env.OPERA_PROOF_BRIDGE_PORT || PROOF_BRIDGE_PORT);
+  const mcp = speakMcp({ port, bridgePort, cwd: root, env: { ...env, OPERA_CLOUD_URL: cloud.url } });
+  if (!(await waitForBridge(bridgePort))) {
+    await mcp.close().catch(() => null);
+    await portal.close();
+    await cloud.close();
+    throw new Error(`the local server never answered the bridge on ${bridgePort}; the browser had nothing to join.`);
+  }
+  const browser = await launchProofBrowser({ port, bridgePort, root, env });
   const steps = [];
 
   const note = (step) => {
@@ -327,6 +395,13 @@ export async function runProof({
   };
 
   try {
+    // WHY THE BRIDGE IS THE READINESS GATE: the local server owns the bridge socket, so the device appears there only when the extension's worker is awake and linked; nothing else in the run can answer a page action.
+    try {
+      await waitForBridgeDevice(browser.bridgePort);
+    } catch (error) {
+      throw new Error(`${String(error?.message ?? error)}; the stubbed meter was asked: ${JSON.stringify(cloud.requests)}`);
+    }
+
     const ready = await mcp.initialize();
     note({ tool: 'initialize', ok: true, note: `server ${ready?.serverInfo?.name ?? 'unknown'}` });
 
@@ -338,7 +413,7 @@ export async function runProof({
 
     const opened = await mcp.tool('browser_goto', { url: portal.url });
     const tabId = opened.answer?.action?.id;
-    if (!tabId) throw new Error('goto returned no tab id');
+    if (!tabId) throw new Error(`browser_goto returned no tab id; the answer was ${JSON.stringify(opened.answer)}`);
     note({ tool: 'browser_goto', ms: opened.ms, ok: true, note: `tab ${tabId} · ${portal.url}` });
 
     const read = await mcp.tool('browser_read', { tabId });
@@ -444,6 +519,7 @@ export async function runProof({
     await mcp.close().catch(() => null);
     browser.close();
     await portal.close();
+    await cloud.close();
   }
 }
 
@@ -460,6 +536,8 @@ export function recordMarkdown({ steps, browser, slides }) {
     '# Proof run: one browser, four files',
     '',
     'The local MCP server drove a throwaway Chrome over stdio: it opened the fixture portal, read the page, downloaded the CSV, and built the four files the site offers. Each file was hashed and compared with the same-named file in `site/public/contoh/`.',
+    '',
+    'One part of the run is answered locally: the cloud meter that opens a session knows an account and its plan, and a throwaway browser has neither, so the meter was pointed at a loopback stub granting a pilot session. The drive, the extension, the bridge and the files are the shipped ones; only the plan check is stood in for.',
     '',
     `Browser: ${browser}. Deck slides: ${slides}.`,
     '',

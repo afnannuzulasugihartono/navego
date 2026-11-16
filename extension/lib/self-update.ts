@@ -90,8 +90,11 @@ export async function applyBuild({ folder, installedVersion, fetchImpl = fetch }
   const response = await fetchImpl(`${UPDATE_BASE_URL}/download/opera-agent.zip`, { cache: 'no-store' });
   if (!response.ok) return { ok: false, reason: 'download-failed' };
   const entries = await readZip(new Uint8Array(await response.arrayBuffer()));
+  // WHY TWO NAMES: every install shipped before the 1.6.60 rebrand verifies the zip it downloads against the name it shipped with ('Opera Agent'); a machine that hears the same check back from this build for a Kemudi-named zip would refuse every future folder-apply and be forced through the browser updater forever.
+  // The check accepts both spellings of the product this one line has always meant.
+  // The bytes it writes over the folder are still required to carry a version, and the browser CRX road never consulted this name at all.
   const manifest = manifestOf(entries);
-  if (!manifest || manifest.name !== 'Opera Agent') return { ok: false, reason: 'not-ours' };
+  if (!manifest || (manifest.name !== 'Kemudi' && manifest.name !== 'Opera Agent')) return { ok: false, reason: 'not-ours' };
   if (!newerThan(installedVersion, String(manifest.version ?? ''))) {
     return { ok: true, changed: false, version: manifest.version ?? installedVersion };
   }

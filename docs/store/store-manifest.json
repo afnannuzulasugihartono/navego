@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Opera Agent",
-  "version": "1.6.54.0",
+  "name": "Kemudi",
+  "version": "1.6.59.0",
   "description": "Bawa asisten AI Anda mengemudikan browser: klik, ketik, isi formulir, baca halaman. Anda pilih modelnya.",
   "permissions": [
     "tabs",
@@ -41,7 +41,7 @@
     }
   ],
   "action": {
-    "default_title": "Opera Agent",
+    "default_title": "Kemudi",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",

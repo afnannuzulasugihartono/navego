@@ -229,22 +229,31 @@ const styles = fs.readFileSync(new URL('../../extension/styles.css', import.meta
 
 test('popup keeps its controls accessible and responsive in narrow Opera panels', () => {
   for (const id of [
-    'statusLine',
+    'statusMain',
     'pairQuickButton',
-    'updateHint', 'updateButton', 'dashboardButton', 'docsButton', 'autoUpdateButton'
+    'updateDoorButton', 'dashboardButton', 'docsButton',
+    'chipToggleButton', 'forgetFolderButton'
   ]) {
     assert.match(popup, new RegExp(`id="${id}"`));
   }
 
-  assert.match(popup, /<h1[^>]*>Opera Agent<\/h1>/);
+  assert.match(popup, /<h1[^>]*>Kemudi<\/h1>/);
   assert.match(popup, /role="alert"/);
   assert.match(styles, /width:\s*400px/);
   assert.match(styles, /min-width:\s*400px/, 'the popup may not collapse below the design width, whatever the viewport reports');
   assert.doesNotMatch(styles, /max-width:\s*100vw/, 'and no clamp may shrink an MV3 popup back onto a tiny initial viewport');
   assert.match(styles, /@media \(max-width: 239px\)/);
-  assert.match(styles, /body\.popup \.menuItem/, 'the rows are still styled as rows');
+  assert.match(styles, /body\.popup \.door/, 'the rows are still styled as rows');
   assert.match(script, /statusLine\(status, paired\)/, 'the status passes through the one status function');
   assert.match(script, /applyI18n\(document\)/, 'and the words are applied from the language table');
+});
+
+test('the pair door is a state, not an action, once paired', () => {
+  assert.match(script, /doors\.paired/, 'the CTA label swaps to the paired state');
+  assert.match(script, /ctaDone/, 'and the door wears the paired colour, not the call to action');
+  assert.match(popup, /id="pairQuickButton"/, 'and the door itself does not move');
+  const i18n = fs.readFileSync(new URL('../../extension/lib/i18n.ts', import.meta.url), 'utf8');
+  assert.match(i18n, /'doors\.paired'/, 'the words exist in the language tables');
 });
 
 const read = (relative) => fs.readFileSync(new URL(relative, import.meta.url), 'utf8');

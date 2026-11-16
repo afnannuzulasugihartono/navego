@@ -1,21 +1,22 @@
 {
-  "name": "opera-agent-mcp",
-  "version": "1.6.54",
+  "name": "kemudi",
+  "version": "1.6.59",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/afnannuzulasugihartono/opera-agent.git"
   },
-  "description": "Drive your own browser from an MCP client over the loopback bridge; metered per plan through the paired device.",
+  "description": "Kemudi — drive your own browser from an MCP client over the loopback bridge; metered per plan through the paired device.",
   "type": "module",
   "bin": {
-    "opera-agent-mcp": "bin/opera-agent-mcp.js",
+    "kemudi": "bin/kemudi.js",
+    "opera-agent-mcp": "bin/kemudi.js",
     "opera-local": "bin/opera-local.js"
   },
   "files": [
     "action-strategy.js",
     "advice.js",
     "agent-guide.js",
-    "bin/opera-agent-mcp.js",
+    "bin/kemudi.js",
     "bin/opera-local.js",
     "bin/opera-local-dev.js",
     "bin/opera-chrome.cmd",

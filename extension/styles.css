@@ -7,7 +7,7 @@ html:has(> body.popup) { background: #10131c; }
 
 :root {
   color-scheme: light dark;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: 'Instrument Sans', Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --bg: #fbfbfa;
   --surface: #ffffff;
   --surface-soft: #f4f4f2;
@@ -240,10 +240,6 @@ input:focus {
 
 /* WHY THE UPDATE NOTE IS ITS OWN COLOUR: a version that does not move is the one thing in the popup the person cannot explain, and it must read as a fact to act on rather than as another grey hint. */
 
-.updateHint {
-  color: var(--primary);
-}
-
 .button-stack {
   display: grid;
   gap: 6px;
@@ -338,52 +334,46 @@ footer {
 
 [hidden] { display: none !important; }
 
-
 /*
- * WHY THE POPUP IS AN ISLAND, NOT A WINDOW.
- * The website is a set of dark islands on electric blue; the popup is the smallest island the product owns - one glance, one decision.
- * It carries the site's own tokens (surface, ink, muted, accent, Instrument Sans) so the person who just came from the site recognizes the panel before they read a word.
- * The options page stays light: it is a page people sit down at; a popup is a thing they glance at.
+ * WHY THE TOOLBAR POPUP IS A MENU.
+ * W2G's popup reads as a product because it repeats one shape: panel ground, mark, a status row, one loud action, quiet list rows, a quiet footer.
+ * The popup is the product's smallest surface; it inherits the site's tokens, not the site's type scale or its marketing grammar.
+ * One fill carries the accent; nothing glows; nothing floats; radius is small and consistent.
  */
 
 body.popup {
   width: 400px;
   background: #10131c;
-  color: #f2f2f2;
+  color: #eceef2;
 }
 
 body.popup .shell {
-  margin: 10px;
-  padding: 0;
   background: #19192f;
-  border-radius: 10px;
   overflow: hidden;
+  padding: 0 0 6px;
 }
-
-/* WHY THE TOP ROW CARRIES THE GEAR: the panel is a menu, not a page, and settings earns its own door the way every other destination earns one. */
 
 body.popup .topbar {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 12px 13px;
-  border-bottom: 1px solid rgba(195, 196, 255, .12);
+  gap: 10px;
+  padding: 12px 14px 10px;
 }
 
 body.popup .mark {
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
 }
 
-body.popup .mark svg { width: 30px; height: 30px; display: block; }
+body.popup .mark svg { width: 34px; height: 34px; display: block; }
 
-body.popup .topbarName { font-size: 13px; font-weight: 600; letter-spacing: .005em; }
+body.popup .topbarText { display: grid; gap: 1px; min-width: 0; }
+body.popup .topbarName { font-size: 13.5px; font-weight: 650; letter-spacing: .005em; margin: 0; }
 
 body.popup .topbarVersion {
-  color: #b9b9e0;
-  opacity: .65;
+  color: #8b8bad;
   font-size: 10px;
   font-variant-numeric: tabular-nums;
 }
@@ -399,87 +389,77 @@ body.popup .gearButton {
   background: transparent;
   color: #c3c4ff;
   cursor: pointer;
-  transition: background .15s;
 }
 
-body.popup .gearButton:hover { background: #232344; }
+body.popup .gearButton:hover { background: #1d1d34; }
 body.popup .gearButton:focus-visible { outline: 2px solid #c3c4ff; outline-offset: -2px; }
 body.popup .gearButton svg { width: 17px; height: 17px; }
 
-/* WHY THE STATUS IS DOT + TWO LINES: the ground answers "am I connected" before the eye reaches a single label. */
-
-body.popup .statusLine {
-  position: relative;
-  margin: 0;
-  padding: 12px 13px 11px 34px;
-  border-bottom: 1px solid rgba(195, 196, 255, .12);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.45;
-  color: #b9b9e0;
+body.popup .status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 2px 14px 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #1d1d34;
 }
 
-body.popup .statusLine::before {
-  content: "";
-  position: absolute;
-  left: 13px;
-  top: 14px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #3d3d66;
-}
+body.popup .statusIcoWrap { flex: 0 0 auto; display: grid; place-items: center; width: 16px; height: 16px; }
+body.popup .statusIco { width: 16px; height: 16px; display: none; }
 
-body.popup .statusLine svg { display: none; }
+body.popup .status[data-tone="ready"] .icoCheck { display: block; color: #3ecf8e; }
+body.popup .status[data-tone="pending"] .icoClock { display: block; color: #f2c94c; }
+body.popup .status[data-tone="idle"] .icoPower { display: block; color: #7d7fa8; }
 
-body.popup .statusLine.ready { color: #eceef2; }
-body.popup .statusLine.ready::before { background: #3ecf8e; }
-body.popup .statusLine.pending::before { background: #f2c94c; }
-body.popup .statusLine.idle { color: #b9b9e0; opacity: .6; }
-
-/* WHY THE PRIMARY ACTION IS THE ONLY FILL: one button carries the color of the site's accent so the plan reads in one glance. */
+body.popup .statusText { min-width: 0; display: flex; align-items: baseline; gap: 8px; }
+body.popup .statusMain { font-size: 12px; font-weight: 600; line-height: 1.25; white-space: nowrap; }
+body.popup .statusSub { font-size: 10.5px; color: #8b8bad; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 body.popup .cta {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  width: calc(100% - 26px);
-  margin: 13px;
+  gap: 9px;
+  width: calc(100% - 28px);
+  margin: 0 14px 12px;
   padding: 0 12px;
-  min-height: 42px;
+  min-height: 44px;
   border: 0;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #c3c4ff;
   color: #0a0a24;
   font-size: 13px;
   font-weight: 650;
-  letter-spacing: .01em;
   cursor: pointer;
-  transition: background .15s, color .15s;
 }
 
 body.popup .cta:hover { background: #dcdcfb; }
 body.popup .cta:focus-visible { outline: 2px solid #c3c4ff; outline-offset: -2px; }
-body.popup .cta svg { width: 17px; height: 17px; display: block; }
+body.popup .cta svg { width: 16px; height: 16px; display: block; flex: 0 0 auto; }
+body.popup .ctaDone,
+body.popup .ctaDone:hover {
+  background: transparent;
+  color: #3ecf8e;
+}
+body.popup .ctaDone:hover { background: #1d1d34; }
+body.popup .ctaDone:focus-visible { outline: 2px solid rgba(62, 207, 142, .6); outline-offset: -2px; }
 
-body.popup .rows {
+body.popup .doors {
   display: flex;
   flex-direction: column;
-  padding: 4px 8px 10px;
+  padding: 0 6px;
 }
 
-body.popup .menuItem,
-body.popup .rowAmber,
-body.popup .rowGhost {
+body.popup .door {
   display: flex;
   align-items: center;
   gap: 11px;
   width: 100%;
-  min-height: 44px;
-  padding: 6px 9px;
+  min-height: 38px;
+  padding: 5px 10px;
   border: 0;
-  border-radius: 6px;
+  border-radius: 8px;
   background: transparent;
   color: #eceef2;
   text-align: left;
@@ -487,65 +467,75 @@ body.popup .rowGhost {
   transition: background .15s;
 }
 
-body.popup .menuItem:focus-visible,
-body.popup .rowAmber:focus-visible,
-body.popup .rowGhost:focus-visible,
-body.popup button.primary:focus-visible {
-  outline: 2px solid #c3c4ff;
-  outline-offset: -2px;
+body.popup .door:hover:not(:disabled) { background: #1d1d34; }
+body.popup .door:focus-visible { outline: 2px solid #c3c4ff; outline-offset: -2px; }
+body.popup .door:disabled { opacity: .5; cursor: default; }
+
+body.popup .doorIcon { flex: 0 0 20px; display: grid; place-items: center; color: #c3c4ff; }
+body.popup .doorIcon svg { width: 16px; height: 16px; display: block; }
+body.popup .doorBody { min-width: 0; display: grid; gap: 1px; }
+body.popup .doorTitle { font-size: 12.5px; font-weight: 550; line-height: 1.25; }
+body.popup .doorChevron { margin-left: auto; color: #565678; font-size: 14px; line-height: 1; }
+
+/* WHY THE SWITCH IS DRAWN: a switch that is not drawn is a row that toggles by courtesy; the one place the reader flips, they see it flip (the Tampermonkey row idiom). */
+
+body.popup .switchUI {
+  margin-left: auto;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 17px;
+  border-radius: 9px;
+  background: #454575;
+  padding: 2px;
+  box-sizing: border-box;
+  transition: background .18s;
 }
 
-body.popup .menuItem:hover:not(:disabled) { background: #232344; }
-body.popup .menuItem:disabled { opacity: .55; cursor: default; }
+body.popup .switchKnob {
+  display: block;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #eceef2;
+  transition: transform .18s;
+}
 
-body.popup .rowIcon { flex: 0 0 20px; display: grid; place-items: center; color: #c3c4ff; }
-body.popup .rowIcon svg { width: 17px; height: 17px; display: block; }
-body.popup .rowBody { min-width: 0; display: grid; gap: 1px; }
-body.popup .rowText { font-size: 12.5px; font-weight: 500; line-height: 1.3; }
-body.popup .rowArrow { margin-left: auto; color: #7d7d9a; font-size: 14px; line-height: 1; }
+body.popup .door[aria-checked="true"] .switchUI { background: #c3c4ff; }
+body.popup .door[aria-checked="true"] .switchKnob { transform: translateX(13px); background: #0a0a24; }
+body.popup .door:focus-visible .switchUI { outline: 2px solid #c3c4ff; outline-offset: 2px; }
 
-body.popup .dangerRow .rowIcon,
-body.popup .dangerRow .rowText { color: #ff6b6b; }
-
-body.popup .accentRow .rowIcon,
-body.popup .accentRow .rowText { color: #3ecf8e; }
-
-/* WHY THE UPDATE ROW INHERITS THE CTA COLOR: it is the one action that may not wait, so it wears the site's accent. */
-
-body.popup .updateHint { margin: 0; }
+body.popup .doorDanger .doorIcon,
+body.popup .doorDanger .doorTitle { color: #ff6b6b; }
 
 body.popup .rowAmber { background: #c3c4ff; color: #0a0a24; }
-body.popup .rowAmber .rowIcon { color: #0a0a24; }
-body.popup .rowAmber .rowArrow { color: #0a0a24; }
+body.popup .rowAmber .doorIcon,
+body.popup .rowAmber .doorTitle,
+body.popup .rowAmber .doorChevron { color: #0a0a24; }
 body.popup .rowAmber:hover { background: #dcdcfb; }
 
 body.popup .rowGhost {
   justify-content: center;
-  min-height: 34px;
-  padding: 5px 9px;
+  min-height: 32px;
+  margin: 0 12px 8px;
+  width: calc(100% - 24px);
   font-size: 11px;
   font-weight: 600;
   color: #c3c4ff;
-  background: rgba(195, 196, 255, .08);
+  background: rgba(195, 196, 255, .09);
 }
-
 body.popup .rowGhost:hover { background: rgba(195, 196, 255, .16); }
 
-body.popup .hint { color: #b9b9e0; opacity: .7; font-size: 10px; line-height: 1.45; margin: 0; }
-body.popup .hint strong { color: #eceef2; opacity: 1; font-weight: 550; }
-body.popup .hint.explain { padding: 8px 11px; }
-
 body.popup .error {
-  margin: 9px 13px 0;
+  margin: 8px 14px 0;
   padding: 8px 10px;
-  border-radius: 6px;
+  border-radius: 8px;
   background: rgba(255, 107, 107, .14);
   color: #ff8484;
   font-size: 11px;
   line-height: 1.45;
 }
 
-body.popup label { color: #b9b9e0; font-size: 10.5px; }
+body.popup label { color: #8b8bad; font-size: 10px; }
 
 body.popup input {
   width: 100%;
@@ -553,46 +543,45 @@ body.popup input {
   padding: 8px 10px;
   border: 1px solid rgba(195, 196, 255, .18);
   border-radius: 6px;
-  background: #232344;
+  background: #1d1d34;
   color: #eceef2;
   font-size: 12px;
 }
 
-body.popup input::placeholder { color: #b9b9e0; opacity: .5; }
+body.popup input::placeholder { color: #565678; }
 
 body.popup pre {
-  margin: 2px 13px;
+  margin: 2px 14px;
   padding: 8px 10px;
-  border: 1px solid rgba(195, 196, 255, .18);
+  border: 1px solid rgba(195, 196, 255, .15);
   border-radius: 6px;
-  background: #232344;
+  background: #1d1d34;
   color: #eceef2;
-  font-size: 10px;
+  font-size: 9.5px;
   white-space: pre-wrap;
 }
 
 body.popup .footbar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 9px 13px 11px;
-  border-top: 1px solid rgba(195, 196, 255, .12);
-  color: #b9b9e0;
-  opacity: .65;
-  font-size: 10px;
+  gap: 10px;
+  padding: 10px 14px 4px;
+  color: #565678;
+  font-size: 9.5px;
 }
 
-body.popup .footBrand { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: .8; }
-
+body.popup .footBrand { white-space: nowrap; opacity: .8; }
 body.popup .footText { display: flex; align-items: center; gap: 8px; margin-left: auto; white-space: nowrap; }
-body.popup .footSep { opacity: .5; }
-
+body.popup .footSep { opacity: .55; }
 body.popup .footLinkText { color: inherit; text-decoration: none; }
-body.popup .footLinkText:hover { color: #eceef2; }
-
+body.popup .footLinkText:hover { color: #c3c4ff; }
 body.popup .footLink { display: grid; place-items: center; color: inherit; transition: color .15s; }
-body.popup .footLink:hover { color: #eceef2; }
-body.popup .footLink svg { width: 14px; height: 14px; display: block; }
+body.popup .footLink:hover { color: #c3c4ff; }
+body.popup .footLink svg { width: 13px; height: 13px; display: block; }
+
+body.popup .hint { color: #8b8bad; font-size: 10px; line-height: 1.45; margin: 0; }
+body.popup .hint strong { color: #eceef2; font-weight: 550; }
+body.popup .hint.explain { padding: 8px 14px; }
 
 @media (max-width: 239px) {
   body.popup { width: 100vw; }

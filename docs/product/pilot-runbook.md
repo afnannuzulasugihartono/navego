@@ -19,18 +19,18 @@ waktunya jadi tidak bisa dibandingkan.
 ## Di mesin klien (remote desktop, operator yang mengetik)
 
 1. Tanya dulu apakah ada tab yang belum disimpan.
-2. Pasang extension Opera Agent di browser klien (hubungi operator untuk CRX-nya; atau
+2. Pasang extension Kemudi di browser klien (hubungi operator untuk CRX-nya; atau
    load unpacked dari `extension/`), lalu pair lewat dashboard — meter butuh device
    yang ter-pair.
 3. Minta pemilik akun login ke portal bank sendiri. Operator tidak mengetik password,
    tidak menjawab OTP, tidak melihat layar saat login. Setelah login, operator kembali.
 4. Pasang paket dan verifikasi:
 
-   npm i -g opera-agent-mcp
+   npm i -g kemudi
 
-   Paket belum di publikasikan ke npm (`npm view opera-agent-mcp` jawab 404), jadi
+   Paket belum di publikasikan ke npm (`npm view kemudi` jawab 404), jadi
    selama itu yang dipakai adalah `cd local && npm install -g .` dari clone repo.
-   `opera-agent-mcp doctor` harus berakhir dengan `verdict: ready` — kalau
+   `kemudi doctor` harus berakhir dengan `verdict: ready` — kalau
    `degraded`, pesan paling bawah menyebut satu perbaikan yang berlaku.
 5. Jalankan server stdio dan arahkan MCP client (opencode/Claude Desktop) ke paket ini
    dengan args `["local"]`.

@@ -593,7 +593,7 @@ const namedCtx = (tabs) => {
 };
 
 const PAGES = [
-  { id: '111', url: 'https://opera-agent.pages.dev/beranda', title: 'Opera Agent' },
+  { id: '111', url: 'https://opera-agent.pages.dev/beranda', title: 'Kemudi' },
   { id: '222', url: 'https://docs.google.com/document/d/one', title: 'Thesis - Google Docs' },
   { id: '333', url: 'https://docs.google.com/document/d/two', title: 'Notes - Google Docs' }
 ];
@@ -1343,7 +1343,10 @@ test('a drop the page took leaves no tab and reports a clean drop', async () => 
   assert.ok(!c.driver.calls.some((call) => call[0] === 'close'), 'nothing to close, nothing closed');
 });
 
-test('search answers with the structured results and closes its tab', async () => {
+// WHY THE FIXTURE KEEPS ITS OLD TITLE: the tests read a captured Bing results page, and the card names it the way Bing served it.
+// The parser reads what the page said; the site's own name today is a different fact, held elsewhere.
+
+test('browser_search answers with the structured results and closes its tab', async () => {
   const c = ctx();
   const server = createMcpServer(c);
 

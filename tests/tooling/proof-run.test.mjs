@@ -139,8 +139,8 @@ test('the recorded run still leaves the files the site ships', () => {
     assert.ok(!path.isAbsolute(row.file), 'the record carries a repository path, not a machine path');
   }
 
-  // The record is historical: at the time it was taken the deck tool was named `deck`.
-  const deck = rows.find((row) => row.tool === 'deck');
+  // The record is as recorded: at the time this record was taken the deck tool was named `deck_build`.
+  const deck = rows.find((row) => row.tool === 'deck_build');
   assert.ok(deck, 'the record carries the deck step');
   const written = fs.readFileSync(path.join(root, 'docs', 'proof', 'run.md'), 'utf8');
   assert.match(written, /Deck slides: 5/, 'the record states the slide count the file holds');

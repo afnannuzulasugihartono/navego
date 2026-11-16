@@ -122,7 +122,7 @@ test('deletes the paired device file by default', async () => {
   });
 });
 
-test('spawns npm uninstall -g opera-agent-mcp with detached:true', async () => {
+test('spawns npm uninstall -g with both names, new and legacy, detached:true', async () => {
   await withRoots(async ({ root, home }) => {
     const calls = [];
     await uninstall({
@@ -133,7 +133,7 @@ test('spawns npm uninstall -g opera-agent-mcp with detached:true', async () => {
       root,
       home,
     });
-    assert.deepEqual(calls, [['npm', 'uninstall', '-g', 'opera-agent-mcp', { detached: true, stdio: 'ignore' }]]);
+    assert.deepEqual(calls, [['npm', 'uninstall', '-g', 'kemudi', 'opera-agent-mcp', { detached: true, stdio: 'ignore' }]]);
   });
 });
 
@@ -149,7 +149,7 @@ test('spawn failure is reported and the command still exits ok', async () => {
     });
     assert.equal(result.ok, true);
     assert.match(result.message, /could not spawn/);
-    assert.match(result.message, /npm uninstall -g opera-agent-mcp/);
+    assert.match(result.message, /npm uninstall -g kemudi opera-agent-mcp/);
   });
 });
 
