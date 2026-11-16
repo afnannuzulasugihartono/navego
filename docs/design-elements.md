@@ -1,7 +1,7 @@
 # Corbin — every element, with its reason
 
 @last-edited: 2026-11-16 UTC+7.
-@state: the minimalist pass is complete for the marketing and legal surfaces; the dashboard is inventoried, its claims data-driven.
+@state: the Web 2.0 pass is complete for beranda, chrome, and the demo player; the dashboard is inventoried, its claims data-driven.
 @related: [`AGENTS.md`](../AGENTS.md) · [`ARCHITECTURE.md`](../ARCHITECTURE.md) · [`docs/design-references.md`](design-references.md)
 
 A page earns its pixels or loses them. This file is the inventory: every text element, button, card, tile, strip and rule on the 16 surfaces, with the reason it exists and the decision taken. Format per entry: `element — reason — decision` (K=keep, C=cut).
@@ -10,38 +10,32 @@ Two house rules do the audit's heavy lifting: no element may sell what the produ
 
 ## Site chrome (all pages)
 
-- Brand mark + wordmark `corbin` — the identity; one raven, one name — K.
+- Brand mark (chrome raven medallion: metal silhouette, iridescent ring, lit amber eye, one lens flare) + wordmark `corbin` in chrome gradient — the identity; one raven, one name, drawn in the millennium's own metal — K.
+- Version pill `v1.6.54` — the era's "beta" tag carrying the true version; pinned by the suite, never invented — K.
 - Nav: `Fitur` `Harga` `Docs` — the three doors a new reader needs before installing; everything else reachable from those three or the footer — K.
 - Nav CTA `Pasang corbin` — one action, always visible, the product's reason to exist — K.
 - Footer `Produk` (Fitur/Harga/Unduh/Docs/MCP) — deep links a curious reader wants after the fold — K.
 - Footer `Legal` (Dukungan/Privasi/Syarat) — required routing, never in nav — K.
 - Footer tagline `Huginn & Muninn — Odin's ravens. Browser Anda, atas perintah Anda.` — the name's meaning; without it, the raven is only a picture — K.
+- Footer badge `88×31` — the era's link-me button, drawn as our own mark so other sites can link us the 2001 way; it carries no third party's claim — K.
 - Footer bar `© 2026 Corbin — private, local, signed.` — ownership + the three-word security story; `Privasi · Syarat · Dukungan` — legal mirror of the nav for readers at the bottom — K.
 
 ## beranda
 
-- h1 `Corbin.` — the name, the product, the brand; a reader who forgets nothing else — K.
-- Lede `Asisten AI di browser Anda.` — what it is, in one line — K.
-- Support line `Membaca halaman, mengisi formulir, bekerja lintas tab — satu perintah teks.` — the three verbs the product actually performs; no adjectives — K.
-- CTA `Pasang corbin →` — the one action on this screen — K.
-- Plan note `plan.pilot gratis` / `Rp 249 rb / 30 hari untuk Firm` — the cost before the click; hidden text is how pilots churn — K.
-- Hero plate `Corvus corax — setelah Naumann, 1874 · public domain` — the real raven, drawn by an 1874 naturalist; the brand is a real bird, credited — K.
-- Facts strip `56 tool · 36 primitive · 6 izin · MV3 Chrome·Edge·Brave · Data tetap di device` — five falsifiable claims, all pinned by the suite (tool/primitive counts derive from source) — K.
-- `Semua halaman. Bukan daftar putih.` + 8 tiles (Sheets, Docs, Maps, YouTube, Gmail, Notion, GitHub, Shopee) — shows breadth of surfaces without a fake compatibility claim; dropped Figma, Linear, Jira, Traveloka (four identical-weight tiles that said nothing new) — C→K (trimmed).
-- `Tidak ada API per situs.` / `Satu endpoint, semua halaman.` — the architectural claim that justifies the whole product; two statements, as big as they deserve — K.
-- Install section: `Dari prompt ke hasil.` head — K.
-- Step list `Unduh / Masuk / Pair` — the three-step path, nothing else — K.
-- Terminal block (`macOS/Linux/Windows` + command + `Salin`) — the real install path, given honestly; copyable — K.
-- `Panel extension` example card — shows the popup; the paired state, the action, the result — one glance, no video — K.
-- Run-log panel (`Isi spreadsheet onboarding dari web`…`onboarding.csv — tersimpan`) — proves the loop end to end — K.
-- Model section: `Pakai model sendiri.` head + copy `Endpoint dan kunci ada di browser Anda.` — the privacy promise in one sentence — K.
-- Model form (provider/endpoint/name/key/저장) — the actual configuration; the one interactive page action besides CTAs — K.
-- `Apa yang ia kerjakan.` + 6 feature rows (One endpoint / Membaca / Mengisi / Ingat / Artefak / Kendali) — each names a capability the tests pin — K.
-- `Pasang. Pair. Kerja.` closing CTA — the entire onboarding in three words — K.
-- FAQ (`Biaya`, `Data`, `Berhenti`) — answers the three objections at the exact price/data/exit questions — K.
-- Pricing teaser (`Isi saldo Rp10.000` / `Plan Firm Rp249.000` / `plan.pilot gratis`) — routes to /harga.html with no bait — K.
-
-Cut this pass: nothing decorative survives; the four weakest tiles were removed.
+- h1 `Corbin.` — the name as a chrome-gradient glyph (Arial Black italic, `#ffffff → #d8ecff → #8fd8ff → #ffffff`) with an aqua halo; one loud line, the millennium way to say one thing — K.
+- Kicker `Ekstensi browser` — the category in three words; answers "apa ini?" before the name does — K.
+- CTA `Pasang corbin` (magenta gel, glowing) + `Pelajari →` (chrome) — the one action and its door — K.
+- Plan note `plan.pilot gratis — 200 perintah/hari, 50 per sesi.` — priced honestly from the published pilot quota; the cost before the click — K.
+- Starburst `Pasang gratis!` — one per page; the claim is the pricing FAQ's own first sentence (`Pasang gratis`), nothing invented — K.
+- Framed plate `Corvus corax — setelah Naumann, 1874 · public domain` — chrome frame with aqua rim light around an ink engraving — K.
+- Facts ticker pill `56 tool · 36 primitive · 6 izin · MV3 Chrome·Edge·Brave · Data tetap di device` — same five falsifiable claims, now chrome with magenta numerals — K.
+- `Coba Corbin.` + `Klik. Lihat ia bekerja.` — the demo's frame, two short lines — K.
+- `Corbin Player` (the film) — chrome bezel, aqua LCD status strip, round aqua play button; plays the real Sinar Jaya September run: same CSV, same totals, a download that really exists — K.
+- `Fungsinya.` + `Baca halaman. Tulis halaman. Kirim hasilnya.` — the three verbs, three lines, light panel — K.
+- `Cara ia bekerja.` + `Lima hal, satu arah: selesai.` + 5 feature rows — each row names a capability the suite pins — K.
+- `Harganya. Tidak kejutan.` + 3 plan cards — money stated before the click; the Firm card is midnight indigo with an aquo name (weight of emphasis, not a "best seller" claim — see pass notes) — K.
+- `Sebelum Anda bertanya.` + `Semuanya di sini.` FAQ (`Biaya`, `Data`, `Berhenti`) — the three objections at the exact price/data/exit questions — K.
+- `Pasang. Pair. Kerja.` closing tail-CTA — K.
 
 ## fitur
 
@@ -120,12 +114,20 @@ Cut this pass: nothing decorative survives; the four weakest tiles were removed.
 - Dashboard (9 views): Ringkasan (plan + metrics + checklist), Device (pair/revoke), Riwayat, Tabel, Sesi dengar, Saldo, Pairing, Aksi, Akun ini — each view answers one operational question a paying reader asks about their device — K.
 - Dashboard empty states — never a blank screen — K.
 
-## Minimalist pass — what changed
+## Y2K pass — what changed
 
-1. Logo tiles 12 → 8 (Figma/Linear/Jira/Traveloka removed: four tiles, zero new information).
-2. Tiles lost their fill; the strip is now a type-set list — fewer boxes, same breadth.
-3. Feature/download cards lightened from #e7e3d5 to #ece9de — a tone step, not a slab.
-4. `.sheet` (spec panels) lost the 2px frame — the tone step carries the grouping alone.
-5. Section vertical rhythm 56px → 72px — more air, fewer eye-anchors competing for attention.
+1. The mark is new: chrome raven inside an iridescent ring (`components/Raven.tsx` + `public/icon.svg`) — metal, aqua rim, lit amber eye, one lens flare; the console rail gets the chrome head variant.
+2. Palette became liquid light: silver-blue page with scanline texture, chrome panels, midnight indigo for console/footer/hero, aqua `#00b8e6` for live state, magenta `#e0219b` for the one CTA, lime `#86e800` used exactly twice.
+3. The hero became a lit midnight splash panel with auras, sparkle points and a chrome frame around the plate.
+4. Typography: Arial Black (display, italic for the big line) + Tahoma (body) + Lucida Console (code, the film's terminal) — all system faces, zero font requests.
+5. Buttons became magenta gel with an aqua halo; the current nav page wears deep blue with a cyan glow; tables got wet blue headers and aqua-tinted zebra rows.
+6. The demo's chrome became brushed metal with an aqua LCD status strip and an aqua play button.
+7. Footer: midnight indigo with a 3px iridescent rule and the 88×31 badge to take away.
+8. Instrument Sans Variable removed for good (no font dependency left at all); theme-color now `#dbe7f3`.
+9. `.plan.is-primary::after TERLARIS` was cut before it ever shipped: no sales data exists, so the badge could only be a lie.
+10. Focus ring: 2px indigo outline plus an aqua halo — visible on chrome panels and midnight indigo alike.
+11. Dead CSS deleted along the way: `.steps-brief`, `.proof-panel`, `.chapter-link`, `.promises`, `.hero-corner`/`.hero-hud`, `full-bleed`/`hero-veil`, and the whole mission/XP/reward block.
+
+Nothing functional was removed. Every surviving element answers a question the reader actually asks, or proves a claim the product actually makes.
 
 Nothing functional was removed. Every surviving element answers a question the reader actually asks, or proves a claim the product actually makes.

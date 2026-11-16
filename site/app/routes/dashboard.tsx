@@ -350,7 +350,7 @@ export default function Dashboard() {
                     <div><dt>Perintah selesai</dt><dd>{doneSum}<span style={{ color: 'var(--muted)' }}> / {totalSum}</span></dd></div>
                   </dl>
 
-                  <div className="panel" style={{ background: planRemaining <= 0 ? '#f3d9d3' : planPercent >= 80 ? '#f6ecd0' : '#e7e3d5' }}>
+                  <div className="panel" style={{ background: planRemaining <= 0 ? '#f6dcd6' : planPercent >= 80 ? '#fbeab6' : 'var(--panel-2)' }}>
                     <div className="panel-head">
                       <h2 style={{ fontSize: 15 }}>Plan</h2>
                       <span className={`chip ${plan?.status === 'active' ? 'good' : 'warn'}`}>{plan?.status === 'active' ? 'aktif' : plan?.status || 'memuat…'}</span>

@@ -159,8 +159,8 @@ export default function Akun() {
               <dl className="sheet" style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', marginTop: 10 }}>
                 {[['Alamat', email], ['Penyedia', PROVIDER_LABEL[provider] || provider], ['Masuk terakhir', relativeTime(user?.last_sign_in_at)], ['ID akun', user?.id || '—']].map(([k, v]) => (
                   <div key={k as string} style={{ display: 'contents' }}>
-                    <div style={{ padding: '8px 12px', color: 'var(--muted-2)', background: '#fff', borderBottom: '1px solid #ece8db', fontSize: 12 }}>{k}</div>
-                    <div style={{ padding: '8px 12px', background: '#fff', borderBottom: '1px solid #ece8db', fontSize: 12, fontFamily: k === 'ID akun' ? 'ui-monospace, Consolas, monospace' : 'inherit' }}>{v}</div>
+                    <div style={{ padding: '8px 12px', color: 'var(--muted-2)', background: '#fff', borderBottom: '1px solid var(--card-2)', fontSize: 12 }}>{k}</div>
+                    <div style={{ padding: '8px 12px', background: '#fff', borderBottom: '1px solid var(--card-2)', fontSize: 12, fontFamily: k === 'ID akun' ? "'Lucida Console', Consolas, monospace" : 'inherit' }}>{v}</div>
                   </div>
                 ))}
               </dl>

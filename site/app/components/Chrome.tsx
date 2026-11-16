@@ -14,6 +14,7 @@ export function SiteHeader({ current }: { current?: string }) {
         <Link className="brand" to="/beranda.html" aria-label="Corbin — beranda">
           <Raven variant="icon" size={22} />
           <span className="brand-word">corbin</span>
+          <span className="brand-version">v1.6.54</span>
         </Link>
         <nav className="nav" aria-label="Navigasi utama">
           {NAV.map((item) => (
@@ -62,6 +63,9 @@ export function SiteFooter() {
               <span className="brand-word" style={{ fontSize: 16 }}>corbin</span>
             </div>
             <p className="footer-tag">Huginn &amp; Muninn — Odin&#x27;s ravens. Browser Anda, atas perintah Anda.</p>
+            <a className="footer-badge" href="/beranda.html" aria-label="Corbin — pasang badge di situs Anda">
+              <img src="/assets/badge-88x31.svg" width={88} height={31} alt="Corbin — Asisten AI di browser Anda" loading="lazy" />
+            </a>
           </div>
           <nav aria-label="Produk">
             <h3>Produk</h3>

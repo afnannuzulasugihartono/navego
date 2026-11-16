@@ -43,8 +43,8 @@ export default function Mcp() {
           <section key={id} style={{ marginTop: 26 }}>
             <h2 style={{ fontSize: 18, marginBottom: 8 }}>{title}</h2>
             <div style={{ background: 'var(--ink)', borderRadius: 8, padding: '9px 12px', display: 'flex', alignItems: 'center', gap: 12, maxWidth: 640 }}>
-              <code style={{ background: 'transparent', color: '#f4f1e9', fontSize: 12 }}>{body}</code>
-              <button onClick={() => copy(body, id)} style={{ background: '#262630', color: '#f4f1e9', border: 0, borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit', marginLeft: 'auto' }}>{copied === id ? 'Tersalin' : 'Salin'}</button>
+              <code style={{ background: 'transparent', color: '#d8f4ff', fontSize: 12 }}>{body}</code>
+              <button onClick={() => copy(body, id)} style={{ background: 'linear-gradient(to bottom, #2a6ae0, #123fb8)', color: '#ffffff', border: '1px solid #061c4e', borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit', marginLeft: 'auto' }}>{copied === id ? 'Tersalin' : 'Salin'}</button>
             </div>
             <p style={{ color: 'var(--muted-2)', fontSize: 13, marginTop: 8, maxWidth: '72ch' }}>{note}</p>
           </section>
@@ -56,8 +56,8 @@ export default function Mcp() {
             <div key={id} style={{ marginBottom: 14 }}>
               <h3 style={{ fontSize: 13, color: 'var(--muted-2)', marginBottom: 6 }}>{title}</h3>
               <div style={{ background: '#101014', borderRadius: 8, padding: '10px 12px', maxWidth: 640, position: 'relative' }}>
-                <pre style={{ color: '#f4f1e9', fontSize: 11.5, overflowX: 'auto' }}><code>{body}</code></pre>
-                <button onClick={() => copy(body, id)} style={{ position: 'absolute', top: 8, right: 8, background: '#262630', color: '#f4f1e9', border: 0, borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit' }}>{copied === id ? 'Tersalin' : 'Salin'}</button>
+                <pre style={{ color: '#d8f4ff', fontSize: 11.5, overflowX: 'auto' }}><code>{body}</code></pre>
+                <button onClick={() => copy(body, id)} style={{ position: 'absolute', top: 8, right: 8, background: 'linear-gradient(to bottom, #2a6ae0, #123fb8)', color: '#ffffff', border: '1px solid #061c4e', borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit' }}>{copied === id ? 'Tersalin' : 'Salin'}</button>
               </div>
             </div>
           ))}

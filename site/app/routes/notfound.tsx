@@ -23,7 +23,7 @@ export default function NotFound() {
       <SiteHeader current="/404.html" />
       <main className="wrap">
         <section className="statement" style={{ paddingTop: 56, paddingBottom: 10 }}>
-          <figure className="hero-figure" style={{ maxWidth: 420 }} aria-hidden="true">
+          <figure className="hero-frame" style={{ maxWidth: 400 }} aria-hidden="true">
             <img src="/assets/raven-1874.jpg" width={1454} height={852} alt="" loading="eager" />
             <figcaption><em>Corvus corax</em> — setelah Naumann, 1874 · public domain</figcaption>
           </figure>
@@ -33,7 +33,7 @@ export default function NotFound() {
         <ul style={{ listStyle: 'none', display: 'grid', gap: 10, maxWidth: 620, margin: '20px 0 40px' }}>
           {EXITS.map(([href, title, body]) => (
             <li key={href}>
-              <Link to={href} style={{ display: 'grid', gap: 2, background: 'var(--card)', borderRadius: 12, padding: '13px 16px', textDecoration: 'none' }}>
+              <Link to={href} style={{ display: 'grid', gap: 2, background: 'var(--panel)', border: '1px solid var(--line)', boxShadow: 'var(--panel-shadow)', borderRadius: 12, padding: '13px 16px', textDecoration: 'none' }}>
                 <strong style={{ fontSize: 14.5 }}>{title}</strong>
                 <span style={{ fontSize: 12, color: 'var(--muted-2)' }}>{body}</span>
               </Link>

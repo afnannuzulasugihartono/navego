@@ -91,7 +91,7 @@ export default function Harga() {
           </section>
 
           <section className="plan is-primary" role="listitem" aria-labelledby="cardFirmTitle">
-            <p className="plan-name">Paling dipakai</p>
+            <p className="plan-name">Kuota terbesar</p>
             <h2 id="cardFirmTitle" className="plan-price">Plan Firm<small> Rp249.000 · 30 hari, sekali bayar</small></h2>
             <ul>
               <li>Kuota 5000 perintah per hari — Pilot hanya 200.</li>
@@ -111,7 +111,7 @@ export default function Harga() {
 
         <dl className="sheet" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 0, marginTop: 26, maxWidth: 900 }}>
           {GLANCE.map(([k, v]) => (
-            <div key={k} style={{ padding: '12px 14px', background: '#fff', borderRight: '1px solid #e4e0d2' }}>
+            <div key={k} style={{ padding: '12px 14px', background: '#fff', borderRight: '1px solid var(--line)' }}>
               <dt style={{ fontSize: 10.5, color: 'var(--muted)', fontWeight: 700 }}>{k}</dt>
               <dd style={{ fontWeight: 800, fontSize: 15, marginTop: 3 }}>{v}</dd>
             </div>

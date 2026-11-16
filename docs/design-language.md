@@ -1,66 +1,68 @@
 # Corbin — the design language, every decision with its meaning
 
 @last-edited: 2026-11-16 UTC+7.
-@state: the constitution for every visible pixel of the site; the audit's sibling is [`design-elements.md`](design-elements.md), which justifies each element, not each value.
+@state: the Y2K pass is complete for the mark, the chrome, the hero and the player; the audit's sibling is [`design-elements.md`](design-elements.md), which justifies each element, not each value.
 @related: [`AGENTS.md`](../AGENTS.md) · [`ARCHITECTURE.md`](../ARCHITECTURE.md) · [`docs/design-elements.md`](design-elements.md)
 
 Every word, element, color, style, image and proportion below says why it exists. A decision without a sentence in this file does not ship. Nothing ships for decoration; nothing hides for convenience.
 
+This era is deliberate. The owner asked for the site whole in the millennium style: chrome, liquid light, the atomic age. The rule is not nostalgia, it is the product's own posture — a 2001 desktop utility that drives the real web. The dress says "the future just shipped"; the substance stays exactly what it is.
+
 ## The name
 
-- **Corbin** — from the Latin *corvus*, raven; the Germanic given name meaning raven. Short, spellable, one syllable in every European language the site supports.
-- **The raven** — Odin's Huginn and Muninn: thought and memory, the two birds that fly across the world each day and return with what they saw. The product is the same animal in code: it flies out (reads your page), it flies back (tells you what it found), it acts (moves the browser). Every visual decision on this site descends from that one bird.
+- **Corbin** — from the Latin *corvus*, raven; the Germanic given name meaning raven. Short, spellable, one syllable.
+- **The raven** — Odin's Huginn and Muninn: thought and memory, the two birds that fly across the world each day and return with what they saw. The product is the same animal in code: it flies out, it flies back, it acts. Every visual decision descends from that one bird — even the millennium chrome is the light the bird flies through.
 
-## The images
+## The mark — the chrome raven
 
-- **The 1874 Naumann plate** (`Corvus corax`, after Naumann, 1874, public domain) — the bird as naturalists measured it: steep forehead, the hump of feathers over the bill base, the hooked culmen, the shaggy crown and throat, the eye ringed in a face of streaks. Used as the opening gesture on beranda/index/404 because it is the raven drawn by the era of the raven before photography — authentic anatomy, not a brand doodle. It is *borrowed*, so it carries its credit line everywhere it lands.
-- **The vector mark** (`components/Raven.tsx`, `public/icon.svg`) — the plate reduced to the three shapes that survive 16 pixels: filled silhouette, amber eye, knocked-out beak line. Used in the header, footer and favicon. It is the bird at a glance; the plate is the bird at a sitting.
+- **The medallion** (`components/Raven.tsx`, `public/icon.svg`) — the 1874 Naumann silhouette rebuilt as polished metal inside an iridescent ring: aqua → violet → magenta → lime. Around it, a dark indigo disc lit from the upper left, one lens flare, and the eye as the single warm point (amber, with a lit halo). It is the era's favourite object — the atomic-age medallion — carrying the only animal the brand has ever had.
+- **The head variant** — the same silhouette in chrome for the console rail: metal on indigo, eye lit, one cyan rim line.
+- **The 1874 Naumann plate** (`public/assets/raven-1874.jpg`) — the bird as naturalists measured it, still the picture on beranda, index and notfound. It is *borrowed*, so it carries its credit line wherever it lands. The mark is the bird rendered in chrome; the plate is the bird drawn in ink.
+- **Why the mark is an orb and not a doodle**: 2001 identity design was built on light — spheres, rings, glass, reflections. A raven in an orb is the same sentence in that language, and it survives 16 pixels because the ring, the hook and the eye carry the read.
 
-## The palette
+## The palette — liquid light
 
-- **Paper `#f4f1e9`** — every page of this site is a document you read, not an app you operate. Paper is the surface of every honest instruction manual, lab notebook and naturalist plate ever printed. The raven has flown across those pages for a thousand years; the site is one more.
-- **Ink `#16161a`** — the raven's own color, warm-blue near-black, not pure `#000`. Pure black on paper is harsh, crude, cheap; this is feather, not carbon. Every primary stroke, rule and filled surface uses it.
-- **The two heavy rules (2px ink) framing every page** — the sheet's two edges. The page is one sheet; the rules hold it open. A page without them is a screen; a sheet with them is a document.
-- **Surface `#e7e3d5` / `#ece9de`** — aged linen, the cheapest tone step between paper and ink. Groups content *without* shadows, borders or floating cards. Depth in this system is earned by distance, never bought with blur.
-- **Amber `#d8923f`** — the raven's eye. It is the only warm, living point in an all-ink bird, and it is reserved for exactly that role everywhere: the eye, the live/active state, the focus ring, the "this one matters" signal. It never fills a surface; it never decorates. If amber is on screen, something is alive.
-- **Good `#2e7d4f`** — forest, not neon. A finished job is a tree that grew, not a siren that cried.
-- **Danger `#a63a3a`** — dried blood. An error is a wound the reader should see at full value, never an orange warning to shrug at.
-- **Muted `#55524a` / `#3f3f38`** — the feather seen from a distance: still present, not shouting. Prose, captions, secondary labels.
+- **Silver-blue page `#dce6f2` over `#eef4fb`** — the washed sky of the millennium desktop, with a fine scanline texture and two soft auras (aqua top-left, magenta right). The page is lit, not printed.
+- **Chrome panels** — every content surface is polished metal: `#ffffff → #eef2f8 → #d3dbe6 → #e9eef4`, one `#93a3b8` bevel, one inner white highlight. Chrome is the era's default surface and it is what makes a page feel like an interface instead of a document.
+- **Deep indigo `#16205a → #0d1338`** — the console, the footer, the primary plan card, the hero's night sky. Dark indigo is where chrome reads as chrome.
+- **Aqua `#00b8e6` (hi `#7ff0ff`)** — the millennium's signature liquid light. It marks the live state: active nav, focus halo, progress fill, links on dark, the eye's halo. It never fills a large surface.
+- **Magenta `#e0219b` (hi `#ff7ad9`)** — the second liquid: primary buttons, the numerals in the facts ticker, the starburst, the "»" bullets. One accent per role, never both at once in the same component.
+- **Lime `#86e800`** — the Y2K green, used exactly twice: the free-plan line in the hero and the success pulse on the facts ticker. More than that is vomit.
+- **Amber `#d8923f`** — the raven's eye, and only the eye: the mark, the film lines, the amber data. The one warm point in a cold system.
+- **Iridescent rule** (`aqua → violet → magenta → lime → aqua`) — the era's one indulgence: a 3px rule at the top of the footer, the auth divider, the glow edge on chrome. One per screen.
+- **Shadows `rgba(18,34,64,…)`** — cool, below 30px, always paired with an inset white highlight. Warm shadows and grey haze are the failure mode this palette exists to avoid.
 
 ## The typography
 
-- **Instrument Sans Variable, one face, always** — the raven has one voice. Two typefaces would make two arguments; one face makes one. The variable weight axis does all hierarchy (400 body, 700 labels/titles, 800 display), so no page ever says two things in two voices.
-- **Display: negative tracking `-0.03em`, weight 800, line-height 0.92–1.02** — the one line the page is built around. One line, one loud voice, like the raven's single croak. Everything else whispers relative to it.
-- **Body 15–16px / 1.55** — below 15px a reader squints on cheap screens; above 16 the page becomes a billboard. 1.55 line-height is print composure, not screen airiness.
-- **Tabular figures everywhere numbers align** — the raven counts; columns of figures line up or the column is a lie.
-- **One line per statement, ever** — the raven speaks in short lines; the page does too.
-- **No monospace outside `<code>`** — monospace has one meaning on this site: "run this". Anywhere else it is a lie about code.
-- **No tracked-uppercase micro-labels, ever** — shouting in small letters is not hierarchy, it is noise. Sentence case at a readable size is the quietest way to label; nothing else is used.
-- **Headlines never exceed two lines at any width** — the raven's eye is wide but finite; two lines is the whole idea.
+- **Arial Black — the display and label face.** The millennium's heaviest system face, always set italic for the display line and upright for buttons and labels. Headlines, buttons, rails, chips, the brand word, the player's title bar.
+- **Tahoma — the body face, 13.5px / 1.65.** The face every 2001 desktop shipped; small, tight, extremely legible.
+- **Lucida Console — the code and terminal face.** The pre-2000 console standard, and the reason the film's run-log looks like a real machine speaking.
+- **Display: weight 900, tracking `-0.03em` to `-0.05em`, line-height 0.86–1.04** — one loud line per section. The hero display is chrome-gradient text clipped to the glyphs (`#ffffff → #d8ecff → #8fd8ff → #ffffff`) with an aqua halo; the same trick carries the auth headline and the film's closing card.
+- **Tabular figures** wherever numbers align — the raven counts.
+- **Tracked-uppercase for kickers and bar chrome only** (`0.1–0.3em`), never for body copy.
+- **Sentence case everywhere else** — the era's all-bold sentence case is the human register.
 
 ## The space
 
-- **Frame: one `--maxw: 1160px` column, equal outer margins at every width** — asymmetry lives inside the grid, never in the frame. The raven flies at the same speed regardless of sky.
-- **Vertical rhythm 56–96px between sections** — the raven glides; the page breathes. No cramped stacking.
-- **Whitespace is the primary separator; tone step is secondary; rules are the frame only** — three distances, ranked. A divider that is not a frame does not exist on this site.
-- **Asymmetry: text left, image or panel right (or vice versa)** — a raven crosses a field diagonally, not dead center. No section is centered; the eye travels.
+- **Frame: one `--maxw: 1160px` column** — equal outer margins at every width.
+- **The hero is a lit panel, not a page** — a rounded midnight card with aqua and magenta auras, floating stars and a chrome frame around the plate. It is the splash screen of the millennium, sized to today's screen.
+- **Panels carry the work** — dashboard, docs rail, spec sheets, plans, FAQ; the header strip is the era's tab without being a fake control.
+- **Glow is used as depth** — aqua halos under chrome edges, magenta under the primary button, never a rainbow around everything.
 
 ## The surfaces
 
-- **Cards exist to group ambiguous-to-group content, and never to decorate** — the tone step replaces the border; the border replaces nothing. If a card holds one sentence, it is not a card, it is a paragraph with shoulders.
-- **One filled button per screen, ever** — attention is finite and the reader is a raven, not a crowd. The filled button is the one thing the page wants from you; everything else is a door, not a drum.
-- **Inputs carry 2px inset strokes** — the only stroke on a control that means "you can type here", and the focus stroke doubles as the answer to "where am I".
-- **Chrome (header/footer) is paper and one 2px rule each** — the site is its own furniture; it does not need a second coat.
-
-## The images
-
-- **Photographs or the 1874 plate only** — no stock illustration, no icon grids, no fake product shots. A page that cannot show the thing shows the real thing, or it shows the bird.
-- **Every image is captioned with its source** — a borrowed bird is a borrowed fact; credit is the price of carrying it.
+- **The header is a chrome bar** — white-to-silver gradient, one bevel line, a version pill (`v1.6.54`, the true version), the chrome wordmark, nav as chrome pills with the current page in deep blue with an aqua halo, and one magenta gel CTA.
+- **The footer is midnight indigo with an iridescent top rule** — brand, two link columns, legal mirror; aqua headings with halo, cool grey copy, and the 88×31 badge to take away.
+- **One filled CTA per screen** — magenta gel with a glow. Everything else is chrome.
+- **Inputs**: white inset wells; focus doubles an aqua ring — visible on chrome and on indigo alike.
+- **The plate frame is chrome** — brushed metal border, deep drop shadow, aqua rim light; the picture inside stays an ink engraving.
+- **Tables are wet tables** — deep blue gel header row, aqua-tinted zebra rows, right-aligned tabular numerics.
 
 ## The failure modes — what each decision forbids
 
-- **No gradients, glows, glass, blur** — they lie about depth; depth here is distance, tone and shape.
-- **No shadows on rest** — resting things cast nothing; only dialogs and menus float.
-- **No centered long-form text** — documents are never centered.
-- **No marketing verbs** — "seamless", "supercharge", "unleash", "jam-packed" are forbidden; only verbs the product performs on the page, and facts it can prove.
-- **No decoration without a sentence** — any pixel on this page that cannot be explained in one sentence in [`design-elements.md`](design-elements.md) is a pixel that does not ship.
+- **No flat Apple restraint** — the owner rejected it: "gallery" is not "portal". A page with only hairlines and empty air is a museum, not a tool.
+- **No Y2K vomit** — no lime on aqua, no rotating gradients, no bouncing logos, no tiled chrome textures on every surface. Aqua and magenta have separate roles; lime appears twice on the whole site.
+- **No fake OS affordances** — the player's title bar and status cells are not clickable; a button that cannot be pressed is a painted lie. Play, download, back are real.
+- **No glow on body text** — halos belong to display type, the eye, and edges.
+- **No marketing verbs** — "seamless", "supercharge", "unleash" remain forbidden; only verbs the product performs and facts it can prove.
+- **No decoration without a sentence** — any pixel on this page that cannot be explained in one sentence in [`design-elements.md`](design-elements.md) does not ship.

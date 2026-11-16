@@ -35,7 +35,7 @@ export default function Studi() {
             <h2 id="inputTitle">Masukannya satu file.</h2>
             <p>Dua puluh tiga baris kas September, empat kolom: tanggal, akun, kanal, jumlah. Tidak ada template dan tidak ada tabel yang sudah jadi.</p>
           </div>
-          <pre style={{ background: 'var(--ink)', color: '#f4f1e9', borderRadius: 10, padding: '14px 16px', maxWidth: 640, overflowX: 'auto', fontSize: 12 }}><code>Tanggal,Akun,Kanal,Jumlah
+          <pre style={{ background: 'var(--ink)', color: '#d8f4ff', borderRadius: 10, padding: '14px 16px', maxWidth: 640, overflowX: 'auto', fontSize: 12 }}><code>Tanggal,Akun,Kanal,Jumlah
 2026-09-02,Pendapatan Penjualan,Langganan,48.250.000
 2026-09-05,Pendapatan Penjualan,Proyek,31.400.000
 2026-09-03,Beban Pokok Layanan,Proyek,-28.900.000</code></pre>

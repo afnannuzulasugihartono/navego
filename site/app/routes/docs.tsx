@@ -191,7 +191,7 @@ export default function Docs() {
               <h3>{group}</h3>
               <dl className="sheet" style={{ maxWidth: 780 }}>
                 {items.map(([name, body]) => (
-                  <div key={name} style={{ display: 'grid', gridTemplateColumns: 'minmax(150px, 230px) 1fr', gap: 10, padding: '7px 12px', background: '#fff', borderBottom: '1px solid #ece8db', fontSize: 12.5 }}>
+                  <div key={name} style={{ display: 'grid', gridTemplateColumns: 'minmax(150px, 230px) 1fr', gap: 10, padding: '7px 12px', background: '#fff', borderBottom: '1px solid var(--card-2)', fontSize: 12.5 }}>
                     <code>{name}</code>
                     <span style={{ color: 'var(--muted-2)' }}>{body}</span>
                   </div>
@@ -204,15 +204,15 @@ export default function Docs() {
           <p>Satu server MCP per mesin: driver lokal, jalan di mesin Anda sendiri, tanpa biaya per panggilan dan tanpa melewati server orang lain. <Link to="/mcp.html">Pasang driver lokal</Link>.</p>
           <p>Koneksi driver lokal:</p>
           <div style={{ background: 'var(--ink)', borderRadius: 8, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 12, maxWidth: 640 }}>
-            <code style={{ background: 'transparent', color: '#f4f1e9' }}>npx -y opera-agent-mcp local</code>
-            <button onClick={() => copy('npx -y opera-agent-mcp local', 'mcp-url')} style={{ background: '#262630', color: '#f4f1e9', border: 0, borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit' }}>{copied === 'mcp-url' ? 'Tersalin' : 'Salin'}</button>
+            <code style={{ background: 'transparent', color: '#d8f4ff' }}>npx -y opera-agent-mcp local</code>
+            <button onClick={() => copy('npx -y opera-agent-mcp local', 'mcp-url')} style={{ background: 'linear-gradient(to bottom, #2a6ae0, #123fb8)', color: '#ffffff', border: '1px solid #061c4e', borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit' }}>{copied === 'mcp-url' ? 'Tersalin' : 'Salin'}</button>
           </div>
           {CONFIGS.map(({ id, title, body }) => (
             <div key={id}>
               <h3>{title}</h3>
               <div style={{ background: '#101014', borderRadius: 8, padding: '10px 12px', maxWidth: 640, position: 'relative' }}>
-                <pre style={{ color: '#f4f1e9', fontSize: 11.5, overflowX: 'auto' }}><code>{body}</code></pre>
-                <button onClick={() => copy(body, id)} style={{ position: 'absolute', top: 8, right: 8, background: '#262630', color: '#f4f1e9', border: 0, borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit' }}>{copied === id ? 'Tersalin' : 'Salin'}</button>
+                <pre style={{ color: '#d8f4ff', fontSize: 11.5, overflowX: 'auto' }}><code>{body}</code></pre>
+                <button onClick={() => copy(body, id)} style={{ position: 'absolute', top: 8, right: 8, background: 'linear-gradient(to bottom, #2a6ae0, #123fb8)', color: '#ffffff', border: '1px solid #061c4e', borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit' }}>{copied === id ? 'Tersalin' : 'Salin'}</button>
               </div>
             </div>
           ))}
