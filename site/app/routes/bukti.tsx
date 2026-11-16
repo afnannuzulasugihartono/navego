@@ -40,7 +40,6 @@ export default function Bukti() {
       <SiteHeader current="/bukti.html" />
       <main className="wrap">
         <header className="page-head" style={{ paddingBottom: 6 }}>
-          <p className="kicker">Bukti</p>
           <h1>Empat berkas, sama persis.</h1>
           <p className="lede">Corbin menjalankan peramban sungguhan di portal contoh, mengunduh CSV-nya, lalu membangun ulang empat berkas yang ada di halaman studi kasus. Setiap berkas dicocokkan dengan berkas yang bisa Anda unduh: sha256-nya sama, byte per byte.</p>
           <div className="page-head-actions">

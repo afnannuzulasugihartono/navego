@@ -14,7 +14,6 @@ export default function Privasi() {
       <SiteHeader current="/privasi.html" />
       <main className="wrap legal">
         <header className="page-head" style={{ paddingBottom: 6 }}>
-          <p className="kicker">Legal</p>
           <h1>Kebijakan Privasi</h1>
           <p className="lede" style={{ fontSize: 13 }}>Terakhir diperbarui: 5 Oktober 2026.</p>
         </header>

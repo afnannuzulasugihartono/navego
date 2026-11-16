@@ -23,7 +23,6 @@ export default function NotFound() {
       <SiteHeader current="/404.html" />
       <main className="wrap">
         <header className="page-head" style={{ paddingBottom: 4 }}>
-          <p className="kicker">404</p>
           <h1>Halaman ini tidak ada</h1>
           <p className="lede">Alamatnya mungkin salah ketik, atau halaman itu sudah dipindahkan. Lima jalan keluar:</p>
         </header>

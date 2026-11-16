@@ -21,7 +21,6 @@ export default function Studi() {
       <SiteHeader current="/studi.html" />
       <main className="wrap">
         <header className="page-head" style={{ paddingBottom: 6 }}>
-          <p className="kicker">Studi kasus</p>
           <h1>Satu bulan kas jadi empat berkas.</h1>
           <p className="lede">Sinar Jaya, September 2026. Satu file CSV jadi laporan keuangan, rencana strategis, riset promosi, dan rencana pemasaran. Setiap angka menyebut baris asalnya, jadi bisa diperiksa.</p>
           <div className="page-head-actions">

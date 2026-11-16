@@ -10,8 +10,8 @@ export function meta() {
 }
 
 const BLOCKS = [
-  { id: 'install', title: '1. Pasang paketnya', body: 'npm install -g opera-agent-mcp', note: 'Satu perintah. Paket ini memakai browser yang sudah Anda gunakan; tidak ada proses tambahan yang perlu dijaga.' },
-  { id: 'doctor', title: '2. Periksa yang terhubung', body: 'opera-agent-mcp doctor', note: 'Cetakan menyatakan nama device, paket plan, dan sisa quota hari ini. Kalau tidak ada yang terhubung, paket akan mencetak langkah perbaikan yang paling mungkin.' }
+  { id: 'install', title: 'Pasang paketnya', body: 'npm install -g opera-agent-mcp', note: 'Satu perintah. Paket ini memakai browser yang sudah Anda gunakan; tidak ada proses tambahan yang perlu dijaga.' },
+  { id: 'doctor', title: 'Periksa yang terhubung', body: 'opera-agent-mcp doctor', note: 'Cetakan menyatakan nama device, paket plan, dan sisa quota hari ini. Kalau tidak ada yang terhubung, paket akan mencetak langkah perbaikan yang paling mungkin.' }
 ];
 
 const HARNESS: Array<{ id: string; title: string; body: string }> = [
@@ -37,7 +37,6 @@ export default function Mcp() {
       <SiteHeader current="/mcp.html" />
       <main className="wrap" style={{ maxWidth: 880 }}>
         <header className="page-head" style={{ paddingBottom: 6 }}>
-          <p className="kicker">Pasang MCP</p>
           <h1>Pasang MCP</h1>
           <p className="lede">Driver lokal Corbin berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi; yang dibutuhkan adalah browser yang masuk akun dan ekstensi terpasang.</p>
         </header>

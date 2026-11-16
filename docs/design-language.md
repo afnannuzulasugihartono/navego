@@ -39,7 +39,7 @@ This era is deliberate. The owner asked for the site whole in the millennium sty
 - **Lucida Console — the code and terminal face.** The pre-2000 console standard, and the reason the film's run-log looks like a real machine speaking.
 - **Display: weight 900, tracking `-0.03em` to `-0.05em`, line-height 0.86–1.04** — one loud line per section. The hero display is chrome-gradient text clipped to the glyphs (`#ffffff → #d8ecff → #8fd8ff → #ffffff`) with an aqua halo; the same trick carries the auth headline and the film's closing card.
 - **Tabular figures** wherever numbers align — the raven counts.
-- **Tracked-uppercase for kickers and bar chrome only** (`0.1–0.3em`), never for body copy.
+- **No tracked-uppercase outside the wet table header** — kicker and bar chrome were the last users and were all converted to sentence case.
 - **Sentence case everywhere else** — the era's all-bold sentence case is the human register.
 
 ## The words
@@ -53,6 +53,12 @@ The owner rejected the copy once as slop. That is a design failure, so it gets r
 - **Second person is "Anda"** — the dashboard said "device milikmu sendiri" in the middle of a formal page.
 - **Every number must be one the site can prove** — 56 tool, 36 primitive, 6 izin, Rp10.000, Rp249.000, 23 baris, Rp 65.310.000, sha256, 200/50 kuota.
 - **A claim that cannot be proved does not ship** — "Paling dipakai" became "Kuota terbesar"; the "TERLARIS" badge was cut before it ever shipped.
+
+- **No eyebrow labels, ever.** The line above a heading — "Contoh nyata.", "Unduh.", "Fitur." — was cut from every page: the information it carried was either already in the heading, dropped, or moved into the lede. The definition lives at [vocab.design](https://vocab.design/eyebrow) ("what category the content belongs to"); it is only useful when a parent grouping exists ([CFPB design system](https://cfpb.github.io/design-system/foundation/headings)), and this site has none. Every heading on the page now names the thing or the claim itself.
+- **A heading is one or two lines, at every width.** Over the same measure, Butterick's line length holds: [45–90 characters](https://practicaltypography.com/line-length.html), and the site's 62ch lede column sits inside it.
+- **Buttons are named for what they do, with the outcome in the word.** "Pasang corbin", "Unduh .zip", "Isi saldo Rp10.000" — verb first, value named, exactly what conversion research keeps finding ([Unbounce's button study](https://unbounce.com/conversion-rate-optimization/cta-copy-critiqued-for-conversion)). "Pelajari →" was vague and became "Cara kerja →".
+- **No uppercase micro-labels.** Tracked caps survived only inside real tables (header row), where a table is allowed its own conventions; every other label — footer, plan, metrics, costs, the player's bar — is sentence case.
+- **No index numbers.** The install steps carry the order in position, not in "1." through "4.".
 
 ## The space
 

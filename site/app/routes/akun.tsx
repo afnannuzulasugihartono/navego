@@ -129,7 +129,6 @@ export default function Akun() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
           <div>
           <header className="page-head" style={{ padding: '8px 0' }}>
-            <p className="kicker">Akun</p>
             <h1>Akun Anda</h1>
             <p className="lede">Akun ini yang dipakai device dan perintah Anda.</p>
           </header>

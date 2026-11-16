@@ -62,7 +62,7 @@ export function DemoCorbin() {
             </div>
           ) : (
             FILM.slice(0, shown).map((beat, index) => (
-              <p key={index} className={`film-line film-line--${beat.tone}${scene === 'run' && index === shown - 1 && index < FILM.length - 1 ? ' cursor-blink' : ''}`}>{beat.text}</p>
+              <p key={index} className={`film-line film-line--${beat.tone}${scene === 'run' && index === shown - 1 && index < FILM.length - 1 ? ' cursor-blink' : ''}`}><code>{beat.text}</code></p>
             ))
           )}
           {scene === 'done' && (
@@ -70,7 +70,7 @@ export function DemoCorbin() {
           )}
         </div>
         <div className="film-bar">
-          <span className="film-time">{scene === 'run' ? `${String(Math.min(shown, FILM.length)).padStart(2, '0')}/${FILM.length}` : scene === 'done' ? 'TAMAT' : 'FILM'}</span>
+          <span className="film-time">{scene === 'run' ? `${String(Math.min(shown, FILM.length)).padStart(2, '0')}/${FILM.length}` : scene === 'done' ? 'Selesai' : 'Film'}</span>
           <span className="film-proof"><a href="/bukti.html">sha256</a> · <a href="/studi.html">studi kasus</a></span>
         </div>
       </div>

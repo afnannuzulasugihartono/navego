@@ -57,11 +57,10 @@ export default function Unduh() {
     <>
       <SiteHeader current="/unduh.html" />
       <main>
-        <header className="page-head wrap">
-          <p className="kicker">Unduh</p>
+        <div className="wrap"><header className="page-head">
           <h1 id="dlTitle">Pasang corbin.<br />Pair. Kerja.</h1>
           <p className="lede">Satu build untuk lima browser. Extension tidak pernah memperbarui dirinya sendiri: setiap rilis Anda muat ulang sendiri dari halaman ini.</p>
-        </header>
+        </header></div>
 
         <section className="chapter warm" aria-labelledby="browserTitle" style={{ paddingTop: 0 }}>
           <div className="dl-grid">
@@ -78,7 +77,6 @@ export default function Unduh() {
         </section>
 
         <section className="chapter" aria-labelledby="stepsTitle">
-          <p className="chapter-eyebrow">Cara memasang.</p>
           <h2 id="stepsTitle" className="chapter-title">Tiga langkah.</h2>
           <ol className="steps" style={{ maxWidth: 760 }}>
             <li><span><strong>Ekstrak.</strong> Buka <code>opera://extensions</code> (atau <code>chrome://extensions</code>), aktifkan <em>Developer mode</em>, klik <em>Load unpacked</em>, pilih folder hasil ekstrak.</span></li>
@@ -88,7 +86,6 @@ export default function Unduh() {
         </section>
 
         <section className="chapter warm" aria-labelledby="permTitle">
-          <p className="chapter-eyebrow">Izin.</p>
           <h2 id="permTitle" className="chapter-title">Enam izin,<br />satu per satu.</h2>
           <p className="chapter-note">Izin per situs: Anda yang memutuskan halaman mana boleh dibuka. Tangkapan layar ditolak di tab pribadi; password, OTP, PIN, kartu, dan CVV selalu diblokir.</p>
           <div className="sheet" style={{ maxWidth: 760 }}>
@@ -102,7 +99,6 @@ export default function Unduh() {
         </section>
 
         <section className="chapter dark" aria-labelledby="verifyTitle">
-          <p className="chapter-eyebrow light">Verifikasi.</p>
           <h2 id="verifyTitle" className="chapter-title light-title">Bandingkan<br />sidik jarinya.</h2>
           <p className="chapter-note light-title" style={{ marginTop: 0 }}>Setiap rilis punya sidik jari SHA-256 sendiri. Dua perintah berikut harus mencetak sidik jari yang sama.</p>
           <div style={{ display: 'grid', gap: 10, maxWidth: 860, marginTop: 20 }}>
@@ -122,7 +118,7 @@ export default function Unduh() {
         </section>
 
         <section className="chapter tail" aria-labelledby="supportTitle" style={{ paddingTop: 20 }}>
-          <div className="section-head"><h2 id="supportTitle" className="chapter-eyebrow" style={{ margin: 0 }}>Browser.</h2></div>
+          <div className="section-head"><h2 id="supportTitle" style={{ fontFamily: "'Arial Black', 'Arial Rounded MT Bold', Verdana, sans-serif", fontSize: 20, letterSpacing: '-0.02em', margin: 0, color: 'var(--navy-1)' }}>Browser yang didukung</h2></div>
           <table className="table" style={{ maxWidth: 640, marginTop: 12 }}>
             <thead><tr><th scope="col">Browser</th><th scope="col">.zip</th><th scope="col">.crx</th></tr></thead>
             <tbody>

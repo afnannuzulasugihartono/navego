@@ -37,7 +37,6 @@ export default function Dukungan() {
       <SiteHeader current="/dukungan.html" />
       <main className="wrap" style={{ maxWidth: 880 }}>
         <header className="page-head" style={{ paddingBottom: 6 }}>
-          <p className="kicker">Dukungan</p>
           <h1>Dukungan</h1>
           <p className="lede">Lima perbaikan paling sering. Kalau jawaban Anda tidak ada di sini, gunakan tiga pintu di bawah.</p>
         </header>

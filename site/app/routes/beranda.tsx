@@ -32,13 +32,12 @@ export default function Beranda() {
 
         <section className="hero" aria-label="Corbin">
           <div className="hero-copy">
-            <p className="hero-kicker">Ekstensi browser</p>
             <h1 className="hero-display">Corbin.</h1>
             <p className="hero-sub2">Asisten AI di browser Anda.</p>
             <p className="hero-support">Beri satu perintah. Corbin membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.</p>
             <div className="hero-actions2">
               <Link className="btn btn-solid hero-btn" to="/unduh.html">Pasang corbin</Link>
-              <Link className="btn btn-ghost hero-btn" to="/docs.html">Pelajari →</Link>
+              <Link className="btn btn-ghost hero-btn" to="/docs.html">Cara kerja →</Link>
             </div>
             <p className="hero-plan"><b>plan.pilot gratis</b>: 200 perintah per hari, 50 per sesi.</p>
           </div>
@@ -51,7 +50,6 @@ export default function Beranda() {
 
         <section className="chapter" aria-labelledby="demoTitle">
           <Reveal>
-            <p className="chapter-eyebrow">Contoh nyata.</p>
             <h2 id="demoTitle" className="chapter-title">Satu perintah, satu berkas.</h2>
             <p className="chapter-note">Rekaman September dari Sinar Jaya: 23 baris kas masuk, dan Rp 65.310.000 keluar sebagai laporan tiga sheet. Angkanya asli; berkasnya bisa Anda unduh.</p>
             <DemoCorbin />
@@ -66,7 +64,6 @@ export default function Beranda() {
 
         <section className="chapter warm" aria-labelledby="workTitle">
           <Reveal>
-            <p className="chapter-eyebrow">Contoh berkas.</p>
             <h2 id="workTitle" className="chapter-title">Laporan keuangan September.</h2>
             <p className="chapter-note">Empat berkas keluar dari satu file kas: laporan keuangan, rencana strategis, riset promo, dan rencana pemasaran. Semuanya bisa Anda buka sekarang, tanpa memasang apa pun.</p>
             <p className="chapter-note"><Link to="/studi.html">Lihat studi kasus lengkapnya →</Link></p>
@@ -75,7 +72,6 @@ export default function Beranda() {
 
         <section id="fitur" className="chapter" aria-labelledby="featuresTitle">
           <Reveal>
-            <p className="chapter-eyebrow">Cara ia bekerja.</p>
             <h2 id="featuresTitle" className="chapter-title">Lima hal yang<br />dikerjakan Corbin.</h2>
             <div className="feature-list">
               {FEATURES.map(([title, body]) => (
@@ -90,7 +86,6 @@ export default function Beranda() {
 
         <section id="harga" className="chapter dark" aria-labelledby="pricingTitle">
           <Reveal>
-            <p className="chapter-eyebrow light">Harga.</p>
             <h2 id="pricingTitle" className="chapter-title light-title">Dua cara bayar.</h2>
             <p className="chapter-note light-title" style={{ marginTop: 0 }}>Satu harga per pekerjaan selesai. Biaya model dari saldo Anda.</p>
             <div className="plans">
@@ -114,7 +109,6 @@ export default function Beranda() {
         </section>
 
         <section id="faq" className="chapter tail" aria-labelledby="faqTitle">
-          <p className="chapter-eyebrow">Pertanyaan yang paling sering.</p>
           <h2 id="faqTitle" className="chapter-title">Tiga yang paling sering.</h2>
           <div className="faq">
             {FAQ.map(([q, a]) => (

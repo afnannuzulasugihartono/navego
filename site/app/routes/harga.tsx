@@ -74,7 +74,6 @@ export default function Harga() {
       <SiteHeader current="/harga.html" />
       <main className="wrap">
         <header className="page-head" style={{ paddingBottom: 6 }}>
-          <p className="kicker">Harga</p>
           <h1>Harga</h1>
           <p className="lede">Dua cara membayar, satu aturan: <strong>tidak ada yang terpotong sampai hasilnya ada.</strong></p>
         </header>

@@ -32,7 +32,6 @@ export default function Fitur() {
       <SiteHeader current="/fitur.html" />
       <main className="wrap">
         <header className="page-head">
-          <p className="kicker">Fitur</p>
           <h1>Yang bisa dikerjakan Corbin.</h1>
           <p className="lede">Anda menulis satu perintah. Corbin membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.</p>
           <div className="page-head-actions">

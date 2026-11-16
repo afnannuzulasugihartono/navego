@@ -119,7 +119,6 @@ export default function Docs() {
       <SiteHeader current="/docs.html" />
       <main className="wrap" style={{ maxWidth: 1080 }}>
         <header className="page-head" style={{ paddingBottom: 6 }}>
-          <p className="kicker">Docs</p>
           <h1>Docs</h1>
           <p className="lede">Pasang, masuk, jalankan, hubungkan.</p>
         </header>
