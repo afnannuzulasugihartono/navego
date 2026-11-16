@@ -109,7 +109,7 @@ export default function Unduh() {
               <div key={id} style={{ display: 'flex', gap: 12, alignItems: 'center', background: '#0b1130', borderRadius: 10, padding: '10px 14px', border: '1px solid #2b3d78' }}>
                 <span style={{ fontSize: 11, fontWeight: 700, color: '#8fb0d6', width: 46, flexShrink: 0 }}>{label}</span>
                 <code style={{ background: 'transparent', color: '#d8f4ff', fontSize: 11, overflowX: 'auto', whiteSpace: 'nowrap', flex: 1 }}>{command}</code>
-                <button onClick={() => copy(command!, id!)} style={{ background: 'var(--paper)', color: '#ffffff', border: '1px solid #061c4e', borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
+                <button onClick={() => copy(command!, id!)} className="cf-copy">
                   {copied === id ? 'Tersalin' : 'Salin'}
                 </button>
               </div>
