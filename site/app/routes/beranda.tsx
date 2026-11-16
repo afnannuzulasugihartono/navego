@@ -40,67 +40,12 @@ export default function Beranda() {
               <span className="cf-spec"><strong>45 tool</strong> MCP · gratis untuk mulai</span>
             </div>
           </div>
-<<<<<<< HEAD
-          <figure className="hero-frame">
-            <img src="/assets/raven-1874.jpg" width={1454} height={852} alt="Sketsa Corvus corax oleh Naumann" loading="eager" />
-            <figcaption><em>Corvus corax</em> — setelah Naumann, 1874 · public domain</figcaption>
-            <span className="burst" aria-hidden="true">Pasang<br />gratis!</span>
-          </figure>
-        </section>
-
-        <section className="chapter" aria-labelledby="demoTitle">
-          <Reveal>
-            <h2 id="demoTitle" className="chapter-title">Satu perintah, satu berkas.</h2>
-            <p className="chapter-note">Rekaman September dari Sinar Jaya: 23 baris kas masuk, dan Rp 65.310.000 keluar sebagai laporan tiga sheet. Angkanya asli; berkasnya bisa Anda unduh.</p>
-            <DemoCorbin />
-          </Reveal>
-        </section>
-
-        <div className="facts facts--center" aria-label="Angka produk">
-          <span><b>45</b> tool MCP diukur dari source</span>
-          <span><b>36</b> primitive browser</span>
-          <span><b>6</b> izin, semua dijelaskan</span>
-        </div>
-
-        <section className="chapter warm" aria-labelledby="workTitle">
-          <Reveal>
-            <h2 id="workTitle" className="chapter-title">Laporan keuangan September.</h2>
-            <p className="chapter-note">Empat berkas keluar dari satu file kas: laporan keuangan, rencana strategis, riset promo, dan rencana pemasaran. Semuanya bisa Anda buka sekarang, tanpa memasang apa pun.</p>
-            <p className="chapter-note"><Link to="/studi.html">Lihat studi kasus lengkapnya →</Link></p>
-          </Reveal>
-        </section>
-
-        <section id="fitur" className="chapter" aria-labelledby="featuresTitle">
-          <Reveal>
-            <h2 id="featuresTitle" className="chapter-title">Lima hal yang<br />dikerjakan Corbin.</h2>
-            <div className="feature-list">
-              {FEATURES.map(([title, body]) => (
-                <div key={title} className="feature-row">
-                  <h3>{title}</h3>
-                  <p>{body}</p>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </section>
-
-        <section id="harga" className="chapter dark" aria-labelledby="pricingTitle">
-          <Reveal>
-            <h2 id="pricingTitle" className="chapter-title light-title">Dua cara bayar.</h2>
-            <p className="chapter-note light-title" style={{ marginTop: 0 }}>Satu harga per pekerjaan selesai. Biaya model dari saldo Anda.</p>
-            <div className="plans">
-              <div className="plan">
-                <p className="plan-name">Isi saldo</p>
-                <p className="plan-price">Rp10.000<small> minimal, sekali isi</small></p>
-                <p className="plan-meta">Bayar per pekerjaan yang benar-benar selesai — harga tampil sebelum mulai. Gagal? Saldo kembali penuh.</p>
-=======
           <div className="cf-counter cf-enter" data-ui>
             {ARTEFAK.map((file) => (
               <div className="cf-artefact cf-crossfade" key={file.name}>
                 <b>{file.name}</b>
                 <span>{file.note}</span>
                 <code>sha256 {file.hash}…</code>
->>>>>>> origin/main
               </div>
             ))}
           </div>
