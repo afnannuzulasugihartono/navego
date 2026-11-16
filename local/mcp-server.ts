@@ -987,7 +987,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           return reply({
             protocolVersion: PROTOCOL_VERSION,
             capabilities: { tools: {} },
-            serverInfo: { name: 'opera-local', version: context.version ?? '0.0.0' }
+            serverInfo: { name: 'corbin', version: context.version ?? '0.0.0' }
           });
         }
         if (method === 'tools/list') return reply({ tools: TOOLS });

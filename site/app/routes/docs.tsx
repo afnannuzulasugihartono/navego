@@ -86,8 +86,8 @@ const TOOLS: Array<{ group: string; items: Array<[string, string]> }> = [
 ];
 
 const CONFIGS: Array<{ id: string; title: string; body: string }> = [
-  { id: 'cfg-opencode', title: 'OpenCode', body: '{\n  "mcp": {\n    "opera-agent": {\n      "type": "local",\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-kilo', title: 'Kilo Code', body: '{\n  "mcpServers": {\n    "opera-agent": {\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-opencode', title: 'OpenCode', body: '{\n  "mcp": {\n    "corbin": {\n      "type": "local",\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-kilo', title: 'Kilo Code', body: '{\n  "mcpServers": {\n    "corbin": {\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
   { id: 'cfg-claude', title: 'Claude Desktop', body: 'command: npx\nargs: ["-y", "opera-agent-mcp", "local"]' }
 ];
 

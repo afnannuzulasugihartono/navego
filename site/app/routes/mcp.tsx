@@ -15,8 +15,8 @@ const BLOCKS = [
 ];
 
 const HARNESS: Array<{ id: string; title: string; body: string }> = [
-  { id: 'cfg-opencode', title: 'OpenCode — opencode.json atau ~/.config/opencode/opencode.json', body: '{\n  "mcp": {\n    "opera-agent": {\n      "type": "local",\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-kilo', title: 'Kilo Code — MCP settings (JSON)', body: '{\n  "mcpServers": {\n    "opera-agent": {\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-opencode', title: 'OpenCode — opencode.json atau ~/.config/opencode/opencode.json', body: '{\n  "mcp": {\n    "corbin": {\n      "type": "local",\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-kilo', title: 'Kilo Code — MCP settings (JSON)', body: '{\n  "mcpServers": {\n    "corbin": {\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
   { id: 'cfg-claude', title: 'Claude Desktop — konfigurasi MCP lokal', body: 'command: npx\nargs: ["-y", "opera-agent-mcp", "local"]' }
 ];
 

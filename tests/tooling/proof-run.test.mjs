@@ -74,7 +74,7 @@ test('the server opens the portal tab and reads the page', { skip: noExtensionBr
   const mcp = speakMcp({ port: browser.port, cwd: root });
   try {
     const ready = await mcp.initialize();
-    assert.equal(ready?.serverInfo?.name, 'opera-local');
+    assert.equal(ready?.serverInfo?.name, 'corbin');
     const names = await mcp.listTools();
     for (const wanted of ['open_url', 'read_page', 'download', 'spreadsheet_build', 'deck_build', 'document_write', 'capture_page', 'close_tab']) {
       assert.ok(names.includes(wanted), `the server offers ${wanted}`);

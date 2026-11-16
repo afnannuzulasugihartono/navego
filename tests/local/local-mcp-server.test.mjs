@@ -175,7 +175,7 @@ test('initialize answers with a protocol version and who this server is', async 
   assert.equal(res.jsonrpc, '2.0');
   assert.equal(res.id, 1);
   assert.ok(res.result.protocolVersion);
-  assert.match(res.result.serverInfo.name, /opera/);
+  assert.match(res.result.serverInfo.name, /corbin/);
 });
 
 test('every advertised tool carries a schema, or a client cannot call it', async () => {
