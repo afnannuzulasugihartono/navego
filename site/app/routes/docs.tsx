@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import catalog from '../data/tools.json';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 
@@ -9,108 +10,7 @@ export function meta() {
   ];
 }
 
-const TOOLS: Array<{ group: string; items: Array<[string, string]> }> = [
-  {
-    group: 'Peramban',
-    items: [
-      ['browser_status', 'Cek perangkat ter-pairing, port yang hidup, dan paket plan masing-masing. Jawab pertama waktu klik dan tombol tidak bekerja.'],
-      ['browser_focus_window', 'Bawa window browser ke depan lewat bagian dari judulnya. Tanpa kecocokan, jawab keadaan tanpa memindahkan apa pun.'],
-      ['browser_focus_tab', 'Bawa window yang memegang satu tab ke depan lewat tabId — tidak menebak dari judul yang bisa sama pada dua window.'],
-      ['browser_select_browser', 'Pilih browser yang menjawab perintah tanpa tab sampai diganti. Tab yang sedang dipakai tetap mengikuti tabId-nya.'],
-      ['browser_list_tabs', 'Daftar tab yang terbuka, dengan id, judul, URL, dan slot browsernya.'],
-      ['browser_open_url', 'Buka URL di tab baru; tab yang sedang terbuka tidak pernah dihapus isinya.'],
-      ['browser_close_tab', 'Tutup tab berdasarkan id; lepas cache sesi tab itu.'],
-      ['browser_get_guide', 'Bacaan ringkas tentang server ini, ditulis sebagai tugas: panggilan yang dikenal bekerja untuk tiap pekerjaan.']
-    ]
-  },
-  {
-    group: 'Membaca halaman',
-    items: [
-      ['browser_read_page', 'Baca halaman: url, judul, teks, dan apakah teksnya sudah berhenti bergerak. Ladder: a11y tree → DOM → selection → foto.'],
-      ['browser_search_web', 'Cari di Bing sebagai data terstruktur (peringkat, judul, URL, situs, cuplikan), bukan halaman yang harus dibaca.'],
-      ['browser_find_text', 'Cari teks terlihat dan balik tiap kecocokan dengan kotak viewport — bisa langsung diklik.'],
-      ['browser_find_element', 'Cari satu baris berdasar role dan nama; balik handle yang tidak basi. Tanpa nama: daftar semua baris peran itu.'],
-      ['browser_screenshot', 'JPEG halaman; viewport × device scale factor. fullPage untuk halaman penuh (canvas tetap viewport).']
-    ]
-  },
-  {
-    group: 'Aksi',
-    items: [
-      ['browser_click', 'Klik titik viewport (x, y), handle dari browser_find_element, atau baris berdasar role dan name — dicari lalu diklik.'],
-      ['browser_hover', 'Gerakkan pointer ke koordinat tanpa menekan; menu dan submenu muncul.'],
-      ['browser_press_key', 'Kirim tombol ke elemen terfokus: Enter, Tab, Escape, panah, atau satu karakter.'],
-      ['browser_type_text', 'Ketik teks ke permukaan terfokus; newline jadi paragraf nyata. atEnd: true untuk menambah di akhir dokumen.'],
-      ['browser_scroll', 'Geser {y: pixel}, {end: true}, atau ke teks/selector tertentu. Jawaban: container mana yang bergerak.'],
-      ['browser_run_steps', '1–8 langkah tergantung dalam satu panggilan; gagal pertama menghentikan yang tersisa.']
-    ]
-  },
-  {
-    group: 'Menunggu',
-    items: [
-      ['browser_wait_until', 'until=text: teks muncul/pergi. until=row: baris menu muncul/pergi. until=url: tiba di halaman. until=stable: halaman berhenti bergerak.']
-    ]
-  },
-  {
-    group: 'Berkas',
-    items: [
-      ['browser_upload_file', 'Isi file input dengan bytes atau path; halaman mengunggah sendiri via change yang sudah didengarkan.'],
-      ['browser_drop_file', 'Lepas file di titik viewport; untuk site yang tidak punya input file (Docs, dll.).'],
-      ['browser_intercept_picker', 'Sembunyikan file picker supaya unggahan selesai tanpa UI OS; aktif → upload → nonaktif.'],
-      ['browser_download_file', 'Klik kontrol unduh, tunggu sampai berkas jadi, kembalikan path dan byte-nya.']
-    ]
-  },
-  {
-    group: 'Menu',
-    items: [
-      ['browser_list_menu', 'Baca apa yang bisa dilakukan aplikasi halaman, dari markup-nya sendiri — tanpa klik.'],
-      ['browser_walk_menu', 'Telusuri path menu (mis. ["Insert","Image"]) dan berhenti di sana; clickLeaf untuk menekan ujungnya.']
-    ]
-  },
-  {
-    group: 'Dialog sistem',
-    items: [
-      ['browser_read_dialog', 'Baca judul, tombol, dan isi kolom dialog OS (file picker). Tidak mengubah apa pun.'],
-      ['browser_type_into_dialog', 'Isi kolom dialog OS dengan teks, lalu baca kembali apa yang benar-benar masuk.'],
-      ['browser_press_dialog_button', 'Tekan tombol bernama pada dialog OS, misalnya Open, Save, atau Cancel.']
-    ]
-  },
-  {
-    group: 'Masuk dan captcha',
-    items: [
-      ['browser_check_gate', 'Baca gate di tab (masuk, kode sekali pakai, captcha) atau tunggu sampai selesai. Tidak mengetik.'],
-      ['browser_login', 'Isi username/password dari file kredensial yang Anda tulis; rahasia tidak pernah masuk ke jawaban.'],
-      ['browser_solve_captcha', 'Opt-in: baca gambar captcha lewat solver yang Anda konfigurasikan, ketik jawabannya. Domain Anda yang memutuskan.']
-    ]
-  },
-  {
-    group: 'Pengiriman',
-    items: [
-      ['delivery_plan', 'Rencana satu pengiriman: nama file, folder, manifest, halaman, dan syarat agar berkas dihitung. Tanpa browser.'],
-      ['delivery_record', 'Catat statement sebagai terkirim: cek berkas di disk, hitung halaman PDF, tambah ke manifest.']
-    ]
-  },
-  {
-    group: 'Berkas keluaran',
-    items: [
-      ['artifact_build_report', 'CSV → rencana laporan dengan tiap angka menyebut kolom dan baris asalnya; dicek ulang.'],
-      ['artifact_build_workbook', 'CSV → Excel workbook: baris laporan, baris sumber, ledger yang menyebut baris penghasil tiap angka.'],
-      ['artifact_build_slides', 'JSON → PowerPoint; slide yang menyebut angka yang tidak ada di laporan ditolak.'],
-      ['artifact_build_document', 'JSON → Word; tiap graph menyebut bagian dan baris asalnya; dicek ulang sebelum ditulis.']
-    ]
-  },
-  {
-    group: 'Dompet',
-    items: [
-      ['wallet_pair_device', 'Pasangkan mesin ini dengan akun yang membayar pekerjaannya; kode dari dashboard. Token = otoritas penuh mesin ini ke wallet Anda.'],
-      ['wallet_get_balance', 'Baca saldo wallet, dan tersedia setelah hold tugas berjalan.'],
-      ['wallet_get_price', 'Harga satu pekerjaan sebelum mulai; tampilkan ke pemiliknya, minta persetujuan.'],
-      ['wallet_add_funds', 'Buka halaman isi ulang; saldo bertambah saat provider mengonfirmasi, bukan saat panggilan kembali.'],
-      ['wallet_hold_price', 'Tahan harga satu pekerjaan sebelum mulai; gagal = ditolak.'],
-      ['wallet_charge', 'Tagih harga pekerjaan yang selesai; hash sha256 artefak adalah satu-satunya yang keluar dari mesin ini.'],
-      ['wallet_refund', 'Kembalikan seluruh harga pekerjaan yang tidak selesai, dengan satu baris alasan.']
-    ]
-  }
-];
+const TOOLS = catalog as Array<{ group: string; items: Array<[string, string]> }>;
 
 const CONFIGS: Array<{ id: string; title: string; body: string }> = [
   { id: 'cfg-opencode', title: 'OpenCode', body: '{\n  "mcp": {\n    "corbin": {\n      "type": "local",\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },

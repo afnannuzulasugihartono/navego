@@ -22,6 +22,21 @@ import { BURST_ACTIONS, BURST_MAX_STEPS } from './burst.js';
 // It has a local burst for dependent moves on one tab, but no reusable element refs beyond a handle that a row-find step hands to a later step, and no cross-tab steps: those are the cloud server's affordances, and pretending a local stdio process has them would advertise something it cannot honour.
 // Coordinates and a fresh read per action stay honest; the burst is the one call that spends its page read once, at the end, instead of after every step.
 
+const sheetJobSchema = (outDescription: string) => ({
+  type: 'object',
+  properties: {
+    source: stringArg('the CSV file exported from the workbook'),
+    client: stringArg('the client the report is for'),
+    title: stringArg('the report title, as the person wants it read'),
+    period: stringArg('the month the report covers, YYYY-MM'),
+    periodColumn: stringArg('the column that holds each row\'s date, when the sheet has one'),
+    groupBy: stringArg('the column whose values become the report lines'),
+    valueColumn: stringArg('the money column that is summed'),
+    out: stringArg(outDescription)
+  },
+  required: ['source', 'client', 'title', 'period', 'groupBy', 'valueColumn']
+});
+
 const tabArg = { type: ['string', 'number'], description: 'which tab to drive, from tabs. Accepts the numeric tab id or its string form; both name the same tab. Required for anything that writes. A chrome:// page (extensions, settings) refuses every move - name a tab the bridge can drive instead.' };
 
 export const STRAY_FILE_TAB = 'file://';
@@ -341,38 +356,12 @@ export const TOOLS = Object.freeze([
   {
     name: 'artifact_build_report',
     description: 'Turn a sheet exported to CSV into a report plan whose every figure names the column and the exact rows it came from, recheck the plan against those rows, and write it beside the source. Refuses a row outside the requested period, a value that is not money, a missing column, and a figure that disagrees with its source - so a wrong number stops the report instead of reaching a client. No browser is touched: month-end reports must not depend on a tab being open.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        source: stringArg('the CSV file exported from the workbook'),
-        client: stringArg('the client the report is for'),
-        title: stringArg('the report title, as the person wants it read'),
-        period: stringArg('the month the report covers, YYYY-MM'),
-        periodColumn: stringArg('the column that holds each row\'s date, when the sheet has one'),
-        groupBy: stringArg('the column whose values become the report lines'),
-        valueColumn: stringArg('the money column that is summed'),
-        out: stringArg('where to write the report; defaults beside the source')
-      },
-      required: ['source', 'client', 'title', 'period', 'groupBy', 'valueColumn']
-    }
+    inputSchema: sheetJobSchema('where to write the report; defaults beside the source')
   },
   {
     name: 'artifact_build_workbook',
     description: 'Turn a sheet exported to CSV into an Excel workbook: the report lines on the first sheet, the source rows on the second, and the ledger that says which rows produced each figure on the third. The totals are numbers, not sentences, so the customer can add them to another sheet. Every figure names the column and the exact rows it came from, and the plan is rechecked against those rows before the file exists. Writes the workbook and the plan beside the source. No browser is touched: month-end reports must not depend on a tab being open.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        source: stringArg('the CSV file exported from the workbook'),
-        client: stringArg('the client the report is for'),
-        title: stringArg('the report title, as the person wants it read'),
-        period: stringArg('the month the report covers, YYYY-MM'),
-        periodColumn: stringArg('the column that holds each row\'s date, when the sheet has one'),
-        groupBy: stringArg('the column whose values become the report lines'),
-        valueColumn: stringArg('the money column that is summed'),
-        out: stringArg('where to write the workbook; defaults beside the source')
-      },
-      required: ['source', 'client', 'title', 'period', 'groupBy', 'valueColumn']
-    }
+    inputSchema: sheetJobSchema('where to write the workbook; defaults beside the source')
   },
   {
     name: 'artifact_build_slides',
