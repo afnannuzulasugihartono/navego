@@ -161,10 +161,13 @@
 // Opera Agent is Kemudi everywhere a human reads: the manifest carries the new name and default_title, and background.js reports product: 'Kemudi' on browser.ping.
 // The extension ID, the signing key and every wire contract are untouched, so a browser already holding 1.6.59 updates into the new name without a beat; the pins move with the reviewed bytes and nothing else.
 
+// WHY these three were re-pinned on 2026-11-16: the 1.7.1 release rode them.
+// The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
+
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
   ['../extension/content.ts', '02365ade2ed83b234e7056ff51c3b7b41b1cacf66c74fdad41e1009b8f464fa5'],
   ['../extension/background.ts', '480d600bed33e228131c69d7a71057b1dca186a40678a8d20be7f829d9b25bea'],
-  ['../extension/manifest.json', '371617e88aa375736cd26d97d4123370f8f6afdb6d658b190999f1c699368010'],
+  ['../extension/manifest.json', 'c0bafe37a46aed6c95cdc548dfdfc5b9781b3c496974b8b52ad70df6b77fe841'],
 ]);
 
 export const OBSERVATION_STACK_LOCKS = Object.freeze([
