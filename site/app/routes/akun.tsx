@@ -129,7 +129,7 @@ export default function Akun() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
           <div>
             <h1 className="page-title" style={{ fontSize: 'clamp(30px,4vw,40px)' }}>Akun Anda</h1>
-            <p className="lede" style={{ marginTop: 6, color: 'var(--muted-2)' }}>Akun ini yang dipakai untuk device dan perintah Anda.</p>
+            <p className="lede" style={{ marginTop: 6, color: 'var(--muted-2)' }}>Akun ini yang dipakai device dan perintah Anda.</p>
           </div>
           <Link className="btn btn-solid" to="/dashboard.html">Buka Dashboard</Link>
         </div>

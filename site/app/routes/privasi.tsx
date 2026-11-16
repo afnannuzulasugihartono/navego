@@ -25,7 +25,7 @@ export default function Privasi() {
         <h2 id="kunci">Kunci Anda</h2>
         <p>Kunci API model dan token device tersimpan di browser Anda masing-masing dan tidak pernah ditampilkan kembali ke halaman web mana pun, termasuk halaman situs ini.</p>
         <h2 id="ditolak">Yang selalu ditolak</h2>
-        <p>Screenshot dan pembacaan halaman ditolak di halaman yang menampilkan password, kode sekali pakai, atau kolom pembayaran, serta di tab private dan incognito.</p>
+        <p>Screenshot dan pembacaan halaman ditolak di halaman yang menampilkan password, kode sekali pakai, atau kolom pembayaran, serta di tab pribadi dan mode penyamaran.</p>
         <h2 id="kontak">Kontak</h2>
         <p>Pertanyaan tentang data Anda: semua kendali mandiri ada di halaman <Link to="/akun.html">Akun</Link> — lihat device yang ter-pairing, cabut yang tidak dikenal, keluar dari sesi. Temuan keamanan jangan dibuka sebagai isu publik; laporkan privat lewat tab Security di repositori.</p>
       </main>

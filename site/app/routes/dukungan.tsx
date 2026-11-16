@@ -52,8 +52,8 @@ export default function Dukungan() {
         </div>
 
         <section className="panel" style={{ marginTop: 26 }} aria-labelledby="kontakTitle">
-          <h2 id="kontakTitle" style={{ fontSize: 18, letterSpacing: '-0.01em' }}>Tidak ketemu jawabannya?</h2>
-          <p style={{ color: 'var(--muted-2)', fontSize: 13, margin: '8px 0 12px' }}>Tiga pintu supaya pertanyaan Anda sampai ke orang yang bisa menjawab.</p>
+          <h2 id="kontakTitle" style={{ fontSize: 18, letterSpacing: '-0.01em' }}>Belum ketemu?</h2>
+          <p style={{ color: 'var(--muted-2)', fontSize: 13, margin: '8px 0 12px' }}>Tiga pintu, dan semuanya dibaca orang.</p>
           <ul style={{ listStyle: 'none', display: 'grid', gap: 8, fontSize: 13.5 }}>
             <li><span style={{ display: 'inline-block', width: 86, color: 'var(--muted)' }}>Email</span> <a href="mailto:afnannuzulasugihartono@gmail.com">afnannuzulasugihartono@gmail.com</a></li>
             <li><span style={{ display: 'inline-block', width: 86, color: 'var(--muted)' }}>Isu publik</span> <a href="https://github.com/afnannuzulasugihartono/opera-agent/issues">Buka isu baru</a></li>

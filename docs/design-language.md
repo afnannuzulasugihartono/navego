@@ -42,6 +42,18 @@ This era is deliberate. The owner asked for the site whole in the millennium sty
 - **Tracked-uppercase for kickers and bar chrome only** (`0.1–0.3em`), never for body copy.
 - **Sentence case everywhere else** — the era's all-bold sentence case is the human register.
 
+## The words
+
+The owner rejected the copy once as slop. That is a design failure, so it gets rules like colour does.
+
+- **Facts, not metaphors** — "Detak jantung yang tetap segar" became "Menjadwalkan pemeriksaan berkala". Where a fact fits, a metaphor never does: no "detak jantung", "pintu", "membekukan kerja", "satu arah: selesai".
+- **Indonesian that is actually Indonesian** — "content script", "tab private", "Host permission di setiap origin", and "Companion dengan AI di belakangnya" were all replaced by "skrip di halaman", "tab pribadi", "Izin per situs", and a plain sentence. Terms the product genuinely uses — tool, primitive, device, extension, harness, pairing — stay in English; everything else is Indonesian.
+- **A heading names a thing, not a mood** — "Tidak kejutan" became "Dua cara bayar", "Semuanya di sini" became "Tiga yang paling sering", "Browser Anda, alat kerja" became "Yang bisa dikerjakan Corbin".
+- **Nothing repeats itself on one page** — "Satu extension, satu akun, satu browser" said the same thing twice on beranda; it now appears nowhere, and the band that carried it was replaced by the four example files.
+- **Second person is "Anda"** — the dashboard said "device milikmu sendiri" in the middle of a formal page.
+- **Every number must be one the site can prove** — 56 tool, 36 primitive, 6 izin, Rp10.000, Rp249.000, 23 baris, Rp 65.310.000, sha256, 200/50 kuota.
+- **A claim that cannot be proved does not ship** — "Paling dipakai" became "Kuota terbesar"; the "TERLARIS" badge was cut before it ever shipped.
+
 ## The space
 
 - **Frame: one `--maxw: 1160px` column** — equal outer margins at every width.

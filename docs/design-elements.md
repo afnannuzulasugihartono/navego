@@ -24,27 +24,29 @@ Two house rules do the audit's heavy lifting: no element may sell what the produ
 
 - h1 `Corbin.` — the name as a chrome-gradient glyph (Arial Black italic, `#ffffff → #d8ecff → #8fd8ff → #ffffff`) with an aqua halo; one loud line, the millennium way to say one thing — K.
 - Kicker `Ekstensi browser` — the category in three words; answers "apa ini?" before the name does — K.
+- Support line `Beri satu perintah. Corbin membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.` — the three actions, stated as actions — K.
 - CTA `Pasang corbin` (magenta gel, glowing) + `Pelajari →` (chrome) — the one action and its door — K.
-- Plan note `plan.pilot gratis — 200 perintah/hari, 50 per sesi.` — priced honestly from the published pilot quota; the cost before the click — K.
+- Plan note `plan.pilot gratis: 200 perintah per hari, 50 per sesi.` — priced honestly from the published pilot quota; the cost before the click — K.
 - Starburst `Pasang gratis!` — one per page; the claim is the pricing FAQ's own first sentence (`Pasang gratis`), nothing invented — K.
 - Framed plate `Corvus corax — setelah Naumann, 1874 · public domain` — chrome frame with aqua rim light around an ink engraving — K.
-- Facts ticker pill `56 tool · 36 primitive · 6 izin · MV3 Chrome·Edge·Brave · Data tetap di device` — same five falsifiable claims, now chrome with magenta numerals — K.
-- `Coba Corbin.` + `Klik. Lihat ia bekerja.` — the demo's frame, two short lines — K.
-- `Corbin Player` (the film) — chrome bezel, aqua LCD status strip, round aqua play button; plays the real Sinar Jaya September run: same CSV, same totals, a download that really exists — K.
-- `Fungsinya.` + `Baca halaman. Tulis halaman. Kirim hasilnya.` — the three verbs, three lines, light panel — K.
-- `Cara ia bekerja.` + `Lima hal, satu arah: selesai.` + 5 feature rows — each row names a capability the suite pins — K.
-- `Harganya. Tidak kejutan.` + 3 plan cards — money stated before the click; the Firm card is midnight indigo with an aquo name (weight of emphasis, not a "best seller" claim — see pass notes) — K.
-- `Sebelum Anda bertanya.` + `Semuanya di sini.` FAQ (`Biaya`, `Data`, `Berhenti`) — the three objections at the exact price/data/exit questions — K.
-- `Pasang. Pair. Kerja.` closing tail-CTA — K.
+- Facts ticker pill `56 tool · 36 primitive · 6 izin` — the three pinned numbers, chrome with magenta numerals — K.
+- `Contoh nyata.` + `Satu perintah, satu berkas.` + the Sinar Jaya line — the demo framed by what it really shows: 23 rows in, Rp 65.310.000 out as three sheets — K.
+- `Contoh berkas.` + `Laporan keuangan September.` — the four files, openable now, linked to the study — replaces the old slogan band that said nothing — K (replaced).
+- `Lima hal yang dikerjakan Corbin.` + 5 feature rows (endpoint, reading, files, rejected secrets, pairing) — each row names a capability the suite pins — K.
+- `Dua cara bayar.` + 3 plan cards — money stated before the click; the Firm card is midnight indigo with an aqua name (weight of emphasis, not a "best seller" claim) — K.
+- `Tiga yang paling sering.` + FAQ (`Biaya`, `Data`, `Berhenti`) — the three objections at the exact price/data/exit questions, each answered with the real number — K.
+- `Unduh, masuk, lalu pair device ini dari dashboard.` — the tail line states the next step instead of repeating a slogan — K (replaced).
 
 ## fitur
 
-- h1 `Browser Anda, alat kerja.` — the page's one promise — K.
+- h1 `Yang bisa dikerjakan Corbin.` — the page's one promise, named as a thing — K.
+- Lede `Anda menulis satu perintah. Corbin membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.` — the loop, in one sentence, no borrowed word — K.
 - Stats strip (`56`, `36`, `6`) — the same three pinned numbers — K.
-- Four-step rail (Bicara/Baca/Tulis/Simpan + `ringkasan.md`) — the workflow as a 4-line ritual; the filename is the proof of artefact-first — K.
-- 8 bento articles — each answers "what does it do for me" with a concrete example (Sheets/Maps/Docs, permissions, portal waiting logic, four downloadable files) — K.
+- Four-step rail (Tulis/Baca/Isi/Simpan) — the ritual of one job, with a real example command — K.
+- 8 tiles (tool, izin, model, pairing, rahasia, MCP, berkas, login) — each names a capability with a number or a rule, none of them slogan — K.
 - Sample-file download row — four real files, openable now — K.
 - Permission panel (`tabs scripting storage alarms debugger downloads`) — every permission, one reason each on the page — K.
+- Final `Mulai dari satu perintah.` — the next three actions in one line, linked to the study and the pricing — K (replaced).
 
 ## harga
 
@@ -58,11 +60,11 @@ Two house rules do the audit's heavy lifting: no element may sell what the produ
 
 ## unduh
 
-- h1 `Unduh berkas.` + sub `Satu build. Lima browser. Sekali klik. Build terbaru, selalu.` — the whole download story — K.
+- h1 `Pasang corbin. Pair. Kerja.` + sub `Satu build untuk lima browser.` — the install story and the build's one honest limit (no self-update) — K.
 - Five browser cards (Chrome/Edge/Brave/Opera/Vivaldi) — the extension runs on all five; zip is the primary door, crx secondary, manifest link for policy-managed machines — K.
 - Install steps — same three steps as beranda — K.
-- Permission list with reasons — the 6-permission promise, repeated here because this is the install page — K.
-- Verify block (two commands, server vs local hash) — trust through verification, not through adjectives — K.
+- Permission list with reasons — the 6-permission promise, repeated here because this is the install page; each reason is a job, not a metaphor — K (reworded).
+- Verify block (two commands, server vs local hash) — trust through verification, not through adjectives; the text said "three commands" and showed two — now "dua" — K (fixed).
 - Browser support table — honest: Firefox refused (no debugger permission) — K.
 - Review-pending note — no fake store badge before review exists — K.
 
@@ -127,6 +129,7 @@ Two house rules do the audit's heavy lifting: no element may sell what the produ
 9. `.plan.is-primary::after TERLARIS` was cut before it ever shipped: no sales data exists, so the badge could only be a lie.
 10. Focus ring: 2px indigo outline plus an aqua halo — visible on chrome panels and midnight indigo alike.
 11. Dead CSS deleted along the way: `.steps-brief`, `.proof-panel`, `.chapter-link`, `.promises`, `.hero-corner`/`.hero-hud`, `full-bleed`/`hero-veil`, and the whole mission/XP/reward block.
+12. Copy pass — the owner called the words slop, and slop is a design failure. Metaphors, borrowed English, moods-as-headings, and lines that repeated themselves were rewritten across beranda, fitur, unduh, docs, dashboard, dukungan, mcp, privasi, consent, akun: "Detak jantung yang tetap segar" → "Menjadwalkan pemeriksaan berkala"; "Tiga perintah berikut" → "Dua perintah berikut" (the text miscounted its own block); "device milikmu sendiri" → "milik Anda sendiri"; "Semuanya di sini" → "Tiga yang paling sering". The rules now live in `design-language.md` under "The words".
 
 Nothing functional was removed. Every surviving element answers a question the reader actually asks, or proves a claim the product actually makes.
 

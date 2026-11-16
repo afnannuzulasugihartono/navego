@@ -370,6 +370,7 @@ h3.card-title { font-size: 15px; font-weight: 700; color: var(--navy-1); }
 
 .dl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
 .dl-card { background: var(--panel); background-image: var(--chrome); border: 1px solid var(--line); border-radius: var(--radius-panel); box-shadow: var(--panel-shadow); padding: 18px; display: grid; gap: 10px; align-content: start; }
+.dl-letter { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; font-family: 'Arial Black', Verdana, sans-serif; font-size: 20px; color: #06121f; background: linear-gradient(to bottom, #9ff3ff 0%, #00b8e6 48%, #0a4f9a 52%, #00b8e6 100%); border: 1px solid #06304f; box-shadow: var(--gel-highlight), 0 0 12px rgba(0, 184, 230, 0.6); }
 .dl-card.is-recommended { background: linear-gradient(to bottom, #16205a, #0d1338); color: #d8e8f8; border-color: #2b3d78; box-shadow: inset 0 1px 0 rgba(127, 240, 255, 0.3), 0 0 24px rgba(0, 184, 230, 0.32), 0 10px 24px rgba(8, 16, 40, 0.4); }
 .dl-card h3 { font-size: 14px; color: inherit; }
 .dl-req { font-size: 10.5px; color: var(--muted); }

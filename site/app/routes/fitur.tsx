@@ -4,26 +4,26 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 export function meta() {
   return [
     { title: 'Fitur — Corbin' },
-    { name: 'description', content: 'Fitur Corbin: 56 tool dan 36 primitive, enam izin yang dijelaskan satu per satu, model milik Anda berjalan di perangkat Anda, pairing device yang tetap.' }
+    { name: 'description', content: 'Yang dikerjakan Corbin: 56 tool dan 36 primitive browser, enam izin yang dijelaskan satu per satu, model milik Anda, pairing device yang bisa dicabut, dan empat berkas contoh yang bisa diunduh.' }
   ];
 }
 
 const BENTO = [
-  ['56 tool, 36 primitive', 'Baca, isi, navigasi, verifikasi. Maps, YouTube, Docs adalah contoh awal.'],
-  ['Enam izin, dijelaskan satu per satu', 'Setiap izin punya satu alasan yang bisa dibaca di halaman Unduh.'],
-  ['Model milik Anda', 'Endpoint dan kunci tetap di browser Anda. Konten halaman hanya pergi ke model yang Anda pilih.'],
-  ['Pairing device', 'Kode sekali pakai mengikat device ke akun Anda. Kelola di Dashboard.'],
-  ['Baca halaman tanpa eksploitasi', 'Password, kode sekali pakai, token, dan kolom pembayaran selalu ditolak.'],
-  ['MCP untuk harness apa pun', 'OpenCode, Kilo Code, dan Claude Code memakai satu endpoint.'],
-  ['Empat berkas dari satu percakapan', 'Laporan keuangan, rencana strategis, riset promo, dan rencana pemasaran — ditulis sebagai berkas.'],
-  ['Portal yang minta masuk tidak lagi membekukan kerja', 'Sign-in atau captcha? Corbin membaca dulu, menunggu Anda menyelesaikannya, lalu lanjut di tab yang sama. Kode sekali pakai tidak pernah dijawab Corbin.']
+  ['56 tool, 36 primitive', 'Membaca, mengisi, menavigasi, dan memverifikasi halaman. Peta, YouTube, dan Docs adalah contoh yang paling sering.'],
+  ['Enam izin, satu alasan masing-masing', 'Setiap izin dijelaskan di halaman Unduh: untuk apa, dan apa yang ditolak.'],
+  ['Model milik Anda', 'Endpoint dan kunci tetap di browser ini. Isi halaman hanya pergi ke model yang Anda pilih.'],
+  ['Pairing device', 'Kode sekali pakai mengikat device ke akun Anda. Cabut dari dashboard kapan saja.'],
+  ['Kolom rahasia ditolak', 'Password, kode sekali pakai, token, dan kolom pembayaran selalu ditolak.'],
+  ['MCP untuk harness apa pun', 'OpenCode, Kilo Code, dan Claude Code memakai satu endpoint yang sama.'],
+  ['Empat berkas dari satu perintah', 'Laporan keuangan, rencana strategis, riset promo, dan rencana pemasaran — semuanya berkas.'],
+  ['Halaman yang minta login tidak memblokir', 'Corbin membaca dulu, lalu menunggu Anda menyelesaikan login atau captcha sendiri, lalu lanjut di tab yang sama.']
 ] as const;
 
 const STEPS = [
-  ['Bicara', 'Satu kalimat: ringkas cek onboarding Q4.'],
-  ['Baca', 'Halaman, tombol, dan baris dibaca.'],
-  ['Tulis', 'Formulir dan sel diisi, bukan diklik asal.'],
-  ['Simpan', 'Berkas dan bukti ikut tersimpan.']
+  ['Tulis', 'Satu kalimat: ringkas cek onboarding Q4.'],
+  ['Baca', 'Halaman, tombol, dan baris dibaca dari tab yang terbuka.'],
+  ['Isi', 'Formulir dan sel diisi sesuai instruksi, bukan diklik asal.'],
+  ['Simpan', 'Berkas hasil kerja tersimpan, dengan jejaknya di dashboard.']
 ] as const;
 
 export default function Fitur() {
@@ -32,11 +32,11 @@ export default function Fitur() {
       <SiteHeader current="/fitur.html" />
       <main className="wrap">
         <section className="section" style={{ paddingBottom: 30 }}>
-          <h1 className="page-title" style={{ fontSize: 'clamp(38px,6vw,64px)' }}>Browser Anda, alat kerja.</h1>
-          <p className="lede" style={{ marginTop: 12, maxWidth: '52ch' }}><strong>Companion dengan AI di belakangnya.</strong> Anda berbicara. Browser bekerja.</p>
+          <h1 className="page-title" style={{ fontSize: 'clamp(38px,6vw,64px)' }}>Yang bisa dikerjakan Corbin.</h1>
+          <p className="lede" style={{ marginTop: 12, maxWidth: '58ch' }}>Anda menulis satu perintah. Corbin membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.</p>
           <div className="hero-cta">
             <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
-            <Link className="btn btn-ghost" to="/beranda.html#install">Lihat cara kerja</Link>
+            <Link className="btn btn-ghost" to="/beranda.html">Lihat contoh kerja</Link>
           </div>
         </section>
 
@@ -89,8 +89,8 @@ export default function Fitur() {
         </section>
 
         <section className="statement" aria-labelledby="finalTitle" style={{ paddingBottom: 40 }}>
-          <h2 id="finalTitle" style={{ fontSize: 'clamp(30px,4.5vw,48px)', letterSpacing: '-0.03em' }}>Satu extension. Browser Anda.</h2>
-          <p style={{ fontSize: 15, color: 'var(--muted-2)', margin: '10px 0 20px' }}>Harga dan aturannya ada di halaman <Link to="/harga.html">Harga</Link>.</p>
+          <h2 id="finalTitle" style={{ fontSize: 'clamp(30px,4.5vw,48px)', letterSpacing: '-0.03em' }}>Mulai dari satu perintah.</h2>
+          <p style={{ fontSize: 15, color: 'var(--muted-2)', margin: '10px 0 20px' }}>Buka akun, pair device ini, lalu jalankan satu pekerjaan. Hasilnya bisa Anda buka di halaman <Link to="/studi.html">Studi kasus</Link>. Aturan biayanya ada di halaman <Link to="/harga.html">Harga</Link>.</p>
           <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
         </section>
       </main>

@@ -460,7 +460,7 @@ export default function Dashboard() {
               {view === 'dengar' ? (
                 <>
                   <h1>Sesi dengar</h1>
-                  <p style={{ fontSize: 12, color: 'var(--muted-2)', marginBottom: 10 }}>Audio sessions ke akun ini: metadata saja, tidak pernah kata-katanya. Transkrip hidup di hasil tool model saja.</p>
+                  <p style={{ fontSize: 12, color: 'var(--muted-2)', marginBottom: 10 }}>Sesi dengar di akun ini: metadata saja, tidak pernah kata-katanya. Transkrip hanya hidup di hasil tool model.</p>
                   {listens === null ? <p className="empty">Memuat…</p> : listens.length === 0 ? <p className="empty">Belum ada sesi dengar. Mulai dari model dengan <code>media_stream_start</code>.</p> : (
                     <div style={{ display: 'grid', gap: 10 }}>
                       {listens.map((session) => (
@@ -542,7 +542,7 @@ export default function Dashboard() {
                 <>
                   <h1>Jalankan aksi</h1>
                   <div className="panel" style={{ maxWidth: 520 }}>
-                    <p style={{ fontSize: 12.5, color: 'var(--muted-2)' }}>Perintah dikirim ke device milikmu sendiri. Device menolak halaman yang menampilkan password, kode sekali pakai, atau pembayaran.</p>
+                    <p style={{ fontSize: 12.5, color: 'var(--muted-2)' }}>Perintah dikirim ke device milik Anda sendiri. Device menolak halaman yang menampilkan password, kode sekali pakai, atau pembayaran.</p>
                     <div className="field" style={{ marginTop: 12 }}>
                       <label htmlFor="runMethod">Primitive</label>
                       <input id="runMethod" type="text" autoComplete="off" spellCheck={false} maxLength={64} value={runMethod} onChange={(event) => setRunMethod(event.target.value)} />

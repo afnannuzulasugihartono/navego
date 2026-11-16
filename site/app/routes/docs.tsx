@@ -119,7 +119,7 @@ export default function Docs() {
       <SiteHeader current="/docs.html" />
       <main className="wrap" style={{ maxWidth: 1080 }}>
         <h1 className="page-title" style={{ fontSize: 'clamp(36px,5vw,52px)', marginTop: 30 }}>Docs</h1>
-        <p className="lede" style={{ marginTop: 8, color: 'var(--muted-2)' }}>Pasang, pair, jalankan, hubungkan.</p>
+        <p className="lede" style={{ marginTop: 8, color: 'var(--muted-2)' }}>Pasang, masuk, jalankan, hubungkan.</p>
 
         <div className="docs-layout">
           <nav className="docs-rail" aria-label="Di halaman ini">
@@ -163,7 +163,7 @@ export default function Docs() {
           <p>Device yang tidak dikenali bisa dicabut kapan saja di Dashboard.</p>
 
           <h2 id="tugas">Tugas pertama</h2>
-          <p>Anda bicara, browser bekerja, hasilnya menjadi artefak nyata. Contoh: <em>Buka Google Maps, cari kopi dekat Monas, dan tulis hasilnya ke sheet.</em></p>
+          <p>Anda menulis satu perintah, browser bekerja, dan hasilnya menjadi berkas. Contoh: <em>Buka Google Maps, cari kopi dekat Monas, dan tulis hasilnya ke sheet.</em></p>
           <ul>
             <li>Satu pekerjaan berarti satu hasil: satu halaman, satu laporan, atau satu daftar.</li>
             <li>Jumlah aksinya dibatasi. Perkiraan yang lebih besar ditolak di depan dengan tawaran dipecah, bukan gagal di tengah. Batas dan harganya ada di halaman <Link to="/harga.html">Harga</Link>.</li>

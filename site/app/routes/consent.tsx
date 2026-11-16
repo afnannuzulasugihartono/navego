@@ -180,7 +180,7 @@ export default function Consent() {
               </div>
             </dl>
             {redirectHost ? <p className="note" style={{ marginTop: 8 }}>Kode hanya dikirim ke {redirectHost}.</p> : null}
-            <p className="note" style={{ marginTop: 6 }}>Corbin tetap memblokir password, kode sekali pakai, data pembayaran, tab private, dan upload file. Izin ini hanya mengizinkan aplikasi itu meminta tindakan lewat Corbin.</p>
+            <p className="note" style={{ marginTop: 6 }}>Corbin tetap memblokir password, kode sekali pakai, data pembayaran, tab pribadi, dan unggah file. Izin ini hanya mengizinkan aplikasi itu meminta tindakan lewat Corbin.</p>
             <div className="hero-cta" style={{ marginTop: 12 }}>
               <button className="btn btn-solid" type="button" disabled={busy} onClick={() => decide('approve')}>Izinkan</button>
               <button className="btn btn-ghost" type="button" disabled={busy} onClick={() => decide('deny')} style={{ color: 'var(--danger)' }}>Tolak</button>

@@ -73,7 +73,7 @@ export default function Mcp() {
           <h2 style={{ fontSize: 18, marginBottom: 8 }}>Batas yang dijaga</h2>
           <ul style={{ paddingLeft: 20, color: 'var(--muted-2)', fontSize: 13.5, display: 'grid', gap: 6 }}>
             <li>Password, kode sekali pakai, PIN, kartu, dan CVV selalu ditolak. Pekerjaan yang berhenti di situ gagal — bukan diam-diam diteruskan.</li>
-            <li>Tab private, tab non-http(s), dan jendela tanpa akses debugger: primitive menolak, dan penolakan disebut namanya.</li>
+            <li>Tab pribadi, tab non-http(s), dan jendela tanpa akses debugger: primitive menolak, dan penolakan disebut namanya.</li>
             <li>Enam izin hanya dipakai untuk enam alasan: <code>tabs</code>, <code>scripting</code>, <code>storage</code>, <code>alarms</code>, <code>debugger</code>, <code>downloads</code>.</li>
           </ul>
           <p style={{ color: 'var(--muted-2)', fontSize: 13, marginTop: 10 }}>Butuh detail teknis? Panduan pemanggilan di <a href="https://github.com/afnannuzulasugihartono/opera-agent/blob/main/docs/agent-call.md">docs/agent-call.md</a> menyebut semua jalur secara persis.</p>

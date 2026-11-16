@@ -4,7 +4,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 export function meta() {
   return [
     { title: 'Unduh — Corbin' },
-    { name: 'description', content: 'Satu build. Lima browser. Sekali klik. Build terbaru, selalu.' }
+    { name: 'description', content: 'Unduh build Corbin untuk Chrome, Edge, Brave, Opera, dan Vivaldi. Pasang lewat developer mode, masuk, lalu pair device dari dashboard.' }
   ];
 }
 
@@ -21,11 +21,11 @@ const BROWSERS = [
 
 const PERMISSIONS: Array<[string, string]> = [
   ['tabs', 'Membuka dan menavigasi tab.'],
-  ['scripting', 'Menjaga content script tetap hidup.'],
+  ['scripting', 'Menjaga skrip di halaman tetap hidup.'],
   ['storage', 'Token dan pengaturan lokal Anda.'],
-  ['alarms', 'Detak jantung yang tetap segar.'],
-  ['debugger', 'Klik tepercaya, screenshot, dan aksesibilitas.'],
-  ['downloads', 'Menyimpan berkas hasil pekerjaan, membuktikan hasil.']
+  ['alarms', 'Menjadwalkan pemeriksaan berkala.'],
+  ['debugger', 'Klik tepercaya, tangkapan layar, dan pembacaan aksesibilitas.'],
+  ['downloads', 'Menyimpan berkas hasil kerja ke disk Anda.']
 ];
 
 const BROWSER_SUPPORT: Array<[string, string, string]> = [
@@ -60,7 +60,7 @@ export default function Unduh() {
         <section className="chapter" aria-labelledby="dlTitle" style={{ paddingTop: 40 }}>
           <p className="chapter-eyebrow">Unduh.</p>
           <h1 id="dlTitle" className="chapter-title">Pasang corbin.<br />Pair. Kerja.</h1>
-          <p className="chapter-note">Satu build. Lima browser. Build terbaru, selalu.</p>
+          <p className="chapter-note">Satu build untuk lima browser. Extension tidak pernah memperbarui dirinya sendiri: setiap rilis Anda muat ulang sendiri dari halaman ini.</p>
         </section>
 
         <section className="chapter warm" aria-labelledby="browserTitle" style={{ paddingTop: 0 }}>
@@ -90,7 +90,7 @@ export default function Unduh() {
         <section className="chapter warm" aria-labelledby="permTitle">
           <p className="chapter-eyebrow">Izin.</p>
           <h2 id="permTitle" className="chapter-title">Enam izin,<br />satu per satu.</h2>
-          <p className="chapter-note">Host permission di setiap origin — Anda yang memutuskan halaman mana. Screenshot ditolak di tab private; password, OTP, PIN, kartu, dan CVV selalu diblokir.</p>
+          <p className="chapter-note">Izin per situs: Anda yang memutuskan halaman mana boleh dibuka. Tangkapan layar ditolak di tab pribadi; password, OTP, PIN, kartu, dan CVV selalu diblokir.</p>
           <div className="sheet" style={{ maxWidth: 760 }}>
             {PERMISSIONS.map(([name, why]) => (
               <div key={name} style={{ display: 'grid', gridTemplateColumns: '130px 1fr', padding: '11px 14px', background: 'var(--panel)', borderBottom: '1px solid var(--card-2)', fontSize: 13 }}>
@@ -103,16 +103,16 @@ export default function Unduh() {
 
         <section className="chapter dark" aria-labelledby="verifyTitle">
           <p className="chapter-eyebrow light">Verifikasi.</p>
-          <h2 id="verifyTitle" className="chapter-title light-title">Sidik jari<br />yang sama.</h2>
-          <p className="chapter-note light-title" style={{ marginTop: 0 }}>Sidik jari SHA-256 berubah tiap rilis. Tiga perintah berikut harus mencetak sidik jari yang sama.</p>
+          <h2 id="verifyTitle" className="chapter-title light-title">Bandingkan<br />sidik jarinya.</h2>
+          <p className="chapter-note light-title" style={{ marginTop: 0 }}>Setiap rilis punya sidik jari SHA-256 sendiri. Dua perintah berikut harus mencetak sidik jari yang sama.</p>
           <div style={{ display: 'grid', gap: 10, maxWidth: 860, marginTop: 20 }}>
             {[
               ['server', 'Server', CURL],
               ['local', 'Lokal', LOCAL]
             ].map(([id, label, command]) => (
-              <div key={id} style={{ display: 'flex', gap: 12, alignItems: 'center', background: '#1a1a21', borderRadius: 10, padding: '10px 14px' }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#8f8f9c', width: 46, flexShrink: 0 }}>{label}</span>
-                <code style={{ background: 'transparent', color: '#f4f1e9', fontSize: 11, overflowX: 'auto', whiteSpace: 'nowrap', flex: 1 }}>{command}</code>
+              <div key={id} style={{ display: 'flex', gap: 12, alignItems: 'center', background: '#0b1130', borderRadius: 10, padding: '10px 14px', border: '1px solid #2b3d78' }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#8fb0d6', width: 46, flexShrink: 0 }}>{label}</span>
+                <code style={{ background: 'transparent', color: '#d8f4ff', fontSize: 11, overflowX: 'auto', whiteSpace: 'nowrap', flex: 1 }}>{command}</code>
                 <button onClick={() => copy(command!, id!)} style={{ background: 'linear-gradient(to bottom, #2a6ae0, #123fb8)', color: '#ffffff', border: '1px solid #061c4e', borderRadius: 6, padding: '5px 10px', fontSize: 10.5, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
                   {copied === id ? 'Tersalin' : 'Salin'}
                 </button>
