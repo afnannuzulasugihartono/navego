@@ -1,5 +1,8 @@
-// Corbin - the monogram, in chrome. One mark for the site, the badge and the extension.
-// C = the open arc; the short bar ends in an amber cursor. Geometric, readable at 16 px.
+// Corbin - the monogram, in chrome.
+// One mark for the site, the badge and the extension.
+// C = the open arc; the short bar ends in an amber cursor.
+// Geometric, readable at 16 px.
+
 interface CorbinMarkProps { size?: number; title?: string; }
 
 export function CorbinMark({ size = 22, title = 'Corbin' }: CorbinMarkProps) {
@@ -21,8 +24,8 @@ export function CorbinMark({ size = 22, title = 'Corbin' }: CorbinMarkProps) {
   );
 }
 
-// The wordmark is drawn from the mark: same round stroke, same open arc on the c,
-// circular bowls, and the amber cursor becomes the dot of the i.
+// The wordmark is drawn from the mark: same round stroke, same open arc on the c, circular bowls, and the amber cursor becomes the dot of the i.
+
 export function CorbinWordmark({ size = 16 }: { size?: number }) {
   return (
     <svg width={size * 3.75} height={size} viewBox="0 0 450 120" role="img" aria-label="corbin">
