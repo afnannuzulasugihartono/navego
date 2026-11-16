@@ -1,6 +1,6 @@
 {
   "name": "kemudi",
-  "version": "1.6.59",
+  "version": "1.7.1",
   "private": true,
   "license": "MIT",
   "description": "Kemudi — local browser control bridge with Supabase-powered workflows and automation.",

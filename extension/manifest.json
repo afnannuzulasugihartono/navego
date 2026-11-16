@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Kemudi",
-  "version": "1.6.59",
+  "version": "1.7.1",
   "description": "Kemudi drives your own browser from the AI you already use; the pages never leave this machine.",
   "permissions": [
     "tabs",
