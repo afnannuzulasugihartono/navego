@@ -1,0 +1,34 @@
+name: Corbin icons
+on:
+  push:
+    paths:
+      - 'site/public/corbin-mark.svg'
+      - '.github/workflows/corbin-icons.yml'
+permissions:
+  contents: write
+jobs:
+  raster:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: corbin-professional-logo
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install cairosvg
+      - name: Raster the monogram into every icon size
+        run: |
+          python3 - <<'PY'
+          import cairosvg
+          for size in (16, 32, 48, 128):
+            cairosvg.svg2png(url='site/public/corbin-mark.svg', write_to=f'extension/icons/icon{size}.png', output_width=size, output_height=size)
+          cairosvg.svg2png(url='site/public/corbin-mark.svg', write_to='docs/store/icon128.png', output_width=128, output_height=128)
+          PY
+      - name: Commit the icons
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add extension/icons/icon16.png extension/icons/icon32.png extension/icons/icon48.png extension/icons/icon128.png docs/store/icon128.png
+          git diff --cached --quiet || git commit -m 'chore(brand): one Corbin monogram in every extension icon'
+          git push

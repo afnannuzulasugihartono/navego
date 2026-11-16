@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
-import { Raven } from '../components/Raven';
+import { CorbinMark } from '../components/CorbinMark';
 import { AUTH_HOST, clearSession, ensureSession, headersFor } from '../lib/auth';
 import {
   type Device,
@@ -322,7 +322,7 @@ export default function Dashboard() {
         ) : (
           <div className="app">
             <nav className="rail" aria-label="Navigasi konsol">
-              <Raven size={26} reverse title="Corbin" />
+              <CorbinMark size={26} title="Corbin" />
               {renderNavItem('ringkasan', 'Ringkasan')}
               {renderNavItem('device', `Device (${total})`)}
               {renderNavItem('riwayat', 'Riwayat')}
