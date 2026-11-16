@@ -52,7 +52,7 @@ export default function Consent() {
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get('authorization_id');
     setAuthId(id);
-    (async () => {
+    void (async () => {
       const token = await ensureSession();
       if (token) {
         try {

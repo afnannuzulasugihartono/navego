@@ -37,7 +37,7 @@ export default function Index() {
     const cont = document.getElementById('continueButton') as HTMLAnchorElement | null;
     if (cont) cont.href = returnTo();
 
-    (async () => {
+    void (async () => {
       const fragment = new URLSearchParams(window.location.hash.replace(/^#/, ''));
       const accessToken = fragment.get('access_token');
       if (accessToken) {
@@ -131,7 +131,7 @@ export default function Index() {
                 <button type="button" role="tab" aria-selected={tab === 'login'} onClick={() => setTab('login')}>Masuk</button>
                 <button type="button" role="tab" aria-selected={tab === 'register'} onClick={() => setTab('register')}>Daftar</button>
               </div>
-              <form onSubmit={(event) => { event.preventDefault(); sendMagicLink(); }}>
+              <form onSubmit={(event) => { event.preventDefault(); void sendMagicLink(); }}>
                 <div className="field">
                   <label htmlFor="magicEmail">Email</label>
                   <input id="magicEmail" type="email" autoComplete="email" spellCheck={false} maxLength={254} placeholder="anda@example.com" value={email} onChange={(event) => setEmail(event.target.value)} />

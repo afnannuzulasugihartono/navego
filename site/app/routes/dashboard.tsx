@@ -123,7 +123,7 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    (async () => {
+    void (async () => {
       const token = await ensureSession();
       if (!token) {
         window.location.replace('./index.html');
@@ -602,7 +602,7 @@ function KonsolView({ deviceCount }: { deviceCount: number }) {
   const pageSize = 50;
 
   useEffect(() => {
-    (async () => {
+    void (async () => {
       const tables = await konsolTables();
       if (!tables?.ok || !Array.isArray(tables.tables)) {
         setState((s) => ({ ...s, ready: true, status: 'Konsol data belum bisa dimuat. Muat ulang halaman sebentar lagi.' }));

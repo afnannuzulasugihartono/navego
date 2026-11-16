@@ -57,7 +57,7 @@ export default function Akun() {
   });
 
   useEffect(() => {
-    (async () => {
+    void (async () => {
       const token = await ensureSession();
       if (!token) {
         window.location.replace('./index.html');
