@@ -7,6 +7,8 @@ const NAV = [
   { href: '/docs.html', label: 'Docs' }
 ];
 
+const VERSION = '1.7.1';
+
 export function SiteHeader({ current }: { current?: string }) {
   return (
     <header className="site-header">
@@ -14,7 +16,7 @@ export function SiteHeader({ current }: { current?: string }) {
         <Link className="brand" to="/beranda.html" aria-label="Corbin — beranda">
           <Raven variant="icon" size={22} />
           <span className="brand-word">corbin</span>
-          <span className="brand-version">v1.6.54</span>
+          <span className="brand-version">v{VERSION}</span>
         </Link>
         <nav className="nav" aria-label="Navigasi utama">
           {NAV.map((item) => (

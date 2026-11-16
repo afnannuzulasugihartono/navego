@@ -35,6 +35,7 @@ const ENUMERATED = [
   'tests/extension/protocol.test.mjs',
   'tests/extension/role-reconcile.test.mjs',
   'tests/extension/timeout-retry-popup-parity.test.mjs',
+  'site/app/components/Chrome.tsx',
   'docs/handoff.md'
 ];
 
