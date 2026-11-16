@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Raven } from './Raven';
+import { CorbinMark, CorbinWordmark } from './CorbinMark';
 
 const NAV = [
   { href: '/fitur.html', label: 'Fitur' },
@@ -14,8 +14,8 @@ export function SiteHeader({ current }: { current?: string }) {
     <header className="site-header">
       <div className="wrap">
         <Link className="brand" to="/beranda.html" aria-label="Corbin — beranda">
-          <Raven variant="icon" size={22} />
-          <span className="brand-word">corbin</span>
+          <CorbinMark size={22} />
+          <CorbinWordmark size={16} />
           <span className="brand-version">v{VERSION}</span>
         </Link>
         <nav className="nav" aria-label="Navigasi utama">
@@ -61,8 +61,8 @@ export function SiteFooter() {
         <div className="footer-cols">
           <div>
             <div className="footer-brand">
-              <Raven variant="icon" size={40} />
-              <span className="brand-word" style={{ fontSize: 16 }}>corbin</span>
+              <CorbinMark size={40} />
+              <CorbinWordmark size={20} />
             </div>
             <p className="footer-tag">Huginn &amp; Muninn — Odin&#x27;s ravens. Browser Anda, atas perintah Anda.</p>
             <a className="footer-badge" href="/beranda.html" aria-label="Corbin — pasang badge di situs Anda">

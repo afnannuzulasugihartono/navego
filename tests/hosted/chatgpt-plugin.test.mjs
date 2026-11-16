@@ -39,5 +39,7 @@ test('the gateway accepts a user JWT and resolves the caller device', async () =
 test('the plugin logo is the shipped mark', async () => {
   const icon = await read('site/public/icon.svg');
   assert.match(icon, /<svg[^>]*viewBox="0 0 240 240"/);
-  assert.match(icon, /id="ring"/, 'the mark keeps its iridescent ring');
+  assert.match(icon, /id="corbin-chrome"/, 'the mark keeps its brushed chrome');
+  assert.match(icon, /#d8923f/, 'and the amber cursor');
+  assert.doesNotMatch(icon, /id="ring"/, 'the old iridescent ring is retired');
 });
