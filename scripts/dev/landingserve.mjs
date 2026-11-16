@@ -20,6 +20,8 @@ const port = Number(process.argv[2] || 8777);
 
 // WHY THE PATH IS BUILT FROM A WHITELIST, NOT JOINED FROM THE REQUEST: joining user input into a filesystem path is the shape the traversal checks flag, whatever guard follows it.
 // The request names a file, the whitelist decides whether it exists, and only files inside the build output are servable.
+// WHY THE PRETTY URLS ARE SERVED HERE TOO: Cloudflare Pages answers /beranda with the beranda.html file, and the client router has to survive that path.
+// The review server mirrors it, so what the reviewer sees is what a reader with an old bookmark gets.
 
 const entries = new Set();
 async function walk(dir, prefix) {
@@ -40,17 +42,19 @@ createServer(async (req, res) => {
   }
   const path = decodeURIComponent(raw);
   const name = path === '/' ? 'index.html' : path.replace(/^\//, '');
-  if (!/^[A-Za-z0-9._/-]+\.(html|css|js|svg|woff2|jpg|xml|txt)$|^(oauth\/consent|index|404)\.html$/.test(name)) {
+  const pretty = !/\.[A-Za-z0-9]+$/.test(name) && entries.has(`${name}.html`);
+  if (!/^[A-Za-z0-9._/-]+\.(html|css|js|svg|woff2|jpg|xml|txt)$|^(oauth\/consent|index|404)\.html$/.test(name) && !pretty) {
     res.writeHead(404);
     res.end();
     return;
   }
-  if (!entries.has(name) && !entries.has(`${name}.html`)) {
+  const served = pretty ? `${name}.html` : name;
+  if (!entries.has(served) && !entries.has(`${served}.html`)) {
     res.writeHead(404);
     res.end();
     return;
   }
-  const file = entries.has(name) ? resolve(root, name) : resolve(root, `${name}.html`);
+  const file = entries.has(served) ? resolve(root, served) : resolve(root, `${served}.html`);
   if (!file.startsWith(rootWithSep)) {
     res.writeHead(403);
     res.end();

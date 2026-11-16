@@ -159,6 +159,20 @@ test('_headers covers every route, forbids inline scripts, denies framing everyw
   }
 });
 
+test('the client router answers the file URL and the legacy pretty URL alike', () => {
+  buildSite();
+  const assets = fs.readdirSync(path.join(client, 'assets'));
+  const manifest = assets.find((f) => f.startsWith('manifest-') && f.endsWith('.js'));
+  assert.ok(manifest, 'the build ships a router manifest');
+  const source = fs.readFileSync(path.join(client, 'assets', manifest), 'utf8');
+  const slugs = ['beranda', 'fitur', 'harga', 'unduh', 'docs', 'mcp', 'studi', 'bukti', 'dukungan', 'privasi', 'syarat', 'akun', 'dashboard', 'oauth/consent'];
+  for (const slug of slugs) {
+    assert.ok(source.includes(`"path":"${slug}"`), `the router knows /${slug}`);
+    assert.ok(source.includes(`"path":"${slug}.html"`), `the router knows /${slug}.html`);
+  }
+  assert.ok(source.includes('"path":"index.html"'), 'the router knows /index.html');
+});
+
 test('the sitemap names exactly the routes the build carries (404 and unknowns are not in it)', () => {
   buildSite();
   const sitemap = fs.readFileSync(path.join(client, 'sitemap.xml'), 'utf8');
