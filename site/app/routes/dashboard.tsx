@@ -366,9 +366,9 @@ export default function Dashboard() {
                   <div className="panel">
                     <div className="panel-head"><h2 style={{ fontSize: 15 }}>Checklist pemasangan</h2></div>
                     <ol style={{ listStyle: 'none', display: 'grid', gap: 8, fontSize: 13 }}>
-                      <li>{installState === 'installed' ? '✓' : '○'} Pasang extension di browser ini</li>
-                      <li>{total > 0 ? '✓' : '○'} Pair device</li>
-                      <li>{doneSum > 0 ? '✓' : '○'} Jalankan perintah pertama</li>
+                      <li>{installState === 'installed' ? 'siap' : '○'} Pasang extension di browser ini</li>
+                      <li>{total > 0 ? 'siap' : '○'} Pair device</li>
+                      <li>{doneSum > 0 ? 'siap' : '○'} Jalankan perintah pertama</li>
                     </ol>
                   </div>
                   {statusLine ? <p className="status warn" role="status">{statusLine}</p> : null}
@@ -532,7 +532,7 @@ export default function Dashboard() {
                       <label htmlFor="pairName">Nama device</label>
                       <input id="pairName" type="text" autoComplete="off" spellCheck={false} maxLength={64} placeholder="opera" value={pairName} onChange={(event) => setPairName(event.target.value)} />
                     </div>
-                    <button className="btn btn-solid" type="button" onClick={runPairQuick}>{pairOk ? '✓ Ter-pairing' : 'Pasangkan browser ini'}</button>
+                    <button className="btn btn-solid" type="button" onClick={runPairQuick}>{pairOk ? 'siap Ter-pairing' : 'Pasangkan browser ini'}</button>
                     <p className="status" role="status" style={{ marginTop: 8 }}>{pairStatus}</p>
                   </div>
                 </>
