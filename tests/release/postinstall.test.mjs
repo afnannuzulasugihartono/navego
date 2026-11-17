@@ -37,3 +37,8 @@ test('OPERA_AGENT_NO_INSTALL=1 exits 0 silently', () => {
   const out = run({ npm_config_global: 'true', OPERA_AGENT_NO_INSTALL: '1' });
   assert.equal(out, '');
 });
+
+test('NAVEGO_NO_INSTALL=1 exits 0 silently (the renamed opt-out)', () => {
+  const out = run({ npm_config_global: 'true', NAVEGO_NO_INSTALL: '1' });
+  assert.equal(out, '');
+});

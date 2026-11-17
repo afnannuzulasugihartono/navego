@@ -35,7 +35,7 @@ function importsOf(source) {
 }
 
 test('the package is named and run the way the guide says', () => {
-  assert.equal(manifest.name, 'opera-agent-mcp');
+  assert.equal(manifest.name, 'navego');
   assert.ok(manifest.bin['navego'], 'the package installs one command');
   assert.equal(manifest.type, 'module');
   assert.ok(manifest.engines.node, 'the package says which node it needs');
@@ -66,7 +66,7 @@ test('the packaged copy of the shared endpoint module still pins the region', as
   assert.equal(socketUrl('https://example.test/bridge'), 'wss://example.test/bridge?forceFunctionRegion=ap-southeast-1');
 });
 
-const bin = fileURLToPath(new URL('../../local/bin/kemudi.js', import.meta.url));
+const bin = fileURLToPath(new URL('../../local/bin/navego.js', import.meta.url));
 
 async function fakeHealthBridge(payload) {
   const server = http.createServer((req, res) => {
@@ -199,7 +199,7 @@ test('the docs name the two modes and where the gate lives', async () => {
 
 test('the package lists every module the server needs, and its shared copies are the current ones', async () => {
   const files = manifest.files;
-  for (const needed of ['bin/kemudi.js', 'mcp-server.js', 'bridge-ws.js', 'tools.js', 'lib/endpoints.js', 'lib/socket-protocol.js']) {
+  for (const needed of ['bin/navego.js', 'mcp-server.js', 'bridge-ws.js', 'tools.js', 'lib/endpoints.js', 'lib/socket-protocol.js']) {
     assert.ok(files.includes(needed), `the package must ship ${needed}`);
   }
   for (const name of ['socket-protocol.js', 'endpoints.js']) {

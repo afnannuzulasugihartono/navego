@@ -1,12 +1,11 @@
 # Calling Navego
 
 One road, one command: `navego local`. Local on the machine where the browser already is.
-`kemudi` dan `opera-agent-mcp` masih berfungsi sebagai alias lama — nama urutannya tidak berubah.
 
 The install is one command:
 
 ```bash
-npm i -g opera-agent-mcp
+npm i -g navego
 ```
 
 ## The installer and the driver

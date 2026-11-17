@@ -13,8 +13,8 @@ export function meta() {
 const TOOLS = catalog as Array<{ group: string; items: Array<[string, string]> }>;
 
 const CONFIGS: Array<{ id: string; title: string; body: string }> = [
-  { id: 'cfg-opencode', title: 'OpenCode', body: '{\n  "mcp": {\n    "navego": {\n      "type": "local",\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-kilo', title: 'Kilo Code', body: '{\n  "mcpServers": {\n    "navego": {\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-opencode', title: 'OpenCode', body: '{\n  "mcp": {\n    "navego": {\n      "type": "local",\n      "command": "navego",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-kilo', title: 'Kilo Code', body: '{\n  "mcpServers": {\n    "navego": {\n      "command": "navego",\n      "args": ["local"]\n    }\n  }\n}' },
   { id: 'cfg-claude', title: 'Claude Desktop', body: 'command: npx\nargs: ["-y", "navego", "local"]' }
 ];
 
@@ -133,8 +133,8 @@ export default function Docs() {
           <p>Satu MCP (Model Context Protocol) per mesin: driver lokal, jalan di mesin Anda sendiri, tanpa biaya per panggilan dan tanpa melewati server orang lain. <Link to="/mcp.html">Pasang driver lokal</Link>.</p>
           <p>Koneksi driver lokal:</p>
           <div style={{ background: 'var(--ink)', borderRadius: 8, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 12, maxWidth: 640 }}>
-            <code style={{ background: 'transparent', color: '#d8f4ff' }}>npx -y opera-agent-mcp local</code>
-            <button onClick={() => copy('npx -y opera-agent-mcp local', 'mcp-url')} className="cf-copy">{copied === 'mcp-url' ? 'Tersalin' : 'Salin'}</button>
+            <code style={{ background: 'transparent', color: '#d8f4ff' }}>npx -y navego local</code>
+            <button onClick={() => copy('npx -y navego local', 'mcp-url')} className="cf-copy">{copied === 'mcp-url' ? 'Tersalin' : 'Salin'}</button>
           </div>
           {CONFIGS.map(({ id, title, body }) => (
             <div key={id}>
