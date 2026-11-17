@@ -4,7 +4,10 @@
 
 FROM node:22-slim
 
-RUN npm install --global navego@1.7.6
+RUN npm install --global navego@1.7.6 --ignore-scripts
+
+RUN groupadd --system navego && useradd --system --gid navego --create-home navego
+USER navego
 
 LABEL io.modelcontextprotocol.server.name="io.github.afnannuzulasugihartono/navego"
 
