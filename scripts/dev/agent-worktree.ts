@@ -26,6 +26,7 @@ const repo = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 // WHY THE SINK ALSO VALIDATES, AND WHY HERE.
 // Every argument passes through one mouth before it reaches git; the argv arriving from an LLM is data, and data at a shell-less exec boundary is still only as safe as what crosses.
 // Subcommands and values must match the path-ish allowlist; dashed args must be in the named flag set; nothing else ever reaches git.
+
 const SAFE_FLAGS = new Set(['-b', '-a', '-m', '-D', '--force', '--porcelain', '--list', '--merged']);
 const SAFE_ARG = /^[A-Za-z0-9][A-Za-z0-9:._ \/\\()-]{0,299}$/;
 const git = (...args: string[]) => {

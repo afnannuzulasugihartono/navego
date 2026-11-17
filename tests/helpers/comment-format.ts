@@ -371,18 +371,19 @@ function inSpans(index: number, spans: Array<[number, number]>) {
 
 function findSentenceCuts(text: any) {
   const out: Array<{ index: number; run: string; punctuation: string }> = [];
-  for (let i = 0; i < text.length; i += 1) {
+  let i = 0;
+  while (i < text.length) {
     const c = text[i];
-    if (c !== '.' && c !== '!' && c !== '?') continue;
+    if (c !== '.' && c !== '!' && c !== '?') { i += 1; continue; }
     let runEnd = i + 1;
     while (runEnd < text.length && '.!?'.includes(text[runEnd] ?? '')) runEnd += 1;
     let tailEnd = runEnd;
     while (tailEnd < text.length && '"\')]'.includes(text[tailEnd] ?? '')) tailEnd += 1;
     let wsEnd = tailEnd;
     while (wsEnd < text.length && /\s/.test(text[wsEnd] ?? '')) wsEnd += 1;
-    if (wsEnd === tailEnd) { i = runEnd - 1; continue; }
+    if (wsEnd === tailEnd) { i = runEnd; continue; }
     out.push({ index: i, run: text.slice(i, runEnd), punctuation: text.slice(i, tailEnd) });
-    i = wsEnd - 1;
+    i = wsEnd;
   }
   return out;
 }
