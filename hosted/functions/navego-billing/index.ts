@@ -114,7 +114,11 @@ const BILLING_TOKEN = Deno.env.get("NAVEGO_BILLING_TOKEN") || "";
 // The site serves the same page through a thin worker that keeps the page's headers and rewrites the refresh redirect, so the link an operator hands out names the site.
 // With no site configured the function's own URL stays as the fallback: the page is readable there even when a browser will not render it as a page.
 
-const BILLING_PAGE_URL = (Deno.env.get("BILLING_PAGE_URL") || "").replace(/\/+$/, "");
+const BILLING_PAGE_URL = (() => {
+  let value = (Deno.env.get("BILLING_PAGE_URL") || "");
+  while (value.endsWith("/")) value = value.slice(0, -1);
+  return value;
+})();
 
 // WHY THE KEY IS KEPT EXACTLY AS IT WAS STORED.
 // The signature is computed over this value, so the value is not adjusted here: which reading of it signs is measured against each notification and named in the log.

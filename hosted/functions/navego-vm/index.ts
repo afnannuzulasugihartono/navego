@@ -104,8 +104,10 @@ function response(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers });
 }
 
-function bearer(req: Request) {
-  return req.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim() || "";
+function bearer(req: Request): string {
+  const header = req.headers.get("authorization") || "";
+  if (!header.toLowerCase().startsWith("bearer ")) return "";
+  return header.slice(7).trim();
 }
 
 async function authenticatedUser(req: Request) {
