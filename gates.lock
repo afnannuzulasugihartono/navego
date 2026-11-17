@@ -157,7 +157,7 @@
 #    the whitespace before hashing a tool schema, so the pin holds the tool's
 #    contract and not its indentation.
 scripts/verify/check.ts da6a0e71cb6a8bde2c9401f9d216a2361a81632f
-scripts/verify/scope.ts aa0e22fa3c0c14294a824d2c973c569b3e0ba10f
+scripts/verify/scope.ts b4ffa9f02ce0aac2e8f3846812ad3dec2fe078d3
 scripts/verify/scope-check.ts 96203fa5b6ebfeb5e8eca8d4abfed50a43579634
 
 # --- the pins themselves: editing these is how a drift goes unnoticed ---
