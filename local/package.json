@@ -3,7 +3,7 @@
   "version": "1.7.5",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/afnannuzulasugihartono/opera-agent.git"
+    "url": "git+https://github.com/afnannuzulasugihartono/navego.git"
   },
   "description": "Navego — drive your own browser from an MCP client over the loopback bridge; metered per plan through the paired device.",
   "type": "module",

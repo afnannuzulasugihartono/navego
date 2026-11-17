@@ -58,8 +58,8 @@ export default function Dukungan() {
           <p style={{ color: 'var(--muted-2)', fontSize: 13, margin: '8px 0 12px' }}>Tiga pintu, dan semuanya dibaca orang.</p>
           <ul style={{ listStyle: 'none', display: 'grid', gap: 8, fontSize: 13.5 }}>
             <li><span style={{ display: 'inline-block', width: 86, color: 'var(--muted)' }}>Email</span> <a href="mailto:afnannuzulasugihartono@gmail.com">afnannuzulasugihartono@gmail.com</a></li>
-            <li><span style={{ display: 'inline-block', width: 86, color: 'var(--muted)' }}>Isu publik</span> <a href="https://github.com/afnannuzulasugihartono/opera-agent/issues">Buka isu baru</a></li>
-            <li><span style={{ display: 'inline-block', width: 86, color: 'var(--muted)' }}>Keamanan</span> <a href="https://github.com/afnannuzulasugihartono/opera-agent/security/advisories/new">Laporkan secara privat</a></li>
+            <li><span style={{ display: 'inline-block', width: 86, color: 'var(--muted)' }}>Isu publik</span> <a href="https://github.com/afnannuzulasugihartono/navego/issues">Buka isu baru</a></li>
+            <li><span style={{ display: 'inline-block', width: 86, color: 'var(--muted)' }}>Keamanan</span> <a href="https://github.com/afnannuzulasugihartono/navego/security/advisories/new">Laporkan secara privat</a></li>
           </ul>
         </section>
         <div className="page-foot">
@@ -67,7 +67,7 @@ export default function Dukungan() {
             <h2>Macet di tengah?</h2>
             <p>Catat apa yang terjadi, lalu buka isu publik — atau laporkan secara privat kalau menyangkut keamanan.</p>
           </div>
-          <a className="btn btn-solid" href="https://github.com/afnannuzulasugihartono/opera-agent/issues/new">Laporkan</a>
+          <a className="btn btn-solid" href="https://github.com/afnannuzulasugihartono/navego/issues/new">Laporkan</a>
         </div>
       </main>
       <SiteFooter />

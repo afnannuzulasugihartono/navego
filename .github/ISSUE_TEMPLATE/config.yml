@@ -6,8 +6,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Report a vulnerability
-    url: https://github.com/afnannuzulasugihartono/opera-agent/security/advisories/new
+    url: https://github.com/afnannuzulasugihartono/navego/security/advisories/new
     about: A private route for a security defect. Never open a public issue for one.
   - name: The rules that bind a change
-    url: https://github.com/afnannuzulasugihartono/opera-agent/blob/main/AGENTS.md
+    url: https://github.com/afnannuzulasugihartono/navego/blob/main/AGENTS.md
     about: What a change has to satisfy, and what the priorities are.
