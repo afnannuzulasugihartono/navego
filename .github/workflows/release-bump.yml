@@ -1,7 +1,7 @@
 # @last-edited: 2026-11-15 UTC+7.
 # @title: release-bump - one dispatch moves every clock; the PR it opens is the review.
 # @state: workflow_dispatch with one input; runs the bump engine on main and stops at a pull request.
-# @dependencies: scripts/release/bump-version.mjs, tests/release/bump-version.test.mjs, .github/workflows/publish-*.yml for the deliberate dispatches after merge.
+# @dependencies: scripts/release/bump-version.ts, tests/release/bump-version.test.ts, .github/workflows/publish-*.yml for the deliberate dispatches after merge.
 
 # WHY THE TOOLCHAIN INSTALLS FIRST.
 # The bump engine runs `npm test` against the tree it just rewrote, and pretest dies on `biome: not found` (exit 127) on a clean runner with no node_modules - exactly what the previous dispatch died on (run 43656685470), after deploy-site and publish-npm had already learned the same lesson.
@@ -56,7 +56,7 @@ jobs:
           fi
 
       - name: The bump moves every clock and the gates must stay green
-        run: node scripts/release/bump-version.mjs "$VERSION"
+        run: node scripts/release/bump-version.ts "$VERSION"
 
       - name: Commit the bump on its own branch
         shell: bash
@@ -79,7 +79,7 @@ jobs:
           {
             echo "## What this PR does"
             echo
-            echo "Mechanical bump to \`${VERSION}\`, produced by \`scripts/release/bump-version.mjs\` from \`main\` at \`${{ github.sha }}\`."
+            echo "Mechanical bump to \`${VERSION}\`, produced by \`scripts/release/bump-version.ts\` from \`main\` at \`${{ github.sha }}\`."
             echo
             echo "## Files changed"
             echo
@@ -87,7 +87,7 @@ jobs:
             echo
             echo "## The pins"
             echo
-            echo "- \`tests/helpers/boundary-locks.mjs\` re-pinned with a new WHY block naming this release."
+            echo "- \`tests/helpers/boundary-locks.ts\` re-pinned with a new WHY block naming this release."
             echo "- \`tests/fixtures/mcp-contract-v1.json\` carries a recomputed \`sourceSha256\`."
             echo "- \`gates.lock\` re-pinned by \`npm run gates:refresh\` inside the engine."
             echo

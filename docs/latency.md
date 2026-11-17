@@ -1,7 +1,7 @@
 # @last-edited: 2026-11-11 UTC+7.
 # @title: latency - every tool, both roads, measured on the everyday browser.
 # @state: the numbers, how they were taken, and the two defects the measuring found.
-# @dependencies: scripts/bench/latency-benchmark.mjs, scripts/dev/start-bridge.mjs.
+# @dependencies: scripts/bench/latency-benchmark.ts, scripts/dev/start-bridge.ts.
 
 # WHAT WAS MEASURED, AND WHERE
 

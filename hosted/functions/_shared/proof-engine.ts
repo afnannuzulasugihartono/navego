@@ -44,8 +44,35 @@ const EXPECTED_TRUST = Object.freeze({
 });
 const VALIDATED_EVIDENCE = Symbol('validatedEvidenceDigest');
 
+
+interface NormalizedDependency {
+  evidenceId: string;
+  evidenceDigest: string;
+}
+
+interface NormalizedEvidence {
+  schemaVersion: number;
+  evidenceId: string;
+  category: string;
+  tenantId: string;
+  goalId: string;
+  goalRevision: number;
+  ledgerDigest: string;
+  claimId: string;
+  scopeId: string;
+  observedAt: string;
+  trust: string;
+  predicate: string;
+  supports: boolean;
+  exhaustive: boolean;
+  dependencies: NormalizedDependency[];
+  evidenceDigest: string;
+}
+
 class ProofError extends Error {
-  constructor(code, message, details = undefined) {
+  code: string;
+  details?: unknown;
+  constructor(code: string, message: string, details?: unknown) {
     super(message);
     this.name = 'ProofError';
     this.code = code;
@@ -53,17 +80,17 @@ class ProofError extends Error {
   }
 }
 
-function fail(code, message, details) {
+function fail(code: string, message: string, details?: unknown): never {
   throw new ProofError(code, message, details);
 }
 
-function isPlainObject(value) {
+function isPlainObject(value: unknown): value is Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const prototype = Object.getPrototypeOf(value);
   return prototype === Object.prototype || prototype === null;
 }
 
-function allowedFields(value, fields, path) {
+function allowedFields(value: unknown, fields: Set<string>, path: string): asserts value is Record<string, unknown> {
   if (!isPlainObject(value)) fail('INVALID_TYPE', `${path} must be a plain object.`);
   for (const key of Object.keys(value)) {
     if (SECRET_FIELD.test(key)) fail('SECRET_LIKE_VALUE', `${path}.${key} is forbidden.`);
@@ -71,7 +98,7 @@ function allowedFields(value, fields, path) {
   }
 }
 
-function stringValue(value, path, { maxBytes = 256, pattern } = {}) {
+function stringValue(value: unknown, path: string, { maxBytes = 256, pattern }: { maxBytes?: number; pattern?: RegExp } = {}): string {
   if (typeof value !== 'string') fail('INVALID_TYPE', `${path} must be a string.`);
   const normalized = value.normalize('NFC');
   if (!normalized || new TextEncoder().encode(normalized).length > maxBytes) fail('OVER_LIMIT', `${path} exceeds its bounds.`);
@@ -80,34 +107,34 @@ function stringValue(value, path, { maxBytes = 256, pattern } = {}) {
   return normalized;
 }
 
-function idValue(value, path) {
+function idValue(value: unknown, path: string): string {
   return stringValue(value, path, { maxBytes: 128, pattern: ID_PATTERN });
 }
 
-function timestampValue(value, path) {
+function timestampValue(value: unknown, path: string): string {
   const normalized = stringValue(value, path, { maxBytes: 32, pattern: UTC_TIMESTAMP });
   if (!Number.isFinite(Date.parse(normalized))) fail('INVALID_VALUE', `${path} is not a valid UTC timestamp.`);
   return normalized;
 }
 
-function digestValue(value, path) {
+function digestValue(value: unknown, path: string): string {
   if (typeof value !== 'string' || !SHA256_HEX.test(value)) fail('INVALID_DIGEST', `${path} is invalid.`);
   return value;
 }
 
-function arrayValue(value, path, maximum, mapper) {
+function arrayValue<T>(value: unknown, path: string, maximum: number, mapper: (item: unknown, itemPath: string) => T): T[] {
   if (!Array.isArray(value)) fail('INVALID_TYPE', `${path} must be an array.`);
   if (value.length > maximum) fail('OVER_LIMIT', `${path} exceeds its item limit.`);
   return value.map((item, index) => mapper(item, `${path}[${index}]`));
 }
 
-function deepFreeze(value) {
+function deepFreeze<T>(value: T): T {
   if (!value || typeof value !== 'object' || Object.isFrozen(value)) return value;
   for (const item of Object.values(value)) deepFreeze(item);
   return Object.freeze(value);
 }
 
-function freezeEvidence(value) {
+function freezeEvidence(value: NormalizedEvidence): NormalizedEvidence {
   Object.defineProperty(value, VALIDATED_EVIDENCE, {
     value: value.evidenceDigest,
     enumerable: false,
@@ -117,7 +144,7 @@ function freezeEvidence(value) {
   return deepFreeze(value);
 }
 
-function normalizeDependency(value, path) {
+function normalizeDependency(value: unknown, path: string): NormalizedDependency {
   allowedFields(value, DEPENDENCY_FIELDS, path);
   return {
     evidenceId: idValue(value.evidenceId, `${path}.evidenceId`),
@@ -125,14 +152,14 @@ function normalizeDependency(value, path) {
   };
 }
 
-function normalizeEvidence(input) {
+function normalizeEvidence(input: unknown): Omit<NormalizedEvidence, 'evidenceDigest'> {
   allowedFields(input, EVIDENCE_FIELDS, 'evidence');
   if (input.schemaVersion !== SCHEMA_VERSION) fail('INVALID_VALUE', 'evidence.schemaVersion is unsupported.');
   const category = stringValue(input.category, 'evidence.category', { maxBytes: 64, pattern: SYMBOL_PATTERN });
   if (!EVIDENCE_CATEGORIES.has(category)) fail('INVALID_VALUE', 'evidence.category is unsupported.');
   const trust = stringValue(input.trust, 'evidence.trust', { maxBytes: 64, pattern: SYMBOL_PATTERN });
-  if (trust !== EXPECTED_TRUST[category]) fail('UNTRUSTED_EVIDENCE', 'Evidence trust does not match its category.');
-  if (!Number.isSafeInteger(input.goalRevision) || input.goalRevision < 1 || input.goalRevision > LEDGER_LIMITS.maximumRevision) {
+  if (trust !== EXPECTED_TRUST[category as keyof typeof EXPECTED_TRUST]) fail('UNTRUSTED_EVIDENCE', 'Evidence trust does not match its category.');
+  if (typeof input.goalRevision !== 'number' || !Number.isSafeInteger(input.goalRevision) || input.goalRevision < 1 || input.goalRevision > LEDGER_LIMITS.maximumRevision) {
     fail('INVALID_VALUE', 'evidence.goalRevision is invalid.');
   }
   if (typeof input.supports !== 'boolean' || typeof input.exhaustive !== 'boolean') {
@@ -162,51 +189,53 @@ function normalizeEvidence(input) {
   };
 }
 
-export async function createEvidence(input) {
+export async function createEvidence(input: unknown): Promise<NormalizedEvidence> {
   const normalized = normalizeEvidence(input);
   const evidenceDigest = await digestCanonical(normalized);
   return freezeEvidence({ ...normalized, evidenceDigest });
 }
 
-async function validateEvidence(input) {
-  if (!isPlainObject(input) || !SHA256_HEX.test(input.evidenceDigest || '')) fail('INVALID_DIGEST', 'evidence.evidenceDigest is invalid.');
-  if (input[VALIDATED_EVIDENCE] === input.evidenceDigest && Object.isFrozen(input)) return input;
+async function validateEvidence(input: unknown): Promise<NormalizedEvidence> {
+  const digestInput = isPlainObject(input) && typeof input.evidenceDigest === 'string' ? input.evidenceDigest : '';
+  if (!isPlainObject(input) || !SHA256_HEX.test(digestInput)) fail('INVALID_DIGEST', 'evidence.evidenceDigest is invalid.');
+  if (isPlainObject(input) && (input as Record<string | symbol, unknown>)[VALIDATED_EVIDENCE] === input.evidenceDigest && Object.isFrozen(input)) return input as unknown as NormalizedEvidence;
   const normalized = normalizeEvidence(input);
   const expected = await digestCanonical(normalized);
   if (expected !== input.evidenceDigest) fail('INVALID_DIGEST', 'Evidence digest does not match canonical content.');
   return freezeEvidence({ ...normalized, evidenceDigest: expected });
 }
 
-function rejectionCode(error) {
+function rejectionCode(error: unknown): string {
   if (error instanceof ProofError || error instanceof LedgerError) return error.code;
   return 'INVALID_DIGEST';
 }
 
-function evidenceIdFor(input, index) {
-  return typeof input?.evidenceId === 'string' && ID_PATTERN.test(input.evidenceId)
-    ? input.evidenceId
+function evidenceIdFor(input: unknown, index: number): string {
+  const record = isPlainObject(input) ? input : {};
+  return typeof record.evidenceId === 'string' && ID_PATTERN.test(record.evidenceId)
+    ? record.evidenceId
     : `invalid_evidence_${index}`;
 }
 
-function requirementAge(claim, requirements, category) {
+function requirementAge(claim: { evidenceRequirementIds: string[] }, requirements: Array<{ requirementId: string; categories: string[]; maximumAgeSeconds: number }>, category: string): number {
   const ids = new Set(claim.evidenceRequirementIds);
   const matching = requirements.filter((item) => ids.has(item.requirementId) && item.categories.includes(category));
   return matching.length ? Math.max(...matching.map((item) => item.maximumAgeSeconds)) : 0;
 }
 
-function compareEvidence(left, right) {
+function compareEvidence(left: { evidenceId: string }, right: { evidenceId: string }): number {
   return left.evidenceId.localeCompare(right.evidenceId, 'en');
 }
 
-function compareRejection(left, right) {
+function compareRejection(left: { index: number }, right: { index: number }): number {
   return left.index - right.index;
 }
 
-function proofBytes(value) {
+function proofBytes(value: unknown): number {
   return new TextEncoder().encode(canonicalJson(value)).length;
 }
 
-export async function evaluateProof(ledgerInput, claimIdInput, evidenceInput, options = {}) {
+export async function evaluateProof(ledgerInput: unknown, claimIdInput: unknown, evidenceInput: unknown, options: { now?: string; dependencyEvidence?: unknown } = {}) {
   const ledger = await validateLedger(ledgerInput, { now: options.now });
   const claimId = idValue(claimIdInput, 'claimId');
   const claim = ledger.claims.find((item) => item.claimId === claimId);
@@ -224,9 +253,9 @@ export async function evaluateProof(ledgerInput, claimIdInput, evidenceInput, op
       return { index, rejection: { evidenceId: evidenceIdFor(item, index), reason: rejectionCode(error) } };
     }
   }));
-  const dependencyValidated = await Promise.all(dependencyInput.map(async (item) => {
+  const dependencyValidated = (await Promise.all(dependencyInput.map(async (item) => {
     try { return await validateEvidence(item); } catch { return null; }
-  }));
+  }))).filter((item): item is NormalizedEvidence => item !== null);
   const dependencyHeads = new Map(dependencyValidated.filter(Boolean).map((item) => [item.evidenceId, item]));
   for (const item of validated) if (item.evidence) dependencyHeads.set(item.evidence.evidenceId, item.evidence);
 
@@ -303,6 +332,7 @@ export async function evaluateProof(ledgerInput, claimIdInput, evidenceInput, op
   const unresolved = [];
   for (const requirementId of claim.evidenceRequirementIds) {
     const requirement = requirementById.get(requirementId);
+    if (!requirement) fail('MISSING_REFERENCE', `Unknown requirement ${requirementId}.`);
     const matches = accepted.filter((item) => item.supports && requirement.categories.includes(item.category));
     const count = requirement.categories.includes('BOUNDARY_OBSERVATION')
       ? new Set(matches.filter((item) => item.category === 'BOUNDARY_OBSERVATION').map((item) => item.observedAt)).size

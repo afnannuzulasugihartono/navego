@@ -33,6 +33,6 @@ and the reason is in the commit.
 
 ## The pins
 
-If the change moves bytes that `gates.lock` or `tests/helpers/boundary-locks.mjs`
+If the change moves bytes that `gates.lock` or `tests/helpers/boundary-locks.ts`
 freezes, the pin moves with it and the commit says why the criterion it
 enforces did or did not change.

@@ -10,7 +10,7 @@ Every module here is pure JavaScript with no I/O, no DOM, no fetch, no Postgres,
 | Module | What it is | Who imports it |
 |---|---|---|
 | `digest.js` | The one canonical encoder and its SHA-256. The VM digests itself with this, byte-identical by construction. | `shared/reactive-vm*.js`, `hosted/functions/_shared/goal-ledger.ts` |
-| `ax-menu.js` | The AX-tree menu walk (find, plan, open, fast-open, refused). | shared by the local surface driver; gates on `tests/shared/ax-menu.test.mjs` |
+| `ax-menu.js` | The AX-tree menu walk (find, plan, open, fast-open, refused). | shared by the local surface driver; gates on `tests/shared/ax-menu.test.ts` |
 | `canonical-order.js` | The code-unit comparator every digest sorts by. | `shared/semantic-working-state.js`, `shared/reactive-vm-host.js`, `hosted/functions/_shared/proof-engine.ts`, `hosted/functions/_shared/goal-ledger.ts` |
 | `delta-first-observation.js` | The changed-fact computation the model consumes as what moved, instead of the page wholesale. | the local read path |
 | `multi-signal-relevance.js` | Relevance scoring the two read ladders use to decide what the model should look at. | the surface drivers |

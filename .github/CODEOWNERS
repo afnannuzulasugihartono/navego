@@ -5,7 +5,7 @@
 # @dependencies: none stated.
 
 # WHY this file is the real gate.
-# Everything else that keeps this tree honest — the test suite, the byte pins in tests/helpers/boundary-locks.mjs, the structure gates — lives in files an automated agent can edit in the same breath as the code those gates judge.
+# Everything else that keeps this tree honest — the test suite, the byte pins in tests/helpers/boundary-locks.ts, the structure gates — lives in files an automated agent can edit in the same breath as the code those gates judge.
 # gates.lock makes that tampering loud instead of silent, but loud is not prevented.
 # THIS is what prevents it: with branch protection on main, a change to any path below needs a human approver, and no agent can grant itself that right or take it away.
 
@@ -22,7 +22,7 @@ gates.lock
 # The verifier.
 # It cannot pin its own hash, so this entry is its only guard.
 
-/scripts/verify/gates.mjs
+/scripts/verify/gates.ts
 
 # Default owner for everything.
 # Release automation paths get the same owner explicitly so no path is ever unowned.
