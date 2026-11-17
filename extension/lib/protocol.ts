@@ -417,7 +417,7 @@ export function safeUrl(value: unknown): string | null {
     return url.toString();
   } catch (error) {
 
-    globalThis.OperaAgentLog?.debug?.('SAFE_URL_PARSE_FAILED', error instanceof Error ? error.message : String(error));
+    globalThis.NavegoLog?.debug?.('SAFE_URL_PARSE_FAILED', error instanceof Error ? error.message : String(error));
     return null;
   }
 }

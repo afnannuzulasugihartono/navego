@@ -282,8 +282,8 @@ test('the focus gate loop is bounded by construction', () => {
 });
 
 test('the shared runtimes are frozen, so a sibling script cannot mutate them', () => {
-  const roles = globalThis.OperaAgentRoleReconcile;
-  const hover = globalThis.OperaAgentHoverSettle;
+  const roles = globalThis.NavegoRoleReconcile;
+  const hover = globalThis.NavegoHoverSettle;
   assert.ok(roles, 'the role runtime must be installed');
   assert.ok(hover, 'the hover runtime must be installed');
   assert.equal(Object.isFrozen(roles), true, 'the role runtime must be frozen');
@@ -299,7 +299,7 @@ test('the shared runtimes are frozen, so a sibling script cannot mutate them', (
 });
 
 test('the role gap sample is a positive integer, not an accidental truthy value', () => {
-  const rolesRuntime = globalThis.OperaAgentRoleReconcile;
+  const rolesRuntime = globalThis.NavegoRoleReconcile;
   assert.ok(rolesRuntime, 'the role runtime must be installed');
   const { ROLE_GAP_SAMPLE_SIZE } = rolesRuntime;
   assert.equal(Number.isInteger(ROLE_GAP_SAMPLE_SIZE), true);

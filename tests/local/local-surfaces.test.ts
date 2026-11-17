@@ -96,13 +96,13 @@ test('the statements root is a folder the person already knows', () => {
 });
 
 test('the bridge port is the one the environment names', () => {
-  const before = process.env.OPERA_BRIDGE_PORT;
-  process.env.OPERA_BRIDGE_PORT = '9911';
+  const before = process.env.NAVEGO_BRIDGE_PORT;
+  process.env.NAVEGO_BRIDGE_PORT = '9911';
   try {
     assert.equal(bridgePort(), 9911);
   } finally {
-    if (before === undefined) delete process.env.OPERA_BRIDGE_PORT;
-    else process.env.OPERA_BRIDGE_PORT = before;
+    if (before === undefined) delete process.env.NAVEGO_BRIDGE_PORT;
+    else process.env.NAVEGO_BRIDGE_PORT = before;
   }
   assert.match(LINK_ERROR, /extension is not connected/, 'the error names what to do');
 });

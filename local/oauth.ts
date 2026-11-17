@@ -6,7 +6,7 @@
 // WHY THIS FILE EXISTS
 
 // The hosted MCP asks for an OAuth token before it answers anything.
-// A machine that has a browser signs in through it once and is remembered; a machine without one sets OPERA_AGENT_MCP_TOKEN instead.
+// A machine that has a browser signs in through it once and is remembered; a machine without one sets NAVEGO_MCP_TOKEN instead.
 // One flow, one file; both doors open the same URL, and neither one needs a secret.
 
 // WHY A LOOPBACK CALLBACK.
@@ -23,7 +23,7 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 
 const PROJECT_REF = 'nenmkmtvjremqphfqnfw';
-export const HOSTED_MCP_URL = `https://${PROJECT_REF}.supabase.co/functions/v1/opera-agent-mcp`;
+export const HOSTED_MCP_URL = `https://${PROJECT_REF}.supabase.co/functions/v1/navego-mcp`;
 const AUTHZ_ENDPOINT = `https://${PROJECT_REF}.supabase.co/auth/v1/oauth/authorize`;
 const TOKEN_ENDPOINT = `https://${PROJECT_REF}.supabase.co/auth/v1/oauth/token`;
 const CLIENT_ID = 'bbc5eb76-f385-435b-8b13-8e339b45e633';
@@ -49,7 +49,7 @@ interface StoredToken {
 const b64url = (bytes: Uint8Array): string => Buffer.from(bytes).toString('base64url');
 
 export function configDir(env: NodeJS.ProcessEnv = process.env): string {
-  if (env.OPERA_AGENT_MCP_CONFIG_HOME) return String(env.OPERA_AGENT_MCP_CONFIG_HOME);
+  if (env.NAVEGO_MCP_CONFIG_HOME) return String(env.NAVEGO_MCP_CONFIG_HOME);
   const home = os.homedir();
   if (process.platform === 'win32') {
     return path.join(process.env.APPDATA || path.join(home, 'AppData', 'Roaming'), 'navego');
@@ -193,7 +193,7 @@ function persistentToken(payload: Record<string, unknown>, previousRefresh: unkn
 }
 
 export async function accessToken({ env = process.env, fetchImpl = fetch, now = () => Date.now() }: { env?: NodeJS.ProcessEnv; fetchImpl?: typeof fetch; now?: () => number } = {}): Promise<string | null> {
-  if (String(env.OPERA_AGENT_MCP_TOKEN ?? '').trim()) return String(env.OPERA_AGENT_MCP_TOKEN).trim();
+  if (String(env.NAVEGO_MCP_TOKEN ?? '').trim()) return String(env.NAVEGO_MCP_TOKEN).trim();
   const stored = readStoredToken(env);
   if (!stored) return null;
   if (Number(stored.expires_at) > now() + SKEW_MS) return stored.access_token;
@@ -224,6 +224,6 @@ export function loginInstructions(_env?: unknown): string {
     'which opens this URL and stores the token beside this install:',
     `  ${AUTHZ_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${encodeURIComponent(SCOPE)}`,
     '',
-    'On a machine without a browser, set OPERA_AGENT_MCP_TOKEN instead.'
+    'On a machine without a browser, set NAVEGO_MCP_TOKEN instead.'
   ].join('\n');
 }

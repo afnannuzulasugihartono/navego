@@ -12,11 +12,11 @@ Dua masalah nyata, keduanya berakar pada packaging:
 1. **Paket `opera-local` sudah ada tapi tidak pernah dipakai.** `local/package.json` sudah berbentuk paket npm (`bin: opera-local`, tanpa dependensi ✓), tetapi `files`-nya tidak memuat dua impor lintas-pohon — `../extension/lib/socket-protocol.js` dan `../extension/lib/endpoints.js` ✗. Paket yang terbit akan gagal memuat modul itu ✗. Karena itu agent yang butuh MCP lokal menjalankan `node local/bin/opera-local.js` **dari clone repo** ✗, dan itu yang terjadi berulang.
 2. **Tidak ada satu perintah yang memasang MCP.** todaySurface hosted hanya bisa dipakai lewat konfigurasi MCP yang menunjuk URL ✗, dan surface local harus dari repo ✗.
 
-Target: `npm i -g opera-agent-mcp` → `opera-agent-mcp cloud` atau `opera-agent-mcp local` ✓, keduanya jalan dari mana saja ✓, dengan mode local yang **terbungkus rapi** ✓.
+Target: `npm i -g navego-mcp` → `navego-mcp cloud` atau `navego-mcp local` ✓, keduanya jalan dari mana saja ✓, dengan mode local yang **terbungkus rapi** ✓.
 
 ## Keputusan yang mengikat (hasil brainstorming 2026-11-08)
 
-- **Satu paket, mode sebagai argumen.** `opera-agent-mcp cloud` dan `opera-agent-mcp local` ✓.
+- **Satu paket, mode sebagai argumen.** `navego-mcp cloud` dan `navego-mcp local` ✓.
 - **Paket membawa seluruh kode local** ✓; extension tetap terpisah (CRX yang dipasang di browser) ✓ — Chrome tidak bisa memasang extension dari npm ✗.
 - **Mode local talking lewat loopback bridge saja.** Jalan debug-port/CDP dihapus ✓: kecepatannya sama (localhost) ✓, tidak bisa lewat profil asli ✗ (Chrome menolak debug-port di profil Default ✓), dan satu browser dengan satu antrean lebih mudah dijaga ✓. Karena itu **drive lokal selalu melewati bridge** ✓✓ — titik di mana kuotanya ditegakkan ✓ (lihat spec paket ✓).
 - **Mode cloud = proksi stdio ke MCP hosted** ✓, dengan login OAuth lewat browser ✓ (token statis dari env tetap berlaku untuk mesin ✓).
@@ -26,8 +26,8 @@ Target: `npm i -g opera-agent-mcp` → `opera-agent-mcp cloud` atau `opera-agent
 
 | | |
 |---|---|
-| nama | `opera-agent-mcp` ✓ |
-| bin | `opera-agent-mcp` ✓ |
+| nama | `navego-mcp` ✓ |
+| bin | `navego-mcp` ✓ |
 | type | `module` ✓ |
 | engines | node >= 20 ✓ |
 | dependensi | tidak ada ✓ |
@@ -38,18 +38,18 @@ Target: `npm i -g opera-agent-mcp` → `opera-agent-mcp cloud` atau `opera-agent
 
 | perintah | apa yang terjadi |
 |---|---|
-| `opera-agent-mcp local` | menjalankan server MCP lokal di atas loopback bridge ✓; kalau extension belum tersambung, jawabannya menyebut cara memperbaikinya ✓ (pesan `LINK_ERROR` yang sudah ada ✓) |
-| `opera-agent-mcp cloud` | menjalankan server MCP stdio yang meneruskan ke endpoint hosted ✓; login OAuth lewat browser saat pertama kali ✓, token disimpan di folder config pengguna ✓; `OPERA_AGENT_MCP_TOKEN` dipakai kalau diisi ✓ |
-| `opera-agent-mcp doctor` | mencetak apa yang terhubung: bridge ✓, perangkat ✓, versi extension ✓, status OAuth ✓, dan tautan unduhan CRX ✓ |
-| `opera-agent-mcp --help` | daftar perintah ✓ |
+| `navego-mcp local` | menjalankan server MCP lokal di atas loopback bridge ✓; kalau extension belum tersambung, jawabannya menyebut cara memperbaikinya ✓ (pesan `LINK_ERROR` yang sudah ada ✓) |
+| `navego-mcp cloud` | menjalankan server MCP stdio yang meneruskan ke endpoint hosted ✓; login OAuth lewat browser saat pertama kali ✓, token disimpan di folder config pengguna ✓; `NAVEGO_MCP_TOKEN` dipakai kalau diisi ✓ |
+| `navego-mcp doctor` | mencetak apa yang terhubung: bridge ✓, perangkat ✓, versi extension ✓, status OAuth ✓, dan tautan unduhan CRX ✓ |
+| `navego-mcp --help` | daftar perintah ✓ |
 
 Mode cloud dan local memakai **tool yang sama** dari sisi agent ✓: nama, skema input, dan bentuk keluaran tidak berbeda antar mode ✓ — perbedaannya hanya siapa yang menjalankan browser ✓.
 
 ## Yang dihapus
 
-- Jalan debug-port di `local/driver.js` ✓ dan pilihan `OPERA_LOCAL_TRANSPORT=cdp` ✓; `unset (auto)` tidak lagi jatuh ke CDP ✓.
+- Jalan debug-port di `local/driver.js` ✓ dan pilihan `NAVEGO_LOCAL_TRANSPORT=cdp` ✓; `unset (auto)` tidak lagi jatuh ke CDP ✓.
 - Peluncuran browser lewat `--remote-debugging-port` di `local/browsers.js` ✗ dan di `scripts/proof-run.mjs` ✓ (drive-nya sudah lewat bridge ✓, dan `scripts/extension-run.mjs` sudah punya mode "joined" tanpa port ✓).
-- `OPERA_LOCAL_PORT` sebagai caraNob提着 browser ✓ (dokumentasi ikut diperbarui ✓).
+- `NAVEGO_LOCAL_PORT` sebagai caraNob提着 browser ✓ (dokumentasi ikut diperbarui ✓).
 
 **Yang tetap ada:** seluruh 54 tool lokal ✓ — bridgeantik membawa perintah CDP yang sama ✓, jadi upload, file chooser, builder dokumen, menu, caret, gate, dan captcha tetap jalan ✓.
 
@@ -69,10 +69,10 @@ CRX yang terbit pada 2026-11-08 memakai versi yang sama dengan build sebelumnya 
 
 ## Uji
 
-- **Paketnya utuh.** Uji yang mengemas paket (tanpa menerbitkan) dan memeriksa: `files` paket memuat dua modul lintas-pohon ✓, tidak ada impor ke luar paket ✓, dan `node bin/opera-agent-mcp.js --help` jalan dari hasil unpack ✓.
+- **Paketnya utuh.** Uji yang mengemas paket (tanpa menerbitkan) dan memeriksa: `files` paket memuat dua modul lintas-pohon ✓, tidak ada impor ke luar paket ✓, dan `node bin/navego-mcp.js --help` jalan dari hasil unpack ✓.
 - **Mode local dari paket.** Uji yang menjalankan server dari direktori paket hasil unpack ✓ dan menjawab `status` lewat bridge ✓.
 - **Mode cloud.** Uji yang mengarahkan proksi ke endpoint hosted dan memeriksa satu panggilan tool ✓ (dijalankan terhadap deployment ✓).
-- **Jalan tunggal.** Uji yang menyatakan `OPERA_LOCAL_TRANSPORT=cdp` **tidak lagi** memaksa jalan port ✓ dan `local/driver.js` tidak lagi memuatNasc client port ✓.
+- **Jalan tunggal.** Uji yang menyatakan `NAVEGO_LOCAL_TRANSPORT=cdp` **tidak lagi** memaksa jalan port ✓ dan `local/driver.js` tidak lagi memuatNasc client port ✓.
 - `npm test`, `npm run check`, dan `py tests/browser_extension_test.py` ✓.
 
 ## Risiko yang diterima

@@ -89,15 +89,15 @@ async function fakeHealthBridge(payload: unknown) {
 }
 
 async function fakeHome() {
-  const home = await mkdtemp(path.join(os.tmpdir(), 'opera-agent-doctor-'));
-  await mkdir(path.join(home, '.opera-agent'), { recursive: true });
-  await writeFile(path.join(home, '.opera-agent', 'device.json'), JSON.stringify({ deviceName: 'everyday-test', token: 'a'.repeat(64) }));
+  const home = await mkdtemp(path.join(os.tmpdir(), 'navego-doctor-'));
+  await mkdir(path.join(home, '.navego'), { recursive: true });
+  await writeFile(path.join(home, '.navego', 'device.json'), JSON.stringify({ deviceName: 'everyday-test', token: 'a'.repeat(64) }));
   return home;
 }
 
 async function runDoctor(env: Record<string, string>) {
   const clean = { ...process.env };
-  delete clean.OPERA_AGENT_MCP_TOKEN;
+  delete clean.NAVEGO_MCP_TOKEN;
   try {
     const { stdout } = await exec(process.execPath, [bin, 'doctor'], {
       encoding: 'utf8',
@@ -133,9 +133,9 @@ test('the doctor prints what is connected, the plan, and what the plan allows', 
   const home = await fakeHome();
   try {
     const { out, code } = await runDoctor({
-      OPERA_BRIDGE_PORT: String(bridge.port),
-      OPERA_AGENT_HOME: home,
-      OPERA_AGENT_MCP_CONFIG_HOME: path.join(home, 'config')
+      NAVEGO_BRIDGE_PORT: String(bridge.port),
+      NAVEGO_HOME: home,
+      NAVEGO_MCP_CONFIG_HOME: path.join(home, 'config')
     });
     assert.equal(code, 0, 'a ready machine exits zero');
     assert.match(out, /everyday-test/);
@@ -144,7 +144,7 @@ test('the doctor prints what is connected, the plan, and what the plan allows', 
     assert.match(out, /5000/, 'the daily quota is printed');
     assert.match(out, /4679/, 'the remaining quota is printed');
     assert.match(out, /1\.6\.32/, 'the extension version is printed');
-    assert.match(out, /opera-agent-update\/download\/opera-agent\.crx/, 'the CRX download link is printed');
+    assert.match(out, /navego-update\/download\/navego\.crx/, 'the CRX download link is printed');
     assert.match(out, /verdict +ready/, 'the ready verdict is the last word');
   } finally {
     await bridge.close();
@@ -157,9 +157,9 @@ test('a bridge from before the meter is named as the problem, not mistaken for a
   const home = await fakeHome();
   try {
     const { out, code } = await runDoctor({
-      OPERA_BRIDGE_PORT: String(bridge.port),
-      OPERA_AGENT_HOME: home,
-      OPERA_AGENT_MCP_CONFIG_HOME: path.join(home, 'config')
+      NAVEGO_BRIDGE_PORT: String(bridge.port),
+      NAVEGO_HOME: home,
+      NAVEGO_MCP_CONFIG_HOME: path.join(home, 'config')
     });
     assert.equal(code, 1);
     assert.match(out, /before the meter/);
@@ -171,17 +171,17 @@ test('a bridge from before the meter is named as the problem, not mistaken for a
 });
 
 test('the doctor says why a machine is degraded instead of crashing', async () => {
-  const home = await mkdtemp(path.join(os.tmpdir(), 'opera-agent-doctor-'));
+  const home = await mkdtemp(path.join(os.tmpdir(), 'navego-doctor-'));
   try {
     const { out, code } = await runDoctor({
-      OPERA_BRIDGE_PORT: '1',
-      OPERA_AGENT_HOME: home,
-      OPERA_AGENT_MCP_CONFIG_HOME: path.join(home, 'config')
+      NAVEGO_BRIDGE_PORT: '1',
+      NAVEGO_HOME: home,
+      NAVEGO_MCP_CONFIG_HOME: path.join(home, 'config')
     });
     assert.equal(code, 1, 'a degraded machine says so in its exit code');
     assert.match(out, /device file/, 'the device-file state is printed');
     assert.match(out, /not listening/i, 'the bridge state is printed');
-    assert.match(out, /opera-agent-update\/download\/opera-agent\.crx/, 'the fix is the CRX link');
+    assert.match(out, /navego-update\/download\/navego\.crx/, 'the fix is the CRX link');
     assert.match(out, /degraded/, 'the verdict names the state');
   } finally {
     await rm(home, { recursive: true, force: true });

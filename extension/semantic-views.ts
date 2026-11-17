@@ -5,7 +5,7 @@
 
 (() => {
   'use strict';
-  if (globalThis.OperaAgentSemanticViews) return;
+  if (globalThis.NavegoSemanticViews) return;
 
   interface CompletionResult {
     status: string;
@@ -61,8 +61,8 @@
   }
 
   const hash = (value: unknown): string => {
-    const engine = globalThis.OperaAgentSemanticIdentity;
-    if (!engine) throw new Error('OperaAgentSemanticIdentity must load before OperaAgentSemanticViews');
+    const engine = globalThis.NavegoSemanticIdentity;
+    if (!engine) throw new Error('NavegoSemanticIdentity must load before NavegoSemanticViews');
     return engine.stableHash(String(value ?? ''));
   };
   const bounded = (value: unknown, max = 160): string => String(value ?? '').replace(/\s+/g, ' ').trim().slice(0, max);
@@ -211,5 +211,5 @@
     return Object.freeze({ observe, reset });
   }
 
-  globalThis.OperaAgentSemanticViews = Object.freeze({ COMPLETION_STATUSES, classifyCompletion, createViewEngine });
+  globalThis.NavegoSemanticViews = Object.freeze({ COMPLETION_STATUSES, classifyCompletion, createViewEngine });
 })();

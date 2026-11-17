@@ -15,7 +15,7 @@ import { BURST_ACTION_METHODS, BURST_STEP_KEYS, validateBurst } from '../../exte
 import { extensionSource } from '../helpers/extension-source.ts';
 
 await import('../../extension/hover-settle.js');
-const hoverSettle = globalThis.OperaAgentHoverSettle;
+const hoverSettle = globalThis.NavegoHoverSettle;
 if (!hoverSettle) throw new Error('the settle runtime must publish itself');
 const { DEFAULTS, normalize, plan } = hoverSettle;
 
@@ -131,7 +131,7 @@ test('the in-page settle only observes and never carries document text out', asy
   assert.doesNotMatch(block, /innerText|textContent/);
 
   assert.match(source, /case 'page\.hover_settle': return hoverSettleState\(args\)/);
-  assert.match(source, /const hoverRuntime = globalThis\.OperaAgentHoverSettle;/,
+  assert.match(source, /const hoverRuntime = globalThis\.NavegoHoverSettle;/,
     'the runtime is no longer read straight into a bare binding');
   assert.match(source, /typeof hoverRuntime\.plan === 'function'/,
     'the planner is not checked before it is used');

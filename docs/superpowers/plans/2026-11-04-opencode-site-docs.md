@@ -151,7 +151,7 @@ Tambah ke `tests/landing-claims.test.mjs`:
 ```js
 test('no page calls the product free while jobs are prepaid', () => {
   assert.doesNotMatch(site, /Gratis dipakai/i, 'a prepaid job is not free');
-  assert.doesNotMatch(site, /Opera Agent gratis/i, 'the extension is free to install; the job is not free');
+  assert.doesNotMatch(site, /Navego gratis/i, 'the extension is free to install; the job is not free');
   assert.match(site, /harga tetap/i, 'and the site says what the job costs');
 });
 
@@ -328,7 +328,7 @@ test('both hosts cover the docs page with one policy each', () => {
     assert.ok(headers.includes(`\n${path}\n`), `_headers covers ${path}`);
     assert.ok(vercel.headers.some((h) => h.source === path), `vercel.json covers ${path}`);
   }
-  assert.match(read('landing/sitemap.xml'), /opera-agent\.pages\.dev\/docs</, 'the map names the docs page');
+  assert.match(read('landing/sitemap.xml'), /navego\.pages\.dev\/docs</, 'the map names the docs page');
 });
 ```
 
@@ -340,7 +340,7 @@ Expected: FAIL — belum ada pintu `/docs`, rule host, atau entri sitemap.
 - [ ] **Step 3: Implementasi minimum**
 
 - Tambah `<a href="./docs.html">Docs</a>` di nav sembilan halaman publik (tanpa `data-i18n`: "Docs" valid di dua bahasa).
-- `landing/sitemap.xml`: tambah `<url><loc>https://opera-agent.pages.dev/docs</loc></url>`.
+- `landing/sitemap.xml`: tambah `<url><loc>https://navego.pages.dev/docs</loc></url>`.
 - `landing/_headers` dan `landing/vercel.json`: rule untuk `/docs` dan `/docs.html` dengan CSP yang meniru halaman statis lain (`default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self' 'sha256-<hash skrip inline docs.html>'; connect-src 'none'; font-src 'self'; base-uri 'none'; frame-ancestors 'none'`). Hash dihitung dari isi skrip: `node -e "const {createHash}=require('node:crypto');const fs=require('node:fs');const html=fs.readFileSync('landing/docs.html','utf8');for(const m of html.matchAll(/<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/g))console.log('sha256-'+createHash('sha256').update(m[1],'utf8').digest('base64'))"`.
 - `scripts/landingserve.mjs`: tambahkan `docs.html` ke `FILES`.
 - Hapus hash skrip inline `dukungan.html` dari kedua host (skrip inline sudah dibuang bersama tombol salinnya), dan tambahkan `script-src 'self'` bila belum ada.
@@ -410,4 +410,4 @@ gh workflow run deploy-site.yml --ref main
 
 - [ ] **Step 4: Buktikan live**
 
-Buka `https://opera-agent.pages.dev/docs` di browser: halaman ada, CSP berlaku, `/docs` ada di sitemap yang di-fetch.
+Buka `https://navego.pages.dev/docs` di browser: halaman ada, CSP berlaku, `/docs` ada di sitemap yang di-fetch.

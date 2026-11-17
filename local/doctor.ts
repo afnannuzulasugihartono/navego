@@ -13,7 +13,7 @@ import { readStoredToken } from './oauth.js';
 import { resolveBridgeToken } from './bridge-token.js';
 import { UPDATE_BASE_URL } from './lib/endpoints.js';
 
-const CRX_URL = `${UPDATE_BASE_URL}/download/opera-agent.crx`;
+const CRX_URL = `${UPDATE_BASE_URL}/download/navego.crx`;
 const PROBE_TIMEOUT_MS = 2000;
 
 interface BridgeProbe {
@@ -33,8 +33,8 @@ async function probeBridge(port: number, fetchImpl: typeof fetch): Promise<Bridg
 }
 
 export async function doctor({ env = process.env, stdout = process.stdout, fetchImpl = fetch }: { env?: NodeJS.ProcessEnv; stdout?: { write(chunk: string): unknown }; fetchImpl?: typeof fetch } = {}): Promise<number> {
-  const port = Number(env.OPERA_BRIDGE_PORT || 9451);
-  const home = typeof env.OPERA_AGENT_HOME === 'string' ? env.OPERA_AGENT_HOME : undefined;
+  const port = Number(env.NAVEGO_BRIDGE_PORT || 9451);
+  const home = typeof env.NAVEGO_HOME === 'string' ? env.NAVEGO_HOME : undefined;
   const lines: string[] = [];
   const problems: string[] = [];
   const say = (label: string, value: unknown) => lines.push(`${label.padEnd(14)}${String(value)}`);
@@ -42,14 +42,14 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
   const paired = readDevice(home === undefined ? {} : { home });
   say('device file', paired ? `paired as ${paired.deviceName} (wallet and hosted tools use it)` : 'none (only the wallet and hosted tools need it)');
 
-  const envToken = typeof env.OPERA_AGENT_MCP_TOKEN === 'string' && env.OPERA_AGENT_MCP_TOKEN.trim();
+  const envToken = typeof env.NAVEGO_MCP_TOKEN === 'string' && env.NAVEGO_MCP_TOKEN.trim();
   const stored = envToken ? null : readStoredToken(env);
   if (envToken) {
-    say('cloud login', 'OPERA_AGENT_MCP_TOKEN (a static token from the environment)');
+    say('cloud login', 'NAVEGO_MCP_TOKEN (a static token from the environment)');
   } else if (stored) {
     say('cloud login', `signed in (token expires ${new Date(Number(stored.expires_at) || 0).toISOString()})`);
   } else {
-    say('cloud login', 'not signed in — cloud mode needs it (`navego auth`, or OPERA_AGENT_MCP_TOKEN)');
+    say('cloud login', 'not signed in — cloud mode needs it (`navego auth`, or NAVEGO_MCP_TOKEN)');
   }
 
   const probe = await probeBridge(port, fetchImpl);

@@ -137,10 +137,10 @@ const buildResponse = (body: Uint8Array, headers: Record<string, string> = {}): 
 
 const fetchImpl = (version: string, zip: Uint8Array) => async (url: string | URL | Request, options?: RequestInit): Promise<Response> => {
   const u = String(url);
-  if (u.includes('/download/opera-agent.zip') && options?.method === 'HEAD') {
+  if (u.includes('/download/navego.zip') && options?.method === 'HEAD') {
     return asResponse({ ok: true, status: 200, headers: { get: (name: string) => (String(name).toLowerCase() === 'x-opera-version' ? version : null) } });
   }
-  if (u.includes('/download/opera-agent.zip')) return buildResponse(zip, { 'x-opera-version': version });
+  if (u.includes('/download/navego.zip')) return buildResponse(zip, { 'x-opera-version': version });
   throw new Error(`unexpected url ${u}`);
 };
 
@@ -208,7 +208,7 @@ test('the served version is the one the build carries, asked by a head on the ar
   const [probeCall] = seen;
   assert.ok(probeCall);
   assert.equal(probeCall.method, 'HEAD', 'and it is asked for cheaply, without carrying the build');
-  assert.match(probeCall.url, /\/download\/opera-agent\.zip$/, 'and it is the archive this extension is updated from, not another surface');
+  assert.match(probeCall.url, /\/download\/navego\.zip$/, 'and it is the archive this extension is updated from, not another surface');
 });
 
 test('a head that cannot say leaves the download to decide, and the write still happens', async () => {

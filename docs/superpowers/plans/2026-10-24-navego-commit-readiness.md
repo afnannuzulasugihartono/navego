@@ -1,4 +1,4 @@
-# Opera Agent Commit Readiness Implementation Plan
+# Navego Commit Readiness Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -8,7 +8,7 @@
 
 **Tech Stack:** Node.js >= 22, existing local MCP server, existing document/report modules, Git, gitleaks, Python browser gate.
 
-**Spec:** [`../specs/2026-10-24-opera-agent-commit-readiness-design.md`](../specs/2026-10-24-opera-agent-commit-readiness-design.md)
+**Spec:** [`../specs/2026-10-24-navego-commit-readiness-design.md`](../specs/2026-10-24-navego-commit-readiness-design.md)
 
 ## Global Constraints
 

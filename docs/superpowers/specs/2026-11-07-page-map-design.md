@@ -153,7 +153,7 @@ Tiga bagian, satu arah:
 
 1. **`extension/lib/page-map.js` (baru).** Tabel aturan klasifikasi (tag/role ke kelas) dan aturan field per kelas, murni data dan fungsi tanpa DOM, supaya bisa diuji di Node tanpa DOM — pola yang sama seperti `extension/lib/protocol.js`. Modul ini tidak tahu apa pun soal transport.
 2. **`extension/content.js`.** Pemindaian: satu lintasan seluruh dokumen, klasifikasi per node, pengukuran kotak, urutan baca, kedalaman daftar, posisi sel tabel. Hasil di-cache per `documentId` + `mutationVersion`, jadi menarik kelas berikutnya adalah cache-hit, bukan scan ulang. `pageRead` mendapat cabang ketiga: `view` = `compact` (sekarang), `map` (baru), atau default.
-3. **`supabase/functions/opera-agent-mcp/tools.ts`.** Tool baru `read_map`; `shot` menerima hasil tile; `read` tetap.
+3. **`supabase/functions/navego-mcp/tools.ts`.** Tool baru `read_map`; `shot` menerima hasil tile; `read` tetap.
 
 Aliran data: MCP -> `page.read` dengan `view: "map"` -> content script -> peta -> balik ke MCP -> bentuk datar K&R.
 
@@ -203,4 +203,4 @@ Aliran data: MCP -> `page.read` dengan `view: "map"` -> content script -> peta -
 - `tests/mcp-surface.test.mjs`: tool baru terdaftar, punya judul dan kalimat "Returns:", input terdeskripsi, output schema datar, peta digest beku diperbarui.
 - `tests/browser_extension_test.py`: pemindaian di dalam halaman — jumlah kelas pada halaman uji, koordinat dokumen, pagination.
 - Uji perangkat nyata: artikel Wikipedia asli — kerangka, tarik `link`, tarik `text`, dan full capture; angka dibandingkan dengan spec ini.
-- `npm test` dan `npm run check` di worktree `opera-agent-page-map` sebelum commit.
+- `npm test` dan `npm run check` di worktree `navego-page-map` sebelum commit.

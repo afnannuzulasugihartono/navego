@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans (recommended) or superpowers:subagent-driven-development to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** `local/` - the npm package that ships as `opera-agent-mcp@1.6.50` and puts "the operator's own signed-in browser" on `npx opera-agent-mcp local` - becomes strict TypeScript in one jump, exactly like Stage 1 did for `shared/`. Same modules, same exports, same protocol, same behaviour; the only difference is that `tsc` now proves the types before the package reaches a user's machine.
+**Goal:** `local/` - the npm package that ships as `navego-mcp@1.6.50` and puts "the operator's own signed-in browser" on `npx navego-mcp local` - becomes strict TypeScript in one jump, exactly like Stage 1 did for `shared/`. Same modules, same exports, same protocol, same behaviour; the only difference is that `tsc` now proves the types before the package reaches a user's machine.
 
 **Architecture:** `local/` is 54 tracked `.js` ESM modules (45 top level + 3 `bin/` + 6 `office/`) that Node executes directly today. The conversion renames every one of them to `.ts` and compiles them with the same base config as Stage 1 (`tsconfig.base.json` + `tsconfig.local.json`); the emitted `.js` twins are written beside the sources and never committed (gitignored), exactly like Stage 1. The emitted twin is what the tarball carries, what `prepack` copies input to, and what every runtime consumer (tests, npm) loads.
 
-**Tech Stack:** TypeScript 5, Node's own builtins (`node:crypto`, `node:fs`, `node:http`, etc.), `@types/node`, no new runtime dependencies, `OPERA_AGENT_MCP_RAW` unsupported (local reads its own renamed twin only).
+**Tech Stack:** TypeScript 5, Node's own builtins (`node:crypto`, `node:fs`, `node:http`, etc.), `@types/node`, no new runtime dependencies, `NAVEGO_MCP_RAW` unsupported (local reads its own renamed twin only).
 
 **Spec:** [`docs/superpowers/specs/2026-11-13-typescript-core-design.md`](../specs/2026-11-13-typescript-core-design.md) — the Stage 2 line is authoritative; the four exit criteria named there are carried verbatim into Task 5.
 
@@ -29,8 +29,8 @@ The failure modes this stage most likely introduces, ranked, each with the ownin
 1. Tests that import `'./local/tools.js'` resolving to an emitted file that is missing in a fresh checkout and stale on an old one → Task 5 (pretest compiles before `npm test`, deterministically verified by the smoke test).
 2. A stale emitted twin bypassing a rename (someone edits the `.js` instead of the `.ts` they just split) → Task 3 (map rule: an emitted `.js` in `local/` without a `.ts` sibling fails `tests/tooling/architecture.test.mjs` in one step).
 3. The packed tarball silently containing `.ts` sources (a stray tracked file, a `files` list typo, or `prepack` compile skipped) → Task 5 (assert no `.ts` in the extracted file list; CI installs from the lock, pinned by SHA).
-4. A shebang or executable bit lost on the two `bin/` entry files, leaving `npx opera-agent-mcp` dead on a user's machine → Task 5 (tarball smoke loads `bin/opera-agent-mcp.js` via `child_process` and asserts the exact help text; tsc preserves a leading `#!` as the first line).
-5. A human-updated `archive/` by mistake for a user on `opera-agent-mcp local`: the usage line `npx opera-agent-mcp local --help` differs from the packed CLI's `--help` (or vice versa) → Task 5 (single assert pins both: `USAGE` constant and the help output printed by the child process).
+4. A shebang or executable bit lost on the two `bin/` entry files, leaving `npx navego-mcp` dead on a user's machine → Task 5 (tarball smoke loads `bin/navego-mcp.js` via `child_process` and asserts the exact help text; tsc preserves a leading `#!` as the first line).
+5. A human-updated `archive/` by mistake for a user on `navego-mcp local`: the usage line `npx navego-mcp local --help` differs from the packed CLI's `--help` (or vice versa) → Task 5 (single assert pins both: `USAGE` constant and the help output printed by the child process).
 
 ## Tasks
 
@@ -95,7 +95,7 @@ Expected: `npx tsc -p tsconfig.local.json --noEmit` reports 0 errors.
 
 - [ ] **Step 2: Convert the remaining 53 files, grouped by dependency order**
 
-Renaming and typing the leaves first (`bin/opera-agent-mcp.ts` stays at the end — the launcher imports the others; keep its shebang by keeping it on line 1). The authoritative count is `git ls-files local | grep -c '\.js$'` == **0** after this task.
+Renaming and typing the leaves first (`bin/navego-mcp.ts` stays at the end — the launcher imports the others; keep its shebang by keeping it on line 1). The authoritative count is `git ls-files local | grep -c '\.js$'` == **0** after this task.
 
 Each converted file is checked by:
 
@@ -168,7 +168,7 @@ Expected: FAIL at `pretest` (compile refuses before the suite runs).
 ### Task 5: The tarball — proof the product works from its shipped files
 
 **Files:**
-- Create: `tests/local/pack-types.test.mjs` — `execFileSync` running `npm pack` in `local/` into a temp dir, asserts the extracted file list carries **no** `.ts` (every file must end `.js`, `.json`, `.md`, `.cmd`, or be a shebang binary); asserts the extracted `bin/opera-agent-mcp.js` both (a) has a valid shebang on line 1 and (b) runs under `node bin/opera-agent-mcp.js --help` and prints the usage block exactly once; asserts `local/lib/` contents present in the tarball (`socket-protocol.js`, `endpoints.js`, `tidy.js`, `bing-serp.js`)
+- Create: `tests/local/pack-types.test.mjs` — `execFileSync` running `npm pack` in `local/` into a temp dir, asserts the extracted file list carries **no** `.ts` (every file must end `.js`, `.json`, `.md`, `.cmd`, or be a shebang binary); asserts the extracted `bin/navego-mcp.js` both (a) has a valid shebang on line 1 and (b) runs under `node bin/navego-mcp.js --help` and prints the usage block exactly once; asserts `local/lib/` contents present in the tarball (`socket-protocol.js`, `endpoints.js`, `tidy.js`, `bing-serp.js`)
 - The spec's exit criteria translated to the test: `npm pack --dry-run` lists files, the extracted list carries no `.ts`, and the packed CLI runs.
 
 **Interfaces:**
@@ -177,7 +177,7 @@ Expected: FAIL at `pretest` (compile refuses before the suite runs).
 
 - [ ] **Step 1: Write the failing smoke test**
 
-`tests/local/pack-types.test.mjs` as described; include the exact asserts: extracted paths carry no `.ts`; `opera-agent-mcp.js` exists post-extract and has shebang `#!/usr/bin/env node` on line 1; `spawnSync(process.execPath, ['<extracted dir>/bin/opera-agent-mcp.js', '--help'])` returns `0`; its stdout contains the string `opera-agent-mcp <mode>`.
+`tests/local/pack-types.test.mjs` as described; include the exact asserts: extracted paths carry no `.ts`; `navego-mcp.js` exists post-extract and has shebang `#!/usr/bin/env node` on line 1; `spawnSync(process.execPath, ['<extracted dir>/bin/navego-mcp.js', '--help'])` returns `0`; its stdout contains the string `navego-mcp <mode>`.
 
 - [ ] **Step 2: Run it and watch it fail**
 

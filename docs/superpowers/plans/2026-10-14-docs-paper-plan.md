@@ -2,7 +2,7 @@
 
 > **State: eight of the nine tasks shipped. One remains, and it needs a live Google session.**
 
-**Goal:** Opera Agent builds thesis-grade Google Docs from user ideas: menu.walk plus 9 structure workflows, UI-only, verified end to end.
+**Goal:** Navego builds thesis-grade Google Docs from user ideas: menu.walk plus 9 structure workflows, UI-only, verified end to end.
 
 **Architecture:** Server-side versioned workflows over the frozen primitives; multi-step menu walks run as single browser.burst programs (keyboard road first, hover-chain fallback); every structure carries an end-state predicate.
 

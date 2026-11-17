@@ -104,7 +104,7 @@ test('a path in the table never names this machine, so the driver carries no loc
       const candidates = entry.paths[platform];
       assert.ok(candidates, `${entry.id} has ${platform} candidates`);
       for (const path of candidates) {
-        assert.ok(!/ASUS|Users\\ASUS|opera-agent|opencode/i.test(path),
+        assert.ok(!/ASUS|Users\\ASUS|navego|opencode/i.test(path),
           `${entry.id} leaks a machine-specific path: ${path}`);
       }
     }

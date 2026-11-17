@@ -5,9 +5,9 @@
 
 ## Context
 
-The public site (`landing/`) is a flat set of ~16 hand-written HTML/CSS/JS files. The 2026-11-15 session (branch `agent/corbin/website/corbin`, worktree `D:\GitHub\opera-agent-corbin`) started a rebuild under a new brand: **Corbin**, the raven (Huginn & Muninn; "Corbin, the raven"). It scaffolded `landing/web-src/` (React 19 + Vite 8 + TypeScript) with a pilot homepage, a `Raven` component, an ink/bone/amber palette with Georgia type, wired `deploy-site.yml` to build it, and copied the legacy flat pages into `web-src/public/` to ride along until ported one by one. Nothing was committed.
+The public site (`landing/`) is a flat set of ~16 hand-written HTML/CSS/JS files. The 2026-11-15 session (branch `agent/corbin/website/corbin`, worktree `D:\GitHub\navego-corbin`) started a rebuild under a new brand: **Corbin**, the raven (Huginn & Muninn; "Corbin, the raven"). It scaffolded `landing/web-src/` (React 19 + Vite 8 + TypeScript) with a pilot homepage, a `Raven` component, an ink/bone/amber palette with Georgia type, wired `deploy-site.yml` to build it, and copied the legacy flat pages into `web-src/public/` to ride along until ported one by one. Nothing was committed.
 
-On 2026-11-16 the owner approved, in session: the "**Lembar Spesifikasi**" visual direction (option C), a full redesign of all 16 surfaces including the dashboard, **Bahasa Indonesia only**, the **React Router v7 (framework mode, SSG)** toolchain, and the rename **Opera Agent → Corbin** on the website. The composition chosen is **A — Gagak di kartu nada** with a **reworked realistic raven** mark (it must read as an actual raven, not as abstract polygons).
+On 2026-11-16 the owner approved, in session: the "**Lembar Spesifikasi**" visual direction (option C), a full redesign of all 16 surfaces including the dashboard, **Bahasa Indonesia only**, the **React Router v7 (framework mode, SSG)** toolchain, and the rename **Navego → Corbin** on the website. The composition chosen is **A — Gagak di kartu nada** with a **reworked realistic raven** mark (it must read as an actual raven, not as abstract polygons).
 
 ## Scope
 
@@ -21,12 +21,12 @@ In scope:
 - Update `ARCHITECTURE.md` and this file's claims as the work lands.
 
 Out of scope (needs its own decision):
-- Renaming the product itself across the extension manifest, npm package, store listing, and release pipeline (`opera-agent-*` stays `opera-agent-*`). The rename applies to the public website surfaces.
+- Renaming the product itself across the extension manifest, npm package, store listing, and release pipeline (`navego-*` stays `navego-*`). The rename applies to the public website surfaces.
 - i18n re-introduction.
 
 ## Boundaries and repo rules
 
-- All work happens in the existing worktree `D:\GitHub\opera-agent-corbin` on branch `agent/corbin/website/corbin`. The uncommitted 2026-11-15 seed (`landing/web-src/`, `deploy-site.yml`, `ARCHITECTURE.md` edits, `hero.png`, `Raven.tsx`, `palette.ts`) is absorbed: the RRv7 app is built in `site/` at the repo root; `Raven` is reimplemented as the realistic mark; `hero.png` is not carried over unless a page uses it; the `deploy-site.yml`/`ARCHITECTURE.md` edits are superseded by the wiring in this spec. The shared checkout is never touched.
+- All work happens in the existing worktree `D:\GitHub\navego-corbin` on branch `agent/corbin/website/corbin`. The uncommitted 2026-11-15 seed (`landing/web-src/`, `deploy-site.yml`, `ARCHITECTURE.md` edits, `hero.png`, `Raven.tsx`, `palette.ts`) is absorbed: the RRv7 app is built in `site/` at the repo root; `Raven` is reimplemented as the realistic mark; `hero.png` is not carried over unless a page uses it; the `deploy-site.yml`/`ARCHITECTURE.md` edits are superseded by the wiring in this spec. The shared checkout is never touched.
 - `.superpowers/` stays local; ensure it is gitignored in the branch.
 
 ## Architecture
@@ -35,7 +35,7 @@ Out of scope (needs its own decision):
 - `app/root.tsx` — HTML shell: `<html lang="id">`, Instrument Sans self-hosted from `site/public/fonts/` (the variable TTF already vendored at `extension/fonts/InstrumentSans-Variable.ttf` with its OFL license), tokens as CSS custom properties in `app/tokens.css`.
 - `app/routes.ts` — explicit routes preserving the legacy flat URLs exactly: `/`, `/beranda.html`, `/fitur.html`, `/harga.html`, `/unduh.html`, `/docs.html`, `/mcp.html`, `/studi.html`, `/bukti.html`, `/dukungan.html`, `/privasi.html`, `/syarat.html`, `/akun.html`, `/404.html`, `/oauth/consent.html`, `/dashboard.html`. Every prerendered path writes `<name>.html`, so Cloudflare Pages keeps serving the exact URLs `sitemap.xml`, `robots.txt`, and external backlinks already use.
 - `site/public/` carries `_worker.js` (unchanged, `/invoice` proxy), `_headers`, `robots.txt`, `sitemap.xml`, `icon.svg`, `fonts/`, legacy assets still referenced.
-- Output `site/build/client` → `deploy-site.yml` runs `npm ci --prefix site && npm run build --prefix site` after the repo-wide gates, then `npx wrangler pages deploy site/build/client --project-name=opera-agent`. `/invoice` keeps working through `_worker.js` at the root of the deployed dir.
+- Output `site/build/client` → `deploy-site.yml` runs `npm ci --prefix site && npm run build --prefix site` after the repo-wide gates, then `npx wrangler pages deploy site/build/client --project-name=navego`. `/invoice` keeps working through `_worker.js` at the root of the deployed dir.
 - Deploy stays manual (`workflow_dispatch`). The workflow lives under CODEOWNERS — the owner merges it.
 
 ## Brand and design language ("Lembar Spesifikasi × Corbin")

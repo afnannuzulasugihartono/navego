@@ -14,7 +14,7 @@ import { speakMcp } from '../proof/proof-run.ts';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const [command, ...rest] = process.argv.slice(2);
-const mcp = speakMcp({ port: Number(process.env.OPERA_BRIDGE_PORT || 9451), cwd: root, bridgePort: Number(process.env.OPERA_BRIDGE_PORT || 9451) });
+const mcp = speakMcp({ port: Number(process.env.NAVEGO_BRIDGE_PORT || 9451), cwd: root, bridgePort: Number(process.env.NAVEGO_BRIDGE_PORT || 9451) });
 await mcp.initialize();
 
 const needsTab = new Set([

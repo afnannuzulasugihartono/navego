@@ -1,13 +1,13 @@
 # @last-edited: 2026-11-15 UTC+7.
 # @title: external install - the extension installs and stays, without the Chrome Web Store, on Windows, macOS and Linux.
 # @state: paths and flags are written to the vendor documentation as of 2026-11-15; the same day the route was chosen (owner decision, single route), and nothing here has been driven end to end on any machine yet.
-# @dependencies: `docs/store/extension-forceinstall.reg`, `docs/store/extension-forceinstall-remove.reg`, `docs/store/opera-agent-managed.json`, `docs/install.md`.
+# @dependencies: `docs/store/extension-forceinstall.reg`, `docs/store/extension-forceinstall-remove.reg`, `docs/store/navego-managed.json`, `docs/install.md`.
 
 # WHAT THIS IS
 
 One route, one story: the extension is **force-installed by policy** and cannot be disabled while the policy stands. It rides the same signed CRX behind one URL:
 
-`https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl`
+`https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl`
 
 There is no second, gentler path in this repository. The classic external-key route was retired on 2026-11-15 by the owner's decision; the artifacts live in git history, not in the tree.
 
@@ -18,7 +18,7 @@ Updates ride the same URL: every browser start, the browser re-reads `update.xml
 Check the update URL answers and carries the version the tree now reads (measured 2026-11-15):
 
 ```
-curl -I "https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"
+curl -I "https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"
 ```
 
 If it does not answer `200` with an `X-Opera-Version` header, nothing on this page will produce an extension.
@@ -56,7 +56,7 @@ What the route costs you, stated once and honestly:
 `defaults` writes user-level preferences; no administrator rights are needed.
 
 ```
-U="ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"
+U="ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"
 defaults write com.google.Chrome ExtensionInstallForcelist -array "$U"
 defaults write com.microsoft.Edge ExtensionInstallForcelist -array "$U"
 defaults write com.brave.Browser ExtensionInstallForcelist -array "$U"
@@ -74,15 +74,15 @@ Managed policy files are JSON in a directory the browser reads at start; this ro
 
 ```
 sudo mkdir -p /etc/opt/chrome/policies/managed
-sudo cp docs/store/opera-agent-managed.json /etc/opt/chrome/policies/managed/opera-agent.json
+sudo cp docs/store/navego-managed.json /etc/opt/chrome/policies/managed/navego.json
 # Edge:
 sudo mkdir -p /etc/opt/microsoft/edge/policies/managed
-sudo cp docs/store/opera-agent-managed.json /etc/opt/microsoft/edge/policies/managed/opera-agent.json
+sudo cp docs/store/navego-managed.json /etc/opt/microsoft/edge/policies/managed/navego.json
 ```
 
 The file carries `ExtensionInstallForcelist` with the same `id;update-url` entry. Restart the browser; verify at `chrome://policy`. Brave's policy directory varies by distribution (`/etc/brave/policies/managed` on most); verify with `brave://policy` rather than guessing.
 
-Removal: `sudo rm /etc/opt/chrome/policies/managed/opera-agent.json` (or the Edge equivalent), restart, then remove the extension at `chrome://extensions`.
+Removal: `sudo rm /etc/opt/chrome/policies/managed/navego.json` (or the Edge equivalent), restart, then remove the extension at `chrome://extensions`.
 
 # WHAT IS TRUE, AND WHAT IS NOT
 

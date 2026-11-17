@@ -4,11 +4,11 @@
 export const PUBLISHABLE_KEY = 'sb_publishable_jAbS_QIQsmXQA-Rj8RWPcg_JVeBedJ6';
 export const REST = 'https://nenmkmtvjremqphfqnfw.supabase.co/rest/v1';
 export const AUTH_HOST = 'https://nenmkmtvjremqphfqnfw.supabase.co/auth/v1';
-export const BILLING = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-billing';
-export const UPDATE_FN = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update';
+export const BILLING = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-billing';
+export const UPDATE_FN = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update';
 
-const ACCESS_KEY = 'opera-agent-access-token';
-const REFRESH_KEY = 'opera-agent-refresh-token';
+const ACCESS_KEY = 'navego-access-token';
+const REFRESH_KEY = 'navego-refresh-token';
 const RETURNABLE = /^\.\/[A-Za-z0-9._~/?=&%-]*$/;
 
 // WHY: ?next is attacker-controllable; only same-site relative paths pass.

@@ -196,7 +196,7 @@ jobs:
           VERSION: ${{ inputs.version }}
           CRX_PATH: ${{ github.workspace }}/extension-stage.crx
         run: |
-          BASE="https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update"
+          BASE="https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update"
           X="id%3D${EXTENSION_ID}%26v%3D${VERSION}%26uc%26nocache%3D1"
           CODEBASE="$(curl --fail --silent --show-error --location "$BASE/update.xml?x=$X" \
             | grep -o 'codebase="[^"]*"' | head -1 | sed 's/codebase="//;s/"//')"
@@ -300,5 +300,5 @@ jobs:
 
       - uses: actions/upload-artifact@v7
         with:
-          name: opera-agent-${{ inputs.version }}-crx
+          name: navego-${{ inputs.version }}-crx
           path: extension-stage.crx

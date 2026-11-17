@@ -17,7 +17,7 @@ const denoStub = { env: { get: (key: string) => process.env[key] } };
 (globalThis as { Deno?: typeof denoStub }).Deno = denoStub;
 
 const source = stripTypeScriptTypes(
-  readFileSync(new URL('../../hosted/functions/opera-agent-feedback/index.ts', import.meta.url), 'utf8')
+  readFileSync(new URL('../../hosted/functions/navego-feedback/index.ts', import.meta.url), 'utf8')
     .replace(/^import\s+["']@supabase\/edge-runtime["'];?\s*$/m, '')
     .replace(/^import\s+\{[^}]*\}\s+from\s+["']@supabase\/supabase-js["'];?\s*$/m, '')
     .replace(/^import\s+\{[^}]*\}\s+from\s+["'][^"']*cors\.ts["'];?\s*$/m, '')
@@ -53,9 +53,9 @@ function harness() {
     TextDecoder,
     crypto
   });
-  const post = (body: any, headers = {}) => handler(new Request('https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-feedback', {
+  const post = (body: any, headers = {}) => handler(new Request('https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-feedback', {
     method: 'POST',
-    headers: { 'content-type': 'application/json', origin: 'https://opera-agent.pages.dev', ...headers },
+    headers: { 'content-type': 'application/json', origin: 'https://navego.pages.dev', ...headers },
     body: typeof body === 'string' ? body : JSON.stringify(body)
   }));
   return { stored, post, raw: (req: any) => handler(req) };
@@ -104,14 +104,14 @@ test('a body that is not an object, and a method that is not POST, are refused',
   const { post, raw } = harness();
   const notJson = await post('not json at all');
   assert.equal(notJson.status, 400);
-  const get = await raw(new Request('https://x.test/functions/v1/opera-agent-feedback', { method: 'GET' }));
+  const get = await raw(new Request('https://x.test/functions/v1/navego-feedback', { method: 'GET' }));
   assert.equal(get.status, 405);
 });
 
 test('only the site may post, and only the site gets the CORS answer', async () => {
   const { post } = harness();
   const ok = await post({ name: 'Sari', contact: '0812-3456-7890' });
-  assert.equal(ok.headers.get('access-control-allow-origin'), 'https://opera-agent.pages.dev');
+  assert.equal(ok.headers.get('access-control-allow-origin'), 'https://navego.pages.dev');
   const evil = await post({ name: 'Sari', contact: '0812-3456-7890' }, { origin: 'https://evil.example' });
   assert.equal(evil.headers.get('access-control-allow-origin'), null);
 });
@@ -126,12 +126,12 @@ test('the fields are cut to the length the table holds, so a long answer cannot 
 
 test('the preflight answers 204 with no body, because a 204 with a body is refused by the runtime', async () => {
   const { raw } = harness();
-  const preflight = await raw(new Request('https://x.test/functions/v1/opera-agent-feedback', {
+  const preflight = await raw(new Request('https://x.test/functions/v1/navego-feedback', {
     method: 'OPTIONS',
-    headers: { origin: 'https://opera-agent.pages.dev', 'access-control-request-method': 'POST' }
+    headers: { origin: 'https://navego.pages.dev', 'access-control-request-method': 'POST' }
   }));
   assert.equal(preflight.status, 204);
-  assert.equal(preflight.headers.get('access-control-allow-origin'), 'https://opera-agent.pages.dev');
+  assert.equal(preflight.headers.get('access-control-allow-origin'), 'https://navego.pages.dev');
   assert.equal(preflight.headers.get('access-control-allow-methods'), 'POST, OPTIONS');
   assert.equal(await preflight.text(), '', 'a 204 carries no body at all');
 });

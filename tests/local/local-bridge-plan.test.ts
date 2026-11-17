@@ -9,7 +9,7 @@
 // The bridge asks once per session, counts locally, refuses past the allowance with the plan named, and reports the usage when the session ends.
 // Every assertion below runs against a real socket with an in-process cloud, so the meter itself is what is under test.
 
-process.env.OPERA_BRIDGE_TOKEN = 'test-bridge-token';
+process.env.NAVEGO_BRIDGE_TOKEN = 'test-bridge-token';
 const realFetch = globalThis.fetch;
 globalThis.fetch = (url, opts) => realFetch(url, { ...opts, headers: { 'x-opera-bridge-token': 'test-bridge-token', ...(opts?.headers || {}) } });
 

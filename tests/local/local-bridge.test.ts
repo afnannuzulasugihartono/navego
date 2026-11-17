@@ -16,7 +16,7 @@
 // A Node WebSocket client sends no Origin header, so every other test here and in bridge-link.test.ts passes against a server that would refuse the browser outright.
 // Chrome does send one, so the header it sends is asserted here against the header the server expects.
 
-process.env.OPERA_BRIDGE_TOKEN = 'test-bridge-token';
+process.env.NAVEGO_BRIDGE_TOKEN = 'test-bridge-token';
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -39,7 +39,7 @@ import { createBridgeServer } from '../../local/bridge-ws.js';
 import type { SocketCommand } from '../../extension/lib/socket-protocol.js';
 import { fakeCloud, startFakeCloud } from '../helpers/fake-cloud.ts';
 
-process.env.OPERA_BRIDGE_PORT = '0';
+process.env.NAVEGO_BRIDGE_PORT = '0';
 
 // WHY A FAKE CLOUD ON THE DRIVER PATH.
 // The driver builds its own bridge, and the meter asks the cloud once per session, so the driver path needs an answerable cloud or every scripted device here would be refused by the real one.
@@ -48,10 +48,10 @@ process.env.OPERA_BRIDGE_PORT = '0';
 let meter: any = null;
 test.before(async () => {
   meter = await startFakeCloud();
-  process.env.OPERA_CLOUD_URL = meter.url;
+  process.env.NAVEGO_CLOUD_URL = meter.url;
 });
 test.after(async () => {
-  delete process.env.OPERA_CLOUD_URL;
+  delete process.env.NAVEGO_CLOUD_URL;
   await meter?.close();
 });
 
@@ -286,12 +286,12 @@ test('a port held by something that is not a bridge is named, and freeing it hea
   const squatterAddress = squatter.address();
   if (squatterAddress === null || typeof squatterAddress === 'string') throw new Error('the squatter bound no port');
   const taken = squatterAddress.port;
-  process.env.OPERA_BRIDGE_PORT = String(taken);
+  process.env.NAVEGO_BRIDGE_PORT = String(taken);
   try {
     await assert.rejects(() => bridgeAddress(), /held by another process that is not a bridge/);
   } finally {
     await new Promise((resolve) => squatter.close(resolve));
-    process.env.OPERA_BRIDGE_PORT = '0';
+    process.env.NAVEGO_BRIDGE_PORT = '0';
   }
   const { port } = await bridgeAddress();
   assert.ok(port > 0, 'the next try listened instead of reusing the dead server');
@@ -302,22 +302,22 @@ test('a port held by something that is not a bridge is named, and freeing it hea
 
 test('a trusted window skips the proof ping, and zero trust proves every call', async () => {
   const device = await startDevice(() => [{ id: 7, url: 'https://x/', title: 'X' }]);
-  const previous = process.env.OPERA_BRIDGE_TRUST_MS;
+  const previous = process.env.NAVEGO_BRIDGE_TRUST_MS;
   try {
-    delete process.env.OPERA_BRIDGE_TRUST_MS;
+    delete process.env.NAVEGO_BRIDGE_TRUST_MS;
     await listBridgeTargets();
     await listBridgeTargets();
     assert.equal(device.pings(), 2, 'without trust every call proves');
 
-    process.env.OPERA_BRIDGE_TRUST_MS = '50';
+    process.env.NAVEGO_BRIDGE_TRUST_MS = '50';
     await sleep(80);
     await listBridgeTargets();
     assert.equal(device.pings(), 3, 'an expired window proves again');
     await listBridgeTargets();
     assert.equal(device.pings(), 3, 'a trusted call sends no ping');
   } finally {
-    if (previous === undefined) delete process.env.OPERA_BRIDGE_TRUST_MS;
-    else process.env.OPERA_BRIDGE_TRUST_MS = previous;
+    if (previous === undefined) delete process.env.NAVEGO_BRIDGE_TRUST_MS;
+    else process.env.NAVEGO_BRIDGE_TRUST_MS = previous;
   }
 });
 
@@ -332,13 +332,13 @@ test('a port held by a stranger is named, not swallowed into a wrong pipe', asyn
   const squatterAddress = squatter.address();
   if (squatterAddress === null || typeof squatterAddress === 'string') throw new Error('the squatter bound no port');
   const taken = squatterAddress.port;
-  process.env.OPERA_BRIDGE_PORT = String(taken);
+  process.env.NAVEGO_BRIDGE_PORT = String(taken);
   try {
     await assert.rejects(() => bridgeReachable(), /held by another process that is not a bridge/,
       'a conflict must name itself instead of answering "no extension"');
   } finally {
     await new Promise((resolve) => squatter.close(resolve));
-    process.env.OPERA_BRIDGE_PORT = '0';
+    process.env.NAVEGO_BRIDGE_PORT = '0';
   }
 });
 
@@ -364,7 +364,7 @@ test('a driver that loses the port adopts the bridge that won it', async () => {
   while (!owner.linked() && Date.now() < until) await sleep(25);
   assert.equal(owner.linked(), true, 'the owner has a device');
 
-  process.env.OPERA_BRIDGE_PORT = String(port);
+  process.env.NAVEGO_BRIDGE_PORT = String(port);
   try {
     assert.equal(await bridgeReachable(), true, 'the loser sees the link the winner holds');
     const tabs = await listBridgeTargets();
@@ -396,7 +396,7 @@ test('a driver that loses the port adopts the bridge that won it', async () => {
   } finally {
     await closeBridge();
     await owner.close();
-    process.env.OPERA_BRIDGE_PORT = '0';
+    process.env.NAVEGO_BRIDGE_PORT = '0';
   }
 });
 
@@ -405,7 +405,7 @@ test('a driver that loses the port adopts the bridge that won it', async () => {
 // So the door is driven over HTTP here, the same way a second driver reaches it, and the two exported calls are the ones a driver actually makes.
 
 test('the exported lease calls read the same table the door serves', async () => {
-  process.env.OPERA_BRIDGE_PORT = '0';
+  process.env.NAVEGO_BRIDGE_PORT = '0';
   try {
     const granted = (await leaseTab('12', 'agent-a', 5000)) as LeaseAnswer;
     assert.equal(granted.granted, true, 'a free tab is granted to the agent that asked');
@@ -427,7 +427,7 @@ test('the exported lease calls read the same table the door serves', async () =>
     assert.equal(((await leaseTab('12', 'agent-b')) as LeaseAnswer).granted, true, 'and the tab is free for the next agent');
   } finally {
     await closeBridge();
-    process.env.OPERA_BRIDGE_PORT = '0';
+    process.env.NAVEGO_BRIDGE_PORT = '0';
   }
 });
 

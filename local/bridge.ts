@@ -35,7 +35,7 @@ const REPLY_TIMEOUT_MS = 10000;
 export const LINK_ERROR = 'bridge: extension is not connected (start the local driver, then reload the extension)';
 
 export function bridgePort() {
-  return Number(process.env.OPERA_BRIDGE_PORT || DEFAULT_BRIDGE_PORT);
+  return Number(process.env.NAVEGO_BRIDGE_PORT || DEFAULT_BRIDGE_PORT);
 }
 
 let server: BridgeTransport | null = null;
@@ -47,7 +47,7 @@ let lastProofAt = 0;
 // Default zero keeps the safe behavior; whoever sets the window opts into the trade with open eyes.
 
 function trustedRecently(): boolean {
-  const trustMs = Math.max(0, Number(process.env.OPERA_BRIDGE_TRUST_MS || 0));
+  const trustMs = Math.max(0, Number(process.env.NAVEGO_BRIDGE_TRUST_MS || 0));
   return trustMs > 0 && Date.now() - lastProofAt < trustMs;
 }
 

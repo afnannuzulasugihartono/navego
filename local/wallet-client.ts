@@ -18,7 +18,7 @@ import { randomBytes } from 'node:crypto';
 
 import { BILLING_URL, DEFAULT_BRIDGE_URL } from './lib/endpoints.js';
 
-const DEVICE_FILE = path.join(os.homedir(), '.opera-agent', 'device.json');
+const DEVICE_FILE = path.join(os.homedir(), '.navego', 'device.json');
 
 export interface WalletCallOptions {
   home?: string | null;
@@ -28,7 +28,7 @@ export interface WalletCallOptions {
 }
 
 function devicePath(home: string | null) {
-  return home ? path.join(home, '.opera-agent', 'device.json') : DEVICE_FILE;
+  return home ? path.join(home, '.navego', 'device.json') : DEVICE_FILE;
 }
 
 export function readDevice({ home = null }: { home?: string | null } = {}): { deviceName: string; token: string } | null {

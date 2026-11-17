@@ -1,7 +1,7 @@
 // @last-edited: 2026-11-09 UTC+7.
 // @title: bridge-plan-gate.test — refuse who cannot pay, name the plan when refusing, and let the firm through.
 // @state: paused plans cannot connect, the quota refuses at the last command, the firm-only page keeps the firm, and everything else passes.
-// @dependencies: node:test, strict, ../hosted/functions/opera-agent-bridge/plan-gate.ts, ../hosted/functions/_shared/plans.ts.
+// @dependencies: node:test, strict, ../hosted/functions/navego-bridge/plan-gate.ts, ../hosted/functions/_shared/plans.ts.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -13,7 +13,7 @@ import {
   handshakeVerdict,
   planIsActive,
   quotaAllowance
-} from '../../hosted/functions/opera-agent-bridge/plan-gate.ts';
+} from '../../hosted/functions/navego-bridge/plan-gate.ts';
 
 const pilot = { plan: 'plan.pilot', status: 'active', dailyQuota: 200, usedToday: 0 };
 const firm = { plan: 'plan.firm', status: 'active', dailyQuota: 5000, usedToday: 0 };

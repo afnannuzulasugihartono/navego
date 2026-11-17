@@ -3,7 +3,7 @@
 @last-edited: 2026-11-08 UTC+7.
 @related: [AGENTS.md](../../../AGENTS.md) - [docs/agent-call.md](../../agent-call.md) - [docs/superpowers/specs/2026-11-08-installable-mcp-design.md](2026-11-08-installable-mcp-design.md)
 
-Disetujui sebagai arah pada 2026-11-08. Spec ini membuat Opera Agent bisa dijual: paket dan kuotanya ditegakkan di **bridge** dan di **MCP hosted**, sementara kliennya (extension dan paket CLI) tetap gratis dan bebas dibaca.
+Disetujui sebagai arah pada 2026-11-08. Spec ini membuat Navego bisa dijual: paket dan kuotanya ditegakkan di **bridge** dan di **MCP hosted**, sementara kliennya (extension dan paket CLI) tetap gratis dan bebas dibaca.
 
 ## Intent
 
@@ -77,7 +77,7 @@ Perbedaannya dengan hosted: drive lokal tetap milidetik ✓✓ (perintahnya tida
 
 ## Yang terlihat di klien
 
-- `opera-agent-mcp doctor` mencetak paket aktif ✓, kuota harian ✓, sisa hari ini ✓, dan tautan pembelian ✓.
+- `navego-mcp doctor` mencetak paket aktif ✓, kuota harian ✓, sisa hari ini ✓, dan tautan pembelian ✓.
 - Mode lokal memakai **bridge loopback** ✓, dan bridge itu memverifikasi paket ke cloud saat sesi dimulai ✓✓ — jadi batas paket berlaku di mode lokal juga ✓✓, tanpa satu pun pemeriksaan di dalam kode klien ✗✓.
 - Extension tidak berubah ✗ — ia sudah speaking ke bridge ✓ (tapi安定arto tetap).
 

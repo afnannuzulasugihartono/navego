@@ -40,7 +40,7 @@ export function fakeCloud({ open = pilotSession(), reports = [] as Array<Record<
 
 // WHY AN HTTP FAKE AND NOT ONLY AN IN-PROCESS ONE.
 // The driver builds its bridge inside local/bridge.js, which has no argument to receive a cloud.
-// Pointing OPERA_CLOUD_URL at a loopback HTTP server exercises the exact call the production meter makes, so the driver path is proven without a test-only hook in production code.
+// Pointing NAVEGO_CLOUD_URL at a loopback HTTP server exercises the exact call the production meter makes, so the driver path is proven without a test-only hook in production code.
 
 export async function startFakeCloud({ open = pilotSession() } = {}) {
   const requests: Array<Record<string, unknown>> = [];

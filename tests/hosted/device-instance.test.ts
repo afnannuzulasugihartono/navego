@@ -1,7 +1,7 @@
 // @last-edited: 2026-11-09 UTC+7.
 // @title: device-instance — a browser keeps an identity, so a second browser is a second device.
 // @state: the identity on the handshake, its absence tolerated, and the bridge naming the browser it heard.
-// @dependencies: node:test, strict, ../extension/worker/instance-id.js, ../extension/lib/socket-protocol.js, ../hosted/functions/opera-agent-bridge/bridge-socket.ts, ../local/bridge-ws.js.
+// @dependencies: node:test, strict, ../extension/worker/instance-id.js, ../extension/lib/socket-protocol.js, ../hosted/functions/navego-bridge/bridge-socket.ts, ../local/bridge-ws.js.
 
 // WHY THIS FILE EXISTS
 
@@ -9,7 +9,7 @@
 // The identity is the fact that tells them apart, and it has to survive both roads: the cloud socket that authenticates a device and the loopback socket that drives one.
 // A build without it must still connect, because the extension that is already installed predates this field.
 
-process.env.OPERA_BRIDGE_TOKEN = 'test-bridge-token';
+process.env.NAVEGO_BRIDGE_TOKEN = 'test-bridge-token';
 const realFetch = globalThis.fetch;
 globalThis.fetch = (url, opts) => realFetch(url, { ...opts, headers: { 'x-opera-bridge-token': 'test-bridge-token', ...(opts?.headers || {}) } });
 
@@ -19,7 +19,7 @@ import assert from 'node:assert/strict';
 import { createBridgeServer } from '../../local/bridge-ws.js';
 import { fakeCloud } from '../helpers/fake-cloud.ts';
 import { DEVICE_PROTOCOL_VERSION, handshakeFrame } from '../../extension/lib/socket-protocol.js';
-import { handshakePayload } from '../../hosted/functions/opera-agent-bridge/bridge-socket.ts';
+import { handshakePayload } from '../../hosted/functions/navego-bridge/bridge-socket.ts';
 import { newInstanceId } from '../../extension/worker/instance-id.js';
 
 const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));

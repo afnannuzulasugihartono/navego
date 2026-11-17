@@ -118,7 +118,7 @@ git commit -m "Name every device's targets apart, and send each command to the b
 ### Task 3: The device identity is per browser
 
 **Files:**
-- Modify: `extension/worker/bridge-link.js`, `extension/lib/protocol.js`, `supabase/functions/opera-agent-bridge/bridge-socket.ts`, `supabase/functions/opera-agent-bridge/index.ts`
+- Modify: `extension/worker/bridge-link.js`, `extension/lib/protocol.js`, `supabase/functions/navego-bridge/bridge-socket.ts`, `supabase/functions/navego-bridge/index.ts`
 - Test: `tests/bridge-socket.test.mjs` (extend), `tests/local-bridge.test.mjs` (extend)
 
 **Interfaces:**

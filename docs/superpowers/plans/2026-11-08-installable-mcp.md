@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** One installable npm package (`opera-agent-mcp`) with two modes — cloud and local — where the local mode is metered by the service, and the plan gate lives in the bridge and the hosted MCP, never in readable client code.
+**Goal:** One installable npm package (`navego-mcp`) with two modes — cloud and local — where the local mode is metered by the service, and the plan gate lives in the bridge and the hosted MCP, never in readable client code.
 
 **Architecture:** The package is the existing local MCP, renamed and made self-contained by a `prepack` step that copies the two cross-tree imports into it. The local mode speaks only over the loopback bridge; the cloud mode is a stdio-to-HTTP proxy in front of the hosted MCP. Plans live in `opera_account_plans` and in a shared `supabase/functions/_shared/plans.js`; the loopback bridge asks the cloud once per session for an allowance and enforces it locally; the hosted MCP enforces the same shared quota per command.
 
@@ -12,10 +12,10 @@
 
 ## Global Constraints
 
-- One package, mode as an argument: `opera-agent-mcp cloud` and `opera-agent-mcp local`.
+- One package, mode as an argument: `navego-mcp cloud` and `navego-mcp local`.
 - The package carries every module it imports: no import may leave the packed tree.
 - The extension stays a separate CRX; the package never installs it.
-- The local mode is the loopback bridge only: the debug-port road and `OPERA_LOCAL_TRANSPORT=cdp` are gone.
+- The local mode is the loopback bridge only: the debug-port road and `NAVEGO_LOCAL_TRANSPORT=cdp` are gone.
 - The gate lives in the bridge (cloud and loopback) and in the hosted MCP; no plan check in client code.
 - The quota is shared per account across both surfaces; the loopback bridge gets an allowance once per session and reports usage back.
 - No new dependency in the package; Node >= 20.
@@ -42,12 +42,12 @@
 - Test: `tests/mcp-package.test.mjs` (new)
 
 **Interfaces:**
-- Produces: the npm package `opera-agent-mcp` with the binary `opera-agent-mcp`; `scripts/pack-mcp.mjs` writes `local/lib/socket-protocol.js` and `local/lib/endpoints.js` from `extension/lib/` and copies the rewritten import paths.
+- Produces: the npm package `navego-mcp` with the binary `navego-mcp`; `scripts/pack-mcp.mjs` writes `local/lib/socket-protocol.js` and `local/lib/endpoints.js` from `extension/lib/` and copies the rewritten import paths.
 - Consumes: nothing.
 
 - [ ] **Step 1: Write the failing test**
 
-`tests/mcp-package.test.mjs` reads `local/package.json` and asserts the name is `opera-agent-mcp`, the bin is `opera-agent-mcp`, and `files` lists every file the server imports. A second test packs the tree (`npm pack --dry-run --json`) and asserts the tarball contains `lib/socket-protocol.js` and `lib/endpoints.js`.
+`tests/mcp-package.test.mjs` reads `local/package.json` and asserts the name is `navego-mcp`, the bin is `navego-mcp`, and `files` lists every file the server imports. A second test packs the tree (`npm pack --dry-run --json`) and asserts the tarball contains `lib/socket-protocol.js` and `lib/endpoints.js`.
 
 - [ ] **Step 2: Run it to verify it fails**
 
@@ -56,8 +56,8 @@ Expected: FAIL — the package is still named `opera-local` and the two modules 
 
 - [ ] **Step 3: Implement**
 
-- `local/package.json`: `name: "opera-agent-mcp"`, `bin: { "opera-agent-mcp": "bin/opera-agent-mcp.js" }`, `version: "1.6.29"`, `files` gains `lib/` and `bin/opera-agent-mcp.js`.
-- `local/bin/opera-agent-mcp.js`: reads the mode from `process.argv[2]` (`cloud` or `local`), prints usage for `--help`, and starts the matching server. `local/bin/opera-local.js` stays as a thin alias.
+- `local/package.json`: `name: "navego-mcp"`, `bin: { "navego-mcp": "bin/navego-mcp.js" }`, `version: "1.6.29"`, `files` gains `lib/` and `bin/navego-mcp.js`.
+- `local/bin/navego-mcp.js`: reads the mode from `process.argv[2]` (`cloud` or `local`), prints usage for `--help`, and starts the matching server. `local/bin/opera-local.js` stays as a thin alias.
 - `scripts/pack-mcp.mjs`: copies `extension/lib/socket-protocol.js` and `extension/lib/endpoints.js` into `local/lib/`, rewriting `../extension/lib/` to `./` in the copies, and is wired as the package's `prepack`.
 - `local/bridge-ws.js` and `local/wallet-client.js`: import from `./lib/` instead of `../extension/lib/`, and the repo copies of those two modules are generated (not hand-edited).
 
@@ -82,7 +82,7 @@ git commit -m "Pack the MCP so an install is one command, with every module it i
 - Test: `tests/local-transport-target.test.mjs` (rewrite), `tests/local-browsers.test.mjs` (rewrite)
 
 **Interfaces:**
-- Produces: `openSession()` always uses the loopback bridge; `OPERA_LOCAL_TRANSPORT` and `OPERA_LOCAL_PORT` no longer choose a road.
+- Produces: `openSession()` always uses the loopback bridge; `NAVEGO_LOCAL_TRANSPORT` and `NAVEGO_LOCAL_PORT` no longer choose a road.
 - Consumes: Task 1's package.
 
 - [ ] **Step 1: Write the failing test**
@@ -96,7 +96,7 @@ Expected: FAIL — the port road still exists.
 
 - [ ] **Step 3: Implement**
 
-Delete the port branch in `local/driver.js`, the transport choice in `local/bin/opera-local.js`, and the programmatic browser launch in `local/browsers.js`; keep `local/bin/opera-chrome.cmd` (it launches Chrome with the extension). Update the docs: the transport table, `OPERA_LOCAL_TRANSPORT`, and `OPERA_LOCAL_PORT` are gone.
+Delete the port branch in `local/driver.js`, the transport choice in `local/bin/opera-local.js`, and the programmatic browser launch in `local/browsers.js`; keep `local/bin/opera-chrome.cmd` (it launches Chrome with the extension). Update the docs: the transport table, `NAVEGO_LOCAL_TRANSPORT`, and `NAVEGO_LOCAL_PORT` are gone.
 
 - [ ] **Step 4: Run it to verify it passes**
 
@@ -116,11 +116,11 @@ git commit -m "One road for the local drive: the loopback bridge, on the everyda
 
 **Files:**
 - Create: `local/cloud.js` (the stdio-to-HTTP proxy), `local/oauth.js` (the browser login)
-- Modify: `local/bin/opera-agent-mcp.js`
+- Modify: `local/bin/navego-mcp.js`
 - Test: `tests/local-cloud.test.mjs` (new)
 
 **Interfaces:**
-- Produces: `opera-agent-mcp cloud` serves the hosted MCP over stdio; the OAuth token lives in the user's config folder; `OPERA_AGENT_MCP_TOKEN` wins when set.
+- Produces: `navego-mcp cloud` serves the hosted MCP over stdio; the OAuth token lives in the user's config folder; `NAVEGO_MCP_TOKEN` wins when set.
 - Consumes: the hosted endpoint and the OAuth config endpoint.
 
 - [ ] **Step 1: Write the failing test**
@@ -192,7 +192,7 @@ git commit -m "Give every account a plan, and one place that says what each plan
 ### Task 5: The gate in the cloud bridge
 
 **Files:**
-- Modify: `supabase/functions/opera-agent-bridge/bridge-socket.ts`, `supabase/functions/opera-agent-bridge/index.ts`
+- Modify: `supabase/functions/navego-bridge/bridge-socket.ts`, `supabase/functions/navego-bridge/index.ts`
 - Test: `tests/bridge-plan-gate.test.mjs` (new)
 
 **Interfaces:**
@@ -220,7 +220,7 @@ Expected: PASS.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add supabase/functions/opera-agent-bridge tests
+git add supabase/functions/navego-bridge tests
 git commit -m "Ask the bridge who is calling, and what their plan allows"
 ```
 
@@ -229,7 +229,7 @@ git commit -m "Ask the bridge who is calling, and what their plan allows"
 ### Task 6: The gate in the hosted MCP
 
 **Files:**
-- Modify: `supabase/functions/opera-agent-mcp/index.ts`, `supabase/functions/opera-agent-mcp/tools.ts`
+- Modify: `supabase/functions/navego-mcp/index.ts`, `supabase/functions/navego-mcp/tools.ts`
 - Test: `tests/hosted-plan-gate.test.mjs` (new)
 
 **Interfaces:**
@@ -257,7 +257,7 @@ Expected: PASS.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add supabase/functions/opera-agent-mcp tests
+git add supabase/functions/navego-mcp tests
 git commit -m "Tell the hosted caller which plan it is on, and stop it when the quota is gone"
 ```
 
@@ -303,11 +303,11 @@ git commit -m "Meter the local drive where it happens: the loopback bridge"
 ### Task 8: What the operator sees, and the docs
 
 **Files:**
-- Modify: `local/bin/opera-agent-mcp.js` (the `doctor` command), `docs/agent-call.md`, `local/README.md`, `README.md`
+- Modify: `local/bin/navego-mcp.js` (the `doctor` command), `docs/agent-call.md`, `local/README.md`, `README.md`
 - Test: `tests/mcp-package.test.mjs` (extend)
 
 **Interfaces:**
-- Produces: `opera-agent-mcp doctor` prints the bridge state, the device, the extension version, the plan, the daily quota, the remaining quota, and the CRX download link.
+- Produces: `navego-mcp doctor` prints the bridge state, the device, the extension version, the plan, the daily quota, the remaining quota, and the CRX download link.
 
 - [ ] **Step 1: Write the failing test**
 

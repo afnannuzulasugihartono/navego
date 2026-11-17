@@ -50,7 +50,7 @@ const NO_STORE = { method: 'GET', cache: 'no-store' as const };
 
 export async function servedVersion(fetchImpl: typeof fetch = fetch) {
   try {
-    const response = await fetchImpl(`${UPDATE_BASE_URL}/download/opera-agent.zip`, NO_STORE_HEAD);
+    const response = await fetchImpl(`${UPDATE_BASE_URL}/download/navego.zip`, NO_STORE_HEAD);
     if (!response.ok) return null;
     const version = String(response.headers?.get('x-opera-version') ?? '').trim();
     return /^\d+\.\d+\.\d+$/.test(version) ? version : null;
@@ -104,14 +104,14 @@ export async function applyBuild({ folder, installedVersion, fetchImpl = fetch }
     return { ok: true, changed: false, version: served };
   }
 
-  const response = await fetchImpl(`${UPDATE_BASE_URL}/download/opera-agent.zip`, NO_STORE);
+  const response = await fetchImpl(`${UPDATE_BASE_URL}/download/navego.zip`, NO_STORE);
   if (!response.ok) return { ok: false, reason: 'download-failed' };
   const entries = await readZip(new Uint8Array(await response.arrayBuffer()));
-  // WHY TWO NAMES: every install shipped before the 1.6.60 rebrand verifies the zip it downloads against the name it shipped with ('Opera Agent'); a machine that hears the same check back from this build for a Navego-named zip would refuse every future folder-apply and be forced through the browser updater forever.
+  // WHY TWO NAMES: every install shipped before the 1.6.60 rebrand verifies the zip it downloads against the name it shipped with ('Navego'); a machine that hears the same check back from this build for a Navego-named zip would refuse every future folder-apply and be forced through the browser updater forever.
   // The check accepts both spellings of the product this one line has always meant.
   // The bytes it writes over the folder are still required to carry a version, and the browser CRX road never consulted this name at all.
   const manifest = manifestOf(entries);
-  if (!manifest || (manifest.name !== 'Navego' && manifest.name !== 'Opera Agent')) return { ok: false, reason: 'not-ours' };
+  if (!manifest || (manifest.name !== 'Navego' && manifest.name !== 'Navego')) return { ok: false, reason: 'not-ours' };
   if (!newerThan(installedVersion, String(manifest.version ?? ''))) {
     return { ok: true, changed: false, version: manifest.version ?? installedVersion };
   }

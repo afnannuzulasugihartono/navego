@@ -61,7 +61,7 @@
     "matches": [
       "http://localhost/*",
       "https://localhost/*",
-      "https://opera-agent.pages.dev/*"
+      "https://navego.pages.dev/*"
     ]
   },
   "content_security_policy": {

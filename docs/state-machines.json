@@ -26,7 +26,7 @@
     {
       "id": "command-lifecycle",
       "kind": "sql",
-      "where": "hosted/migrations/20260907204146_opera_agent_1_0_0_core.sql:35",
+      "where": "hosted/migrations/20260907204146_navego_1_0_0_core.sql:35",
       "states": [
         "queued",
         "claimed",
@@ -80,7 +80,7 @@
     {
       "id": "device-lifecycle",
       "kind": "sql",
-      "where": "hosted/migrations/20260907204146_opera_agent_1_0_0_core.sql:13",
+      "where": "hosted/migrations/20260907204146_navego_1_0_0_core.sql:13",
       "states": [
         "offline",
         "online",
@@ -182,7 +182,7 @@
     {
       "id": "workflow-run-lifecycle",
       "kind": "sql",
-      "where": "hosted/migrations/20260908031756_opera_agent_async_workflow_runner.sql:3",
+      "where": "hosted/migrations/20260908031756_navego_async_workflow_runner.sql:3",
       "states": [
         "queued",
         "running",
@@ -191,7 +191,7 @@
         "expired",
         "cancelled"
       ],
-      "writers": "opera_start_workflow (insert queued), opera-agent-runner (queued→running, running→terminal)",
+      "writers": "opera_start_workflow (insert queued), navego-runner (queued→running, running→terminal)",
       "readers": "opera_await_workflow, run_workflow, every dashboard/Konsol view",
       "wrongIfConfused": "a runner that dies mid-workflow leaves 'running' forever; opera_await_workflow times out with a row saying work is still happening — the console shows an eternally-running row with no retry",
       "decision": "model",
@@ -271,7 +271,7 @@
     {
       "id": "bridge-socket-handshake",
       "kind": "edge",
-      "where": "hosted/functions/opera-agent-bridge/bridge-socket.ts:193",
+      "where": "hosted/functions/navego-bridge/bridge-socket.ts:193",
       "states": [
         "opened",
         "handshake-pending",
@@ -309,7 +309,7 @@
     {
       "id": "crx-release-chain",
       "kind": "sql",
-      "where": "hosted/migrations/20260908021039_opera_agent_releases.sql:4",
+      "where": "hosted/migrations/20260908021039_navego_releases.sql:4",
       "states": [
         "inactive",
         "active"
@@ -388,7 +388,7 @@
         "installed-and-paired",
         "installed-and-ran"
       ],
-      "writers": "the content script marker (documentElement data-opera-agent), the install MutationObserver, the device poll",
+      "writers": "the content script marker (documentElement data-navego), the install MutationObserver, the device poll",
       "readers": "the checklist, the primary CTA, renderChecklist",
       "wrongIfConfused": "a MutationObserver misses a marker that lands between reads and the page never flips — the user is told to install what is already installed",
       "decision": "model",
@@ -431,7 +431,7 @@
     {
       "id": "pairing-code-lifecycle",
       "kind": "sql",
-      "where": "hosted/migrations/20260907204146_opera_agent_1_0_0_core.sql:26",
+      "where": "hosted/migrations/20260907204146_navego_1_0_0_core.sql:26",
       "states": [
         "minted",
         "consumed",
@@ -574,7 +574,7 @@
     {
       "id": "v2-release-registry",
       "kind": "sql",
-      "where": "hosted/migrations/20261010080000_opera_agent_v2_releases.sql:11",
+      "where": "hosted/migrations/20261010080000_navego_v2_releases.sql:11",
       "states": [
         "active",
         "inactive"
@@ -607,7 +607,7 @@
     {
       "id": "ephemeral-workflow-lease",
       "kind": "sql",
-      "where": "hosted/migrations/20261009000000_opera_agent_ephemeral_workflows.sql:4",
+      "where": "hosted/migrations/20261009000000_navego_ephemeral_workflows.sql:4",
       "states": [
         "registered",
         "swept",
@@ -722,7 +722,7 @@
     {
       "id": "capability-allowlist",
       "kind": "sql",
-      "where": "hosted/migrations/20260907204146_opera_agent_1_0_0_core.sql:6",
+      "where": "hosted/migrations/20260907204146_navego_1_0_0_core.sql:6",
       "states": [
         "enabled",
         "disabled"
@@ -817,7 +817,7 @@
     {
       "id": "goal-ledger-dark",
       "kind": "sql",
-      "where": "hosted/migrations/20260911162525_opera_agent_goal_head.sql:4",
+      "where": "hosted/migrations/20260911162525_navego_goal_head.sql:4",
       "states": [
         "OPEN",
         "PARTIAL",
@@ -853,7 +853,7 @@
     {
       "id": "operator-konsol-scope",
       "kind": "sql",
-      "where": "hosted/migrations/20261010090000_opera_agent_konsol_tables.sql:16",
+      "where": "hosted/migrations/20261010090000_navego_konsol_tables.sql:16",
       "states": [
         "not-operator",
         "operator"
@@ -900,7 +900,7 @@
     {
       "id": "vm-host-dark",
       "kind": "sql",
-      "where": "hosted/migrations/20260912061541_opera_agent_reactive_vm_host.sql:25",
+      "where": "hosted/migrations/20260912061541_navego_reactive_vm_host.sql:25",
       "states": [
         "idle",
         "running",
@@ -912,7 +912,7 @@
         "expired"
       ],
       "writers": "opera_vm_enqueue/claim/checkpoint/release/cancel — flag-gated, never called",
-      "readers": "opera-agent-vm (only when the flag flips)",
+      "readers": "navego-vm (only when the flag flips)",
       "wrongIfConfused": "the flag flips with zero UI anywhere — a stray SQL update turns a week of an unshipped host on for the whole live project with no banner",
       "decision": "tolerate",
       "why": "explicit model behind an owner-flipped flag; inert by default — tolerate",

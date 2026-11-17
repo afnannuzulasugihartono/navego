@@ -19,9 +19,9 @@ import { launchProofBrowser, runProof, serveCompany, sha256, speakMcp } from '..
 const root = path.resolve(fileURLToPath(new URL('../../', import.meta.url)));
 const company = path.join(root, 'tests', 'fixtures', 'mock-company');
 
-const noExtensionBrowser = process.env.OPERA_PROOF_BROWSER
+const noExtensionBrowser = process.env.NAVEGO_PROOF_BROWSER
   ? false
-  : 'this run has no extension-capable browser; set OPERA_PROOF_BROWSER to one (Chrome for Testing or Chromium)';
+  : 'this run has no extension-capable browser; set NAVEGO_PROOF_BROWSER to one (Chrome for Testing or Chromium)';
 
 test('the fixture portal answers with the page and the CSV a drive needs', async () => {
   const portal = await serveCompany(company);

@@ -9,11 +9,11 @@
 
 export const SUPABASE_PROJECT_REF = 'nenmkmtvjremqphfqnfw';
 const SUPABASE_URL = `https://${SUPABASE_PROJECT_REF}.supabase.co`;
-export const DEFAULT_BRIDGE_URL = `${SUPABASE_URL}/functions/v1/opera-agent-bridge`;
-export const BILLING_URL = `${SUPABASE_URL}/functions/v1/opera-agent-billing`;
-export const LISTEN_BASE_URL = `${SUPABASE_URL}/functions/v1/opera-agent-listen`;
-export const UPDATE_BASE_URL = `${SUPABASE_URL}/functions/v1/opera-agent-update`;
-export const CONSENT_CONFIG_URL = `${SUPABASE_URL}/functions/v1/opera-agent-auth/config`;
+export const DEFAULT_BRIDGE_URL = `${SUPABASE_URL}/functions/v1/navego-bridge`;
+export const BILLING_URL = `${SUPABASE_URL}/functions/v1/navego-billing`;
+export const LISTEN_BASE_URL = `${SUPABASE_URL}/functions/v1/navego-listen`;
+export const UPDATE_BASE_URL = `${SUPABASE_URL}/functions/v1/navego-update`;
+export const CONSENT_CONFIG_URL = `${SUPABASE_URL}/functions/v1/navego-auth/config`;
 
 // WHY every cloud call is pinned to Singapore.
 // Edge functions run closest to the requester, and from this machine that is Tokyo while the database sits in Singapore — measured live as DENO_REGION ap-northeast-1 against a db host in ap-southeast-1.
@@ -36,4 +36,4 @@ export function socketUrl(bridgeUrl: string | undefined) {
   return `${convert}${separator}forceFunctionRegion=${EDGE_REGION}`;
 }
 
-export const SITE_ORIGIN = 'https://opera-agent.pages.dev';
+export const SITE_ORIGIN = 'https://navego.pages.dev';

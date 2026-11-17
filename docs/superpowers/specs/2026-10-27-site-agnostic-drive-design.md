@@ -11,7 +11,7 @@ berikutnya dan tidak masuk di sini.
 
 ## Intent
 
-Opera Agent hari ini membaca Google Docs dengan kode yang mengenali situs itu
+Navego hari ini membaca Google Docs dengan kode yang mengenali situs itu
 secara eksplisit. Situs canvas lain — Sheets, Slides, dan aplikasi berat yang
 belum pernah dilihat — hampir tidak terbaca sama sekali. Tool-nya sendiri sudah
 mengakui batas ini: "On other canvas-rendered pages little or no text comes
@@ -42,7 +42,7 @@ Target keberhasilan yang dapat diukur:
 - Tidak menambah wire method baru ke `extension/lib/protocol.js`; jumlah
   primitif allowlisted tetap 31. Driver lokal mengirim CDP langsung, jadi
   kapabilitas baru tidak melewati wire protocol.
-- Tidak mengubah surface cloud (`supabase/functions/opera-agent-mcp`).
+- Tidak mengubah surface cloud (`supabase/functions/navego-mcp`).
 - Tidak membangun mutasi terverifikasi, komposisi task, atau pengiriman
   artefak — itu sub-proyek 3, 4, dan 5.
 - Tidak menambah dependency baru.

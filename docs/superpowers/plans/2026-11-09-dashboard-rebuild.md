@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 >
-> Working in worktree `D:\GitHub\opera-agent-dashboard-rebuild` on branch `agent/dashboard-rebuild/dashboard-rebuild` (already created). Release steps run from the **main checkout**, one at a time, never from the worktree.
+> Working in worktree `D:\GitHub\navego-dashboard-rebuild` on branch `agent/dashboard-rebuild/dashboard-rebuild` (already created). Release steps run from the **main checkout**, one at a time, never from the worktree.
 
 **Goal:** Make an exhausted plan visible in opencode tools and rebuild the dashboard around a plan hero, in release 1.6.35.
 
@@ -15,7 +15,7 @@
 ## Global Constraints
 
 - Version 1.6.35 everywhere a version is named (spec — "Perubahan 4: Rilis 1.6.35").
-- `OPERA_AGENT_MCP_RAW` handling and the `status` tool **description bytes stay unchanged** (`tests/hosted-mcp.test.mjs`, `tests/mcp-surface.test.mjs`, `tests/fixtures/mcp-contract-v1.json` all pin it). Do not touch the description strings.
+- `NAVEGO_MCP_RAW` handling and the `status` tool **description bytes stay unchanged** (`tests/hosted-mcp.test.mjs`, `tests/mcp-surface.test.mjs`, `tests/fixtures/mcp-contract-v1.json` all pin it). Do not touch the description strings.
 - All dashboard reads go through `opera_*` RPCs; never a raw `/rest/v1/<table>` path (pinned in `tests/landing-dashboard.test.mjs`).
 - One language per string only via the `id`/`en` dictionary pair; every `data-i18n` key must resolve in **both** languages.
 - No new dependencies, no CSS framework, no build step. Site brand is dark-only (`#0b0d10` background, `#3ecf8e` accent).
@@ -37,7 +37,7 @@ The spec implies these input classes but pins none of them; each gets a test in 
 ### Task 1: hosted `planInfo` reports remaining + exhaustion
 
 **Files:**
-- Modify: `supabase/functions/opera-agent-mcp/plan-info.ts`
+- Modify: `supabase/functions/navego-mcp/plan-info.ts`
 - Test: `tests/hosted-plan-gate.test.mjs`
 
 **Interfaces:**
@@ -47,13 +47,13 @@ The spec implies these input classes but pins none of them; each gets a test in 
 - [ ] **Step 2: Run it to verify it fails** — `node --test tests/hosted-plan-gate.test.mjs` → FAIL (`planRemaining`/`planExhausted` undefined).
 - [ ] **Step 3: Implement** — in `plan-info.ts`, compute `const remaining = Math.max(0, quota - used)` after `used` is known, return both fields alongside the existing four. No new imports.
 - [ ] **Step 4: Run tests to verify pass** — `node --test tests/hosted-plan-gate.test.mjs` → PASS.
-- [ ] **Step 5: Commit** — `git add supabase/functions/opera-agent-mcp/plan-info.ts tests/hosted-plan-gate.test.mjs && git commit -m "The hosted caller gets the two plan facts it was one fetch away from"`.
+- [ ] **Step 5: Commit** — `git add supabase/functions/navego-mcp/plan-info.ts tests/hosted-plan-gate.test.mjs && git commit -m "The hosted caller gets the two plan facts it was one fetch away from"`.
 
 ### Task 2: hosted `executeStatus` merges plan on success AND failure
 
 **Files:**
-- Modify: `supabase/functions/opera-agent-mcp/index.ts` (`executeStatus`, ~lines 500)
-- Modify: `tests/helpers/boundary-locks.mjs` (re-pin `supabase/functions/opera-agent-mcp/index.ts`)
+- Modify: `supabase/functions/navego-mcp/index.ts` (`executeStatus`, ~lines 500)
+- Modify: `tests/helpers/boundary-locks.mjs` (re-pin `supabase/functions/navego-mcp/index.ts`)
 - Test: `tests/mcp-surface.test.mjs`
 
 **Interfaces:**
@@ -64,7 +64,7 @@ The spec implies these input classes but pins none of them; each gets a test in 
 - [ ] **Step 2: Run it to verify it fails** — `node --test tests/mcp-surface.test.mjs` → FAIL on the new pin.
 - [ ] **Step 3: Implement** — restructure `executeStatus`: always `const [presence, plan] = await Promise.all([devicePresence(userId), planInfo(await db(), userId)])`; if `answer.isError`, merge `...(plan ?? {})` into the existing error structuredContent (keeping `ok:false`, `error`, every existing key), keep `isError:true`, return re-serialized text with the same shape; else merge as today. Also spread `planRemaining`/`planExhausted` via `plan` (already in the Task 1 object — no extra code).
 - [ ] **Step 4: Run tests** — `node --test tests/mcp-surface.test.mjs tests/hosted-mcp.test.mjs tests/mcp-output-tidy.test.mjs tests/mcp-output-kr.test.mjs` → PASS (descriptions unchanged so `mcp-contract-v1.json` needs no re-pin; if `mcp-output-tidy.test.mjs` reshapes merged output unexpectedly, extend its expectation minimally and say so).
-- [ ] **Step 5: Re-pin the boundary in the same commit** — compute `git hash-object supabase/functions/opera-agent-mcp/index.ts` (LF-normalized via the helper — check `boundary-locks.mjs` header for the exact normalization; if the gate normalizes CRLF→LF, hash after `sed -i` equivalent or `git hash-object --stdin < file` with contents normalized). Replace the entry `'../supabase/functions/opera-agent-mcp/index.ts', '09f854c4ca203b3c1f076a663fa94841847e08f0'` with the new hash and say in the commit message why: `executeStatus now merges plan info on the failure path; the tool description and schemas are byte-identical`.
+- [ ] **Step 5: Re-pin the boundary in the same commit** — compute `git hash-object supabase/functions/navego-mcp/index.ts` (LF-normalized via the helper — check `boundary-locks.mjs` header for the exact normalization; if the gate normalizes CRLF→LF, hash after `sed -i` equivalent or `git hash-object --stdin < file` with contents normalized). Replace the entry `'../supabase/functions/navego-mcp/index.ts', '09f854c4ca203b3c1f076a663fa94841847e08f0'` with the new hash and say in the commit message why: `executeStatus now merges plan info on the failure path; the tool description and schemas are byte-identical`.
 - [ ] **Step 6: Commit** — message like `status tells the plan also when the command it carried failed`.
 
 ### Task 3: local MCP `status` passes the meter through
@@ -122,19 +122,19 @@ main.console > .layout
 - [ ] **Step 3: Rewrite `landing/dashboard.html`** per the IA above — copy the proven JS logic blocks (`esc`, `relativeTime`, `TRANSLATED` + the five refusal translations verbatim, `showSection`, `refreshDevices` + 10s poll + `visibilitychange`, `currentSession` guards ×3+, MutationObserver install marker, revoke confirm, wallet + pairing countdown + konsol + CSV, `location.replace('./index.html')`, shared nav/footer/`href="./akun.html"`, `aria-current="page"` on the brand link, `Device milik`, `id="installState"` logic, `<dt>Status</dt>`/`<dt>Terakhir terlihat</dt>`/`<dt>Perintah</dt>`/`<dt>ID device</dt>`, `data-copy="${esc(device.id)}"`, `/salin ID/`). Add `refreshPlan()` + the hero markup. Add `<script type="application/json" id="i18n-dict">` with `id` and `en` key sets covering every static string (nav, rail groups, hero, metrics, checklist, empty states, buttons, footer). Every static visible string gets `data-i18n`.
 - [ ] **Step 4: Update `tests/landing-dashboard.test.mjs`** — keep all pins still true; **change** the rail-sections test to also require `operatorToggle`/`operatorGroup` and the two group labels; **add** pins: `opera_my_plan` present; `id="planExhaustedBanner"` present; `role="progressbar"` present; `<script type="application/json" id="i18n-dict">` parses and its `id` and `en` dictionaries carry the identical key set; every `data-i18n` attribute key exists in both dictionaries. **Do not weaken** any pin that still holds (RPC scoping, `_headers`, hash routing, MutationObserver, refusal translations, revoke confirm, `.result` ban).
 - [ ] **Step 5: Run the full suite** — `npm test` → PASS; `npm run check` → PASS. If `check` flags landing files in `gates.lock`, see Task 5 for the re-pin step (do it there, not ad hoc).
-- [ ] **Step 6: Real-browser pass** — serve `landing/` locally (`npx serve` or `node scripts/landingserve.mjs` — inspect its usage first) and open `dashboard.html` in Opera Agent (dogfood the local road) or a CDP-attached Chrome; screenshot signed-out (must show sign-in redirect), and the three hero states by temporarily stubbing `opera_my_plan` responses via a local fetch mock if login is unavailable. Signed-in with real account is the user's verification after deploy — note it in the PR.
+- [ ] **Step 6: Real-browser pass** — serve `landing/` locally (`npx serve` or `node scripts/landingserve.mjs` — inspect its usage first) and open `dashboard.html` in Navego (dogfood the local road) or a CDP-attached Chrome; screenshot signed-out (must show sign-in redirect), and the three hero states by temporarily stubbing `opera_my_plan` responses via a local fetch mock if login is unavailable. Signed-in with real account is the user's verification after deploy — note it in the PR.
 - [ ] **Step 7: Commit** — `git add landing/dashboard.html landing/dashboard.css tests/landing-dashboard.test.mjs && git commit -m "The dashboard speaks product: plan first, pelanggan first, operator behind one door"`.
 
 ### Task 5: release 1.6.35
 
-**Files:** `package.json`, `local/package.json`, `extension/manifest.json`, `extension/lib/protocol.js`, `store/store-manifest.json`, `scripts/check.mjs` (its version pin), `supabase/functions/opera-agent-mcp/index.ts` (PRODUCT_VERSION), `tests/{protocol,mcp-surface,burst-atomic-actions,hover-settle,role-reconcile,timeout-retry-popup-parity}.test.mjs` (their 1.6.34 pins), `CHANGELOG.md`, `docs/releases/1.6.35.md` (new), `docs/handoff.md`, `package-lock.json`, `gates.lock` (only if a gated file moved — check `node scripts/gates.mjs --refresh` output, with reasons in the commit message), `tests/helpers/boundary-locks.mjs` (already re-pinned in Task 2)
+**Files:** `package.json`, `local/package.json`, `extension/manifest.json`, `extension/lib/protocol.js`, `store/store-manifest.json`, `scripts/check.mjs` (its version pin), `supabase/functions/navego-mcp/index.ts` (PRODUCT_VERSION), `tests/{protocol,mcp-surface,burst-atomic-actions,hover-settle,role-reconcile,timeout-retry-popup-parity}.test.mjs` (their 1.6.34 pins), `CHANGELOG.md`, `docs/releases/1.6.35.md` (new), `docs/handoff.md`, `package-lock.json`, `gates.lock` (only if a gated file moved — check `node scripts/gates.mjs --refresh` output, with reasons in the commit message), `tests/helpers/boundary-locks.mjs` (already re-pinned in Task 2)
 
 - [ ] **Step 1: Bump every 1.6.34 → 1.6.35** — `git grep -l '1.6.34' -- . ':!node_modules' ':!docs/releases/1.6.34.md'` minus the spec. Keep each file's surrounding format.
 - [ ] **Step 2: Write `docs/releases/1.6.35.md` and CHANGELOG entry** — what changed (plan visible in both roads' `status`; dashboard rebuilt with plan hero; operator group; id+en complete), how it was proven, explicit limits (signed-in verification by account owner; no quota change).
 - [ ] **Step 3: `npm test` + `npm run check` + `py tests/browser_extension_test.py`** → all green; fix anything the bump broke (tests that hard-pin the version).
 - [ ] **Step 4: `npm run gates:refresh` if and only if `check` says a gated file moved** — print what moved; re-pin with stated reasons; otherwise leave `gates.lock` untouched.
 - [ ] **Step 5: PR** — `gh pr create` (branch pushed) with the same title style as recent PRs (`gh pr list --state merged --limit 5` for tone); CI must pass; squash-merge to `main` when green.
-- [ ] **Step 6 (from main checkout, one at a time): redeploy `opera-agent-mcp`** from main; **CRX re-sign** for 1.6.35 (extension bytes changed: version pins) via the same workflow 1.6.34 used (`gh run list --workflow=…` to find it; `gh workflow run <name>` / watch with `gh run watch`); update update endpoint expectations; **do not** publish npm — staged publish of `opera-agent-mcp@1.6.35` waits for explicit user approval (1.6.34 may still be pending approval).
+- [ ] **Step 6 (from main checkout, one at a time): redeploy `navego-mcp`** from main; **CRX re-sign** for 1.6.35 (extension bytes changed: version pins) via the same workflow 1.6.34 used (`gh run list --workflow=…` to find it; `gh workflow run <name>` / watch with `gh run watch`); update update endpoint expectations; **do not** publish npm — staged publish of `navego-mcp@1.6.35` waits for explicit user approval (1.6.34 may still be pending approval).
 - [ ] **Step 7: Update `docs/handoff.md`** — 1.6.35 state, what is proven, what remains (user-side signed-in verification, pending npm approvals for 1.6.34/1.6.35).
 - [ ] **Step 8: Clean the worktree** — remove it with `node scripts/agent-worktree.mjs remove <path>` after merge.
 

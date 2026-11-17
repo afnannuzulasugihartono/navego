@@ -15,20 +15,20 @@ const read = (name: any) => readFile(new URL(name, root), 'utf8');
 test('the plugin bundle exists and names the hosted files', async () => {
   const manifest = JSON.parse(await read('site/public/chatgpt-plugin/ai-plugin.json'));
   assert.equal(manifest.schema_version, 'v1');
-  assert.equal(manifest.name_for_model, 'opera_agent');
+  assert.equal(manifest.name_for_model, 'navego_');
   assert.match(manifest.description_for_model, /read the envelope/i);
   assert.equal(manifest.auth?.type, 'oauth');
   assert.match(manifest.auth?.authorization_url || '', /supabase\.co\/auth\/v1\/authorize/);
   assert.equal(manifest.api?.type, 'openapi');
-  assert.equal(manifest.api?.url, 'https://opera-agent.pages.dev/chatgpt-plugin/openapi.json');
-  assert.equal(manifest.logo_url, 'https://opera-agent.pages.dev/icon.svg');
+  assert.equal(manifest.api?.url, 'https://navego.pages.dev/chatgpt-plugin/openapi.json');
+  assert.equal(manifest.logo_url, 'https://navego.pages.dev/icon.svg');
   const spec = JSON.parse(await read('site/public/chatgpt-plugin/openapi.json'));
   assert.equal(spec.openapi, '3.0.0');
   assert.ok(spec.paths?.['/command']?.post, 'the bundled spec serves /command');
 });
 
 test('the gateway accepts a user JWT and resolves the caller device', async () => {
-  const source = await read('hosted/functions/opera-agent-gateway/index.ts');
+  const source = await read('hosted/functions/navego-gateway/index.ts');
 
   assert.match(source, /await supabase\.auth\.getUser\(token\)/);
   assert.match(source, /\.from\("opera_devices"\)/);

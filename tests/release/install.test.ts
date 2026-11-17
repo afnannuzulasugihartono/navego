@@ -12,14 +12,14 @@ import os from 'node:os';
 import path from 'node:path';
 import { fetchVerifiedZip, installCrxInto } from '../../local/install.js';
 
-const makeZip = () => Buffer.from('zip-payload-of-the-opera-agent-build-for-tests');
+const makeZip = () => Buffer.from('zip-payload-of-the-navego-build-for-tests');
 
 const serve = async (handler: http.RequestListener) => {
   const server = http.createServer(handler);
   await new Promise<void>((resolve) => { server.listen(0, '127.0.0.1', () => resolve()); });
   const address = server.address();
   if (!address || typeof address === 'string') assert.fail('server did not bind a port');
-  return { server, url: `http://127.0.0.1:${address.port}/opera-agent.zip` };
+  return { server, url: `http://127.0.0.1:${address.port}/navego.zip` };
 };
 
 test('fetchVerifiedZip returns the bytes when the header hash matches', async () => {
@@ -69,13 +69,13 @@ test('fetchVerifiedZip throws when the download fails', async () => {
   }
 });
 
-test('installCrxInto creates <root>/<Browser>/opera-agent.zip and README.txt', async () => {
+test('installCrxInto creates <root>/<Browser>/navego.zip and README.txt', async () => {
   const dir = await mkdtemp(path.join(os.tmpdir(), 'oa-install-'));
   try {
     const bytes = makeZip();
     const { folder, crx } = await installCrxInto(dir, 'chrome', bytes, 'readme content\n');
     assert.equal(path.basename(folder), 'Chrome');
-    assert.equal(path.basename(crx), 'opera-agent.zip');
+    assert.equal(path.basename(crx), 'navego.zip');
     assert.equal((await stat(crx)).size, bytes.length);
     assert.equal(await readFile(path.join(folder, 'README.txt'), 'utf8'), 'readme content\n');
     assert.deepEqual([...(await readFile(crx))], [...bytes]);

@@ -1,7 +1,7 @@
 @last-edited: 2026-10-24 UTC+7.
 @related: [`../../../AGENTS.md`](../../../AGENTS.md) - [`../../handoff.md`](../../handoff.md) - [`../../uec-north-star.md`](../../uec-north-star.md) - [`../../naming.md`](../../naming.md) - [`2026-10-23-local-run-task-design.md`](2026-10-23-local-run-task-design.md)
 
-# Spec: Opera Agent commit readiness — document_build verification, docs, and migration cleanup
+# Spec: Navego commit readiness — document_build verification, docs, and migration cleanup
 
 Disetujui sebagai arah pada 2026-10-24. Spec ini belum membangun apa pun; ia
 memutuskan bentuk, batas, dan urutan langkah sebelum kode disentuh. Targetnya

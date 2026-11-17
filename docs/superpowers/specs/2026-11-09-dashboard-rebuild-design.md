@@ -24,7 +24,7 @@ devices: [{ name, id, instanceId, extensionVersion, slot, port,
 - `resetsAt` = tengah malam UTC berikutnya (ISO string), dihitung sisi klien MCP.
 - Refusal per command tidak berubah (sudah `PLAN_LIMIT_REACHED` dengan nama paket).
 
-## Perubahan 2: opencode tools — jalan hosted (`supabase/functions/opera-agent-mcp`)
+## Perubahan 2: opencode tools — jalan hosted (`supabase/functions/navego-mcp`)
 
 Gap nyata: `executeStatus` hanya menggabungkan `planInfo` bila jawaban command **sukses** (`if (answer.isError) return answer`) — persis saat paket habis dan command gagal, info paket justru tidak terlihat.
 
@@ -38,8 +38,8 @@ Batas yang disetujui in-chat: **rebuild penuh, evolusi brand situs, app shell (r
 
 ### Yang dipertahankan
 
-- Statis, vanilla JS, tanpa framework; `site.css` tetap basis; brand situs (latar gelap `#0b0d10`, aksen `#3ecf8e`, mark Opera Agent, tipografi situs, dark-only).
-- Semua RPC & alur yang sudah ada: `opera_my_devices`, `opera_my_listen`, `opera_konsol_tables` / `opera_konsol_table` (+ CSV export, editor), `opera_create_pairing_code` / `opera_revoke_my_device` / `opera_run_on_my_device`, billing FK (`opera-agent-billing`), refresh-token auth, i18n id/en, Ctrl-K palette, hash routing.
+- Statis, vanilla JS, tanpa framework; `site.css` tetap basis; brand situs (latar gelap `#0b0d10`, aksen `#3ecf8e`, mark Navego, tipografi situs, dark-only).
+- Semua RPC & alur yang sudah ada: `opera_my_devices`, `opera_my_listen`, `opera_konsol_tables` / `opera_konsol_table` (+ CSV export, editor), `opera_create_pairing_code` / `opera_revoke_my_device` / `opera_run_on_my_device`, billing FK (`navego-billing`), refresh-token auth, i18n id/en, Ctrl-K palette, hash routing.
 - Aksesibilitas: `aria-live` status lines, `focus-visible`, `prefers-reduced-motion`, target sentuh jelas.
 
 ### Information architecture (rail dua grup)
@@ -63,10 +63,10 @@ Batas yang disetujui in-chat: **rebuild penuh, evolusi brand situs, app shell (r
 
 ## Perubahan 4: Rilis 1.6.35
 
-- Pin versi 1.6.35 di semua sumber (`package.json`, `local/package.json`, `store/store-manifest.json`, `supabase/functions/opera-agent-mcp` bila ter-pin, `docs/releases/1.6.35.md`, `CHANGELOG.md`, `docs/handoff.md`).
-- Deploy ulang fungsi `opera-agent-mcp` dari main checkout (satu per satu); dashboard naik ke Pages lewat alur deploy yang sudah ada.
+- Pin versi 1.6.35 di semua sumber (`package.json`, `local/package.json`, `store/store-manifest.json`, `supabase/functions/navego-mcp` bila ter-pin, `docs/releases/1.6.35.md`, `CHANGELOG.md`, `docs/handoff.md`).
+- Deploy ulang fungsi `navego-mcp` dari main checkout (satu per satu); dashboard naik ke Pages lewat alur deploy yang sudah ada.
 - CRX **tidak** di-sign (extension tidak berubah).
-- npm: staging saja — **publish menunggu persetujuan eksplisit**; `opera-agent-mcp@1.6.34` masih menunggu approval di npmjs staged packages.
+- npm: staging saja — **publish menunggu persetujuan eksplisit**; `navego-mcp@1.6.34` masih menunggu approval di npmjs staged packages.
 - Gates: `npm run gates:refresh` dengan alasan; `npm test`, `npm run check`, `py tests/browser_extension_test.py` hijau sebelum merge.
 
 ## Testing

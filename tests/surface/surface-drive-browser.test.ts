@@ -12,8 +12,8 @@ import assert from 'node:assert/strict';
 
 import { openSession } from '../../local/driver.js';
 
-const TARGET = process.env.OPERA_DRILL_TARGET || '';
-const skip = TARGET === '' ? 'set OPERA_DRILL_TARGET to a page target on the local bridge to run this drill' : false;
+const TARGET = process.env.NAVEGO_DRILL_TARGET || '';
+const skip = TARGET === '' ? 'set NAVEGO_DRILL_TARGET to a page target on the local bridge to run this drill' : false;
 
 interface DrilledRead {
   text?: string;

@@ -21,7 +21,7 @@
 import { execFileSync } from 'node:child_process';
 
 export const EXTENSION_ID = 'ofgemipoobcnbjkfanmofjbdonjapmgl';
-export const UPDATE_URL = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl';
+export const UPDATE_URL = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl';
 const EXTENSION_PREFIX = `${EXTENSION_ID};`;
 const EXTENSION_ENTRY = `${EXTENSION_ID};${UPDATE_URL}`;
 

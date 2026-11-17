@@ -33,7 +33,7 @@ const siteDir = path.join(root, 'site');
 
 function buildSite() {
   if (built) return built;
-  // WHY no --prefix: with --prefix npm re-registers the enclosing package (opera-agent) as a file: dependency of the site every run.
+  // WHY no --prefix: with --prefix npm re-registers the enclosing package (navego) as a file: dependency of the site every run.
   const quiet = (args: string[]) => {
     try {
       execFileSync(npm, args, { cwd: siteDir, stdio: ['ignore', 'pipe', 'pipe'], shell: process.platform === 'win32' });
@@ -110,7 +110,7 @@ const CLAIMS = {
   '/beranda.html': ['Navego.', '45', 'primitive browser'],
   '/fitur.html': ['45', 'primitive', 'debugger'],
   '/harga.html': ['Rp10.000', 'Rp249.000', 'QRIS'],
-  '/unduh.html': ['opera-agent-update', 'chrome', 'SHA-256'],
+  '/unduh.html': ['navego-update', 'chrome', 'SHA-256'],
   '/docs.html': ['browser_status', 'navego'],
   '/mcp.html': ['navego', '45'],
   '/dukungan.html': ['Dukungan'],
@@ -138,7 +138,7 @@ test('_worker.js ships byte-identical to the checked-in source', () => {
   const fromPublic = fs.readFileSync(path.join(site, 'public', '_worker.js'), 'utf8');
   const fromBuild = fs.readFileSync(path.join(client, '_worker.js'), 'utf8');
   assert.equal(fromBuild, fromPublic);
-  assert.ok(fromPublic.includes('opera-agent-billing'), 'the invoice proxy is intact');
+  assert.ok(fromPublic.includes('navego-billing'), 'the invoice proxy is intact');
 });
 
 // WHY robots.txt and sitemap.xml carry no CSP: static policy files, not HTML.
@@ -181,7 +181,7 @@ test('the client router answers the file URL and the legacy pretty URL alike', (
 test('the sitemap names exactly the routes the build carries (404 and unknowns are not in it)', () => {
   buildSite();
   const sitemap = fs.readFileSync(path.join(client, 'sitemap.xml'), 'utf8');
-  const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => String(m[1]).replace('https://opera-agent.pages.dev', ''));
+  const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => String(m[1]).replace('https://navego.pages.dev', ''));
   const expected = ['/beranda', '/fitur', '/harga', '/unduh', '/docs', '/mcp', '/dukungan', '/privasi', '/syarat', '/akun', '/dashboard', '/oauth/consent', '/'];
   assert.deepEqual([...locs].sort(), [...expected].sort());
 });

@@ -10,7 +10,7 @@ npm i -g navego
 |---|---|---|
 | `navego local` | the everyday profile on this machine, over the loopback bridge | Node 20+, the extension, a paired device |
 | `navego cloud` | the paired device's browser, through the hosted server | an account, an OAuth login, a paired device |
-| `navego auth` | sign in once, keep the token beside this install | a browser, or `OPERA_AGENT_MCP_TOKEN` |
+| `navego auth` | sign in once, keep the token beside this install | a browser, or `NAVEGO_MCP_TOKEN` |
 | `navego doctor` | print what is connected and what the plan allows | nothing but this install |
 
 `npx -y navego` is the published form of the package.
@@ -50,8 +50,8 @@ navego doctor
 
 is the one command to reach for. It prints the bridge, the device, the
 extension version, the plan, the quota, and the fix when something is degraded —
-`ready` when everything is wired. `OPERA_BRIDGE_PORT` (default `9451`) names
-the loopback port; `OPERA_AGENT_HOME` names the paired device file's folder.
+`ready` when everything is wired. `NAVEGO_BRIDGE_PORT` (default `9451`) names
+the loopback port; `NAVEGO_HOME` names the paired device file's folder.
 A dedicated, separate test profile with the extension pre-loaded is
 `local\bin\opera-chrome.cmd` — on macOS and Linux the equivalent is one
 Chrome invocation with `--load-extension`.

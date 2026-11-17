@@ -17,8 +17,8 @@ interface PagesWorker {
 
 const worker = (await import(new URL('../../site/public/_worker.js', import.meta.url).href) as { default: PagesWorker }).default;
 
-const PAGE = 'https://opera-agent.pages.dev/invoice?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234';
-const UPSTREAM = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-billing?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234';
+const PAGE = 'https://navego.pages.dev/invoice?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234';
+const UPSTREAM = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-billing?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234';
 
 const calls: any = [];
 const assetCalls: any = [];
@@ -97,7 +97,7 @@ test('the refresh form is forwarded whole, and its redirect comes back to the pa
     headers: { location: UPSTREAM }
   }));
 
-  const response = await worker.fetch(new Request('https://opera-agent.pages.dev/invoice', {
+  const response = await worker.fetch(new Request('https://navego.pages.dev/invoice', {
     method: 'POST',
     headers: { 'content-type': 'application/x-www-form-urlencoded' },
     body
@@ -115,7 +115,7 @@ test('the refresh form is forwarded whole, and its redirect comes back to the pa
 test('a redirect written as a path is rewritten too, because the function only knows its own address', async () => {
   reset(() => new Response(null, {
     status: 303,
-    headers: { location: '/opera-agent-billing?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234&refresh=failed' }
+    headers: { location: '/navego-billing?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234&refresh=failed' }
   }));
 
   const response = await worker.fetch(new Request(PAGE, {
@@ -148,7 +148,7 @@ test('every other path is the asset server\'s, untouched and never sent to the f
     throw new Error('the function must not be called for an asset');
   });
 
-  const request = new Request('https://opera-agent.pages.dev/beranda');
+  const request = new Request('https://navego.pages.dev/beranda');
   const response = await worker.fetch(request, env);
 
   assert.equal(calls.length, 0, 'the worker owns one path, not the site');
@@ -160,10 +160,10 @@ test('every other path is the asset server\'s, untouched and never sent to the f
 test('the trailing slash is the same page, so a form posted without an action still works', async () => {
   reset(() => new Response('<!doctype html><html lang="en"></html>', { status: 200 }));
 
-  const response = await worker.fetch(new Request('https://opera-agent.pages.dev/invoice/?invoice_id=x&token=y'), env);
+  const response = await worker.fetch(new Request('https://navego.pages.dev/invoice/?invoice_id=x&token=y'), env);
 
   assert.equal(response.status, 200);
-  assert.equal(calls[0].url, 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-billing?invoice_id=x&token=y');
+  assert.equal(calls[0].url, 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-billing?invoice_id=x&token=y');
 });
 
 test('a function that cannot be reached answers with a page and no reason a customer cannot use', async () => {

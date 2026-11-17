@@ -12,7 +12,7 @@
   'use strict';
   try {
     const host = String((globalThis.location && globalThis.location.hostname) || '');
-    if (host !== 'opera-agent.pages.dev') return;
+    if (host !== 'navego.pages.dev') return;
     const match = /(?:^|;\s*)oa_device_id=([A-Za-z0-9._-]{8,64})(?:;|$)/.exec(String(document.cookie || ''));
     const value = match && match[1] ? match[1] : '';
     if (!value) return;

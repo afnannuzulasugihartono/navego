@@ -1,7 +1,7 @@
 /*
  * @last-edited: 2026-11-12 UTC+7.
  * @title: record-main - the recording pipeline as a MAIN-world program: canvas, captureStream, MediaRecorder webm, in the page's own realm.
- * @state: builds globalThis.OperaAgentRecord on injection; invoked by the worker via chrome.scripting.executeScript({world: 'MAIN'}) for init/frame/stop/cancel; never mutates the page.
+ * @state: builds globalThis.NavegoRecord on injection; invoked by the worker via chrome.scripting.executeScript({world: 'MAIN'}) for init/frame/stop/cancel; never mutates the page.
  * @dependencies: none.
  */
 
@@ -17,7 +17,7 @@
     return typeof value === 'object' && value !== null && !Array.isArray(value);
   }
 
-  if (globalThis.OperaAgentRecord) return;
+  if (globalThis.NavegoRecord) return;
 
   interface RecordState {
     canvas: HTMLCanvasElement;
@@ -282,7 +282,7 @@
     };
   }
 
-  globalThis.OperaAgentRecord = {
+  globalThis.NavegoRecord = {
     init: init,
     frame: frame,
     stop: stop,

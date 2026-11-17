@@ -85,7 +85,7 @@
 
   chrome.runtime.onMessage.addListener(function (message) {
     if (!message || typeof message !== 'object') return;
-    if (message.scope === 'opera-agent-content' && message.method === 'chip.hide') removeChip();
+    if (message.scope === 'navego-content' && message.method === 'chip.hide') removeChip();
   });
 
   // If the page turns into a sensitive surface while the agent is in it, the mark goes away.

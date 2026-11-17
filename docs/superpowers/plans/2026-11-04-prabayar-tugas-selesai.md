@@ -4,7 +4,7 @@
 
 **Goal:** Pengguna membayar per pekerjaan selesai dari saldo wallet prabayar (deposit QRIS), dengan alur reserve → settle / refund penuh, tanpa subscription.
 
-**Architecture:** Uang hanya bergerak lewat tabel ledger append-only di Supabase; saldo dihitung sebagai SUM ledger, tidak ada kolom saldo. Edge function `opera-agent-billing` menambah endpoint `wallet/*` dan `task/*` di atas modul `_shared/billing.js` + `_shared/wallet.js` baru. Extension memanggil endpoint itu sebelum dan sesudah task; tidak ada angka uang di client.
+**Architecture:** Uang hanya bergerak lewat tabel ledger append-only di Supabase; saldo dihitung sebagai SUM ledger, tidak ada kolom saldo. Edge function `navego-billing` menambah endpoint `wallet/*` dan `task/*` di atas modul `_shared/billing.js` + `_shared/wallet.js` baru. Extension memanggil endpoint itu sebelum dan sesudah task; tidak ada angka uang di client.
 
 **Tech Stack:** Supabase (Postgres migration + Deno edge function), MV3 extension (JS), Midtrans Snap (sudah ada), node:test untuk unit, Deno test untuk edge function.
 
@@ -62,7 +62,7 @@
 ### Task 3: Endpoint wallet + task di edge function
 
 **Files:**
-- Modify: `supabase/functions/opera-agent-billing/index.ts` (tambah route)
+- Modify: `supabase/functions/navego-billing/index.ts` (tambah route)
 - Create: `supabase/functions/_shared/wallet-api.js` (handler murni, bisa di-test tanpa network)
 - Test: `tests/wallet-api.test.mjs` (panggil handler dengan mock supabase client)
 
@@ -77,7 +77,7 @@
 ### Task 4: Sweep hold kedaluwarsa
 
 **Files:**
-- Modify: `supabase/functions/opera-agent-billing/index.ts` (tambah `POST /internal/sweep` dipanggil cron/pg_cron; untuk V1 tes panggil manual)
+- Modify: `supabase/functions/navego-billing/index.ts` (tambah `POST /internal/sweep` dipanggil cron/pg_cron; untuk V1 tes panggil manual)
 - Test: tambah kasus di `tests/wallet-api.test.mjs`
 
 - [ ] **Step 1: Tes RED** — reservation `open` dengan `expires_at` lewat → refund otomatis, status `expired`.
@@ -86,7 +86,7 @@
 ### Task 5: Client — reserve/settle/refund di sekitar eksekusi
 
 **Files:**
-- Create: `local/wallet-client.js` (device token dari `~/.opera-agent/device.json`; tidak pernah simpan saldo)
+- Create: `local/wallet-client.js` (device token dari `~/.navego/device.json`; tidak pernah simpan saldo)
 - Modify: `local/tools.js` + `local/mcp-server.js` (tujuh tool: pair, balance, quote, top_up, reserve, settle, refund)
 - Modify: `extension/lib/endpoints.js` (tambah `BILLING_URL`)
 - Test: `tests/wallet-client.test.mjs`, `tests/local-wallet-tools.test.mjs`

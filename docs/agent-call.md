@@ -20,7 +20,7 @@ Point a client at it (OpenCode reads `.mcp.servers` in `~/.config/opencode/openc
 {
   "mcp": {
     "servers": {
-      "opera-agent": {
+      "navego": {
         "type": "local",
         "command": "navego",
         "args": ["local"],
@@ -33,10 +33,10 @@ Point a client at it (OpenCode reads `.mcp.servers` in `~/.config/opencode/openc
 
 | variable | default | meaning |
 |---|---|---|
-| `OPERA_BRIDGE_PORT` | `9451` | the loopback port the extension dials into |
-| `OPERA_AGENT_HOME` | `~/.opera-agent` | where the paired device file lives |
-| `OPERA_AGENT_MCP_CONFIG_HOME` | platform config dir | where the OAuth token lives |
-| `OPERA_AGENT_MCP_TOKEN` | unset | a static token wins over the OAuth login |
+| `NAVEGO_BRIDGE_PORT` | `9451` | the loopback port the extension dials into |
+| `NAVEGO_HOME` | `~/.navego` | where the paired device file lives |
+| `NAVEGO_MCP_CONFIG_HOME` | platform config dir | where the OAuth token lives |
+| `NAVEGO_MCP_TOKEN` | unset | a static token wins over the OAuth login |
 
 ### The meter, and what refuses you
 

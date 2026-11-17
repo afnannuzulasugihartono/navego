@@ -26,7 +26,7 @@ Keputusan yang mengikat (hasil brainstorming 2026-11-08):
 |---|---|---|---|
 | Anggaran hasil | 512 KiB (`MAX_RESULT_BYTES`) | **3,75 MiB** = `FRAME_MAX_BYTES - 256 KiB` | `extension/lib/serialize.js` |
 | Bingkai perangkat | 1 MiB (`FRAME_MAX_BYTES`) | **4 MiB** | `extension/lib/socket-protocol.js` |
-| Bingkai bridge | 1 MiB (`MAX_FRAME_BYTES`) | **4 MiB** | `supabase/functions/opera-agent-bridge/bridge-socket.ts` |
+| Bingkai bridge | 1 MiB (`MAX_FRAME_BYTES`) | **4 MiB** | `supabase/functions/navego-bridge/bridge-socket.ts` |
 | Setelah dekompresi | 8 MiB (`MAX_DECOMPRESSED_BYTES`) | **8 MiB** (tidak berubah; = 2x bingkai) | file yang sama |
 
 Alasan angkanya, bukan selera:
@@ -40,7 +40,7 @@ Alasan angkanya, bukan selera:
 
 - `extension/lib/socket-protocol.js`: `FRAME_MAX_BYTES` 1 MiB → 4 MiB. Tidak ada perubahan bentuk frame.
 - `extension/lib/serialize.js`: `MAX_RESULT_BYTES` dihapus; `RESULT_BUDGET_BYTES = FRAME_MAX_BYTES - 256 * 1024` diekspor, diturunkan dari `FRAME_MAX_BYTES` yang diimpor. `oversized(value)` membandingkan ke `RESULT_BUDGET_BYTES`. `boundedResult(value)` melempar `Result exceeds ${RESULT_BUDGET_BYTES} bytes. Use bounded/chunked reads.` seperti sekarang, dengan angka baru.
-- `supabase/functions/opera-agent-bridge/bridge-socket.ts`: `MAX_FRAME_BYTES` 1 MiB → 4 MiB. `MAX_DECOMPRESSED_BYTES` tidak berubah.
+- `supabase/functions/navego-bridge/bridge-socket.ts`: `MAX_FRAME_BYTES` 1 MiB → 4 MiB. `MAX_DECOMPRESSED_BYTES` tidak berubah.
 - `extension/background.js`: guard `page.read` memakai `RESULT_BUDGET_BYTES` apa adanya untuk pemangkasan `read` dan pangkas ekor tarik kelas peta — anggaran itu sudah menyisakan 256 KiB untuk amplop, jadi guard tidak memotong dua kali. Tidak ada lagi rujukan ke `MAX_RESULT_BYTES`.
 - `extension/worker/capture-page.js`: anggaran irisan tile (`TILE_SLICE_BYTES`) menjadi `RESULT_BUDGET_BYTES - 256 * 1024`, menyisakan ruang untuk metadata tile (`index`, `sha256`, `y`, `width`, `height`, `bytes`) yang mengelilingi blok gambarnya.
 
