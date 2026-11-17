@@ -126,7 +126,7 @@ export default function Dashboard() {
     void (async () => {
       const token = await ensureSession();
       if (!token) {
-        window.location.replace('./index.html');
+        window.location.replace('./index.html?next=./dashboard.html');
         return;
       }
       try {

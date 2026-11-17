@@ -6,8 +6,8 @@ import { AUTH_HOST, clearSession, getReturnTo, getRefreshToken, getStoredToken, 
 
 export function meta() {
   return [
-    { title: 'Masuk — Navego' },
-    { name: 'description', content: 'Satu akun untuk website dan device Anda. Masuk dengan Google, GitHub, atau magic link email — tanpa password.' }
+    { title: 'Masuk dashboard — Navego' },
+    { name: 'description', content: 'Akun Navego dipakai hanya untuk dashboard: mengelola device, plan, dan pemakaian Anda. Masuk dengan Google, GitHub, atau magic link email — tanpa password.' }
   ];
 }
 
@@ -123,7 +123,7 @@ export default function Index() {
         <div className="auth-pane">
           <div className="auth-copy">
             <h1>Navego.</h1>
-            <p>Satu akun.<br />Semua browser Anda.</p>
+            <p>Akun untuk dashboard.<br />Bukan untuk publik.</p>
           </div>
           {phase === 'form' ? (
             <div className="auth-card">

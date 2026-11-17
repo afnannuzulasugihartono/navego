@@ -15,7 +15,7 @@ const RETURNABLE = /^\.\/[A-Za-z0-9._~/?=&%-]*$/;
 
 export function getReturnTo(): string {
   const asked = new URLSearchParams(window.location.search).get('next') || '';
-  return RETURNABLE.test(asked) ? asked : './beranda.html';
+  return RETURNABLE.test(asked) ? asked : './dashboard.html';
 }
 
 export function getStoredToken(): string | null {
