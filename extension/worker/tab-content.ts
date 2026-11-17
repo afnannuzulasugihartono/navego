@@ -99,9 +99,13 @@ async function ensureContent(tabId: number) {
 export async function contentCall(tabId: number, method: string, params: Record<string, unknown> = {}): Promise<Record<string, unknown> | null> {
 
   const message = { scope: 'opera-agent-content', method, params };
+  const sendWithTimeout = () => Promise.race([
+    chrome.tabs.sendMessage(tabId, message),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('the content script did not answer within 8000ms')), 8000))
+  ]);
   let response = null;
   try {
-    response = await chrome.tabs.sendMessage(tabId, message);
+    response = await sendWithTimeout();
   } catch (error) {
 
     log.debug('CONTENT_SEND_FAILED', error instanceof Error && error.message ? error.message : String(error));

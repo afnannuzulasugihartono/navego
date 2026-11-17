@@ -24,7 +24,7 @@ const ID = {
   'doors.dashboard': 'Buka Dashboard',
   'doors.docs': 'Dokumentasi',
   'doors.pairQuick': 'Pasangkan browser ini',
-  'doors.paired': 'Browser ini terpasang',
+  'doors.paired': 'Browser ini sudah dipair',
   'doors.settings': 'Pengaturan',
   'doors.updateAuto': 'Update otomatis',
   'chip.labelOn': 'Tandai tab yang dipegang agent',

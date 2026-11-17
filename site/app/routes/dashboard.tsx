@@ -69,6 +69,17 @@ function duration(from?: string, to?: string): string {
 const isDeviceLive = (device: Device) => /online|active|live|awake/i.test(String(device.status || ''));
 const deviceStatusText = (device: Device) => String(device.status || 'tidak diketahui');
 
+// WHY THE PAIR INTENT SURVIVES LOGIN: the popup's one-click door deep-links with ?pair=1; a freshly installed browser that is not logged in yet hits the login gate first.
+// Dropping the intent here would send pair=1 users to a logged-out dashboard and leave the pairing unfinished.
+
+const wantPairIntent = (): boolean => {
+  try {
+    return new URLSearchParams(window.location.search).has('pair');
+  } catch {
+    return false;
+  }
+};
+
 // One-click pair deep-link from the extension popup: ?pair=1 fires the same flow once.
 // The identity cookie is seeded here for the same reason: the extension mirrors it into its own storage, and pairing adopts the legacy identity in place so a reinstall keeps its device.
 
@@ -126,7 +137,8 @@ export default function Dashboard() {
     void (async () => {
       const token = await ensureSession();
       if (!token) {
-        window.location.replace('./index.html?next=./dashboard.html');
+        const next = wantPairIntent() ? './dashboard.html?pair=1#pairing' : './dashboard.html';
+        window.location.replace('./index.html?next=' + encodeURIComponent(next));
         return;
       }
       try {

@@ -21,6 +21,7 @@
     "bin/opera-local-dev.js",
     "bin/opera-chrome.cmd",
     "doctor.js",
+    "bridge-token.js",
     "bridge-ws.js",
     "bridge.js",
     "browsers.js",

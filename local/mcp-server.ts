@@ -36,6 +36,7 @@ import { documentFromFile, documentDocxFromFile } from './documents.js';
 import { detectGate, waitForGateClear, loginWithCredentials } from './gates.js';
 import { captchaAllowed, solverSettings, solveImageCaptcha } from './captcha-solver.js';
 import { BURST_INPUT_ACTIONS, normalizeBurst, runLocalBurst } from './burst.js';
+import { resolveBridgeToken } from './bridge-token.js';
 import { leaseTab, releaseTab, preferBridgeDevice } from './bridge.js';
 
 // WHY THE SAME TIDY FUNCTION THE HOSTED SURFACE USES, AND WHY IT RIDES THE PACKAGE.
@@ -216,9 +217,9 @@ let lastSeen: AxRow[] = [];
 // A wait that is asked for in milliseconds and a wait that is asked for in hours both have to come back: an agent that asks for a minute and waits ten is not measuring the page, it is measuring its own typing.
 // Bounds keep a wait a wait.
 
-const budgetOf = (value: unknown, fallback: number): number => {
+const budgetOf = (value: unknown, fallback: number, cap = 30000): number => {
   const asked = Number(value ?? fallback);
-  return Number.isFinite(asked) ? Math.min(30000, Math.max(500, asked)) : fallback;
+  return Number.isFinite(asked) ? Math.min(cap, Math.max(500, asked)) : fallback;
 };
 
 const gapOf = (value: unknown, fallback: number, min = 100): number => {
@@ -337,7 +338,7 @@ const nextUtcMidnight = (): string => {
 const linkedDevices = async (port: number): Promise<{ devices: Array<Record<string, unknown>>; preferredSlot: number | null } | null> => {
   if (!Number.isInteger(port) || port <= 0) return null;
   try {
-    const response = await fetch(`http://127.0.0.1:${port}/health`, { signal: AbortSignal.timeout(1000) });
+    const response = await fetch(`http://127.0.0.1:${port}/health`, { signal: AbortSignal.timeout(1000), headers: { 'x-opera-bridge-token': resolveBridgeToken() } });
     if (!response.ok) return null;
     const health = (await response.json()) as { devices?: unknown[]; preferredSlot?: unknown } | null;
     if (!health || !Array.isArray(health.devices)) return null;
@@ -663,9 +664,6 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
       case 'browser_select_browser':
         return asText(await preferBridgeDevice(args.device));
       case 'browser_open_url': {
-        if (tab) {
-          return afterAction(driver, { navigated: await driver.navigate(args.url), tab: args.tabId });
-        }
         const opened = await driver.open(args.url);
         // WHY THE LOOK AFTER THE OPEN READS THE TAB THAT WAS OPENED.
         // The fallback driver keeps whatever page it was last pointed at, so reading through it after a bridge-opened tab read a chrome:// extensions page and failed instead of answering - the tab had opened fine, and the agent was told otherwise.
@@ -842,9 +840,11 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           const timeoutMs = Number.isFinite(rawTimeout) ? Math.min(30000, Math.max(500, rawTimeout)) : 8000;
           const rawGap = Number(args.intervalMs ?? 100);
           const intervalMs = Number.isFinite(rawGap) ? Math.min(5000, Math.max(50, rawGap)) : 100;
-          const state = await driver.waitForText(args.text, { timeoutMs, intervalMs });
+          const absent = args.absent === true;
+          const state = await driver.waitForText(String(args.text), { timeoutMs, intervalMs, absent });
           const read = isObject(state) ? state : {};
-          return afterAction(driver, { found: String(read.text ?? '').includes(args.text), ms: Date.now() - started, settled: true });
+          const includes = String(read.text ?? '').includes(String(args.text));
+          return afterAction(driver, { found: includes !== absent, ms: Date.now() - started, settled: true });
         }
         if (until === 'row') {
           if (!args.role) throw new Error('wait until=row needs role — e.g. menuitem');
@@ -853,7 +853,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
             role: args.role,
             name: args.name,
             absent: args.absent === true,
-            timeoutMs: budgetOf(args.timeoutMs, 10000),
+            timeoutMs: budgetOf(args.timeoutMs, 10000, 60000),
             intervalMs: gapOf(args.intervalMs, 50, 50)
           });
           return afterAction(driver, { ...(isObject(rowOut) ? rowOut : {}), settled: true });
@@ -946,7 +946,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         if (action === 'wait') {
           // The drive's verbs accept unknown arguments; the gate driver's narrow surface is the same object at runtime.
           const out = await waitForGateClear(driver as unknown as import('./gates.js').GateDriver, {
-            timeoutMs: budgetOf(args.timeoutMs, 30000),
+            timeoutMs: budgetOf(args.timeoutMs, 30000, 300000),
             intervalMs: gapOf(args.intervalMs, 500, 50)
           });
           return afterAction(driver, { ...out, settled: true });

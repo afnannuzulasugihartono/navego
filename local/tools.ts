@@ -287,7 +287,7 @@ export const TOOLS = Object.freeze([
       type: 'object',
       properties: {
         tabId: tabArg,
-        handle: { type: 'string', description: 'element handle from grab or tap' },
+        handle: { type: 'string', description: 'element handle from browser_find_element' },
         role: stringArg('row role to click, e.g. link or button'),
         name: stringArg('row name for that role'),
         x: numberArg('viewport x, instead of a handle or a row'),

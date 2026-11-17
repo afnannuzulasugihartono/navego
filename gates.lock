@@ -161,7 +161,7 @@ scripts/verify/scope.mjs f5895703e958e67c79a1f2f4392b037a84c26220
 scripts/verify/scope-check.mjs 2a4ba5563b68a9979c40165363235f72cac0d4df
 
 # --- the pins themselves: editing these is how a drift goes unnoticed ---
-tests/helpers/boundary-locks.mjs f31bdc2e0de4069b8caf679510b20ede0ad71864
+tests/helpers/boundary-locks.mjs 6f6a683f22b938ecef79e4b645dadf8983a1ce02
 tests/helpers/canonical-source-hash.mjs a4ebaa0d40122afce47a52cba39309d7dfdb1af1
 tests/helpers/comment-format.mjs bced9e4c9b7a58b56e3317067d5e6717dd2040bf
 tests/docs/comment-format.test.mjs 32080dd4c31c64a6eb977072cd370f4e4c566722
@@ -180,7 +180,7 @@ shared/secret-pattern.ts 5392a31127fa25df3d9f55d0a9fa87562200418d
 
 # --- surfaces an owner, not an agent, should have to look at ---
 # The merge took main's Kemudi manifest for the file and this branch's .gitleaks.toml bytes; both pins match what the merged tree actually holds.
-extension/manifest.json 4457cde21f0807057798524f86d24755555af361
+extension/manifest.json 9e4e478300da65a7e2e3831368abbbd862e2de79
 .gitleaks.toml 9e2fabe35824000f8e5aeff06616766722637d31
 .github/CODEOWNERS ca0271e08aadabe56f86ae17620b36073df44cfb
 .github/workflows/ci.yml 1a473af40bbc6fe476b2764719f89a552d4eb39e

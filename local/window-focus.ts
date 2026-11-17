@@ -29,7 +29,7 @@ export type ExecFunction = (file: string, args: readonly string[]) => Promise<Sh
 // The promisified exec yields Buffer|string depending on options; this wrapper pins the string form the call sites use.
 
 const run: ExecFunction = (file, args) => new Promise((resolve, reject) => {
-  execFile(file, [...args], (error: import('node:child_process').ExecFileException | null, stdout: string | Buffer, stderr: string | Buffer) => {
+  execFile(file, [...args], { timeout: 8000 }, (error: import('node:child_process').ExecFileException | null, stdout: string | Buffer, stderr: string | Buffer) => {
     if (error) reject(error);
     else resolve({ stdout: String(stdout), stderr: String(stderr) });
   });
@@ -216,6 +216,10 @@ function warmReader(): WarmReader {
   reader = {
     child,
     ask: (verb: string, arg = '') => new Promise<string>((resolve, reject) => {
+      if (/[\r\n]/.test(arg)) {
+        reject(new Error('a window title may not contain newline characters'));
+        return;
+      }
       const waiter = (part: string) => { clearTimeout(timer); resolve(part); };
       const timer = setTimeout(() => {
         const at = waiting.indexOf(waiter);
@@ -245,7 +249,7 @@ const APPLE_READ = 'tell application "System Events" to get name of every proces
 const APPLE_FOCUS = (match: string) => [
   'tell application "System Events"',
   'set names to name of every process whose visible is true',
-  `set target to first item of (every process whose name contains "${match.replace(/"/g, '\\"')}")`,
+  `set target to first item of (every process whose name contains "${match.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}")`,
   'set frontmost of target to true',
   'return name of target',
   'end tell'
@@ -287,7 +291,7 @@ async function windowsAsk(verb: string, match: string | null, run_: ExecFunction
     const warm = await warmReader().ask(verb, match ?? '').catch(() => null);
     if (warm !== null) return warm;
   }
-  const read = await run_('powershell', [
+  const read = await run_(POWERSHELL, [
     '-NoProfile',
     '-NonInteractive',
     '-Command',

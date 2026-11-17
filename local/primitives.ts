@@ -54,8 +54,12 @@ export function createPrimitives(cdp: PrimitivesCdp, { chunkSize = 2000, sleep =
   // biome-ignore lint/suspicious/noExplicitAny: the drive is assembled by Object.assign across nine files; a closed record would refuse every method those files add, and nothing leaves the drive untyped — callers go through the manifest in types.ts.
   const primitives: Record<string, any> = {
     async navigate(url: string) {
+      const target = String(url || '').trim();
+      if (!/^(https?|about):/i.test(target)) {
+        throw new Error(`the drive refuses to navigate to ${target.split(':')[0] || 'an unspecified scheme'} URLs`);
+      }
       await cdp.send('Page.enable');
-      await cdp.send('Page.navigate', { url });
+      await cdp.send('Page.navigate', { url: target });
       return primitives.waitForIdle();
     },
 
@@ -127,25 +131,29 @@ export function createPrimitives(cdp: PrimitivesCdp, { chunkSize = 2000, sleep =
       }
     },
 
+    // WHY THE MATCH DECIDES THE ROAD: a bare call answers state without moving anything, via the CDP bounds read; a named call goes through the OS road, because a CDP window cannot be chosen by title and the agent is told which road answered.
     async focusWindow(match: unknown = '') {
-      try {
-        const { windowId } = await cdp.send('Browser.getWindowForTarget', {});
-        await cdp.send('Browser.setWindowBounds', { windowId, bounds: { windowState: 'normal' } });
-        const { bounds } = await cdp.send('Browser.getWindowBounds', { windowId });
-        const focused = bounds?.windowState !== 'minimized';
-        return {
-          platform: process.platform,
-          match: String(match ?? ''),
-          focused,
-          title: focused ? 'the browser window' : '',
-          foreground: '',
-          windows: [],
-          minimized: focused ? [] : ['the browser window'],
-          why: focused ? '' : 'the browser would not leave the taskbar'
-        };
-      } catch {
-        return osFocusWindow(match);
+      const want = String(match ?? '');
+      if (want === '') {
+        try {
+          const { windowId } = await cdp.send('Browser.getWindowForTarget', {});
+          const { bounds } = await cdp.send('Browser.getWindowBounds', { windowId });
+          const focused = (bounds as { windowState?: string } | undefined)?.windowState !== 'minimized';
+          return {
+            platform: process.platform,
+            match: '',
+            focused,
+            title: '',
+            foreground: '',
+            windows: [],
+            minimized: focused ? [] : ['the browser window'],
+            why: ''
+          };
+        } catch {
+          return osWindowState();
+        }
       }
+      return osFocusWindow(match);
     },
     dialogState: () => osDialogState(),
     dialogType: (text: unknown) => osDialogType(text),

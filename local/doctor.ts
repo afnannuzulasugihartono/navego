@@ -10,6 +10,7 @@
 
 import { readDevice } from './wallet-client.js';
 import { readStoredToken } from './oauth.js';
+import { resolveBridgeToken } from './bridge-token.js';
 import { UPDATE_BASE_URL } from './lib/endpoints.js';
 
 const CRX_URL = `${UPDATE_BASE_URL}/download/opera-agent.crx`;
@@ -23,7 +24,7 @@ interface BridgeProbe {
 
 async function probeBridge(port: number, fetchImpl: typeof fetch): Promise<BridgeProbe> {
   try {
-    const response = await fetchImpl(`http://127.0.0.1:${port}/health`, { signal: AbortSignal.timeout(PROBE_TIMEOUT_MS) });
+    const response = await fetchImpl(`http://127.0.0.1:${port}/health`, { signal: AbortSignal.timeout(PROBE_TIMEOUT_MS), headers: { 'x-opera-bridge-token': resolveBridgeToken() } });
     if (!response.ok) return { ok: false, error: `the bridge answered ${response.status}` };
     return { ok: true, health: await response.json().catch(() => null) };
   } catch (error: unknown) {

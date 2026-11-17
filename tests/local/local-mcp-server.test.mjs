@@ -586,7 +586,7 @@ const namedCtx = (tabs) => {
     driver,
     browsers: [{ id: 'chrome', name: 'Google Chrome' }],
     port: 9450,
-    resolveTab: async () => tabs.map((page) => page.id),
+    resolveTab: async () => [...tabs.map((page) => page.id), 't2'],
     open: async () => driver,
     lease: openLease()
   };
@@ -682,11 +682,11 @@ test('a call that names no tab names the window the driver is attached to', asyn
   assert.deepEqual(front[1], { match: 'Paper' }, 'the page the driver is on is the one its window carries');
 });
 
-// WHY A NAMED TAB IS NAVIGATED.
-// Measured live on this machine: `goto` with a tabId answered "driver.open is not a function", because a per-tab driver cannot open anything - and a caller who names a tab means "this tab goes here", not "open one more".
-// So a named tab is navigated in place and the answer names the tab it moved.
+// WHY A PARSE OF A NAMED TAB OPENS A NEW TAB ANYWAY.
+// The tool's contract is that a drive never navigates a tab that is already open, so nobody who hands a tabId can lose the page they were reading to a silent move.
+// A caller who passes tabId anyway does not get the silent navigation either - browser_open_url never moves an existing tab.
 
-test('goto with a named tab navigates that tab instead of opening another one', async () => {
+test('goto with a named tab opens a new tab and never navigates the one it names', async () => {
   const c = namedCtx(PAGES);
   const server = createMcpServer(c);
 
@@ -696,10 +696,9 @@ test('goto with a named tab navigates that tab instead of opening another one', 
   });
 
   const out = JSON.parse(res.result.content[0].text);
-  assert.deepEqual(c.driver.calls.filter(([name]) => name === 'navigate'), [['navigate', 'https://example.com/beranda']]);
-  assert.equal(out.action.navigated.url, 'https://example.com/beranda');
-  assert.equal(out.action.tab, '333', 'and the answer says which tab it moved');
-  assert.ok(!c.driver.calls.some(([name]) => name === 'open'), 'no second tab was opened');
+  assert.deepEqual(c.driver.calls.filter(([name]) => name === 'open'), [['open', 'https://example.com/beranda']]);
+  assert.ok(!c.driver.calls.some(([name]) => name === 'navigate'), 'an already-open tab is never navigated');
+  assert.equal(out.action.url, 'https://example.com/beranda');
 });
 
 test('a capture comes back as image content a model can see, not base64 text', async () => {

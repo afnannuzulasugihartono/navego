@@ -61,9 +61,16 @@ export function createCdpClient(transport: CdpTransport) {
   let nextId = 0;
   let closed = false;
 
+  // A malformed frame from the debugging socket must not kill the server.
   const dispatch = (raw: unknown) => {
-    const message: CdpMessage = typeof raw === 'string' ? (JSON.parse(raw) as CdpMessage) : (raw as CdpMessage);
+    let message: CdpMessage;
+    try {
+      message = typeof raw === 'string' ? (JSON.parse(raw) as CdpMessage) : (raw as CdpMessage);
+    } catch {
+      return;
+    }
     const id = message && message.id !== undefined ? Number(message.id) : null;
+    if (id !== null && Number.isNaN(id)) return;
     const settle = id === null ? undefined : pending.get(id);
     if (id !== null && settle) {
       pending.delete(id);
@@ -89,13 +96,20 @@ export function createCdpClient(transport: CdpTransport) {
   transport.onMessage(dispatch);
 
   const client = {
-    send(method: string, params: Record<string, unknown> = {}, sessionId?: string) {
+    send(method: string, params: Record<string, unknown> = {}, sessionId?: string, timeoutMs = 15000) {
       if (closed) return Promise.reject(new Error(CLOSED));
       nextId += 1;
       const id = nextId;
       const frame = sessionId ? { id, method, params, sessionId } : { id, method, params };
       return new Promise<CdpResult>((resolve, reject) => {
-        pending.set(id, { resolve, reject });
+        const timer = setTimeout(() => {
+          if (!pending.delete(id)) return;
+          reject(new Error(`the debugging port did not answer ${method}`));
+        }, timeoutMs);
+        pending.set(id, {
+          resolve: (value) => { clearTimeout(timer); resolve(value); },
+          reject: (reason) => { clearTimeout(timer); reject(reason); }
+        });
         transport.send(JSON.stringify(frame));
       });
     },

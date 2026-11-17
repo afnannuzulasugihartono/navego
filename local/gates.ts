@@ -299,10 +299,17 @@ function domainOf(url: unknown): string {
   }
 }
 
-function accountFor(accounts: Array<{ domain: string; username: string; password: string }>, host: string): { domain: string; username: string; password: string } | null {
+// WHY THE ACCOUNT IS AN EXACT HOST BY DEFAULT.
+// A match that swallowed subdomains let a page on upload.filebackupload.someonedomain.com receive credentials for that domain.
+// An account may opt in to its subdomains by setting subdomains: true; nobody inherits them by accident.
+
+function accountFor(accounts: Array<{ domain: string; username: string; password: string; subdomains?: boolean }>, host: string): { domain: string; username: string; password: string } | null {
   return accounts.find((account) => {
     const domain = String(account.domain ?? '').trim().toLowerCase();
-    return domain && (host === domain || host.endsWith('.' + domain));
+    if (!domain) return false;
+    if (host === domain) return true;
+    if (account.subdomains === true && host.endsWith('.' + domain)) return true;
+    return false;
   }) ?? null;
 }
 

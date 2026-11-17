@@ -418,6 +418,7 @@ export function createSocketClient({
     stop,
     send: (text: string) => {
       if (!ready) return false;
+      if (!socket || socket.readyState !== 1) return false;
       frame(text);
       return true;
     },

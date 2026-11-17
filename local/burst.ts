@@ -288,7 +288,7 @@ async function runStep(driver: JsonRecord, step: BurstStep, results: BurstResult
       timeoutMs: Math.max(0, remaining),
       ...(step.intervalMs === undefined ? {} : { intervalMs: step.intervalMs })
     };
-    if (step.until === 'text' || step.text !== undefined) {
+    if (step.until === 'text' || (step.until === undefined && step.text !== undefined)) {
       const absent = step.absent === true;
       if (typeof driver.waitForText !== 'function') throw new Error('this driver cannot wait for text');
       const state = await driver.waitForText(step.text, { ...options, absent });

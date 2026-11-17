@@ -35,7 +35,7 @@
 
 import { log } from '../lib/log.js';
 import { createSocketClient } from '../lib/socket-client.js';
-import { PRODUCT_VERSION } from '../lib/protocol.js';
+import { PRODUCT_VERSION, safeUrl } from '../lib/protocol.js';
 import { instanceId } from './instance-id.js';
 import { releaseDebuggerSession, releaseIdleDebuggerSessions } from '../lib/debugger-session.js';
 import { withDebugger } from './capture.js';
@@ -166,7 +166,9 @@ async function runCommand(command: Record<string, unknown>) {
     return all.map(publicBridgeTab);
   }
   if (method === 'tabs.open') {
-    const created = await chrome.tabs.create({ url: String(params.url || 'about:blank'), active: params.active === true });
+    const url = safeUrl(params.url);
+    if (url === null) throw new Error('bridge: tabs.open needs an http(s) url');
+    const created = await chrome.tabs.create({ url, active: params.active === true });
     return publicBridgeTab(created);
   }
   if (method === 'tabs.get') {
@@ -188,7 +190,9 @@ async function runCommand(command: Record<string, unknown>) {
   }
   if (method === 'tabs.navigate') {
     const tabId = Number(params.tabId);
-    const tab = await chrome.tabs.update(tabId, { url: String(params.url || '') });
+    const url = safeUrl(params.url);
+    if (url === null) throw new Error('bridge: tabs.navigate needs an http(s) url');
+    const tab = await chrome.tabs.update(tabId, { url });
     return publicBridgeTab(tab);
   }
   if (method === 'cdp') {

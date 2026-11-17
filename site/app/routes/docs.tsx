@@ -63,7 +63,7 @@ export default function Docs() {
           <ol style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: 10, listStyle: 'none' }}>
             {[
               ['#pasang', 'Pasang extension', 'Arsip .zip, mode pengembang.'],
-              ['#pairing', 'Pair device', 'Kode sekali pakai dari Dashboard.'],
+              ['#pairing', 'Pair device', 'Klik Pasangkan browser ini — satu klik.'],
               ['#tugas', 'Tugas pertama', 'Satu kalimat, satu hasil.']
             ].map(([href, title, body]) => (
               <li key={href}><a href={href} className="feature" style={{ textDecoration: 'none', display: 'block', height: '100%' }}><strong style={{ fontSize: 13.5 }}>{title}</strong><p style={{ color: 'var(--muted-2)', fontSize: 12, marginTop: 4 }}>{body}</p></a></li>
@@ -85,8 +85,8 @@ export default function Docs() {
           <h2 id="pairing">Masuk dan pair device</h2>
           <p>Masuk dengan magic link email, Google, atau GitHub dari <Link to="/index.html">halaman Masuk</Link>.</p>
           <ol className="steps">
-            <li><span><strong>Buat kode.</strong> Di <Link to="/dashboard.html">Dashboard</Link>, buka Device dan buat kode sekali pakai — atau klik Pasangkan browser ini untuk pair 1 klik.</span></li>
-            <li><span><strong>Tempel.</strong> Kode berlaku sepuluh menit dan hanya dipakai sekali.</span></li>
+            <li><span><strong>Klik.</strong> Di <Link to="/dashboard.html">Dashboard</Link>, buka Device — atau klik <strong>Pasangkan browser ini</strong> di popup.</span></li>
+            <li><span><strong>Izin.</strong> Browser meminta izin pairing sekali; tidak ada kode yang harus diketik.</span></li>
             <li><span><strong>Periksa.</strong> Device muncul di daftar dengan status daring.</span></li>
           </ol>
           <p>Device yang tidak dikenali bisa dicabut kapan saja di Dashboard.</p>
@@ -96,7 +96,7 @@ export default function Docs() {
           <ul>
             <li>Satu pekerjaan berarti satu hasil: satu halaman, satu laporan, atau satu daftar.</li>
             <li>Jumlah aksinya dibatasi. Perkiraan yang lebih besar ditolak di depan dengan tawaran dipecah, bukan gagal di tengah. Batas dan harganya ada di halaman <Link to="/harga.html">Harga</Link>.</li>
-            <li>Konten halaman hanya pergi ke endpoint model Anda; kunci API tersimpan di browser ini.</li>
+            <li>Konten halaman hanya pergi ke endpoint model yang Anda pilih (opsional — lihat dokumentasi untuk penyiapan BYOK).</li>
           </ul>
 
           <h2 id="berkas">Berkas yang jadi</h2>
@@ -130,7 +130,7 @@ export default function Docs() {
           ))}
 
           <h2 id="mcp">Hubungkan AI harness</h2>
-          <p>Satu server MCP per mesin: driver lokal, jalan di mesin Anda sendiri, tanpa biaya per panggilan dan tanpa melewati server orang lain. <Link to="/mcp.html">Pasang driver lokal</Link>.</p>
+          <p>Satu MCP (Model Context Protocol) per mesin: driver lokal, jalan di mesin Anda sendiri, tanpa biaya per panggilan dan tanpa melewati server orang lain. <Link to="/mcp.html">Pasang driver lokal</Link>.</p>
           <p>Koneksi driver lokal:</p>
           <div style={{ background: 'var(--ink)', borderRadius: 8, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 12, maxWidth: 640 }}>
             <code style={{ background: 'transparent', color: '#d8f4ff' }}>npx -y opera-agent-mcp local</code>
@@ -145,9 +145,9 @@ export default function Docs() {
               </div>
             </div>
           ))}
-          <p>Tidak perlu login atau langganan untuk memakai driver lokal. Meter plan tetap jalan di bridge — sisa quota Anda bisa dilihat dengan <code>opera-agent-mcp doctor</code> kapan pun. Semua jalur dijelaskan di satu panduan: <a href="https://github.com/afnannuzulasugihartono/opera-agent/blob/main/docs/agent-call.md">docs/agent-call.md</a>.</p>
-          <h3>ChatGPT dan konektor lain</h3>
-          <p>Konektor mereka bicara remote-over-HTTP; itu sudah berhenti eksis — kami tidak menyediakan jalur hosted lagi. Untuk ChatGPT dan harness serupa, gunakan harness lokal (atau Claude Desktop/OpenCode yang menerima MCP stdio).</p>
+          <p>Tidak perlu login atau langganan untuk memakai driver lokal. Quota paket Anda tetap dihitung di bridge Navego (jembatan ke mesin Anda) — sisa kuota bisa dilihat dengan <code>opera-agent-mcp doctor</code> kapan pun. Semua jalur dijelaskan di satu panduan: <a href="https://github.com/afnannuzulasugihartono/opera-agent/blob/main/docs/agent-call.md">docs/agent-call.md</a>.</p>
+          <h3>ChatGPT dan harness lain</h3>
+          <p>MCP harness = aplikasi AI Anda (Claude Desktop, OpenCode, dsb.). Konektor ChatGPT berbicara jarak jauh-HTTP; itu sudah berhenti eksis — kami tidak menyediakan jalur hosted lagi. Untuk ChatGPT dan harness serupa, gunakan harness lokal (atau Claude Desktop/OpenCode yang menerima MCP stdio).</p>
           <p>Setelah terpasang, alat baru muncul sesudah restart harness — itu perilaku harness, bukan error koneksi.</p>
 
           <h2 id="batas">Batas yang dijaga</h2>
