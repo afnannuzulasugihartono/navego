@@ -41,7 +41,7 @@ A private, local-browser control bridge.
 ## One command
 
 ```bash
-npm i -g navego
+npm i -g opera-agent-mcp
 ```
 
 | | |
@@ -55,7 +55,7 @@ npm i -g navego
 `kemudi` and `opera-agent-mcp` still work as aliases — the rename is additive.
 
 The local drive is metered where it happens: the local bridge calls the cloud once per session to open the meter and reads the plan from there, then enforces it locally and reports usage into the same daily count the hosted surface reads, so a command past the allowance answers `PLAN_LIMIT_REACHED` with the plan named. The gate lives in the bridge and in the plan's data in the database, never in readable client code. The package is
-on the registry: `npm i -g navego`, or from a clone with
+on the registry: `npm i -g opera-agent-mcp`, or from a clone with
 `cd local && npm install -g .`. The full answer: [`docs/agent-call.md`](docs/agent-call.md).
 
 Every number in that table is measured, not typed: `tests/docs/readme.test.mjs` reads the

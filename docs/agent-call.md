@@ -6,7 +6,7 @@ One road, one command: `navego local`. Local on the machine where the browser al
 The install is one command:
 
 ```bash
-npm i -g navego
+npm i -g opera-agent-mcp
 ```
 
 ## The installer and the driver
