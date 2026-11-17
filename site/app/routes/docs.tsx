@@ -108,7 +108,7 @@ export default function Docs() {
             <li><a href="/contoh/rencana-pemasaran-2027.docx" download>Rencana pemasaran 2027</a> — Word: positioning, segmentasi, dan rencana kanal.</li>
           </ul>
           <p>Portal yang minta masuk tidak menghentikan pekerjaan: agen membaca halaman lebih dulu, tahu ada sign-in atau captcha, dan menunggu Anda menyelesaikannya di browser Anda sendiri sebelum lanjut di tab yang sama.</p>
-          <p>Cara file-file itu dibuat dari satu file kas ada di halaman <Link to="/studi.html">Studi kasus</Link>.</p>
+          <p>Berkas dibuat dari satu file kas yang Anda lihat sendiri — tidak ada langkah yang disembunyikan.</p>
 
           <h2 id="saldo">Saldo dan tagihan</h2>
           <p>Isi saldo lewat QRIS dari Dashboard, tanpa langganan. Saldo yang kurang membuat pekerjaan ditolak sebelum mulai, dengan tautan isi ulang. Harga tetap, pengembalian, dan masa berlaku saldo ada di halaman <Link to="/harga.html">Harga</Link>.</p>
@@ -162,7 +162,7 @@ export default function Docs() {
         <div className="page-foot" style={{ marginTop: 36 }}>
           <div>
             <h2>Macet di tengah dokumen?</h2>
-            <p>Langkah yang bisa diikuti ada di Dukungan — atau lihat studi kasus untuk jalannya yang berhasil.</p>
+            <p>Langkah yang bisa diikuti ada di halaman Dukungan.</p>
           </div>
           <Link className="btn btn-solid" to="/dukungan.html">Dukungan</Link>
         </div>

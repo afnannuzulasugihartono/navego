@@ -84,20 +84,6 @@ export default function Beranda() {
         </div>
       </section>
 
-      <section className="cf-section cf-bleed" aria-labelledby="judul-bukti">
-        <div className="cf-wrap cf-proof">
-          <div>
-            <h2 id="judul-bukti" className="cf-enter">Bukti bisa dibuka.</h2>
-            <p className="cf-proof-figure cf-enter">23 baris<br />Rp 65.310.000</p>
-            <p className="cf-enter">Larian September 2026 menghasilkan empat berkas. Angka dan hash-nya ada di halaman bukti, bisa Anda cocokkan sendiri.</p>
-            <p className="cf-enter"><Link className="cf-button" to="/bukti.html">Periksa buktinya</Link></p>
-          </div>
-          <ul className="cf-proof-list cf-enter" data-ui>
-            {ARTEFAK.map((file) => <li key={file.name}><span>{file.name}</span><code>{file.hash}…</code></li>)}
-          </ul>
-        </div>
-      </section>
-
       <section className="cf-section cf-wrap" aria-labelledby="judul-harga">
         <div className="cf-section-head">
           <h2 id="judul-harga" className="cf-enter">Harga terbuka.</h2>

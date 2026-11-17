@@ -84,21 +84,6 @@ Two house rules do the audit's heavy lifting: no element may sell what the produ
 - Install/verify/register commands — copy-paste-ready — K.
 - 4 sections — install, verify, per-harness config, boundaries — K.
 
-## studi
-
-- h1 `Satu bulan kas jadi empat berkas.` — the case, in one line — K.
-- Input CSV listing — the artefact before the artefact — K.
-- Four output files with download links — the study is verifiable by opening — K.
-- figureTable (`Pendapatan/Beban/Total`) — the numbers re-checked — K.
-
-## bukti
-
-- h1 `Empat berkas, sama persis.` — the proof claim — K.
-- Steps list — what the run did — K.
-- sha256 table — four files, byte-compared — K.
-- Extension-path proof — the same run through the extension — K.
-- portal.jpg figure — the page the agent read — K.
-
 ## dukungan
 
 - h1 `Dukungan.` — the page's job — K.

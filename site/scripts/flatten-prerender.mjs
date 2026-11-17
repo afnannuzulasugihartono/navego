@@ -8,7 +8,7 @@ import { join } from 'node:path';
 const client = new URL('../build/client/', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
 const flat = [
   'beranda.html', 'fitur.html', 'harga.html', 'unduh.html', 'docs.html', 'mcp.html',
-  'studi.html', 'bukti.html', 'dukungan.html', 'privasi.html', 'syarat.html', 'akun.html',
+  'dukungan.html', 'privasi.html', 'syarat.html', 'akun.html',
   '404.html', 'dashboard.html', 'oauth/consent.html'
 ];
 

@@ -35,7 +35,7 @@ function RoleTabs() {
       <div className="role-detail" role="tabpanel">
         <h3>{task}</h3>
         <code>{tools}</code>
-        <p>Contoh berkas nyata: <a href="/contoh/laporan-keuangan-2026-09.xlsx" download>Laporan (.xlsx)</a> · <a href="/contoh/rencana-strategis-2027.pptx" download>Rencana (.pptx)</a> · <Link to="/studi.html">studi kasus</Link>.</p>
+        <p>Contoh berkas nyata: <a href="/contoh/laporan-keuangan-2026-09.xlsx" download>Laporan (.xlsx)</a> · <a href="/contoh/rencana-strategis-2027.pptx" download>Rencana (.pptx)</a>.</p>
       </div>
     </div>
   );
@@ -100,7 +100,7 @@ export default function Fitur() {
         <div className="page-foot">
           <div>
             <h2>Mulai dari satu perintah.</h2>
-            <p>Buka akun, pair device ini, lalu jalankan satu pekerjaan — hasilnya bisa Anda buka di halaman <Link to="/studi.html">Studi kasus</Link>.</p>
+            <p>Buka akun, pair device ini, lalu jalankan satu pekerjaan — hasilnya berupa berkas nyata yang bisa Anda buka sendiri.</p>
           </div>
           <Link className="btn btn-solid" to="/unduh.html">Unduh navego</Link>
         </div>

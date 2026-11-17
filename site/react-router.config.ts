@@ -14,8 +14,6 @@ export default {
     '/unduh.html',
     '/docs.html',
     '/mcp.html',
-    '/studi.html',
-    '/bukti.html',
     '/dukungan.html',
     '/privasi.html',
     '/syarat.html',
