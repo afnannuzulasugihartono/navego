@@ -46,11 +46,11 @@ jobs:
         with:
           node-version: 22.20.0
 
-      - name: Run tests
-        run: npm test --if-present || npm test
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
 
-      - name: Build package
-        run: npm run build --if-present
+      - name: Run tests
+        run: npm test
 
 # WHY THE COSIGN INSTALLER IS PINNED BY COMMIT SHA.
 # A mutable tag would let an attacker swap what the publish step accepts as a trusted binary.
