@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // @last-edited: 2026-11-17 UTC+7.
-// @title: corbin-agent — the thin harness I drive Corbin through from an agent with a shell.
+// @title: navego-agent — the thin harness I drive Navego through from an agent with a shell.
 // @state: one process owns one driver lease; `serve` keeps it alive on loopback for interactive drives; explicit tabId on every write.
 // @dependencies: node:fs, node:http, node:path, node:url, ../proof/proof-run.mjs (speakMcp).
 // Every write needs an explicit tabId; a separate process per call would collide on the tab claim.
@@ -51,7 +51,7 @@ async function execute(cmd, args) {
   } else if (cmd === 'shot') {
     if (!args[0]) throw new Error('shot needs tabId');
     const call = await mcp.tool('browser_screenshot', { tabId: args[0] });
-    const target = resolve(args[1] ?? '.taste-skill/corbin-shot.jpg');
+    const target = resolve(args[1] ?? '.taste-skill/navego-shot.jpg');
     if (!call.image) throw new Error(`screenshot answered no image: ${call.text}`);
     mkdirSync(dirname(target), { recursive: true });
     writeFileSync(target, Buffer.from(call.image, 'base64'));
@@ -69,7 +69,7 @@ async function execute(cmd, args) {
     const tabId = tabOf(opened.text);
     if (!tabId) throw new Error(`open answered no tab id: ${opened.text}`);
     process.stdout.write(`tabId ${tabId}\n`);
-    show(await mcp.tool('browser_wait_until', { tabId, until: 'text', text: args[1] ?? 'Corbin', timeoutMs: 15000 }));
+    show(await mcp.tool('browser_wait_until', { tabId, until: 'text', text: args[1] ?? 'Navego', timeoutMs: 15000 }));
     show(await mcp.tool('browser_read_page', { tabId }));
     if (args[2]) {
       const shot = await mcp.tool('browser_screenshot', { tabId });
@@ -111,7 +111,7 @@ if (command === 'serve') {
       }
     });
   });
-  server.listen(port, '127.0.0.1', () => process.stdout.write(`corbin-agent listening on ${port}\n`));
+  server.listen(port, '127.0.0.1', () => process.stdout.write(`navego-agent listening on ${port}\n`));
 } else {
   try {
     if (command === 'batch') {

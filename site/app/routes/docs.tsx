@@ -5,7 +5,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return [
-    { title: 'Docs — Corbin' },
+    { title: 'Docs — Navego' },
     { name: 'description', content: 'Pasang, pair, jalankan, hubungkan. 45 tool MCP di atas 36 primitive browser - langkah yang bisa diikuti.' }
   ];
 }
@@ -13,8 +13,8 @@ export function meta() {
 const TOOLS = catalog as Array<{ group: string; items: Array<[string, string]> }>;
 
 const CONFIGS: Array<{ id: string; title: string; body: string }> = [
-  { id: 'cfg-opencode', title: 'OpenCode', body: '{\n  "mcp": {\n    "corbin": {\n      "type": "local",\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-kilo', title: 'Kilo Code', body: '{\n  "mcpServers": {\n    "corbin": {\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-opencode', title: 'OpenCode', body: '{\n  "mcp": {\n    "navego": {\n      "type": "local",\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-kilo', title: 'Kilo Code', body: '{\n  "mcpServers": {\n    "navego": {\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
   { id: 'cfg-claude', title: 'Claude Desktop', body: 'command: npx\nargs: ["-y", "opera-agent-mcp", "local"]' }
 ];
 
@@ -75,9 +75,9 @@ export default function Docs() {
           <h2 id="pasang">Pasang extension</h2>
           <ol className="steps">
             <li><span><strong>Unduh.</strong> Ambil arsip <code>.zip</code> dari halaman <Link to="/unduh.html">Unduh</Link>.</span></li>
-            <li><span><strong>Ekstrak.</strong> Ke folder yang tidak akan dirapikan lagi, misalnya <code>C:\Corbin\</code>.</span></li>
+            <li><span><strong>Ekstrak.</strong> Ke folder yang tidak akan dirapikan lagi, misalnya <code>C:\Navego\</code>.</span></li>
             <li><span><strong>Muat.</strong> Buka <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>, Brave: <code>brave://extensions</code>, Opera: <code>opera://extensions</code>), nyalakan Mode Pengembang, lalu muat folder tadi.</span></li>
-            <li><span><strong>Periksa.</strong> Corbin muncul di daftar extension.</span></li>
+            <li><span><strong>Periksa.</strong> Navego muncul di daftar extension.</span></li>
           </ol>
           <p>Mesin yang dikelola perusahaan memasang <code>.crx</code> bertanda tangan lewat <code>chrome://policy</code>. Firefox tidak didukung: tidak ada izin <code>debugger</code> di sana.</p>
           <p>Pemasangan tidak dipungut biaya. Yang dibayar nanti adalah setiap pekerjaan yang selesai.</p>

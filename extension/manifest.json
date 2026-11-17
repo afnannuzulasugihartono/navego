@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Kemudi",
+  "name": "Navego",
   "version": "1.7.1",
-  "description": "Kemudi drives your own browser from the AI you already use; the pages never leave this machine.",
+  "description": "Navego drives your own browser from the AI you already use; the pages never leave this machine.",
   "permissions": [
     "tabs",
     "scripting",
@@ -41,7 +41,7 @@
     }
   ],
   "action": {
-    "default_title": "Kemudi",
+    "default_title": "Navego",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",

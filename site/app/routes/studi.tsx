@@ -3,7 +3,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return [
-    { title: 'Studi kasus — Corbin' },
+    { title: 'Studi kasus — Navego' },
     { name: 'description', content: 'Sinar Jaya, September 2026. Satu file CSV jadi laporan keuangan, rencana strategis, riset promosi, dan rencana pemasaran. Setiap angka menyebut baris asalnya.' }
   ];
 }
@@ -24,7 +24,7 @@ export default function Studi() {
           <h1>Satu bulan kas jadi empat berkas.</h1>
           <p className="lede">Sinar Jaya, September 2026. Satu file CSV jadi laporan keuangan, rencana strategis, riset promosi, dan rencana pemasaran. Setiap angka menyebut baris asalnya, jadi bisa diperiksa.</p>
           <div className="page-head-actions">
-            <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
+            <Link className="btn btn-solid" to="/unduh.html">Unduh navego</Link>
             <Link className="btn btn-ghost" to="/fitur.html">Lihat kemampuan</Link>
           </div>
         </header>
@@ -78,7 +78,7 @@ export default function Studi() {
             <h2>Buka berkasnya sekarang.</h2>
             <p>Keempat berkas di halaman ini dibuat dari data tiruan, dan bisa dibuka di aplikasi Anda sendiri. Pekerjaan Anda berikutnya dimulai dari file yang sama.</p>
           </div>
-          <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
+          <Link className="btn btn-solid" to="/unduh.html">Unduh navego</Link>
         </div>
       </main>
       <SiteFooter />

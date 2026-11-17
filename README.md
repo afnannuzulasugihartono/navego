@@ -1,7 +1,7 @@
 @last-edited: 2026-11-09 UTC+7.
 @related: [`AGENTS.md`](AGENTS.md) - [`docs/security.md`](docs/security.md) - [`docs/api.md`](docs/api.md)
 
-# Kemudi
+# Navego
 
 A private, local-browser control bridge.
 

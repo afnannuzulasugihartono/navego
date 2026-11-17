@@ -42,7 +42,7 @@ Saya cari 3 firma untuk pilot 1 bulan, sampai 15 client-month, Rp 99.000 — bay
 
 Yang mau tahu lebih jauh: jawab tiga pertanyaannya di {tautan}. Saya baca sendiri, dan saya balas satu per satu.
 
-## 2. Postingan kedua, sepekan kemudian
+## 2. Postingan kedua, sepekan navegoan
 
 Sudut yang berbeda, bukan pengulangan: bukan lagi "berapa banyak klien", tapi "bagian mana yang paling melelahkan". Satu postings, satu tempat berbeda, dan tidak ada yang disebut secara pribadi.
 

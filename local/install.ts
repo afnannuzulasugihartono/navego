@@ -28,7 +28,7 @@ export async function fetchVerifiedZip({ url = ZIP_URL, sha256Header = SHA256_HE
 
 export function crxReadme(browser: unknown): string {
   const name = String(browser);
-  return `Kemudi for ${name}
+  return `Navego for ${name}
 
 This folder keeps a verified copy of the extension build (opera-agent.zip) in
 case the browser cannot install it from the policy. To install manually:
@@ -40,7 +40,7 @@ finds the entry whose data names ${EXTENSION_ID}, fetches the update manifest, d
 update endpoint, installs it, and keeps it there. Deleting the policy entry removes your protection of it;
 the installed copy stays until you remove it at chrome://extensions (edge: edge://extensions, brave: brave://extensions).
 
-Uninstall: run \`kemudi uninstall\`. It removes exactly this extension's policy entries, nothing else.
+Uninstall: run \`navego uninstall\`. It removes exactly this extension's policy entries, nothing else.
 Pairing: run \`kemudi auth\` to sign in, then open the extension and pair the device.
 `;
 }
@@ -62,7 +62,7 @@ import { execFileSync } from 'node:child_process';
 import { detectBrowsers } from './browsers.js';
 import { writeExtensionKey } from './registry.js';
 
-const NON_WINDOWS = 'Kemudi installs its extension only into Windows browsers. On this platform, install from the Chrome Web Store or the Kemudi download page (https://opera-agent.pages.dev/unduh).';
+const NON_WINDOWS = 'Navego installs its extension only into Windows browsers. On this platform, install from the Chrome Web Store or the Navego download page (https://opera-agent.pages.dev/unduh).';
 
 const NO_BROWSER = 'No Chrome, Brave, Edge or Chrome for Testing was found on this machine. Install one of them, or grab the signed build from https://opera-agent.pages.dev/unduh.';
 

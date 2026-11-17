@@ -4,7 +4,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return [
-    { title: 'Halaman tidak ditemukan — Corbin' },
+    { title: 'Halaman tidak ditemukan — Navego' },
     { name: 'description', content: 'Alamatnya mungkin salah ketik, atau halaman itu sudah dipindahkan. Lima jalan keluar.' }
   ];
 }

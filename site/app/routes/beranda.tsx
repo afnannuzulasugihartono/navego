@@ -3,8 +3,8 @@ import { CommandPreview } from '../components/CommandPreview';
 
 export function meta() {
   return [
-    { title: 'Corbin — AI untuk browser Anda' },
-    { name: 'description', content: 'Corbin menjalankan browser Anda dari satu perintah teks. Membaca halaman, mengisi formulir, menyimpan hasilnya sebagai berkas. 45 tool MCP, 36 primitive browser, 6 izin.' }
+    { title: 'Navego — AI untuk browser Anda' },
+    { name: 'description', content: 'Navego menjalankan browser Anda dari satu perintah teks. Membaca halaman, mengisi formulir, menyimpan hasilnya sebagai berkas. 45 tool MCP, 36 primitive browser, 6 izin.' }
   ];
 }
 
@@ -17,12 +17,12 @@ const ARTEFAK = [
 
 const CARA = [
   { title: 'Satu perintah', body: 'Anda menulis kalimat dalam bahasa sendiri. Tidak ada API per situs, tidak ada skrip yang Anda pasang.' },
-  { title: 'Browser Anda bergerak', body: 'Corbin membaca tab yang Anda tunjuk, mencari kolom dan tombol, lalu mengisi atau mengkliknya.' },
+  { title: 'Browser Anda bergerak', body: 'Navego membaca tab yang Anda tunjuk, mencari kolom dan tombol, lalu mengisi atau mengkliknya.' },
   { title: 'Berkas mendarat', body: 'Hasilnya file nyata di folder Anda. Nama file, isi, dan asal angkanya bisa Anda periksa.' }
 ];
 
 const FAQ = [
-  { q: 'Apakah Corbin membaca semua tab saya?', a: 'Tidak. Corbin hanya bekerja pada tab yang Anda tunjuk lewat tabId. Halaman pribadi dan chrome:// ditolak.' },
+  { q: 'Apakah Navego membaca semua tab saya?', a: 'Tidak. Navego hanya bekerja pada tab yang Anda tunjuk lewat tabId. Halaman pribadi dan chrome:// ditolak.' },
   { q: 'Apakah kata sandi boleh diketik agen?', a: 'Tidak. Kolom kata sandi, kode sekali pakai, dan data pembayaran selalu ditolak. Anda menyelesaikan masuk di browser Anda sendiri.' },
   { q: 'Apa yang dipasang di komputer saya?', a: 'Ekstensi MV3 dan driver lokal. Data halaman tidak dikirim ke server kami; kunci model tetap di browser Anda.' }
 ];
@@ -33,7 +33,7 @@ export default function Beranda() {
       <section className="cf-hero" aria-labelledby="judul-beranda">
         <div className="cf-wrap cf-hero-grid">
           <div>
-            <h1 id="judul-beranda" className="cf-enter">Corbin.<br />AI browser.</h1>
+            <h1 id="judul-beranda" className="cf-enter">Navego.<br />AI browser.</h1>
             <p className="cf-lede cf-enter">Asisten AI yang menjalankan browser Anda dari satu perintah.</p>
             <div className="cf-hero-actions cf-enter">
               <Link className="cf-button" to="/unduh.html">Pasang gratis</Link>
@@ -52,17 +52,17 @@ export default function Beranda() {
         </div>
       </section>
 
-      <section className="cf-intro" aria-label="Apa yang dilakukan Corbin">
+      <section className="cf-intro" aria-label="Apa yang dilakukan Navego">
         <div className="cf-wrap">
           <img className="cf-raven" src="/assets/raven-1874.jpg" alt="Corvus corax, gambar Naturalis tahun 1874" width="180" height="140" />
-          <p className="cf-enter">Anda menulis satu kalimat. Corbin membaca halaman, mengisi kolom, lalu menyimpan hasilnya sebagai berkas. Browser Anda tetap browser Anda.</p>
+          <p className="cf-enter">Anda menulis satu kalimat. Navego membaca halaman, mengisi kolom, lalu menyimpan hasilnya sebagai berkas. Browser Anda tetap browser Anda.</p>
         </div>
       </section>
 
       <section className="cf-section cf-wrap" aria-labelledby="judul-coba">
         <div className="cf-section-head">
           <h2 id="judul-coba" className="cf-enter">Coba bayangkan perintahnya.</h2>
-          <p className="cf-enter">Pilih contoh atau tulis sendiri. Corbin menunjukkan langkah yang akan diambil — tanpa menjalankan browser Anda di sini.</p>
+          <p className="cf-enter">Pilih contoh atau tulis sendiri. Navego menunjukkan langkah yang akan diambil — tanpa menjalankan browser Anda di sini.</p>
         </div>
         <CommandPreview />
       </section>
@@ -131,7 +131,7 @@ export default function Beranda() {
           ))}
         </div>
         <p className="cf-enter" style={{ marginTop: 48 }}>
-          <Link className="cf-button" to="/unduh.html">Pasang Corbin</Link>
+          <Link className="cf-button" to="/unduh.html">Pasang Navego</Link>
         </p>
       </section>
     </main>

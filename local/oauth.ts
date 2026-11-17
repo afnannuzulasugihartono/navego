@@ -133,7 +133,7 @@ function waitForCode({ url, state, open }: { url: string; state: string; open: (
       }
       clearTimeout(timer);
       res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
-      res.end('<h1>Kemudi is signed in.</h1><p>You can close this window.</p>');
+      res.end('<h1>Navego is signed in.</h1><p>You can close this window.</p>');
       done(null, code);
     });
     server.on('error', (error: Error) => {
@@ -218,7 +218,7 @@ export async function login({ env = process.env, fetchImpl = fetch, open = openB
 
 export function loginInstructions(_env?: unknown): string {
   return [
-    'No Kemudi token yet. Sign in once with a browser:',
+    'No Navego token yet. Sign in once with a browser:',
     '  kemudi auth',
     '',
     'which opens this URL and stores the token beside this install:',

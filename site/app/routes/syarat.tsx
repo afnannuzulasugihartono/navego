@@ -2,8 +2,8 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return [
-    { title: 'Syarat Layanan — Corbin' },
-    { name: 'description', content: 'Syarat layanan Corbin: akses terbuka, bawa model sendiri, dan pairing yang dapat dicabut.' }
+    { title: 'Syarat Layanan — Navego' },
+    { name: 'description', content: 'Syarat layanan Navego: akses terbuka, bawa model sendiri, dan pairing yang dapat dicabut.' }
   ];
 }
 

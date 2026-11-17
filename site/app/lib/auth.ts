@@ -1,4 +1,4 @@
-// Corbin's client-side auth + API helpers.
+// Navego's client-side auth + API helpers.
 // No SDK, no secrets: the publishable key is public by design, the session lives in this browser's localStorage, and every call that carries identity goes to the project's Auth or REST host only.
 
 export const PUBLISHABLE_KEY = 'sb_publishable_jAbS_QIQsmXQA-Rj8RWPcg_JVeBedJ6';

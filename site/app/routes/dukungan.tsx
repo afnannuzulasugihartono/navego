@@ -3,7 +3,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return [
-    { title: 'Dukungan — Corbin' },
+    { title: 'Dukungan — Navego' },
     { name: 'description', content: 'Lima perbaikan paling sering, kontak yang tepat, dan langkah berikutnya — jawaban yang bisa langsung diikuti.' }
   ];
 }

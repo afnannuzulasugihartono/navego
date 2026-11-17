@@ -133,7 +133,7 @@ export async function dispatch(method: string, params: DispatchParams = {}, cont
       const fitted = fitWithinBudget(faults, RESULT_BUDGET_BYTES - 16 * 1024);
       return {
         ok: true,
-        product: 'Kemudi',
+        product: 'Navego',
         version: PRODUCT_VERSION,
         protocolVersion: PROTOCOL_VERSION,
         deviceName: cfg.deviceName,

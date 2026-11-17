@@ -24,7 +24,7 @@ if (gateVerdict.status !== 0) {
 
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'extension/manifest.json'), 'utf8'));
 const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
-assert.equal(manifest.name, 'Kemudi');
+assert.equal(manifest.name, 'Navego');
 assert.equal(manifest.version, '1.7.1');
 assert.equal(PRODUCT_VERSION, '1.7.1');
 assert.equal(pkg.version, '1.7.1');

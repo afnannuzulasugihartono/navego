@@ -3,8 +3,8 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return [
-    { title: 'Kebijakan Privasi — Corbin' },
-    { name: 'description', content: 'Kebijakan privasi Corbin: konten halaman hanya pergi ke endpoint model milik Anda, tidak pernah dibagikan ke pihak ketiga.' }
+    { title: 'Kebijakan Privasi — Navego' },
+    { name: 'description', content: 'Kebijakan privasi Navego: konten halaman hanya pergi ke endpoint model milik Anda, tidak pernah dibagikan ke pihak ketiga.' }
   ];
 }
 

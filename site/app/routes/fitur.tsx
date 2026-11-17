@@ -4,8 +4,8 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return [
-    { title: 'Fitur — Corbin' },
-    { name: 'description', content: 'Yang dikerjakan Corbin: 45 tool MCP di atas 36 primitive browser, enam izin yang dijelaskan satu per satu, model milik Anda, pairing device yang bisa dicabut, dan empat berkas contoh yang bisa diunduh.' }
+    { title: 'Fitur — Navego' },
+    { name: 'description', content: 'Yang dikerjakan Navego: 45 tool MCP di atas 36 primitive browser, enam izin yang dijelaskan satu per satu, model milik Anda, pairing device yang bisa dicabut, dan empat berkas contoh yang bisa diunduh.' }
   ];
 }
 
@@ -47,10 +47,10 @@ export default function Fitur() {
       <SiteHeader current="/fitur.html" />
       <main className="wrap">
         <header className="page-head">
-          <h1>Yang bisa dikerjakan Corbin.</h1>
-          <p className="lede">Anda menulis satu perintah. Corbin membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.</p>
+          <h1>Yang bisa dikerjakan Navego.</h1>
+          <p className="lede">Anda menulis satu perintah. Navego membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.</p>
           <div className="page-head-actions">
-            <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
+            <Link className="btn btn-solid" to="/unduh.html">Unduh navego</Link>
             <Link className="btn btn-ghost" to="/beranda.html">Lihat contoh kerja</Link>
           </div>
         </header>
@@ -102,7 +102,7 @@ export default function Fitur() {
             <h2>Mulai dari satu perintah.</h2>
             <p>Buka akun, pair device ini, lalu jalankan satu pekerjaan — hasilnya bisa Anda buka di halaman <Link to="/studi.html">Studi kasus</Link>.</p>
           </div>
-          <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
+          <Link className="btn btn-solid" to="/unduh.html">Unduh navego</Link>
         </div>
       </main>
       <SiteFooter />

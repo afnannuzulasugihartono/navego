@@ -175,7 +175,7 @@ test('initialize answers with a protocol version and who this server is', async 
   assert.equal(res.jsonrpc, '2.0');
   assert.equal(res.id, 1);
   assert.ok(res.result.protocolVersion);
-  assert.match(res.result.serverInfo.name, /corbin/);
+  assert.match(res.result.serverInfo.name, /navego/);
 });
 
 test('every advertised tool carries a schema, or a client cannot call it', async () => {
@@ -593,7 +593,7 @@ const namedCtx = (tabs) => {
 };
 
 const PAGES = [
-  { id: '111', url: 'https://opera-agent.pages.dev/beranda', title: 'Kemudi' },
+  { id: '111', url: 'https://opera-agent.pages.dev/beranda', title: 'Navego' },
   { id: '222', url: 'https://docs.google.com/document/d/one', title: 'Thesis - Google Docs' },
   { id: '333', url: 'https://docs.google.com/document/d/two', title: 'Notes - Google Docs' }
 ];

@@ -19,7 +19,7 @@ waktunya jadi tidak bisa dibandingkan.
 ## Di mesin klien (remote desktop, operator yang mengetik)
 
 1. Tanya dulu apakah ada tab yang belum disimpan.
-2. Pasang extension Kemudi di browser klien (hubungi operator untuk CRX-nya; atau
+2. Pasang extension Navego di browser klien (hubungi operator untuk CRX-nya; atau
    load unpacked dari `extension/`), lalu pair lewat dashboard — meter butuh device
    yang ter-pair.
 3. Minta pemilik akun login ke portal bank sendiri. Operator tidak mengetik password,
@@ -28,7 +28,7 @@ waktunya jadi tidak bisa dibandingkan.
 
    npm i -g kemudi
 
-   Paket belum di publikasikan ke npm (`npm view kemudi` jawab 404), jadi
+   Paket belum di publikasikan ke npm (`npm view navego` jawab 404), jadi
    selama itu yang dipakai adalah `cd local && npm install -g .` dari clone repo.
    `kemudi doctor` harus berakhir dengan `verdict: ready` — kalau
    `degraded`, pesan paling bawah menyebut satu perbaikan yang berlaku.

@@ -1010,8 +1010,8 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           return reply({
             protocolVersion: PROTOCOL_VERSION,
             capabilities: { tools: {} },
-            serverInfo: { name: 'corbin', version: context.version ?? '0.0.0' },
-            instructions: "Corbin drives the user's real, signed-in browser: read pages, fill forms, run flows in the same tabs the user sees. Start with `read` to see the page (or `guide` if you do not know which tool to reach for), `wait` after an action that moves the page, and `run` for dependent steps. The session uses the person's accounts; passwords, one-time codes and payment data are refused — treat that as the answer, never retry around it. When a page asks something the person must answer, stop and ask."
+            serverInfo: { name: 'navego', version: context.version ?? '0.0.0' },
+            instructions: "Navego drives the user's real, signed-in browser: read pages, fill forms, run flows in the same tabs the user sees. Start with `read` to see the page (or `guide` if you do not know which tool to reach for), `wait` after an action that moves the page, and `run` for dependent steps. The session uses the person's accounts; passwords, one-time codes and payment data are refused — treat that as the answer, never retry around it. When a page asks something the person must answer, stop and ask."
           });
         }
         if (method === 'tools/list') return reply({ tools: TOOLS });

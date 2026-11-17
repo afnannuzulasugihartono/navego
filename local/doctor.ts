@@ -54,7 +54,7 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
   const probe = await probeBridge(port, fetchImpl);
   if (!probe.ok) {
     say('bridge', `not listening on 127.0.0.1:${port} (${probe.error})`);
-    problems.push('start the everyday browser with the Kemudi extension installed');
+    problems.push('start the everyday browser with the Navego extension installed');
   } else {
     const health = (probe.health ?? {}) as Record<string, unknown>;
     const devices = (Array.isArray(health.devices) ? health.devices : []) as Array<Record<string, unknown>>;
@@ -72,7 +72,7 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
     if (!devices.length && !refusal) {
       problems.push(linked
         ? 'the bridge runs pre-meter code — restart the driver process so it can report the session'
-        : 'the extension is not linked to this bridge; reload the everyday browser with Kemudi installed');
+        : 'the extension is not linked to this bridge; reload the everyday browser with Navego installed');
     }
     const preferRaw = (health as Record<string, unknown>).preferredSlot;
     say('preferred', typeof preferRaw === 'number' ? `slot ${preferRaw} (tab-less commands follow it)` : 'none (tab-less commands follow the first ready browser)');

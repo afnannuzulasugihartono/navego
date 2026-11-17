@@ -217,7 +217,7 @@ function openApiSpec(basePath: string) {
   return {
     openapi: "3.0.0",
     info: {
-      title: "Kemudi Gateway",
+      title: "Navego Gateway",
       description: "One-hop browser control for any AI platform. Authenticate with body.apiKey (GPT Actions) or the x-opera-agent-token header.",
       version: "1.0.1"
     },

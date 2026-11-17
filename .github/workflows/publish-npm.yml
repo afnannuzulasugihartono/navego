@@ -76,7 +76,7 @@ jobs:
         run: |
           VERSION="$(node -p "require('./local/package.json').version")"
           for attempt in $(seq 1 40); do
-            PUBLISHED="$(npm view kemudi@${VERSION} version 2>/dev/null || true)"
+            PUBLISHED="$(npm view navego@${VERSION} version 2>/dev/null || true)"
             echo "attempt ${attempt}: registry says: ${PUBLISHED:-nothing}"
             if [ "${PUBLISHED}" = "${VERSION}" ]; then
               echo "registry answers ${VERSION}"

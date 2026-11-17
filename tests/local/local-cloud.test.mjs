@@ -69,7 +69,7 @@ async function fakeHosted() {
       requests.push({ authorization: req.headers.authorization, provider: req.headers['x-opera-provider'], device: req.headers['x-opera-device'], message });
       if (req.headers.authorization !== 'Bearer test-token') {
         res.writeHead(401, { 'content-type': 'application/json' });
-        res.end(JSON.stringify({ error: 'unauthorized', error_description: 'A valid Kemudi access token is required.' }));
+        res.end(JSON.stringify({ error: 'unauthorized', error_description: 'A valid Navego access token is required.' }));
         return;
       }
       const reply = (result) => {

@@ -3,8 +3,8 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return [
-    { title: 'Bukti — Corbin' },
-    { name: 'description', content: 'Corbin menjalankan peramban sungguhan di portal contoh, mengunduh CSV-nya, lalu membangun ulang empat berkas halaman studi kasus — sha256 sama, byte per byte.' }
+    { title: 'Bukti — Navego' },
+    { name: 'description', content: 'Navego menjalankan peramban sungguhan di portal contoh, mengunduh CSV-nya, lalu membangun ulang empat berkas halaman studi kasus — sha256 sama, byte per byte.' }
   ];
 }
 
@@ -41,7 +41,7 @@ export default function Bukti() {
       <main className="wrap">
         <header className="page-head" style={{ paddingBottom: 6 }}>
           <h1>Empat berkas, sama persis.</h1>
-          <p className="lede">Corbin menjalankan peramban sungguhan di portal contoh, mengunduh CSV-nya, lalu membangun ulang empat berkas yang ada di halaman studi kasus. Setiap berkas dicocokkan dengan berkas yang bisa Anda unduh: sha256-nya sama, byte per byte.</p>
+          <p className="lede">Navego menjalankan peramban sungguhan di portal contoh, mengunduh CSV-nya, lalu membangun ulang empat berkas yang ada di halaman studi kasus. Setiap berkas dicocokkan dengan berkas yang bisa Anda unduh: sha256-nya sama, byte per byte.</p>
           <div className="page-head-actions">
             <Link className="btn btn-solid" to="/studi.html">Lihat keempat berkasnya</Link>
             <a className="btn btn-ghost" href="https://github.com/afnannuzulasugihartono/opera-agent/blob/main/proof/run.md">Buka catatannya</a>
@@ -77,7 +77,7 @@ export default function Bukti() {
         <section className="section" aria-labelledby="roadTitle" style={{ paddingTop: 10 }}>
           <div className="section-head">
             <h2 id="roadTitle">Jalan lewat extension.</h2>
-            <p>Jalannya di atas memakai peramban terpisah. Yang Anda pakai sehari-hari berjalan lewat extension Corbin: extension itu menyambung sendiri ke server lokal dan menjalankan peramban yang sedang Anda buka. Jalur itu sudah dijalankan dan dicatat.</p>
+            <p>Jalannya di atas memakai peramban terpisah. Yang Anda pakai sehari-hari berjalan lewat extension Navego: extension itu menyambung sendiri ke server lokal dan menjalankan peramban yang sedang Anda buka. Jalur itu sudah dijalankan dan dicatat.</p>
           </div>
           <ol className="steps" style={{ maxWidth: 720 }}>
             {ROAD.map((step) => <li key={step}><span>{step}</span></li>)}
@@ -108,7 +108,7 @@ export default function Bukti() {
             <h2>Berhasil? Bawa ke pekerjaan Anda.</h2>
             <p>Gunakan file CSV yang sama dengan halaman Studi kasus, lalu jalankan perintah yang sama di browser Anda sendiri.</p>
           </div>
-          <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
+          <Link className="btn btn-solid" to="/unduh.html">Unduh navego</Link>
         </div>
       </main>
       <SiteFooter />

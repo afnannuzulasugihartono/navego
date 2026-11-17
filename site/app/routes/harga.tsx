@@ -5,7 +5,7 @@ import { BILLING, ensureSession, getStoredToken, headersFor } from '../lib/auth'
 
 export function meta() {
   return [
-    { title: 'Harga — Corbin' },
+    { title: 'Harga — Navego' },
     { name: 'description', content: 'Dua cara membayar, satu aturan: tidak ada yang terpotong sampai hasilnya ada. Isi saldo mulai Rp10.000 lewat QRIS, atau Plan Firm Rp249.000 / 30 hari.' }
   ];
 }
@@ -27,7 +27,7 @@ const QA = [
   ['pekerjaan', 'Bayar per pekerjaan selesai', 'Sebelum satu pekerjaan mulai, Anda melihat harga tetapnya dan menyetujuinya. Saat pekerjaan selesai dan artefaknya ada, saldo dipotong sebesar harga itu. Tidak ada meteran lain yang memotong saldo Anda.'],
   ['gagal', 'Pekerjaan gagal: saldo kembali', 'Kalau pekerjaan gagal — termasuk berhenti karena halaman meminta kata sandi, OTP, atau data kartu — dana yang ditahan dikembalikan penuh. Tidak ada potongan proporsional, tidak ada biaya admin. Dana yang ditahan lebih dari 30 menit tanpa penyelesaian dikembalikan otomatis.'],
   ['batas', 'Satu pekerjaan maksimal 10 aksi', 'Satu pekerjaan adalah satu hasil yang jelas: satu halaman, satu laporan, atau satu daftar yang dipecah otomatis menjadi kelompok 10 item, masing-masing dengan harga dan pengembalian sendiri. Pekerjaan yang diperkirakan lebih dari 10 aksi ditolak di depan dengan tawaran untuk dipecah — bukan gagal di tengah jalan.'],
-  ['model', 'Biaya model tetap urusan Anda', 'Corbin memakai model yang Anda bawa sendiri: endpoint, nama model, dan kunci API Anda. Biaya pemakaian model dibayar langsung ke penyedia model itu, bukan ke Corbin.']
+  ['model', 'Biaya model tetap urusan Anda', 'Navego memakai model yang Anda bawa sendiri: endpoint, nama model, dan kunci API Anda. Biaya pemakaian model dibayar langsung ke penyedia model itu, bukan ke Navego.']
 ] as const;
 
 export default function Harga() {
@@ -131,7 +131,7 @@ export default function Harga() {
             <h2>Harga yang jalan.</h2>
             <p>Pasang gratis, jalankan satu pekerjaan pertama Anda, dan bayar hanya setelah hasilnya ada.</p>
           </div>
-          <Link className="btn btn-solid" to="/unduh.html">Pasang corbin</Link>
+          <Link className="btn btn-solid" to="/unduh.html">Pasang navego</Link>
         </div>
       </main>
       <SiteFooter />

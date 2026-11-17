@@ -26,7 +26,7 @@ import { readDevice } from './wallet-client.js';
 
 // WHY THE WIRE STILL SAYS opera-agent-mcp.
 // The provider pin is a wire identifier matched by the server's per-provider routing (opera_provider_pins); renaming the default on release day would orphan every pin a caller already set without a word about it.
-// The product says Kemudi everywhere a human reads; the pin is a machine word and stays until a reviewed migration moves the table too.
+// The product says Navego everywhere a human reads; the pin is a machine word and stays until a reviewed migration moves the table too.
 
 const PROVIDER = process.env.OPERA_AGENT_MCP_PROVIDER || 'opera-agent-mcp';
 
@@ -102,8 +102,8 @@ export async function serveCloud({ env = process.env, input = process.stdin, out
   }
   const base = hostedBase(env);
   const deviceName = pinnedDeviceName(env);
-  stderr.write(`kemudi cloud: ${base}\n`);
-  if (deviceName) stderr.write(`kemudi cloud: driving the paired device "${deviceName}"\n`);
+  stderr.write(`navego cloud: ${base}\n`);
+  if (deviceName) stderr.write(`navego cloud: driving the paired device "${deviceName}"\n`);
 
   const lines = readline.createInterface({ input, terminal: false });
   lines.on('line', (line: string) => {

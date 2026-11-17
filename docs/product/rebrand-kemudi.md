@@ -1,9 +1,9 @@
 # @last-edited: 2026-11-15 UTC+7.
-# @title: rebrand-kemudi - the product is Kemudi; the research, the decision, and the cutover.
+# @title: rebrand-navego - the product is Navego; the research, the decision, and the cutover.
 # @state: the decision is made and shipped in the tree; the owner's acts are named at the end.
 # @dependencies: docs/product/monetization.md, docs/handoff.md.
 
-# Kemudi - the name this project was always steering toward
+# Navego - the name this project was always steering toward
 
 Opera Agent was the working title of a browser agent: drive the browser the person already uses, from the AI they already pay for, without moving the session anywhere else. It was accurate. It was not a company. It told no one the browser term, the browser, the mission; it described. A company's name is a word the market says back to it, and Opera Agent's second word was also the category word everyone else uses, while its first word belongs to somebody else's trademark family (Opera Software).
 
@@ -28,24 +28,24 @@ The mandate: redesign the name so it is native to the agent, keep what must stay
 
 | Candidate | Meaning | Collision check | Verdict |
 |---|---|---|---|
-| **Kemudi** | wheel / helm; *mengemudi* = to drive | npm 404, PyPI 404; GitHub: 30 repos, none a software product at scale; kemudi.ai/.io do not resolve; kemudi.com parked; no company of note | **the name** |
+| **Navego** | wheel / helm; *mengemudi* = to drive | npm 404, PyPI 404; GitHub: 30 repos, none a software product at scale; navego.ai/.io do not resolve; navego.com parked; no company of note | **the name** |
 | Gerak | movement; *bergerak* = to move | npm/PyPI free, but GitHub: 1,004 repos; gerak.com/.ai/.id all live | noisy; motion ≠ agency |
 | Sakti | magical / powerful | common SEA suffix; *sakit* = sick (one vowel off) | failure by rhyme |
 | Karya | work / creation | heavily used in local product names; generic | common noun, no ownership |
-| Juru (…) | operator of … | `juru kemudi` = helmsman, two words, perfect sense as a compound | loses Cursor's one-hand test |
+| Juru (…) | operator of … | `juru navego` = helmsman, two words, perfect sense as a compound | loses Cursor's one-hand test |
 
-Kemudi wins the Cursor test — the word is already in the hand: *kemudikan browser Anda* is already the Indonesian sentence this product exists to make true.
+Navego wins the Cursor test — the word is already in the hand: *navegokan browser Anda* is already the Indonesian sentence this product exists to make true.
 
 ## The decision
 
-- **Product name: Kemudi.** "Kemudi" (kuh-MOO-dee) — Indonesian for the helm of a vessel. Tagline (ID): **AI yang mengemudikan browser Anda.** (EN): **The AI that drives your browser.**
-- **Company line:** the legal entity is the owner's act to file; suggested PT name **PT Kemudi Anak Bangsa** (the national pattern, same honesty as gotong royong in GoTo) or keep any existing entity and rebrand the trade name only. The repo, store listing, package and site all carry Kemudi from here.
+- **Product name: Navego.** "Navego" (kuh-MOO-dee) — Indonesian for the helm of a vessel. Tagline (ID): **AI yang mengemudikan browser Anda.** (EN): **The AI that drives your browser.**
+- **Company line:** the legal entity is the owner's act to file; suggested PT name **PT Navego Anak Bangsa** (the national pattern, same honesty as gotong royong in GoTo) or keep any existing entity and rebrand the trade name only. The repo, store listing, package and site all carry Navego from here.
 - **Mark:** unchanged. The cursor-in-O (filled disc, evenodd cursor knocked out, pointing NE, #c3c4ff on #232344) is a silhouette without letters; it was accepted for exactly this property. Rewriting a mark the owner just adopted for its name independence would be brand theatre, not rebrand.
 - **Why not English:** a native word is the differentiator, not the liability. Global precedent above (all three cases); local precedent (GoTo). The market being entered buys in rupiah via Midtrans.
 
 ## What moved, and what deliberately did not
 
-**Moved (the face):** extension manifest name + action title; every popup/page brand row; popup.title/update.title; the web shim names on first run; the npm package `opera-agent-mcp` → **`kemudi`** (the legacy name keeps a working alias: `bin/kemudi.js` is also `opera-agent-mcp`, so every installed machine and script keeps working); root and local package names; the uninstall path removes both names (one spawn, both specs); the store-manifest; the landing site — 23 surfaces, og:site_name, wordmark, terminal examples (`npm i -g kemudi`, `npx -y kemudi local`); the docs; the examples; the gateway's public OpenAPI title; `check.mjs`'s manifest-name pin (re-pinned); `gates.lock` (4 pins re-pinned with the commit); `boundary-locks.mjs` (manifest.json + background.ts re-pinned with an explanatory WHY); the owner-visible action in `browser.ping` (`product: "Kemudi"`).
+**Moved (the face):** extension manifest name + action title; every popup/page brand row; popup.title/update.title; the web shim names on first run; the npm package `opera-agent-mcp` → **`navego`** (the legacy name keeps a working alias: `bin/navego.js` is also `opera-agent-mcp`, so every installed machine and script keeps working); root and local package names; the uninstall path removes both names (one spawn, both specs); the store-manifest; the landing site — 23 surfaces, og:site_name, wordmark, terminal examples (`npm i -g navego`, `npx -y navego local`); the docs; the examples; the gateway's public OpenAPI title; `check.mjs`'s manifest-name pin (re-pinned); `gates.lock` (4 pins re-pinned with the commit); `boundary-locks.mjs` (manifest.json + background.ts re-pinned with an explanatory WHY); the owner-visible action in `browser.ping` (`product: "Navego"`).
 
 **Not moved (the bones), each with its reason:**
 - the extension key and extension ID (`ofgemipoobcnbjkfanmofjbdonjapmgl`) — the signing identity updates ship against; moving it strands every paired browser.
@@ -58,20 +58,20 @@ Kemudi wins the Cursor test — the word is already in the hand: *kemudikan brow
 
 ## The one load-bearing line
 
-`extension/lib/self-update.ts` verifies the downloaded build's `manifest.name` before writing it over the installed folder. The builds installed before the rebrand check for `'Opera Agent'` — immutable on those machines. Had this flip shipped without the both-names acceptance, every folder-apply would refuse the rebranded zip forever. The check now accepts **both** spellings, with the reasoning at the line. The browser CRX update path never read this name; auto-update into Kemudi is unaffected.
+`extension/lib/self-update.ts` verifies the downloaded build's `manifest.name` before writing it over the installed folder. The builds installed before the rebrand check for `'Opera Agent'` — immutable on those machines. Had this flip shipped without the both-names acceptance, every folder-apply would refuse the rebranded zip forever. The check now accepts **both** spellings, with the reasoning at the line. The browser CRX update path never read this name; auto-update into Navego is unaffected.
 
 ## The cutover the owner finishes
 
-1. Merge the PR (gates green) — the tree then reads Kemudi everywhere.
-2. When 1.6.60 publishes (next bump, same ritual): `npm deprecate opera-agent-mcp@'<1.6.60' "renamed to kemudi — npm i -g kemudi"`.
-3. `kemudi.pages.dev` — rename (or create) the Pages project and point the same deploy at it; buy the domain (`kemudi.id` currently 301s to `www.kemudi.id`, probe it at purchase; `kemudi.com` is parked; `kemudi.ai`/`.io` do not resolve today). Keep the old domain 301'ing forever; Deals pages-internal links are relative already.
-4. Supabase dashboard → Authentication → Sign In / Up → the OAuth client's display name "Opera Agent" → "Kemudi" (it is what every consent screen shows). One field; no protocol moves.
-5. Store listing → Kemudi (store-manifest already says so; the listing text lives in the Store console).
+1. Merge the PR (gates green) — the tree then reads Navego everywhere.
+2. When 1.6.60 publishes (next bump, same ritual): `npm deprecate opera-agent-mcp@'<1.6.60' "renamed to navego — npm i -g navego"`.
+3. `navego.pages.dev` — rename (or create) the Pages project and point the same deploy at it; buy the domain (`navego.id` currently 301s to `www.navego.id`, probe it at purchase; `navego.com` is parked; `navego.ai`/`.io` do not resolve today). Keep the old domain 301'ing forever; Deals pages-internal links are relative already.
+4. Supabase dashboard → Authentication → Sign In / Up → the OAuth client's display name "Opera Agent" → "Navego" (it is what every consent screen shows). One field; no protocol moves.
+5. Store listing → Navego (store-manifest already says so; the listing text lives in the Store console).
 6. Rename the repository (Settings → General) — GitHub redirects every old link and workflow reference travels with it; update the repo description, topics, and the social cards.
-7. Midtrans: the statement descriptor on the paired storefront — customers should read KEMUDI on their bank line, not the old title. Ties into the plans/tiers rail already on this machine.
+7. Midtrans: the statement descriptor on the paired storefront — customers should read NAVEGO on their bank line, not the old title. Ties into the plans/tiers rail already on this machine.
 8. Trademark clearance in ID and US before paid acquisition; nothing legal was verified here — registry-level only (npm/PyPI/GitHub/DNS).
 9. Social handles and the press-kit mark (same evenodd geometry) as the channels open.
 
 ## What this cost
 
-95 files re-worded for the brand, 0 wires cut. The next release carries it. A stranger in December 2026 downloads **Kemudi** and never learns its first name — which is the entire point.
+95 files re-worded for the brand, 0 wires cut. The next release carries it. A stranger in December 2026 downloads **Navego** and never learns its first name — which is the entire point.

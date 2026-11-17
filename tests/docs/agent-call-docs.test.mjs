@@ -4,7 +4,7 @@
 // @dependencies: node:test, strict, node:fs, node:url, local/tools.js.
 
 // WHY THE GUIDE IS PINNED TO THE CODE.
-// A reader who asks how to call Kemudi is sent to one file.
+// A reader who asks how to call Navego is sent to one file.
 // If that file names a tool the server does not register, or a command that does not exist, the reader finds out from an error.
 
 import test from 'node:test';

@@ -4,8 +4,8 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return [
-    { title: 'Unduh — Corbin' },
-    { name: 'description', content: 'Unduh build Corbin untuk Chrome, Edge, Brave, Opera, dan Vivaldi. Pasang lewat developer mode, masuk, lalu pair device dari dashboard.' }
+    { title: 'Unduh — Navego' },
+    { name: 'description', content: 'Unduh build Navego untuk Chrome, Edge, Brave, Opera, dan Vivaldi. Pasang lewat developer mode, masuk, lalu pair device dari dashboard.' }
   ];
 }
 
@@ -58,7 +58,7 @@ export default function Unduh() {
       <SiteHeader current="/unduh.html" />
       <main>
         <div className="wrap"><header className="page-head">
-          <h1 id="dlTitle">Pasang corbin.<br />Pair. Kerja.</h1>
+          <h1 id="dlTitle">Pasang navego.<br />Pair. Kerja.</h1>
           <p className="lede">Satu build untuk lima browser. Extension tidak pernah memperbarui dirinya sendiri: setiap rilis Anda muat ulang sendiri dari halaman ini.</p>
         </header></div>
 

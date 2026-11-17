@@ -1,19 +1,19 @@
-# kemudi
+# navego
 
 Drive your own browser from an MCP client, with no dependencies. Two modes, one command:
 
 ```bash
-npm i -g kemudi
+npm i -g navego
 ```
 
 | mode | what drives | what it needs |
 |---|---|---|
-| `kemudi local` | the everyday profile on this machine, over the loopback bridge | Node 20+, the extension, a paired device |
-| `kemudi cloud` | the paired device's browser, through the hosted server | an account, an OAuth login, a paired device |
-| `kemudi auth` | sign in once, keep the token beside this install | a browser, or `OPERA_AGENT_MCP_TOKEN` |
-| `kemudi doctor` | print what is connected and what the plan allows | nothing but this install |
+| `navego local` | the everyday profile on this machine, over the loopback bridge | Node 20+, the extension, a paired device |
+| `navego cloud` | the paired device's browser, through the hosted server | an account, an OAuth login, a paired device |
+| `navego auth` | sign in once, keep the token beside this install | a browser, or `OPERA_AGENT_MCP_TOKEN` |
+| `navego doctor` | print what is connected and what the plan allows | nothing but this install |
 
-`npx kemudi` is the published form of this package. It is not on the
+`npx navego` is the published form of this package. It is not on the
 registry yet, so installing from a clone works today: clone this repository,
 `cd local`, `npm install -g .`.
 
@@ -34,7 +34,7 @@ not by reading documentation.
 
 ## Requirements
 
-Node 20 or newer, the Kemudi extension on the everyday browser, and a paired
+Node 20 or newer, the Navego extension on the everyday browser, and a paired
 device for the meter. The bridge — not a debugging port — is the road: Chrome
 refuses a debugging port on the Default profile, the extension cannot be driven
 from a headless harness, and the everyday window is the one people actually use.
@@ -47,7 +47,7 @@ device to name whose allowance the session spends.
 Then:
 
 ```bash
-kemudi doctor
+navego doctor
 ```
 
 is the one command to reach for. It prints the bridge, the device, the
