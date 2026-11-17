@@ -109,7 +109,7 @@ const CLAIMS = {
   '/harga.html': ['Rp10.000', 'Rp249.000', 'QRIS'],
   '/unduh.html': ['opera-agent-update', 'chrome', 'SHA-256'],
   '/docs.html': ['browser_status', 'opera-agent-mcp'],
-  '/mcp.html': ['opera-agent-mcp', '56'],
+  '/mcp.html': ['opera-agent-mcp', '45'],
   '/studi.html': ['transaksi-2026-09.csv', 'sha256'],
   '/bukti.html': ['sha256', 'portal.jpg'],
   '/dukungan.html': ['Dukungan'],
