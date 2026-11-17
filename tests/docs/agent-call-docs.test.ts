@@ -49,7 +49,7 @@ test('the guide says the bridge is the one road, with no transport flag left', (
   const readme = read('local/README.md');
   const bridge: Array<[string, string]> = [['the guide', guide], ['the README', readme]];
   for (const [name, text] of bridge) {
-    assert.doesNotMatch(text, /OPERA_LOCAL_TRANSPORT/, `${name} does not carry the dead flag`);
+    assert.doesNotMatch(text, /NAVEGO_LOCAL_TRANSPORT/, `${name} does not carry the dead flag`);
   }
   assert.match(guide, /loopback bridge/i, 'the guide names the road');
 });

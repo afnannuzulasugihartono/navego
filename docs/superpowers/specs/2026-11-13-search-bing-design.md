@@ -1,7 +1,7 @@
 # @last-edited: 2026-11-13 UTC+7.
 # @title: search - one call, the Bing SERP, in one structured object an agent can act on.
 # @state: the design for the search tool; the task this pins, the guarantees, and the refusal cases.
-# @dependencies: `supabase/functions/opera-agent-mcp/tools.ts`, `tests/fixtures/mcp-contract-v1.json`, `tests/fixtures/bing-serp-page1.json`.
+# @dependencies: `supabase/functions/navego-mcp/tools.ts`, `tests/fixtures/mcp-contract-v1.json`, `tests/fixtures/bing-serp-page1.json`.
 
 # WHAT THIS IS FOR
 
@@ -23,10 +23,10 @@ The shortest possible round-trip from "I know what to search for" to "here are t
     "results": [
       {
         "rank": 1,
-        "title": "Opera Agent: Private Local MCP Browser Automation Bridge",
-        "url": "https://mcpmarket.com/server/opera-agent",
+        "title": "Navego: Private Local MCP Browser Automation Bridge",
+        "url": "https://mcpmarket.com/server/navego",
         "site": "mcpmarket.com",
-        "snippet": "The Opera Agent is a private, secure bridge that connects AI agents using the Model Context Protocol (MCP) with a user's local web browser. It allows for local automation and real-time execution without routing sessions to the cloud."
+        "snippet": "The Navego is a private, secure bridge that connects AI agents using the Model Context Protocol (MCP) with a user's local web browser. It allows for local automation and real-time execution without routing sessions to the cloud."
       }
     ]
   }

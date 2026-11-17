@@ -89,7 +89,7 @@ async function ensureContent(tabId: number) {
   const tab = await chrome.tabs.get(tabId);
   if (!HTTP_URL_RE.test(tab.url || '')) throw new Error('Page primitives only support http/https tabs.');
   try {
-    const pong = await chrome.tabs.sendMessage(tabId, { scope: 'opera-agent-content', method: 'content.ping', params: {} });
+    const pong = await chrome.tabs.sendMessage(tabId, { scope: 'navego-content', method: 'content.ping', params: {} });
     if (pong?.ok) return;
   } catch (error) {
     log.debug('CONTENT_PING_FAILED', error instanceof Error && error.message ? error.message : String(error));
@@ -99,7 +99,7 @@ async function ensureContent(tabId: number) {
 
 export async function contentCall(tabId: number, method: string, params: Record<string, unknown> = {}): Promise<Record<string, unknown> | null> {
 
-  const message = { scope: 'opera-agent-content', method, params };
+  const message = { scope: 'navego-content', method, params };
   const sendWithTimeout = () => Promise.race([
     chrome.tabs.sendMessage(tabId, message),
     new Promise((_, reject) => setTimeout(() => reject(new Error('the content script did not answer within 8000ms')), 8000))
@@ -123,7 +123,7 @@ export async function contentCall(tabId: number, method: string, params: Record<
 
 export async function recordScanCall(tabId: number, method: string, params: Record<string, unknown> = {}) {
 
-  const message = { scope: 'opera-agent-record-scan', method, params };
+  const message = { scope: 'navego-record-scan', method, params };
   let response = null;
   try {
     response = await chrome.tabs.sendMessage(tabId, message);

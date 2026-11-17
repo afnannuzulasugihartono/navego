@@ -21,7 +21,7 @@ devs per bulan), satu aksi terisi per layar, dan FAQ accordion di kaki halaman.
 Tidak ada bayangan, tidak ada gradien, tidak ada kartu berwarna.
 
 Spec ini memindahkan seluruh 12 halaman ke satu kanvas gelap dengan pola
-opencode sebagai patokan ukuran, bukan sebagai salinan. Identitas Opera Agent
+opencode sebagai patokan ukuran, bukan sebagai salinan. Identitas Navego
 tetap: mint `#3ecf8e`, logo, dan Bahasa Indonesia sebagai bahasa pertama.
 
 Target keberhasilan yang dapat diukur:

@@ -34,7 +34,7 @@
 
 **Files:**
 - Modify: `extension/lib/socket-protocol.js` (`FRAME_MAX_BYTES` 1 MiB -> 4 MiB)
-- Modify: `supabase/functions/opera-agent-bridge/bridge-socket.ts` (`MAX_FRAME_BYTES` 1 MiB -> 4 MiB)
+- Modify: `supabase/functions/navego-bridge/bridge-socket.ts` (`MAX_FRAME_BYTES` 1 MiB -> 4 MiB)
 - Test: `tests/device-socket-protocol.test.mjs`, `tests/bridge-socket.test.mjs`
 
 **Interfaces:**
@@ -76,7 +76,7 @@ Expected: PASS, including the existing `>= 1.5 x MAX_RESULT_BYTES` relations.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add extension/lib/socket-protocol.js supabase/functions/opera-agent-bridge/bridge-socket.ts \
+git add extension/lib/socket-protocol.js supabase/functions/navego-bridge/bridge-socket.ts \
   tests/device-socket-protocol.test.mjs tests/bridge-socket.test.mjs
 git commit -m "Give both runtimes a four-megabyte frame, before anything else is measured against it"
 ```

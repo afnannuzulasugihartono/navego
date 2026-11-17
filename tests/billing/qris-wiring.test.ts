@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const root = new URL('../../', import.meta.url);
-const fn = fs.readFileSync(new URL('hosted/functions/opera-agent-billing/index.ts', root), 'utf8');
+const fn = fs.readFileSync(new URL('hosted/functions/navego-billing/index.ts', root), 'utf8');
 const page = fs.readFileSync(new URL('hosted/functions/_shared/invoice-page.ts', root), 'utf8');
 const tree = fs.readdirSync(new URL('hosted/functions', root), { recursive: true })
   .filter((name) => typeof name === 'string' && /\.(ts|js|json)$/.test(name))

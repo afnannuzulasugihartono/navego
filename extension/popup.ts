@@ -11,7 +11,7 @@ import { servedVersion, newerThan } from './lib/self-update.js';
 import { t, applyI18n } from './lib/i18n.js';
 import { isRecord } from './lib/guards.js';
 applyI18n(document);
-const log = globalThis.OperaAgentLog;
+const log = globalThis.NavegoLog;
 if (typeof log?.warn !== 'function') throw new Error('Agent log runtime is unavailable.');
 const $ = (id: string) => document.getElementById(id);
 
@@ -101,7 +101,7 @@ async function showServedVersion(installed: string) {
 }
 
 async function call(action: string, extra: Record<string, unknown> = {}) {
-  return chrome.runtime.sendMessage({ scope: 'opera-agent-popup', action, ...extra });
+  return chrome.runtime.sendMessage({ scope: 'navego-popup', action, ...extra });
 }
 
 // WHY THE POPUP SPEAKS TWICE.

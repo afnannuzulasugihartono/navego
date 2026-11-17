@@ -10,19 +10,19 @@
 1. Only on Windows. On any other OS it prints the Web Store path and exits 0.
 2. Detects the Chromium browsers this machine carries - Chrome, Brave, Edge and Chrome for Testing - by probing the install paths each one lives at (`local/browsers.ts`, the same table the driver uses; no second list). Chrome for Testing has no canonical install path - it ships as pinned `chromium-<rev>` zips - so the probe is a one-level wildcard over the usual cache folders instead of an exact-path guess.
 3. Writes one numbered `ExtensionInstallForcelist` policy entry per detected browser (`HKCU\Software\Policies\Google\Chrome\ExtensionInstallForcelist`, Edge and Brave paths analogous), each carrying `id;update-url`. A number is chosen against what is already in the list, and this extension's own entry is recognised at any number - foreign entries are never touched. The browser installs the extension itself on its next start; no UAC, no admin, no download dialog. **The extension cannot be disabled or removed while the policy entry stands.**
-4. Creates `%LOCALAPPDATA%\OperaAgent\{Chrome,Brave,Edge}\` only for the browsers found, containing a **verified** copy of the build (`opera-agent.zip`, sha256 checked against the `x-opera-sha256` header of the public update endpoint before the bytes are written) plus a README that explains the whole mechanism and the manual fallback. Chrome for Testing is detected but deliberately not force-installed - no verified policy path exists for the test binary - and it gets no folder; load it unpacked instead.
+4. Creates `%LOCALAPPDATA%\Navego\{Chrome,Brave,Edge}\` only for the browsers found, containing a **verified** copy of the build (`navego.zip`, sha256 checked against the `x-opera-sha256` header of the public update endpoint before the bytes are written) plus a README that explains the whole mechanism and the manual fallback. Chrome for Testing is detected but deliberately not force-installed - no verified policy path exists for the test binary - and it gets no folder; load it unpacked instead.
 5. Runs `navego doctor` and prints what remains human: sign in with `navego auth` (OAuth, one browser round trip), then click **Pasangkan browser ini** in the extension popup - the dashboard mints a single-use code and delivers it straight to the extension; nothing to type.
 
 `npm i -g navego` performs the same install silently from the
 `postinstall` hook, but only when installed globally, never in CI, and only
-when `NAVEGO_NO_INSTALL` is unset (`OPERA_AGENT_NO_INSTALL=1` still works). `NAVEGO_NO_INSTALL=1 npm i -g navego` opts out. The postinstall hook can never turn an npm install red.
+when `NAVEGO_NO_INSTALL` is unset (`NAVEGO_NO_INSTALL=1` still works). `NAVEGO_NO_INSTALL=1 npm i -g navego` opts out. The postinstall hook can never turn an npm install red.
 
 # WHAT THE UNINSTALL DOES
 
 `navego uninstall`, one command, maximum honesty:
 
 1. Deletes this extension's entries from the three `ExtensionInstallForcelist` policy lists (Chrome, Brave, Edge) - exactly the values whose data names this extension, at whatever number they landed; a foreign entry is never deleted. **The browser stops forcing the extension, but the installed copy stays** until you remove it at `chrome://extensions` (`edge://`, `brave://`). Chrome for Testing entries are not written and not touched.
-2. Deletes `%LOCALAPPDATA%\OperaAgent\` - the dedicated ChromeProfile, the verified build copies, the README, everything - unless `--keep-pair` is passed, in which case the paired-device file is the only thing kept.
+2. Deletes `%LOCALAPPDATA%\Navego\` - the dedicated ChromeProfile, the verified build copies, the README, everything - unless `--keep-pair` is passed, in which case the paired-device file is the only thing kept.
 3. Spawns a detached `npm uninstall -g navego`; the package removes itself after the process exits. If it cannot, the exact command to run is printed.
 4. Prints the one thing it cannot script away: removing the installed copy at `chrome://extensions`, or copies installed the manual developer-mode way (`Load unpacked`).
 

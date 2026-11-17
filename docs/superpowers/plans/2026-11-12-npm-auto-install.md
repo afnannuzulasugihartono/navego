@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** `npm i -g opera-agent-mcp` ships a machine that "just works", and `opera-agent-mcp uninstall` undoes all of it — the extension included, by the browser's own hand.
+**Goal:** `npm i -g navego-mcp` ships a machine that "just works", and `navego-mcp uninstall` undoes all of it — the extension included, by the browser's own hand.
 
-**Architecture:** A small set of new modules inside the published package (a platform-gated installer that probes installed browsers, writes per-user registry keys pointing at the public update manifest, drops a verified CRX backup and a README into `%LOCALAPPDATA%\OperaAgent\<Browser>\`, and a symmetrical uninstaller). A `postinstall` hook runs the installer silently and always exits 0. No browser profile is ever edited; the Secure Preferences are never touched.
+**Architecture:** A small set of new modules inside the published package (a platform-gated installer that probes installed browsers, writes per-user registry keys pointing at the public update manifest, drops a verified CRX backup and a README into `%LOCALAPPDATA%\Navego\<Browser>\`, and a symmetrical uninstaller). A `postinstall` hook runs the installer silently and always exits 0. No browser profile is ever edited; the Secure Preferences are never touched.
 
 **Tech Stack:** Node >= 20, ES modules, `child_process.execFileSync('reg', …)` for registry ops (behind a seam for tests), no new dependencies.
 
@@ -25,7 +25,7 @@
 2. **CRX download unreachable or corrupt** (offline/proxy) — no folder created, keys still written (they need no network), install still completes for the browsers whose keys were written; exit 0 in `postinstall`, exit 1 in `install` with the reason printed. Test: same file, case `download failure leaves no folder, reports reason`.
 3. **Chrome blocks the re-add after an uninstall** (sticky removal observed earlier) — uninstall prints exactly: registry-installed copies are gone after the next browser start; a profile that ever removed the extension will not silently reinstall; manual unpacked copies remove once at `chrome://extensions`. Behaviour, not code — in the printout and in `docs/install.md`.
 4. **Package installed as a dependency, not globally** — `postinstall` must not write anything. Test: `tests/postinstall.test.mjs` case `not global install exits 0 with no writes` with `npm_config_global` unset.
-5. **Uninstall of a machine that never installed anything** — all removals report `nothing to remove`, process exits 0; no folder deletion is attempted when `%LOCALAPPDATA%\OperaAgent` is absent. Test: `tests/uninstall.test.mjs` case `clean machine reports nothing, exit 0`.
+5. **Uninstall of a machine that never installed anything** — all removals report `nothing to remove`, process exits 0; no folder deletion is attempted when `%LOCALAPPDATA%\Navego` is absent. Test: `tests/uninstall.test.mjs` case `clean machine reports nothing, exit 0`.
 
 ---
 
@@ -93,7 +93,7 @@ Expected: PASS.
 
 **Interfaces:**
 - Consumes: nothing
-- Produces: `export const EXTENSION_ID = 'ofgemipoobcnbjkfanmofjbdonjapmgl'`, `export const UPDATE_URL = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl'` (inline in the module; not imported elsewhere), `export function writeExtensionKey({ vendor, exec }) → { ok, error? }` and `export function deleteExtensionKey({ vendor, exec }) → { ok, error? }` where `exec(cmd, args)` defaults to `execFileSync(cmd, args, { encoding: 'utf8' })`. `vendor` is `'chrome' | 'brave' | 'edge'` and maps to `HKCU\Software\Google\Chrome\Extensions\<id>`, `HKCU\Software\BraveSoftware\Brave-Browser\Extensions\<id>`, `HKCU\Software\Microsoft\Edge\Extensions\<id>` respectively. Values: `update_url` → `UPDATE_URL`, type `REG_SZ`, via `reg add <key> /v update_url /t REG_SZ /d <url> /f`; delete via `reg delete <key> /f`.
+- Produces: `export const EXTENSION_ID = 'ofgemipoobcnbjkfanmofjbdonjapmgl'`, `export const UPDATE_URL = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl'` (inline in the module; not imported elsewhere), `export function writeExtensionKey({ vendor, exec }) → { ok, error? }` and `export function deleteExtensionKey({ vendor, exec }) → { ok, error? }` where `exec(cmd, args)` defaults to `execFileSync(cmd, args, { encoding: 'utf8' })`. `vendor` is `'chrome' | 'brave' | 'edge'` and maps to `HKCU\Software\Google\Chrome\Extensions\<id>`, `HKCU\Software\BraveSoftware\Brave-Browser\Extensions\<id>`, `HKCU\Software\Microsoft\Edge\Extensions\<id>` respectively. Values: `update_url` → `UPDATE_URL`, type `REG_SZ`, via `reg add <key> /v update_url /t REG_SZ /d <url> /f`; delete via `reg delete <key> /f`.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -149,7 +149,7 @@ Expected: FAIL — module not found.
 
 **Interfaces:**
 - Consumes: `probeBrowsers` (Task 1), `writeExtensionKey`, `deleteExtensionKey` (Task 2).
-- Produces: `export async function fetchVerifiedCrx({ url, sha256Header, fetchImpl = globalThis.fetch, headThrows = false }) → Buffer` and `export function installCrxInto(root, browser, bytes, readme) → { folder, crx }`. `install()` orchestration (Task 4) consumes both. `fetchVerifiedCrx` reads the `x-opera-sha256` response header from the HEAD request to `url` (the same CRX URL the unduh page documents), then `GET`s it, verifies the bytes match the sha256 and start with the bytes `43 72 32 34` (`Cr24`), throws otherwise. `installCrxInto` creates `<root>\<browser>\` (`%LOCALAPPDATA%\OperaAgent` by default), writes `extension.crx` and `README.txt`, refuses (no folder) if bytes fail verification.
+- Produces: `export async function fetchVerifiedCrx({ url, sha256Header, fetchImpl = globalThis.fetch, headThrows = false }) → Buffer` and `export function installCrxInto(root, browser, bytes, readme) → { folder, crx }`. `install()` orchestration (Task 4) consumes both. `fetchVerifiedCrx` reads the `x-opera-sha256` response header from the HEAD request to `url` (the same CRX URL the unduh page documents), then `GET`s it, verifies the bytes match the sha256 and start with the bytes `43 72 32 34` (`Cr24`), throws otherwise. `installCrxInto` creates `<root>\<browser>\` (`%LOCALAPPDATA%\Navego` by default), writes `extension.crx` and `README.txt`, refuses (no folder) if bytes fail verification.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -173,21 +173,21 @@ Expected: FAIL — module not found.
 
 `README.txt` content is fixed:
 ```
-Opera Agent for <browser>
+Navego for <browser>
 
 This folder keeps a verified copy of the extension in case the browser
 cannot install it from the registry. To install manually: chrome://extensions
 (edge/brave equivalents) -> Developer mode -> Load unpacked -> this folder's
-parent in this OperaAgent tree.
+parent in this Navego tree.
 
 How the automatic install works: the browser reads HKCU\Software\...\Extensions\<id>,
 fetches the update manifest, downloads the same CRX, and installs it. Deleting the
 key removes the extension on next start.
 
-Uninstall: run `opera-agent-mcp uninstall`, or double-click
+Uninstall: run `navego-mcp uninstall`, or double-click
 store/extension-registry-uninstall.reg from the repository.
-Pairing: open the extension -> Sign in with the Opera Agent dashboard, or run
-`opera-agent-mcp auth`.
+Pairing: open the extension -> Sign in with the Navego dashboard, or run
+`navego-mcp auth`.
 ```
 
 - [ ] **Step 4: Add `install.js` to `local/package.json` `files`**
@@ -196,7 +196,7 @@ Pairing: open the extension -> Sign in with the Opera Agent dashboard, or run
 
 - [ ] **Step 6: Commit**
 
-`git add local/install.js local/package.json tests/install.test.mjs && git commit -m "feat(install): download and verify the CRX, lay out the OperaAgent folder"`
+`git add local/install.js local/package.json tests/install.test.mjs && git commit -m "feat(install): download and verify the CRX, lay out the Navego folder"`
 
 ### Task 4: Orchestrator `install()` in `local/install.js`
 
@@ -205,8 +205,8 @@ Pairing: open the extension -> Sign in with the Opera Agent dashboard, or run
 - Test: `tests/install.test.mjs` (append)
 
 **Interfaces:**
-- Consumes: everything from Task 3, plus `update.xml`-derived constants: `CRX_URL = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update/opera-agent-ofgemipoobcnbjkfanmofjbdonjapmgl-1.6.44.crx'`, `SHA256_HEADER = 'x-opera-sha256'`.
-- Produces: `export async function install({ env = process.env, exec = defaultExec, fetchImpl = globalThis.fetch, print = console.error, root = process.env.LOCALAPPDATA + '\\OperaAgent' } = {}) → { ok: boolean, browsers: Array<{ id, keyWritten, crx: 'written' | 'failed' | 'skipped' }>, message: string }`. Non-Windows or zero browsers → `{ ok: false, browsers: [], message: <instructions> }` and no side effects.
+- Consumes: everything from Task 3, plus `update.xml`-derived constants: `CRX_URL = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/navego-ofgemipoobcnbjkfanmofjbdonjapmgl-1.6.44.crx'`, `SHA256_HEADER = 'x-opera-sha256'`.
+- Produces: `export async function install({ env = process.env, exec = defaultExec, fetchImpl = globalThis.fetch, print = console.error, root = process.env.LOCALAPPDATA + '\\Navego' } = {}) → { ok: boolean, browsers: Array<{ id, keyWritten, crx: 'written' | 'failed' | 'skipped' }>, message: string }`. Non-Windows or zero browsers → `{ ok: false, browsers: [], message: <instructions> }` and no side effects.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -223,7 +223,7 @@ test('quiet mode (used by postinstall) produces no stdout/stderr of its own; cal
 
 - [ ] **Step 3: Implement `install()`**
 
-Flow: `if (env.PLATFORM not win32)` — actually probe `process.platform` via options. Steps: detect; if empty → message + `{ ok:false, browsers: [], message }`. For each detected browser: `writeExtensionKey`; collect. For each browser whose key was written: `fetchVerifiedCrx` + `installCrxInto`. Compose the final message lines: which browsers registered, which CRX written/failed, and the one remaining human step ("Sign in with `opera-agent-mcp auth`, then open the extension and pair the device"). Return the report. Never throws; every error lands in the report.
+Flow: `if (env.PLATFORM not win32)` — actually probe `process.platform` via options. Steps: detect; if empty → message + `{ ok:false, browsers: [], message }`. For each detected browser: `writeExtensionKey`; collect. For each browser whose key was written: `fetchVerifiedCrx` + `installCrxInto`. Compose the final message lines: which browsers registered, which CRX written/failed, and the one remaining human step ("Sign in with `navego-mcp auth`, then open the extension and pair the device"). Return the report. Never throws; every error lands in the report.
 
 - [ ] **Step 4: Add README/spec note** pointing at `docs/registry-install.md` — no code.
 
@@ -241,14 +241,14 @@ Flow: `if (env.PLATFORM not win32)` — actually probe `process.platform` via op
 
 **Interfaces:**
 - Consumes: `deleteExtensionKey` (Task 2), same folder root logic as Task 3.
-- Produces: `export async function uninstall({ keepPair = false, exec = defaultExec, spawn = defaultSpawn, root } = {}) → { ok: boolean, steps: Array<{ step: string, result: string }> }`. `spawn` is injectable; production implementation spawns `npm uninstall -g opera-agent-mcp` detached with `setsid`/`detached: true`, does not wait; output discards.
+- Produces: `export async function uninstall({ keepPair = false, exec = defaultExec, spawn = defaultSpawn, root } = {}) → { ok: boolean, steps: Array<{ step: string, result: string }> }`. `spawn` is injectable; production implementation spawns `npm uninstall -g navego-mcp` detached with `setsid`/`detached: true`, does not wait; output discards.
 
 - [ ] **Step 1: Write the failing tests**
 
 ```js
 test('clean machine reports nothing removed, exit ok');
 test('deletes all three keys and reports each');
-test('deletes the OperaAgent folder; keepPair keeps device file, everything else still deleted');
+test('deletes the Navego folder; keepPair keeps device file, everything else still deleted');
 test('spawns npm uninstall -g with detached:true');
 test('spawn failure is reported, process still exits ok');
 test('prints browser Remove instructions for developer-mode copies');
@@ -282,7 +282,7 @@ Steps in order: delete the three keys; if `<root>` exists delete it, or with kee
 ```js
 test('not global install: exits 0, install not called');
 test('CI=true: exits 0, install not called');
-test('OPERA_AGENT_NO_INSTALL=1: exits 0, install not called');
+test('NAVEGO_NO_INSTALL=1: exits 0, install not called');
 test('global install, install resolves true: exits 0, one line printed');
 test('global install, install throws: exits 0 (spawned env simulation)');
 ```
@@ -294,14 +294,14 @@ test('global install, install throws: exits 0 (spawned env simulation)');
 ```js
 #!/usr/bin/env node
 const isGlobal = process.env.npm_config_global === 'true' || process.env.npm_config_global_old === 'true';
-if (process.env.CI === 'true' || process.env.OPERA_AGENT_NO_INSTALL === '1' || !isGlobal) process.exit(0);
+if (process.env.CI === 'true' || process.env.NAVEGO_NO_INSTALL === '1' || !isGlobal) process.exit(0);
 try {
   const { install } = await import('./install.js');
   const report = await install({ print: () => {} });
-  if (report.browsers.length) process.stdout.write(`opera-agent-mcp: extension registered in ${report.browsers.map((b) => b.id).join(', ')}. Run \`opera-agent-mcp install\` for the full report.\n`);
-  else process.stdout.write('opera-agent-mcp: no Chrome/Brave/Edge found on this machine; see docs/registry-install.md for the Web Store path.\n');
+  if (report.browsers.length) process.stdout.write(`navego-mcp: extension registered in ${report.browsers.map((b) => b.id).join(', ')}. Run \`navego-mcp install\` for the full report.\n`);
+  else process.stdout.write('navego-mcp: no Chrome/Brave/Edge found on this machine; see docs/registry-install.md for the Web Store path.\n');
 } catch (error) {
-  process.stdout.write('opera-agent-mcp: postinstall skipped (' + String(error?.message || error) + ')\n');
+  process.stdout.write('navego-mcp: postinstall skipped (' + String(error?.message || error) + ')\n');
 }
 process.exit(0);
 ```
@@ -316,10 +316,10 @@ CI on the package does not run `npm install` of itself, so this test simulates v
 
 `git add local/postinstall.mjs local/package.json tests/postinstall.test.mjs && git commit -m "feat(install): postinstall registers the extension, silently and safely"`
 
-### Task 7: Wire `install` and `uninstall` into `bin/opera-agent-mcp.js` + `local/package.json` files
+### Task 7: Wire `install` and `uninstall` into `bin/navego-mcp.js` + `local/package.json` files
 
 **Files:**
-- Modify: `local/bin/opera-agent-mcp.js`
+- Modify: `local/bin/navego-mcp.js`
 - Modify: `local/package.json`
 - Test: none (behaviour verified in Task 9)
 
@@ -327,7 +327,7 @@ CI on the package does not run `npm install` of itself, so this test simulates v
 
 ```
   install    detect browsers, register the extension, drop a verified CRX backup
-  uninstall  remove the keys, the OperaAgent folder, the package itself; prints what it cannot remove
+  uninstall  remove the keys, the Navego folder, the package itself; prints what it cannot remove
 ```
 
 - [ ] **Step 2: Dispatch** by cloning the existing `doctor` branch shape: `install` → `import('../install.js').then(m => process.exitCode = await m.installFromCli())`; `uninstall` → same for `uninstallFromCli()`. `installFromCli`/`uninstallFromCli` are thin wrappers around `install()`/`uninstall()` that print the report and translate `report.ok` to exit codes (0 success, 1 any failure, never throws).
@@ -338,7 +338,7 @@ CI on the package does not run `npm install` of itself, so this test simulates v
 
 - [ ] **Step 5: Commit**
 
-`git add local/bin/opera-agent-mcp.js local/package.json && git commit -m "feat(install): install and uninstall are subcommands of the everyday command"`
+`git add local/bin/navego-mcp.js local/package.json && git commit -m "feat(install): install and uninstall are subcommands of the everyday command"`
 
 ### Task 8: Docs + handoff
 
@@ -346,10 +346,10 @@ CI on the package does not run `npm install` of itself, so this test simulates v
 - Create: `docs/install.md`
 - Modify: `docs/registry-install.md` (link the command path alongside the `.reg`)
 - Modify: `docs/handoff.md` (npm 1.6.46 install story + the uninstall promise + registry status)
-- Modify: `README.md` (one line under the npm section: "`npx opera-agent-mcp install` registers the extension too")
+- Modify: `README.md` (one line under the npm section: "`npx navego-mcp install` registers the extension too")
 - Test: none
 
-`docs/install.md` content outline — verified measurements (Chrome 153.0.8010.36, Brave 157.1.99.56, Edge x86; isolated throwaway profiles; deletion removes the extension; Chrome sticky behaviour; the everyday profile is never edited); the command sequence (`npm i -g opera-agent-mcp`, restart browsers, `opera-agent-mcp auth`, done); uninstall (`opera-agent-mcp uninstall`, restart browsers, extension gone); the `.reg` fallback; the Windows-only honesty; the manual unpacked path for people whose policy-managed machine refuses.
+`docs/install.md` content outline — verified measurements (Chrome 153.0.8010.36, Brave 157.1.99.56, Edge x86; isolated throwaway profiles; deletion removes the extension; Chrome sticky behaviour; the everyday profile is never edited); the command sequence (`npm i -g navego-mcp`, restart browsers, `navego-mcp auth`, done); uninstall (`navego-mcp uninstall`, restart browsers, extension gone); the `.reg` fallback; the Windows-only honesty; the manual unpacked path for people whose policy-managed machine refuses.
 
 - [ ] **Step 1: Write `docs/install.md`**
 - [ ] **Step 2: Point `docs/registry-install.md` at it**
@@ -376,7 +376,7 @@ CI on the package does not run `npm install` of itself, so this test simulates v
 - [ ] **Step 1: push branch → watch PR #272 gates (unit, browser, secret-scan, SonarCloud)**
 - [ ] **Step 2: squash-merge PR #272**
 - [ ] **Step 3: dispatch `publish-npm.yml -f version=1.6.46`**
-- [ ] **Step 4: In an isolated fresh profile on this machine: install via the published package path (`npm install -g` into a temp prefix), confirm the extension appears on first launch; then `opera-agent-mcp uninstall`, confirm the extension folder is gone and the registry keys are gone.**
+- [ ] **Step 4: In an isolated fresh profile on this machine: install via the published package path (`npm install -g` into a temp prefix), confirm the extension appears on first launch; then `navego-mcp uninstall`, confirm the extension folder is gone and the registry keys are gone.**
 - [ ] **Step 5: Update handoff with the outcome**
 - [ ] **Step 6: cleanup worktrees (`node scripts/agent-worktree.mjs remove npm-auto-install`)**
 
@@ -384,6 +384,6 @@ CI on the package does not run `npm install` of itself, so this test simulates v
 
 ## Plan self-review
 
-- **Spec coverage:** Task 1 (probe) ✓, Task 2 (registry write/delete) ✓, Task 3 (CRX download + layout + README + x-opera-sha256 + Cr24 magic) ✓, Task 4 (install orchestrator: Windows gate, detection, keys, folders, doctor wrap-up; failures logged, never throws) ✓, Task 5 (uninstall: keys, folder, detached npm uninstall, browser-removal message) ✓, Task 6 (postinstall guards: global/CI/opt-out, never throws) ✓, Task 7 (bin wiring, files list) ✓, Task 8 (docs + handoff + README) ✓, Task 9 (release 1.6.46) ✓, Task 10 (merge, dispatch, live verify) ✓. Precision points from the spec carried: header name `x-opera-sha256`, magic bytes check, `OPERA_AGENT_NO_INSTALL`, `--keep-pair`, the Windows-only honesty, update manifest stays 1.6.44.
+- **Spec coverage:** Task 1 (probe) ✓, Task 2 (registry write/delete) ✓, Task 3 (CRX download + layout + README + x-opera-sha256 + Cr24 magic) ✓, Task 4 (install orchestrator: Windows gate, detection, keys, folders, doctor wrap-up; failures logged, never throws) ✓, Task 5 (uninstall: keys, folder, detached npm uninstall, browser-removal message) ✓, Task 6 (postinstall guards: global/CI/opt-out, never throws) ✓, Task 7 (bin wiring, files list) ✓, Task 8 (docs + handoff + README) ✓, Task 9 (release 1.6.46) ✓, Task 10 (merge, dispatch, live verify) ✓. Precision points from the spec carried: header name `x-opera-sha256`, magic bytes check, `NAVEGO_NO_INSTALL`, `--keep-pair`, the Windows-only honesty, update manifest stays 1.6.44.
 - **Proportion:** 10 tasks, mostly 1 file + 1 test each; Task 4 is the only orchestrator and stays thin by construction.
 - **Names locked:** `probeBrowsers`, `BROWSER_CANDIDATES`, `writeExtensionKey`/`deleteExtensionKey`, `fetchVerifiedCrx`, `installCrxInto`, `install()`, `uninstall()`, `installFromCli`/`uninstallFromCli`. Exports and signatures match across Tasks 1–7.

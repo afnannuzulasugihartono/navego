@@ -49,12 +49,12 @@ function cleanFilename(value: unknown, tabUrl: string): string {
   try {
     const host = new URL(tabUrl).hostname.replace(/[^a-z0-9.-]/gi, '-');
 
-    if (host) return `opera-agent-scan-${host}-${Date.now()}.html`;
+    if (host) return `navego-scan-${host}-${Date.now()}.html`;
   } catch {
 
   }
 
-  return `opera-agent-scan-${Date.now()}.html`;
+  return `navego-scan-${Date.now()}.html`;
 }
 
 function base64(bytes: Uint8Array): string {

@@ -157,7 +157,7 @@ test('the signature is read from the field the provider sends, and the field is 
   assert.match(shared, /notification\.signature_key\s*\?\?/, 'the provider field is read first, and the alias is the fallback');
 
   // The same field name decides whether a notification is recognised at all.
-  const fn = fs.readFileSync(new URL('../../hosted/functions/opera-agent-billing/index.ts', import.meta.url), 'utf8');
+  const fn = fs.readFileSync(new URL('../../hosted/functions/navego-billing/index.ts', import.meta.url), 'utf8');
   assert.match(fn, /signature_key/, 'the function must look for the field the provider sends');
   assert.doesNotMatch(fn, /Boolean\(body\.signature\)/, 'looking for a field the provider never sends turns every notification into "unknown action"');
   assert.match(fn, /Boolean\(body\.order_id\) && Boolean\(body\.status_code\)/, 'a notification is recognised by what it says happened, not by carrying a signature');
@@ -230,7 +230,7 @@ test('a transaction the provider says does not exist is read from the body, wher
   assert.equal(providerSaysMissing({ status_code: '401', status_message: 'Access denied' }), false, 'a refused key is not a missing transaction');
   assert.equal(providerSaysMissing(null), false);
 
-  const fn = fs.readFileSync(new URL('../../hosted/functions/opera-agent-billing/index.ts', import.meta.url), 'utf8');
+  const fn = fs.readFileSync(new URL('../../hosted/functions/navego-billing/index.ts', import.meta.url), 'utf8');
   assert.match(fn, /if \(providerSaysMissing\(payload\)\) return \{ state: "closed", status: "not found" \}/,
     'the call site treats a missing transaction as nothing to close before it judges the status');
   assert.match(fn, /status_code \$\{code\}/, 'a refused status names the provider code an operator needs');
@@ -281,7 +281,7 @@ test('a settlement carries the method and the transaction the provider named', (
 });
 
 test('a refused signature asks the provider, and the provider formula is the only one believed', () => {
-  const fn = fs.readFileSync(new URL('../../hosted/functions/opera-agent-billing/index.ts', import.meta.url), 'utf8');
+  const fn = fs.readFileSync(new URL('../../hosted/functions/navego-billing/index.ts', import.meta.url), 'utf8');
   assert.match(fn, /providerSaysSettled\(String\(notification\.order_id/, 'a refusal must become a question, not an ending');
   assert.match(fn, /notificationSignatureValid\(notification, MIDTRANS_SERVER_KEY\)/, 'the signature is checked by the provider rule');
   assert.doesNotMatch(fn, /whichReadingSigned/, 're-reading the key cannot substitute for the formula the provider uses');
@@ -301,7 +301,7 @@ test('the shape of a stored secret names a paste artifact without the secret', (
 });
 
 test('every notification that arrives is written down, refused or accepted', () => {
-  const fn = fs.readFileSync(new URL('../../hosted/functions/opera-agent-billing/index.ts', import.meta.url), 'utf8');
+  const fn = fs.readFileSync(new URL('../../hosted/functions/navego-billing/index.ts', import.meta.url), 'utf8');
   const calls = fn.match(/await noteNotification\(/g) || [];
   assert.equal(calls.length, 2, 'the refused branch and the accepted branch both write the row');
   assert.match(fn, /from\("opera_notification_log"\)/, 'the row goes to the table the migration created');
@@ -548,7 +548,7 @@ test('the charge URL follows the stated environment, and is never inferred from 
 });
 
 test('the snap charge call passes the customer the function actually has', () => {
-  const source = fs.readFileSync(new URL('../../hosted/functions/opera-agent-billing/index.ts', import.meta.url), 'utf8');
+  const source = fs.readFileSync(new URL('../../hosted/functions/navego-billing/index.ts', import.meta.url), 'utf8');
   const from = source.indexOf('snapChargeRequest({');
   assert.ok(from >= 0, 'the billing function must call the shared charge builder');
   const call = source.slice(from, source.indexOf('});', from));
@@ -568,7 +568,7 @@ test('the snap charge call passes the customer the function actually has', () =>
 // A helper test says nothing about a call that reads the wrong row, so the three rules that keep one payable transaction per invoice are named here.
 
 test('one invoice keeps one payable transaction, and an older attempt cannot kill the current link', () => {
-  const fn = fs.readFileSync(new URL('../../hosted/functions/opera-agent-billing/index.ts', import.meta.url), 'utf8');
+  const fn = fs.readFileSync(new URL('../../hosted/functions/navego-billing/index.ts', import.meta.url), 'utf8');
   assert.match(fn, /contains\("provider_order_ids", \[orderId\]\)/, 'a notification is placed by every attempt the invoice opened');
   assert.doesNotMatch(fn, /eq\("provider_order_id", orderId\)/, 'the scalar is one attempt, not the index');
   assert.match(fn, /String\(invoice\.provider_order_id \|\| ""\) === orderId/, 'only the current attempt may clear the link');
@@ -582,10 +582,10 @@ test('one invoice keeps one payable transaction, and an older attempt cannot kil
 // The site serves the same page through site/public/_worker.js, so the link an operator hands out is built from BILLING_PAGE_URL, and the function's URL remains only the fallback for a deployment that never set it.
 
 test('the operator link names the page host, and falls back to the function', () => {
-  const fn = fs.readFileSync(new URL('../../hosted/functions/opera-agent-billing/index.ts', import.meta.url), 'utf8');
-  assert.match(fn, /BILLING_PAGE_URL = \(Deno\.env\.get\("BILLING_PAGE_URL"\) \|\| ""\)\.replace\(\/\\\/\+\$\/, ""\)/,
-    'the setting is read once and its trailing slash cannot double the page path');
-  assert.match(fn, /const base = BILLING_PAGE_URL \|\| `\$\{SUPABASE_URL\}\/functions\/v1\/opera-agent-billing`/,
+  const fn = fs.readFileSync(new URL('../../hosted/functions/navego-billing/index.ts', import.meta.url), 'utf8');
+  assert.match(fn, /let value = \(Deno\.env\.get\("BILLING_PAGE_URL"\) \|\| ""\);\s*while \(value\.endsWith\("\/"\)\) value = value\.slice\(0, -1\);\s*return value;\s*}\)\(\);/,
+    'the setting is read once and its trailing slashes are stripped inline without a regex');
+  assert.match(fn, /const base = BILLING_PAGE_URL \|\| `\$\{SUPABASE_URL\}\/functions\/v1\/navego-billing`/,
     'a deployment without the setting still answers with a link that works');
   assert.match(fn, /const link = `\$\{base\}\?invoice_id=\$\{encodeURIComponent\(out\.invoice\.id\)\}&token=\$\{out\.token\}`/,
     'the link carries the invoice and the token, encoded');

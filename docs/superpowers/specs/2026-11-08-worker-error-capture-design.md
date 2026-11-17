@@ -21,7 +21,7 @@ Keputusan yang mengikat (hasil brainstorming 2026-11-08):
 
 ## Non-goals
 
-- Tidak menangkap error halaman (content script). Itu tetap jalur `OperaAgentLog` yang sudah ada.
+- Tidak menangkap error halaman (content script). Itu tetap jalur `NavegoLog` yang sudah ada.
 - Tidak menyimpan stack trace, tidak mengirim telemetry ke server, tidak menulis ke dashboard.
 - Tidak mengubah bentuk `bridge.lastError`, `connectionState.lastError`, atau ring buffer 200 entri.
 - Tidak menangkap error yang sudah ditangani dan **tidak** dinamai (mis. `catch {}` kosong) — itu pekerjaan audit tersendiri.

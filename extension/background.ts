@@ -15,7 +15,7 @@ import { isRecord } from './lib/guards.js';
 
 import './role-reconcile.js';
 import { isPrivateTab } from './worker/private-tabs.js';
-const { axRoleIndex, reconcileElements, hasRoleGap } = globalThis.OperaAgentRoleReconcile ?? { axRoleIndex: undefined, reconcileElements: undefined, hasRoleGap: undefined };
+const { axRoleIndex, reconcileElements, hasRoleGap } = globalThis.NavegoRoleReconcile ?? { axRoleIndex: undefined, reconcileElements: undefined, hasRoleGap: undefined };
 
 import { log } from './lib/log.js';
 import { popupsSince } from './lib/popup-events.js';

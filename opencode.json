@@ -46,6 +46,6 @@
   },
   "plugins": [
     "{env:USERPROFILE}/.config/opencode/plugins.project/workflow",
-    "{env:USERPROFILE}/.config/opencode/plugins.project/opera-agent"
+    "{env:USERPROFILE}/.config/opencode/plugins.project/navego"
   ]
 }

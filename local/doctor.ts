@@ -1,25 +1,42 @@
-// @last-edited: 2026-11-09 UTC+7.
-// @title: doctor - the operator's one question about this machine, answered in words.
+// @last-edited: 2026-11-18 UTC+7.
+// @title: doctor - the operator's one question about this machine, answered in words and in JSON.
 // @state: the bridge's state, the device's meter, the pairing, the cloud login, and the CRX link.
+// The --json flag emits the same answers as a single object for MCP clients and scripts.
 // @dependencies: ./wallet-client.js, ./oauth.js, ./lib/endpoints.js.
 
 // WHY THIS FILE EXISTS
 
 // An install that cannot say what it is doing misleads the operator into debugging the wrong thing: a missing pairing looks like a broken install, and a refused meter looks like a broken extension.
-// The doctor reads the only state that is real - the loopback bridge's own health answer, the paired device file, and the cloud login - and prints one line per answer, plus the one fix that applies.
+// The doctor reads the only state that is real - the loopback bridge's own health answer, the paired device file, and the cloud login - and prints one line per answer plus the one fix that applies, or emits the same thing as JSON for scripts.
 
 import { readDevice } from './wallet-client.js';
 import { readStoredToken } from './oauth.js';
 import { resolveBridgeToken } from './bridge-token.js';
 import { UPDATE_BASE_URL } from './lib/endpoints.js';
 
-const CRX_URL = `${UPDATE_BASE_URL}/download/opera-agent.crx`;
+const CRX_URL = `${UPDATE_BASE_URL}/download/navego.crx`;
 const PROBE_TIMEOUT_MS = 2000;
 
 interface BridgeProbe {
   ok: boolean;
   error?: string;
   health?: unknown;
+}
+
+export interface DoctorReport {
+  ready: boolean;
+  port: number;
+  deviceFile: string | null;
+  cloudLogin: 'token' | 'signed-in' | 'none';
+  bridge: {
+    ok: boolean;
+    devices: Array<Record<string, unknown>>;
+    linked: boolean;
+    refusal: string | null;
+    preferredSlot: number | null;
+  };
+  problems: string[];
+  crxUrl: string;
 }
 
 async function probeBridge(port: number, fetchImpl: typeof fetch): Promise<BridgeProbe> {
@@ -32,30 +49,75 @@ async function probeBridge(port: number, fetchImpl: typeof fetch): Promise<Bridg
   }
 }
 
-export async function doctor({ env = process.env, stdout = process.stdout, fetchImpl = fetch }: { env?: NodeJS.ProcessEnv; stdout?: { write(chunk: string): unknown }; fetchImpl?: typeof fetch } = {}): Promise<number> {
-  const port = Number(env.OPERA_BRIDGE_PORT || 9451);
-  const home = typeof env.OPERA_AGENT_HOME === 'string' ? env.OPERA_AGENT_HOME : undefined;
+export async function doctor({ env = process.env, stdout = process.stdout, fetchImpl = fetch, args = [] }: { env?: NodeJS.ProcessEnv; stdout?: { write(chunk: string): unknown }; fetchImpl?: typeof fetch; args?: readonly string[] } = {}): Promise<number> {
+  const port = Number(env.NAVEGO_BRIDGE_PORT || 9451);
+  const home = typeof env.NAVEGO_HOME === 'string' ? env.NAVEGO_HOME : undefined;
+  const jsonMode = args.includes('--json');
   const lines: string[] = [];
   const problems: string[] = [];
   const say = (label: string, value: unknown) => lines.push(`${label.padEnd(14)}${String(value)}`);
 
   const paired = readDevice(home === undefined ? {} : { home });
+
+  const envToken = typeof env.NAVEGO_MCP_TOKEN === 'string' && env.NAVEGO_MCP_TOKEN.trim();
+  const stored = envToken ? null : readStoredToken(env);
+
+  const probe = await probeBridge(port, fetchImpl);
+
+  const deviceFile: DoctorReport['deviceFile'] = paired ? paired.deviceName : null;
+
+  const cloudLogin: DoctorReport['cloudLogin'] = envToken ? 'token' : stored ? 'signed-in' : 'none';
+
+  const bridgeOk = probe.ok;
+  if (!bridgeOk) {
+    problems.push('start the everyday browser with the Navego extension installed');
+  } else {
+    const healthForDevices = probe.health as Record<string, unknown> | undefined;
+    const devicesRaw = Array.isArray(healthForDevices?.devices) ? (healthForDevices?.devices as Array<Record<string, unknown>>) : [];
+    const linked = healthForDevices?.linked === true;
+    const refusal = typeof healthForDevices?.meterRefusal === 'string' && healthForDevices.meterRefusal.trim() ? (healthForDevices.meterRefusal as string).trim() : null;
+    if (refusal) problems.push('the meter refused the session; update the extension to the current release and reload it');
+    else if (!devicesRaw.length && !linked) problems.push('the extension is not linked to this bridge; reload the everyday browser with Navego installed');
+    else if (!devicesRaw.length) problems.push('the bridge runs pre-meter code; restart the driver process so it can report the session');
+    for (const device of devicesRaw) {
+      if (!device?.meter) {
+        problems.push('reload the everyday browser so its hello reaches the bridge');
+        break;
+      }
+    }
+  }
+
+  if (jsonMode) {
+    const healthRecord = probe.health as Record<string, unknown> | undefined;
+    const devicesOut = Array.isArray(healthRecord?.devices) ? (healthRecord?.devices as Array<Record<string, unknown>>) : [];
+    const linkedOut = healthRecord?.linked === true;
+    const refusalOut = typeof healthRecord?.meterRefusal === 'string' && (healthRecord.meterRefusal as string).trim() ? (healthRecord.meterRefusal as string).trim() : null;
+    const preferRaw = healthRecord?.preferredSlot as unknown;
+    const report: DoctorReport = {
+      ready: problems.length === 0,
+      port,
+      deviceFile,
+      cloudLogin,
+      bridge: { ok: bridgeOk, devices: devicesOut, linked: linkedOut, refusal: refusalOut, preferredSlot: typeof preferRaw === 'number' ? preferRaw : null },
+      problems,
+      crxUrl: CRX_URL,
+    };
+    stdout.write(JSON.stringify(report, null, 2) + '\n');
+    return report.ready ? 0 : 1;
+  }
+
   say('device file', paired ? `paired as ${paired.deviceName} (wallet and hosted tools use it)` : 'none (only the wallet and hosted tools need it)');
 
-  const envToken = typeof env.OPERA_AGENT_MCP_TOKEN === 'string' && env.OPERA_AGENT_MCP_TOKEN.trim();
-  const stored = envToken ? null : readStoredToken(env);
   if (envToken) {
-    say('cloud login', 'OPERA_AGENT_MCP_TOKEN (a static token from the environment)');
+    say('cloud login', 'NAVEGO_MCP_TOKEN (a static token from the environment)');
   } else if (stored) {
     say('cloud login', `signed in (token expires ${new Date(Number(stored.expires_at) || 0).toISOString()})`);
   } else {
-    say('cloud login', 'not signed in — cloud mode needs it (`navego auth`, or OPERA_AGENT_MCP_TOKEN)');
+    say('cloud login', 'not signed in - cloud mode needs it (`navego auth`, or NAVEGO_MCP_TOKEN)');
   }
 
-  const probe = await probeBridge(port, fetchImpl);
   if (!probe.ok) {
     say('bridge', `not listening on 127.0.0.1:${port} (${probe.error})`);
-    problems.push('start the everyday browser with the Navego extension installed');
   } else {
     const health = (probe.health ?? {}) as Record<string, unknown>;
     const devices = (Array.isArray(health.devices) ? health.devices : []) as Array<Record<string, unknown>>;
@@ -64,18 +126,12 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
     say('bridge', devices.length
       ? `listening on 127.0.0.1:${port}; ${devices.length} device(s) linked`
       : linked
-        ? `listening on 127.0.0.1:${port}; linked to a bridge from before the meter — restart the driver and reload the extension`
+        ? `listening on 127.0.0.1:${port}; linked to a bridge from before the meter - restart the driver and reload the extension`
         : `listening on 127.0.0.1:${port}; nothing linked`);
     if (refusal) {
       say('meter', refusal);
-      problems.push('the meter refused the session — update the extension to 1.6.32 (the everyday browser sends its paired credentials there) and reload it');
     }
-    if (!devices.length && !refusal) {
-      problems.push(linked
-        ? 'the bridge runs pre-meter code — restart the driver process so it can report the session'
-        : 'the extension is not linked to this bridge; reload the everyday browser with Navego installed');
-    }
-    const preferRaw = (health as Record<string, unknown>).preferredSlot;
+    const preferRaw = health.preferredSlot as unknown;
     say('preferred', typeof preferRaw === 'number' ? `slot ${preferRaw} (tab-less commands follow it)` : 'none (tab-less commands follow the first ready browser)');
     for (const device of devices) {
       const slot = device?.slot ?? '?';
@@ -87,7 +143,6 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
         say('  daily quota', `${meter.dailyQuota} per day (${meter.usedToday ?? 0} used today across surfaces, ${meter.sent ?? 0} this session, ${meter.remaining ?? 0} left)`);
       } else {
         say('  meter', 'no session metered yet (a fresh bridge has not heard a hello)');
-        problems.push('reload the everyday browser so its hello reaches the bridge');
       }
     }
   }

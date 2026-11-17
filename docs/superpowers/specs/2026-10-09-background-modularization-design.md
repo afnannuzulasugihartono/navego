@@ -259,7 +259,7 @@ region yang dipindah: `popupLog`, `popupActionStack`, `POPUP_LOG_MAX_AGE_MS`,
 
 ```js
 import './agent-log.js';
-export const log = globalThis.OperaAgentLog || {};
+export const log = globalThis.NavegoLog || {};
 if (typeof log.warn !== 'function') throw new Error('Agent log runtime is unavailable.');
 ```
 

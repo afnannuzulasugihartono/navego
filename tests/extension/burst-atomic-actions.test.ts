@@ -76,7 +76,7 @@ test('the local surface exposes run only, never a cloud-side run_workflow', () =
 
 test('skip_ads workflow migration registers a re-querying loop workflow', () => {
   const migrations = fs.readdirSync(new URL('../../hosted/migrations', import.meta.url));
-  const name = migrations.find((file) => file.includes('opera_agent_youtube_skip_ads_workflow'));
+  const name = migrations.find((file) => file.includes('navego_youtube_skip_ads_workflow'));
   assert.ok(name, 'a youtube skip_ads workflow migration must exist');
   const sql = fs.readFileSync(new URL(`../../hosted/migrations/${name}`, import.meta.url), 'utf8');
   assert.match(sql, /opera_register_workflow\(\s*'youtube\.skip_ads'/);

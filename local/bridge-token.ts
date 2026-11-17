@@ -19,8 +19,8 @@ let cached: string | null = null;
 
 export function resolveBridgeToken() {
   if (cached) return cached;
-  if (process.env.OPERA_BRIDGE_TOKEN) {
-    cached = process.env.OPERA_BRIDGE_TOKEN;
+  if (process.env.NAVEGO_BRIDGE_TOKEN) {
+    cached = process.env.NAVEGO_BRIDGE_TOKEN;
     return cached;
   }
   try {

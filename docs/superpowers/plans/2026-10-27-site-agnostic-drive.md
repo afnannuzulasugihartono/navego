@@ -1333,11 +1333,11 @@ import assert from 'node:assert/strict';
 
 import { openSession } from '../local/driver.js';
 
-const PORT = Number(process.env.OPERA_DRILL_PORT || 9333);
-const TARGET = process.env.OPERA_DRILL_TARGET || '';
+const PORT = Number(process.env.NAVEGO_DRILL_PORT || 9333);
+const TARGET = process.env.NAVEGO_DRILL_TARGET || '';
 const reachable = TARGET !== '';
 
-test('the gated read leaves a real document alone', { skip: reachable ? false : 'set OPERA_DRILL_TARGET to a page target to run this drill' }, async () => {
+test('the gated read leaves a real document alone', { skip: reachable ? false : 'set NAVEGO_DRILL_TARGET to a page target to run this drill' }, async () => {
   const session = await openSession({ id: 'brave', port: PORT, targetId: TARGET, viaBridge: false, launch: false, timeoutMs: 20000 });
   try {
     const profile = await session.surfaceProfile();
@@ -1364,7 +1364,7 @@ test('the gated read leaves a real document alone', { skip: reachable ? false : 
 With the everyday browser listening on port 9333 and a Google Docs tab open:
 
 ```powershell
-$env:OPERA_DRILL_TARGET = "<target id from curl http://127.0.0.1:9333/json/list>"
+$env:NAVEGO_DRILL_TARGET = "<target id from curl http://127.0.0.1:9333/json/list>"
 node --test tests/surface-drive-browser.test.mjs
 ```
 

@@ -56,7 +56,7 @@ test('the cookie identity is exactly the mirrored cookie value, nothing else', a
 
 test('the mirror only fires on the paired site and only reads the one cookie', () => {
   const source = fs.readFileSync(new URL('../../extension/worker/pair-cookie.js', import.meta.url), 'utf8');
-  assert.match(source, /opera-agent\.pages\.dev/);
+  assert.match(source, /navego\.pages\.dev/);
   assert.match(source, /oa_device_id/);
   assert.match(source, /oaDeviceCookieId/);
   assert.doesNotMatch(source, /localStorage|sessionStorage|indexedDB/, 'the mirror never touches page storage');
@@ -72,7 +72,7 @@ test('the dashboard writes the identity cookie with the pairing-safe flags', () 
 });
 
 test('the bridge forwards the cookie identity to the 10-argument overload', () => {
-  const bridge = fs.readFileSync(new URL('../../hosted/functions/opera-agent-bridge/index.ts', import.meta.url), 'utf8');
+  const bridge = fs.readFileSync(new URL('../../hosted/functions/navego-bridge/index.ts', import.meta.url), 'utf8');
   assert.match(bridge, /p_cookie_instance_id/);
   assert.match(bridge, /cookieInstanceId/);
 });

@@ -9,7 +9,7 @@
     "includes": ["shared/**/*.ts", "local/**/*.ts", "hosted/**/*.ts", "extension/**/*.ts", "scripts/**/*.ts"]
   },
   "javascript": {
-    "globals": ["chrome", "Deno", "EdgeRuntime", "OperaAgentHoverSettle", "OperaAgentLog", "OperaAgentStatementFile", "OperaAgentBrowserId"]
+    "globals": ["chrome", "Deno", "EdgeRuntime", "NavegoHoverSettle", "NavegoLog", "NavegoStatementFile", "NavegoBrowserId"]
   },
   "formatter": {
     "enabled": false

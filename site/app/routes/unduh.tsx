@@ -9,8 +9,8 @@ export function meta() {
   ];
 }
 
-const DOWNLOAD = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update/download/opera-agent';
-const MANIFEST = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl';
+const DOWNLOAD = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/download/navego';
+const MANIFEST = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl';
 
 const BROWSERS = [
   { key: 'chrome', name: 'Chrome', letter: 'C' },
@@ -38,8 +38,8 @@ const BROWSER_SUPPORT: Array<[string, string, string]> = [
   ['Firefox', 'ditolak — tidak ada izin debugger', 'ditolak']
 ];
 
-const CURL = 'curl.exe -sI https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-update/download/opera-agent.zip | findstr /i x-opera-sha256';
-const LOCAL = 'Get-FileHash .\\opera-agent-*.zip -Algorithm SHA256';
+const CURL = 'curl.exe -sI https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/download/navego.zip | findstr /i x-opera-sha256';
+const LOCAL = 'Get-FileHash .\\navego-*.zip -Algorithm SHA256';
 
 export default function Unduh() {
   const [copied, setCopied] = useState<string | null>(null);

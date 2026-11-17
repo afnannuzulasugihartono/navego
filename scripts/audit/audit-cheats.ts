@@ -31,8 +31,8 @@ const SANCTIONED = new Map([
   ['local/sessions.ts', { count: 1, reason: 'the session store pairs verbs with opaque keys, so the stored driver is honest-but-untyped; the cast names the type the store pinned above.' }],
   ['local/transport.ts', { count: 1, reason: 'globalThis.WebSocket is only typed for the browser surface; the cast names the shape the CDP transport actually uses.' }],
   ['local/window-focus.ts', { count: 2, reason: 'child.stdout and child.stdin are typed as streams without .unref(); the two casts name the shape node gives these pipes on the platform.' }],
-  ['hosted/functions/opera-agent-bridge/index.ts', { count: 1, reason: 'pg.unsafe returns Promise<any> at the boundary where the query shape is a constant; the cast names the Promise<unknown[]> the handler consumes.' }],
-  ['hosted/functions/opera-agent-update/index.ts', { count: 1, reason: 'crypto.subtle.digest accepts BufferSource; the cast restores the ArrayBuffer the byte array already holds.' }],
+  ['hosted/functions/navego-bridge/index.ts', { count: 1, reason: 'pg.unsafe returns Promise<any> at the boundary where the query shape is a constant; the cast names the Promise<unknown[]> the handler consumes.' }],
+  ['hosted/functions/navego-update/index.ts', { count: 1, reason: 'crypto.subtle.digest accepts BufferSource; the cast restores the ArrayBuffer the byte array already holds.' }],
 ]);
 
 function* walk(dir: string): Generator<string, void, unknown> {

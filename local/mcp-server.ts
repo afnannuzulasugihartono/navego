@@ -389,14 +389,14 @@ const INPUT_TOOLS = new Set(['browser_click', 'browser_hover', 'browser_type_tex
 // WHY THE OWNER IS A LABEL AND A NUMBER.
 // The label is what a refusal reads back to an agent that can go and drive another tab, and the number keeps two agents that share a label from sharing one claim.
 
-const OWNER = `${process.env.OPERA_AGENT_LABEL || 'driver'}-${randomUUID().slice(0, 8)}`;
+const OWNER = `${process.env.NAVEGO_LABEL || 'driver'}-${randomUUID().slice(0, 8)}`;
 
 // WHY THE WINDOW IS TUNABLE AND DEFAULTS TO A MINUTE.
 // A minute outlives any single call and still clears an agent that went quiet; a caller whose agents idle for longer can widen it, and one that wants a fast hand-over can narrow it.
 // The window is read per call rather than held, so a change takes effect on the next claim without a restart.
 
 const leaseWindow = () => {
-  const ttl = Number(process.env.OPERA_LEASE_TTL_MS);
+  const ttl = Number(process.env.NAVEGO_LEASE_TTL_MS);
   return Number.isFinite(ttl) && ttl > 0 ? ttl : undefined;
 };
 
@@ -964,11 +964,11 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
       case 'browser_solve_captcha': {
         const settings = solverSettings(process.env);
         if (!settings.configured) {
-          throw new Error('captcha is opt-in and no solver is configured: set OPERA_CAPTCHA_API_URL, OPERA_CAPTCHA_API_KEY and OPERA_CAPTCHA_DOMAINS, or let the person solve it and use portal.');
+          throw new Error('captcha is opt-in and no solver is configured: set NAVEGO_CAPTCHA_API_URL, NAVEGO_CAPTCHA_API_KEY and NAVEGO_CAPTCHA_DOMAINS, or let the person solve it and use portal.');
         }
         const gate = await detectGate(driver as unknown as import('./gates.js').GateDriver);
         if (!captchaAllowed(settings, gate.url)) {
-          throw new Error(`captcha refuses ${gate.url || 'this page'}: its host is not in OPERA_CAPTCHA_DOMAINS, and the allowlist is what makes the spend the person's decision.`);
+          throw new Error(`captcha refuses ${gate.url || 'this page'}: its host is not in NAVEGO_CAPTCHA_DOMAINS, and the allowlist is what makes the spend the person's decision.`);
         }
         const image = gate.fields.captchaImage[0];
         const field = gate.fields.captchaInput[0];

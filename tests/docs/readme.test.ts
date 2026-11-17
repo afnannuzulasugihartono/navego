@@ -66,7 +66,7 @@ test('the README states how many edge functions are deployed, and names them', (
   assert.equal(Number(claimed[1]), edgeFunctions.length,
     `the README must say ${edgeFunctions.length} edge functions are deployed`);
   for (const directory of edgeFunctions) {
-    const short = directory.replace('opera-agent-', '');
+    const short = directory.replace('navego-', '');
     assert.ok(layout.toLowerCase().includes(short.toLowerCase()),
       `the README must name the ${directory} edge function`);
   }

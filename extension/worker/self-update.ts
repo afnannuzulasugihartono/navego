@@ -18,10 +18,10 @@ import { t, applyI18n } from '../lib/i18n.js';
 import type { I18nRoot } from '../lib/i18n.js';
 import { isRecord } from '../lib/guards.js';
 
-const DB_NAME = 'opera-agent-self-update';
+const DB_NAME = 'navego-self-update';
 const STORE_NAME = 'handles';
 const FOLDER_KEY = 'extension-folder';
-const UPDATE_ALARM = 'opera-agent-self-update';
+const UPDATE_ALARM = 'navego-self-update';
 const UPDATE_ALARM_MINUTES = 30;
 
 type PermissionState = 'granted' | 'denied' | 'prompt';
@@ -137,7 +137,7 @@ async function pickExtensionFolder() {
   if (typeof picker !== 'function') {
     throw new Error(t('update.braveFlag'));
   }
-  const handle = await picker({ mode: 'readwrite', id: 'opera-agent-extension-folder' });
+  const handle = await picker({ mode: 'readwrite', id: 'navego-extension-folder' });
   await saveFolderHandle(handle);
   return handle.name;
 }

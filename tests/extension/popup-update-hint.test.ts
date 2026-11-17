@@ -24,7 +24,7 @@ test('the popup asks the update service which version is served', () => {
 test('the one served-version check asks the archive, not the legacy health page', () => {
   const lib = fs.readFileSync(new URL('extension/lib/self-update.js', root), 'utf8');
   assert.match(lib, /method: 'HEAD'/, 'the version is asked cheaply, carrying nothing');
-  assert.match(lib, /download\/opera-agent\.zip/, 'from the archive this extension is updated from');
+  assert.match(lib, /download\/navego\.zip/, 'from the archive this extension is updated from');
   assert.match(lib, /x-opera-version/, 'and the answer is the version the build carries');
   assert.doesNotMatch(lib, /fetch\([^)]*health/, 'not the health page, which answers for another extension by design');
 });

@@ -50,7 +50,7 @@ npm i -g navego
 | `navego auth` | sign in once; the token stays beside this install |
 | `navego doctor` | print what is connected and what the plan allows |
 | `navego install` | register the extension with every Chromium browser on this Windows machine |
-| `navego uninstall` | remove the keys, the OperaAgent folder, and the package itself |
+| `navego uninstall` | remove the keys, the Navego folder, and the package itself |
 
 
 ## For AI agents

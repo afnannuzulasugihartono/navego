@@ -21,7 +21,7 @@ https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1
 Gateway base (append the routed paths to this):
 
 ```
-https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-gateway
+https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-gateway
 ```
 
 - The gateway does not trust the incoming request URL when advertising its own base.
@@ -36,7 +36,7 @@ https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-gateway
 
 The gateway accepts the token in three carriers, checked in this order:
 
-1. `x-opera-agent-token: <device-token>` request header.
+1. `x-navego-token: <device-token>` request header.
 2. `Authorization: Bearer <device-token>` request header. The `Bearer ` prefix is
    optional and matched case-insensitively, so a bare token is accepted too.
 3. `apiKey` in the JSON request body.
@@ -229,9 +229,9 @@ Run a command with the token in a header:
 
 ```bash
 curl -X POST \
-  "https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-gateway/command" \
+  "https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-gateway/command" \
   -H "content-type: application/json" \
-  -H "x-opera-agent-token: $OPERA_AGENT_TOKEN" \
+  -H "x-navego-token: $NAVEGO_TOKEN" \
   -d '{
     "method": "tabs.list",
     "params": {},
@@ -243,10 +243,10 @@ curl -X POST \
 Fetch the live spec (no token required):
 
 ```bash
-curl "https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-gateway/openapi.json"
+curl "https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-gateway/openapi.json"
 ```
 
-- Export `$OPERA_AGENT_TOKEN` from the device token issued at pairing time.
+- Export `$NAVEGO_TOKEN` from the device token issued at pairing time.
 - Never paste a real token into a script, a shell history file, or a commit.
 
 ## If this document disagrees with the gateway

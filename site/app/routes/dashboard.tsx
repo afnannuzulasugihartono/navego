@@ -156,10 +156,10 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    const check = () => setInstallState(document.documentElement.dataset.operaAgent !== undefined ? 'installed' : 'unknown');
+    const check = () => setInstallState(document.documentElement.dataset.navego !== undefined ? 'installed' : 'unknown');
     check();
     const observer = new MutationObserver(check);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-opera-agent'] });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-navego'] });
     return () => observer.disconnect();
   }, []);
 

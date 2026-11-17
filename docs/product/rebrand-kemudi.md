@@ -5,7 +5,7 @@
 
 # Navego - the name this project was always steering toward
 
-Opera Agent was the working title of a browser agent: drive the browser the person already uses, from the AI they already pay for, without moving the session anywhere else. It was accurate. It was not a company. It told no one the browser term, the browser, the mission; it described. A company's name is a word the market says back to it, and Opera Agent's second word was also the category word everyone else uses, while its first word belongs to somebody else's trademark family (Opera Software).
+Navego was the working title of a browser agent: drive the browser the person already uses, from the AI they already pay for, without moving the session anywhere else. It was accurate. It was not a company. It told no one the browser term, the browser, the mission; it described. A company's name is a word the market says back to it, and Navego's second word was also the category word everyone else uses, while its first word belongs to somebody else's trademark family (Opera Software).
 
 The mandate: redesign the name so it is native to the agent, keep what must stay, research the internet for who got this right and who did not, and carry it through product, website and marketing.
 
@@ -45,27 +45,27 @@ Navego wins the Cursor test — the word is already in the hand: *navegokan brow
 
 ## What moved, and what deliberately did not
 
-**Moved (the face):** extension manifest name + action title; every popup/page brand row; popup.title/update.title; the web shim names on first run; the npm package `opera-agent-mcp` → **`navego`** (the legacy name keeps a working alias: `bin/navego.js` is also `opera-agent-mcp`, so every installed machine and script keeps working); root and local package names; the uninstall path removes both names (one spawn, both specs); the store-manifest; the landing site — 23 surfaces, og:site_name, wordmark, terminal examples (`npm i -g navego`, `npx -y navego local`); the docs; the examples; the gateway's public OpenAPI title; `check.mjs`'s manifest-name pin (re-pinned); `gates.lock` (4 pins re-pinned with the commit); `boundary-locks.mjs` (manifest.json + background.ts re-pinned with an explanatory WHY); the owner-visible action in `browser.ping` (`product: "Navego"`).
+**Moved (the face):** extension manifest name + action title; every popup/page brand row; popup.title/update.title; the web shim names on first run; the npm package `navego-mcp` → **`navego`** (the legacy name keeps a working alias: `bin/navego.js` is also `navego-mcp`, so every installed machine and script keeps working); root and local package names; the uninstall path removes both names (one spawn, both specs); the store-manifest; the landing site — 23 surfaces, og:site_name, wordmark, terminal examples (`npm i -g navego`, `npx -y navego local`); the docs; the examples; the gateway's public OpenAPI title; `check.mjs`'s manifest-name pin (re-pinned); `gates.lock` (4 pins re-pinned with the commit); `boundary-locks.mjs` (manifest.json + background.ts re-pinned with an explanatory WHY); the owner-visible action in `browser.ping` (`product: "Navego"`).
 
 **Not moved (the bones), each with its reason:**
 - the extension key and extension ID (`ofgemipoobcnbjkfanmofjbdonjapmgl`) — the signing identity updates ship against; moving it strands every paired browser.
-- Supabase function names (`opera-agent-update`, `opera-agent-bridge`, `opera-agent-billing`, …), artifact URLs and filenames (`opera-agent.zip`, `opera-agent.crx`), the update endpoint path — every paired install speaks these; a coordinated redeploy would be a repo rename with no functional gain.
-- `.opera-agent/` device config and `%LOCALAPPDATA%\OperaAgent\` — installed state; the uninstall command removes the folder and would strand pairing files on reinstall.
-- wire identifiers: `x-opera-provider` default `opera-agent-mcp`, the OAuth account dir, the `OPERA_*` env vars, `X-Opera-Agent-Token` — machines, not humans.
-- the repo URL and the `opera-agent.pages.dev` domain — remote redirects and Cloudflare make both lossless to rename later; they are named as cutover steps below, not rushed in this change.
+- Supabase function names (`navego-update`, `navego-bridge`, `navego-billing`, …), artifact URLs and filenames (`navego.zip`, `navego.crx`), the update endpoint path — every paired install speaks these; a coordinated redeploy would be a repo rename with no functional gain.
+- `.navego/` device config and `%LOCALAPPDATA%\Navego\` — installed state; the uninstall command removes the folder and would strand pairing files on reinstall.
+- wire identifiers: `x-opera-provider` default `navego-mcp`, the OAuth account dir, the `NAVEGO_*` env vars, `X-Navego-Agent-Token` — machines, not humans.
+- the repo URL and the `navego.pages.dev` domain — remote redirects and Cloudflare make both lossless to rename later; they are named as cutover steps below, not rushed in this change.
 - every historical page: `docs/releases/*`, `docs/superpowers/*`, `docs/handoff.md`'s dated bullets, SQL migrations, `tests/fixtures/*` — receipts of what shipped, not things to re-sign.
-- fixtures are evidence; the SERP capture that literally shows "Opera Agent" in a Bing result is a measurement of the past, not a lie about the present.
+- fixtures are evidence; the SERP capture that literally shows "Navego" in a Bing result is a measurement of the past, not a lie about the present.
 
 ## The one load-bearing line
 
-`extension/lib/self-update.ts` verifies the downloaded build's `manifest.name` before writing it over the installed folder. The builds installed before the rebrand check for `'Opera Agent'` — immutable on those machines. Had this flip shipped without the both-names acceptance, every folder-apply would refuse the rebranded zip forever. The check now accepts **both** spellings, with the reasoning at the line. The browser CRX update path never read this name; auto-update into Navego is unaffected.
+`extension/lib/self-update.ts` verifies the downloaded build's `manifest.name` before writing it over the installed folder. The builds installed before the rebrand check for `'Navego'` — immutable on those machines. Had this flip shipped without the both-names acceptance, every folder-apply would refuse the rebranded zip forever. The check now accepts **both** spellings, with the reasoning at the line. The browser CRX update path never read this name; auto-update into Navego is unaffected.
 
 ## The cutover the owner finishes
 
 1. Merge the PR (gates green) — the tree then reads Navego everywhere.
-2. When 1.6.60 publishes (next bump, same ritual): `npm deprecate opera-agent-mcp@'<1.6.60' "renamed to navego — npm i -g navego"`.
+2. When 1.6.60 publishes (next bump, same ritual): `npm deprecate navego-mcp@'<1.6.60' "renamed to navego — npm i -g navego"`.
 3. `navego.pages.dev` — rename (or create) the Pages project and point the same deploy at it; buy the domain (`navego.id` currently 301s to `www.navego.id`, probe it at purchase; `navego.com` is parked; `navego.ai`/`.io` do not resolve today). Keep the old domain 301'ing forever; Deals pages-internal links are relative already.
-4. Supabase dashboard → Authentication → Sign In / Up → the OAuth client's display name "Opera Agent" → "Navego" (it is what every consent screen shows). One field; no protocol moves.
+4. Supabase dashboard → Authentication → Sign In / Up → the OAuth client's display name "Navego" → "Navego" (it is what every consent screen shows). One field; no protocol moves.
 5. Store listing → Navego (store-manifest already says so; the listing text lives in the Store console).
 6. Rename the repository (Settings → General) — GitHub redirects every old link and workflow reference travels with it; update the repo description, topics, and the social cards.
 7. Midtrans: the statement descriptor on the paired storefront — customers should read NAVEGO on their bank line, not the old title. Ties into the plans/tiers rail already on this machine.

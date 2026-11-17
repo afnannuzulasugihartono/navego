@@ -9,7 +9,7 @@ import { readFile } from 'node:fs/promises';
 import { SUPABASE_PROJECT_REF } from '../../extension/lib/endpoints.js';
 import { stripComments } from '../helpers/source-scan.ts';
 
-const gatewayPath = new URL('../../hosted/functions/opera-agent-gateway/index.ts', import.meta.url);
+const gatewayPath = new URL('../../hosted/functions/navego-gateway/index.ts', import.meta.url);
 const docPath = new URL('../../docs/api.md', import.meta.url);
 
 function tableRows(doc: any) {
@@ -84,7 +84,7 @@ test('extractToken accepts exactly the three documented carriers', async () => {
   assert.ok(extract, 'extractToken is present in the gateway');
   const body = extract[0];
 
-  for (const carrier of ['x-opera-agent-token', 'authorization', 'apiKey']) {
+  for (const carrier of ['x-navego-token', 'authorization', 'apiKey']) {
     assert.ok(body.includes(carrier), `extractToken reads the ${carrier} carrier`);
   }
   assert.doesNotMatch(
@@ -142,7 +142,7 @@ test('api.md states that the query string is never a carrier', async () => {
 
 test('api.md base URL matches the shared endpoint constants', async () => {
   const doc = await readFile(docPath, 'utf8');
-  const expected = `https://${SUPABASE_PROJECT_REF}.supabase.co/functions/v1/opera-agent-gateway`;
+  const expected = `https://${SUPABASE_PROJECT_REF}.supabase.co/functions/v1/navego-gateway`;
   assert.ok(doc.includes(expected), 'docs/api.md states the gateway base URL derived from the project ref');
 });
 

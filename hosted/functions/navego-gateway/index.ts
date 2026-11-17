@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: opera-agent-gateway — the gateway a browser reaches when the caller is a person, not a device.
+// @title: navego-gateway — the gateway a browser reaches when the caller is a person, not a device.
 // @state: the CORS answer, the token it accepts, and the command it enqueues for the device.
 // @dependencies: edge-runtime, supabase-js, cors.
 
@@ -16,7 +16,7 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
 });
 
 const CORS_BASE_HEADERS = {
-  "Access-Control-Allow-Headers": "content-type, x-opera-agent-token, authorization",
+  "Access-Control-Allow-Headers": "content-type, x-navego-token, authorization",
   "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
   "Cache-Control": "no-store"
 };
@@ -49,7 +49,7 @@ async function sha256Hex(value: string) {
 }
 
 function extractToken(req: Request, body: Record<string, unknown> | null): string | null {
-  const header = req.headers.get("x-opera-agent-token") || req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+  const header = req.headers.get("x-navego-token") || req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (header) return header.trim();
   if (body && typeof body.apiKey === "string" && body.apiKey.trim()) return body.apiKey.trim();
   return null;
@@ -106,7 +106,7 @@ async function command(req: Request, _url: URL) {
   }
   const token = extractToken(req, body);
   if (!token) {
-    return json(req, { ok: false, error: { code: "UNAUTHORIZED", message: "Missing token (x-opera-agent-token header or body.apiKey)." } }, 401);
+    return json(req, { ok: false, error: { code: "UNAUTHORIZED", message: "Missing token (x-navego-token header or body.apiKey)." } }, 401);
   }
   const method = typeof body.method === "string" ? body.method.trim() : "";
   if (!METHOD_RE.test(method)) {
@@ -218,7 +218,7 @@ function openApiSpec(basePath: string) {
     openapi: "3.0.0",
     info: {
       title: "Navego Gateway",
-      description: "One-hop browser control for any AI platform. Authenticate with body.apiKey (GPT Actions) or the x-opera-agent-token header.",
+      description: "One-hop browser control for any AI platform. Authenticate with body.apiKey (GPT Actions) or the x-navego-token header.",
       version: "1.0.1"
     },
     servers: [{ url: basePath }],
@@ -235,7 +235,7 @@ function openApiSpec(basePath: string) {
                   type: "object",
                   required: ["method"],
                   properties: {
-                    apiKey: { type: "string", description: "Device token (x-opera-agent-token header also accepted)." },
+                    apiKey: { type: "string", description: "Device token (x-navego-token header also accepted)." },
                     method: { type: "string", examples: ["tabs.list", "page.find", "browser.burst"] },
                     params: { type: "object" },
                     waitMs: { type: "integer", minimum: 500, maximum: 32000, default: 12000 },
@@ -260,7 +260,7 @@ function openApiSpec(basePath: string) {
 function health(req: Request) {
   return json(req, {
     ok: true,
-    service: "opera-agent-gateway",
+    service: "navego-gateway",
     version: "1.0.1",
     time: new Date().toISOString()
   });
@@ -272,7 +272,7 @@ Deno.serve(async (req: Request) => {
     const url = new URL(req.url);
     if (url.pathname.endsWith("/openapi.json")) {
 
-      return json(req, openApiSpec(`${SUPABASE_URL}/functions/v1/opera-agent-gateway`), 200);
+      return json(req, openApiSpec(`${SUPABASE_URL}/functions/v1/navego-gateway`), 200);
     }
     if (url.pathname.endsWith("/health")) return health(req);
   }

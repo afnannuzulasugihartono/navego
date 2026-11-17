@@ -77,7 +77,7 @@ Reflect.set(globalThis, 'chrome', {
 // The server and the global exist before the import, because the worker dials out the moment it loads: a test that connected it by hand would be testing its own wiring.
 
 const PORT = 9471;
-globalThis.OPERA_BRIDGE_WS = `ws://127.0.0.1:${PORT}`;
+globalThis.NAVEGO_BRIDGE_WS = `ws://127.0.0.1:${PORT}`;
 
 const bridge = createBridgeServer({ cloud: fakeCloud(), port: PORT, heartbeatMs: 500 });
 await bridge.listen();
@@ -222,7 +222,7 @@ test('the frame writer the server uses is the one the client decodes', () => {
 
 test('the worker gives up before the local side stops listening', async () => {
   const workerBound = await import('../../extension/worker/bridge-link.js')
-    .then(() => Number(globalThis.OPERA_BRIDGE_HANDLE_TIMEOUT_MS ?? 8000));
+    .then(() => Number(globalThis.NAVEGO_BRIDGE_HANDLE_TIMEOUT_MS ?? 8000));
   const callerBound = Number((await import('node:fs')).readFileSync(
     new URL('../../local/bridge.js', import.meta.url), 'utf8'
   ).match(/const REPLY_TIMEOUT_MS = (\d+)/)?.[1]);

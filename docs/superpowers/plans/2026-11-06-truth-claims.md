@@ -5,9 +5,9 @@
 **Goal:** Every claim in `docs/agent-call.md`, `local/README.md`, `proof/extension-run.md` and the proof/check scripts matches what the code and the live servers actually do. Scope = the 13 review findings on merged #189–#191, nothing more.
 
 **Evidence already gathered (2026-11-06):**
-- OpenCode schema (https://opencode.ai/config.json, live): servers live at `mcp.servers.<name>`; remote `oauth` fields are snake_case (`client_id`, `redirect_uri`, `callback_port` …). The guide's `"mcp": { "opera-agent": … }` + `"clientId"` snippet is the old shape and is ignored by current OpenCode.
-- OAuth client id `bbc5eb76-f385-435b-8b13-8e339b45e633` IS registered in Supabase `auth.oauth_clients` ("Opera Agent", redirect `http://127.0.0.1:19876/mcp/oauth/callback` = OpenCode's default callback). Live probe: authorize with that client+redirect → `302` to `/oauth/consent`; any other redirect → `400 invalid redirect_uri`.
-- `local/driver.js:110` + `local/bin/opera-local.js:43`: `OPERA_LOCAL_TRANSPORT` unset = auto (bridge when an extension is linked, CDP otherwise). `local/sessions.js:119` calls `openSession` with `launch:false`, so a client pointed at 9333 with nothing listening gets `No browser is listening on port 9333.` — the server does not open a second browser.
+- OpenCode schema (https://opencode.ai/config.json, live): servers live at `mcp.servers.<name>`; remote `oauth` fields are snake_case (`client_id`, `redirect_uri`, `callback_port` …). The guide's `"mcp": { "navego": … }` + `"clientId"` snippet is the old shape and is ignored by current OpenCode.
+- OAuth client id `bbc5eb76-f385-435b-8b13-8e339b45e633` IS registered in Supabase `auth.oauth_clients` ("Navego", redirect `http://127.0.0.1:19876/mcp/oauth/callback` = OpenCode's default callback). Live probe: authorize with that client+redirect → `302` to `/oauth/consent`; any other redirect → `400 invalid redirect_uri`.
+- `local/driver.js:110` + `local/bin/opera-local.js:43`: `NAVEGO_LOCAL_TRANSPORT` unset = auto (bridge when an extension is linked, CDP otherwise). `local/sessions.js:119` calls `openSession` with `launch:false`, so a client pointed at 9333 with nothing listening gets `No browser is listening on port 9333.` — the server does not open a second browser.
 - `tests/extension-run.test.mjs` re-hashes the fixture and compares with the recorded hash; it never re-drives a browser. The "cannot drift away from the code that makes it" sentence overstates this.
 - Chrome 153.0.8010.36 (branded) is installed; `--load-extension` is ignored by branded Chrome 137+ (Chromium / Chrome for Testing still honour it) — so `scripts/extension-run.mjs` "own" mode must fail fast naming that limit instead of waiting 60 s for a link that cannot come.
 - Chrome prefs: `download.default_directory` empty (default `~/Downloads`); OneDrive root exists, `OneDrive\Downloads` does not — but Known Folder Move can redirect Downloads there, so the extension-road watch must cover both and name them.
@@ -15,7 +15,7 @@
 
 **Gates per task:** `npm test`, `npm run check`, `node scripts/format-comments.mjs --check`. Baseline on `agent/truth/claims` (240bbe53): 1849 tests, 1846 pass, 0 fail, 3 skipped.
 
-**Workflow:** branch `agent/truth/claims` off `origin/main` (already created, worktree `D:/GitHub/opera-agent-truth`); conventional commits; PR from `.github/pull_request_template.md`; merge `gh pr merge <n> --squash --admin --delete-branch=false`; no `landing/` change in this pass, so no deploy dispatch.
+**Workflow:** branch `agent/truth/claims` off `origin/main` (already created, worktree `D:/GitHub/navego-truth`); conventional commits; PR from `.github/pull_request_template.md`; merge `gh pr merge <n> --squash --admin --delete-branch=false`; no `landing/` change in this pass, so no deploy dispatch.
 
 ---
 

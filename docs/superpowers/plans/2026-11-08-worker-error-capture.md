@@ -56,7 +56,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 await import('../extension/lib/agent-log.js');
-const log = globalThis.OperaAgentLog;
+const log = globalThis.NavegoLog;
 
 test('a repeated fault is one row with a count', () => {
   log.clearErrors();
@@ -259,7 +259,7 @@ git commit -m "Catch the worker's own faults, and stop hiding four of them at de
 
 **Files:**
 - Modify: `extension/background.js` (`browser.ping`)
-- Modify: `supabase/functions/opera-agent-mcp/tools.ts` (the `status` description)
+- Modify: `supabase/functions/navego-mcp/tools.ts` (the `status` description)
 - Modify: `tests/mcp-surface.test.mjs`, `tests/fixtures/mcp-contract-v1.json`, `tests/helpers/boundary-locks.mjs`
 - Modify: `docs/agent-call.md`, `tests/agent-call-docs.test.mjs`
 
@@ -312,7 +312,7 @@ Expected: PASS. Commit says which pins moved and why.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add extension/background.js supabase/functions/opera-agent-mcp/tools.ts tests/mcp-surface.test.mjs \
+git add extension/background.js supabase/functions/navego-mcp/tools.ts tests/mcp-surface.test.mjs \
   tests/fixtures/mcp-contract-v1.json tests/helpers/boundary-locks.mjs gates.lock docs/agent-call.md \
   tests/agent-call-docs.test.mjs
 git commit -m "Answer status with the worker's own faults, and say when they were trimmed"

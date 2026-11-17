@@ -616,7 +616,7 @@ git commit -m "Let the console read the canvas tokens like every other page"
 
 - [ ] **Step 1: Konfirmasi tidak ada pembaca**
 
-Run: `node -e "const fs=require('fs');const d='D:/GitHub/opera-agent/landing/';for(const f of fs.readdirSync(d).filter(x=>x.endsWith('.css'))){const t=fs.readFileSync(d+f,'utf8');for(const tok of ['--surface-strong','--lime']){const n=(t.match(new RegExp('var\\\\('+tok+'\\\\)','g'))||[]).length;if(n)console.log(f,tok,n)}}"`
+Run: `node -e "const fs=require('fs');const d='D:/GitHub/navego/landing/';for(const f of fs.readdirSync(d).filter(x=>x.endsWith('.css'))){const t=fs.readFileSync(d+f,'utf8');for(const tok of ['--surface-strong','--lime']){const n=(t.match(new RegExp('var\\\\('+tok+'\\\\)','g'))||[]).length;if(n)console.log(f,tok,n)}}"`
 Expected: tidak ada keluaran.
 
 - [ ] **Step 2: Hapus dua baris dari `:root`**
@@ -678,7 +678,7 @@ Ganti blok `<dl class="facts faq">…</dl>` di `landing/beranda.html` dengan:
       <div class="faqList">
         <details>
           <summary data-i18n="faq.cost.dt">Biaya</summary>
-          <p data-i18n="faq.cost.dd">Opera Agent gratis. Model ditagih penyedianya.</p>
+          <p data-i18n="faq.cost.dd">Navego gratis. Model ditagih penyedianya.</p>
         </details>
         <details>
           <summary data-i18n="faq.model.dt">Model</summary>
@@ -871,7 +871,7 @@ Ganti `<div class="hero">…</div>` dengan:
 
 ```html
     <section class="downloadHead">
-      <h1 data-i18n="page.title">Unduh Opera Agent.</h1>
+      <h1 data-i18n="page.title">Unduh Navego.</h1>
       <p class="lede" data-i18n="page.sub">Satu arsip, satu langkah, dan browser Anda jadi alat kerja.</p>
       <div class="row">
         <a class="btn primary" href="./unduh-berkas.html" data-i18n="cta.get">Ambil berkas</a>

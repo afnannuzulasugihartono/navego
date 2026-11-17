@@ -2,13 +2,13 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Make Opera Agent honestly callable as a browser agent: one working entry point per surface, a recorded proof that the shipped extension drives a real browser through the public MCP surface, and a call guide that matches the code.
+**Goal:** Make Navego honestly callable as a browser agent: one working entry point per surface, a recorded proof that the shipped extension drives a real browser through the public MCP surface, and a call guide that matches the code.
 
-**Architecture:** `scripts/extension-run.mjs` drives the real product path end to end: the shipped `extension/` is loaded into a real Chrome, the extension's own loopback bridge link connects to the local bridge, and an MCP client speaks stdio to `local/bin/opera-local.js` with `OPERA_LOCAL_TRANSPORT=bridge`. Every call and answer is written to `proof/extension-run.jsonl` and `proof/extension-run.md`. `scripts/hosted-mcp-check.mjs` records what the hosted MCP surface answers to a client that has no token yet. `docs/agent-call.md` is the call guide, and a test pins it to the code so it cannot drift.
+**Architecture:** `scripts/extension-run.mjs` drives the real product path end to end: the shipped `extension/` is loaded into a real Chrome, the extension's own loopback bridge link connects to the local bridge, and an MCP client speaks stdio to `local/bin/opera-local.js` with `NAVEGO_LOCAL_TRANSPORT=bridge`. Every call and answer is written to `proof/extension-run.jsonl` and `proof/extension-run.md`. `scripts/hosted-mcp-check.mjs` records what the hosted MCP surface answers to a client that has no token yet. `docs/agent-call.md` is the call guide, and a test pins it to the code so it cannot drift.
 
 **Tech Stack:** Node 22, Chrome DevTools Protocol over WebSocket, MCP JSON-RPC over stdio, `node:test`.
 
-**Spec:** none written; this plan is the design. The goal it serves: Opera Agent is legitimately callable as a browser agent.
+**Spec:** none written; this plan is the design. The goal it serves: Navego is legitimately callable as a browser agent.
 
 ## Global Constraints
 
@@ -76,7 +76,7 @@ In `scripts/proof-run.mjs`, change the spawn env so the transport is a parameter
 export function speakMcp({ port, cwd = process.cwd(), env = process.env, transport = 'cdp' } = {}) {
   const child = spawn(process.execPath, [path.join(cwd, 'local', 'bin', 'opera-local.js')], {
     cwd,
-    env: { ...env, OPERA_LOCAL_TRANSPORT: transport, OPERA_LOCAL_PORT: String(port) },
+    env: { ...env, NAVEGO_LOCAL_TRANSPORT: transport, NAVEGO_LOCAL_PORT: String(port) },
     stdio: ['pipe', 'pipe', 'inherit']
   });
 ```
@@ -86,7 +86,7 @@ export function speakMcp({ port, cwd = process.cwd(), env = process.env, transpo
 `scripts/extension-run.mjs` does, in order:
 
 1. `serveCompany()` for the portal fixture, so the drive reads a page it did not create.
-2. `speakMcp({ transport: 'bridge', env: { ...process.env, OPERA_BRIDGE_PORT: String(bridgePort) } })`. The MCP server owns the bridge on `127.0.0.1:9451`, which is the port the extension probes first (`extension/worker/bridge-link.js:46`).
+2. `speakMcp({ transport: 'bridge', env: { ...process.env, NAVEGO_BRIDGE_PORT: String(bridgePort) } })`. The MCP server owns the bridge on `127.0.0.1:9451`, which is the port the extension probes first (`extension/worker/bridge-link.js:46`).
 3. Wait for `GET http://127.0.0.1:<bridgePort>/health` to answer `ok: true`.
 4. Launch Chrome with the shipped extension: `--load-extension=<repo>/extension`, `--disable-extensions-except=<repo>/extension`, `--remote-debugging-port=<port>`, `--user-data-dir=<temp>`, `--headless=new`.
 5. Wait for the bridge health to report `linked: true`, which is the extension's own socket. A timeout names the port and the extension id.
@@ -118,7 +118,7 @@ git commit -m "feat(proof): drive a real browser through the shipped extension"
 
 **Interfaces:**
 - Consumes: `extension/lib/endpoints.js` (the live URLs), `local/tools.js` (the tool names), `local/package.json` (the package name and bin).
-- Produces: `docs/agent-call.md`, the one file a reader is sent to when they ask how to call Opera Agent.
+- Produces: `docs/agent-call.md`, the one file a reader is sent to when they ask how to call Navego.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -126,7 +126,7 @@ git commit -m "feat(proof): drive a real browser through the shipped extension"
 // tests/agent-call-docs.test.mjs
 test('the call guide names every surface that exists', () => {
   const guide = fs.readFileSync(new URL('../docs/agent-call.md', import.meta.url), 'utf8');
-  assert.ok(guide.includes(ENDPOINTS.SUPABASE_PROJECT_REF ? 'opera-agent-mcp' : ''));
+  assert.ok(guide.includes(ENDPOINTS.SUPABASE_PROJECT_REF ? 'navego-mcp' : ''));
   assert.match(guide, /local\/bin\/opera-local\.js/);
   assert.match(guide, /extension/);
 });
@@ -174,7 +174,7 @@ Expected: both pass.
 
 ```bash
 git add docs/agent-call.md local/README.md docs/product/pilot-runbook.md tests/agent-call-docs.test.mjs
-git commit -m "docs(agent): one guide to call Opera Agent, true to the code"
+git commit -m "docs(agent): one guide to call Navego, true to the code"
 ```
 
 ---
@@ -284,4 +284,4 @@ Use `.github/pull_request_template.md`: what changed, the measurement, the failu
 
 - [ ] **Step 3: Merge and deploy**
 
-Run: `gh pr merge <n> --squash --admin --delete-branch=false`, then dispatch `.github/workflows/deploy-site.yml` because `landing/` changed, then read `https://opera-agent.pages.dev/bukti` and `https://opera-agent.pages.dev/docs` to confirm the new copy is live.
+Run: `gh pr merge <n> --squash --admin --delete-branch=false`, then dispatch `.github/workflows/deploy-site.yml` because `landing/` changed, then read `https://navego.pages.dev/bukti` and `https://navego.pages.dev/docs` to confirm the new copy is live.

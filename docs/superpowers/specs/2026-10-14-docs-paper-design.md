@@ -2,7 +2,7 @@
 
 - Date: 2026-10-14
 - Status: spec, awaiting review
-- Goal: Opera Agent drives Google Docs to full API parity — styling, tables,
+- Goal: Navego drives Google Docs to full API parity — styling, tables,
   images, alignment, fonts, margins, footnotes, headers/footers, page numbers,
   TOC, equations, bibliography — UI-only, no Google API, no new permission.
 

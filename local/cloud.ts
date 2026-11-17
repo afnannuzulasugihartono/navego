@@ -24,18 +24,18 @@ import readline from 'node:readline';
 import { HOSTED_MCP_URL, accessToken, loginInstructions } from './oauth.js';
 import { readDevice } from './wallet-client.js';
 
-// WHY THE WIRE STILL SAYS opera-agent-mcp.
+// WHY THE WIRE STILL SAYS navego-mcp.
 // The provider pin is a wire identifier matched by the server's per-provider routing (opera_provider_pins); renaming the default on release day would orphan every pin a caller already set without a word about it.
 // The product says Navego everywhere a human reads; the pin is a machine word and stays until a reviewed migration moves the table too.
 
-const PROVIDER = process.env.OPERA_AGENT_MCP_PROVIDER || 'opera-agent-mcp';
+const PROVIDER = process.env.NAVEGO_MCP_PROVIDER || 'navego-mcp';
 
 export function hostedBase(env: NodeJS.ProcessEnv = process.env): string {
-  return String(env.OPERA_AGENT_MCP_BASE_URL || HOSTED_MCP_URL).trim();
+  return String(env.NAVEGO_MCP_BASE_URL || HOSTED_MCP_URL).trim();
 }
 
 export function pinnedDeviceName(env: NodeJS.ProcessEnv = process.env, { home = null }: { home?: string | null } = {}): string {
-  const named = String(env.OPERA_AGENT_MCP_DEVICE_NAME || '').trim();
+  const named = String(env.NAVEGO_MCP_DEVICE_NAME || '').trim();
   if (named) return named;
   try {
     return String(readDevice({ home })?.deviceName || '').trim();

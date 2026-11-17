@@ -158,7 +158,7 @@
 // The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
 
 // WHY manifest.json and background.ts were re-pinned on 2026-11-15: the rebrand moved the product name.
-// Opera Agent is Navego everywhere a human reads: the manifest carries the new name and default_title, and background.js reports product: 'Navego' on browser.ping.
+// Navego is Navego everywhere a human reads: the manifest carries the new name and default_title, and background.js reports product: 'Navego' on browser.ping.
 // The extension ID, the signing key and every wire contract are untouched, so a browser already holding 1.6.59 updates into the new name without a beat; the pins move with the reviewed bytes and nothing else.
 
 // WHY these three were re-pinned on 2026-11-16: the 1.7.1 release rode them.
@@ -186,10 +186,14 @@
 // `declare const self: Pick<EventTarget, 'addEventListener'> | undefined` names the browser script scope without binding an address TypeScript does not know; the emitted background.js is byte-identical.
 // The public surface, the manifest and the protocol did not move, so only this pin moves.
 
+// WHY content.ts was re-pinned on 2026-11-18: the product-wide rename retire-Opera Agent/trademMark sweep replaced the remaining brand-token occurrences inside the frozen file (Opera Agent -> Navego throughout).
+// The runtime surface, the dispatch tables and the primitives are unchanged; only the brand strings moved.
+// WHY background.ts was re-pinned on 2026-11-18: the product-wide rename retired Opera Agent/Kemudi/legacy tokens including type-only internal global names (example: `__operaAgentContentV1`, `__operaAgentCursorIdle`); the runtime dispatch table and wire contract are unchanged; the change set is the rename sweep itself.
+
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
-  ['../extension/content.ts', '02365ade2ed83b234e7056ff51c3b7b41b1cacf66c74fdad41e1009b8f464fa5'],
-  ['../extension/background.ts', '0590232b5cb0fad3344459ccc4ab14f61b0d9a82ba9107159e94c54b6eb01da6'],
-  ['../extension/manifest.json', '46af96ef36e8cab18c5e5d8ebf4659b6c216579f886d78b47ebec01aa65d94ed'],
+  ['../extension/content.ts', '51b1c5cd5fc74537fdbea924c26f08e47422abe75bb84f0aeb49d82c6680adfe'],
+  ['../extension/background.ts', '67b1744d986e6efa095a0bc6d9f02a029f9df42a1223acb502c5c7ea21bf40e0'],
+  ['../extension/manifest.json', '4a6d4efbdd982f6d595f50002bdde3987f17b83197f50da6819f1e2c0ad19fa6'],
 ]);
 
 // WHY collect and control-flow moved on 2026-11-17: the hosted functions are now type-checked by CI (deno check in ci.yml).

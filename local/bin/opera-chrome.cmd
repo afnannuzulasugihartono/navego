@@ -9,7 +9,7 @@ REM Run this instead of opening Chrome normally.
 REM Sign in to Google once; the profile keeps the login and the flag keeps the extension across restarts.
 
 setlocal
-set PROFILE=%LOCALAPPDATA%\OperaAgent\ChromeProfile
+set PROFILE=%LOCALAPPDATA%\Navego\ChromeProfile
 set EXTDIR=%~dp0..\..\extension
 if not exist "%PROFILE%" mkdir "%PROFILE%" 2>nul
 start "Navego Chrome" "C:\Program Files\Google\Chrome\Application\chrome.exe" --user-data-dir="%PROFILE%" --remote-debugging-port=9450 --load-extension="%EXTDIR%" --no-first-run --no-default-browser-check about:blank

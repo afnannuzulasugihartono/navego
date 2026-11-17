@@ -3,15 +3,15 @@
 # @state: the consent screen lives on the site, at /oauth/consent.
 # @dependencies: none stated.
 
-project_id = "opera-agent"
+project_id = "navego"
 
 [auth]
 
-site_url = "https://opera-agent.pages.dev"
+site_url = "https://navego.pages.dev"
 
 [auth.emailRedirect]
 
-redirect_urls = ["https://opera-agent.pages.dev"]
+redirect_urls = ["https://navego.pages.dev"]
 
 [auth.oauth_server]
 enabled = true

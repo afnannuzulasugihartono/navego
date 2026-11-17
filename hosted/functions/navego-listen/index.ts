@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: opera-agent-listen — the listen edge: audio in, transcripts out, audio deleted behind them.
+// @title: navego-listen — the listen edge: audio in, transcripts out, audio deleted behind them.
 // @state: the live session it holds, the segments it stores, and the window it transcribes.
 // @dependencies: edge-runtime, supabase-js, edge-log.
 
@@ -230,7 +230,7 @@ async function handle(req: Request) {
       .update({ status: "ended", ended_at: new Date().toISOString() }).eq("id", sessionId);
     return json({ ok: true });
   } catch (error) {
-    createEdgeLog({}).error("opera-agent-listen", error instanceof Error ? error.message.slice(0, 500) : String(error));
+    createEdgeLog({}).error("navego-listen", error instanceof Error ? error.message.slice(0, 500) : String(error));
     return json({ ok: false, error: "Internal server error." }, 500);
   }
 }

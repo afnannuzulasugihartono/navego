@@ -74,7 +74,7 @@ Sub-256 ms for the whole surface is not available on the remote path: the transp
 npm i -g navego@latest  # replaces the stale 1.6.46 install on this machine
 ```
 
-then point the OpenCode MCP entry for `opera-agent` at `navego local` instead of the remote URL (as of 2026-11 this machine's `~/.config/opencode/opencode.json` registers the remote one), and restart the session. The README measures the same action as under 1 ms through that road — the remaining milliseconds are the device's settle waits, not the transport.
+then point the OpenCode MCP entry for `navego` at `navego local` instead of the remote URL (as of 2026-11 this machine's `~/.config/opencode/opencode.json` registers the remote one), and restart the session. The README measures the same action as under 1 ms through that road — the remaining milliseconds are the device's settle waits, not the transport.
 
 Expectation on that road, tool by tool: state reads and page reads land in the low tens of milliseconds; `goto`, `navigate_tab`, `shot`, `record_stop` and `close` stay above 256 ms because the browser work itself — load, JPEG encode, record finalize, tab teardown — is real work, not overhead. Those can only be batched (`browser_burst`) or avoided, never compressed below the work they do.
 

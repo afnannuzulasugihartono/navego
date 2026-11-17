@@ -33,7 +33,7 @@ import type { Driver, JsonRecord } from '../types.js';
 const here = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(join(here, '..', 'package.json'), 'utf8')) as { version?: string; [key: string]: unknown };
 
-const PORT = Number(process.env.OPERA_LOCAL_PORT || 9333);
+const PORT = Number(process.env.NAVEGO_LOCAL_PORT || 9333);
 
 // WHY THE LINK IS ASKED PER CALL.
 // One `BRIDGED` constant decided the pipe at startup and then decided it for good: an extension that was asleep at that moment lost the run to a debugging port, which opens a profile nobody is logged into.

@@ -12,7 +12,7 @@ const fixture = JSON.parse(
   await readFile(new URL('../fixtures/bing-serp-page1.json', import.meta.url), 'utf8')
 );
 
-// WHY THE EXPECTED TITLE CARRIES THE OLD BRAND: the fixture is a captured Bing SERP (2026-11-14) and the ranked card was titled 'Opera Agent: ...' when the search engine served it; the fixture is evidence of what the parser read, not a claim about what the site calls itself today.
+// WHY THE EXPECTED TITLE CARRIES THE OLD BRAND: the fixture is a captured Bing SERP (2026-11-14) and the ranked card was titled 'Navego: ...' when the search engine served it; the fixture is evidence of what the parser read, not a claim about what the site calls itself today.
 
 test('the parser reads the real page-1 SERP into the external results, in order, with snippets', () => {
   const { results, nextFirst } = parseBingSerp(fixture, { currentFirst: 1 });
@@ -33,8 +33,8 @@ test('the parser reads the real page-1 SERP into the external results, in order,
     'tejima.jp'
   ]);
   assert.equal(first.rank, 1);
-  assert.equal(first.title, 'Opera Agent: Private Local MCP Browser Automation Bridge');
-  assert.equal(first.url, 'https://mcpmarket.com/server/opera-agent');
+  assert.equal(first.title, 'Navego: Private Local MCP Browser Automation Bridge');
+  assert.equal(first.url, 'https://mcpmarket.com/server/navego');
   assert.ok(first.snippet.includes('Connect MCP clients'), 'snippet carries the card description');
   assert.equal(fifth.title, 'GitHub - operasoftware/opera-devtools-mcp');
   assert.ok(fifth.snippet.includes('opera-devtools-mcp'), 'the date prefix stays part of the snippet, verbatim');

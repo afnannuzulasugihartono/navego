@@ -16,7 +16,7 @@ function listenUrlFor(bridgeUrl: unknown) {
   const functionsRoot = base.includes('/functions/v1/')
     ? base.slice(0, base.indexOf('/functions/v1/') + '/functions/v1'.length)
     : base.replace(/\/[^/]*\/?$/, '');
-  return `${base ? functionsRoot : LISTEN_BASE_URL}/opera-agent-listen`;
+  return `${base ? functionsRoot : LISTEN_BASE_URL}/navego-listen`;
 }
 
 export async function readListenSession(): Promise<Record<string, unknown> | null> {

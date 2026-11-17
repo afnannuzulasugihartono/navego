@@ -292,7 +292,7 @@ export const TOOLS = Object.freeze([
         name: stringArg('row name for that role'),
         x: numberArg('viewport x, instead of a handle or a row'),
         y: numberArg('viewport y, instead of a handle or a row'),
-        dir: stringArg('folder to download into; defaults to Downloads/opera-agent'),
+        dir: stringArg('folder to download into; defaults to Downloads/navego'),
         saveAs: stringArg('file name to give it once it has stopped growing, without a folder'),
         timeoutMs: numberArg('how long to wait for the file, default 30000')
       }
@@ -418,7 +418,7 @@ export const TOOLS = Object.freeze([
   },
   {
     name: 'browser_solve_captcha',
-    description: "Opt-in: read the captcha image on one tab through the solver the person configured (OPERA_CAPTCHA_API_URL, OPERA_CAPTCHA_API_KEY, OPERA_CAPTCHA_DOMAINS), then type the answer into the captcha field. Refuses when no solver is configured, when this page's host is not in the allowlist, when the page holds a token widget rather than an image, or when the image or its field cannot be found - every refusal types nothing and says which of those it is. The domain allowlist is what makes the spend the person's decision, so this never runs on a host they did not name.",
+    description: "Opt-in: read the captcha image on one tab through the solver the person configured (NAVEGO_CAPTCHA_API_URL, NAVEGO_CAPTCHA_API_KEY, NAVEGO_CAPTCHA_DOMAINS), then type the answer into the captcha field. Refuses when no solver is configured, when this page's host is not in the allowlist, when the page holds a token widget rather than an image, or when the image or its field cannot be found - every refusal types nothing and says which of those it is. The domain allowlist is what makes the spend the person's decision, so this never runs on a host they did not name.",
     inputSchema: {
       type: 'object',
       properties: {

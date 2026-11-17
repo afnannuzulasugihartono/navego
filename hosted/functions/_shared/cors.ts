@@ -9,7 +9,7 @@
 const FALLBACK_ORIGINS = Object.freeze([
   'chrome-extension://ofgemipoobcnbjkfanmofjbdonjapmgl',
   'chrome-extension://ohbbpamcljckmjhcpkcmefdobkoeaick',
-  'https://opera-agent.pages.dev',
+  'https://navego.pages.dev',
 ]);
 
 export const CORS_DEFAULT_ORIGINS = FALLBACK_ORIGINS;

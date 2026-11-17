@@ -15,7 +15,7 @@ And one requirement, also the owner's: the architecture must be **native for age
 
 # THE PRODUCT, IN ONE LINE
 
-Opera Agent is one product, delivered two ways, with one browser half in common:
+Navego is one product, delivered two ways, with one browser half in common:
 
 ```
   HOSTED ROAD (Supabase)                LOCAL ROAD (npm)
@@ -23,8 +23,8 @@ Opera Agent is one product, delivered two ways, with one browser half in common:
         |  HTTP / SSE                          |  stdio
         v                                       v
   hosted/functions/                      local/bin/opera-local.js
-  opera-agent-mcp (42 tools)             local/mcp-server.js (42 tools)
-  opera-agent-bridge (relay)             local/bridge(.js|-ws).js -> extension (bridge, active:false)
+  navego-mcp (42 tools)             local/mcp-server.js (42 tools)
+  navego-bridge (relay)             local/bridge(.js|-ws).js -> extension (bridge, active:false)
   + 8 more edge functions                     OR local/transport.js -> CDP /json/new (foreground)
         |                                       |
         v                                       v
@@ -84,7 +84,7 @@ Root, after the restructure. Every entry is dispositioned; nothing is unaccounte
 |---|---|---|---|
 | `ARCHITECTURE.md` | THE map: roads diagram, import matrix, where-everything-lives, file-creation rules | gated by `tests/architecture.test.mjs` | NEW |
 | `extension/` | The browser half; MV3 CRX; wire truth lives in `extension/lib/protocol.js` | `publish-crx.yml`, `release.yml` (manifest), boundary pins | unchanged in shape |
-| `local/` | The local road: npm package `opera-agent-mcp`, stdio server | `local/package.json` `files`, bin path, npm provenance | unchanged in shape; `local/lib/` becomes 100% generated |
+| `local/` | The local road: npm package `navego-mcp`, stdio server | `local/package.json` `files`, bin path, npm provenance | unchanged in shape; `local/lib/` becomes 100% generated |
 | `hosted/` | The hosted road: the Supabase project | supabase CLI (`working-directory: hosted`), `deploy-functions.yml` | renamed from `supabase/` |
 | `shared/` | Pure modules both roads import; no I/O | import matrix gate | renamed from `lib/` |
 | `landing/` | The public site; one page per door | `deploy-site.yml`, `wrangler pages` | unchanged |
@@ -132,9 +132,9 @@ Full file inventory, by role, is Appendix B. Entry contract (`bin/opera-local.js
 hosted/config.toml                 (was supabase/config.toml; supabase CLI runs with hosted as cwd)
 hosted/migrations/                 (127 files, unchanged contents; path only)
 hosted/functions/
-  opera-agent-auth                  opera-agent-billing            opera-agent-bridge
-  opera-agent-gateway               opera-agent-listen             opera-agent-mcp
-  opera-agent-runner                opera-agent-update             opera-agent-vm
+  navego-auth                  navego-billing            navego-bridge
+  navego-gateway               navego-listen             navego-mcp
+  navego-runner                navego-update             navego-vm
   _shared/                          (20 files: adhoc-compile.js, billing.js, bing-serp.js -> MOVED to shared/ in PR #1,
                                      command-result.js, command-stream.ts, cors.js, cut-stream.ts, docs-ui-map.js,
                                      edge-log.js, goal-ledger.js, invoice-page.js, plans.js, proof-engine.js,
@@ -155,9 +155,9 @@ hosted/README.md                   (NEW: the hosted road in one page - dataflow,
 | `canonical-order.js` | `shared/canonical-order.js` | `shared/delta-first-observation.js`, `shared/semantic-working-state.js`, `hosted/functions/_shared/proof-engine.js`, `_shared/goal-ledger.js` |
 | `delta-first-observation.js` | `shared/delta-first-observation.js` | tests/shared |
 | `multi-signal-relevance.js` | `shared/multi-signal-relevance.js` | (consumers read it; see boundary pin) |
-| `reactive-vm.js` | `shared/reactive-vm.js` | `hosted/functions/opera-agent-vm/index.ts` |
-| `reactive-vm-collect.js` | `shared/reactive-vm-collect.js` | `opera-agent-vm/index.ts`, `shared/reactive-vm-host.js` |
-| `reactive-vm-control-flow.js` | `shared/reactive-vm-control-flow.js` | `opera-agent-vm/index.ts` |
+| `reactive-vm.js` | `shared/reactive-vm.js` | `hosted/functions/navego-vm/index.ts` |
+| `reactive-vm-collect.js` | `shared/reactive-vm-collect.js` | `navego-vm/index.ts`, `shared/reactive-vm-host.js` |
+| `reactive-vm-control-flow.js` | `shared/reactive-vm-control-flow.js` | `navego-vm/index.ts` |
 | `reactive-vm-host.js` | `shared/reactive-vm-host.js` | tests/shared |
 | `secret-pattern.js` | `shared/secret-pattern.js` | `shared/reactive-vm*.js`, `hosted/functions/_shared/{goal-ledger,proof-engine}.js` |
 | `semantic-working-state.js` | `shared/semantic-working-state.js` | tests/shared |
@@ -167,7 +167,7 @@ And two modules arrive (these are the "one source, two roads" pair, moved in PR 
 | module | was | why shared |
 |---|---|---|
 | `shared/bing-serp.js` | `supabase/functions/_shared/bing-serp.js` | the one SERP parser; hosted imports directly, local carries a pack copy; byte-pinned by `tests/search/bing-serp.test.mjs` |
-| `shared/tidy.js` | `supabase/functions/opera-agent-mcp/tidy.ts` | the one answer normalizer; TypeScript stripped for good - it ships as the JS it always effectively was |
+| `shared/tidy.js` | `supabase/functions/navego-mcp/tidy.ts` | the one answer normalizer; TypeScript stripped for good - it ships as the JS it always effectively was |
 
 `shared/README.md` (NEW): one line per module - what it is, who imports it, why it lives here. One source per module, stated once, for the reader and the gate.
 
@@ -269,7 +269,7 @@ Every backtick path in the file must resolve (check 2 below), so the file cannot
 Inserted before "## Goals":
 
 > ## The product in one line, and the map
-> Opera Agent is one product with two delivery roads and one browser half: the hosted road (MCP client ⇄ HTTP/SSE ⇄ `hosted/functions/` ⇄ Postgres ⇄ relay ⇄ `extension/`) and the local road (MCP client ⇄ stdio ⇄ `local/` ⇄ CDP, or `local/` ⇄ bridge ⇄ `extension/`). Shared pure modules live in `shared/` - and only there as source: `extension/` and `local/` carry pack-generated copies, never hand-written ones. `ARCHITECTURE.md` at the root is the map: it names where everything lives and what may import what, and `tests/architecture.test.mjs` fails the build when the map and the tree disagree - so read the map first, and fix the map, never the test. Where a new file goes is decided there; if you are about to create a file at a path the map does not bless, stop and ask why.
+> Navego is one product with two delivery roads and one browser half: the hosted road (MCP client ⇄ HTTP/SSE ⇄ `hosted/functions/` ⇄ Postgres ⇄ relay ⇄ `extension/`) and the local road (MCP client ⇄ stdio ⇄ `local/` ⇄ CDP, or `local/` ⇄ bridge ⇄ `extension/`). Shared pure modules live in `shared/` - and only there as source: `extension/` and `local/` carry pack-generated copies, never hand-written ones. `ARCHITECTURE.md` at the root is the map: it names where everything lives and what may import what, and `tests/architecture.test.mjs` fails the build when the map and the tree disagree - so read the map first, and fix the map, never the test. Where a new file goes is decided there; if you are about to create a file at a path the map does not bless, stop and ask why.
 
 And one line appended to "## Always":
 
@@ -293,7 +293,7 @@ Everything else in AGENTS.md stays as it is. The owner reviews this diff in the 
 1. `lib/` -> `shared/` (10 modules, `git mv`); every import rewritten (`../../../lib/` -> `../../../shared/` in edge functions, `../lib/` -> `../shared/` in tests, `check.mjs` secret-pattern exception re-pathed).
 2. The one-source-two-roads consolidation: `tidy.ts` -> `shared/tidy.js` (plain JS); `scripts/pack-mcp.mjs` (`scripts/pack/`) becomes byte-copy only; `local/lib/socket-protocol.js` and `local/lib/endpoints.js` untracked; `.gitignore` becomes the one rule `local/lib/`; `local/lib/` regenerated and verified in the tests.
 3. Parser fixes from review (all in `shared/bing-serp.js`): unwrap Bing `/ck/a` redirect wrappers with re-validation; `DISPLAYISH` narrowed so titles containing URLs survive; duplicate-title snippet boundary fixed with a multiset. The fixture loses its session identifiers (`sid=`, `FPIG=`).
-4. Hosted fixes (`hosted/functions/opera-agent-mcp/index.ts` after PR #2; `supabase/...` on PR #1's branch): missing `result.dump` -> `SEARCH_DUMP_MALFORMED`; Bing consent/429 markers with no external cards -> `SEARCH_REFUSED`; `tabs.close` failure surfaced in the answer.
+4. Hosted fixes (`hosted/functions/navego-mcp/index.ts` after PR #2; `supabase/...` on PR #1's branch): missing `result.dump` -> `SEARCH_DUMP_MALFORMED`; Bing consent/429 markers with no external cards -> `SEARCH_REFUSED`; `tabs.close` failure surfaced in the answer.
 5. Local fixes (`local/mcp-server.js`): `fallback.open` inside the try; `withDeadline` timer cleared; close failure surfaced. `tabId` dropped from the local answer for contract parity (spec example updated). Descriptions corrected (background tab only when bridged; CDP foreground; untrusted-fields line).
 6. `SERP_EXPRESSION` in `local/page-expressions.js`: `anchor.href` (absolutized), and the text cap + `textTruncated`, matching `page.dump`.
 7. CI green, reviewer dispositioned, merge.
@@ -312,11 +312,11 @@ Everything else in AGENTS.md stays as it is. The owner reviews this diff in the 
 
 **PR #3 - the tool surface, one source (the owner ruling of 2026-11-13; replaces the last meaningful duplication).** Branched from `main` after PR #2 merges.
 
-The two roads advertise the same 42 tools today by writing them independently: `local/tools.js` exports a plain-JS `TOOLS` (JSON-Schema descriptors; consumed by `local/mcp-server.js`), and `hosted/functions/opera-agent-mcp/tools.ts` registers the same 42 with zod. The names and counts are pinned by `mcp-surface.test.mjs`; the descriptions are not, and they have already drifted (search's wording differs between the two roads). The owner wants them synchronized; this stage makes them one source, not two copies that are checked or not.
+The two roads advertise the same 42 tools today by writing them independently: `local/tools.js` exports a plain-JS `TOOLS` (JSON-Schema descriptors; consumed by `local/mcp-server.js`), and `hosted/functions/navego-mcp/tools.ts` registers the same 42 with zod. The names and counts are pinned by `mcp-surface.test.mjs`; the descriptions are not, and they have already drifted (search's wording differs between the two roads). The owner wants them synchronized; this stage makes them one source, not two copies that are checked or not.
 
 1. New `shared/tool-surface.mjs`: `export const TOOLS` - the 42 tools verbatim in the local JSON-Schema shape (name, title, description, inputSchema with `pattern`/`minLength`/`maxLength`/`minimum`/`maximum`/`enum`/`const`/`default`, nested `properties`, `required`). Moved out of `local/tools.js` essentially unchanged; the hosted wording of any drifted description wins (the hosted text is the fuller one).
 2. `local/tools.js` becomes a thin re-export: `export { TOOLS, ASKABLE, askParams, STRAY_FILE_TAB }` - ASKABLE/askParams logic moves unchanged; nothing about the call path changes for local.
-3. `hosted/functions/opera-agent-mcp/tools.ts` becomes a thin wrapper: a ~150-line `jsonSchemaToZod()` maps every schema key to zod (`string->z.string().regex/min/max`, `integer/number->z.number().int().min().max()`, `boolean`, `enum->z.enum([...])`, `const->z.literal(...)`, `array`, nested `object->z.object({...})`, `record->z.record(...)`, `unknown`, `optional` via the `required` array) and each tool registers with the shared `title`/`description`/`inputSchema`. Handlers stay in `index.ts`/`tools.ts` - they differ by transport and they must stay two roads.
+3. `hosted/functions/navego-mcp/tools.ts` becomes a thin wrapper: a ~150-line `jsonSchemaToZod()` maps every schema key to zod (`string->z.string().regex/min/max`, `integer/number->z.number().int().min().max()`, `boolean`, `enum->z.enum([...])`, `const->z.literal(...)`, `array`, nested `object->z.object({...})`, `record->z.record(...)`, `unknown`, `optional` via the `required` array) and each tool registers with the shared `title`/`description`/`inputSchema`. Handlers stay in `index.ts`/`tools.ts` - they differ by transport and they must stay two roads.
 4. Hosted-only refinements that are behavioral (not wire shape) may stay in the hosted wrapper, documented, and only ever tighten: never loosen what the model may send.
 5. New gate `tests/tool-surface-parity.test.mjs` (subject folder `tests/shared/`): both roads' derivations must equal `shared/tool-surface.mjs` on names, titles, descriptions, and input schemas - field by field. Drift in either road fails CI. `mcp-surface.test.mjs` and `mcp-output-*.test.mjs` continue to pin counts and rendering.
 6. `scripts/pack/pack-mcp.mjs` carries one more file (`tool-surface.mjs`) into `local/lib/`; `.gitignore` unchanged (`local/lib/` remains the one rule).
@@ -410,7 +410,7 @@ Unchanged at `tests/` root: `browser_extension_test.py`, `paper_e2e.py`, `real_s
 
 # APPENDIX B - local/, every file, by role (60 files, for `local/README.md`)
 
-**bin/** (2) - `bin/opera-local.js` (the driver entry: bridge-first, CDP fallback), `bin/opera-agent-mcp.js` (the npm bin: CLI surface, doctor)
+**bin/** (2) - `bin/opera-local.js` (the driver entry: bridge-first, CDP fallback), `bin/navego-mcp.js` (the npm bin: CLI surface, doctor)
 
 **surface/** (5) - what the model reads: `mcp-server.js` (dispatch, tool call/response), `tools.js` (the 42 tools, descriptions, schemas), `agent-guide.js` (per-tool usage notes), `advice.js` (failure -> what to do), `gates.js` (the plan gate)
 

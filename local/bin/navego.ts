@@ -14,9 +14,9 @@ const USAGE = `navego <mode>
   local      drive the everyday browser on this machine, over the loopback bridge
   cloud      drive it through the hosted Navego server
   auth       sign in with a browser and keep the token beside this install
-  doctor     print what is connected, the plan, and what the plan allows
+  doctor     print what is connected, the plan, and what the plan allows (--json for scripts)
   install    detect this machine's browsers, register the extension, keep a verified CRX backup
-  uninstall  remove the extension's policy entries, the OperaAgent folder, and this package; prints what it cannot remove
+  uninstall  remove the extension's policy entries, the Navego folder, and this package; prints what it cannot remove
 
   --help     print this
 `;
@@ -31,7 +31,8 @@ if (mode === 'help' || process.argv.includes('--help')) {
 
 if (mode === 'doctor') {
   const { doctor } = await import('../doctor.js');
-  process.exitCode = await doctor();
+  const args = process.argv.slice(2).filter(a => a.startsWith('--'));
+  process.exitCode = await doctor({ args });
 } else if (mode === 'local') {
   await import('./opera-local.js');
 } else if (mode === 'cloud') {

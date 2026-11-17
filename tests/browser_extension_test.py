@@ -780,7 +780,7 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
 
     def do_POST(self):
-        if self.path == "/opera-agent-listen":
+        if self.path == "/navego-listen":
             length = int(self.headers.get("content-length", "0"))
             body = json.loads(self.rfile.read(length) or b"{}")
             action = body.get("action")
@@ -1192,7 +1192,7 @@ def managed_browser_resources(func):
         server = ThreadingHTTPServer((HOST, 0), Handler)
         port = server.server_address[1]
         threading.Thread(target=server.serve_forever, daemon=True).start()
-        profile_dir = tempfile.TemporaryDirectory(prefix="opera-agent-browser-")
+        profile_dir = tempfile.TemporaryDirectory(prefix="navego-browser-")
         try:
             await asyncio.sleep(0.2)
             return await func(port, Path(profile_dir.name))
@@ -1245,7 +1245,7 @@ async def run(port, profile):
         )
         await popup.reload()
         pair_reply = await popup.evaluate(
-            f"chrome.runtime.sendMessage({{scope: 'opera-agent-popup', action: 'pair', code: '{PAIR_CODE}'}})"
+            f"chrome.runtime.sendMessage({{scope: 'navego-popup', action: 'pair', code: '{PAIR_CODE}'}})"
         )
         assert pair_reply.get("ok") is True, pair_reply
         assert STATE.paired
@@ -1308,7 +1308,7 @@ async def run(port, profile):
             "page.record_start",
             {
                 "tabId": scan_tab,
-                "filename": "opera-agent-test-record.webm",
+                "filename": "navego-test-record.webm",
                 "fps": 15,
                 "maxWidth": 800,
                 "quality": 50,
@@ -1317,7 +1317,7 @@ async def run(port, profile):
             benchmark="page.record_start",
         )
         armed = assert_completed_ok(await asyncio.to_thread(STATE.wait, cid, 60))
-        assert armed["armed"]["filename"] == "opera-agent-test-record.webm", armed
+        assert armed["armed"]["filename"] == "navego-test-record.webm", armed
         assert armed["armed"]["startedAt"] > 0, armed
 
         cid = STATE.push(
@@ -1381,7 +1381,7 @@ async def run(port, profile):
 
         cid = STATE.push(
             "page.scan",
-            {"tabId": scan_tab, "filename": "opera-agent-test-scan.html"},
+            {"tabId": scan_tab, "filename": "navego-test-scan.html"},
             timeout=60000,
             benchmark="page.scan",
         )
@@ -4723,7 +4723,7 @@ async def run(port, profile):
         assert background_input_burst["results"][2]["result"]["visiblePointer"] is True
         assert background_input_burst["results"][2]["result"]["focusEmulated"] is True
 
-        cursor_sel = "#__opera_agent_pointer_cursor"
+        cursor_sel = "#__navego_pointer_cursor"
         body = await audited_background_command(
             worker, focus_audit, "page.query", {"tabId": tab_id, "selector": cursor_sel}
         )
