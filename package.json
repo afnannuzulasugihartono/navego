@@ -1,9 +1,9 @@
 {
-  "name": "kemudi",
-  "version": "1.7.1",
+  "name": "navego",
+  "version": "1.7.5",
   "private": true,
   "license": "MIT",
-  "description": "Kemudi — local browser control bridge with Supabase-powered workflows and automation.",
+  "description": "Navego — local browser control bridge with Supabase-powered workflows and automation.",
   "type": "module",
   "scripts": {
     "build:shared": "node scripts/pack/build-shared.mjs",

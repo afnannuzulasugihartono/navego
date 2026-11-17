@@ -25,17 +25,17 @@
 export const RECIPES = Object.freeze([
   {
     task: 'See what is on the page',
-    do: ['browser_read'],
+    do: ['browser_read_page'],
     note: 'On a Google Doc this reads the document itself, not the toolbar around it.'
   },
   {
     task: 'See what can be clicked, with role and name',
-    do: ['browser_find'],
+    do: ['browser_find_element'],
     note: 'Pass role (menuitem, button, option, link) without a name to list every row of that role; with a name to find the one row.'
   },
   {
     task: 'Find one row by what it is called',
-    do: ['browser_find'],
+    do: ['browser_find_element'],
     note: 'role + name returns the one row, exact name first then substring, with a handle for later clicks.'
   },
   {
@@ -45,92 +45,92 @@ export const RECIPES = Object.freeze([
   },
   {
     task: 'Open a menu and walk into a submenu',
-    do: ['browser_hover', 'browser_wait'],
+    do: ['browser_hover', 'browser_wait_until'],
     note: 'Submenus need the pointer to leave and come back. Wait for the row, never for a guessed number of milliseconds.'
   },
   {
     task: 'Walk a menu by path, not by guessing',
-    do: ['browser_menu'],
-    note: 'action=walk with a path like ["Insert","Image"] opens each level and stops; branches are hovered, never clicked into blindly.'
+    do: ['browser_walk_menu'],
+    note: 'browser_walk_menu({path: ["Insert","Image"]}) opens each level and stops; branches are hovered, never clicked into blindly.'
   },
   {
     task: 'Do several dependent moves in one call',
-    do: ['browser_run'],
+    do: ['browser_run_steps'],
     note: 'Up to eight steps on one tab, in order. The first failure stops the burst and keeps the steps that finished; the page is settled and read once at the end instead of after every move. A refFromStep carries a handle from an earlier step into a later click.'
   },
   {
     task: 'Wait for something to arrive or to go',
-    do: ['browser_wait'],
+    do: ['browser_wait_until'],
     note: 'until=text looks for a text; until=row with absent:true looks for a row to leave. Returns found:false with the page rather than hanging.'
   },
   {
     task: 'Wait until a navigation has happened',
-    do: ['browser_wait'],
+    do: ['browser_wait_until'],
     note: 'Follows a submit or a sign-in with until=url (contains or matches) instead of polling the text. A text wait cannot see a url move.'
   },
   {
     task: 'Wait until the page has stopped moving',
-    do: ['browser_wait'],
+    do: ['browser_wait_until'],
     note: 'until=stable, for anything that moves on its own: a menu animating, a save running, an upload landing.'
   },
   {
     task: 'Put a file into a page that has a file input',
-    do: ['browser_chooser', 'browser_click', 'browser_upload', 'browser_chooser'],
+    do: ['browser_intercept_picker', 'browser_click', 'browser_upload_file', 'browser_intercept_picker'],
     note: 'Enable interception first, click the chooser (or the input), call upload with the path or the bytes, then disable it. If upload reports inputFound:false, the site has no input — use the drop below.'
   },
   {
     task: 'Put a file into a page whose chooser has no input',
-    do: ['browser_drop'],
-    note: 'A drop needs no dialog at all: the page takes the file on the drop it already listens for. If the chooser is already open - Google Docs opens it through the File System Access API - answer it with browser_dialog, which reaches it from the machine.'
+    do: ['browser_drop_file'],
+    note: 'A drop needs no dialog at all: the page takes the file on the drop it already listens for. If the chooser is already open - Google Docs opens it through the File System Access API - answer it with browser_type_into_dialog, which reaches it from the machine.'
   },
   {
     task: 'Take a file out of a page',
-    do: ['browser_find', 'browser_download'],
-    note: 'Resolve the control that starts the download, then hand its handle to browser_download with the folder you want. The file landing and stopping growing is the proof; a still-writing file, a viewer that opened instead, and a click that produced nothing each come back downloaded:false with the reason.'
+    do: ['browser_find_element', 'browser_download_file'],
+    note: 'Resolve the control that starts the download, then hand its handle to browser_download_file with the folder you want. The file landing and stopping growing is the proof; a still-writing file, a viewer that opened instead, and a click that produced nothing each come back downloaded:false with the reason.'
   },
   {
     task: 'Deliver a client statement',
-    do: ['browser_card', 'browser_goto', 'browser_read', 'browser_find', 'browser_download', 'browser_delivered'],
+    do: ['delivery_plan', 'browser_open_url', 'browser_read_page', 'browser_find_element', 'browser_download_file', 'delivery_record'],
     note: 'One client, one portal, one month. The card names the file and the folder before anything is clicked; the drive gets the file; delivered checks it on disk and adds the client-month to the manifest. Never type a password: if the portal asks to sign in, the person signs in in their own browser and the same tab is used again. The answer is the proof another agent can hand to its own user: bytes, the kind of file sniffed from its bytes, the page count, and the closing balance as the portal printed it with the page named as its source. A balance that was not read is reported missing, never invented.'
   },
   {
     task: 'Build a report from an exported sheet',
-    do: ['browser_report'],
+    do: ['artifact_build_report'],
     note: 'CSV in, a checked report out, written beside the source. No browser is touched: month-end reports must not depend on a tab being open. Every figure names the column and the exact rows it came from, and the plan is rechecked against those rows before the file exists.'
   },
   {
     task: 'Build a paper from JSON tables, images, and graphs',
-    do: ['browser_doc'],
+    do: ['artifact_build_document'],
     note: 'JSON in, a .docx out in one call: the checked plan (written beside the source) and the Word file built from it. Every graph names its table and columns, and the graph is recomputed from those rows before the file exists - a graph without a source, or one whose number disagrees with the table, stops the paper instead of reaching a reader.'
   },
   {
     task: 'Turn an exported sheet into an Excel workbook',
-    do: ['browser_sheet'],
+    do: ['artifact_build_workbook'],
     note: 'CSV in, an .xlsx out: the report lines, the source rows, and the ledger of which rows produced each figure. The totals are numbers, so the customer can use them in another sheet. The plan is rechecked against those rows before the file exists, and the plan is written beside the workbook for the next artifact that needs the same figures.'
   },
   {
     task: 'Turn a written plan into slides',
-    do: ['browser_deck'],
+    do: ['artifact_build_slides'],
     note: 'JSON in, a .pptx out. A slide names a figure from the checked report and carries its value; a name the report does not hold stops the deck. The provenance of every figure is written beside the presentation, so the author can answer "where did this number come from" without opening the slide.'
   },
   {
     task: 'Sign in to a portal',
-    do: ['browser_portal', 'browser_login', 'browser_portal'],
+    do: ['browser_check_gate', 'browser_login', 'browser_check_gate'],
     note: "One read says whether the page wants a password, a one-time code, or a captcha. login fills the fields from a credential file the person wrote, matched by the page's own domain, and never returns the secret. A one-time code is never answered: portal waits while the person signs in in their own browser, and the same tab is used again. Without a credentials file the default stands - the person signs in and portal waits for them."
   },
   {
     task: 'Solve a captcha',
-    do: ['browser_portal', 'browser_captcha', 'browser_portal'],
+    do: ['browser_check_gate', 'browser_solve_captcha', 'browser_check_gate'],
     note: 'portal names the captcha and which kind it is. captcha is opt-in: it reads the image through the solver the person configured, only on a host they allowlisted, and types the answer. A token widget cannot be solved this way - let the person click it and use portal. With no solver configured, captcha refuses and types nothing.'
   },
   {
     task: 'Prove it worked',
-    do: ['browser_screenshot', 'browser_read'],
+    do: ['browser_screenshot', 'browser_read_page'],
     note: 'A picture and the text, compared against what you expected. A tool saying it succeeded is not proof; the page saying so is.'
   },
   {
     task: 'Bring a window forward',
-    do: ['browser_status', 'browser_front'],
+    do: ['browser_status', 'browser_focus_window'],
     note: 'status names the browser in front and whether it is ours; front takes a piece of the window title. With no match, front answers the state without moving anything — pass a piece of the title to bring one forward. Never an empty match: that used to bring an arbitrary window forward.'
   }
 ]);
@@ -140,45 +140,50 @@ export const RECIPES = Object.freeze([
 // The two roads that replaced it are above, and a recipe that teaches guessing is worse than no recipe.
 
 export const SIDE_EFFECTS = Object.freeze({
-  browser_pair: ['writes a device token to this machine\'s disk, which is the whole authority of the machine over the wallet'],
-  browser_balance: [],
-  browser_quote: [],
-  browser_topup: ['opens a payable invoice at the provider, which costs nothing until the person pays it'],
-  browser_reserve: ['arms a hold of the quoted price, which the next settle or refund will close'],
-  browser_settle: ['takes the held price from the wallet, once, for a job that was reported finished'],
-  browser_refund: ['returns the whole held price to the wallet, once, for a job that did not finish'],
+  wallet_pair_device: ['writes a device token to this machine\'s disk, which is the whole authority of the machine over the wallet'],
+  wallet_get_balance: [],
+  wallet_get_price: [],
+  wallet_add_funds: ['opens a payable invoice at the provider, which costs nothing until the person pays it'],
+  wallet_hold_price: ['arms a hold of the quoted price, which the next settle or refund will close'],
+  wallet_charge: ['takes the held price from the wallet, once, for a job that was reported finished'],
+  wallet_refund: ['returns the whole held price to the wallet, once, for a job that did not finish'],
   browser_status: [],
-  browser_front: ['brings a browser window to the front of the machine, which takes the keyboard away from whatever was in front'],
-  browser_dialog: ['reads the dialog\'s title, buttons and field text — changes nothing', 'writes text into an operating system dialog outside the browser', 'presses a button on an operating system dialog outside the browser'],
-  browser_guide: [],
-  browser_menu: ['list action: reads the menu markup and answers — never clicks', 'walk action: opens menus by hovering and clicking levels on the way to the path you gave'],
-  browser_pin: ['pins tab-less commands to the named browser until another switch says otherwise; moves no tab by itself and steers no running drive'],
-  browser_tabs: [],
-  browser_goto: ['opens a new tab in the same browser'],
-  browser_close: ['closes a tab the caller may still be holding'],
-  browser_search: ['opens one background tab on the Bing results on the bridged path (the direct CDP fallback opens it in the foreground) and closes it before the answer returns - nothing is left on the browser, and the machine\'s own window is never brought forward'],
-  browser_read: ['with allowCaretMove, borrows the selection on a canvas editor to read the text through it, and answers caretRestored as what was measured rather than what was hoped', 'without it, that step is skipped and the reason is reported, because a canvas caret is not in the DOM and cannot be promised back'],
-  browser_find: [],
+  browser_focus_window: ['brings a browser window to the front of the machine, which takes the keyboard away from whatever was in front'],
+  browser_focus_tab: ['brings the window holding one named tab to the front, instead of guessing by window title'],
+  browser_read_dialog: ['reads the dialog\'s title, buttons and field text outside the browser — changes nothing'],
+  browser_type_into_dialog: ['writes text into an operating system dialog outside the browser and reads the field back'],
+  browser_press_dialog_button: ['presses a button on an operating system dialog outside the browser'],
+  browser_get_guide: [],
+  browser_list_menu: ['reads the menu markup and answers — never clicks'],
+  browser_walk_menu: ['opens menus by hovering and clicking levels on the way to the path you gave'],
+  browser_select_browser: ['pins tab-less commands to the named browser until another switch says otherwise; moves no tab by itself and steers no running drive'],
+  browser_list_tabs: [],
+  browser_open_url: ['opens a new tab in the same browser'],
+  browser_close_tab: ['closes a tab the caller may still be holding'],
+  browser_search_web: ['opens one background tab on the Bing results on the bridged path (the direct CDP fallback opens it in the foreground) and closes it before the answer returns - nothing is left on the browser, and the machine\'s own window is never brought forward'],
+  browser_read_page: ['with allowCaretMove, borrows the selection on a canvas editor to read the text through it, and answers caretRestored as what was measured rather than what was hoped', 'without it, that step is skipped and the reason is reported, because a canvas caret is not in the DOM and cannot be promised back'],
+  browser_find_text: [],
+  browser_find_element: [],
   browser_click: ['moves the pointer and presses'],
   browser_hover: ['moves the pointer'],
-  browser_press: ['sends a key to whatever is focused'],
-  browser_type: ['inserts text into whatever is focused', 'atEnd: moves the caret to the end before inserting, so text lands at the end instead of wherever the caret was left'],
+  browser_press_key: ['sends a key to whatever is focused'],
+  browser_type_text: ['inserts text into whatever is focused', 'atEnd: moves the caret to the end before inserting, so text lands at the end instead of wherever the caret was left'],
   browser_scroll: ['moves the view, which can load more of a lazy page and move the page out from under coordinates you already hold'],
-  browser_run: ['runs every step in order and stops at the first failure', 'settles and reads the page once at the end, not after each step'],
-  browser_wait: ['waits until text appears, a row matches, a url matches, or the page stops changing — whatever until= says'],
-  browser_upload: ['fills a file input, which fires the change the page listens for'],
-  browser_drop: ['brings the tab to front and drops a file on it'],
-  browser_chooser: ['changes whether the native file picker appears on this tab'],
-  browser_download: ['brings the tab to front, clicks, and writes a file into the download folder it names'],
-  browser_card: [],
-  browser_delivered: ['writes the client-month into the manifest on disk, replacing the record only when asked'],
-  browser_report: ['writes a checked report file beside the source; no page is touched'],
-  browser_doc: ['writes a checked document plan and the Word file built from it beside the source; no page is touched'],
-  browser_sheet: ['writes an Excel workbook and a checked report plan beside the source; no page is touched'],
-  browser_deck: ['writes a PowerPoint presentation and the provenance of its figures beside the source; no page is touched'],
-  browser_portal: ['reads the gate on the page and names it — sign-in, one-time code, captcha, or nothing; types nothing', 'waits for the person to clear the gate in their own browser, then answers with the page as it stands'],
+  browser_run_steps: ['runs every step in order and stops at the first failure', 'settles and reads the page once at the end, not after each step'],
+  browser_wait_until: ['waits until text appears, a row matches, a url matches, or the page stops changing — whatever until= says'],
+  browser_upload_file: ['fills a file input, which fires the change the page listens for'],
+  browser_drop_file: ['brings the tab to front and drops a file on it'],
+  browser_intercept_picker: ['changes whether the native file picker appears on this tab'],
+  browser_download_file: ['brings the tab to front, clicks, and writes a file into the download folder it names'],
+  delivery_plan: [],
+  delivery_record: ['writes the client-month into the manifest on disk, replacing the record only when asked'],
+  artifact_build_report: ['writes a checked report file beside the source; no page is touched'],
+  artifact_build_document: ['writes a checked document plan and the Word file built from it beside the source; no page is touched'],
+  artifact_build_workbook: ['writes an Excel workbook and a checked report plan beside the source; no page is touched'],
+  artifact_build_slides: ['writes a PowerPoint presentation and the provenance of its figures beside the source; no page is touched'],
+  browser_check_gate: ['reads the gate on the page and names it — sign-in, one-time code, captcha, or nothing; types nothing', 'waits for the person to clear the gate in their own browser, then answers with the page as it stands'],
   browser_login: ['fills the username and password fields from the credential file and submits; the secret never returns in the answer'],
-  browser_captcha: ['reads a captcha image through the configured solver, which spends the person\'s money at that service, then types the answer into the captcha field'],
+  browser_solve_captcha: ['reads a captcha image through the configured solver, which spends the person\'s money at that service, then types the answer into the captcha field'],
   browser_screenshot: []
 });
 
@@ -195,7 +200,7 @@ export function guide(topic: unknown) {
     recipes,
     sideEffects: Object.entries(SIDE_EFFECTS).map(([tool, effects]) => ({ tool, effects })),
     refusals: [
-      'A native operating-system dialog cannot be opened, closed or filled from here — try browser_dialog instead, which reaches the dialog from the machine.',
+      'A native operating-system dialog cannot be opened, closed or filled from here — try browser_type_into_dialog or browser_press_dialog_button instead, which reach the dialog from the machine.',
       'There is no raw CDP escape hatch — anything that can change the page is a named tool, by design.',
       'A tool that reports success is not proof. The page saying so is.',
       'A page cannot see whether the window in front of it is the one the machine has in front. Clicks and keys go nowhere while status says the window is not focused.',

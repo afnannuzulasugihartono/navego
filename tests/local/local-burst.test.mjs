@@ -79,13 +79,13 @@ test('a ref can only point at an earlier step', () => {
     /earlier/
   );
   assert.throws(
-    () => normalizeBurst({ steps: [{ action: 'browser_find', role: 'menuitem', name: 'Insert' }, { action: 'browser_click', refFromStep: 2 }] }),
+    () => normalizeBurst({ steps: [{ action: 'browser_find_element', role: 'menuitem', name: 'Insert' }, { action: 'browser_click', refFromStep: 2 }] }),
     /earlier/
   );
 });
 
 test('the whole burst is capped at twelve seconds', () => {
-  const normalized = normalizeBurst({ steps: [{ action: 'browser_press', key: 'Enter' }], timeoutMs: 999999 });
+  const normalized = normalizeBurst({ steps: [{ action: 'browser_press_key', key: 'Enter' }], timeoutMs: 999999 });
 
   assert.equal(normalized.timeoutMs, 12000);
 });
@@ -94,7 +94,7 @@ test('a ref carries the handle from resolve into the click, never a guessed poin
   const driver = fakeDriver();
   const normalized = normalizeBurst({
     steps: [
-      { action: 'browser_find', role: 'menuitem', name: 'Insert' },
+      { action: 'browser_find_element', role: 'menuitem', name: 'Insert' },
       { action: 'browser_click', refFromStep: 0 }
     ]
   });
@@ -111,12 +111,12 @@ test('a ref carries the handle from resolve into the click, never a guessed poin
 
 test('a step carries its own answer, with no second box around it', async () => {
   const driver = fakeDriver();
-  const normalized = normalizeBurst({ steps: [{ action: 'browser_find', role: 'menuitem', name: 'Insert' }] });
+  const normalized = normalizeBurst({ steps: [{ action: 'browser_find_element', role: 'menuitem', name: 'Insert' }] });
 
   const out = await runLocalBurst({ driver, steps: normalized.steps, timeoutMs: normalized.timeoutMs });
 
   assert.equal(out.results[0].handle, 'opera-7', 'the row the step found is right there');
-  assert.equal(out.results[0].action, 'browser_find');
+  assert.equal(out.results[0].action, 'browser_find_element');
   assert.equal(out.results[0].result, undefined, 'and there is no wrapper to open');
 });
 
@@ -126,12 +126,12 @@ test('a step carries its own answer, with no second box around it', async () => 
 
 test('a burst that held a wait settled the page, and one that did not says nothing', async () => {
   const waited = fakeDriver();
-  const withWait = normalizeBurst({ steps: [{ action: 'browser_find', role: 'row', name: 'Row 1' }, { action: 'browser_wait', text: 'Row 2' }] });
+  const withWait = normalizeBurst({ steps: [{ action: 'browser_find_element', role: 'row', name: 'Row 1' }, { action: 'browser_wait_until', text: 'Row 2' }] });
   const quiet = await runLocalBurst({ driver: waited, steps: withWait.steps, timeoutMs: withWait.timeoutMs });
   assert.equal(quiet.settled, true, 'the wait looked until the page stopped');
 
   const reads = fakeDriver();
-  const withoutWait = normalizeBurst({ steps: [{ action: 'browser_find', role: 'row', name: 'Row 1' }] });
+  const withoutWait = normalizeBurst({ steps: [{ action: 'browser_find_element', role: 'row', name: 'Row 1' }] });
   const plain = await runLocalBurst({ driver: reads, steps: withoutWait.steps, timeoutMs: withoutWait.timeoutMs });
   assert.equal(plain.settled, undefined, 'a burst of reads never claimed the page stopped moving');
 });
@@ -141,8 +141,8 @@ test('a row that the click raises, and text that lands, happen in one call', asy
   const normalized = normalizeBurst({
     steps: [
       { action: 'browser_click', role: 'button', name: 'Add row' },
-      { action: 'browser_wait', until: 'row', role: 'row', name: 'Row 101', timeoutMs: 2000 },
-      { action: 'browser_wait', text: 'Row 101' }
+      { action: 'browser_wait_until', until: 'row', role: 'row', name: 'Row 101', timeoutMs: 2000 },
+      { action: 'browser_wait_until', text: 'Row 101' }
     ]
   });
 
@@ -160,7 +160,7 @@ test('a row that never appears stops the burst where it did', async () => {
   const normalized = normalizeBurst({
     steps: [
       { action: 'browser_click', role: 'button', name: 'Add row' },
-      { action: 'browser_wait', until: 'row', role: 'row', name: 'Row 101', timeoutMs: 500 }
+      { action: 'browser_wait_until', until: 'row', role: 'row', name: 'Row 101', timeoutMs: 500 }
     ]
   });
 
@@ -176,7 +176,7 @@ test('the first failure stops the burst and keeps the steps that finished', asyn
   const normalized = normalizeBurst({
     steps: [
       { action: 'browser_click', role: 'menuitem', name: 'Insert' },
-      { action: 'browser_type', text: 'must not run' }
+      { action: 'browser_type_text', text: 'must not run' }
     ]
   });
 
@@ -186,7 +186,7 @@ test('the first failure stops the burst and keeps the steps that finished', asyn
   assert.equal(out.failedAt, 0);
   assert.equal(out.completedSteps, 0);
   assert.match(out.error.message, /menu is gone/);
-  assert.ok(!driver.calls.some(([name]) => name === 'browser_type'), 'the next step never fired');
+  assert.ok(!driver.calls.some(([name]) => name === 'browser_type_text'), 'the next step never fired');
 });
 
 test('the deadline is checked before the next step, so a burst cannot overrun it', async () => {
@@ -216,7 +216,7 @@ test('a wait that never sees its text fails the step instead of walking into the
 
   const out = await runLocalBurst({
     driver,
-    steps: [{ action: 'browser_wait', text: 'Total' }, { action: 'browser_press', key: 'Enter' }],
+    steps: [{ action: 'browser_wait_until', text: 'Total' }, { action: 'browser_press_key', key: 'Enter' }],
     timeoutMs: 12000
   });
 

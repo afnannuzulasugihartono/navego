@@ -5,8 +5,8 @@ import { AUTH_HOST, clearSession, ensureSession, getStoredToken, getRefreshToken
 
 export function meta() {
   return [
-    { title: 'Izin aplikasi — Corbin' },
-    { name: 'description', content: 'Tinjau aplikasi yang meminta akses ke akun Corbin Anda sebelum memberi izin.' }
+    { title: 'Izin aplikasi — Navego' },
+    { name: 'description', content: 'Tinjau aplikasi yang meminta akses ke akun Navego Anda sebelum memberi izin.' }
   ];
 }
 
@@ -182,7 +182,7 @@ export default function Consent() {
               </div>
             </dl>
             {redirectHost ? <p className="note" style={{ marginTop: 8 }}>Kode hanya dikirim ke {redirectHost}.</p> : null}
-            <p className="note" style={{ marginTop: 6 }}>Corbin tetap memblokir password, kode sekali pakai, data pembayaran, tab pribadi, dan unggah file. Izin ini hanya mengizinkan aplikasi itu meminta tindakan lewat Corbin.</p>
+            <p className="note" style={{ marginTop: 6 }}>Navego tetap memblokir password, kode sekali pakai, data pembayaran, tab pribadi, dan unggah file. Izin ini hanya mengizinkan aplikasi itu meminta tindakan lewat Navego.</p>
             <div className="hero-cta" style={{ marginTop: 12 }}>
               <button className="btn btn-solid" type="button" disabled={busy} onClick={() => decide('approve')}>Izinkan</button>
               <button className="btn btn-ghost" type="button" disabled={busy} onClick={() => decide('deny')} style={{ color: 'var(--danger)' }}>Tolak</button>

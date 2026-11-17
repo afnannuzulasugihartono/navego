@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
-import { CorbinMark } from '../components/CorbinMark';
+import { NavegoMark } from '../components/NavegoMark';
 import { AUTH_HOST, clearSession, ensureSession, headersFor } from '../lib/auth';
 import {
   type Device,
@@ -23,7 +23,7 @@ import {
 
 export function meta() {
   return [
-    { title: 'Dashboard — Corbin' },
+    { title: 'Dashboard — Navego' },
     { name: 'description', content: 'Device ter-pairing, perintah, plan, saldo, dan kendali atas semuanya — dalam satu konsol.' }
   ];
 }
@@ -68,6 +68,17 @@ function duration(from?: string, to?: string): string {
 
 const isDeviceLive = (device: Device) => /online|active|live|awake/i.test(String(device.status || ''));
 const deviceStatusText = (device: Device) => String(device.status || 'tidak diketahui');
+
+// WHY THE PAIR INTENT SURVIVES LOGIN: the popup's one-click door deep-links with ?pair=1; a freshly installed browser that is not logged in yet hits the login gate first.
+// Dropping the intent here would send pair=1 users to a logged-out dashboard and leave the pairing unfinished.
+
+const wantPairIntent = (): boolean => {
+  try {
+    return new URLSearchParams(window.location.search).has('pair');
+  } catch {
+    return false;
+  }
+};
 
 // One-click pair deep-link from the extension popup: ?pair=1 fires the same flow once.
 // The identity cookie is seeded here for the same reason: the extension mirrors it into its own storage, and pairing adopts the legacy identity in place so a reinstall keeps its device.
@@ -126,7 +137,8 @@ export default function Dashboard() {
     void (async () => {
       const token = await ensureSession();
       if (!token) {
-        window.location.replace('./index.html');
+        const next = wantPairIntent() ? './dashboard.html?pair=1#pairing' : './dashboard.html';
+        window.location.replace('./index.html?next=' + encodeURIComponent(next));
         return;
       }
       try {
@@ -158,7 +170,7 @@ export default function Dashboard() {
       if (!value) return;
       document.cookie = `oa_device_id=${value}; Max-Age=31536000; Path=/; Secure; SameSite=Lax`;
     } catch {
-      console.warn('[corbin] the device cookie could not be written; pairing will use a random identity this time');
+      console.warn('[navego] the device cookie could not be written; pairing will use a random identity this time');
     }
   }, []);
 
@@ -322,7 +334,7 @@ export default function Dashboard() {
         ) : (
           <div className="app">
             <nav className="rail" aria-label="Navigasi konsol">
-              <CorbinMark size={26} title="Corbin" />
+              <NavegoMark size={26} title="Navego" />
               {renderNavItem('ringkasan', 'Ringkasan')}
               {renderNavItem('device', `Device (${total})`)}
               {renderNavItem('riwayat', 'Riwayat')}
@@ -383,7 +395,7 @@ export default function Dashboard() {
                   {devices && devices.length === 0 ? (
                     <div className="empty">
                       <p><strong>Belum ada device.</strong></p>
-                      <p>Pasang Corbin di browser ini, lalu klik “Pasangkan browser ini”.</p>
+                      <p>Pasang Navego di browser ini, lalu klik “Pasangkan browser ini”.</p>
                       <button className="btn btn-solid btn-sm" type="button" onClick={() => go('pairing')} style={{ marginTop: 10 }}>Pasangkan browser ini</button>
                     </div>
                   ) : null}

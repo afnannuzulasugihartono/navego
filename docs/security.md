@@ -3,7 +3,7 @@
 
 # Security
 
-Kemudi can interact with a local browser and therefore uses a strict allowlisted command model. This page carries the detail; the short policy GitHub renders on the security tab is [`SECURITY.md`](../SECURITY.md).
+Navego can interact with a local browser and therefore uses a strict allowlisted command model. This page carries the detail; the short policy GitHub renders on the security tab is [`SECURITY.md`](../SECURITY.md).
 
 ## Security principles
 

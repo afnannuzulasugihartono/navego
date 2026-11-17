@@ -158,16 +158,34 @@
 // The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
 
 // WHY manifest.json and background.ts were re-pinned on 2026-11-15: the rebrand moved the product name.
-// Opera Agent is Kemudi everywhere a human reads: the manifest carries the new name and default_title, and background.js reports product: 'Kemudi' on browser.ping.
+// Opera Agent is Navego everywhere a human reads: the manifest carries the new name and default_title, and background.js reports product: 'Navego' on browser.ping.
 // The extension ID, the signing key and every wire contract are untouched, so a browser already holding 1.6.59 updates into the new name without a beat; the pins move with the reviewed bytes and nothing else.
 
 // WHY these three were re-pinned on 2026-11-16: the 1.7.1 release rode them.
 // The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
 
+// WHY background.ts was re-pinned on 2026-11-17: the owner unified the product name to Navego.
+// `product` on browser.ping now answers 'Navego'; the wire contract, the extension id and every other byte are untouched, so the pin moves with the reviewed one-line change and nothing else.
+
+// WHY these three were re-pinned on 2026-11-17: the 1.7.2 release rode them.
+// The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
+
+// WHY these three were re-pinned on 2026-11-17: the 1.7.3 release rode them.
+// The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
+
+// WHY these three were re-pinned on 2026-11-17: the 1.7.4 release rode them.
+// The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
+
+// WHY manifest.json was re-pinned again on 2026-11-17: the CSP lost its bare https: wildcard.
+// A wildcard connect-src admitted any https origin as an exfiltration path; named hosts are the shape the extension actually needs.
+
+// WHY these three were re-pinned on 2026-11-17: the 1.7.5 release rode them.
+// The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
+
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
   ['../extension/content.ts', '02365ade2ed83b234e7056ff51c3b7b41b1cacf66c74fdad41e1009b8f464fa5'],
-  ['../extension/background.ts', '480d600bed33e228131c69d7a71057b1dca186a40678a8d20be7f829d9b25bea'],
-  ['../extension/manifest.json', 'c0bafe37a46aed6c95cdc548dfdfc5b9781b3c496974b8b52ad70df6b77fe841'],
+  ['../extension/background.ts', 'b2e496988683da01a2248ba214edf8f18182d3eeeb25e0823603edd528752316'],
+  ['../extension/manifest.json', '46af96ef36e8cab18c5e5d8ebf4659b6c216579f886d78b47ebec01aa65d94ed'],
 ]);
 
 export const OBSERVATION_STACK_LOCKS = Object.freeze([

@@ -7,6 +7,8 @@
 // The frame codec is unit-pinned separately; what can only be proven over a real connection is the part that actually failed in production: a handshake that completes, a command that arrives the instant it is sent, a completion that settles the caller, and a heartbeat that keeps an otherwise idle worker from dying.
 // A mock proves none of those.
 
+process.env.OPERA_BRIDGE_TOKEN = 'test-bridge-token';
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { connect as netConnect } from 'node:net';
@@ -289,7 +291,7 @@ test('the command door settles against the device and names a device failure', a
       port,
       path: '/command',
       method: 'POST',
-      headers: { 'content-type': 'application/json', 'content-length': Buffer.byteLength(payload) }
+      headers: { 'content-type': 'application/json', 'content-length': Buffer.byteLength(payload), 'x-opera-bridge-token': 'test-bridge-token' }
     }, (res) => {
       let out = '';
       res.on('data', (piece) => { out += piece; });

@@ -133,17 +133,17 @@ test('the version comparison reads as numbers, not as text', () => {
 
 test('the zip reader gives back the files the archive holds', async () => {
   const zip = buildZip([
-    { name: 'manifest.json', text: '{"name":"Kemudi","version":"1.6.38"}' },
+    { name: 'manifest.json', text: '{"name":"Navego","version":"1.6.38"}' },
     { name: 'lib/browser-id.js', text: 'export const x = 1;' }
   ]);
   const entries = await readZip(zip);
   assert.deepEqual(entries.map((entry) => entry.name), ['manifest.json', 'lib/browser-id.js']);
-  assert.equal(new TextDecoder().decode(entries[0].bytes), '{"name":"Kemudi","version":"1.6.38"}');
+  assert.equal(new TextDecoder().decode(entries[0].bytes), '{"name":"Navego","version":"1.6.38"}');
 });
 
 test('a newer build is written over the folder, file by file', async () => {
   const zip = buildZip([
-    { name: 'manifest.json', text: '{"name":"Kemudi","version":"1.6.38"}' },
+    { name: 'manifest.json', text: '{"name":"Navego","version":"1.6.38"}' },
     { name: 'lib/browser-id.js', text: 'export const family = () => "Brave";' }
   ]);
   const folder = fakeFolder();
@@ -157,7 +157,7 @@ test('a newer build is written over the folder, file by file', async () => {
 });
 
 test('the same version writes nothing', async () => {
-  const zip = buildZip([{ name: 'manifest.json', text: '{"name":"Kemudi","version":"1.6.38"}' }]);
+  const zip = buildZip([{ name: 'manifest.json', text: '{"name":"Navego","version":"1.6.38"}' }]);
   const folder = fakeFolder();
   const outcome = await applyBuild({ folder, installedVersion: '1.6.38', fetchImpl: fetchImpl('1.6.38', zip) });
   assert.equal(outcome.changed, false);
@@ -187,7 +187,7 @@ test('the served version is the one the build carries, asked by a head on the ar
 });
 
 test('a head that cannot say leaves the download to decide, and the write still happens', async () => {
-  const zip = buildZip([{ name: 'manifest.json', text: '{"name":"Kemudi","version":"1.6.38"}' }]);
+  const zip = buildZip([{ name: 'manifest.json', text: '{"name":"Navego","version":"1.6.38"}' }]);
   const folder = fakeFolder();
   const blind = async (url, options) => {
     if (options?.method === 'HEAD') return { ok: false, status: 503, headers: { get: () => null } };

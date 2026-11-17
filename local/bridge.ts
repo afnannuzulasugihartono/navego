@@ -22,6 +22,7 @@
 // So the bridge hands over a transport, the same contract the real debugging port satisfies, and nothing above this line learns that the bytes went through an extension.
 
 import { createBridgeServer } from './bridge-ws.js';
+import { resolveBridgeToken } from './bridge-token.js';
 import type { BridgeTransport } from './bridge-ws.js';
 
 const DEFAULT_BRIDGE_PORT = 9451;
@@ -63,7 +64,7 @@ function adoptedBridge(port: number): BridgeTransport & { adopted: true; probe: 
     try {
       const response = await fetch(`http://127.0.0.1:${port}/command`, {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', 'x-opera-bridge-token': resolveBridgeToken() },
         body: JSON.stringify({ method, params, timeoutMs }),
         signal: AbortSignal.timeout(timeoutMs + 2000)
       });
@@ -79,7 +80,7 @@ function adoptedBridge(port: number): BridgeTransport & { adopted: true; probe: 
   const probe = async (): Promise<boolean> => {
     let body: Record<string, unknown> | null = null;
     try {
-      const response = await fetch(`http://127.0.0.1:${port}/health`, { signal: AbortSignal.timeout(2000) });
+      const response = await fetch(`http://127.0.0.1:${port}/health`, { signal: AbortSignal.timeout(2000), headers: { 'x-opera-bridge-token': resolveBridgeToken() } });
       body = await response.json() as Record<string, unknown>;
     } catch {
       body = null;
@@ -269,7 +270,7 @@ export async function preferBridgeDevice(target: unknown): Promise<Record<string
   else payload = { deviceName: wanted };
   const response = await fetch(`http://127.0.0.1:${address.port}/prefer`, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: { 'content-type': 'application/json', 'x-opera-bridge-token': resolveBridgeToken() },
     body: JSON.stringify(payload),
     signal: AbortSignal.timeout(PREFER_TIMEOUT_MS)
   });
@@ -305,7 +306,7 @@ async function leaseAsk(action: string, tabId: unknown, owner: string, ttlMs?: n
   const { port } = address;
   const response = await fetch(`http://127.0.0.1:${String(port)}/lease`, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: { 'content-type': 'application/json', 'x-opera-bridge-token': resolveBridgeToken() },
     body: JSON.stringify({ action, tabId: String(tabId), owner, ...(ttlMs ? { ttlMs } : {}) }),
     signal: AbortSignal.timeout(REPLY_TIMEOUT_MS)
   }).catch(() => null);

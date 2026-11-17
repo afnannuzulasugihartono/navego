@@ -12,8 +12,6 @@ const PAGES: Array<[string, string]> = [
   ['unduh', './routes/unduh.tsx'],
   ['docs', './routes/docs.tsx'],
   ['mcp', './routes/mcp.tsx'],
-  ['studi', './routes/studi.tsx'],
-  ['bukti', './routes/bukti.tsx'],
   ['dukungan', './routes/dukungan.tsx'],
   ['privasi', './routes/privasi.tsx'],
   ['syarat', './routes/syarat.tsx'],

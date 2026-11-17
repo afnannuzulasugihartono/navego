@@ -6,8 +6,8 @@ import { AUTH_HOST, clearSession, getReturnTo, getRefreshToken, getStoredToken, 
 
 export function meta() {
   return [
-    { title: 'Masuk — Corbin' },
-    { name: 'description', content: 'Satu akun untuk website dan device Anda. Masuk dengan Google, GitHub, atau magic link email — tanpa password.' }
+    { title: 'Masuk dashboard — Navego' },
+    { name: 'description', content: 'Akun Navego dipakai hanya untuk dashboard: mengelola device, plan, dan pemakaian Anda. Masuk dengan Google, GitHub, atau magic link email — tanpa password.' }
   ];
 }
 
@@ -118,12 +118,12 @@ export default function Index() {
   return (
     <>
       <SiteHeader current="/index.html" />
-      <main className="auth-stage" aria-label="Masuk ke Corbin">
+      <main className="auth-stage" aria-label="Masuk ke Navego">
         <div className="auth-art" aria-hidden="true" style={{ backgroundImage: "url('/assets/raven-1874.jpg')" }} />
         <div className="auth-pane">
           <div className="auth-copy">
-            <h1>Corbin.</h1>
-            <p>Satu akun.<br />Semua browser Anda.</p>
+            <h1>Navego.</h1>
+            <p>Akun untuk dashboard.<br />Bukan untuk publik.</p>
           </div>
           {phase === 'form' ? (
             <div className="auth-card">

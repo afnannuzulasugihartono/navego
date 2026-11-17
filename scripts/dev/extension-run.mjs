@@ -199,27 +199,27 @@ async function runExtensionProof({
     note({ kind: 'call', tool: 'browser_status', ok: true, ms: status.ms, note: `the bridge on ${bridgePort} is the road in use` });
 
     process.stderr.write('extension run: status done\n');
-    const opened = await mcp.tool('browser_goto', { url: portal.url });
+    const opened = await mcp.tool('browser_open_url', { url: portal.url });
     const tabId = opened.answer?.action?.id;
     if (!tabId) throw new Error('goto returned no tab id');
-    note({ kind: 'call', tool: 'browser_goto', ok: true, ms: opened.ms, note: `tab ${tabId} opened the fixture portal` });
+    note({ kind: 'call', tool: 'browser_open_url', ok: true, ms: opened.ms, note: `tab ${tabId} opened the fixture portal` });
 
     process.stderr.write('extension run: goto done\n');
-    const read = await mcp.tool('browser_read', { tabId });
+    const read = await mcp.tool('browser_read_page', { tabId });
     const text = String(read.answer?.text ?? '');
     for (const mark of MARKS) {
       if (!text.includes(mark)) throw new Error(`read did not show ${mark}`);
     }
-    note({ kind: 'call', tool: 'browser_read', ok: true, ms: read.ms, note: `${text.length} characters read from the portal` });
+    note({ kind: 'call', tool: 'browser_read_page', ok: true, ms: read.ms, note: `${text.length} characters read from the portal` });
 
     process.stderr.write('extension run: read done\n');
-    const found = await mcp.tool('browser_find', { tabId, text: 'Unduh CSV' });
+    const found = await mcp.tool('browser_find_text', { tabId, text: 'Unduh CSV' });
     const matches = Array.isArray(found.answer) ? found.answer : [];
     if (!matches.length) throw new Error('find did not find the download control');
-    note({ kind: 'call', tool: 'browser_find', ok: true, ms: found.ms, note: `${matches.length} match for "Unduh CSV"` });
+    note({ kind: 'call', tool: 'browser_find_text', ok: true, ms: found.ms, note: `${matches.length} match for "Unduh CSV"` });
 
     process.stderr.write('extension run: find done\n');
-    const grabbed = await mcp.tool('browser_download', {
+    const grabbed = await mcp.tool('browser_download_file', {
       tabId,
       ...CONTROL,
       dir: work,
@@ -243,7 +243,7 @@ async function runExtensionProof({
     }
     note({
       kind: 'download',
-      tool: 'browser_download',
+      tool: 'browser_download_file',
       ok: true,
       ms: grabbed.ms,
       file: path.basename(csv),
@@ -264,8 +264,8 @@ async function runExtensionProof({
     if (!shot.image) throw new Error('shot returned no picture');
     note({ kind: 'call', tool: 'browser_screenshot', ok: true, ms: shot.ms, note: `${Math.round((shot.image.length * 3) / 4)} picture bytes` });
 
-    const closed = await mcp.tool('browser_close', { tabId });
-    note({ kind: 'call', tool: 'browser_close', ok: true, ms: closed.ms, note: `tab ${closed.answer?.id ?? tabId} closed` });
+    const closed = await mcp.tool('browser_close_tab', { tabId });
+    note({ kind: 'call', tool: 'browser_close_tab', ok: true, ms: closed.ms, note: `tab ${closed.answer?.id ?? tabId} closed` });
 
     return { rows, jpeg: shot.image, browser: browser?.name ?? 'the browser the extension was linked to', extensionId: id };
   } finally {

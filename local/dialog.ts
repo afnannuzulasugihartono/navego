@@ -19,9 +19,12 @@
 // - title, controls, the text in the field - and a refusal says why instead of returning false.
 
 import { execFile } from 'node:child_process';
+import path from 'node:path';
 import { promisify } from 'node:util';
 
 const run = promisify(execFile);
+
+const POWERSHELL = path.join(process.env.SystemRoot || process.env.WINDIR || 'C:\\Windows', 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
 
 // WHY ONE SCRIPT WITH A MODE.
 // Three scripts would mean three copies of the same window-walking code, and the copies would drift the way copies do.
@@ -157,13 +160,17 @@ if ($mode -eq 'press') {
   foreach ($child in $children) {
     if ([OperaDialog]::ClassOf($child) -ne 'Button') { continue }
     $caption = [OperaDialog]::TitleOf($child)
-    if ($caption -like "*$name*") { $target = $child; $matched = $caption; break }
+    if ($caption.IndexOf($name, [System.StringComparison]::OrdinalIgnoreCase) -ge 0) { $target = $child; $matched = $caption; break }
   }
   if ($target -eq [IntPtr]::Zero) {
     ConvertTo-Json @{ open = $true; platform = 'win32'; pressed = $false; buttons = @($controls | Where-Object { $_.cls -eq 'Button' } | ForEach-Object { $_.name }); why = ('no button on this dialog is called ' + $name) } -Compress -Depth 5
     exit 0
   }
-  [void][OperaDialog]::Post($target, 0x00F5, [IntPtr]::Zero, [IntPtr]::Zero)
+  $sent = [OperaDialog]::Post($target, 0x00F5, [IntPtr]::Zero, [IntPtr]::Zero)
+  if (-not $sent) {
+    ConvertTo-Json @{ open = $true; platform = 'win32'; pressed = $false; why = 'the button refused the message' } -Compress
+    exit 0
+  }
   ConvertTo-Json @{ open = $true; platform = 'win32'; pressed = $true; button = $matched; why = '' } -Compress
   exit 0
 }
@@ -171,12 +178,12 @@ if ($mode -eq 'press') {
 ConvertTo-Json @{ open = $true; platform = 'win32'; why = ('unknown mode ' + $mode) } -Compress
 `;
 
-const powershell = (mode: string, ...rest: unknown[]) => run('powershell', [
+const powershell = (mode: string, ...rest: unknown[]) => run(POWERSHELL, [
   '-NoProfile',
   '-NonInteractive',
   '-Command',
   `& { ${SCRIPT} } ${mode} ${rest.map((one) => `'${String(one).replace(/'/g, "''")}'`).join(' ')}`
-]);
+], { timeout: 15000 });
 
 const parse = async (mode: string, ...rest: unknown[]) => {
   const platform = process.platform;

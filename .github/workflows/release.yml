@@ -99,7 +99,7 @@ jobs:
           else
             gh release create "$TAG" "${ASSETS[@]}" \
               --target "$GITHUB_SHA" \
-              --title "Kemudi ${VERSION}" \
+              --title "Navego ${VERSION}" \
               "${NOTES_ARGS[@]}"
           fi
 

@@ -5,7 +5,7 @@
 
 import { log } from '../lib/log.js';
 import { browserFamily, deviceNameFor } from '../lib/browser-id.js';
-import { socketUrl } from '../lib/endpoints.js';
+import { socketUrl, SITE_ORIGIN } from '../lib/endpoints.js';
 import {
   PRODUCT_VERSION,
   PROTOCOL_VERSION,
@@ -360,11 +360,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   await chrome.alarms.create(WAKE_ALARM, { periodInMinutes: 0.5 });
-  // WHY THE FIRST RUN OPENS A PAGE: an extension a person installed silence does not know what to do next.
-  // The page answers exactly one question - how this browser ties itself to the account - and hands the rest to the dashboard's one-click flow.
+  // WHY THE FIRST RUN OPENS THE DASHBOARD: an extension a person installed in silence does not know what to do next.
+  // The dashboard's pair flow answers exactly one question - how this browser ties itself to the account - in one click.
   // Only install reason fires it; an update must never hijack a tab.
   if (details.reason === 'install') {
-    await chrome.tabs.create({ url: chrome.runtime.getURL('onboarding.html') }).catch(() => {});
+    await chrome.tabs.create({ url: `${SITE_ORIGIN}/dashboard.html?pair=1#pairing` }).catch(() => {});
   }
   scheduleSelfUpdate();
 

@@ -1,4 +1,4 @@
-# Corbin — the design language, every decision with its meaning
+# Navego — the design language, every decision with its meaning
 
 @last-edited: 2026-11-16 UTC+7.
 @state: the Y2K pass is complete for the mark, the chrome, the hero and the player; the audit's sibling is [`design-elements.md`](design-elements.md), which justifies each element, not each value.
@@ -10,12 +10,12 @@ This era is deliberate. The owner asked for the site whole in the millennium sty
 
 ## The name
 
-- **Corbin** — from the Latin *corvus*, raven; the Germanic given name meaning raven. Short, spellable, one syllable.
+- **Navego** — from the Latin *corvus*, raven; the Germanic given name meaning raven. Short, spellable, one syllable.
 - **The raven** — Odin's Huginn and Muninn: thought and memory, the two birds that fly across the world each day and return with what they saw. The product is the same animal in code: it flies out, it flies back, it acts. Every visual decision descends from that one bird — even the millennium chrome is the light the bird flies through.
 
 ## The mark — the chrome C
 
-- **The monogram** (`components/CorbinMark.tsx`, `public/corbin-mark.svg`) — a C drawn from one geometric arc in brushed chrome, its short bar ending in an amber cursor. The circle is the old medallion reduced to its shape, not its ornament; one raven-free mark for the site, the badge, the favicon and the extension icons.
+- **The monogram** (`components/NavegoMark.tsx`, `public/navego-mark.svg`) — a C drawn from one geometric arc in brushed chrome, its short bar ending in an amber cursor. The circle is the old medallion reduced to its shape, not its ornament; one raven-free mark for the site, the badge, the favicon and the extension icons.
 - **The head variant** — the same silhouette in chrome for the console rail: metal on indigo, eye lit, one cyan rim line.
 - **The 1874 Naumann plate** (`public/assets/raven-1874.jpg`) — the bird as naturalists measured it, still the picture on beranda, index and notfound. It is *borrowed*, so it carries its credit line wherever it lands. The mark is the bird rendered in chrome; the plate is the bird drawn in ink.
 - **Why the mark is a circle and not a doodle**: the 2001 language of light survives in the brushed chrome and the navy disc, but nothing decorative remains. The open arc, the bar and the amber cursor are legible at 16 px — the favicon and the toolbar icon read before the wordmark does.
@@ -48,15 +48,15 @@ The owner rejected the copy once as slop. That is a design failure, so it gets r
 
 - **Facts, not metaphors** — "Detak jantung yang tetap segar" became "Menjadwalkan pemeriksaan berkala". Where a fact fits, a metaphor never does: no "detak jantung", "pintu", "membekukan kerja", "satu arah: selesai".
 - **Indonesian that is actually Indonesian** — "content script", "tab private", "Host permission di setiap origin", and "Companion dengan AI di belakangnya" were all replaced by "skrip di halaman", "tab pribadi", "Izin per situs", and a plain sentence. Terms the product genuinely uses — tool, primitive, device, extension, harness, pairing — stay in English; everything else is Indonesian.
-- **A heading names a thing, not a mood** — "Tidak kejutan" became "Dua cara bayar", "Semuanya di sini" became "Tiga yang paling sering", "Browser Anda, alat kerja" became "Yang bisa dikerjakan Corbin".
+- **A heading names a thing, not a mood** — "Tidak kejutan" became "Dua cara bayar", "Semuanya di sini" became "Tiga yang paling sering", "Browser Anda, alat kerja" became "Yang bisa dikerjakan Navego".
 - **Nothing repeats itself on one page** — "Satu extension, satu akun, satu browser" said the same thing twice on beranda; it now appears nowhere, and the band that carried it was replaced by the four example files.
 - **Second person is "Anda"** — the dashboard said "device milikmu sendiri" in the middle of a formal page.
-- **Every number must be one the site can prove** — 40 tool, 36 primitive, 6 izin, Rp10.000, Rp249.000, 23 baris, Rp 65.310.000, sha256, 200/50 kuota.
+- **Every number must be one the site can prove** — 45 tool, 36 primitive, 6 izin, Rp10.000, Rp249.000, 23 baris, Rp 65.310.000, sha256, 200/50 kuota.
 - **A claim that cannot be proved does not ship** — "Paling dipakai" became "Kuota terbesar"; the "TERLARIS" badge was cut before it ever shipped.
 
 - **No eyebrow labels, ever.** The line above a heading — "Contoh nyata.", "Unduh.", "Fitur." — was cut from every page: the information it carried was either already in the heading, dropped, or moved into the lede. The definition lives at [vocab.design](https://vocab.design/eyebrow) ("what category the content belongs to"); it is only useful when a parent grouping exists ([CFPB design system](https://cfpb.github.io/design-system/foundation/headings)), and this site has none. Every heading on the page now names the thing or the claim itself.
 - **A heading is one or two lines, at every width.** Over the same measure, Butterick's line length holds: [45–90 characters](https://practicaltypography.com/line-length.html), and the site's 62ch lede column sits inside it.
-- **Buttons are named for what they do, with the outcome in the word.** "Pasang corbin", "Unduh .zip", "Isi saldo Rp10.000" — verb first, value named, exactly what conversion research keeps finding ([Unbounce's button study](https://unbounce.com/conversion-rate-optimization/cta-copy-critiqued-for-conversion)). "Pelajari →" was vague and became "Cara kerja →".
+- **Buttons are named for what they do, with the outcome in the word.** "Pasang navego", "Unduh .zip", "Isi saldo Rp10.000" — verb first, value named, exactly what conversion research keeps finding ([Unbounce's button study](https://unbounce.com/conversion-rate-optimization/cta-copy-critiqued-for-conversion)). "Pelajari →" was vague and became "Cara kerja →".
 - **No uppercase micro-labels.** Tracked caps survived only inside real tables (header row), where a table is allowed its own conventions; every other label — footer, plan, metrics, costs, the player's bar — is sentence case.
 - **No index numbers.** The install steps carry the order in position, not in "1." through "4.".
 

@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-16 UTC+7.
-// @title: site — the rebuilt Corbin site, gated on its own build.
+// @title: site — the rebuilt Navego site, gated on its own build.
 // @state: builds the site, type-checks it, then parses build/client for the per-page contract.
 // @dependencies: site/ (React Router v7 + TypeScript), node:test, node:child_process.
 
@@ -18,7 +18,7 @@ const client = path.join(site, 'build', 'client');
 
 const ROUTES = [
   '/', '/beranda.html', '/fitur.html', '/harga.html', '/unduh.html', '/docs.html',
-  '/mcp.html', '/studi.html', '/bukti.html', '/dukungan.html', '/privasi.html',
+  '/mcp.html', '/dukungan.html', '/privasi.html',
   '/syarat.html', '/akun.html', '/404.html', '/oauth/consent.html', '/dashboard.html'
 ];
 
@@ -104,14 +104,12 @@ test('every inline script is covered by the CSP hashes in build/client/_headers'
 });
 
 const CLAIMS = {
-  '/beranda.html': ['Corbin.', '40', 'primitive browser'],
-  '/fitur.html': ['40', 'primitive', 'debugger'],
+  '/beranda.html': ['Navego.', '45', 'primitive browser'],
+  '/fitur.html': ['45', 'primitive', 'debugger'],
   '/harga.html': ['Rp10.000', 'Rp249.000', 'QRIS'],
   '/unduh.html': ['opera-agent-update', 'chrome', 'SHA-256'],
-  '/docs.html': ['browser_status', 'opera-agent-mcp'],
-  '/mcp.html': ['opera-agent-mcp', '56'],
-  '/studi.html': ['transaksi-2026-09.csv', 'sha256'],
-  '/bukti.html': ['sha256', 'portal.jpg'],
+  '/docs.html': ['browser_status', 'navego'],
+  '/mcp.html': ['navego', '45'],
   '/dukungan.html': ['Dukungan'],
   '/privasi.html': ['Kebijakan Privasi'],
   '/syarat.html': ['Syarat Layanan'],
@@ -165,7 +163,7 @@ test('the client router answers the file URL and the legacy pretty URL alike', (
   const manifest = assets.find((f) => f.startsWith('manifest-') && f.endsWith('.js'));
   assert.ok(manifest, 'the build ships a router manifest');
   const source = fs.readFileSync(path.join(client, 'assets', manifest), 'utf8');
-  const slugs = ['beranda', 'fitur', 'harga', 'unduh', 'docs', 'mcp', 'studi', 'bukti', 'dukungan', 'privasi', 'syarat', 'akun', 'dashboard', 'oauth/consent'];
+  const slugs = ['beranda', 'fitur', 'harga', 'unduh', 'docs', 'mcp', 'dukungan', 'privasi', 'syarat', 'akun', 'dashboard', 'oauth/consent'];
   for (const slug of slugs) {
     assert.ok(source.includes(`"path":"${slug}"`), `the router knows /${slug}`);
     assert.ok(source.includes(`"path":"${slug}.html"`), `the router knows /${slug}.html`);
@@ -177,7 +175,7 @@ test('the sitemap names exactly the routes the build carries (404 and unknowns a
   buildSite();
   const sitemap = fs.readFileSync(path.join(client, 'sitemap.xml'), 'utf8');
   const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => String(m[1]).replace('https://opera-agent.pages.dev', ''));
-  const expected = ['/beranda', '/fitur', '/harga', '/unduh', '/docs', '/mcp', '/studi', '/bukti', '/dukungan', '/privasi', '/syarat', '/akun', '/dashboard', '/oauth/consent', '/'];
+  const expected = ['/beranda', '/fitur', '/harga', '/unduh', '/docs', '/mcp', '/dukungan', '/privasi', '/syarat', '/akun', '/dashboard', '/oauth/consent', '/'];
   assert.deepEqual([...locs].sort(), [...expected].sort());
 });
 

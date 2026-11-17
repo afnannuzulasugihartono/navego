@@ -1,13 +1,14 @@
 {
-  "name": "kemudi",
-  "version": "1.7.1",
+  "name": "navego",
+  "version": "1.7.5",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/afnannuzulasugihartono/opera-agent.git"
   },
-  "description": "Kemudi — drive your own browser from an MCP client over the loopback bridge; metered per plan through the paired device.",
+  "description": "Navego — drive your own browser from an MCP client over the loopback bridge; metered per plan through the paired device.",
   "type": "module",
   "bin": {
+    "navego": "bin/kemudi.js",
     "kemudi": "bin/kemudi.js",
     "opera-agent-mcp": "bin/kemudi.js",
     "opera-local": "bin/opera-local.js"
@@ -21,6 +22,7 @@
     "bin/opera-local-dev.js",
     "bin/opera-chrome.cmd",
     "doctor.js",
+    "bridge-token.js",
     "bridge-ws.js",
     "bridge.js",
     "browsers.js",

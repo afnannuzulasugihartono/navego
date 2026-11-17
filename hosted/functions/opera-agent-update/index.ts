@@ -68,6 +68,24 @@ function requestedExtensionId(url: URL) {
   return EXTENSION_ID_PATTERN.test(candidate) ? candidate : null;
 }
 
+// WHY THE SHIPPED MANIFEST'S UPDATE_URL HAS NO ID.
+// The Update button and the first external-install check ask from that bare URL, and the browser's own request carries its appid inside x.
+// Reading both means a caller that names itself gets its own answer, and a caller that names nobody hears about every app we serve instead of only the legacy one.
+
+function askedExtensionIds(url: URL): string[] {
+  const ids = new Set<string>();
+  const nested = new URLSearchParams(url.searchParams.get("x") ?? "");
+  for (const candidate of [nested.get("id"), url.searchParams.get("id")]) {
+    if (candidate === null) continue;
+    if (!EXTENSION_ID_PATTERN.test(candidate)) return [];
+    ids.add(candidate);
+  }
+  const chromeRequest = String(url.searchParams.get("x") ?? "");
+  const fromChrome = chromeRequest.match(/appid=["']?([a-p]{32})/i)?.[1];
+  if (fromChrome) ids.add(fromChrome);
+  return [...ids];
+}
+
 async function activeRelease(extensionId: string) {
   const { data, error } = await supabase
     .from("opera_releases")
@@ -110,6 +128,22 @@ Deno.serve(async (req: Request) => {
     const path = url.pathname;
     const base = `${SUPABASE_URL.replace(/\/$/, "")}/functions/v1/opera-agent-update`;
 
+    if (path.endsWith("/update.xml")) {
+      const asked = askedExtensionIds(url);
+      const ids = asked.length ? asked : [LEGACY_EXTENSION_ID, CURRENT_EXTENSION_ID];
+      const releases = (await Promise.all(ids.map(activeRelease))).filter(
+        (candidate): candidate is NonNullable<typeof candidate> => candidate !== null
+      );
+      if (!releases.length) return response(req, "No active release for extension ID", 404, { "Content-Type": "text/plain; charset=utf-8" });
+      await logUpdateEvent("update_xml", req, releases[0], url);
+      const apps = releases.map((release) => `  <app appid="${release.extension_id}">\n    <updatecheck codebase="${base}/opera-agent-${release.extension_id}-${release.version}.crx" version="${release.version}" />\n  </app>`).join("\n");
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<gupdate xmlns="http://www.google.com/update2/response" protocol="2.0">\n${apps}\n</gupdate>\n`;
+      return response(req, req.method === "HEAD" ? null : xml, 200, {
+        "Content-Type": "application/xml; charset=utf-8",
+        "Cache-Control": "no-store, max-age=0"
+      });
+    }
+
     if (path.endsWith("/download/opera-agent.crx") || path.endsWith("/download/opera-agent.zip")) {
       const wantsZip = path.endsWith("/download/opera-agent.zip");
       const current = await activeRelease(CURRENT_EXTENSION_ID);
@@ -150,15 +184,6 @@ Deno.serve(async (req: Request) => {
       return response(req, "Release not found", 404, { "Content-Type": "text/plain; charset=utf-8" });
     }
 
-    if (path.endsWith("/update.xml")) {
-      await logUpdateEvent("update_xml", req, release, url);
-      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<gupdate xmlns="http://www.google.com/update2/response" protocol="2.0">\n  <app appid="${release.extension_id}">\n    <updatecheck codebase="${base}/opera-agent-${release.extension_id}-${release.version}.crx" version="${release.version}" />\n  </app>\n</gupdate>\n`;
-      return response(req, req.method === "HEAD" ? null : xml, 200, {
-        "Content-Type": "application/xml; charset=utf-8",
-        "Cache-Control": "no-store, max-age=0"
-      });
-    }
-
     const identityCrxPath = `/opera-agent-${release.extension_id}-${release.version}.crx`;
     const legacyCrxPath = release.extension_id === LEGACY_EXTENSION_ID
       ? `/opera-agent-${release.version}.crx`
@@ -177,7 +202,7 @@ Deno.serve(async (req: Request) => {
     if (path.endsWith("/health") || path.endsWith("/opera-agent-update") || path.endsWith("/")) {
       const body = JSON.stringify({
         ok: true,
-        product: "Kemudi",
+        product: "Navego",
         version: release.version,
         extensionId: release.extension_id,
         sha256: release.sha256,

@@ -194,6 +194,10 @@ export async function discoverPageWebSocket(port: number, { fetch = globalThis.f
 // The endpoint takes PUT and refuses GET, so a driver built on GET reports every open as a failure.
 
 export async function openTab(port: number, url: string, { fetch = globalThis.fetch }: FetchOptions = {}) {
+  const target = String(url || '').trim();
+  if (!/^(https?|about):/i.test(target)) {
+    throw new Error(`the drive refuses to open ${target.split(':')[0] || 'an unspecified scheme'} URLs`);
+  }
   let created: Response;
   try {
     created = await fetch(`http://127.0.0.1:${port}/json/new?${encodeURIComponent(url)}`, { method: 'PUT' });

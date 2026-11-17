@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // @last-edited: 2026-11-08 UTC+7.
-// @title: kemudi - the installed entry point: one command, two modes.
+// @title: navego - the installed entry point: one command, two modes.
 // @state: the mode comes from the first argument; each mode starts the server it names.
 // @dependencies: ./opera-local.js for the local mode.
 
@@ -9,10 +9,10 @@
 // A caller that has to remember a flag has two ways to get it wrong; a caller that names the mode cannot.
 // The modes share every tool name and every answer shape, so the choice is only about who drives the browser.
 
-const USAGE = `kemudi <mode>
+const USAGE = `navego <mode>
 
   local      drive the everyday browser on this machine, over the loopback bridge
-  cloud      drive it through the hosted Kemudi server
+  cloud      drive it through the hosted Navego server
   auth       sign in with a browser and keep the token beside this install
   doctor     print what is connected, the plan, and what the plan allows
   install    detect this machine's browsers, register the extension, keep a verified CRX backup

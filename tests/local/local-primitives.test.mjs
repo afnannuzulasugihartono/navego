@@ -29,24 +29,22 @@ test('the window state asks the browser, not the operating system, when it can',
 });
 
 
-test('focusing a minimized window uses the browser bounds, not a shell', async () => {
+test('a bare focusWindow answers the state without moving the window', async () => {
   const calls = [];
   const cdp = {
     send: async (method, params = {}) => {
       calls.push({ method, params });
       if (method === 'Browser.getWindowForTarget') return { windowId: 44, bounds: { windowState: 'minimized' } };
-      if (method === 'Browser.setWindowBounds') return {};
-      if (method === 'Browser.getWindowBounds') return { bounds: { windowState: 'normal' } };
+      if (method === 'Browser.getWindowBounds') return { bounds: { windowState: 'minimized' } };
       return {};
     }
   };
 
-  const out = await createPrimitives(cdp).focusWindow('Paper');
+  const out = await createPrimitives(cdp).focusWindow('');
 
-  assert.deepEqual(calls.map((c) => c.method), ['Browser.getWindowForTarget', 'Browser.setWindowBounds', 'Browser.getWindowBounds']);
-  assert.deepEqual(calls[1].params, { windowId: 44, bounds: { windowState: 'normal' } });
-  assert.equal(out.focused, true);
-  assert.equal(out.title, 'the browser window');
+  assert.deepEqual(calls.map((c) => c.method), ['Browser.getWindowForTarget', 'Browser.getWindowBounds']);
+  assert.equal(out.focused, false);
+  assert.deepEqual(out.minimized, ['the browser window']);
 });
 
 

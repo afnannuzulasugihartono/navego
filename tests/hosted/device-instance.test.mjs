@@ -9,6 +9,10 @@
 // The identity is the fact that tells them apart, and it has to survive both roads: the cloud socket that authenticates a device and the loopback socket that drives one.
 // A build without it must still connect, because the extension that is already installed predates this field.
 
+process.env.OPERA_BRIDGE_TOKEN = 'test-bridge-token';
+const realFetch = globalThis.fetch;
+globalThis.fetch = (url, opts) => realFetch(url, { ...opts, headers: { 'x-opera-bridge-token': 'test-bridge-token', ...(opts?.headers || {}) } });
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 

@@ -1,7 +1,7 @@
 @last-edited: 2026-11-10 UTC+7.
 @related: [`README.md`](README.md) - [`docs/handoff.md`](docs/handoff.md) - [`docs/security.md`](docs/security.md)
 
-# Kemudi agent instructions
+# Navego agent instructions
 
 MV3 browser extension + Supabase backend. This file binds every task, in every area. Every rule in it is bounded to the agent: it governs this agent's own choices, and it says nothing about the user, the product, or the wider world. Where this file is silent, the agent decides.
 

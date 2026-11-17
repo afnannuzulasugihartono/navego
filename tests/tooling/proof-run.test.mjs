@@ -74,21 +74,21 @@ test('the server opens the portal tab and reads the page', { skip: noExtensionBr
   const mcp = speakMcp({ port: browser.port, cwd: root });
   try {
     const ready = await mcp.initialize();
-    assert.equal(ready?.serverInfo?.name, 'corbin');
+    assert.equal(ready?.serverInfo?.name, 'navego');
     const names = await mcp.listTools();
-    for (const wanted of ['browser_goto', 'browser_read', 'browser_download', 'browser_sheet', 'browser_deck', 'browser_doc', 'browser_screenshot', 'browser_close']) {
+    for (const wanted of ['browser_open_url', 'browser_read_page', 'browser_download_file', 'artifact_build_workbook', 'artifact_build_slides', 'artifact_build_document', 'browser_screenshot', 'browser_close_tab']) {
       assert.ok(names.includes(wanted), `the server offers ${wanted}`);
     }
 
-    const opened = await mcp.tool('browser_goto', { url: portal.url });
+    const opened = await mcp.tool('browser_open_url', { url: portal.url });
     const tabId = opened.answer?.action?.id;
     assert.ok(tabId, 'goto names the tab it opened');
 
-    const read = await mcp.tool('browser_read', { tabId });
+    const read = await mcp.tool('browser_read_page', { tabId });
     assert.match(String(read.answer?.text ?? ''), /Portal Mitra/);
     assert.match(String(read.answer?.text ?? ''), /Unduh CSV/);
 
-    await mcp.tool('browser_close', { tabId });
+    await mcp.tool('browser_close_tab', { tabId });
   } finally {
     await mcp.close();
     browser.close();
@@ -114,7 +114,7 @@ test('one drive downloads the CSV and leaves the four files the site ships', { s
       assert.equal(row.bytes, fs.statSync(path.join(work, 'out', name)).size, `${name} is the file the run made`);
     }
 
-    const downloaded = result.steps.find((step) => step.tool === 'browser_download');
+    const downloaded = result.steps.find((step) => step.tool === 'browser_download_file');
     assert.equal(downloaded.ok, true);
     assert.equal(downloaded.sha256, sha256(path.join(company, 'transaksi-2026-09.csv')), 'the CSV came off the portal unchanged');
     assert.ok(result.jpeg && result.jpeg.length > 1000, 'the run captured the portal it read');

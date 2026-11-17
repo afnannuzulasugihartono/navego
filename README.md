@@ -1,7 +1,7 @@
 @last-edited: 2026-11-09 UTC+7.
 @related: [`AGENTS.md`](AGENTS.md) - [`docs/security.md`](docs/security.md) - [`docs/api.md`](docs/api.md)
 
-# Kemudi
+# Navego
 
 A private, local-browser control bridge.
 
@@ -35,25 +35,27 @@ A private, local-browser control bridge.
 | --- | --- |
 | Protocol | `1` |
 | Browser primitives | **36** allowlisted generic methods ([`extension/lib/protocol.ts`](extension/lib/protocol.ts)) plus device-local `watch.*`/`loop.*` async methods |
-| Local MCP surface | **40** tools ([`local/mcp-server.ts`](local/mcp-server.ts)) - the operator's own signed-in Chrome, no cloud hop, plus the wallet that pays for the work |
+| Local MCP surface | **45** tools ([`local/mcp-server.ts`](local/mcp-server.ts)) - the operator's own signed-in Chrome, no cloud hop, plus the wallet that pays for the work |
 | Distribution | Signed CRX3 self-updates from the update service |
 
 ## One command
 
 ```bash
-npm i -g kemudi
+npm i -g navego
 ```
 
 | | |
 |---|---|
-| `kemudi local` | the everyday browser on this machine, over the loopback bridge |
-| `kemudi auth` | sign in once; the token stays beside this install |
-| `kemudi doctor` | print what is connected and what the plan allows |
-| `kemudi install` | register the extension with every Chromium browser on this Windows machine |
-| `kemudi uninstall` | remove the keys, the OperaAgent folder, and the package itself |
+| `navego local` | the everyday browser on this machine, over the loopback bridge |
+| `navego auth` | sign in once; the token stays beside this install |
+| `navego doctor` | print what is connected and what the plan allows |
+| `navego install` | register the extension with every Chromium browser on this Windows machine |
+| `navego uninstall` | remove the keys, the OperaAgent folder, and the package itself |
+
+`kemudi` and `opera-agent-mcp` still work as aliases — the rename is additive.
 
 The local drive is metered where it happens: the local bridge calls the cloud once per session to open the meter and reads the plan from there, then enforces it locally and reports usage into the same daily count the hosted surface reads, so a command past the allowance answers `PLAN_LIMIT_REACHED` with the plan named. The gate lives in the bridge and in the plan's data in the database, never in readable client code. The package is
-on the registry: `npm i -g kemudi`, or from a clone with
+on the registry: `npm i -g navego`, or from a clone with
 `cd local && npm install -g .`. The full answer: [`docs/agent-call.md`](docs/agent-call.md).
 
 Every number in that table is measured, not typed: `tests/docs/readme.test.mjs` reads the
@@ -105,9 +107,7 @@ Local green is not acceptance. The acceptance rule is in [`AGENTS.md`](AGENTS.md
 | What primitives may the extension expose, and over what wire? | [`docs/api.md`](docs/api.md) |
 | What happens on a site nobody has a workflow for? | [`docs/unknown-site.md`](docs/unknown-site.md) |
 | How does this repo resist slop and silent drift? | [`docs/anti-drift.md`](docs/anti-drift.md) |
-| What is the statement job, and what does a delivery claim? | [`docs/jobs/statements.md`](docs/jobs/statements.md) |
-| How do the first bookkeepers get reached, and how does a session run? | [`docs/product/first-three-bookkeepers.md`](docs/product/first-three-bookkeepers.md) and [`docs/product/pilot-runbook.md`](docs/product/pilot-runbook.md) |
-| What is a delivery worth, and what may an agent hand to its own user? | [`docs/product/monetization.md`](docs/product/monetization.md) |
+| How much does a client-month cost, and what does a delivery claim? | [`docs/uec-north-star.md`](docs/uec-north-star.md) and the `opera_price_list` table (migrations under `hosted/migrations/`) |
 | What did a release contain, and why? | [`CHANGELOG.md`](CHANGELOG.md) and [`docs/releases/`](docs/releases/) |
 | What design references informed this? | [`docs/design-references.md`](docs/design-references.md) |
 | What is the product aiming at? | [`docs/uec-north-star.md`](docs/uec-north-star.md) |

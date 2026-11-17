@@ -109,7 +109,7 @@ function coverSlide(title: string): string {
   const shapes = [
     shape(2, 'Accent bar', MARGIN, 2286000, RULE_WIDTH, RULE_HEIGHT, PALETTE.accent),
     textBox(3, 'Cover title', 2514600, 1600200, [paragraph(run(title, { size: 4000, bold: true, colour: PALETTE.white }), { lineSpacing: 120000 })]),
-    textBox(4, 'Wordmark', 5486400, 457200, [paragraph(run('Kemudi', { size: 1200, colour: PALETTE.light }))])
+    textBox(4, 'Wordmark', 5486400, 457200, [paragraph(run('Navego', { size: 1200, colour: PALETTE.light }))])
   ].join('');
   return slideXml(`${background}${tree(shapes)}`);
 }

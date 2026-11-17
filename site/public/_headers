@@ -5,7 +5,6 @@
 
 # WHY this file exists: Cloudflare Pages configures headers with this file, one block per path. One path per block: a comma-joined path line matches nothing on Cloudflare.
 # WHY the hashes are not in this file: the prerendered pages ship React Router's inline hydration boot, and those hashes are a function of the build bytes — the build rewrites the deployed copy (site/scripts/inline-script-hashes.mjs) so this file stays stable while the policy stays closed: script-src 'self' plus exactly the hashes this build emitted, never 'unsafe-inline'.
-# WHY img-src carries 'self' beside data:: bukti.html serves one photograph of its own (/bukti/portal.jpg); every other page stays data:-only.
 # tests/site parses the build and fails on drift.
 
 /
@@ -86,50 +85,6 @@
   X-Frame-Options: DENY
 
 /unduh.html
-  Cache-Control: no-store
-  Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
-  Referrer-Policy: no-referrer
-  X-Content-Type-Options: nosniff
-  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=()
-  Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Resource-Policy: same-origin
-  X-Frame-Options: DENY
-
-/studi
-  Cache-Control: no-store
-  Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
-  Referrer-Policy: no-referrer
-  X-Content-Type-Options: nosniff
-  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=()
-  Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Resource-Policy: same-origin
-  X-Frame-Options: DENY
-
-/studi.html
-  Cache-Control: no-store
-  Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
-  Referrer-Policy: no-referrer
-  X-Content-Type-Options: nosniff
-  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=()
-  Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Resource-Policy: same-origin
-  X-Frame-Options: DENY
-
-/bukti
-  Cache-Control: no-store
-  Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
-  Referrer-Policy: no-referrer
-  X-Content-Type-Options: nosniff
-  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=()
-  Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Resource-Policy: same-origin
-  X-Frame-Options: DENY
-
-/bukti.html
   Cache-Control: no-store
   Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
   Referrer-Policy: no-referrer

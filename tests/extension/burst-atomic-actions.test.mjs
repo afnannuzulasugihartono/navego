@@ -63,7 +63,7 @@ test('the local guidance teaches the atomic find+click burst pattern', () => {
 
 test('the local surface exposes the burst tool with dependent steps', () => {
   const tools = fs.readFileSync(new URL('../../local/tools.ts', import.meta.url), 'utf8');
-  assert.match(tools, /name: 'browser_run'/);
+  assert.match(tools, /name: 'browser_run_steps'/);
 });
 
 test('the local surface exposes run only, never a cloud-side run_workflow', () => {
@@ -85,9 +85,9 @@ test('skip_ads workflow migration registers a re-querying loop workflow', () => 
 test('version bumped to 1.6.32 for the local loop release', () => {
   assert.equal(BURST_STEP_KEYS && true, true);
   const protocol = fs.readFileSync(new URL('../../extension/lib/protocol.js', import.meta.url), 'utf8');
-  assert.match(protocol, /PRODUCT_VERSION = '1.7.1'/);
+  assert.match(protocol, /PRODUCT_VERSION = '1.7.5'/);
   const manifest = JSON.parse(fs.readFileSync(new URL('../../extension/manifest.json', import.meta.url), 'utf8'));
-  assert.equal(manifest.version, '1.7.1');
+  assert.equal(manifest.version, '1.7.5');
 });
 
 test('validateBurst accepts grid and file macro steps with tight params', () => {

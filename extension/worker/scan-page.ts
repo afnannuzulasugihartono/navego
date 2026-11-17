@@ -181,7 +181,7 @@ export async function scanPage(tabId: unknown, params: Record<string, unknown> |
 
   if (tab.incognito) throw codedError('CAPTURE_BLOCKED', 'Scans are blocked in incognito tabs.', { tabId: id, reason: 'INCOGNITO' });
 
-  if (await isPrivateTab(id)) throw codedError('CAPTURE_BLOCKED', 'This tab was marked private in the Kemudi popup.', { tabId: id, reason: 'USER_PRIVATE' });
+  if (await isPrivateTab(id)) throw codedError('CAPTURE_BLOCKED', 'This tab was marked private in the Navego popup.', { tabId: id, reason: 'USER_PRIVATE' });
 
   const policy = await contentCall(id, 'page.capture_policy', {});
 

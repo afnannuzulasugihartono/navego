@@ -1,19 +1,19 @@
-# kemudi
+# navego
 
 Drive your own browser from an MCP client, with no dependencies. Two modes, one command:
 
 ```bash
-npm i -g kemudi
+npm i -g navego
 ```
 
 | mode | what drives | what it needs |
 |---|---|---|
-| `kemudi local` | the everyday profile on this machine, over the loopback bridge | Node 20+, the extension, a paired device |
-| `kemudi cloud` | the paired device's browser, through the hosted server | an account, an OAuth login, a paired device |
-| `kemudi auth` | sign in once, keep the token beside this install | a browser, or `OPERA_AGENT_MCP_TOKEN` |
-| `kemudi doctor` | print what is connected and what the plan allows | nothing but this install |
+| `navego local` | the everyday profile on this machine, over the loopback bridge | Node 20+, the extension, a paired device |
+| `navego cloud` | the paired device's browser, through the hosted server | an account, an OAuth login, a paired device |
+| `navego auth` | sign in once, keep the token beside this install | a browser, or `OPERA_AGENT_MCP_TOKEN` |
+| `navego doctor` | print what is connected and what the plan allows | nothing but this install |
 
-`npx kemudi` is the published form of this package. It is not on the
+`npx navego` is the published form of this package. It is not on the
 registry yet, so installing from a clone works today: clone this repository,
 `cd local`, `npm install -g .`.
 
@@ -34,7 +34,7 @@ not by reading documentation.
 
 ## Requirements
 
-Node 20 or newer, the Kemudi extension on the everyday browser, and a paired
+Node 20 or newer, the Navego extension on the everyday browser, and a paired
 device for the meter. The bridge — not a debugging port — is the road: Chrome
 refuses a debugging port on the Default profile, the extension cannot be driven
 from a headless harness, and the everyday window is the one people actually use.
@@ -47,7 +47,7 @@ device to name whose allowance the session spends.
 Then:
 
 ```bash
-kemudi doctor
+navego doctor
 ```
 
 is the one command to reach for. It prints the bridge, the device, the
@@ -78,30 +78,35 @@ not who drives.
 
 ## Tools
 
-The server advertises 40 tools, every one prefixed `browser_` for the job it does:
+The server advertises 45 tools, named for what they do and grouped by what they touch:
 
-`browser_status`, `browser_front`, `browser_dialog`,
-`browser_pin`, `browser_tabs`, `browser_goto`, `browser_close`,
-`browser_read`, `browser_search`, `browser_find`, `browser_click`, `browser_hover`,
-`browser_press`, `browser_type`, `browser_scroll`, `browser_run`, `browser_wait`,
-`browser_upload`, `browser_drop`, `browser_chooser`, `browser_download`,
-`browser_menu`, `browser_guide`, `browser_screenshot`, `browser_card`, `browser_delivered`,
-`browser_report`, `browser_sheet`, `browser_deck`, `browser_doc`,
-`browser_portal`, `browser_login`, `browser_captcha`,
-`browser_pair`, `browser_balance`, `browser_quote`, `browser_topup`,
-`browser_reserve`, `browser_settle`, `browser_refund`.
+`browser_status`, `browser_focus_window`, `browser_focus_tab`, `browser_select_browser`,
+`browser_list_tabs`, `browser_open_url`, `browser_close_tab`, `browser_read_page`,
+`browser_search_web`, `browser_find_text`, `browser_find_element`, `browser_click`,
+`browser_hover`, `browser_press_key`, `browser_type_text`, `browser_scroll`,
+`browser_run_steps_steps`, `browser_wait_until`, `browser_upload_file`, `browser_drop_file`,
+`browser_intercept_picker`, `browser_download_file`, `browser_list_menu`, `browser_walk_menu`,
+`browser_get_guide`, `browser_screenshot`, `browser_read_dialog`, `browser_type_into_dialog`,
+`browser_press_dialog_button`, `browser_check_gate`, `browser_login`, `browser_solve_captcha`.
 
-`browser_status` names the paired browsers and `browser_pin` pins tab-less calls
-(`browser_goto` is the one that matters) to one of them until another switch says
+`delivery_plan`, `delivery_record`.
+
+`artifact_build_report`, `artifact_build_workbook`, `artifact_build_slides`, `artifact_build_document`.
+
+`wallet_pair_device`, `wallet_get_balance`, `wallet_get_price`, `wallet_add_funds`,
+`wallet_hold_price`, `wallet_charge`, `wallet_refund`.
+
+`browser_status` names the paired browsers and `browser_select_browser` pins tab-less calls
+(`browser_open_url` is the one that matters) to one of them until another switch says
 otherwise; pass a slot number, a device name, or `any` to follow the first ready
 browser again. Tab-scoped calls keep routing by their tab id either way.
 
-`browser_run` runs 1-8 dependent steps on one tab in a single call and reads the page
+`browser_run_steps` runs 1-8 dependent steps on one tab in a single call and reads the page
 once at the end; the first failure stops the burst and keeps the steps that finished.
-`browser_goto` always opens its own tab, so a drive never navigates a page someone is
+`browser_open_url` always opens its own tab, so a drive never navigates a page someone is
 already reading. `browser_screenshot` is clipped to the viewport at one pixel per
 clickable coordinate, so a coordinate read off a screenshot can be clicked as-is.
-Actions answer with where the page stands and the rows that changed; `browser_find`
+Actions answer with where the page stands and the rows that changed; `browser_find_element`
 is the deliberate look at every row for a role.
 
 Every answer is one flat document: `{ ok: true, ...facts }`, with the cost of the
@@ -109,14 +114,14 @@ call under `elapsedMs`. A refused tool answers the same way - `{ ok: false, erro
 { code, message } }` - with the next move in the message, so the local road reads
 exactly like the hosted one.
 
-`download` writes a file to the folder the caller names and proves it by the file on
+`browser_download_file` writes a file to the folder the caller names and proves it by the file on
 disk — a `.crdownload` is not a result, and two files landing at once is not a
 result either: the newest of an ambiguous pair is somebody else's download, so the
 answer names both and moves neither. Over the extension the browser's own folder is
 watched instead of an armed one, because `chrome.debugger` refuses browser-level
 commands there. The last two tools are the statement job: a
 card that names the file before the drive, and a delivery that verifies it and adds the
-client-month to a manifest. See [`docs/jobs/statements.md`](../docs/jobs/statements.md).
+client-month to a manifest. See the statement job in the price list migration under `hosted/migrations/`.
 
 ## Recipes, measured
 

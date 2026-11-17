@@ -4,20 +4,20 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return [
-    { title: 'Pasang MCP — Corbin' },
-    { name: 'description', content: 'Driver lokal Corbin berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi.' }
+    { title: 'Pasang MCP — Navego' },
+    { name: 'description', content: 'Driver lokal Navego berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi.' }
   ];
 }
 
 const BLOCKS = [
-  { id: 'install', title: 'Pasang paketnya', body: 'npm install -g opera-agent-mcp', note: 'Satu perintah. Paket ini memakai browser yang sudah Anda gunakan; tidak ada proses tambahan yang perlu dijaga.' },
-  { id: 'doctor', title: 'Periksa yang terhubung', body: 'opera-agent-mcp doctor', note: 'Cetakan menyatakan nama device, paket plan, dan sisa quota hari ini. Kalau tidak ada yang terhubung, paket akan mencetak langkah perbaikan yang paling mungkin.' }
+  { id: 'install', title: 'Pasang paketnya', body: 'npm install -g navego', note: 'Satu perintah. Paket ini memakai browser yang sudah Anda gunakan; tidak ada proses tambahan yang perlu dijaga.' },
+  { id: 'doctor', title: 'Periksa yang terhubung', body: 'navego doctor', note: 'Cetakan menyatakan nama device, paket plan, dan sisa quota hari ini. Kalau tidak ada yang terhubung, paket akan mencetak langkah perbaikan yang paling mungkin.' }
 ];
 
 const HARNESS: Array<{ id: string; title: string; body: string }> = [
-  { id: 'cfg-opencode', title: 'OpenCode — opencode.json atau ~/.config/opencode/opencode.json', body: '{\n  "mcp": {\n    "corbin": {\n      "type": "local",\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-kilo', title: 'Kilo Code — MCP settings (JSON)', body: '{\n  "mcpServers": {\n    "corbin": {\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-claude', title: 'Claude Desktop — konfigurasi MCP lokal', body: 'command: npx\nargs: ["-y", "opera-agent-mcp", "local"]' }
+  { id: 'cfg-opencode', title: 'OpenCode — opencode.json atau ~/.config/opencode/opencode.json', body: '{\n  "mcp": {\n    "navego": {\n      "type": "local",\n      "command": "navego",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-kilo', title: 'Kilo Code — MCP settings (JSON)', body: '{\n  "mcpServers": {\n    "navego": {\n      "command": "navego",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-claude', title: 'Claude Desktop — konfigurasi MCP lokal', body: 'command: npx\nargs: ["-y", "navego", "local"]' }
 ];
 
 export default function Mcp() {
@@ -38,7 +38,7 @@ export default function Mcp() {
       <main className="wrap" style={{ maxWidth: 880 }}>
         <header className="page-head" style={{ paddingBottom: 6 }}>
           <h1>Pasang MCP</h1>
-          <p className="lede">Driver lokal Corbin berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi; yang dibutuhkan adalah browser yang masuk akun dan ekstensi terpasang.</p>
+          <p className="lede">Driver lokal Navego berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi; yang dibutuhkan adalah browser yang masuk akun dan ekstensi terpasang.</p>
         </header>
 
         {BLOCKS.map(({ id, title, body, note }) => (
@@ -63,12 +63,12 @@ export default function Mcp() {
               </div>
             </div>
           ))}
-          <p style={{ color: 'var(--muted-2)', fontSize: 13 }}>Server lokal itu menambah <strong>40 tool MCP</strong> di atas <strong>36 primitive browser</strong>. Tidak ada login, tidak ada quota yang harus dimengerti di website: quota dibaca di lingkungan bridge dan ditampilkan oleh <code>doctor</code>.</p>
+          <p style={{ color: 'var(--muted-2)', fontSize: 13 }}>Server lokal itu menambah <strong>45 tool MCP</strong> di atas <strong>36 primitive browser</strong>. Tidak ada login, tidak ada quota yang harus dimengerti di website: quota dibaca di lingkungan bridge dan ditampilkan oleh <code>doctor</code>.</p>
         </section>
 
         <section style={{ marginTop: 26 }}>
           <h2 style={{ fontSize: 18, marginBottom: 8 }}>4. Satu kali per peramban</h2>
-          <p style={{ color: 'var(--muted-2)', fontSize: 13.5, maxWidth: '76ch' }}>Peramban baru harus memasang ekstensi Corbin dulu (lihat <Link to="/unduh.html">Unduh</Link>), lalu buka <Link to="/dashboard.html">Dasbor</Link> dan klik <strong>Pasangkan browser ini</strong> — kode dibuat di server dan dikirim langsung ke ekstensi. Setelah itu, driver lokal otomatis mengambil alih — tidak perlu langkah lain setiap sesi.</p>
+          <p style={{ color: 'var(--muted-2)', fontSize: 13.5, maxWidth: '76ch' }}>Peramban baru harus memasang ekstensi Navego dulu (lihat <Link to="/unduh.html">Unduh</Link>), lalu buka <Link to="/dashboard.html">Dasbor</Link> dan klik <strong>Pasangkan browser ini</strong> — kode dibuat di server dan dikirim langsung ke ekstensi. Setelah itu, driver lokal otomatis mengambil alih — tidak perlu langkah lain setiap sesi.</p>
         </section>
 
         <section style={{ marginTop: 26 }}>
@@ -83,7 +83,7 @@ export default function Mcp() {
         <div className="page-foot">
           <div>
             <h2>Operator menunggu.</h2>
-            <p>Satu perintah <code>opera-agent-mcp local</code>, lalu harness Anda langsung bisa menjalankan browser.</p>
+            <p>Satu perintah <code>navego local</code>, lalu harness Anda langsung bisa menjalankan browser.</p>
           </div>
           <Link className="btn btn-solid" to="/docs.html">Baca Docs</Link>
         </div>

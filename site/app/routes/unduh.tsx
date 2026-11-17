@@ -4,8 +4,8 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return [
-    { title: 'Unduh — Corbin' },
-    { name: 'description', content: 'Unduh build Corbin untuk Chrome, Edge, Brave, Opera, dan Vivaldi. Pasang lewat developer mode, masuk, lalu pair device dari dashboard.' }
+    { title: 'Unduh — Navego' },
+    { name: 'description', content: 'Unduh build Navego untuk Chrome, Edge, Brave, Opera, dan Vivaldi. Pasang lewat developer mode, masuk, lalu pair device dari dashboard.' }
   ];
 }
 
@@ -58,8 +58,8 @@ export default function Unduh() {
       <SiteHeader current="/unduh.html" />
       <main>
         <div className="wrap"><header className="page-head">
-          <h1 id="dlTitle">Pasang corbin.<br />Pair. Kerja.</h1>
-          <p className="lede">Satu build untuk lima browser. Extension tidak pernah memperbarui dirinya sendiri: setiap rilis Anda muat ulang sendiri dari halaman ini.</p>
+          <h1 id="dlTitle">Pasang navego.<br />Pair. Kerja.</h1>
+          <p className="lede">Satu build untuk lima browser. Extension mengizinkan satu folder sekali; setelah itu memeriksa update setiap 30 menit, mengambil build yang lebih baru, dan reload sendiri.</p>
         </header></div>
 
         <section className="chapter warm" aria-labelledby="browserTitle" style={{ paddingTop: 0 }}>
@@ -69,7 +69,7 @@ export default function Unduh() {
                 <span aria-hidden="true" className="dl-letter">{browser.letter}</span>
                 <h2>{browser.name}</h2>
                 <a className="btn btn-solid" style={{ justifyContent: 'center', width: '100%' }} href={`${DOWNLOAD}.zip?for=${browser.key}`} download>Unduh .zip</a>
-                <p className="dl-req">Pasang lewat developer mode. Tidak pernah diperbarui sendiri — klik muat ulang di chrome://extensions setiap rilis.</p>
+                <p className="dl-req">Untuk build ini, klik Izinkan folder sekali di popup/opsi; setelah itu extension memeriksa dan mengambil rilis baru otomatis.</p>
                 <p className="dl-req">Atau: <a href={`${DOWNLOAD}.crx?for=${browser.key}`} download title="Paket bertanda tangan: untuk mesin yang dikelola">.crx</a> · <a href={MANIFEST}>Manifest</a></p>
               </article>
             ))}

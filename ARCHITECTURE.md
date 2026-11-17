@@ -5,7 +5,7 @@
 
 # One product, one driver, one browser half
 
-Kemudi is one product: one local stdio driver on the machine, one
+Navego is one product: one local stdio driver on the machine, one
 browser half it drives, and one tool surface. The 56 tools live once, in the
 local driver. Anything the browser half and the meter both need lives once in
 `shared/` — never copied by hand.
@@ -49,7 +49,7 @@ Root files, each with its job: `AGENTS.md` rules and acceptance bar · `ARCHITEC
 | `tsconfig.extension.json` | The browser-half build: compiles `extension/**/*.ts` to bespoke `.js` beside each source; the emits are never committed. | `npm run build:extension`, `npm run types` |
 | `biome.json` | The linter: a deliberate `preset: none` ruleset, strict where it is on (no `any`, no non-null, no unused imports); formatter off by design. | `npm test` (pretest), `tests/tooling/` |
 | `tests/` | The gates, one folder per subject — `tests/local/`, `tests/hosted/`, `tests/extension/`, `tests/site/`, `tests/docs/`, `tests/surface/`, `tests/vm/`, `tests/billing/`, `tests/release/`, `tests/tooling/`, `tests/search/`, `tests/shared/`. `tests/fixtures/` and `tests/helpers/` are shared across subjects. The three Python harnesses stay at `tests/` root because `ci.yml` calls them there. | `npm test` (`tests/**/*.test.mjs`) |
-| `site/` | The public site (Corbin): React Router v7 framework mode, TypeScript strict, all 16 routes prerendered to flat `.html` paths at build. `site/public/` carries `_worker.js` (`/invoice` proxy, unchanged), `_headers`, `robots.txt`, `sitemap.xml`, `icon.svg`, `site/public/contoh/` and `site/public/bukti/` assets. | `deploy-site.yml` deploys `site/build/client`; `tests/site` parses the build |
+| `site/` | The public site (Navego): React Router v7 framework mode, TypeScript strict, all 16 routes prerendered to flat `.html` paths at build. `site/public/` carries `_worker.js` (`/invoice` proxy, unchanged), `_headers`, `robots.txt`, `sitemap.xml`, `icon.svg`, `site/public/contoh/` and `site/public/bukti/` assets. | `deploy-site.yml` deploys `site/build/client`; `tests/site` parses the build |
 | `docs/` | Documentation. `docs/proof/` holds the record of real shipped runs; `docs/store/` the generated Web Store form; `docs/releases/` and `docs/superpowers/specs/` are history and are never rewritten. | hygiene and docs gates |
 | `.github/` | CI workflows + CODEOWNERS (the paths only an owner may approve). | `gates.lock` |
 

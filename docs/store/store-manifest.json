@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Kemudi",
-  "version": "1.7.1.0",
+  "name": "Navego",
+  "version": "1.7.5.0",
   "description": "Bawa asisten AI Anda mengemudikan browser: klik, ketik, isi formulir, baca halaman. Anda pilih modelnya.",
   "permissions": [
     "tabs",
@@ -41,7 +41,7 @@
     }
   ],
   "action": {
-    "default_title": "Kemudi",
+    "default_title": "Navego",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -65,6 +65,6 @@
     ]
   },
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' http://127.0.0.1:* ws://127.0.0.1:* https://*.supabase.co wss://*.supabase.co https:"
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' http://127.0.0.1:* ws://127.0.0.1:* https://*.supabase.co wss://*.supabase.co"
   }
 }

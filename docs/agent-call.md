@@ -1,16 +1,17 @@
-# Calling Kemudi
+# Calling Navego
 
-One road, one command: `kemudi local`. Local on the machine where the browser already is.
+One road, one command: `navego local`. Local on the machine where the browser already is.
+`kemudi` dan `opera-agent-mcp` masih berfungsi sebagai alias lama — nama urutannya tidak berubah.
 
 The install is one command:
 
 ```bash
-npm i -g kemudi
+npm i -g navego
 ```
 
 ## The installer and the driver
 
-`kemudi` is one command with one road: stdio on this machine,
+`navego` is one command with one road: stdio on this machine,
 driving the everyday browser through the loopback bridge — no cloud round trip
 per command.
 
@@ -22,7 +23,7 @@ Point a client at it (OpenCode reads `.mcp.servers` in `~/.config/opencode/openc
     "servers": {
       "opera-agent": {
         "type": "local",
-        "command": "kemudi",
+        "command": "navego",
         "args": ["local"],
         "timeout": { "startup": 60000, "catalog": 60000, "execution": 600000 }
       }
@@ -48,7 +49,7 @@ cloud cannot be reached. A command past the session allowance answers
 session ends, so the local road and the pairing account share one daily count —
 `plan.pilot` carries 200 commands per day and 50 per session;
 `plan.firm` carries 5000 and 500. The gate lives in the bridge — never in
-readable client code. `kemudi doctor` prints the bridge, the device,
+readable client code. `navego doctor` prints the bridge, the device,
 the extension version, the plan, and the quota.
 
 `browser_status` answers with the port the drive is really on, so read it
@@ -56,15 +57,15 @@ first: `port: 9451` means the extension road. When a linked device's daily
 quota is spent the device card carries `planExhaustedDevices` with the device
 names, so a driver sees it before the next call is refused.
 
-The server advertises 40 tools, every one prefixed `browser_` and named for the job it does. `browser_guide()` returns them as tasks rather than a
+The server advertises 45 tools, named for the resource they touch and the job they do: `browser_*` drives a page or window, `artifact_*` builds a file, `delivery_*` records a client-month, `wallet_*` moves account state. `browser_get_guide()` returns them as tasks rather than a
 list, and the full list is in [`local/README.md`](../local/README.md).
 
 ### The capture ladder
 
-`browser_read` answers with measured text, and everything it says about the page
+`browser_read_page` answers with measured text, and everything it says about the page
 carries the number it measured, never an assumption: `settled` is true only
 when two reads a beat apart agree the text has stopped moving (`settled: null`
-means one sample cannot say; `browser_wait()` is the companion), and
+means one sample cannot say; `browser_wait_until()` is the companion), and
 `grewBy` names how many characters arrived between reads. The read walks a
 ladder chosen from what the page measures as: the accessibility tree
 first where a canvas covers the viewport, then the DOM, then a selection copy
@@ -73,6 +74,10 @@ selection copy asks nothing of the page, the answer names which step it used,
 and a missing-but-needed step is reported as skipped with the reason. On a
 canvas-rendered page the tree is cut at a depth cap, and `surface.truncated`
 says so.
+
+### The harness I use myself
+
+`scripts/dev/navego-agent.mjs` is the thin client I drive Navego through from an agent harness that has a shell but no Navego tool in its own catalog. `list` and `tabs` are lookups; `open-and-read <url> [text] [file]` opens one tab, waits for a real text, reads it and writes a screenshot in the **same process**, because a tab claim belongs to one driver lease — separate CLI processes collide on the claim. `batch <file.json>` runs a list of commands in one lease. Every write tool takes an explicit `tabId`: no default tab, because the everyday browser carries private tabs.
 
 ## The extension road
 
@@ -84,7 +89,7 @@ socket is one WebSocket on `127.0.0.1:9451`.
    `chrome://extensions` with developer mode on loads it unpacked.
 2. Pair the browser in the dashboard — the meter needs a paired device to name
    the account the session belongs to.
-3. Run `kemudi doctor`. It prints the bridge, the device, the
+3. Run `navego doctor`. It prints the bridge, the device, the
    extension version, the plan, and the quota; a `degraded` verdict names the
    one fix that applies.
 
@@ -103,7 +108,7 @@ node --test tests/extension/extension-run.test.mjs
 - [`docs/proof/extension-portal.jpg`](../docs/proof/extension-portal.jpg) — the picture the run took.
 
 The last recorded run carried seven calls over the bridge — `browser_status`,
-`browser_goto`, `browser_read`, `browser_find`, `browser_download`, `browser_screenshot`,
-`browser_close` — and the CSV it pulled down hashed equal to the file the portal
+`browser_open_url`, `browser_read_page`, `browser_find_element`, `browser_download_file`, `browser_screenshot`,
+`browser_close_tab` — and the CSV it pulled down hashed equal to the file the portal
 served. `tests/extension/extension-run.test.mjs` re-hashes that fixture and compares it
 with the hash in the record; it does not drive a browser again.

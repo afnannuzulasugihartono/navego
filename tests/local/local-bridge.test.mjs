@@ -16,6 +16,8 @@
 // A Node WebSocket client sends no Origin header, so every other test here and in bridge-link.test.mjs passes against a server that would refuse the browser outright.
 // Chrome does send one, so the header it sends is asserted here against the header the server expects.
 
+process.env.OPERA_BRIDGE_TOKEN = 'test-bridge-token';
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer, request as httpRequest } from 'node:http';
@@ -418,7 +420,7 @@ test('the lease door grants a free tab, refuses a held one, and frees it on rele
   const ask = async (body) => {
     const response = await fetch(`http://127.0.0.1:${port}/lease`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', 'x-opera-bridge-token': 'test-bridge-token' },
       body: JSON.stringify(body)
     });
     return response.json();
@@ -446,7 +448,7 @@ test('the lease door grants a free tab, refuses a held one, and frees it on rele
 
     const refused = await fetch(`http://127.0.0.1:${port}/lease`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', 'x-opera-bridge-token': 'test-bridge-token' },
       body: JSON.stringify({ action: 'claim' })
     });
     assert.equal(refused.status, 400, 'a claim with no tab and no owner is a malformed ask');

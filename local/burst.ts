@@ -18,13 +18,13 @@ export const BURST_MAX_STEPS = 8;
 export const BURST_MAX_TIMEOUT_MS = 12000;
 export const BURST_ACTIONS = Object.freeze([
   'browser_click',
-  'browser_find',
+  'browser_find_element',
   'browser_hover',
-  'browser_press',
-  'browser_type',
+  'browser_press_key',
+  'browser_type_text',
   'browser_scroll',
   'stream',
-  'browser_wait'
+  'browser_wait_until'
 ]);
 
 // A read-only burst must not bring a window forward.
@@ -33,21 +33,21 @@ export const BURST_ACTIONS = Object.freeze([
 export const BURST_INPUT_ACTIONS = Object.freeze([
   'browser_click',
   'browser_hover',
-  'browser_press',
-  'browser_type',
+  'browser_press_key',
+  'browser_type_text',
   'browser_scroll',
   'stream'
 ]);
 
 const STEP_KEYS: Record<string, readonly string[]> = Object.freeze({
   'browser_click': ['action', 'x', 'y', 'handle', 'role', 'name', 'refFromStep'],
-  'browser_find': ['action', 'role', 'name'],
+  'browser_find_element': ['action', 'role', 'name'],
   'browser_hover': ['action', 'x', 'y', 'refFromStep'],
-  'browser_press': ['action', 'key', 'modifiers'],
-  'browser_type': ['action', 'text', 'atEnd'],
+  'browser_press_key': ['action', 'key', 'modifiers'],
+  'browser_type_text': ['action', 'text', 'atEnd'],
   'browser_scroll': ['action', 'y', 'end', 'text', 'selector'],
   'stream': ['action', 'events'],
-  'browser_wait': ['action', 'until', 'text', 'role', 'name', 'absent', 'timeoutMs', 'intervalMs', 'quietMs']
+  'browser_wait_until': ['action', 'until', 'text', 'role', 'name', 'absent', 'timeoutMs', 'intervalMs', 'quietMs']
 });
 
 const MODIFIERS = new Set(['Control', 'Alt', 'Shift', 'Meta']);
@@ -136,7 +136,7 @@ function streamEvents(events: unknown, where: string): Array<Record<string, unkn
 function waitStep(step: Record<string, unknown>, where: string): BurstStep {
   const until = typeof step.until === 'string' ? step.until : (step.text !== undefined ? 'text' : undefined);
   if (!until) throw new Error(`${where} needs until — text, row, url or stable`);
-  const out: BurstStep = { action: 'browser_wait', until };
+  const out: BurstStep = { action: 'browser_wait_until', until };
 
   if (until === 'text') {
     out.text = textOf(step.text, `${where} text`);
@@ -199,20 +199,20 @@ function normalizeStep(value: unknown, index: number): BurstStep {
       ...(target.ref !== null ? { refFromStep: target.ref } : {})
     };
   }
-  if (action === 'browser_find') {
+  if (action === 'browser_find_element') {
     return { action, role: textOf(step.role, `${where} role`), name: textOf(step.name, `${where} name`) };
   }
-  if (action === 'browser_press') {
+  if (action === 'browser_press_key') {
     return { action, key: textOf(step.key, `${where} key`), modifiers: modifiersOf(step.modifiers) };
   }
-  if (action === 'browser_type') {
+  if (action === 'browser_type_text') {
     if (typeof step.text !== 'string') throw new Error(`${where} text must be a string`);
     return { action, text: step.text, ...(step.atEnd === true ? { atEnd: true } : {}) };
   }
   if (action === 'stream') {
     return { action, events: streamEvents(step.events, where) };
   }
-  if (action === 'browser_wait') return waitStep(step, where);
+  if (action === 'browser_wait_until') return waitStep(step, where);
 
   const out: BurstStep = { action };
   if (step.y !== undefined) {
@@ -254,12 +254,12 @@ function refAt(step: BurstStep, results: BurstResult[]): BurstResult | null {
 }
 
 async function runStep(driver: JsonRecord, step: BurstStep, results: BurstResult[], remaining: number): Promise<unknown> {
-  if (step.action === 'browser_find') return driver.resolve(step.role, step.name);
+  if (step.action === 'browser_find_element') return driver.resolve(step.role, step.name);
   if (step.action === 'browser_click') {
     const ref = refAt(step, results);
     if (step.role !== undefined) return driver.clickRow(step.role, step.name);
     if (!ref) return driver.click(step.x, step.y, step.handle ?? null);
-    if (!ref.handle) throw new Error('refFromStep did not hand back a handle; browser_find the row first');
+    if (!ref.handle) throw new Error('refFromStep did not hand back a handle; browser_find_element the row first');
     return driver.click(null, null, ref.handle);
   }
   if (step.action === 'browser_hover') {
@@ -271,8 +271,8 @@ async function runStep(driver: JsonRecord, step: BurstStep, results: BurstResult
     if (!Number.isFinite(x) || !Number.isFinite(y)) throw new Error('refFromStep did not hand back a point to hover');
     return driver.hover(x, y);
   }
-  if (step.action === 'browser_press') return driver.key(step.key, step.modifiers ?? []);
-  if (step.action === 'browser_type') return step.atEnd === true ? driver.append(step.text) : driver.type(step.text);
+  if (step.action === 'browser_press_key') return driver.key(step.key, step.modifiers ?? []);
+  if (step.action === 'browser_type_text') return step.atEnd === true ? driver.append(step.text) : driver.type(step.text);
   if (step.action === 'stream') return driver.keys(step.events);
   if (step.action === 'browser_scroll') {
     const options: Record<string, unknown> = {};
@@ -283,12 +283,12 @@ async function runStep(driver: JsonRecord, step: BurstStep, results: BurstResult
     return driver.scroll(options);
   }
 
-  if (step.action === 'browser_wait') {
+  if (step.action === 'browser_wait_until') {
     const options = {
       timeoutMs: Math.max(0, remaining),
       ...(step.intervalMs === undefined ? {} : { intervalMs: step.intervalMs })
     };
-    if (step.until === 'text' || step.text !== undefined) {
+    if (step.until === 'text' || (step.until === undefined && step.text !== undefined)) {
       const absent = step.absent === true;
       if (typeof driver.waitForText !== 'function') throw new Error('this driver cannot wait for text');
       const state = await driver.waitForText(step.text, { ...options, absent });
@@ -328,7 +328,7 @@ async function runStep(driver: JsonRecord, step: BurstStep, results: BurstResult
       if (!still) throw new Error('wait for the page to stop changing timed out');
       return out;
     }
-    throw new Error(`browser_wait until must be text, row, url or stable — got: ${String(step.until)}`);
+    throw new Error(`browser_wait_until until must be text, row, url or stable — got: ${String(step.until)}`);
   }
 
   throw new Error(`${step.action} is not a step this burst can run`);
@@ -389,7 +389,7 @@ export async function runLocalBurst({ driver, steps, timeoutMs = BURST_MAX_TIMEO
   // WHY A BURST THAT SETTLED TELLS THE LOOK.
   // A wait step ends on a settled page, and a chord-only stream returns a verdict that it watched the page go quiet.
   // The look after the burst would settle the same page again, which is one round trip billed twice, so the burst passes the verdict it already has.
-  const settledStep = results.some((entry) => entry.action === 'browser_wait' || (entry.action === 'stream' && entry.settled === true));
+  const settledStep = results.some((entry) => entry.action === 'browser_wait_until' || (entry.action === 'stream' && entry.settled === true));
 
   return { ok: true, completedSteps: results.length, results, timingMs: Math.max(0, clock() - started), ...(settledStep ? { settled: true } : {}) };
 }

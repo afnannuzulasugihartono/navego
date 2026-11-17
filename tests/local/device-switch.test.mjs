@@ -9,6 +9,12 @@
 // The pin is the answer: a person names the browser, every tab-less command follows it until another pin says otherwise, and a missing pin is refused by name instead of falling back into the wrong signed-in profile.
 // Tab-scoped commands never consult the pin; a tab id already names its browser, so a drive never jumps mid-drive.
 
+// WHY THE WRAPPER: the loopback bridge gates its /health and /prefer doors on a bridge token; every fetch in this file then carries it.
+
+process.env.OPERA_BRIDGE_TOKEN = 'test-bridge-token';
+const realFetch = globalThis.fetch;
+globalThis.fetch = (url, opts) => realFetch(url, { ...opts, headers: { 'x-opera-bridge-token': 'test-bridge-token', ...(opts?.headers || {}) } });
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 

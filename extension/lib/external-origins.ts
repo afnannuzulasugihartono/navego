@@ -1,19 +1,18 @@
-// @last-edited: 2026-10-09 UTC+7.
+// @last-edited: 2026-11-17 UTC+7.
 // @title: external-origins — the origin allowlist for chrome.runtime.onMessageExternal.
-// @state: exports originAllowed; the site origin matches exactly, localhost matches by port prefix.
-// The list stays module-local: nothing outside this file may widen it silently.
+// @state: exports originAllowed; the site origin and the exact Vite dev origin match exactly.
 // @dependencies: endpoints.
 
 // The origins allowed to push model config into the extension through chrome.runtime.onMessageExternal (applyModelConfig).
-// The official site is the owner's own page; localhost stays for local development.
+// The official site is the owner's own page; local development is limited to the exact Vite dev origin so a bare localhost prefix cannot reconfigure the extension from any locally-served page.
 
 import { SITE_ORIGIN } from './endpoints.js';
 
-const EXTERNAL_CONFIG_ORIGINS = Object.freeze(['http://localhost:', 'https://localhost:', SITE_ORIGIN]);
+const DEV_ORIGINS = Object.freeze(['http://localhost:5173', 'http://127.0.0.1:5173']);
 
 export function originAllowed(from: unknown) {
   const value = String(from || '');
-  return EXTERNAL_CONFIG_ORIGINS.some((origin) => (
-    origin.endsWith(':') ? value.startsWith(origin) : value === origin || value.startsWith(`${origin}/`)
-  ));
+  if (value === SITE_ORIGIN) return true;
+  if (value.startsWith(`${SITE_ORIGIN}/`)) return true;
+  return DEV_ORIGINS.some((origin) => value === origin || value.startsWith(`${origin}/`));
 }

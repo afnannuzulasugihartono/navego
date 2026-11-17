@@ -5,10 +5,10 @@ that follows can be argued with.
 
 ## The question
 
-Not "what would make Kemudi better" — that invites a feature list. The question is:
+Not "what would make Navego better" — that invites a feature list. The question is:
 
 > An AI agent has a browser task. It can fetch the HTML, drive its own browser, use
-> Playwright MCP, or use Kemudi. What makes it reach for Kemudi **first**, and
+> Playwright MCP, or use Navego. What makes it reach for Navego **first**, and
 > what makes it come back the second time?
 
 The second half matters more. Agents do not form habits; they form expectations from the
@@ -37,7 +37,7 @@ Seven patterns, each shipped by someone and each justified by a failure they hit
 |---|---|---|
 | Wait for the page to settle after **every** action | Playwright MCP (`--timeout-settle`, 500 ms default); Chrome DevTools MCP ("automatically wait for action result") | The next call reads a page that has not finished reacting |
 | Address elements by **reference**, not coordinates | Playwright MCP (`target`: "exact target element reference from the page snapshot") | A coordinate is stale the moment the layout moves |
-| **Search** the page server-side instead of dumping it | Playwright MCP (`browser_find`) | The accessibility tree does not fit in a context window |
+| **Search** the page server-side instead of dumping it | Playwright MCP (`browser_find_element`) | The accessibility tree does not fit in a context window |
 | Errors that **carry the next move** | Chrome DevTools MCP design principles ("Self-Healing Errors"); Anthropic | The agent retries the same call, or gives up |
 | **Token-optimised** answers, references for heavy assets | Chrome DevTools MCP ("Return semantic summaries"; "Reference over Value") | 50k lines of JSON for one question |
 | The **surface is a budget** | Playwright (`--caps` opt-in); Chrome DevTools (`--slim`) | Tool schemas are loaded whether or not they are used |
@@ -56,7 +56,7 @@ Neither ships what this product's architecture is built around: a **real signed-
 profile** and **server-side, site-generic workflows**. That is the moat. Everything below
 is about not losing the race to the moat.
 
-## Where Kemudi stands, measured
+## Where Navego stands, measured
 
 All numbers from this repository, today.
 
@@ -100,7 +100,7 @@ falsifies one.
 | `guide("here")`: one call says what this page is and what to do | **Keep, first.** The measured discovery loop was 6 calls; Anthropic's consolidation advice and Chrome DevTools' "progressive complexity" both point the same way |
 | Settle by default, report the delta | **Keep, first — and it is table stakes.** Both competitors already do the waiting half. Acting behind them is not a design choice, it is a gap |
 | Machine-readable `next` moves | **Keep.** Neither competitor offers executable next calls; both only advise. This is a real differentiator, and the advice engine already exists |
-| `read` outline/diff modes | **Keep.** 13,483 chars per read, against Playwright's `--snapshot-mode none` and `browser_find` |
+| `read` outline/diff modes | **Keep.** 13,483 chars per read, against Playwright's `--snapshot-mode none` and `browser_find_element` |
 | One-command browser bootstrap | **Keep — table stakes.** Chrome DevTools starts the browser itself. Ours answered `not reachable` and named no road |
 | `tabs` on both roads | **Keep, small bug.** It returned empty over the debug port while `/json/list` had the target |
 | Tab hygiene | **Keep, small.** 15 tabs from one drive |
@@ -115,7 +115,7 @@ one area where the code is ahead of the notes.
 
 The competitor is not Playwright MCP. It is `fetch` plus reading the HTML, or whatever
 browser the agent harness already has. For a public page, `fetch` is one call, zero
-schema, and no browser to start. Kemudi wins only where the session matters: the
+schema, and no browser to start. Navego wins only where the session matters: the
 signed-in profile, the real app, the click that changes state.
 
 So the product is not competing on capability. It is competing on **the cost of the first
@@ -185,7 +185,7 @@ Ordered by effect on the choice, not by ease.
 - Anthropic, *Writing effective tools for agents — with agents*, 2025-09-11.
   https://www.anthropic.com/engineering/writing-tools-for-agents
 - Microsoft, Playwright MCP, README (accessibility snapshots, refs, `--timeout-settle`,
-  `browser_find`, `--snapshot-mode`, `--caps`, CLI+skills note).
+  `browser_find_element`, `--snapshot-mode`, `--caps`, CLI+skills note).
   https://github.com/microsoft/playwright-mcp
 - Chrome DevTools MCP, README and design principles (auto-start, wait for action,
   token-optimised, self-healing errors, reference over value, progressive complexity).

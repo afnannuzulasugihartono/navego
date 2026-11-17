@@ -10,6 +10,7 @@
 
 import { readDevice } from './wallet-client.js';
 import { readStoredToken } from './oauth.js';
+import { resolveBridgeToken } from './bridge-token.js';
 import { UPDATE_BASE_URL } from './lib/endpoints.js';
 
 const CRX_URL = `${UPDATE_BASE_URL}/download/opera-agent.crx`;
@@ -23,7 +24,7 @@ interface BridgeProbe {
 
 async function probeBridge(port: number, fetchImpl: typeof fetch): Promise<BridgeProbe> {
   try {
-    const response = await fetchImpl(`http://127.0.0.1:${port}/health`, { signal: AbortSignal.timeout(PROBE_TIMEOUT_MS) });
+    const response = await fetchImpl(`http://127.0.0.1:${port}/health`, { signal: AbortSignal.timeout(PROBE_TIMEOUT_MS), headers: { 'x-opera-bridge-token': resolveBridgeToken() } });
     if (!response.ok) return { ok: false, error: `the bridge answered ${response.status}` };
     return { ok: true, health: await response.json().catch(() => null) };
   } catch (error: unknown) {
@@ -48,13 +49,13 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
   } else if (stored) {
     say('cloud login', `signed in (token expires ${new Date(Number(stored.expires_at) || 0).toISOString()})`);
   } else {
-    say('cloud login', 'not signed in — cloud mode needs it (`kemudi auth`, or OPERA_AGENT_MCP_TOKEN)');
+    say('cloud login', 'not signed in — cloud mode needs it (`navego auth`, or OPERA_AGENT_MCP_TOKEN)');
   }
 
   const probe = await probeBridge(port, fetchImpl);
   if (!probe.ok) {
     say('bridge', `not listening on 127.0.0.1:${port} (${probe.error})`);
-    problems.push('start the everyday browser with the Kemudi extension installed');
+    problems.push('start the everyday browser with the Navego extension installed');
   } else {
     const health = (probe.health ?? {}) as Record<string, unknown>;
     const devices = (Array.isArray(health.devices) ? health.devices : []) as Array<Record<string, unknown>>;
@@ -72,7 +73,7 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
     if (!devices.length && !refusal) {
       problems.push(linked
         ? 'the bridge runs pre-meter code — restart the driver process so it can report the session'
-        : 'the extension is not linked to this bridge; reload the everyday browser with Kemudi installed');
+        : 'the extension is not linked to this bridge; reload the everyday browser with Navego installed');
     }
     const preferRaw = (health as Record<string, unknown>).preferredSlot;
     say('preferred', typeof preferRaw === 'number' ? `slot ${preferRaw} (tab-less commands follow it)` : 'none (tab-less commands follow the first ready browser)');
@@ -96,6 +97,6 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
   const ready = problems.length === 0;
   say('verdict', ready ? 'ready' : `degraded: ${problems[0]}`);
   for (const problem of problems.slice(1)) say('  also', problem);
-  stdout.write(`kemudi doctor\n\n${lines.join('\n')}\n`);
+  stdout.write(`navego doctor\n\n${lines.join('\n')}\n`);
   return ready ? 0 : 1;
 }

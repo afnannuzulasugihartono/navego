@@ -37,11 +37,9 @@ Three lines, on every page:
 
 | Page | Job | One action |
 | --- | --- | --- |
-| `beranda.html` | Convince a first-time reader and steer them | Pasang Kemudi |
+| `beranda.html` | Convince a first-time reader and steer them | Pasang Navego |
 | `unduh.html` | Answer "where do I get it" with the least friction | Download the zip file |
 | `fitur.html` | Prove the product works end to end | Unduh |
-| `bukti.html` | Show the measured numbers, nothing else | Unduh |
-| `studi.html` | Show finished work the reader can judge | Unduh |
 | `dukungan.html` | Answer support questions, then leave | Open docs |
 | `docs.html` | Teach the roads (explanations allowed here, only here) | Call an example |
 | `privasi.html` | The legal page nobody enjoys but needs | — |
@@ -65,7 +63,7 @@ Three lines, on every page:
 
 1. `unduh.html` - done on branch `agent/download-redesign/download-redesign`; the separate files page was merged into it (one door, quiet facts, two-column answers, logos, arrival motion).
 2. `fitur.html` — delete the page-intro, collapse each proof block to one claim + one artifact, remove the two duplicated counters.
-3. `studi.html` + `dukungan.html` — trim everything that narrates; keep the artifacts and the FAQs.
+3. `dukungan.html` — trim everything that narrates; keep the artifacts and the FAQs.
 4. `privasi.html` + `syarat.html` — read-only rhythm pass; no legal fact is cut; only framing sentences die.
 5. `404.html` + `index.html` + `akun.html` — reduce to their one job.
 6. `beranda.html` — prune the demo to its two most compelling panels, dedupe the statements, cut the hero lede to one clause; keep the install steps and the pair flow untouched.

@@ -33,14 +33,14 @@ reg import extension-forceinstall.reg
 
 It writes one numbered `ExtensionInstallForcelist` entry per browser (Chrome, Edge, Brave) under HKCU, each carrying `id;update-url`. The number is whatever is next free at the time; on a fresh machine that is `1`. Then restart the browser. Verify:
 
-- `chrome://extensions` shows Kemudi, installed, enabled, and the button to remove it is greyed out.
+- `chrome://extensions` shows Navego, installed, enabled, and the button to remove it is greyed out.
 - `chrome://policy` (or `brave://policy`, `edge://policy`) lists the `ExtensionInstallForcelist` policy, set by the user.
 
-If you already had your own forcelisted extension(s), do not double-click an unmodified copy blindly - the file writes `1`, and if somebody else already owns `1` it gets overwritten. In that case run `kemudi install` instead: it finds the next free number and never touches a foreign entry.
+If you already had your own forcelisted extension(s), do not double-click an unmodified copy blindly - the file writes `1`, and if somebody else already owns `1` it gets overwritten. In that case run `navego install` instead: it finds the next free number and never touches a foreign entry.
 
 Removal, in order of least to most surgical:
 
-1. `kemudi uninstall` - finds this extension's own entries by their id at whatever number they landed and deletes exactly those.
+1. `navego uninstall` - finds this extension's own entries by their id at whatever number they landed and deletes exactly those.
 2. `docs/store/extension-forceinstall-remove.reg` - deletes exactly value `1` of the three policies. Only correct when `1` is ours (a fresh machine), as installed by the `.reg` file unmodified.
 3. Then restart the browser and, if you want the installed copy gone too, remove it at `chrome://extensions` (`edge://`, `brave://`).
 

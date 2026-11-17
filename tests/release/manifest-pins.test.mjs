@@ -10,8 +10,8 @@ import fs from 'node:fs';
 const manifest = JSON.parse(fs.readFileSync(new URL('../../extension/manifest.json', import.meta.url), 'utf8'));
 const csp = manifest.content_security_policy.extension_pages;
 
-test('the worker may reach the owner https endpoint and loopback, Supabase stays named', () => {
-  assert.match(csp, /(^| )https:( |$|;)/);
+test('the worker may reach exactly the hosted bridge and loopback, nothing wider', () => {
+  assert.doesNotMatch(csp, /(^| )https:( |$|;)/, 'a bare wildcard https: admits every https origin — the extension needs named hosts, not a catch-all');
   assert.match(csp, /http:\/\/127\.0\.0\.1:\*/);
   assert.match(csp, /https:\/\/\*\.supabase\.co/);
 });

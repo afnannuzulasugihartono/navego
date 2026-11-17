@@ -4,8 +4,8 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return [
-    { title: 'Fitur — Corbin' },
-    { name: 'description', content: 'Yang dikerjakan Corbin: 40 tool MCP di atas 36 primitive browser, enam izin yang dijelaskan satu per satu, model milik Anda, pairing device yang bisa dicabut, dan empat berkas contoh yang bisa diunduh.' }
+    { title: 'Fitur — Navego' },
+    { name: 'description', content: 'Yang dikerjakan Navego: 45 tool MCP di atas 36 primitive browser, enam izin yang dijelaskan satu per satu, model milik Anda, pairing device yang bisa dicabut, dan empat berkas contoh yang bisa diunduh.' }
   ];
 }
 
@@ -35,7 +35,7 @@ function RoleTabs() {
       <div className="role-detail" role="tabpanel">
         <h3>{task}</h3>
         <code>{tools}</code>
-        <p>Contoh berkas nyata: <a href="/contoh/laporan-keuangan-2026-09.xlsx" download>Laporan (.xlsx)</a> · <a href="/contoh/rencana-strategis-2027.pptx" download>Rencana (.pptx)</a> · <Link to="/studi.html">studi kasus</Link>.</p>
+        <p>Contoh berkas nyata: <a href="/contoh/laporan-keuangan-2026-09.xlsx" download>Laporan (.xlsx)</a> · <a href="/contoh/rencana-strategis-2027.pptx" download>Rencana (.pptx)</a>.</p>
       </div>
     </div>
   );
@@ -47,16 +47,16 @@ export default function Fitur() {
       <SiteHeader current="/fitur.html" />
       <main className="wrap">
         <header className="page-head">
-          <h1>Yang bisa dikerjakan Corbin.</h1>
-          <p className="lede">Anda menulis satu perintah. Corbin membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.</p>
+          <h1>Yang bisa dikerjakan Navego.</h1>
+          <p className="lede">Anda menulis satu perintah. Navego membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.</p>
           <div className="page-head-actions">
-            <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
+            <Link className="btn btn-solid" to="/unduh.html">Unduh navego</Link>
             <Link className="btn btn-ghost" to="/beranda.html">Lihat contoh kerja</Link>
           </div>
         </header>
 
         <div className="facts" aria-label="Angka produk" style={{ fontSize: 12 }}>
-          <span><b>40</b> tool MCP</span>
+          <span><b>45</b> tool MCP</span>
           <span><b>36</b> primitive</span>
           <span><b>6</b> izin</span>
         </div>
@@ -100,9 +100,9 @@ export default function Fitur() {
         <div className="page-foot">
           <div>
             <h2>Mulai dari satu perintah.</h2>
-            <p>Buka akun, pair device ini, lalu jalankan satu pekerjaan — hasilnya bisa Anda buka di halaman <Link to="/studi.html">Studi kasus</Link>.</p>
+            <p>Buka akun, pair device ini, lalu jalankan satu pekerjaan — hasilnya berupa berkas nyata yang bisa Anda buka sendiri.</p>
           </div>
-          <Link className="btn btn-solid" to="/unduh.html">Unduh corbin</Link>
+          <Link className="btn btn-solid" to="/unduh.html">Unduh navego</Link>
         </div>
       </main>
       <SiteFooter />

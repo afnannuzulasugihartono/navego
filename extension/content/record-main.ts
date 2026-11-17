@@ -61,7 +61,7 @@
     ctx.fillStyle = '#f2f2f2';
     ctx.font = '16px ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace';
     ctx.textBaseline = 'middle';
-    ctx.fillText('Kemudi recording starting - 0 ms', 24, canvas.height / 2);
+    ctx.fillText('Navego recording starting - 0 ms', 24, canvas.height / 2);
 
     var stream: MediaStream;
 
@@ -137,7 +137,7 @@
       target.ctx.fillStyle = '#f2f2f2';
       target.ctx.font = '18px ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace';
       target.ctx.textBaseline = 'middle';
-      target.ctx.fillText('Recording Kemudi - ' + elapsed + ' ms', 24, target.canvas.height / 2);
+      target.ctx.fillText('Recording Navego - ' + elapsed + ' ms', 24, target.canvas.height / 2);
     }
 
     target.pumped += 1;

@@ -140,13 +140,13 @@ test('the manifest loads the settle runtime before the content script', async ()
   const scripts = manifest.content_scripts[0].js;
   assert.ok(scripts.includes('hover-settle.js'), 'the settle runtime must be injected');
   assert.ok(scripts.indexOf('hover-settle.js') < scripts.indexOf('content.js'));
-  assert.equal(manifest.version, '1.7.1');
+  assert.equal(manifest.version, '1.7.5');
 });
 
 test('the public burst schema accepts a hover step and still bounds everything', async () => {
   const tools = await readFile(new URL('../../local/tools.ts', import.meta.url), 'utf8');
   const burst = await readFile(new URL('../../local/burst.ts', import.meta.url), 'utf8');
-  assert.match(tools, /name: 'browser_run'/);
+  assert.match(tools, /name: 'browser_run_steps'/);
   assert.match(burst, /hover/, 'the local burst must carry the hover step');
   assert.match(burst, /BURST_ACTIONS/);
 });

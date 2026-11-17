@@ -21,6 +21,7 @@
 
 import { randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
+import { resolveBridgeToken } from './bridge-token.js';
 import { EventEmitter } from 'node:events';
 
 import { parseFrame } from './lib/socket-protocol.js';
@@ -537,25 +538,46 @@ export function createBridgeServer({ port = 9451, host = '127.0.0.1', heartbeatM
     res.end(JSON.stringify(payload));
   };
 
+  const loopbackToken = resolveBridgeToken();
+  const requireBridge = (req: import('node:http').IncomingMessage, res: import('node:http').ServerResponse): boolean => {
+    const supplied = String(req.headers['x-opera-bridge-token'] ?? '');
+    const origin = String(req.headers['origin'] ?? '');
+    const host = String(req.headers['host'] ?? '');
+    const foreignHost = host && !/^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host);
+    const foreignOrigin = origin && !/^(chrome-extension:|http:\/\/localhost(:\d+)?\/?|http:\/\/127\.0\.0\.1(:\d+)?\/?)$/.test(origin);
+    if (foreignHost || foreignOrigin || supplied !== loopbackToken) {
+      json(res, 401, { ok: false, error: { message: 'bridge token required' } });
+      return false;
+    }
+    return true;
+  };
+
   const server = createServer((req: import('node:http').IncomingMessage, res: import('node:http').ServerResponse) => {
     if (req.url === '/health') {
       const live = readyDevices();
+      const supplied = String(req.headers['x-opera-bridge-token'] ?? '');
+      const authorized = supplied !== '' && supplied === loopbackToken;
       res.writeHead(200, { 'content-type': 'application/json' });
-      res.end(JSON.stringify({
-        ok: true,
-        linked: live.length > 0,
-        deviceId: live[0]?.id ?? null,
-        deviceInstanceId: live[0]?.instanceId ?? null,
-        preferredSlot,
-        devices: deviceRows(),
-        queued: queue.length,
-        waiting: waiting.size,
-        lastHeardMsAgo: live[0]?.lastHeardAt ? now() - live[0].lastHeardAt : null,
-        meterRefusal: refusalNote()
-      }));
+      if (authorized) {
+        res.end(JSON.stringify({
+          ok: true,
+          linked: live.length > 0,
+          deviceId: live[0]?.id ?? null,
+          deviceInstanceId: live[0]?.instanceId ?? null,
+          preferredSlot,
+          devices: deviceRows(),
+          queued: queue.length,
+          waiting: waiting.size,
+          lastHeardMsAgo: live[0]?.lastHeardAt ? now() - live[0].lastHeardAt : null,
+          meterRefusal: refusalNote()
+        }));
+      } else {
+        res.end(JSON.stringify({ ok: true, linked: live.length > 0, devices: [] }));
+      }
       return;
     }
     if (req.method === 'POST' && req.url === '/command') {
+      if (!requireBridge(req, res)) return;
       void (async () => {
         const body = await readJson(req);
         if (!body?.method) {
@@ -576,6 +598,7 @@ export function createBridgeServer({ port = 9451, host = '127.0.0.1', heartbeatM
     // The preference door: which browser answers tab-less commands until another ask says otherwise.
     // Loopback like the rest of this server; the same threat model as the lease door.
     if (req.method === 'POST' && req.url === '/prefer') {
+      if (!requireBridge(req, res)) return;
       void (async () => {
         const body = await readJson(req);
         const raw = body?.slot;
@@ -616,6 +639,7 @@ export function createBridgeServer({ port = 9451, host = '127.0.0.1', heartbeatM
 
     // The lease door answers one ask per call: a claim, which the table grants or refuses, or a release, which only the owner that holds the tab may make.
     if (req.method === 'POST' && req.url === '/lease') {
+      if (!requireBridge(req, res)) return;
       void (async () => {
         const body = await readJson(req);
         if (!body?.action || !body?.tabId || !body?.owner) {
