@@ -14,14 +14,14 @@
 export const FEED_URL = 'https://api.gojekapi.com/merchant-analytics/v2/merchants/transactions';
 export const TOKEN_URL = 'https://api.gobiz.co.id/goid/token';
 
-const RFC3339 = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:?\d{2})$/;
+const RFC3339 = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:?\d{2})$/;`n`ninterface ParsedRow {`n  id: string;`n  amount: number;`n  at: string;`n  method: string;`n  payment: string;`n  channel: string;`n  status: string;`n  usable: boolean;`n}`n`ninterface Match {`n  invoiceId: string;`n  transactionId: string;`n  amountRupiah: number;`n  at: string;`n  method: string;`n}`n`ninterface DetectorPlan {`n  mode: string;`n  closes: Match[];`n  wouldClose: Match[];`n  rupiahMatches: Match[];`n  minorMatches: Match[];`n}
 
 // WHY THE PAGE IS CAPPED AT 100 AND NOT 200.
 // The API answered 422 for size=200 on 2026-11-04 and 200 for size=100, so the page is capped here instead of failing at runtime.
 // WHY THE SERVER-SIDE FILTERS.
 // The feed also carries cards, GoPay wallet payments and refunds, and one page of 100 rows is cheap to read only while it holds money we can use.
 
-export function feedQuery({ merchantId, from = 0, size = 100, startTime, endTime }) {
+export function feedQuery({ merchantId, from = 0, size = 100, startTime, endTime }: { merchantId: unknown; from?: number; size?: number; startTime: unknown; endTime: unknown }): string | null {
   if (!merchantId) return null;
   if (!Number.isInteger(from) || from < 0) return null;
   if (!Number.isInteger(size) || size < 1 || size > 100) return null;
@@ -42,7 +42,7 @@ export function feedQuery({ merchantId, from = 0, size = 100, startTime, endTime
 // The 2026-11-02 probe measured that a new UUID per call is refused with 401: the server binds the session to one device id.
 // So the id is a session property held with the token, and one id per deployed detector.
 
-export function feedHeaders({ accessToken, uniqueId }) {
+export function feedHeaders({ accessToken, uniqueId }: { accessToken: unknown; uniqueId: unknown }): Record<string, string> | null {
   if (!accessToken || !uniqueId) return null;
   return {
     authorization: `Bearer ${accessToken}`,
@@ -60,7 +60,7 @@ export function feedHeaders({ accessToken, uniqueId }) {
 // WHY THE REFRESH CALL HAS ITS OWN HEADERS.
 // The token route is the merchant portal's route, not the consumer app's, and on 2026-11-04 it answered 400 for the feed headers and 201 for these.
 
-export function sessionHeaders({ accessToken, uniqueId }) {
+export function sessionHeaders({ accessToken, uniqueId }: { accessToken: unknown; uniqueId: unknown }): Record<string, string> | null {
   if (!accessToken || !uniqueId) return null;
   return {
     Accept: 'application/json, text/plain, */*',
@@ -83,7 +83,7 @@ export function sessionHeaders({ accessToken, uniqueId }) {
 // WHY THE TOKEN BODY IS NESTED.
 // The route answered 400 "At least one required parameter is missing" for a flat body and 201 for this one.
 
-export function refreshBody(refreshToken) {
+export function refreshBody(refreshToken: unknown): Record<string, unknown> | null {
   if (!refreshToken) return null;
   return {
     client_id: 'go-biz-web-new',
@@ -97,7 +97,7 @@ export function refreshBody(refreshToken) {
 // WHY gross_amount.
 // That is the field the live feed carries, measured on 2026-11-04: a Rp1.000 payment reads 100000, so the feed counts minor units.
 
-export function parseFeed(body) {
+export function parseFeed(body: unknown): ParsedRow[] {
   const list = Array.isArray(body?.data) ? body.data : Array.isArray(body?.transactions) ? body.transactions : [];
   const out = [];
   for (const row of list) {
@@ -130,21 +130,21 @@ export function parseFeed(body) {
 
 const CLOCK_SKEW_MS = 10 * 60 * 1000;
 
-function paidAfterInvoice(transactionAt, invoiceCreatedAt) {
+function paidAfterInvoice(transactionAt: unknown, invoiceCreatedAt: unknown): boolean {
   const paid = Date.parse(String(transactionAt || ''));
   const opened = Date.parse(String(invoiceCreatedAt || ''));
   if (!Number.isFinite(paid) || !Number.isFinite(opened)) return false;
   return paid >= opened - CLOCK_SKEW_MS;
 }
 
-export function matchOpenInvoices(invoices, transactions, unit) {
+export function matchOpenInvoices(invoices: unknown, transactions: unknown, unit: unknown): Array<Match> {
   const scale = unit === 'minor' ? 100 : 1;
   const open = (Array.isArray(invoices) ? invoices : [])
     .filter((invoice) => String(invoice.status || '') === 'open')
     .map((invoice) => ({ invoice, cents: Number(invoice.amount_cents) }))
     .sort((a, b) => String(a.invoice.created_at).localeCompare(String(b.invoice.created_at)));
   const used = new Set();
-  const matches = [];
+  const matches: Match[] = [];
   for (const entry of open) {
     const wantRupiah = entry.cents / 100;
     const hit = transactions.find((tx) => !used.has(tx.id) && tx.usable && tx.amount / scale === wantRupiah && paidAfterInvoice(tx.at, entry.invoice.created_at));
@@ -163,7 +163,7 @@ export function matchOpenInvoices(invoices, transactions, unit) {
 // WHY ONLY THE MINOR READING MAY CLOSE AN INVOICE.
 // The feed counts minor units, measured on 2026-11-04, so the rupiah reading of the same number is a wrong amount that happens to match a bigger invoice.
 
-export function detectorPlan(mode, matchesByUnit) {
+export function detectorPlan(mode: unknown, matchesByUnit: { minor: Match[]; rupiah: Match[] }): DetectorPlan {
   const live = String(mode || 'dry').toLowerCase() === 'live';
   return {
     mode: live ? 'live' : 'dry',
