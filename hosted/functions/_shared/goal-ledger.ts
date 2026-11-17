@@ -54,8 +54,63 @@ const CLAIM_FIELDS = new Set(['claimId', 'scopeId', 'predicate', 'evidenceRequir
 const REQUIREMENT_FIELDS = new Set(['requirementId', 'categories', 'minimumCount', 'maximumAgeSeconds']);
 const SECRET_FIELD = /(?:password|passcode|otp|secret|credential|private.?key|access.?token|refresh.?token|card.?number|cvv)/i;
 
+
+export interface LedgerScope {
+  kind: string;
+  resourceId: string;
+}
+export interface LedgerConstraint {
+  constraintId: string;
+  kind: string;
+  claimField: string;
+  operator: string;
+  integerValue?: number;
+  stringValue?: string;
+  booleanValue?: boolean;
+  stringValues?: string[];
+}
+export interface LedgerAuthorization {
+  authorizationId: string;
+  operationClass: string;
+  scopeId: string;
+  expiresAt: string;
+}
+export interface LedgerClaim {
+  claimId: string;
+  scopeId: string;
+  predicate: string;
+  evidenceRequirementIds: string[];
+}
+export interface LedgerRequirement {
+  requirementId: string;
+  categories: string[];
+  minimumCount: number;
+  maximumAgeSeconds: number;
+}
+export interface Ledger {
+  schemaVersion: number;
+  goalId: string;
+  tenantId: string;
+  revision: number;
+  parentDigest: string | null;
+  objective: string;
+  scope: LedgerScope;
+  constraints: LedgerConstraint[];
+  authorizations: LedgerAuthorization[];
+  claims: LedgerClaim[];
+  evidenceRequirements: LedgerRequirement[];
+  nonGoals: string[];
+  status: string;
+  createdAt: string;
+  expiresAt: string;
+  ledgerDigest: string;
+}
+export type LedgerDraft = Omit<Ledger, 'ledgerDigest'>;
+
 export class LedgerError extends Error {
-  constructor(code, message, details = undefined) {
+  code: string;
+  details?: unknown;
+  constructor(code: string, message: string, details?: unknown) {
     super(message);
     this.name = 'LedgerError';
     this.code = code;
@@ -63,21 +118,21 @@ export class LedgerError extends Error {
   }
 }
 
-function fail(code, message, details) {
+function fail(code: string, message: string, details?: unknown): never {
   throw new LedgerError(code, message, details);
 }
 
-function isPlainObject(value) {
+function isPlainObject(value: unknown): value is Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const prototype = Object.getPrototypeOf(value);
   return prototype === Object.prototype || prototype === null;
 }
 
-function assertPlainObject(value, path) {
+function assertPlainObject(value: unknown, path: string): asserts value is Record<string, unknown> {
   if (!isPlainObject(value)) fail('INVALID_TYPE', `${path} must be a plain object.`);
 }
 
-function assertAllowedFields(value, allowed, path) {
+function assertAllowedFields(value: unknown, allowed: Set<string>, path: string): asserts value is Record<string, unknown> {
   assertPlainObject(value, path);
   for (const key of Object.keys(value)) {
     if (SECRET_FIELD.test(key)) fail('SECRET_LIKE_VALUE', `${path}.${key} is a forbidden secret-like field.`);
@@ -85,7 +140,7 @@ function assertAllowedFields(value, allowed, path) {
   }
 }
 
-function assertNoSecretLikeValues(value, path = 'ledger', seen = new WeakSet()) {
+function assertNoSecretLikeValues(value: unknown, path = 'ledger', seen = new WeakSet<object>()): void {
   if (typeof value === 'string') {
     if (SECRET_VALUE.test(value)) fail('SECRET_LIKE_VALUE', `${path} contains a secret-like value.`);
     return;
@@ -101,7 +156,7 @@ function assertNoSecretLikeValues(value, path = 'ledger', seen = new WeakSet()) 
   seen.delete(value);
 }
 
-function normalizeString(value, path, { min = 1, maxBytes = 1000, pattern } = {}) {
+function normalizeString(value: unknown, path: string, { min = 1, maxBytes = 1000, pattern }: { min?: number; maxBytes?: number; pattern?: RegExp } = {}): string {
   if (typeof value !== 'string') fail('INVALID_TYPE', `${path} must be a string.`);
   const normalized = value.normalize('NFC');
   const bytes = new TextEncoder().encode(normalized).length;
@@ -110,38 +165,39 @@ function normalizeString(value, path, { min = 1, maxBytes = 1000, pattern } = {}
   return normalized;
 }
 
-function normalizeId(value, path) {
+function normalizeId(value: unknown, path: string): string {
   return normalizeString(value, path, { maxBytes: 128, pattern: ID_PATTERN });
 }
 
-function normalizeTimestamp(value, path) {
+function normalizeTimestamp(value: unknown, path: string): string {
   const normalized = normalizeString(value, path, { maxBytes: 32 });
   const milliseconds = Date.parse(normalized);
   if (!UTC_TIMESTAMP.test(normalized) || !Number.isFinite(milliseconds)) fail('INVALID_VALUE', `${path} must be an RFC3339 UTC timestamp.`);
   return normalized;
 }
 
-function normalizePositiveInteger(value, path, maximum = Number.MAX_SAFE_INTEGER) {
-  if (!Number.isSafeInteger(value) || value < 1 || value > maximum) fail('INVALID_VALUE', `${path} must be a bounded positive integer.`);
+function normalizePositiveInteger(value: unknown, path: string, maximum = Number.MAX_SAFE_INTEGER): number {
+  if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 1 || value > maximum) fail('INVALID_VALUE', `${path} must be a bounded positive integer.`);
   return value;
 }
 
-function normalizeArray(value, path, maximum, mapper) {
+function normalizeArray<T>(value: unknown, path: string, maximum: number, mapper: (item: unknown, itemPath: string) => T): T[] {
   if (!Array.isArray(value)) fail('INVALID_TYPE', `${path} must be an array.`);
   if (value.length > maximum) fail('OVER_LIMIT', `${path} exceeds its item limit.`);
   return value.map((item, index) => mapper(item, `${path}[${index}]`));
 }
 
-function uniqueBy(items, key, path) {
-  const values = new Set();
+function uniqueBy<T>(items: T[], key: string, path: string): Set<unknown> {
+  const values = new Set<unknown>();
   for (const item of items) {
-    if (values.has(item[key])) fail('DUPLICATE_ID', `${path} contains duplicate ${key} ${item[key]}.`);
-    values.add(item[key]);
+    const itemValue = (item as Record<string, unknown>)[key];
+    if (values.has(itemValue)) fail('DUPLICATE_ID', `${path} contains duplicate ${key} ${String(itemValue)}.`);
+    values.add(itemValue);
   }
   return values;
 }
 
-function normalizeScope(value, path) {
+function normalizeScope(value: unknown, path: string): LedgerScope {
   assertAllowedFields(value, SCOPE_FIELDS, path);
   return {
     kind: normalizeString(value.kind, `${path}.kind`, { maxBytes: 64, pattern: /^[A-Z][A-Z0-9_]{0,63}$/ }),
@@ -149,23 +205,23 @@ function normalizeScope(value, path) {
   };
 }
 
-function normalizeConstraint(value, path) {
+function normalizeConstraint(value: unknown, path: string): LedgerConstraint {
   assertAllowedFields(value, CONSTRAINT_FIELDS, path);
-  const output = {
+  const output: LedgerConstraint = {
     constraintId: normalizeId(value.constraintId, `${path}.constraintId`),
     kind: normalizeString(value.kind, `${path}.kind`, { maxBytes: 32 }),
     claimField: normalizeString(value.claimField, `${path}.claimField`, { maxBytes: 128 }),
     operator: normalizeString(value.operator, `${path}.operator`, { maxBytes: 16 }),
   };
-  if (!CONSTRAINT_KINDS.has(output.kind)) fail('INVALID_VALUE', `${path}.kind is not supported.`);
-  if (!CLAIM_OPERATORS.has(output.operator)) fail('INVALID_VALUE', `${path}.operator is not supported.`);
+  if (!CONSTRAINT_KINDS.has(output.kind as string)) fail('INVALID_VALUE', `${path}.kind is not supported.`);
+  if (!CLAIM_OPERATORS.has(output.operator as string)) fail('INVALID_VALUE', `${path}.operator is not supported.`);
 
   const valueFields = ['integerValue', 'stringValue', 'booleanValue', 'stringValues'].filter((field) => value[field] !== undefined);
   if (valueFields.length !== 1) fail('INVALID_VALUE', `${path} must contain exactly one typed value.`);
   const valueField = valueFields[0];
   if (valueField === 'integerValue') {
     if (!Number.isSafeInteger(value.integerValue)) fail('INVALID_VALUE', `${path}.integerValue must be a safe integer.`);
-    output.integerValue = value.integerValue;
+    output.integerValue = value.integerValue as number;
   } else if (valueField === 'stringValue') output.stringValue = normalizeString(value.stringValue, `${path}.stringValue`);
   else if (valueField === 'booleanValue') {
     if (typeof value.booleanValue !== 'boolean') fail('INVALID_TYPE', `${path}.booleanValue must be boolean.`);
@@ -174,7 +230,7 @@ function normalizeConstraint(value, path) {
   return output;
 }
 
-function normalizeAuthorization(value, path) {
+function normalizeAuthorization(value: unknown, path: string): LedgerAuthorization {
   assertAllowedFields(value, AUTHORIZATION_FIELDS, path);
   return {
     authorizationId: normalizeId(value.authorizationId, `${path}.authorizationId`),
@@ -184,7 +240,7 @@ function normalizeAuthorization(value, path) {
   };
 }
 
-function normalizeClaim(value, path) {
+function normalizeClaim(value: unknown, path: string): LedgerClaim {
   assertAllowedFields(value, CLAIM_FIELDS, path);
   return {
     claimId: normalizeId(value.claimId, `${path}.claimId`),
@@ -199,7 +255,7 @@ function normalizeClaim(value, path) {
   };
 }
 
-function normalizeRequirement(value, path) {
+function normalizeRequirement(value: unknown, path: string): LedgerRequirement {
   assertAllowedFields(value, REQUIREMENT_FIELDS, path);
   const categories = normalizeArray(value.categories, `${path}.categories`, 7, (item, itemPath) => {
     const category = normalizeString(item, itemPath, { maxBytes: 64 });
@@ -215,14 +271,15 @@ function normalizeRequirement(value, path) {
   };
 }
 
-function normalizeLedgerShape(input, { creation = false } = {}) {
+function normalizeLedgerShape(input: unknown, { creation = false }: { creation?: boolean } = {}): LedgerDraft {
   assertNoSecretLikeValues(input);
   assertAllowedFields(input, ROOT_FIELDS, 'ledger');
   if (input.schemaVersion !== SCHEMA_VERSION) fail('INVALID_VALUE', 'ledger.schemaVersion is unsupported.');
   const revision = normalizePositiveInteger(input.revision, 'ledger.revision', LEDGER_LIMITS.maximumRevision);
   if (creation && revision !== 1) fail('INVALID_VALUE', 'A new ledger must begin at revision 1.');
   if (creation && input.parentDigest !== null) fail('INVALID_VALUE', 'A new ledger must have a null parentDigest.');
-  if (!creation && revision > 1 && !SHA256_HEX.test(input.parentDigest || '')) fail('INVALID_DIGEST', 'A revised ledger requires a valid parentDigest.');
+  const parentDigestInput = typeof input.parentDigest === 'string' ? input.parentDigest : '';
+  if (!creation && revision > 1 && !SHA256_HEX.test(parentDigestInput)) fail('INVALID_DIGEST', 'A revised ledger requires a valid parentDigest.');
 
   const constraints = normalizeArray(input.constraints, 'ledger.constraints', LEDGER_LIMITS.constraints, normalizeConstraint);
   const authorizations = normalizeArray(input.authorizations, 'ledger.authorizations', LEDGER_LIMITS.authorizations, normalizeAuthorization);
@@ -263,12 +320,12 @@ function normalizeLedgerShape(input, { creation = false } = {}) {
   if (!LEDGER_STATUSES.has(status)) fail('INVALID_VALUE', 'ledger.status is unsupported.');
   if (creation && status !== 'OPEN') fail('INVALID_VALUE', 'A new ledger must be OPEN.');
 
-  const output = {
+  const output: LedgerDraft = {
     schemaVersion: SCHEMA_VERSION,
     goalId: normalizeId(input.goalId, 'ledger.goalId'),
     tenantId: normalizeId(input.tenantId, 'ledger.tenantId'),
     revision,
-    parentDigest: input.parentDigest,
+    parentDigest: typeof input.parentDigest === 'string' ? input.parentDigest : null,
     objective: normalizeString(input.objective, 'ledger.objective', { maxBytes: LEDGER_LIMITS.objectiveUtf8Bytes }),
     scope: normalizeScope(input.scope, 'ledger.scope'),
     constraints,
@@ -285,7 +342,7 @@ function normalizeLedgerShape(input, { creation = false } = {}) {
   return output;
 }
 
-function deepFreeze(value) {
+function deepFreeze<T>(value: T): T {
   if (!value || typeof value !== 'object' || Object.isFrozen(value)) return value;
   for (const item of Object.values(value)) deepFreeze(item);
   return Object.freeze(value);
@@ -294,12 +351,12 @@ function deepFreeze(value) {
 export { canonicalJson, digestCanonical } from '../../../shared/digest.js';
 import { canonicalJson, digestCanonical } from '../../../shared/digest.js';
 
-async function attachDigest(normalized) {
+async function attachDigest(normalized: LedgerDraft): Promise<Ledger> {
   const ledgerDigest = await digestCanonical(normalized);
   return deepFreeze({ ...normalized, ledgerDigest });
 }
 
-function assertNowWithinLedger(ledger, now, { allowAtExpiry = false } = {}) {
+function assertNowWithinLedger(ledger: LedgerDraft, now: unknown, { allowAtExpiry = false }: { allowAtExpiry?: boolean } = {}) {
   const nowValue = normalizeTimestamp(now, 'options.now');
   const nowMs = Date.parse(nowValue);
   const expiresMs = Date.parse(ledger.expiresAt);
@@ -307,7 +364,7 @@ function assertNowWithinLedger(ledger, now, { allowAtExpiry = false } = {}) {
   return nowValue;
 }
 
-export async function createLedger(input, options = {}) {
+export async function createLedger(input: unknown, options: { now?: string; authoritySource?: string } = {}): Promise<Ledger> {
   const normalized = normalizeLedgerShape(input, { creation: true });
   assertNowWithinLedger(normalized, options.now);
   if (normalized.authorizations.length && options.authoritySource !== 'USER') {
@@ -316,9 +373,10 @@ export async function createLedger(input, options = {}) {
   return await attachDigest(normalized);
 }
 
-export async function validateLedger(input, options = {}) {
+export async function validateLedger(input: unknown, options: { now?: string | undefined } = {}): Promise<Ledger> {
   assertPlainObject(input, 'ledger');
-  if (!SHA256_HEX.test(input.ledgerDigest || '')) fail('INVALID_DIGEST', 'ledger.ledgerDigest is invalid.');
+  const digestInput = typeof input.ledgerDigest === 'string' ? input.ledgerDigest : '';
+  if (!SHA256_HEX.test(digestInput)) fail('INVALID_DIGEST', 'ledger.ledgerDigest is invalid.');
   const normalized = normalizeLedgerShape(input, { creation: input.revision === 1 });
   if (options.now !== undefined && !TERMINAL_STATUSES.has(normalized.status)) assertNowWithinLedger(normalized, options.now);
   const expected = await digestCanonical(normalized);
@@ -326,7 +384,7 @@ export async function validateLedger(input, options = {}) {
   return deepFreeze({ ...normalized, ledgerDigest: expected });
 }
 
-export function inspectLedger(ledger) {
+export function inspectLedger(ledger: Ledger): Record<string, unknown> {
   assertPlainObject(ledger, 'ledger');
   if (!SHA256_HEX.test(ledger.ledgerDigest || '')) fail('INVALID_DIGEST', 'ledger.ledgerDigest is invalid.');
   return deepFreeze({

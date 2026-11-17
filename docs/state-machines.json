@@ -2,7 +2,7 @@
   "version": 1,
   "generated": "2026-11-14T00:00:00+07:00",
   "source": "Two read-only sweeps, 2026-11-09 UTC: extension/|local/|shared/ (~200 files) and hosted/|site/|scripts/|docs/store/|.github/ (site/ rebuilt 2026-11-16; the five site entries follow their files to site/)",
-  "why": "An implicit state machine is code whose behavior hangs on state nobody declared. It is the shape of every silent failure in this product: the 'connected but dead' bridge, the ghost listen session, the command that completes after its timeout, the plan that runs out mid-run. The register names each one, and the gate (tests/tooling/implicit-state-machines.test.mjs) refuses hidden state nobody can point at. The decision order is fixed: UX > DX > AX — a failure the user can feel is fixed before a convenience for either of us.",
+  "why": "An implicit state machine is code whose behavior hangs on state nobody declared. It is the shape of every silent failure in this product: the 'connected but dead' bridge, the ghost listen session, the command that completes after its timeout, the plan that runs out mid-run. The register names each one, and the gate (tests/tooling/implicit-state-machines.test.ts) refuses hidden state nobody can point at. The decision order is fixed: UX > DX > AX — a failure the user can feel is fixed before a convenience for either of us.",
   "machines": [
     {
       "id": "bridge-device-lifecycle",

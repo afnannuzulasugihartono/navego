@@ -5,7 +5,17 @@
 
 MV3 browser extension + Supabase backend. This file binds every task, in every area. Every rule in it is bounded to the agent: it governs this agent's own choices, and it says nothing about the user, the product, or the wider world. Where this file is silent, the agent decides.
 
-The agent has 100 percent freedom: simplify, delete, and rewrite anything — tests included — as long as the Goals below move and every word here stays true. A test removed is a claim retired, so replace it with proof of equal strength, never with silence.
+The agent has full freedom to simplify, delete, and rewrite - tests included - as long as the Goals below move and every word here stays true, and within the scope below. A test removed is a claim retired, so replace it with proof of equal strength, never with silence.
+
+SCOPE AND REGRESSION PROTECTION
+
+1. Never delete or weaken an existing test merely to make CI pass.
+2. Never modify acceptance gates, gates.lock, or their verification logic unless the task explicitly requires it. A gate that must move is re-pinned in the same commit, with the reason written in that commit.
+3. Never change public APIs, protocol contracts, database schemas, or architectural boundaries outside the approved task scope.
+4. Preserve existing behavior unless the specification explicitly authorizes a behavior change.
+5. Every changed behavior must have a corresponding test.
+6. Refactoring unrelated to the task is prohibited.
+7. If a test conflicts with the requested behavior, explain the conflict before changing the test.
 
 > Standard: Apple-grade finish — full freedom, every word binds the agent.
 
@@ -21,8 +31,8 @@ These ride with every job. Read them before acting, not once per session.
 - Audit everything, delete the trash, simplify the program: sweep for dead files, dead exports, and stale scaffolds, remove what you find, and leave the tree simpler than you met it.
 - Never ask any human for signing keys or any secret material: publisher secrets live only in GitHub Secrets - verify presence with `gh secret list` (names only, values never print), and treat publishing as your own dispatch task, not a question for the owner.
 - Read the lines you need, never the file: ranges through `Select-Object -Skip n -First m` or `Select-String -Context`, logs through their tails. Printing a file whole to find one line is a failed search done in public.
-- Filter before you display. A command that can produce hundreds of lines runs through a bounded filter or the machinery the tree already carries - `npm test` ends in the dot reporter, one dot per test, failures printed in full at the end, nothing else. The gate is `tests/tooling/tidy-output.test.mjs`.
-- Find every implicit state machine you touch and decide its fate before you ship: model it, delete it, or tolerate it with a written reason - ranked user > developer > agent, always. The register is `docs/state-machines.json`; the gate is `tests/tooling/implicit-state-machines.test.mjs`.
+- Filter before you display. A command that can produce hundreds of lines runs through a bounded filter or the machinery the tree already carries - `npm test` ends in the dot reporter, one dot per test, failures printed in full at the end, nothing else. The gate is `tests/tooling/tidy-output.test.ts`.
+- Find every implicit state machine you touch and decide its fate before you ship: model it, delete it, or tolerate it with a written reason - ranked user > developer > agent, always. The register is `docs/state-machines.json`; the gate is `tests/tooling/implicit-state-machines.test.ts`.
 - Where a file lives is decided by `ARCHITECTURE.md`; create nothing at a path the map does not bless.
 
 ## Goals
@@ -31,7 +41,7 @@ These ride with every job. Read them before acting, not once per session.
 - **Cover every site, Google first.** Google Sheets/Excel, Docs, Maps, and YouTube hold the lead; the rest teach the new functions. Do push past one happy path per site. The site does not ever have to be slow about it: grow server-side primitives, not per-site gadgets, so round trips stay short. What the extension may do: [`extension/lib/protocol.ts`](extension/lib/protocol.ts) and [`docs/api.md`](docs/api.md).
 - **Be a companion with an AI behind it.** The person talks, the assistant drives, the work lands as a real artefact. Do build it as server-side workflows over the generic primitives in [`docs/api.md`](docs/api.md). The extension may grow as rich as task-based work needs — including local real-time loops — but every primitive in it stays generic: no per-site code and no free `eval` in the extension, ever.
 - **Keep the tree honest.** A dead file, a dead export, a stale scaffold, a shortcut standing where the real code should be — all of it is trash that compounds. Do sweep for it every session and delete what you find.
-- **Work in your own worktree, never in the shared checkout.** Two agents in one tree take turns overwriting each other and the overwrite is silent. Make yours with `node scripts/dev/agent-worktree.mjs create <name> [base] [topic]`; `list` shows them all and `remove` archives the branch before it deletes it.
+- **Work in your own worktree, never in the shared checkout.** Two agents in one tree take turns overwriting each other and the overwrite is silent. Make yours with `node scripts/dev/agent-worktree.ts create <name> [base] [topic]`; `list` shows them all and `remove` archives the branch before it deletes it.
 - **Claim the tab you drive.** The everyday browser is one shared profile, so a tool call on a tab another agent holds is refused with the claim named: work on separate tabs, and `tabs` says which are open. A claim lapses after a minute of silence and `close` releases it.
 - **Do one at a time, from the main checkout, with the others told first:** migrations, edge function deploys, and the signed CRX — a worktree cannot isolate them. See [`docs/concurrent-agents.md`](docs/concurrent-agents.md).
 

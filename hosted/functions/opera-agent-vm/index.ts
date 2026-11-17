@@ -10,15 +10,16 @@ import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from "../_shared/cors.ts";
 import { canonicalJson, digestCanonical } from "../_shared/goal-ledger.ts";
 import {
   advanceCollectVm,
+  type CollectState,
   createCollectVm,
   validateCollectProgram,
-} from "../../../shared/reactive-vm-collect.js";
+} from "../../../shared/reactive-vm-collect.ts";
 import {
   REACTIVE_VM_HOST_LIMITS,
   classifyVmPersistence,
   deriveVmEffectIdempotencyKey,
   reconcileVmEffectObservation,
-} from "../../../shared/reactive-vm-host.js";
+} from "../../../shared/reactive-vm-host.ts";
 import {
   decodeVmHostKey,
   openVmHostToken,
@@ -69,39 +70,8 @@ class HostError extends Error {
   }
 }
 
-interface VmProgramTarget {
-  deviceId?: unknown;
-  tabId?: unknown;
-  documentGeneration?: unknown;
-  [key: string]: unknown;
-}
-
-interface VmProgram {
-  target: VmProgramTarget;
-  goalId?: unknown;
-  goalRevision?: unknown;
-  taskDependencies?: unknown;
-  [key: string]: unknown;
-}
-
-interface VmPendingEffect {
-  target?: { deviceId?: unknown; tabId?: unknown; [key: string]: unknown } | null;
-  arguments?: unknown;
-  method?: unknown;
-  requestDigest?: unknown;
-  [key: string]: unknown;
-}
-
-interface VmState {
-  pendingEffect?: VmPendingEffect | null;
-  lastLogicalNowMs?: unknown;
-  status?: unknown;
-  result?: unknown;
-  suspension?: { reason?: unknown; [key: string]: unknown } | null;
-  runId?: unknown;
-  tenantId?: unknown;
-  [key: string]: unknown;
-}
+type VmProgram = import('../../../shared/reactive-vm-collect.ts').ReactiveProgram;
+type VmState = import('../../../shared/reactive-vm-collect.ts').CollectState;
 
 interface VmClaim {
   runId?: unknown;
@@ -263,7 +233,7 @@ async function authoritativeProgram(programInput: unknown, tenantId: string) {
   if (!programInput || typeof programInput !== "object" || Array.isArray(programInput)) throw new HostError("INVALID_PROGRAM", "program must be an object.");
   const candidate = programInput as Record<string, unknown>;
   if (candidate.tenantId !== tenantId) throw new HostError("CROSS_TENANT", "Program tenant differs from authenticated tenant.", 403);
-  let program: unknown;
+  let program: Awaited<ReturnType<typeof validateCollectProgram>>;
   try {
     program = await validateCollectProgram(candidate);
   } catch (error) {
@@ -290,7 +260,7 @@ async function enqueueRun(body: Record<string, unknown>, tenantId: string) {
       tenantId,
       goalRevision: program.goalRevision,
       logicalNowMs,
-      deadlineAtMs: logicalNowMs + Math.min(program.budgets.runDeadlineMs, REACTIVE_VM_HOST_LIMITS.runDeadlineMs),
+      deadlineAtMs: logicalNowMs + REACTIVE_VM_HOST_LIMITS.runDeadlineMs,
     });
   } catch (error) {
     const failure = error && typeof error === "object" ? error as { code?: unknown } : {};
@@ -301,7 +271,7 @@ async function enqueueRun(body: Record<string, unknown>, tenantId: string) {
   const checkpointDigest = await digestCanonical(state);
   const programToken = await sealVmHostToken(program, key, { kind: "PROGRAM" });
   const checkpointToken = await sealVmHostToken(state, key, { kind: "CHECKPOINT" });
-  const expiresAt = new Date(logicalNowMs + Math.min(program.budgets.runDeadlineMs, REACTIVE_VM_HOST_LIMITS.runDeadlineMs)).toISOString();
+  const expiresAt = new Date(logicalNowMs + REACTIVE_VM_HOST_LIMITS.runDeadlineMs).toISOString();
   const stored = await rpc("opera_vm_enqueue", {
     p_tenant_id: tenantId,
     p_run_id: runId,
@@ -434,8 +404,8 @@ async function executeEffect(program: VmProgram, state: VmState, claim: VmClaim,
     const observedGeneration = extractDocumentGeneration(awaited.result);
     if (observedGeneration !== program.target.documentGeneration) {
       return {
-        requestDigest: pending.requestDigest,
-        method: pending.method,
+        requestDigest: String(pending.requestDigest ?? ''),
+        method: String(pending.method ?? ''),
         ok: false,
         provenance,
         value: null,
@@ -445,8 +415,8 @@ async function executeEffect(program: VmProgram, state: VmState, claim: VmClaim,
   }
 
   return {
-    requestDigest: pending.requestDigest,
-    method: pending.method,
+    requestDigest: String(pending.requestDigest ?? ''),
+    method: String(pending.method ?? ''),
     ok,
     provenance,
     value: effectValue,
@@ -540,8 +510,8 @@ async function processSlice(runId: string, tenantId: string) {
   }
 
   try {
-    const program = await openVmHostToken(String(claim.programToken), key, { kind: "PROGRAM" });
-    let state = await openVmHostToken(String(claim.checkpointToken), key, { kind: "CHECKPOINT" });
+    const program = await openVmHostToken(String(claim.programToken), key, { kind: "PROGRAM" }) as Awaited<ReturnType<typeof validateCollectProgram>>;
+    let state = await openVmHostToken(String(claim.checkpointToken), key, { kind: "CHECKPOINT" }) as CollectState;
     const validatedProgram = await validateCollectProgram(program);
     if (validatedProgram.programDigest !== claim.programDigest || await digestCanonical(validatedProgram.target) !== claim.targetDigest) {
       throw new HostError("STALE_RUN", "Encrypted program no longer matches durable metadata.", 409);
@@ -571,7 +541,7 @@ async function processSlice(runId: string, tenantId: string) {
         break;
       }
 
-      let advanced: unknown;
+      let advanced: import('../../../shared/reactive-vm-collect.ts').CollectStep;
       if (state.pendingEffect) {
         const effectResult = await executeEffect(validatedProgram, state, claim, workerId, tenantId, device, sliceDeadline);
         advanced = await advanceCollectVm(validatedProgram, state, { logicalNowMs, effectResult });

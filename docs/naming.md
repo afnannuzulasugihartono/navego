@@ -52,9 +52,9 @@ The Postgres names are in the migrations, and the edge functions refuse anything
 
 The shapes are pinned by tests, so a name in the wrong shape fails a gate rather than reaching a user:
 
-- `tests/docs/readme.test.mjs` reads the local tool names out of `local/tools.ts` and counts them against the number the README claims.
-- `tests/extension/ax-observation.test.mjs` matches the local tools against the accessible-name allowlist the runtime answers.
-- `docs/api.md` documents the gateway's `method` parameter and the pattern it must match, and `tests/docs/api-docs.test.mjs` fails when that document stops covering the routed paths.
+- `tests/docs/readme.test.ts` reads the local tool names out of `local/tools.ts` and counts them against the number the README claims.
+- `tests/extension/ax-observation.test.ts` matches the local tools against the accessible-name allowlist the runtime answers.
+- `docs/api.md` documents the gateway's `method` parameter and the pattern it must match, and `tests/docs/api-docs.test.ts` fails when that document stops covering the routed paths.
 
 ## Adding a name
 
@@ -86,9 +86,9 @@ The Postgres names are in the migrations, and the edge functions refuse anything
 
 The shapes are pinned by tests, so a name in the wrong shape fails a gate rather than reaching a user:
 
-- `tests/docs/readme.test.mjs` reads the local tool names out of `local/tools.ts` and counts them against the number the README claims.
-- `tests/extension/ax-observation.test.mjs` matches the local tools against the accessible-name allowlist the runtime answers.
-- `docs/api.md` documents the gateway's `method` parameter and the pattern it must match, and `tests/docs/api-docs.test.mjs` fails when that document stops covering the routed paths.
+- `tests/docs/readme.test.ts` reads the local tool names out of `local/tools.ts` and counts them against the number the README claims.
+- `tests/extension/ax-observation.test.ts` matches the local tools against the accessible-name allowlist the runtime answers.
+- `docs/api.md` documents the gateway's `method` parameter and the pattern it must match, and `tests/docs/api-docs.test.ts` fails when that document stops covering the routed paths.
 
 ## Adding a name
 

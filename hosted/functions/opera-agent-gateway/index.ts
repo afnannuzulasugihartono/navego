@@ -118,7 +118,7 @@ async function command(req: Request, _url: URL) {
 
   const tokenHash = await sha256Hex(token.toLowerCase());
 
-  let result = await rpc("opera_verify_enqueue", {
+  let result: Record<string, unknown> | null = await rpc("opera_verify_enqueue", {
     p_token_hash: tokenHash,
     p_device_name: DEVICE_NAME,
     p_method: method,
@@ -161,7 +161,7 @@ async function command(req: Request, _url: URL) {
     return json(req, { ok: false, error: { code: "DEVICE_NOT_PAIRED", message: "Device is not paired." } }, 401);
   }
   if (result && result.ok === false && typeof result.error === "string") {
-    const body = { ok: false, error: result.error };
+    const body: { ok: false; error: string; lastSeenAt?: unknown } = { ok: false, error: String(result.error) };
     if (result.lastSeenAt !== undefined) body.lastSeenAt = result.lastSeenAt;
     return json(req, body, 200);
   }

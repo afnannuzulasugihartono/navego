@@ -8,7 +8,9 @@ import {
   evaluateReactiveExpression,
   validateReactiveProgram,
 } from './reactive-vm.js';
-import { makeGuards, type Guards } from './reactive-vm-core.js';
+import { makeGuards } from './reactive-vm-core.js';
+
+type Guards = ReturnType<typeof makeGuards>;
 
 const STATE_VERSION = 'OA_REACTIVE_VM_CONTROL_FLOW_STATE_V1';
 const DIGEST_RE = /^sha256:[0-9a-f]{64}$/;

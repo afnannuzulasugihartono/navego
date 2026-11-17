@@ -146,9 +146,10 @@ async function verifyInPage(tabId: number, url: string): Promise<FileVerificatio
     > => {
       const helpers = globalThis.OperaAgentStatementFile;
       if (!helpers) return { ok: false, error: 'the statement helpers were not injected into the page.' };
+      const noStore = { credentials: 'include' as const, cache: 'no-store' as const };
       let response: Response | undefined;
       try {
-        response = await fetch(target, { credentials: 'include', cache: 'no-store' });
+        response = await fetch(target, noStore);
       } catch (error) {
         return { ok: false, error: `the page could not fetch the file: ${error instanceof Error ? error.message : String(error)}` };
       }

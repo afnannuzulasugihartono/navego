@@ -7,6 +7,8 @@
 // Every edge function used to write `Deno.env.get("X")!` at module scope, the non-null assertion telling the typechecker what deploy already knows.
 // The helper names the same invariant once, with the message a deployer actually needs.
 
+declare const Deno: { env: { get(name: string): string | undefined } };
+
 export function requiredEnv(name: string): string {
   const value = Deno.env.get(name);
   if (!value) throw new Error(`${name} is required but not set in the deploy environment.`);

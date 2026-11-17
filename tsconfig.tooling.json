@@ -1,0 +1,27 @@
+{
+  // @title: tsconfig.tooling - strict type-check of the repo's own tooling and the site's prerender scripts, without emitting.
+  // @state: the files this gate covers stay at zero errors or the gate refuses to run.
+  // @dependencies: tsconfig.base.json.
+  // WHY THIS IS NOT CHECKING tests/.
+  // tests/**/*.ts are checked by a separate budget gate instead (tests/tooling/type-budget.test.ts): the count of their tsc findings may only shrink, so the debt is named, measured and monotonic rather than hidden or lied about with a red gate nobody can pass today.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "types": [
+      "node",
+      "chrome"
+    ],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ]
+  },
+  "include": [
+    "scripts/**/*.ts",
+    "site/scripts/**/*.ts",
+    "extension/types/**/*.d.ts"
+  ]
+}

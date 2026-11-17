@@ -6,6 +6,7 @@
 import { digestCanonical } from './digest.js';
 import { SECRET_VALUE } from './secret-pattern.js';
 import { createMultiSignalRelevancePipeline } from './multi-signal-relevance.js';
+import type { RelevanceDecision } from './multi-signal-relevance.ts';
 import { SECRET_FIELD } from './reactive-vm-core.js';
 
 const DIGEST_RE = /^sha256:[0-9a-f]{64}$/;
@@ -23,8 +24,8 @@ export interface HostIdentity {
 export interface VmReconciliation {
   identity: HostIdentity;
   observation: unknown;
-  relevance: unknown;
-  canonicalState: unknown;
+  relevance: RelevanceDecision;
+  canonicalState: RelevanceDecision['canonicalState'];
 }
 
 export interface VmPersistenceDecision {
@@ -68,7 +69,7 @@ export function reconcileVmEffectObservation(identityInput: unknown, observation
     runtimeEpoch: String(envelope.runtimeEpoch || envelope.runId || ''),
   };
 
-  const relevanceResult = hostRelevancePipeline.reconcile(identity, observationInput, null) as { canonicalState?: unknown };
+  const relevanceResult = hostRelevancePipeline.reconcile(identity, observationInput, null);
 
   return Object.freeze({
     identity,

@@ -1,0 +1,134 @@
+// @last-edited: 2026-11-02 UTC+7.
+// @title: format-comments — apply the structural comment rule to the tree, and report the files that are not in it.
+// @state: `--write` rewrites every source file to the canonical form, and `--check` exits non-zero when any file is not canonical; the agent-tool directories are not repo code and are not read.
+// @dependencies: node:fs/promises, node:path, node:url, tests/helpers/comment-format.ts.
+
+// WHY THIS PROGRAM EXISTS.
+// The rule is a formatter, so the gate is an equality: format(file) === file.
+// That is checkable by anyone, and a file the formatter cannot read is a file it does not touch.
+// The list of files it reads is written down here, once, and the hygiene gate calls this program rather than walking the tree a second way.
+
+import { readFile, writeFile, readdir } from 'node:fs/promises';
+import fsSync from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { formatComments } from '../../tests/helpers/comment-format.ts';
+
+const root = fileURLToPath(new URL('../..', import.meta.url));
+
+const EXTENSIONS = new Set([
+  '.js', '.ts', '.cjs', '.ts', '.jsx', '.tsx',
+  '.sql', '.css', '.html', '.htm', '.py',
+  '.yml', '.yaml', '.toml', '.example', '.cmd', '.bat',
+]);
+
+const NAMES = new Set([
+  '.gitignore', '.gitattributes', '.dockerignore', '.npmignore',
+  '.assetsignore', '.vercelignore', 'CODEOWNERS', 'Dockerfile', 'Makefile',
+]);
+
+// WHY THE AGENT-TOOL DIRECTORIES ARE SKIPPED.
+// A skill installed into the tree is machine-local tool state and not repository code, and its comments follow the tool's style rather than this repository's.
+// The gate reads the files a person would ship, and a skill that a colleague never installs must not turn the suite red.
+
+const SKIP_DIRS = new Set([
+  '.git', 'node_modules', '.kilo', '.agents', '.superpowers', '.serena', '.ruff_cache', 'dist', 'build', 'tmp', 'coverage',
+  '.next', '.vercel', '__pycache__', '.temp',
+]);
+
+// WHY site/public/_headers IS NOT HERE.
+// Cloudflare parses that file block by block, and a blank line inside a rule block is the host's business, not ours.
+// Its comments are written in the canonical shape by hand, and the file stays out of the formatter's reach.
+
+const SKIP_FILES = new Set(['LICENSE', 'site/public/_headers']);
+
+async function walk(dir: string, prefix = ''): Promise<string[]> {
+  const files = [];
+  for (const entry of await readdir(dir, { withFileTypes: true })) {
+    if (SKIP_DIRS.has(entry.name)) continue;
+    const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) files.push(...await walk(path.join(dir, entry.name), relative));
+    else files.push(relative);
+  }
+  return files;
+}
+
+function shouldFormat(file: string) {
+  if (SKIP_FILES.has(file) || file.startsWith('hosted/.temp/')) return false;
+  const ext = path.extname(file).toLowerCase();
+  if (ext) return EXTENSIONS.has(ext);
+  return NAMES.has(path.basename(file));
+}
+
+// WHY GIT DECIDES WHICH FILES ARE THE REPOSITORY.
+// An uncommitted build artifact (shared/<stem>.js emitted by tsc, the copies pack-mcp writes into local/lib) is not repository code, and its formatting is the compiler's business; the rule judges the source, which git tracks.
+// A file git lists is exactly the set a person would ship: tracked files, plus untracked-but-not-ignored new files, which is what `git add` would stage.
+// Outside a git checkout the filesystem is all there is, and the rule falls back to it.
+
+function fixedGitBin() {
+  // The analyzer wants a command that is never resolved against PATH: the fixed, unwriteable install locations git lands in on dpkg, macOS Homebrew and Git for Windows.
+  // If none of them exists (an unusual install), the gate falls back to walking the filesystem through the null return, exactly as it does outside a git checkout.
+  const candidates = process.platform === 'win32'
+    ? ['C:\\Program Files\\Git\\bin\\git.exe', 'C:\\Program Files\\Git\\cmd\\git.exe']
+    : ['/usr/bin/git', '/usr/local/bin/git', '/opt/homebrew/bin/git'];
+  return candidates.find((candidate) => fsSync.existsSync(candidate)) ?? null;
+}
+
+function repoFiles() {
+  try {
+    const gitBin = fixedGitBin();
+    if (!gitBin) return null;
+    const output = execFileSync(gitBin, ['ls-files', '-z', '--cached', '--others', '--exclude-standard'], { cwd: root, encoding: 'utf8', maxBuffer: 1 << 28 });
+    return new Set(output.split('\0').filter(Boolean));
+  } catch {
+    return null;
+  }
+}
+
+async function targets() {
+  const inRepo = repoFiles();
+  const files = (await walk(root)).filter(shouldFormat).filter((file) => !inRepo || inRepo.has(file)).sort((a, b) => a.localeCompare(b));
+  return files.map((file) => ({ file, ext: path.extname(file).toLowerCase() }));
+}
+
+async function apply(write: boolean) {
+  const files = await targets();
+  const changed: string[] = [];
+  for (const { file, ext } of files) {
+    const text = await readFile(path.join(root, file), 'utf8');
+    const next = formatComments(text, ext);
+    if (next === text) continue;
+    changed.push(file);
+    if (write) await writeFile(path.join(root, file), next);
+  }
+  return { total: files.length, changed };
+}
+
+// WHY THIS IS EXPOSED.
+// The hygiene gate asserts the equality over the whole tree, and it must walk the same files this program walks.
+
+export async function checkFormat() {
+  return apply(false);
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const write = process.argv.includes('--write');
+  const { total, changed } = await apply(write);
+
+  if (changed.length === 0) {
+    console.log(`comment format ok: ${total} files`);
+    process.exit(0);
+  }
+
+  if (write) {
+    console.log(`comment format wrote ${changed.length} of ${total} files`);
+    process.exit(0);
+  }
+
+  console.error(`comment format: ${changed.length} of ${total} files are not canonical`);
+  for (const file of changed.slice(0, 40)) console.error(`  ${file}`);
+  if (changed.length > 40) console.error(`  ... and ${changed.length - 40} more`);
+  console.error('run: node scripts/dev/format-comments.ts --write');
+  process.exit(1);
+}

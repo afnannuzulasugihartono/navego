@@ -1,0 +1,641 @@
+// @last-edited: 2026-10-21 UTC+7.
+// @title: comment-format — one structural rule for comment spacing and sentence lines.
+// @state: A comment block at column zero is a section header and gets a blank line before and after.
+// An indented block documents the code below it and is left alone.
+// A sentence is written on one line; the formatter joins a wrapped sentence and splits a line that holds two.
+// The classifier tracks block comments, templates, Python docstrings and YAML block scalars so embedded data is never rewritten.
+// @dependencies: none.
+
+const LINE_MARKERS: Record<string, string[]> = {
+  '.js': ['//', '/*'],
+  '.ts': ['//', '/*'],
+  '.cjs': ['//', '/*'],
+  '.jsx': ['//', '/*'],
+  '.tsx': ['//', '/*'],
+  '.sql': ['--', '/*'],
+  '.css': ['/*'],
+  '.html': ['<!--', '//', '/*'],
+  '.htm': ['<!--', '//', '/*'],
+  '.py': ['#'],
+  '.yml': ['#', '//'],
+  '.yaml': ['#', '//'],
+  '.toml': ['#'],
+  '.example': ['#'],
+  '.cmd': ['REM', '::'],
+  '.bat': ['REM', '::'],
+  '': ['#'],
+};
+
+const JS_EXTENSIONS = new Set(['.js', '.ts', '.cjs', '.jsx', '.tsx', '.html', '.htm']);
+const HTML_EXTENSIONS = new Set(['.html', '.htm']);
+
+const DIRECTIVE = /^(?:eslint\b|@ts-[a-z-]+|prettier-ignore\b|#region\b|#endregion\b|istanbul\b|c8\b|v8\b|webpack\b|@flow\b|jshint\b|global\b|exported\b|sourceMappingURL\b|sourceURL\b|yaml-language-server\b|type:\s|pragma:\s|shellcheck\b|vim?:\s|fmt:\s|noqa\b|nosec\b|kics-scan\b|trivy\b|hadolint\b|pylint:\s|mypy:\s|ruff:\s|biome-ignore\b|rome-ignore\b|deno-(?:lint|fmt)\b)/;
+const ABBREVIATIONS = new Set([
+  'e.g', 'i.e', 'etc', 'vs', 'cf', 'approx', 'resp', 'al',
+  'dr', 'mr', 'mrs', 'ms', 'st', 'no', 'fig', 'eq', 'sec', 'ch',
+  'vol', 'pp', 'ed', 'trans', 'rev', 'u.s', 'u.k', 'e.u', 'a.m', 'p.m',
+]);
+
+function indentOf(line: any) {
+  return line.length - line.trimStart().length;
+}
+
+function stripStar(text: any) {
+  const trimmed = text.trimStart();
+  if (!trimmed.startsWith('*')) return trimmed;
+  return trimmed.slice(1).replace(/^\s/, '');
+}
+
+function yamlScalarRanges(lines: string[]): Array<{ start: number; end: number; node: boolean }> {
+  const ranges: Array<{ start: number; end: number; node: boolean }> = [];
+  let i = 0;
+  while (i < lines.length) {
+    const open = /^(\s*)[^\s#][^:]*:\s*[|>][-+]?\d?\s*$/.exec(lines[i] ?? '');
+    if (!open) { i += 1; continue; }
+    const keyIndent = open[1]?.length ?? 0;
+    let end = i;
+    let node = false;
+    for (let j = i + 1; j < lines.length; j += 1) {
+      const line = lines[j] ?? '';
+      if (line.trim() === '') { end = j; continue; }
+      if (indentOf(line) <= keyIndent) break;
+      if (/node\s+-e\s*"/.test(line)) node = true;
+      end = j;
+    }
+    ranges.push({ start: i + 1, end, node });
+    i = end + 1;
+  }
+  return ranges;
+}
+
+function pythonStringMask(lines: any) {
+  const mask = new Array(lines.length).fill(false);
+  let triple = null;
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (triple) {
+      mask[i] = true;
+      if (line.includes(triple)) triple = null;
+      continue;
+    }
+    if (line.trimStart().startsWith('#')) continue;
+    for (const quote of ['"""', "'''"]) {
+      const count = line.split(quote).length - 1;
+      if (count % 2 === 1) { triple = quote; mask[i] = true; break; }
+    }
+  }
+  return mask;
+}
+
+function regexEnd(line: any, start: any) {
+  let inClass = false;
+  for (let i = start + 1; i < line.length; i += 1) {
+    const c = line[i];
+    if (c === '\\') { i += 1; continue; }
+    if (c === '[') { inClass = true; continue; }
+    if (c === ']') { inClass = false; continue; }
+    if (c === '/' && !inClass) return i;
+  }
+  return -1;
+}
+
+function regexAllowed(line: any, index: any) {
+  let i = index - 1;
+  while (i >= 0 && /\s/.test(line[i])) i -= 1;
+  if (i < 0) return true;
+  if ('([{,;:!?&|+-*%<>~=^/'.includes(line[i])) return true;
+  const before = line.slice(0, i + 1);
+  return /(?:^|[^\w$])(?:return|typeof|case|in|of|new|delete|void|instanceof|yield|await|else|do)$/.test(before);
+}
+
+function templateAfter(line: any, inTemplate: any) {
+  let state = inTemplate ? 'template' : 'code';
+  let i = 0;
+  while (i < line.length) {
+    const c = line[i];
+    const d = line[i + 1];
+    if (state === 'code') {
+      if (c === '/' && d === '/') break;
+      if (c === '/' && d === '*') {
+        const end = line.indexOf('*/', i + 2);
+        if (end === -1) break;
+        i = end + 2;
+        continue;
+      }
+      if (c === '/' && regexAllowed(line, i)) {
+        const end = regexEnd(line, i);
+        if (end !== -1) { i = end + 1; continue; }
+      }
+      if (c === "'" || c === '"') {
+        const quote = c;
+        i += 1;
+        while (i < line.length) {
+          if (line[i] === '\\') { i += 2; continue; }
+          if (line[i] === quote) break;
+          i += 1;
+        }
+        i += 1;
+        continue;
+      }
+      if (c === '`') { state = 'template'; i += 1; continue; }
+      i += 1;
+      continue;
+    }
+    if (c === '\\') { i += 2; continue; }
+    if (c === '`') { state = 'code'; i += 1; continue; }
+    i += 1;
+  }
+  return state === 'template';
+}
+
+function markerOf(trimmed: any, ext: any) {
+  for (const marker of LINE_MARKERS[ext] || []) {
+    if (marker === 'REM') {
+      if (/^@?rem(?:\s|$)/i.test(trimmed)) return 'REM';
+      continue;
+    }
+    if (marker === '::' && trimmed.startsWith('::')) return '::';
+    if (marker !== 'REM' && marker !== '::' && trimmed.startsWith(marker)) return marker;
+  }
+  return null;
+}
+
+function record(text: any, ext: any) {
+  const lines = text.split('\n');
+  const records = new Array(lines.length).fill(null);
+  const isYaml = ext === '.yml' || ext === '.yaml';
+  const scalarRanges = isYaml ? yamlScalarRanges(lines) : [];
+  const pyMask = ext === '.py' ? pythonStringMask(lines) : null;
+  const jsLike = JS_EXTENSIONS.has(ext);
+  let block = null;
+  let blockId = 0;
+  let inTemplate = false;
+
+  const scalarAt = (index: any) => scalarRanges.find((range) => index >= range.start && index <= range.end);
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    const trimmed = line.trimStart();
+    const indent = line.slice(0, line.length - trimmed.length);
+
+    if (block) {
+      const close = block.family === 'html' ? '-->' : '*/';
+      const at = trimmed.indexOf(close);
+      const text = at === -1 ? trimmed : trimmed.slice(0, at).trim();
+      records[i] = {
+        kind: 'block',
+        family: block.family,
+        id: block.id,
+        indent: block.indent,
+        text: block.family === 'js' ? stripStar(text) : text,
+        raw: line,
+      };
+      if (at !== -1) block = null;
+      continue;
+    }
+
+    if (jsLike && inTemplate) {
+      inTemplate = templateAfter(line, true);
+      continue;
+    }
+
+    if (pyMask && pyMask[i]) continue;
+
+    const scalar = isYaml ? scalarAt(i) : null;
+    if (scalar) {
+      if (scalar.node && trimmed.startsWith('//')) {
+        records[i] = {
+          kind: 'line',
+          marker: '//',
+          indent,
+          text: trimmed.slice(2).replace(/^\s/, ''),
+          raw: line,
+        };
+      }
+      continue;
+    }
+
+    const continued = i > 0
+      && records[i - 1] === null
+      && lines[i - 1].trimEnd().endsWith('\\');
+    if (continued) {
+      if (jsLike) inTemplate = templateAfter(line, false);
+      continue;
+    }
+
+    const isHtml = HTML_EXTENSIONS.has(ext);
+    let family = null;
+    let openLength = 0;
+    let jsdoc = false;
+    if (isHtml && trimmed.startsWith('<!--')) {
+      family = 'html';
+      openLength = 4;
+    } else if (trimmed.startsWith('/*')
+      && (JS_EXTENSIONS.has(ext) || ext === '.css' || ext === '.sql')) {
+      family = 'js';
+      openLength = 2;
+      jsdoc = trimmed.startsWith('/**');
+    }
+
+    if (family) {
+      const close = family === 'html' ? '-->' : '*/';
+      let rest = trimmed.slice(openLength);
+      if (jsdoc) rest = rest.slice(1);
+      const at = rest.indexOf(close);
+      const id = blockId;
+      blockId += 1;
+      if (at !== -1) {
+        records[i] = {
+          kind: 'block',
+          family,
+          id,
+          indent,
+          text: (family === 'js' ? stripStar(rest.slice(0, at)) : rest.slice(0, at)).trim(),
+          raw: line,
+          single: true,
+          jsdoc,
+        };
+      } else {
+        records[i] = {
+          kind: 'block',
+          family,
+          id,
+          indent,
+          text: (family === 'js' ? stripStar(rest) : rest).trim(),
+          raw: line,
+          jsdoc,
+        };
+        block = { family, id, indent };
+      }
+      continue;
+    }
+
+    const marker = markerOf(trimmed, ext);
+    if (marker) {
+      if (marker === '#' && trimmed.startsWith('#!')) continue;
+      let text = trimmed.slice(marker.length);
+      let outMarker = marker;
+      if (marker === 'REM') {
+        const rem = /^@?rem(?:\s|$)/i.exec(trimmed);
+        if (rem) text = trimmed.slice(rem[0].length);
+        outMarker = 'REM';
+      }
+      records[i] = {
+        kind: 'line',
+        marker: outMarker,
+        indent,
+        text: text.replace(/^\s/, ''),
+        raw: line,
+      };
+      continue;
+    }
+
+    if (jsLike) inTemplate = templateAfter(line, false);
+  }
+  return records;
+}
+
+function groupsOf(records: any) {
+  const groups = [];
+  let i = 0;
+  while (i < records.length) {
+    const current = records[i];
+    if (!current) { i += 1; continue; }
+    if (current.kind === 'line') {
+      let end = i;
+      while (end + 1 < records.length
+        && records[end + 1]
+        && records[end + 1].kind === 'line'
+        && records[end + 1].marker === current.marker
+        && records[end + 1].indent === current.indent) end += 1;
+      groups.push({ kind: 'line', start: i, end, records: records.slice(i, end + 1) });
+      i = end + 1;
+      continue;
+    }
+    let end = i;
+    while (end + 1 < records.length
+      && records[end + 1]
+      && records[end + 1].kind === 'block'
+      && records[end + 1].id === current.id) end += 1;
+    groups.push({ kind: 'block', start: i, end, records: records.slice(i, end + 1) });
+    i = end + 1;
+  }
+  return groups;
+}
+
+function directiveTexts(texts: any) {
+  const first = texts.find((text: any) => text.trim() !== '');
+  return Boolean(first && DIRECTIVE.test(first.trim()));
+}
+
+function nonProse(texts: any) {
+  return texts.some((text: any) => {
+    const line = text.trim();
+    if (!line) return false;
+    if (/^(?:```|\||> |> )/.test(line)) return true;
+    if (/^(?:py|python3?|node|npm|npx|pnpm|yarn|bun|deno|git|gh|curl|wget|supabase|docker)\s/.test(line)) return true;
+    if (/^(?:\.{1,2}[\\/]|[A-Za-z]:[\\/]|https?:\/\/|wss?:\/\/)/.test(line)) return true;
+    if (/^(?:const|let|var|function|class|import|export)\b.*[;{=]/.test(line)) return true;
+    if (/^(?:if|for|while|switch|catch)\s*\(/.test(line)) return true;
+    if (/^(?:return|throw)\b.*[;({[]/.test(line)) return true;
+    if (/^(?:SELECT|CREATE|ALTER|DROP|INSERT|UPDATE|DELETE|WITH|BEGIN|COMMIT)\b.*[;(]/.test(line)) return true;
+    if (/^[{};]/.test(line)) return true;
+    if (/^\]/.test(line)) return true;
+    if (/^\[[^\]]*\]\s*[,;.)\]]?$/.test(line)) return true;
+    if (/^<[/!]?[a-z][^>]*>$/i.test(line)) return true;
+    return false;
+  });
+}
+
+function codeSpans(text: string): Array<[number, number]> {
+  const spans = [];
+  for (const match of text.matchAll(/`[^`]*`/g)) spans.push([match.index, match.index + match[0].length] as [number, number]);
+  return spans;
+}
+
+function quotedSpans(text: string): Array<[number, number]> {
+  const spans = [];
+  let start = -1;
+  for (let i = 0; i < text.length; i += 1) {
+    if (text[i] === '\\') { i += 1; continue; }
+    if (text[i] !== '"') continue;
+    if (start === -1) start = i;
+    else { spans.push([start, i + 1] as [number, number]); start = -1; }
+  }
+  return spans;
+}
+
+function inSpans(index: number, spans: Array<[number, number]>) {
+  return spans.some(([start, end]) => index >= start && index < end);
+}
+
+function findSentenceCuts(text: any) {
+  const out: Array<{ index: number; run: string; punctuation: string }> = [];
+  let i = 0;
+  while (i < text.length) {
+    const c = text[i];
+    if (c !== '.' && c !== '!' && c !== '?') { i += 1; continue; }
+    let runEnd = i + 1;
+    while (runEnd < text.length && '.!?'.includes(text[runEnd] ?? '')) runEnd += 1;
+    let tailEnd = runEnd;
+    while (tailEnd < text.length && '"\')]'.includes(text[tailEnd] ?? '')) tailEnd += 1;
+    let wsEnd = tailEnd;
+    while (wsEnd < text.length && /\s/.test(text[wsEnd] ?? '')) wsEnd += 1;
+    if (wsEnd === tailEnd) { i = runEnd; continue; }
+    out.push({ index: i, run: text.slice(i, runEnd), punctuation: text.slice(i, tailEnd) });
+    i = wsEnd;
+  }
+  return out;
+}
+
+function trailingToken(text: string) {
+  // WHY A MANUAL SCAN AND NOT /([A-Za-z][\w.]*|\d[\w.]*)$/.
+  // The two alternatives both swallow word characters and dots, which is the overlapping-alternation shape the linear-runtime rules forbid.
+  // The scan walks back over [\w.]
+  // once and then steps to the first letter or digit, which is the same string the regex found.
+  let end = text.length;
+  let start = end;
+  while (start > 0) {
+    const ch = text[start - 1] ?? '';
+    if (!/[\w.]/.test(ch)) break;
+    start -= 1;
+  }
+  while (start < end && !/[A-Za-z0-9]/.test(text.charAt(start))) start += 1;
+  return text.slice(start, end);
+}
+
+function sentenceCuts(text: any) {
+  const code = codeSpans(text);
+  const quotes = quotedSpans(text);
+  const cuts = [];
+  for (const match of findSentenceCuts(text)) {
+    const at = match.index;
+    if (inSpans(at, code) || inSpans(at, quotes)) continue;
+
+    const run = match.run;
+    if (/^\.{2,}$/.test(run)) continue;
+
+    const before = text.slice(0, at).trimEnd();
+    const token = trailingToken(before);
+    if (ABBREVIATIONS.has(token.toLowerCase())) continue;
+    if (/^[A-Z]$/.test(token)) continue;
+
+    const cut = at + match.punctuation.length;
+    if (cut < text.length) cuts.push(cut);
+  }
+  return cuts;
+}
+
+function splitSentences(text: any) {
+  const cuts = sentenceCuts(text);
+  if (!cuts.length) return [text.trim()];
+  const sentences = [];
+  let start = 0;
+  for (const cut of cuts) {
+    sentences.push(text.slice(start, cut).trim());
+    start = cut;
+  }
+  sentences.push(text.slice(start).trim());
+  return sentences.filter(Boolean);
+}
+
+function paragraphsOf(texts: string[]): Array<string[] | null> {
+  const paragraphs: Array<string[] | null> = [];
+  let current: string[] = [];
+  const flush = () => {
+    if (current.length) paragraphs.push(current);
+    current = [];
+  };
+  for (const text of texts) {
+    if (text.trim() === '') {
+      flush();
+      paragraphs.push(null);
+      continue;
+    }
+    if (/^@[\w-]+/.test(text.trim())) {
+      flush();
+      current.push(text);
+      continue;
+    }
+    if (/^(?:[-*+]|\d+[.)]|[A-Za-z][.)])\s/.test(text.trim())) {
+      flush();
+      current.push(text);
+      continue;
+    }
+    current.push(text);
+  }
+  flush();
+  return paragraphs;
+}
+
+function reflowTexts(texts: any) {
+  if (directiveTexts(texts) || nonProse(texts)) return null;
+  let listIndent = null;
+  let afterBlank = true;
+  for (const text of texts) {
+    if (text.trim() === '') { afterBlank = true; listIndent = null; continue; }
+    const match = /^(\s*)(?:[-*+]|\d+[.)]|[A-Za-z][.)])\s/.exec(text);
+    if (!match) continue;
+    const indent = match && match[1] !== undefined ? match[1].length : 0;
+    if (afterBlank || listIndent === null) { listIndent = indent; afterBlank = false; continue; }
+    if (indent > listIndent) return null;
+  }
+  const paragraphs = paragraphsOf(texts);
+  const out = [];
+  for (const paragraph of paragraphs) {
+    if (paragraph === null) { out.push(null); continue; }
+    const joined = paragraph === null ? '' : paragraph.map((text: any) => text.trim()).filter(Boolean).join(' ');
+    if (!joined) continue;
+    const list = /^([-*+]|\d+[.)]|[A-Za-z][.)])\s+/.exec(joined);
+    if (list) {
+      const body = joined.slice(list[0].length);
+      if (nonProse([body])) return null;
+      const sentences = splitSentences(body);
+      out.push(`${list[1]} ${sentences[0]}`);
+      const pad = ' '.repeat(list[0].length);
+      for (const sentence of sentences.slice(1)) out.push(`${pad}${sentence}`);
+      continue;
+    }
+    if (nonProse([joined])) return null;
+    for (const sentence of splitSentences(joined)) out.push(sentence);
+  }
+  return out;
+}
+
+function formatLineGroup(group: any) {
+  const first = group.records[0];
+  const texts = group.records.map((line: any) => line.text);
+  const original = group.records.map((line: any) => line.raw);
+  if (first.marker === '#' && first.text.startsWith('!')) return original;
+
+  const prefix = `${first.indent}${first.marker} `;
+
+  if (first.marker === 'REM' || first.marker === '::') {
+    const merged: Array<string | null> = [];
+    for (const line of group.records) {
+      const text = line.text.trim();
+      if (!text) { merged.push(null); continue; }
+      const previous = merged[merged.length - 1];
+      const continuation = typeof previous === 'string'
+        && previous.split(/\s+/).length >= 3
+        && !/[.!?]["')\]]?$/.test(previous)
+        && /^[a-z]/.test(text);
+      if (continuation) merged[merged.length - 1] = `${previous} ${text}`;
+      else merged.push(text);
+    }
+    while (merged.length && merged[0] === null) merged.shift();
+    while (merged.length && merged[merged.length - 1] === null) merged.pop();
+    if (merged.length === 0) return [''];
+    const out = [];
+    for (const text of merged) {
+      if (text === null) { out.push(''); continue; }
+      for (const sentence of splitSentences(text)) out.push(`${prefix}${sentence}`);
+    }
+    return out;
+  }
+
+  const reflowed = reflowTexts(texts);
+  if (!reflowed) return original;
+  while (reflowed.length && reflowed[0] === null) reflowed.shift();
+  while (reflowed.length && reflowed[reflowed.length - 1] === null) reflowed.pop();
+  if (reflowed.length === 0) return [''];
+
+  return reflowed.map((text) => (text === null ? '' : `${prefix}${text}`));
+}
+
+function formatBlockGroup(group: any) {
+  const first = group.records[0];
+  const original = group.records.map((line: any) => line.raw);
+  if (first.raw.trimStart().startsWith('/*!')) return original;
+
+  const texts = group.records.map((line: any) => line.text);
+  if (directiveTexts(texts) || nonProse(texts)) return original;
+  if (first.family === 'html' && texts.join(' ').includes('<')) return original;
+  if (first.family === 'html' && texts.join(' ').includes('--')) return original;
+  if (!texts.some((text: any) => text.trim() !== '')) return original;
+
+  const body = texts.slice();
+  while (body.length && body[0].trim() === '') body.shift();
+  while (body.length && body[body.length - 1].trim() === '') body.pop();
+
+  const reflowed = reflowTexts(body);
+  if (!reflowed) return original;
+
+  const onlyOne = reflowed.filter((text) => text !== null).length === 1;
+  if (first.single && onlyOne && reflowed[0] === first.text.trim()) return original;
+
+  if (first.family === 'html') {
+    const indent = first.indent;
+    const out = [];
+    for (const text of reflowed) {
+      if (text === null) out.push('');
+      else out.push(`${indent}<!-- ${text} -->`);
+    }
+    return out;
+  }
+
+  const indent = first.indent;
+  const opening = first.jsdoc ? `${indent}/**` : `${indent}/*`;
+  const out = [opening];
+  for (const text of reflowed) {
+    out.push(text === null ? `${indent} *` : `${indent} * ${text}`);
+  }
+  out.push(`${indent} */`);
+  return out;
+}
+
+function formatSentences(text: any, ext: any) {
+  const lines = text.split('\n');
+  const groups = groupsOf(record(text, ext));
+  const byStart = new Map(groups.map((group) => [group.start, group]));
+  const out = [];
+  let i = 0;
+  while (i < lines.length) {
+    const group = byStart.get(i);
+    if (!group) { out.push(lines[i]); i += 1; continue; }
+    const formatted = group.kind === 'line' ? formatLineGroup(group) : formatBlockGroup(group);
+    out.push(...formatted);
+    i = group.end + 1;
+  }
+  return out.join('\n');
+}
+
+function addSpacing(text: any, ext: any) {
+  const lines = text.split('\n');
+  const records = record(text, ext);
+  const groups = groupsOf(records);
+  const byStart = new Map(groups.map((group) => [group.start, group]));
+  const out = [];
+  let i = 0;
+  while (i < lines.length) {
+    const group = byStart.get(i);
+    if (!group) { out.push(lines[i]); i += 1; continue; }
+
+    const first = group.records[0];
+    const header = first.indent === '' && !directiveTexts(group.records.map((line: any) => line.text));
+    if (header && out.length > 0 && out[out.length - 1].trim() !== '' && records[i - 1] === null) {
+      out.push('');
+    }
+    for (let n = group.start; n <= group.end; n += 1) out.push(lines[n]);
+    if (header
+      && group.end + 1 < lines.length
+      && lines[group.end + 1].trim() !== ''
+      && records[group.end + 1] === null) {
+      out.push('');
+    }
+    i = group.end + 1;
+  }
+  return out.join('\n');
+}
+
+export function formatComments(text: any, ext = '') {
+  const eol = text.includes('\r\n') ? '\r\n' : '\n';
+  const normalized = eol === '\n' ? text : text.split('\r\n').join('\n');
+  const sentences = formatSentences(normalized, ext);
+  const spaced = addSpacing(sentences, ext);
+  return eol === '\n' ? spaced : spaced.split('\n').join('\r\n');
+}
+
+export function commentLineMask(text: any, ext = '') {
+  return record(text, ext).map(Boolean);
+}

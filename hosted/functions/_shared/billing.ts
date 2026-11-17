@@ -59,11 +59,11 @@
 
 import { createHash, createHmac } from 'node:crypto';
 
-function hmacSha512(secret, payload) {
+function hmacSha512(secret: string, payload: string | Buffer): string {
   return createHmac('sha512', secret).update(payload).digest('hex');
 }
 
-function sameText(expected, given) {
+function sameText(expected: unknown, given: unknown): boolean {
   if (typeof expected !== 'string' || typeof given !== 'string') return false;
   if (expected.length !== given.length) return false;
   let difference = 0;
@@ -73,28 +73,30 @@ function sameText(expected, given) {
   return difference === 0;
 }
 
-export function invoiceToken(invoiceId, secret) {
-  return hmacSha512(secret, `invoice:${invoiceId}`).slice(0, 32);
+export function invoiceToken(invoiceId: unknown, secret: unknown): string {
+  const id = String(invoiceId ?? '');
+  return hmacSha512(String(secret ?? ''), `invoice:${id}`).slice(0, 32);
 }
 
-export function verifyInvoiceToken(invoiceId, token, secret) {
+export function verifyInvoiceToken(invoiceId: unknown, token: unknown, secret: unknown): boolean {
   if (!invoiceId || !token || !secret) return false;
   const expected = invoiceToken(invoiceId, secret);
   return sameText(expected, token);
 }
 
-export function priceFor(priceList, kind) {
-  const entry = (priceList || []).find((row) => row.kind === kind && row.active !== false);
+export function priceFor(priceList: unknown, kind: unknown): { kind: string; unit: string; amountCents: number; currency: string } | null {
+  const rows = Array.isArray(priceList) ? (priceList as Array<Record<string, unknown>>) : [];
+  const entry = rows.find((row) => row.kind === kind && row.active !== false);
   if (!entry) return null;
-  return { kind: entry.kind, unit: entry.unit, amountCents: Number(entry.amount_cents), currency: entry.currency || 'IDR' };
+  return { kind: String(entry.kind), unit: String(entry.unit ?? ''), amountCents: Number(entry.amount_cents), currency: String(entry.currency || 'IDR') };
 }
 
-export function amountFor(lines, priceList) {
+export function amountFor(lines: unknown, priceList: unknown): { amountCents: number; currency: string; priced: Array<Record<string, unknown>>; unpriced: Array<Record<string, unknown>> } {
   const priced = [];
   const unpriced = [];
   let amountCents = 0;
   let currency = 'IDR';
-  for (const line of lines || []) {
+  for (const line of (Array.isArray(lines) ? (lines as Array<Record<string, unknown>>) : [])) {
     const price = priceFor(priceList, line.kind);
     if (!price) {
       unpriced.push({ ...line, reason: 'no price for this kind' });
@@ -115,14 +117,14 @@ export function amountFor(lines, priceList) {
   return { amountCents, currency, priced, unpriced };
 }
 
-export function providerAmount(amountCents, currency = 'IDR') {
+export function providerAmount(amountCents: unknown, currency = 'IDR'): number | null {
   if (String(currency || '').toUpperCase() !== 'IDR') return null;
   const cents = Number(amountCents);
   if (!Number.isFinite(cents) || cents < 100) return null;
   return Math.round(cents / 100);
 }
 
-export function paidAmountCents(grossAmount, currency = 'IDR') {
+export function paidAmountCents(grossAmount: unknown, currency = 'IDR'): number | null {
   const value = Number(grossAmount);
   if (!Number.isFinite(value)) return null;
   const unit = String(currency || '').toUpperCase();
@@ -130,7 +132,7 @@ export function paidAmountCents(grossAmount, currency = 'IDR') {
   return Math.round(value * 100);
 }
 
-export function providerOrderId(invoiceId, amountCents, currency = 'IDR', attempt = 1) {
+export function providerOrderId(invoiceId: unknown, amountCents: unknown, currency = 'IDR', attempt = 1): string {
   const counted = Math.trunc(Number(attempt));
   const number = Number.isFinite(counted) && counted > 1 ? counted : 1;
   const retry = number > 1 ? `\u0000${number}` : '';
@@ -156,7 +158,7 @@ export const PAY_LINK_EXPIRY = Object.freeze({ unit: 'hour', duration: 24 });
 
 const EXPIRY_MS = Object.freeze({ second: 1000, minute: 60_000, hour: 3_600_000, day: 86_400_000 });
 
-export function payLinkDeadline(now = Date.now()) {
+export function payLinkDeadline(now: number = Date.now()): string {
   const start = Number(now);
   const step = EXPIRY_MS[PAY_LINK_EXPIRY.unit] || EXPIRY_MS.hour;
   return new Date((Number.isFinite(start) ? start : Date.now()) + step * PAY_LINK_EXPIRY.duration).toISOString();
@@ -167,9 +169,11 @@ export function payLinkDeadline(now = Date.now()) {
 // So the state is computed here from the link and its deadline: nothing to pay, a deadline nobody knows, a deadline still ahead, or one that has passed.
 // A deadline that cannot be parsed is "unknown" rather than "expired": an honest page shows the link and says it does not know when it stops working.
 
-export function payLinkState(invoice, now = Date.now()) {
-  if (!invoice || !invoice.pay_url) return 'none';
-  const deadline = Date.parse(String(invoice.pay_url_expires_at || ''));
+export function payLinkState(invoice: unknown, now: number = Date.now()): 'none' | 'unknown' | 'live' | 'expired' {
+  if (!invoice) return 'none';
+  const i = invoice as Record<string, unknown>;
+  if (!i.pay_url) return 'none';
+  const deadline = Date.parse(String(i.pay_url_expires_at || ''));
   if (!Number.isFinite(deadline)) return 'unknown';
   const at = Number(now);
   const moment = Number.isFinite(at) ? at : Date.now();
@@ -178,7 +182,7 @@ export function payLinkState(invoice, now = Date.now()) {
 
 export const SNAP_QRIS_ONLY_BELOW_CENTS = 10_000_000;
 
-export function snapPaymentMethods(amountCents, currency = 'IDR') {
+export function snapPaymentMethods(amountCents: unknown, currency = 'IDR'): { chargeable: boolean; enabled: string[] | null; why: string } {
   const amount = Number(amountCents);
   if (String(currency || '').toUpperCase() !== 'IDR') {
     return {
@@ -211,13 +215,15 @@ export function snapPaymentMethods(amountCents, currency = 'IDR') {
 // The prefix does name the environment today - sandbox keys start SB-Mid-server-, production keys Mid-server- - but a host inferred from a string the provider controls breaks silently the day the format changes, and the failure looks like a bad key.
 // So the environment is stated, and the refusal log names the host that was used so a mismatch is visible instead of silent.
 
-const SNAP_ENVIRONMENTS = Object.freeze({
-  production: 'https://app.midtrans.com/snap/v1/transactions',
+const SNAP_PRODUCTION_URL = 'https://app.midtrans.com/snap/v1/transactions';
+
+const SNAP_ENVIRONMENTS: Record<string, string> = Object.freeze({
+  production: SNAP_PRODUCTION_URL,
   sandbox: 'https://app.sandbox.midtrans.com/snap/v1/transactions'
 });
 
-export function snapUrlFor(environment) {
-  return SNAP_ENVIRONMENTS[String(environment || 'production')] || SNAP_ENVIRONMENTS.production;
+export function snapUrlFor(environment: unknown): string {
+  return SNAP_ENVIRONMENTS[String(environment || 'production')] ?? SNAP_PRODUCTION_URL;
 }
 
 // WHY THE EXPIRY IS PASSED IN AND NOT INVENTED HERE.
@@ -225,15 +231,21 @@ export function snapUrlFor(environment) {
 // So the caller passes one expiry - the same constant the stored deadline is computed from - and this function only carries it in the body.
 // A request without one keeps the provider's own default, which is what an invoice written before a stored deadline already has.
 
-export function snapChargeRequest({ orderId, amountCents, currency = 'IDR', customerId = '', enabled = null, serverKey = '', environment = 'production', expiry = null }) {
+export function snapChargeRequest(args: { orderId: unknown; amountCents: unknown; currency?: string; customerId?: unknown; enabled?: string[] | null; serverKey?: unknown; environment?: unknown; expiry?: unknown }): { url: string; method: string; headers: Record<string, string>; body: string } | null {
+  const orderId = String(args.orderId ?? '');
+  const amountCents = Number(args.amountCents);
+  const currency = typeof args.currency === 'string' ? args.currency : 'IDR';
+  const enabled = args.enabled ?? null;
+  const environment = typeof args.environment === 'string' ? args.environment : 'production';
+  const serverKey = String(args.serverKey ?? '');
   const gross = providerAmount(amountCents, currency);
   if (gross === null) return null;
-  const request = {
-    transaction_details: { order_id: String(orderId), gross_amount: gross },
-    customer_details: { first_name: String(customerId || '').slice(0, 50) }
+  const request: Record<string, unknown> = {
+    transaction_details: { order_id: orderId, gross_amount: gross },
+    customer_details: { first_name: String(args.customerId ?? '').slice(0, 50) }
   };
   if (enabled) request.enabled_payments = enabled;
-  if (expiry) request.expiry = expiry;
+  if (args.expiry) request.expiry = args.expiry;
   return {
     url: snapUrlFor(environment),
     method: 'POST',
@@ -251,23 +263,26 @@ export function snapChargeRequest({ orderId, amountCents, currency = 'IDR', cust
 // The provider records the transaction and will say what happened to it, over the same key the charge already used, so the answer to a refused signature is a question, not a rejection.
 // A forged body cannot pass this: the provider answers about its own transaction, never about the claim in the request.
 
-const SNAP_STATUS = Object.freeze({
+const SNAP_STATUS: Record<string, string> = Object.freeze({
   production: 'https://api.midtrans.com/v2',
   sandbox: 'https://api.sandbox.midtrans.com/v2'
 });
 
-function snapStatusUrl(environment, orderId) {
+function snapStatusUrl(environment: unknown, orderId: unknown): string {
   const base = SNAP_STATUS[String(environment || 'production')] || SNAP_STATUS.production;
   return `${base}/${encodeURIComponent(String(orderId || ''))}/status`;
 }
 
-function snapExpireUrl(environment, orderId) {
+function snapExpireUrl(environment: unknown, orderId: unknown): string {
   const base = SNAP_STATUS[String(environment || 'production')] || SNAP_STATUS.production;
   return `${base}/${encodeURIComponent(String(orderId || ''))}/expire`;
 }
 
-export function snapStatusRequest({ orderId, serverKey = '', environment = 'production' }) {
+export function snapStatusRequest(args: { orderId: unknown; serverKey?: unknown; environment?: unknown }): { url: string; method: string; headers: Record<string, string> } | null {
+  const orderId = String(args.orderId ?? '');
   if (!orderId) return null;
+  const environment = typeof args.environment === 'string' ? args.environment : 'production';
+  const serverKey = String(args.serverKey ?? '');
   return {
     url: snapStatusUrl(environment, orderId),
     method: 'GET',
@@ -284,8 +299,9 @@ export function snapStatusRequest({ orderId, serverKey = '', environment = 'prod
 // The HTTP status therefore cannot say whether the transaction exists, and a caller that trusts only it refuses to close an attempt that is not there to close.
 // A missing transaction is nothing to close: a charge with this key cannot open a payable link for an order the provider does not know, so treating it as closed cannot leave a second payable transaction behind.
 
-export function providerSaysMissing(payload) {
-  return Boolean(payload && typeof payload === 'object' && String(payload.status_code || '') === '404');
+export function providerSaysMissing(payload: unknown): boolean {
+  if (!payload || typeof payload !== 'object') return false;
+  return String((payload as Record<string, unknown>).status_code || '') === '404';
 }
 
 // WHY A RETRY ASKS THE PROVIDER TO EXPIRE THE OLD ATTEMPT.
@@ -293,8 +309,11 @@ export function providerSaysMissing(payload) {
 // The provider accepts an expire call while the transaction is still pending, and answers with that transaction's own status, so the answer says whether the first attempt is dead.
 // The path sits beside the status path on the host the stated environment names; only POST is accepted there, and the key never travels in the URL.
 
-export function snapExpireRequest({ orderId, serverKey = '', environment = 'production' }) {
+export function snapExpireRequest(args: { orderId: unknown; serverKey?: unknown; environment?: unknown }): { url: string; method: string; headers: Record<string, string> } | null {
+  const orderId = String(args.orderId ?? '');
   if (!orderId) return null;
+  const environment = typeof args.environment === 'string' ? args.environment : 'production';
+  const serverKey = String(args.serverKey ?? '');
   return {
     url: snapExpireUrl(environment, orderId),
     method: 'POST',
@@ -310,17 +329,18 @@ export function snapExpireRequest({ orderId, serverKey = '', environment = 'prod
 // The provider names the method and the transaction in every answer, so both are carried back and stored when the invoice closes.
 // An absent field is an empty string rather than undefined, so a caller never has to tell "missing" from "not read".
 
-export function providerSettlement(payload) {
+export function providerSettlement(payload: unknown): { settled: boolean; status: string; grossAmount: string; paymentType: string; transactionId: string } {
   if (!payload || typeof payload !== 'object') return { settled: false, status: '', grossAmount: '', paymentType: '', transactionId: '' };
-  const status = String(payload.transaction_status || '');
-  const fraud = String(payload.fraud_status === undefined ? 'accept' : payload.fraud_status);
+  const record = payload as Record<string, unknown>;
+  const status = String(record.transaction_status || '');
+  const fraud = String(record.fraud_status === undefined ? 'accept' : record.fraud_status);
   const settled = status === 'settlement' || (status === 'capture' && (fraud === 'accept' || fraud === ''));
   return {
     settled,
     status,
-    grossAmount: String(payload.gross_amount === undefined ? '' : payload.gross_amount),
-    paymentType: String(payload.payment_type === undefined ? '' : payload.payment_type),
-    transactionId: String(payload.transaction_id === undefined ? '' : payload.transaction_id)
+    grossAmount: String(record.gross_amount === undefined ? '' : record.gross_amount),
+    paymentType: String(record.payment_type === undefined ? '' : record.payment_type),
+    transactionId: String(record.transaction_id === undefined ? '' : record.transaction_id)
   };
 }
 
@@ -328,19 +348,20 @@ export function providerSettlement(payload) {
 // The provider answers with a redirect_url and a token, and either one missing means the charge was not opened even though the HTTP status said otherwise.
 // One function decides what a good answer is, so the function cannot accept a 200 that carries no way to pay.
 
-export function snapRedirect(response) {
+export function snapRedirect(response: unknown): { payUrl: string; token: string } | null {
   if (!response || typeof response !== 'object') return null;
-  const url = typeof response.redirect_url === 'string' ? response.redirect_url : '';
-  const token = typeof response.token === 'string' ? response.token : '';
+  const record = response as Record<string, unknown>;
+  const url = typeof record.redirect_url === 'string' ? record.redirect_url : '';
+  const token = typeof record.token === 'string' ? record.token : '';
   if (!url || !token) return null;
   return { payUrl: url, token };
 }
 
-export function linesFromDeliveries(deliveries, kind = 'statement.client_month') {
-  const seen = new Set();
-  const lines = [];
-  const refused = [];
-  for (const row of deliveries || []) {
+export function linesFromDeliveries(deliveries: unknown, kind: string = 'statement.client_month'): { lines: Array<Record<string, unknown>>; refused: Array<Record<string, unknown>> } {
+  const seen = new Set<string>();
+  const lines: Array<Record<string, unknown>> = [];
+  const refused: Array<Record<string, unknown>> = [];
+  for (const row of (Array.isArray(deliveries) ? deliveries as Array<Record<string, unknown>> : [])) {
     const client = String(row?.client || '').trim();
     const period = String(row?.period || '').trim();
     const portal = String(row?.portal || '').trim();
@@ -368,15 +389,16 @@ export function linesFromDeliveries(deliveries, kind = 'statement.client_month')
 // The first customer pays before a provider account exists, and an invoice that cannot record that money is a page that lies.
 // So a transfer follows the same rules the provider does: only an open invoice, only the amount it says, and a note that names who confirmed it, because the ledger has to be checkable a year later.
 
-export function manualSettlement(invoice, { amountCents = null, note = '' } = {}) {
+export function manualSettlement(invoice: Record<string, unknown> | null | undefined, args: { amountCents?: number | null; note?: string } = {}): { ok: boolean; why?: string } {
   if (!invoice) return { ok: false, why: 'no invoice to settle' };
   const status = String(invoice.status || '').toLowerCase();
   if (status === 'paid') return { ok: false, why: 'this invoice is already paid, and a paid invoice is terminal' };
   if (status !== 'open') return { ok: false, why: `only an open invoice can be settled, and this one is ${status || 'stateless'}` };
-  if (amountCents !== null && amountCents !== undefined && Number(amountCents) !== Number(invoice.amount_cents)) {
+  const amountCents = args.amountCents ?? null;
+  if (amountCents !== null && Number(amountCents) !== Number(invoice.amount_cents)) {
     return { ok: false, why: `the amount does not match the invoice: expected ${invoice.amount_cents}, got ${amountCents}` };
   }
-  const text = String(note || '').trim();
+  const text = String(args.note || '').trim();
   if (text.length < 3) return { ok: false, why: 'a manual settlement needs a note, so the ledger can be checked later' };
   return { ok: true };
 }
@@ -385,20 +407,22 @@ export function manualSettlement(invoice, { amountCents = null, note = '' } = {}
 // The offer is one number a firm compares with the hours it saves, so the plan is its own kind of line.
 // The clients the plan includes are not lines at all, and only the clients above the cap are: a discount line would make the invoice say two numbers for one agreement, and the customer would have to trust the arithmetic.
 
-const PLAN_INCLUDED = { 'plan.pilot': 15, 'plan.firm': 50 };
+const PLAN_INCLUDED: Record<string, number> = { 'plan.pilot': 15, 'plan.firm': 50 };
 
-export function planInvoiceLines(deliveries, plan, period) {
-  const included = PLAN_INCLUDED[plan];
+export function planInvoiceLines(deliveries: unknown, plan: unknown, period: unknown): { lines: Array<Record<string, unknown>>; refused: Array<Record<string, unknown>>; included?: number } {
+  const planName = String(plan ?? '');
+  const periodLabel = String(period ?? '');
+  const included = PLAN_INCLUDED[planName];
   if (!included) {
-    return { lines: [], refused: [{ reason: `no plan named ${plan || 'nothing'} in the price list` }] };
+    return { lines: [], refused: [{ reason: `no plan named ${planName || 'nothing'} in the price list` }] };
   }
   const derived = linesFromDeliveries(deliveries);
   if (derived.refused.length) return { lines: [], refused: derived.refused };
-  const label = plan === 'plan.pilot' ? 'Pilot' : 'Firm';
-  const lines = [{
-    kind: plan,
+  const label = planName === 'plan.pilot' ? 'Pilot' : 'Firm';
+  const lines: Array<Record<string, unknown>> = [{
+    kind: planName,
     quantity: 1,
-    description: `${label} — up to ${included} client-months, ${period}`
+    description: `${label} - up to ${included} client-months, ${periodLabel}`
   }];
   for (const row of derived.lines.slice(included)) {
     lines.push({ ...row, kind: 'statement.client_month', description: `${row.description} (above plan)` });
@@ -416,7 +440,7 @@ export function planInvoiceLines(deliveries, plan, period) {
 // A paste artifact is invisible: a length that is one too long, or a character outside the alphabet a provider key uses, says what no amount of staring at a masked field can.
 // The shape is a count and a boolean, so it can be written to a log without putting any part of the key there.
 
-export function secretShape(secret) {
+export function secretShape(secret: unknown): string {
   const raw = secret === undefined || secret === null ? '' : String(secret);
   const outside = raw.replace(/[A-Za-z0-9_-]/g, '').length;
   const prefix = ['SB-Mid-server-', 'Mid-server-'].find((known) => raw.startsWith(known)) || 'not a provider key';
@@ -430,7 +454,7 @@ export function secretShape(secret) {
 // That combination is what a wrong formula looks like, because a wrong key cannot open a charge.
 // The test agreed with the code because it was written from the same belief, so the vector below was produced by another implementation and the retired rule is asserted to fail.
 
-export function providerSignature(notification, serverKey) {
+export function providerSignature(notification: Record<string, unknown> | null | undefined, serverKey: unknown): string {
   if (!notification || !serverKey) return '';
   const orderId = String(notification.order_id || '');
   const statusCode = String(notification.status_code || '');
@@ -445,7 +469,7 @@ export function providerSignature(notification, serverKey) {
 // Refusing is the right answer for a bare long number: nothing can prove it was the provider's digest, and one accepted proves nothing about the next.
 // A short run of digits is a digest the code base value already carries — the pinned vector begins with 4 digits — and that same text is still compared.
 
-export function notificationSignatureValid(notification, serverKey) {
+export function notificationSignatureValid(notification: Record<string, unknown> | null | undefined, serverKey: unknown): boolean {
   if (!notification || !serverKey) return false;
   const given = notification.signature_key ?? notification.signature;
   if (given === undefined || given === null || given === '') return false;
@@ -462,18 +486,18 @@ export function notificationSignatureValid(notification, serverKey) {
 // The provider repeats itself, so the same settlement arrives more than once and a late notification can follow the one that closed the invoice.
 // The moment money landed is evidence: a second notification may confirm it, never move it.
 
-export function needsClosing(invoice) {
+export function needsClosing(invoice: { status?: string; paid_at?: string | null } | null | undefined): boolean {
   if (!invoice) return false;
   return invoice.status !== 'paid' || !invoice.paid_at;
 }
 
-export function notificationAcknowledged(outcome) {
+export function notificationAcknowledged(outcome: { ok?: boolean; retry?: boolean } | null | undefined): boolean {
   if (!outcome) return false;
   if (outcome.ok) return true;
   return outcome.retry === false;
 }
 
-export function isSettled(notification) {
+export function isSettled(notification: Record<string, unknown> | null | undefined): boolean {
   const status = String(notification?.transaction_status || notification?.status || '').toLowerCase();
   if (status === 'capture') {
     const fraud = String(notification?.fraud_status || '').toLowerCase();

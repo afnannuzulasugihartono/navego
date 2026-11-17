@@ -10,7 +10,14 @@
 // WHY THE AMOUNT IS A WHOLE RUPIAH STRING.
 // Tag 54 carries "1000" for Rp 1.000, and "1000.00" was not the accepted form; the rupiah has no subunit in a QRIS payload, so the amount is integer rupiah and nothing else.
 
-export function crc16CcittFalse(text) {
+export interface QrisField {
+  tag: string;
+  value: string;
+}
+
+export type ParsedQris = QrisField[];
+
+export function crc16CcittFalse(text: string): string {
   let crc = 0xffff;
   const bytes = new TextEncoder().encode(text);
   for (const byte of bytes) {
@@ -25,9 +32,9 @@ export function crc16CcittFalse(text) {
 // WHY THE CRC IS COMPUTED OVER THE PAYLOAD WITH A BARE TAG 63.
 // The checksum covers everything before it, so the running payload ends with "6304" and the four hex digits are appended after.
 
-export function parseQris(payload) {
+export function parseQris(payload: string | undefined): ParsedQris {
   if (typeof payload !== 'string' || payload.length < 4) return [];
-  const fields = [];
+  const fields: ParsedQris = [];
   let at = 0;
   while (at + 4 <= payload.length) {
     const tag = payload.slice(at, at + 2);
@@ -41,11 +48,11 @@ export function parseQris(payload) {
   return at === payload.length ? fields : [];
 }
 
-export function serializeQris(fields) {
+export function serializeQris(fields: ParsedQris): string {
   return fields.map((field) => `${field.tag}${String(field.value.length).padStart(2, '0')}${field.value}`).join('');
 }
 
-function setField(fields, tag, value) {
+function setField(fields: ParsedQris, tag: string, value: string): void {
   const existing = fields.find((field) => field.tag === tag);
   if (existing) existing.value = value;
   else fields.push({ tag, value });
@@ -57,16 +64,16 @@ function setField(fields, tag, value) {
 // WHY THE AMOUNT IS A BARE WHOLE RUPIAH.
 // The 2026-11-04 scan matrix in BRImo: tag 54 "1000.00" was refused (kode th 03) and "1000" was accepted, so the bare form is the one emitted.
 
-function insertAmount(fields, amount) {
+function insertAmount(fields: ParsedQris, amount: number): ParsedQris {
   const without = fields.filter((field) => field.tag !== '54');
   const at = without.findIndex((field) => field.tag === '58');
-  const field = { tag: '54', value: String(amount) };
+  const field: QrisField = { tag: '54', value: String(amount) };
   if (at === -1) without.push(field);
   else without.splice(at, 0, field);
   return without;
 }
 
-export function toDynamicQris(staticPayload, amountRupiah) {
+export function toDynamicQris(staticPayload: string | undefined, amountRupiah: number): string | null {
   if (!Number.isInteger(amountRupiah) || amountRupiah <= 0) return null;
   const parsed = parseQris(staticPayload);
   if (!parsed.length) return null;
@@ -84,13 +91,13 @@ export function toDynamicQris(staticPayload, amountRupiah) {
   return `${body}6304${crc16CcittFalse(`${body}6304`)}`;
 }
 
-export function qrisAmount(payload) {
+export function qrisAmount(payload: string | undefined): number | null {
   const field = parseQris(payload).find((entry) => entry.tag === '54');
   const amount = Number(field?.value);
   return Number.isInteger(amount) && amount > 0 ? amount : null;
 }
 
-export function qrisCategory(payload) {
+export function qrisCategory(payload: string | undefined): string | null {
   const field = parseQris(payload).find((entry) => entry.tag === '62');
   const sub = field ? parseQris(field.value).find((entry) => entry.tag === '07') : null;
   return sub?.value ?? null;

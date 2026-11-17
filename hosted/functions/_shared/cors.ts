@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-08 UTC+7.
-// @title: cors — the one resolver every edge function asks which origin it may answer.
+// @title: cors - the one resolver every edge function asks which origin it may answer.
 // @state: the allowlist of extension ids and site origins, and the fail-closed answer for anything else.
 // @dependencies: none.
 
@@ -14,7 +14,13 @@ const FALLBACK_ORIGINS = Object.freeze([
 
 export const CORS_DEFAULT_ORIGINS = FALLBACK_ORIGINS;
 
-export function resolveAllowedOrigin(req, defaults) {
+interface OriginRequest {
+  headers: Headers;
+}
+
+declare const Deno: { env?: { get(name: string): string | undefined } | undefined } | undefined;
+
+export function resolveAllowedOrigin(req: OriginRequest, defaults?: string[] | readonly string[]): string | null {
   const list = Array.isArray(defaults) && defaults.length > 0 ? defaults : FALLBACK_ORIGINS;
 
   const raw = typeof Deno !== 'undefined' && Deno.env

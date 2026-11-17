@@ -25,25 +25,25 @@ import { payLinkState } from './billing.ts';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-const money = (cents, currency) => {
+const money = (cents: unknown, currency: unknown): string => {
   const value = (Number(cents) || 0) / 100;
   return currency === 'IDR'
     ? `Rp ${value.toLocaleString('id-ID', { maximumFractionDigits: 0 })}`
     : `${currency} ${value.toFixed(2)}`;
 };
 
-const escapeHtml = (value) => String(value ?? '')
+const escapeHtml = (value: unknown): string => String(value ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
 const ZONE_OFFSET_MS = 7 * 60 * 60 * 1000;
 
-const moment = (value) => {
+const moment = (value: unknown): string => {
   if (!value) return '';
   const parsed = new Date(String(value));
   if (Number.isNaN(parsed.getTime())) return '';
   const at = new Date(parsed.getTime() + ZONE_OFFSET_MS);
-  const pad = (number) => String(number).padStart(2, '0');
+  const pad = (number: number): string => String(number).padStart(2, '0');
   return `${at.getUTCDate()} ${MONTHS[at.getUTCMonth()]} ${at.getUTCFullYear()}, ${pad(at.getUTCHours())}:${pad(at.getUTCMinutes())} UTC+7`;
 };
 
@@ -51,7 +51,7 @@ const moment = (value) => {
 // "qris" is a token from the provider's payload; "QRIS" is a word a person recognises, and an operator reading the invoice should not have to know the provider's vocabulary.
 // A method this page does not know is still shown, with its underscores opened into spaces, because hiding it would make the page quieter than the ledger.
 
-const METHOD_WORDS = Object.freeze({
+const METHOD_WORDS: Record<string, string> = Object.freeze({
   qris: 'QRIS',
   gopay: 'GoPay',
   shopeepay: 'ShopeePay',
@@ -64,7 +64,7 @@ const METHOD_WORDS = Object.freeze({
   akulaku: 'Akulaku'
 });
 
-const methodWords = (method) => {
+const methodWords = (method: unknown): string => {
   const key = String(method || '').trim().toLowerCase();
   if (!key) return '';
   return METHOD_WORDS[key] || key.replace(/[_-]+/g, ' ');
@@ -72,9 +72,9 @@ const methodWords = (method) => {
 
 const STATUS_WORDS = Object.freeze({ open: 'Open, awaiting payment', paid: 'Paid', void: 'Cancelled' });
 
-const statusWords = (status) => STATUS_WORDS[String(status || '').toLowerCase()] || String(status || 'Unknown');
+const statusWords = (status: unknown): string => STATUS_WORDS[String(status || '').toLowerCase() as keyof typeof STATUS_WORDS] || String(status || 'Unknown');
 
-function refreshForm(invoice, token, failed) {
+function refreshForm(invoice: Record<string, unknown>, token: unknown, failed: unknown): string {
   const notice = failed
     ? '<p class="notice" role="status">The new payment link could not be opened just now. Please try again.</p>'
     : '';
@@ -86,11 +86,12 @@ function refreshForm(invoice, token, failed) {
 </form>`;
 }
 
-function paidBlock(invoice) {
+function paidBlock(invoice: Record<string, unknown>): string {
   const at = moment(invoice.paid_at);
   const method = methodWords(invoice.paid_method);
   const transaction = String(invoice.provider_transaction_id || '').trim();
-  const manual = invoice.lines?.manual;
+  const lines = invoice.lines as { priced?: Array<Record<string, unknown>>; unpriced?: Array<Record<string, unknown>>; manual?: { note?: string; at?: string } } | undefined;
+  const manual = lines?.manual;
   const how = at
     ? `<p>Paid on ${escapeHtml(at)}${method ? ` with ${escapeHtml(method)}` : ''}.</p>`
     : '<p>The payment has been recorded.</p>';
@@ -101,7 +102,7 @@ function paidBlock(invoice) {
 // Every state shows a different sentence and a different set of controls, and a page that chose them in two places would sooner or later show a Pay button under "cancelled".
 // The state comes from payLinkState, the one rule the create path also uses, so the page and the writer cannot disagree about a link that has died.
 
-function paymentBlock(invoice, { token, bank, canRefresh, now, refreshFailed }) {
+function paymentBlock(invoice: Record<string, unknown>, { token, bank, canRefresh, now, refreshFailed }: { token?: unknown; bank?: string; canRefresh?: boolean; now?: number; refreshFailed?: unknown }): string {
   const total = escapeHtml(money(invoice.amount_cents, invoice.currency));
   const bankLine = bank ? `<p><small>${escapeHtml(bank)}</small></p>` : '';
   const status = String(invoice.status || '').toLowerCase();
@@ -134,24 +135,25 @@ function paymentBlock(invoice, { token, bank, canRefresh, now, refreshFailed }) 
 // WHY THE PAGE ITSELF REFUSES A QR ON A NON-OPEN INVOICE.
 // The function only derives a payload for an open invoice, but the page is the thing a customer reads: a paid invoice carrying a scannable code invites a second payment.
 
-function qrisBlockFor(invoice, qrisSvg) {
+function qrisBlockFor(invoice: Record<string, unknown>, qrisSvg: string | null | undefined): string {
   if (!qrisSvg) return '';
   if (String(invoice.status || '').toLowerCase() !== 'open') return '';
   return qrisBlock(invoice, qrisSvg);
 }
 
-function qrisBlock(invoice, qrisSvg) {
+function qrisBlock(invoice: Record<string, unknown>, qrisSvg: string): string {
   const total = escapeHtml(money(invoice.amount_cents, invoice.currency));
   return `<div class="qris"><p class="state">Scan this QRIS with any payment app to pay <strong>${total}</strong> — the amount is already locked in the code.</p>${qrisSvg}</div>`;
 }
 
-function lineRows(invoice) {
-  const priced = (invoice.lines?.priced || []).map((line) => `<tr><td>${escapeHtml(line.description || line.unit || line.kind)}</td><td>${escapeHtml(line.quantity)}</td><td class="amount">${escapeHtml(money(line.amountCents, invoice.currency))}</td></tr>`).join('');
-  const unpriced = (invoice.lines?.unpriced || []).map((line) => `<tr><td>${escapeHtml(line.description || line.kind)}</td><td colspan="2">not charged: ${escapeHtml(line.reason)}</td></tr>`).join('');
+function lineRows(invoice: Record<string, unknown>): string {
+  const lines = invoice.lines as { priced?: Array<Record<string, unknown>>; unpriced?: Array<Record<string, unknown>> } | undefined;
+  const priced = (lines?.priced || []).map((line) => `<tr><td>${escapeHtml(line.description || line.unit || line.kind)}</td><td>${escapeHtml(line.quantity)}</td><td class="amount">${escapeHtml(money(line.amountCents, invoice.currency))}</td></tr>`).join('');
+  const unpriced = (lines?.unpriced || []).map((line) => `<tr><td>${escapeHtml(line.description || line.kind)}</td><td colspan="2">not charged: ${escapeHtml(line.reason)}</td></tr>`).join('');
   return `${priced}${unpriced}`;
 }
 
-export function invoicePage(invoice, { token, bank = '', now = Date.now(), canRefresh = false, refreshFailed = false, qrisSvg = null } = {}) {
+export function invoicePage(invoice: Record<string, unknown>, { token, bank = '', now = Date.now(), canRefresh = false, refreshFailed = false, qrisSvg = null }: { token?: unknown; bank?: string; now?: number; canRefresh?: boolean; refreshFailed?: boolean; qrisSvg?: string | null } = {}): string {
   return `<!doctype html>
 <html lang="en">
 <head>

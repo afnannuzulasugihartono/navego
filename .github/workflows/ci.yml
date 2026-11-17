@@ -52,6 +52,42 @@ jobs:
           npm test
           npm run check
 
+  site:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22.20.0
+      - name: Install the site toolchain
+        run: npm ci --ignore-scripts --no-audit --no-fund --prefix site
+      - name: Site typecheck
+        run: npm run typecheck --prefix site
+
+  deno-hosted:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed
+        with:
+          deno-version: v2.x
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run build:shared
+      - name: Deno check every deployed function
+        run: |
+          for dir in hosted/functions/*/; do
+            [ -f "${dir}index.ts" ] || continue
+            (cd "${dir}" && deno check index.ts) || exit 1
+          done
+
   secret-scan:
     runs-on: ubuntu-24.04
     timeout-minutes: 15

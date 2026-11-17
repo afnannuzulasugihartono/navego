@@ -13,7 +13,9 @@
 // The worker wakes on an alarm, asks the update service what it serves, and writes the build when it is newer and the permission is still there.
 
 import { applyBuild, newerThan, servedVersion } from '../lib/self-update.js';
+import type { BuildFolderHandle } from '../lib/self-update.js';
 import { t, applyI18n } from '../lib/i18n.js';
+import type { I18nRoot } from '../lib/i18n.js';
 import { isRecord } from '../lib/guards.js';
 
 const DB_NAME = 'opera-agent-self-update';
@@ -22,7 +24,54 @@ const FOLDER_KEY = 'extension-folder';
 const UPDATE_ALARM = 'opera-agent-self-update';
 const UPDATE_ALARM_MINUTES = 30;
 
-interface PermissionedDirectoryHandle extends FileSystemDirectoryHandle {
+type PermissionState = 'granted' | 'denied' | 'prompt';
+
+type IDBTransactionMode = 'readonly' | 'readwrite';
+
+interface IDBRequest<T> {
+  onsuccess: (() => void) | null;
+  onerror: (() => void) | null;
+  readonly result: T;
+  readonly error: unknown;
+}
+
+interface IDBOpenDatabaseRequest extends IDBRequest<IDBDatabase> {
+  onupgradeneeded: (() => void) | null;
+}
+
+interface IDBObjectStore {
+  get(key: string): IDBRequest<unknown>;
+  put(value: unknown, key: string): IDBRequest<unknown>;
+  delete(key: string): IDBRequest<unknown>;
+}
+
+interface IDBDatabase {
+  createObjectStore(name: string): IDBObjectStore;
+  transaction(storeName: string, mode: IDBTransactionMode): { objectStore(name: string): IDBObjectStore };
+  close(): void;
+}
+
+declare const indexedDB: { open(name: string, version?: number): IDBOpenDatabaseRequest };
+
+interface PageNode {
+  hidden: boolean;
+  disabled: boolean;
+  textContent: string | null;
+  readonly dataset: Record<string, string | undefined>;
+  getAttribute(name: string): string | null;
+  setAttribute(name: string, value: string): void;
+  removeAttribute(name: string): void;
+  addEventListener(type: string, listener: () => void | Promise<void>): void;
+}
+
+interface PageDocument extends I18nRoot {
+  getElementById(id: string): PageNode | null;
+}
+
+declare const document: PageDocument;
+
+interface PermissionedDirectoryHandle extends BuildFolderHandle {
+  readonly name: string;
   queryPermission(descriptor: { mode: 'read' | 'readwrite' }): Promise<PermissionState>;
   requestPermission(descriptor: { mode: 'read' | 'readwrite' }): Promise<PermissionState>;
 }
@@ -161,7 +210,7 @@ export { newerThan, servedVersion };
 type GateMode = 'allow' | 'apply';
 let gateMode: GateMode = 'allow';
 
-const pageElement = <T extends HTMLElement>(id: string) => document.getElementById(id) as T | null;
+const pageElement = (id: string) => document.getElementById(id);
 
 const showPageError = (message: string) => {
   const line = pageElement('gateError');
@@ -181,7 +230,7 @@ const setGateMain = (text: string) => {
 };
 
 const setGateIcon = (mode: GateMode) => {
-  const setHidden = (el: Element | null, hidden: boolean) => {
+  const setHidden = (el: PageNode | null, hidden: boolean) => {
     if (!el) return;
     if (hidden) el.setAttribute('hidden', '');
     else el.removeAttribute('hidden');
@@ -192,7 +241,7 @@ const setGateIcon = (mode: GateMode) => {
 
 const showPageState = async (line?: string) => {
   const permission = await folderPermission();
-  const pick = pageElement<HTMLButtonElement>('gatePick');
+  const pick = pageElement('gatePick');
   if (!pick) return;
   const isGranted = permission === 'granted';
   gateMode = isGranted ? 'apply' : 'allow';
@@ -205,13 +254,13 @@ const showPageState = async (line?: string) => {
     setGateMain(line ?? t(permission === 'prompt' ? 'update.state.prompt' : 'update.state.none'));
   }
   setGateIcon(gateMode);
-  const label = pageElement<HTMLElement>('gatePickText');
+  const label = pageElement('gatePickText');
   if (label) label.textContent = t(isGranted ? 'doors.updateNow' : 'update.allowFolder');
 };
 
 function wireUpdatePage() {
   applyI18n(document);
-  const pick = pageElement<HTMLButtonElement>('gatePick');
+  const pick = pageElement('gatePick');
   if (!pick) return;
   pick.addEventListener('click', async () => {
     showPageError('');

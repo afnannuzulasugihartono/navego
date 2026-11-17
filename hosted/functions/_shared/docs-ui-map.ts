@@ -50,17 +50,21 @@ const MENU_MAP = Object.freeze(
   Object.fromEntries(Object.entries(ENTRIES).map(([en, entry]) => [en, Object.freeze({ ...entry })]))
 );
 
-export function resolveMenuTarget(path, locale = 'en') {
+export function resolveMenuTarget(path: string | string[], locale = 'en') {
   const segments = Array.isArray(path) ? path : [path];
   if (!segments.length) return null;
   const lowered = Object.fromEntries(
     Object.keys(MENU_MAP).map((name) => [name.toLowerCase(), name])
   );
-  const labels = [];
+  const resolved: Array<{ label: string; verify: string }> = [];
   for (const segment of segments) {
     const canonical = lowered[String(segment).toLowerCase()];
-    if (!canonical) return null;
-    labels.push(locale === 'id' ? MENU_MAP[canonical].id : canonical);
+    if (typeof canonical !== 'string') return null;
+    const entry = MENU_MAP[canonical];
+    if (!entry) return null;
+    resolved.push({ label: locale === 'id' ? entry.id : canonical, verify: entry.verify });
   }
-  return { labels, verify: { selector: MENU_MAP[lowered[String(segments[segments.length - 1]).toLowerCase()]].verify } };
+  const last = resolved[resolved.length - 1];
+  if (!last) return null;
+  return { labels: resolved.map((item) => item.label), verify: { selector: last.verify } };
 }

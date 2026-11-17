@@ -76,7 +76,7 @@ says so.
 
 ### The harness I use myself
 
-`scripts/dev/navego-agent.mjs` is the thin client I drive Navego through from an agent harness that has a shell but no Navego tool in its own catalog. `list` and `tabs` are lookups; `open-and-read <url> [text] [file]` opens one tab, waits for a real text, reads it and writes a screenshot in the **same process**, because a tab claim belongs to one driver lease — separate CLI processes collide on the claim. `batch <file.json>` runs a list of commands in one lease. Every write tool takes an explicit `tabId`: no default tab, because the everyday browser carries private tabs.
+`scripts/dev/navego-agent.ts` is the thin client I drive Navego through from an agent harness that has a shell but no Navego tool in its own catalog. `list` and `tabs` are lookups; `open-and-read <url> [text] [file]` opens one tab, waits for a real text, reads it and writes a screenshot in the **same process**, because a tab claim belongs to one driver lease — separate CLI processes collide on the claim. `batch <file.json>` runs a list of commands in one lease. Every write tool takes an explicit `tabId`: no default tab, because the everyday browser carries private tabs.
 
 ## The extension road
 
@@ -94,12 +94,12 @@ socket is one WebSocket on `127.0.0.1:9451`.
 
 ### The record
 
-`scripts/dev/extension-run.mjs` drives a real browser through the extension and
+`scripts/dev/extension-run.ts` drives a real browser through the extension and
 writes what happened:
 
 ```bash
-node scripts/dev/extension-run.mjs
-node --test tests/extension/extension-run.test.mjs
+node scripts/dev/extension-run.ts
+node --test tests/extension/extension-run.test.ts
 ```
 
 - [`docs/proof/extension-run.md`](../docs/proof/extension-run.md) — the readable record.
@@ -109,5 +109,5 @@ node --test tests/extension/extension-run.test.mjs
 The last recorded run carried seven calls over the bridge — `browser_status`,
 `browser_open_url`, `browser_read_page`, `browser_find_element`, `browser_download_file`, `browser_screenshot`,
 `browser_close_tab` — and the CSV it pulled down hashed equal to the file the portal
-served. `tests/extension/extension-run.test.mjs` re-hashes that fixture and compares it
+served. `tests/extension/extension-run.test.ts` re-hashes that fixture and compares it
 with the hash in the record; it does not drive a browser again.

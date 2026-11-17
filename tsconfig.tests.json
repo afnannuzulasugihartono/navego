@@ -1,0 +1,23 @@
+{
+  // @title: tsconfig.tests - strict TypeScript over the test tree and the hosted files it exercises, held at zero errors.
+  // @state: the count of errors under this project is ratchet-gated by scripts/verify/type-debt.ts; it may never rise above 0.
+  // @dependencies: tsconfig.base.json, scripts/verify/type-debt.ts.
+  // WHY THE GATE STAYS AT ZERO.
+  // tests/ was written in JavaScript-flavoured TypeScript before the tree was ever strict; the 2026-11-17 migration recorded 1796 errors and the ratchet was seeded with a count nobody ever verified.
+  // The debt was paid down in reviewable steps by the 2026-11-17 burn-down (the lock now says 0); the gate holds the tree at zero so it cannot come back quietly.
+  // The clean surfaces (shared, local, extension, scripts, site) stay pinned at zero in tsconfig.tooling.json; this project is held to the same number now.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "types": [
+      "node",
+      "chrome"
+    ]
+  },
+  "include": [
+    "tests/**/*.ts",
+    "extension/types/**/*.d.ts"
+  ]
+}

@@ -97,7 +97,7 @@ async function connectDirectDb(): Promise<void> {
   const { default: postgres } = await import("postgres");
   const pg = postgres(url, { max: 3, connect_timeout: 10, idle_timeout: 30 });
   await pg`select 1`;
-  directDb = { sql: (text: unknown, values: unknown) => pg.unsafe(text as string, values as unknown[], { prepare: true }) as unknown as Promise<unknown[]> };
+  directDb = { sql: (text: unknown, values: unknown) => pg.unsafe(text as string, (values ?? []) as never[], { prepare: true }) as unknown as Promise<unknown[]> };
 }
 
 async function pair(body: Record<string, unknown>) {
@@ -378,7 +378,7 @@ async function planForDevice(identity: { deviceName: string; token: string }) {
   return profile?.ok ? profile : null;
 }
 
-function subscribe(identity: { deviceName: string; token: string }, onCommand: (command: unknown) => void) {
+function subscribe(identity: { deviceName: string; token: string }, onCommand: (command: Record<string, unknown>) => void) {
   let draining = false;
 
   const drain = async () => {
@@ -390,20 +390,22 @@ function subscribe(identity: { deviceName: string; token: string }, onCommand: (
         const claimed = await claimForDevice(identity, { waitMs: first ? 0 : DRAIN_WAIT_MS });
         first = false;
         if (!claimed?.command) return false;
-        const admitted = gateVerdict(await planForDevice(identity), claimed.command);
+        const command = (claimed.command && typeof claimed.command === 'object' ? claimed.command : {}) as Record<string, unknown>;
+        const admitted = gateVerdict(await planForDevice(identity), command);
         if (!admitted.ok) {
           await complete({
             ...identity,
-            commandId: claimed.command.id,
+            commandId: command.id,
             ok: false,
             error: { code: admitted.code, message: admitted.message }
           }).catch(() => {});
           continue;
         }
-        onCommand(claimed.command);
+        onCommand(command);
       }
     } catch (error) {
-      createEdgeLog({}).error("bridge socket drain failed", String(error?.message || error));
+      const why = error instanceof Error ? error.message : String(error);
+      createEdgeLog({}).error("bridge socket drain failed", why);
       return false;
     } finally {
       draining = false;
@@ -449,12 +451,14 @@ async function verifyDeviceSocket(identity: { token: string; deviceName: string 
 
 Deno.serve((req: Request) => {
   if (isUpgradeRequest(req)) {
-    return serveDeviceSocket(req, {
+    const upgraded = serveDeviceSocket(req, {
       verifyDevice: verifyDeviceSocket,
       complete,
       subscribe,
       log: createEdgeLog({})
-    }).response;
+    });
+    if (upgraded.response) return upgraded.response;
+    return new Response("the socket could not be upgraded", { status: 400 });
   }
   return handle(req).then((res) => withCors(req, res));
 });

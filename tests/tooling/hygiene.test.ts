@@ -1,0 +1,633 @@
+// @last-edited: 2026-10-21 UTC+7.
+// @title: hygiene — runtime properties, the canonical comment form, allowlist paths, logic gates.
+// @state: The memoized read path, the comment form over every file in the tree, allowlist paths and four rule gates are locked.
+// @dependencies: node:test, strict, promises, path, child_process, url, focus-gate, format-comments, extension-source.
+
+// Properties that keep the runtime code correct as it grows, and that the code itself violated when first written.
+
+// Each case here corresponds to a real defect found by audit, not a style preference.
+// They are cheap and they fail loudly.
+
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fsSync from 'node:fs';
+import path from 'node:path';
+import { readFile, readdir } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { FOCUS_GATE_ATTEMPTS } from '../../extension/lib/focus-gate.js';
+import { checkFormat } from '../../scripts/dev/format-comments.ts';
+import { extensionSource } from '../helpers/extension-source.ts';
+
+const collectTests = async (dir: string): Promise<string[]> => {
+  const out: string[] = [];
+  for (const entry of await readdir(new URL(dir, import.meta.url), { withFileTypes: true })) {
+    const p = `${dir}/${entry.name}`;
+    if (entry.isDirectory()) {
+      if (entry.name === '__pycache__') continue;
+      out.push(...await collectTests(p));
+    } else if (/\.(?:test\.)?(mjs|ts)$/.test(entry.name)) {
+      out.push(p);
+    }
+  }
+  return out;
+};
+
+await import('../../extension/role-reconcile.js');
+await import('../../extension/hover-settle.js');
+
+const background = await extensionSource();
+
+test('every comment in the tree is in the canonical form the formatter writes', async () => {
+
+  const { total, changed } = await checkFormat();
+  assert.ok(total > 300, `the gate read ${total} files, so it is not reading the tree`);
+  assert.deepEqual(changed, [], `${changed.length} files are not canonical:\n${changed.slice(0, 12).join('\n')}`);
+});
+
+test('no document says Do X and another says Don\'t X', async () => {
+  const root = new URL('../../', import.meta.url);
+
+  const hub = await readFile(new URL('../../AGENTS.md', import.meta.url), 'utf8');
+  assert.match(hub, /^## Always$/m, 'sanity: the hub is the file that carries the commands');
+  assert.match(hub, /SCOPE AND REGRESSION PROTECTION/, 'the hub still binds the agent to the scope rules');
+
+  const dir = fileURLToPath(root);
+  const commands = new Map();
+  const collect = (file: string) => {
+    const body = fsSync.readFileSync(path.join(dir, file), 'utf8');
+    const dos = new Set();
+    const donts = new Map();
+    body.split('\n').forEach((line, i) => {
+      const key = line
+        .replace(/^\s*[-*]?\s*/, '')
+        .replace(/^(?:Do|Don't)\s+/, '')
+        .replace(/\s+/g, ' ')
+        .replace(/[.;:]$/, '')
+        .toLowerCase();
+      if (/^\s*[-*]?\s*Do\s+/.test(line)) dos.add(key);
+      if (/^\s*[-*]?\s*Don't\s+/.test(line)) {
+        if (!donts.has(key)) donts.set(key, i + 1);
+      }
+    });
+    for (const [key, line] of donts) if (dos.has(key)) commands.set(`${file}:${line}`, key);
+  };
+  for (const file of execFileSync('git', ['ls-files'], { cwd: dir, encoding: 'utf8' })
+    .split('\n')
+    .filter((f) => f.endsWith('.md'))) {
+    collect(file);
+  }
+  assert.deepEqual([...commands.keys()], []);
+});
+
+const REQUIRED_SECTIONS = ['Always', 'Goals', 'Priority order'];
+
+test('the three sections an agent reads every turn exist, in order', async () => {
+  const body = await readFile(new URL('../../AGENTS.md', import.meta.url), 'utf8');
+  const headings = [...body.matchAll(/^## (.+)$/gm)].map((m) => {
+    const name = m[1];
+    assert.ok(name, 'the heading capture is present');
+    return { name: name.trim(), at: m.index ?? 0 };
+  });
+  const found = REQUIRED_SECTIONS.map((name) => headings.find((h) => h.name === name));
+  const missing = REQUIRED_SECTIONS.filter((_, i) => !found[i]);
+  assert.deepEqual(missing, [], `AGENTS.md is missing: ${missing.join(', ')}`);
+  assert.deepEqual(headings.map((h) => h.name), REQUIRED_SECTIONS, 'nothing rides beside the three');
+  for (let i = 1; i < found.length; i += 1) {
+    const prev = found[i - 1];
+    const curr = found[i];
+    assert.ok(prev && curr, 'every required section was found');
+    assert.ok(curr.at > prev.at, `${curr.name} must come after ${prev.name}`);
+  }
+  for (const item of found) {
+    assert.ok(item, 'every required section was found');
+    const section = body.slice(item.at).split('\n## ')[0] ?? '';
+
+    const bullets = (section.match(/^(?:- |\d+\. )/gm) || []).length;
+    assert.ok(bullets >= 3, `${item.name} carries ${bullets} instruction lines; it must actually instruct`);
+  }
+});
+
+test('every section the rules point at exists', async () => {
+  const body = await readFile(new URL('../../AGENTS.md', import.meta.url), 'utf8');
+  const headings = new Set([...body.matchAll(/^## (.+)$/gm)].map((m) => {
+    const name = m[1];
+    assert.ok(name, 'the heading capture is present');
+    return name.trim();
+  }));
+
+  const referenced = new Set(['Always', 'Goals', 'Priority order']);
+  const dangling = [...referenced].filter((name) => !headings.has(name));
+  assert.deepEqual(dangling, []);
+});
+
+const DUPLICATE_OVERLAP = 0.6;
+
+test('no rule is stated twice in two forms', async () => {
+  const dir = fileURLToPath(new URL('../../', import.meta.url));
+  const rules: Array<{ file: string; line: number; tokens: Set<string> }> = [];
+  for (const file of execFileSync('git', ['ls-files'], { cwd: dir, encoding: 'utf8' })
+    .split('\n')
+    .filter((f) => f.endsWith('.md'))) {
+    const body = fsSync.readFileSync(path.join(dir, file), 'utf8');
+    body.split('\n').forEach((line, i) => {
+      const match = line.match(/^\s*[-*]?\s*Do(?:n't)?\s+(.+?)\.?\s*$/);
+      if (!match) return;
+      const capture = match[1];
+      assert.ok(capture, 'the rule capture is present');
+      const tokens = new Set(capture.toLowerCase()
+        .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+        .replace(/[`*_]/g, '')
+        .replace(/[^a-z0-9\s-]/g, ' ')
+        .split(/\s+/)
+        .filter(Boolean));
+      if (tokens.size >= 4) rules.push({ file, line: i + 1, tokens });
+    });
+  }
+  assert.ok(rules.length > 0, 'the gate looked at a rule set');
+  const duplicates = [];
+  for (let i = 0; i < rules.length; i += 1) {
+    const ruleI = rules[i];
+    assert.ok(ruleI);
+    for (let j = i + 1; j < rules.length; j += 1) {
+      const ruleJ = rules[j];
+      assert.ok(ruleJ);
+      let shared = 0;
+      for (const token of ruleI.tokens) if (ruleJ.tokens.has(token)) shared += 1;
+      const overlap = shared / (ruleI.tokens.size + ruleJ.tokens.size - shared);
+      if (overlap >= DUPLICATE_OVERLAP) duplicates.push(`${ruleI.file}:${ruleI.line} and ${ruleJ.file}:${ruleJ.line}`);
+    }
+  }
+  assert.deepEqual(duplicates, [], duplicates.slice(0, 8).join('\n'));
+});
+
+test('the logic gate actually inspected the rule set', async () => {
+  const dir = fileURLToPath(new URL('../../', import.meta.url));
+  const body = fsSync.readFileSync(path.join(dir, 'AGENTS.md'), 'utf8');
+
+  const commands = (body.match(/\bDo(?:n't)?\s+\S/g) || []).length;
+  assert.ok(commands >= 4, `AGENTS.md carries only ${commands} commands; the gates are reading too little`);
+
+  const goalsAt = body.indexOf('## Goals');
+  const priorityAt = body.indexOf('## Priority order');
+  const goals = body.slice(goalsAt, priorityAt);
+  for (const line of body.split('\n')) {
+    if (/\bDo(?:n't)?\s+\S/.test(line)) assert.ok(goals.includes(line), `command outside Goals: ${line.trim().slice(0, 60)}`);
+  }
+});
+
+test('every relative link in a document resolves to a file in the tree', async () => {
+
+  const dir = fileURLToPath(new URL('../../', import.meta.url));
+  const tracked = execFileSync('git', ['ls-files', '*.md'], { cwd: dir, encoding: 'utf8' })
+    .split('\n')
+    .filter(Boolean);
+  const dead = [];
+  for (const file of tracked) {
+    const body = fsSync.readFileSync(path.join(dir, file), 'utf8');
+    for (const match of body.matchAll(/\[[^\]]+\]\(([^)\s]+)\)/g)) {
+      const captured = match[1];
+      assert.ok(captured, 'the link capture is present');
+      if (/^(?:[a-z]+:|#)/i.test(captured)) continue;
+      const wanted = captured.split('#')[0];
+      if (!wanted) continue;
+      if (!fsSync.existsSync(path.resolve(dir, path.dirname(file), wanted))) dead.push(`${file} -> ${captured}`);
+    }
+  }
+  assert.deepEqual(dead, [], `documents point at files that are not there:\n${dead.join('\n')}`);
+});
+
+test('every gitleaks allowlist path still names a file in the tree', async () => {
+  const root = new URL('../../', import.meta.url);
+  const tracked = new Set(execFileSync('git', ['ls-files'], { cwd: fileURLToPath(root), encoding: 'utf8' })
+    .split('\n')
+    .filter(Boolean));
+  const config = await readFile(new URL('../../.gitleaks.toml', import.meta.url), 'utf8');
+
+  const patterns = [...config.matchAll(/paths\s*=\s*\[([^\]]*)\]/g)]
+    .flatMap((m): string[] => {
+      const group = m[1] ?? '';
+      return [...group.matchAll(/'''([^']+)'''/g)].map((n) => {
+        const allowlist = n[1];
+        assert.ok(allowlist, 'the allowlist path capture is present');
+        return allowlist;
+      });
+    });
+  const stale = [];
+  for (const pattern of patterns) {
+
+    const glob = pattern
+      .replace(/^\^/, '')
+      .replace(/\$$/, '')
+      .replace(/\\\./g, '.')
+      .replace(/\.\*/g, '*');
+    if (glob.includes('*')) {
+      const re = new RegExp(`^${glob.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*')}$`);
+      if (![...tracked].some((f) => re.test(f))) stale.push(`${pattern} matches no tracked file`);
+      continue;
+    }
+    if (!tracked.has(glob)) stale.push(`${pattern} names no tracked file`);
+  }
+  assert.deepEqual(stale, [], stale.join('\n'));
+});
+
+test('a read is serialized once, not once per size check', () => {
+
+  const block = background.slice(
+    background.indexOf('function boundedResult'),
+    background.indexOf('function clearSerializedResult() {')
+  );
+  assert.ok(
+    background.indexOf('function clearSerializedResult() {')
+      > background.indexOf('function boundedResult'),
+    'the result-sizing block must have a live end marker after boundedResult'
+  );
+  assert.equal((block.match(/JSON\.stringify\(/g) || []).length, 1, 'exactly one stringify in the result-sizing path');
+  assert.match(background, /function serializeResult\(value(: unknown)?\)/);
+  assert.match(background, /if \(serializedResult\.value === value\) return serializedResult\.text;/);
+  assert.match(block, /function oversized\(value(: unknown)?\) \{\s*return serializeResult\(value\)\.length > RESULT_BUDGET_BYTES;/);
+  const bounded = block.slice(block.indexOf('function boundedResult'), block.indexOf('function oversized'));
+  assert.match(bounded, /const text = serializeResult\(value\)/);
+
+  assert.match(background, /Result is not serializable\./);
+});
+
+test('the memo cannot retain a large result between commands', () => {
+
+  assert.match(background, /let serializedResult(:\s*\{[^}]*\})?\s*= \{ value: null, text: '' \};/);
+  const executor = background.slice(background.indexOf('async function executeCommand'));
+  assert.match(executor.slice(0, 900), /clearSerializedResult\(\);/);
+});
+
+test('the focus-gate slice is a real block, not the whole file', () => {
+  const start = background.indexOf('async function withForegroundFocusGate');
+  const end = background.indexOf('const UV_WAIT_FLOOR_MS');
+  assert.ok(start > 0, 'withForegroundFocusGate must exist');
+  assert.ok(end > start, 'the next top-level constant must come after the function');
+  const block = background.slice(start, end);
+  assert.ok(block.split('\n').length >= 30 && block.split('\n').length <= 40,
+    `expected a single function, got ${block.split('\n').length} lines`);
+});
+
+test('the focus gate loop is bounded by construction', () => {
+
+  const gate = background.slice(
+    background.indexOf('async function withForegroundFocusGate'),
+    background.indexOf('const UV_WAIT_FLOOR_MS')
+  );
+  assert.doesNotMatch(gate, /for \([^;]*;\s*;/);
+  assert.match(gate, /for \(let attempt = 1; attempt <= FOCUS_GATE_ATTEMPTS; attempt \+= 1\)/);
+  assert.match(gate, /FOCUS_GATE_SETTLE_MS/);
+  assert.equal(FOCUS_GATE_ATTEMPTS, 3);
+});
+
+test('the shared runtimes are frozen, so a sibling script cannot mutate them', () => {
+  const roles = globalThis.OperaAgentRoleReconcile;
+  const hover = globalThis.OperaAgentHoverSettle;
+  assert.ok(roles, 'the role runtime must be installed');
+  assert.ok(hover, 'the hover runtime must be installed');
+  assert.equal(Object.isFrozen(roles), true, 'the role runtime must be frozen');
+  assert.equal(Object.isFrozen(hover), true, 'the hover runtime must be frozen');
+
+  assert.equal(Array.isArray(roles.GENERIC_ROLES), true, 'GENERIC_ROLES must be an array, not a Set');
+  assert.equal(Object.isFrozen(roles.GENERIC_ROLES), true);
+  assert.throws(() => { (roles.GENERIC_ROLES as string[]).push('button'); }, TypeError);
+  assert.equal(roles.isGenericRole('button'), false, 'a rejected mutation must not take effect');
+  const hoverDefaults = hover.DEFAULTS as { timeoutMs: number };
+  assert.throws(() => { hoverDefaults.timeoutMs = 99999; }, TypeError);
+  assert.equal(hover.DEFAULTS.timeoutMs, 1500, 'the settle budget must be unchanged');
+});
+
+test('the role gap sample is a positive integer, not an accidental truthy value', () => {
+  const rolesRuntime = globalThis.OperaAgentRoleReconcile;
+  assert.ok(rolesRuntime, 'the role runtime must be installed');
+  const { ROLE_GAP_SAMPLE_SIZE } = rolesRuntime;
+  assert.equal(Number.isInteger(ROLE_GAP_SAMPLE_SIZE), true);
+  assert.ok(ROLE_GAP_SAMPLE_SIZE > 0);
+});
+
+test('the R9 modules expose no unused surface', async () => {
+
+  const keyboard = await readFile(new URL('../../extension/lib/keyboard.js', import.meta.url), 'utf8');
+  const uses = keyboard.match(/keyNames/g) || [];
+  assert.equal(uses.length, 2, 'keyNames must be referenced only by its declaration and its one caller');
+  assert.match(keyboard, /export const KEY_ALLOWLIST = Object\.freeze\(keyNames\(\)\)/);
+
+  assert.doesNotMatch(keyboard, /MODIFIER_ALLOWLIST/);
+
+  assert.doesNotMatch(background, /export function isPlainObject/);
+  const protocol = await readFile(new URL('../../extension/lib/protocol.ts', import.meta.url), 'utf8');
+  assert.doesNotMatch(protocol, /isPlainObject/, 'the sentinel moved to extension/lib/guards.ts as isRecord');
+  const guards = await readFile(new URL('../../extension/lib/guards.ts', import.meta.url), 'utf8');
+  assert.match(guards, /export function isRecord\(value: unknown\): value is Record<string, unknown>/);
+  assert.equal((protocol.match(/isRecord/g) || []).length, 8, 'imported once and used seven times');
+});
+
+test('no module under extension/, shared/, scripts/ or hosted/functions/ exports a symbol nothing reaches', async () => {
+
+  const runtimeRoots = ['../../extension', '../../shared'];
+  const collect = async (dir: string, match: RegExp): Promise<string[]> => {
+    const out: string[] = [];
+    for (const entry of await readdir(new URL(dir, import.meta.url), { withFileTypes: true })) {
+      const p = `${dir}/${entry.name}`;
+      if (entry.isDirectory()) out.push(...await collect(p, match));
+      else if (match.test(entry.name)) out.push(p);
+    }
+    return out;
+  };
+  const jsFiles = /\.js$/;
+  const runtimeModules = (await Promise.all(runtimeRoots.map((d) => collect(d, jsFiles)))).flat();
+
+  const edgeModules = (await Promise.all(['../../hosted/functions'].map((d) => collect(d, jsFiles)))).flat();
+  const scriptModules = await collect('../../scripts', /\.ts$/);
+  const modules = [...runtimeModules, ...edgeModules, ...scriptModules];
+
+  const testDir = await collectTests('../../tests');
+  const edgeDir = await collectTests('../../hosted/functions');
+  const scripts = (await readdir(new URL('../../scripts', import.meta.url)))
+    .filter((n) => n.endsWith('.ts'))
+    .map((n) => `../../scripts/${n}`);
+
+  const consumers = await Promise.all(
+    [...new Set([...modules, ...testDir, ...edgeDir, ...scripts])]
+      .map(async (p) => ({ p, text: await readFile(new URL(p, import.meta.url), 'utf8') }))
+  );
+
+  const pattern = (name: string) => `\\b${name.replace(/\$/g, '\\$')}\\b`;
+  const dead = [];
+  const noCaller = [];
+
+  const callerText = new Map(consumers.map(({ p, text }) => [
+    p,
+    text.split('\n').filter((line) => !/^\s*export\b/.test(line)).join('\n'),
+  ]));
+  const textByPath = new Map(consumers.map(({ p, text }) => [p, text]));
+
+  const collectExports = (p: string, text: string, visited: Set<string>): string[] => {
+    if (visited.has(p)) return [];
+    visited.add(p);
+    const names = [...text.matchAll(
+      /^export\s+(?:async\s+)?(?:function\*?|const|let|var|class)\s+([A-Za-z_$][\w$]*)/gm
+    )].map((m) => {
+      const name = m[1];
+      assert.ok(name, 'the export capture is present');
+      return name;
+    });
+    for (const m of text.matchAll(/^export\s*\{([^}]*)\}(\s*from\s*['"][^'"]+['"])?/gm)) {
+      const exportList = m[1] ?? '';
+      const reexport = Boolean(m[2]);
+      for (const item of exportList.split(',')) {
+        const parts = item.split(/\s+as\s+/).map((s) => s.trim().replace(/^type\s+/, '').split(/\s+/)[0]).filter((s): s is string => Boolean(s));
+        if (parts.length === 0) continue;
+        const local = reexport ? parts[parts.length - 1] : parts[0];
+        if (local && /^[A-Za-z_$][\w$]*$/.test(local)) names.push(local);
+      }
+    }
+    for (const m of text.matchAll(/^export\s*\*\s*from\s*['"]([^'"]+)['"]/gm)) {
+      const spec = m[1];
+      assert.ok(spec, 'the star re-export capture is present');
+      const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(p), spec));
+      const target = textByPath.get(resolved);
+      if (target === undefined) throw new Error(`unresolvable star re-export ${p} -> ${spec} (resolved ${resolved})`);
+      names.push(...collectExports(resolved, target, visited));
+    }
+    return [...new Set(names)];
+  };
+  for (const { p, text } of consumers.filter(({ p }) => modules.includes(p))) {
+    const names = collectExports(p, text, new Set<string>());
+    for (const name of names) {
+      const usedElsewhere = consumers.some(
+        (other) => other.p !== p && new RegExp(pattern(name)).test(callerText.get(other.p) ?? '')
+      );
+
+      const usesHere = (text.match(new RegExp(pattern(name), 'g')) || []).length;
+      const where = `${p.split('/').slice(-2).join('/')} :: ${name}`;
+      if (!usedElsewhere && usesHere <= 1) dead.push(where);
+      if (!usedElsewhere && runtimeModules.includes(p)) noCaller.push(where);
+    }
+  }
+  assert.deepEqual(dead, [], 'these exports are referenced nowhere at all');
+  assert.deepEqual(noCaller, [], 'these extension/ and shared/ exports have no caller in another file');
+});
+
+// WHY A MODULE ONLY ITS OWN TEST IMPORTS IS DEAD.
+// A test that imports the module it was written for proves the module works, and nothing runs it.
+// The unit is the module, so the claim the test makes is about code the product never loads.
+// One module is staged for the one open task of the paper plan, and it is named here with that reason.
+
+const STAGED_FOR_THE_OPEN_TASK = new Map([
+  ['shared/ax-menu.ts', 'Task 9 of docs/superpowers/plans/2026-10-14-docs-paper-plan.md: the AX road reads live row names to compare against the label map'],
+  ['hosted/functions/_shared/docs-ui-map.ts', 'Task 9 of docs/superpowers/plans/2026-10-14-docs-paper-plan.md: the map the AX road is compared against'],
+]);
+
+test('a module with its own code is reached by the product, not only by its own test', async () => {
+  const dir = fileURLToPath(new URL('../../', import.meta.url));
+  const skipDirs = new Set(['.git', 'node_modules', '.kilo', 'dist', 'build', 'tmp', 'coverage', '__pycache__', '.vercel', '.next']);
+  const walk = (relative: string): string[] => {
+    const out: string[] = [];
+    for (const entry of fsSync.readdirSync(path.join(dir, relative), { withFileTypes: true })) {
+      if (skipDirs.has(entry.name)) continue;
+      const next = relative ? `${relative}/${entry.name}` : entry.name;
+      if (entry.isDirectory()) out.push(...walk(next));
+      else out.push(next);
+    }
+    return out;
+  };
+  const present = ['extension', 'shared', 'local', 'scripts', 'hosted', 'tests'].flatMap(walk);
+  const codeFiles = present.filter((file) => /\.(js|mjs|cjs|ts)$/.test(file));
+  const edgeFiles = present.filter((file) => /\.(js|mjs|cjs|ts|html)$/.test(file));
+  const textOf = new Map(edgeFiles.map((file) => [file, fsSync.readFileSync(path.join(dir, file), 'utf8')]));
+
+  const resolve = (from: string, spec: string | undefined): string | null => {
+    if (!spec || !spec.startsWith('.')) return null;
+    const base = path.posix.normalize(path.posix.join(path.posix.dirname(from), spec));
+    for (const candidate of [base, `${base}.js`, `${base}.ts`, `${base}.ts`, `${base}/index.js`]) {
+      if (textOf.has(candidate)) return candidate;
+    }
+    return null;
+  };
+
+  const edges = new Map<string, string[]>();
+  for (const [file, text] of textOf) {
+    const targets = new Set<string>();
+    for (const match of text.matchAll(/from\s*['"](\.[^'"]+)['"]/g)) {
+      const hit = resolve(file, match[1]);
+      if (hit) targets.add(hit);
+    }
+    for (const match of text.matchAll(/(?:^|\n)\s*import\s*['"](\.[^'"]+)['"]/g)) {
+      const hit = resolve(file, match[1]);
+      if (hit) targets.add(hit);
+    }
+    for (const match of text.matchAll(/import\(\s*['"](\.[^'"]+)['"]\s*\)/g)) {
+      const hit = resolve(file, match[1]);
+      if (hit) targets.add(hit);
+    }
+    for (const match of text.matchAll(/importScripts\(\s*['"](\.[^'"]+)['"]\s*\)/g)) {
+      const hit = resolve(file, match[1]);
+      if (hit) targets.add(hit);
+    }
+    for (const match of text.matchAll(/<script[^>]+src=["']([^"']+)["']/g)) {
+      const spec = match[1];
+      assert.ok(spec, 'the script src capture is present');
+      const hit = resolve(file, spec.startsWith('.') ? spec : `./${spec}`);
+      if (hit) targets.add(hit);
+    }
+    // WHY executeScript files are edges: the worker reaches a module by injecting it by file name (content/record-main.js, lib/statement-file.js), never by import - a MAIN-world encoder runs in the page's realm and cannot be imported into the worker.
+    // An entry that is not extension-relative is left alone; a path that does not resolve adds no edge, like every other rule here.
+    for (const match of text.matchAll(/files:\s*\[([^\]]+)\]/g)) {
+      const inner = match[1];
+      assert.ok(inner, 'the files array capture is present');
+      for (const quoted of inner.matchAll(/["']([^"']+)["']/g)) {
+        const spec = quoted[1];
+        assert.ok(spec, 'the file name capture is present');
+        if (!spec.endsWith('.js')) continue;
+        const hit = spec.startsWith('.') ? resolve(file, spec) : resolve('extension/placeholder.js', `./${spec}`);
+        if (hit) targets.add(hit);
+      }
+    }
+    edges.set(file, [...targets]);
+  }
+
+  // The build emits shared/<stem>.js from shared/<stem>.ts, and every road imports the artifact by construction; the source is reached exactly when its artifact is, so the census counts the pair as one module.
+  // The browser half compiles beside sources too (extension/lib, extension/worker, ...).
+  for (const [, targets] of edges) {
+    for (const target of [...targets]) {
+      const match = /^(shared|local|extension)\/(.+)\.js$/.exec(target);
+      if (match && textOf.has(`${match[1]}/${match[2]}.ts`)) targets.push(`${match[1]}/${match[2]}.ts`);
+    }
+  }
+
+  // The entry points: what the product actually runs.
+  const roots = new Set<string>();
+  for (const file of present) {
+    if (/^hosted\/functions\/[^/]+\/index\.ts$/.test(file)) roots.add(file);
+    if (/^scripts\/.*\.(ts|py)$/.test(file)) roots.add(file);
+    if (/^local\/bin\/.*\.js$/.test(file)) roots.add(file);
+  }
+  roots.add('local/mcp-server.js');
+  const manifest = JSON.parse(fsSync.readFileSync(path.join(dir, 'extension/manifest.json'), 'utf8'));
+  for (const script of manifest.content_scripts || []) for (const js of script.js || []) roots.add(`extension/${js}`);
+  if (manifest.background?.service_worker) roots.add(`extension/${manifest.background.service_worker}`);
+  if (manifest.action?.default_popup) roots.add(`extension/${manifest.action.default_popup}`);
+  if (manifest.options_page) roots.add(`extension/${manifest.options_page}`);
+  // WHY THE SITE IS NOT IN THE CENSUS.
+  // The site is one bundled app shipped as one artefact; the bundler and tests/site enforce reachability there.
+  // Flat HTML pages were separate entry points; bundled hashed chunks cannot be resolved statically, so the old landing/ roots scan has no equivalent here.
+  // WHY THE PACKAGE'S LIFECYCLE SCRIPTS ARE ROOTS.
+  // npm runs `postinstall` and `prepack` on the user's machine; the import graph cannot follow a subprocess, so the gate must be told the package.json scripts count as entry points - otherwise a wired lifecycle hook reads as dead code.
+  const localManifestPath = path.join(dir, 'local', 'package.json');
+  if (fsSync.existsSync(localManifestPath)) {
+    const localManifest = JSON.parse(fsSync.readFileSync(localManifestPath, 'utf8'));
+    for (const value of Object.values(localManifest.scripts ?? {})) {
+      const text = typeof value === 'string' ? value : String(value);
+      const match = /^node\s+(\S+)/.exec(text);
+      if (!match) continue;
+      const script = match[1];
+      assert.ok(script, 'the lifecycle script capture is present');
+      const candidate = path.posix.normalize(path.posix.join('local', script));
+      if (textOf.has(candidate)) roots.add(candidate);
+    }
+  }
+
+  // A root that names the emitted copy also reaches its source; a lifecycle script or bin stub is the same module as its .ts twin, and the census judges the source.
+  for (const file of [...roots]) {
+    const match = /^(local|shared|extension)\/(.+)\.js$/.exec(file);
+    if (match && textOf.has(`${match[1]}/${match[2]}.ts`)) roots.add(`${match[1]}/${match[2]}.ts`);
+  }
+
+  const reached = new Set<string>();
+  const queue = [...roots];
+  while (queue.length) {
+    const current = queue.pop();
+    if (current === undefined) break;
+    if (reached.has(current)) continue;
+    reached.add(current);
+    for (const target of edges.get(current) || []) if (!reached.has(target)) queue.push(target);
+  }
+
+  // A file that only re-exports another module is a bridge to live code, not dead code.
+  const isShim = (text: string) => {
+    const code = text.split('\n').filter((line) => !/^\s*(\/\/|\/\*|\*|#)/.test(line)).join('\n');
+    const withoutReexports = code.replace(/export\s*\*\s*from\s*['"][^'"]+['"];?/g, '').replace(/export\s*\{[^}]*\}\s*from\s*['"][^'"]+['"];?/g, '').trim();
+    return withoutReexports === '';
+  };
+
+  // Ambient type-declaration files are types, never runtime code, so they are not modules that can be reached.
+  // shared/<stem>.js is the build's copy of shared/<stem>.ts and cannot be judged on its own; its source is, and the artifact-to-source mapping above carries the reach.
+  const runtimeFiles = codeFiles.filter((file) =>
+    (/^(shared|hosted\/functions|scripts)\//.test(file)
+      || (/^(extension|local)\//.test(file) && file.endsWith('.ts')))
+    && !file.endsWith('.d.ts')
+    && !/^shared\/[^/]+\.js$/.test(file));
+  const unreachable = runtimeFiles.filter((file) => {
+    const text = textOf.get(file);
+    if (text === undefined) throw new Error(`the census never read ${file}`);
+    return !reached.has(file) && !isShim(text);
+  });
+  const unexpected = unreachable.filter((file) => !STAGED_FOR_THE_OPEN_TASK.has(file));
+  assert.deepEqual(unexpected, [],
+    `these modules are reached by nothing but their own test:\n${unexpected.join('\n')}`);
+  const staleAllowance = [...STAGED_FOR_THE_OPEN_TASK.keys()].filter((file) => !unreachable.includes(file));
+  assert.deepEqual(staleAllowance, [],
+    `these modules are reached by the product now, so the staged list must drop them:\n${staleAllowance.join('\n')}`);
+  for (const file of unreachable) {
+    const why = STAGED_FOR_THE_OPEN_TASK.get(file);
+    assert.ok(why, `${file} is staged, so it carries a written reason`);
+    assert.ok(why.length > 20, `${file} must say why it is staged`);
+  }
+});
+
+test('every lib header states what is actually in the file', async () => {
+  const boilerplate = 'MV3 runtime library, shared with the Node suite..';
+  const dir = new URL('../../extension/lib/', import.meta.url);
+  const names = (await readdir(dir)).filter((n) => n.endsWith('.js')).sort();
+  assert.ok(names.length >= 17, 'the lib directory must not be empty');
+  const offenders = [];
+  for (const name of names) {
+    const text = await readFile(new URL(name, dir), 'utf8');
+    if (text.includes(boilerplate)) offenders.push(name);
+  }
+  assert.deepEqual(offenders, [],
+    `boilerplate header must be replaced with a description of the file: ${offenders.join(', ')}`);
+});
+
+// WHY A HEADER HAS TO SAY SOMETHING.
+// The header is the first thing a reader sees, and a scaffold word or a commit message says nothing about the file.
+// The title names the file and what it is; the state says what it holds right now, not what a past commit did to it.
+
+const SCAFFOLD_TITLE = /(?:—\s*)?(?:Test|Repository file|Script|Deno edge function|Shared pure module(?:\.js)?|Pure module|Source|Repository)\.*$/;
+const CHANGELOG_STATE = /^(?:fix|feat|refactor|chore|perf|test|docs|build|ci)\(|^(?:remove|add|drop|rename|generalize|centralize|move|delete|resolve|consolidate|lock|implement|restore|retry|serve|fold|activate|verify|clear|convert|cover)\b/i;
+
+test('every source file carries a header that says what the file is and what it holds', async () => {
+  const dir = fileURLToPath(new URL('../../', import.meta.url));
+  // WHY site/ IS EXCLUDED.
+  // The site is a separate package with its own toolchain and style, and the header rule never judged it when the file list was read from disk instead of git.
+  // This gate judges what it always judged; widening it is a different decision, not a side effect of skipping build output.
+  const files = execFileSync('git', ['ls-files'], { cwd: dir, encoding: 'utf8' })
+    .split('\n')
+    .filter(Boolean)
+    .filter((file) => /\.(?:js|mjs|cjs|ts|py|html|css|yml|yaml|toml|cmd|example)$/.test(file))
+    .filter((file) => !file.startsWith('hosted/migrations/'))
+    .filter((file) => !file.startsWith('site/'));
+
+  const problems = [];
+  for (const file of files) {
+    const text = fsSync.readFileSync(path.join(dir, file), 'utf8');
+    const head = text.split('\n').slice(0, 8).join('\n');
+    const clean = (value?: string) => (value ?? '').replace(/(-->|\*\/)\s*$/, '').trim();
+    const title = clean(/@title:\s*(.+)/.exec(head)?.[1]);
+    const state = clean(/@state:\s*(.+)/.exec(head)?.[1]);
+    if (!title || !state || !/@last-edited:/.test(head) || !/@dependencies:/.test(head)) {
+      problems.push(`${file}: the four header fields must all be there`);
+      continue;
+    }
+    if (SCAFFOLD_TITLE.test(title)) problems.push(`${file}: the title ends in a scaffold word: ${title}`);
+    if (/\.\.$/.test(title)) problems.push(`${file}: the title ends in two dots: ${title}`);
+    if (title.split('—').length > 2) problems.push(`${file}: the title names the file twice: ${title}`);
+    if (SCAFFOLD_TITLE.test(state)) problems.push(`${file}: the state is a scaffold word: ${state}`);
+    if (CHANGELOG_STATE.test(state)) problems.push(`${file}: the state is a commit message: ${state}`);
+    if (!state.endsWith('.')) problems.push(`${file}: the state is not a sentence: ${state}`);
+    if (state === title) problems.push(`${file}: the state repeats the title`);
+  }
+  assert.deepEqual(problems, [], problems.slice(0, 20).join('\n'));
+});

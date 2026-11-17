@@ -42,7 +42,7 @@ jobs:
       - name: Stage the CRX payload and prove the emitted set is complete
         shell: bash
         run: |
-          node scripts/pack/stage-crx.mjs "${GITHUB_WORKSPACE}/extension-stage"
+          node scripts/pack/stage-crx.ts "${GITHUB_WORKSPACE}/extension-stage"
 
       - name: Check the version matches the manifest
         shell: bash
