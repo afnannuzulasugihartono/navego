@@ -53,21 +53,21 @@ const censusOrEvidence = () => {
 
 test('the runtime census lists local/*.ts, not only .js', () => {
   const lines = censusOrEvidence();
-  const near = (marker: string) => {
+  const near = () => {
     const tail = lines.slice(-8).join(', ');
     return `census returned ${lines.length} files; last: ${tail}`;
   };
-  assert.ok(lines.includes('local/primitives.ts'), `the census lists the .ts sources: ${near('local/primitives.ts')}`);
-  assert.ok(!lines.some((line) => /^(local\/[^/]+|local\/bin\/[^/]+|local\/office\/[^/]+|local\/lib\/[^/]+)\.js$/.test(line)), `the census never lists the emitted local/*.js copies (found one): ${near('local/*.js')}`);
-  assert.ok(!lines.some((line) => /^local\/.*\.d\.ts$/.test(line)), `the census never lists local type declarations as runtime files (found one): ${near('local/*.d.ts')}`);
+  assert.ok(lines.includes('local/primitives.ts'), `the census lists the .ts sources: ${near()}`);
+  assert.ok(!lines.some((line) => /^(local\/[^/]+|local\/bin\/[^/]+|local\/office\/[^/]+|local\/lib\/[^/]+)\.js$/.test(line)), `the census never lists the emitted local/*.js copies (found one): ${near()}`);
+  assert.ok(!lines.some((line) => /^local\/.*\.d\.ts$/.test(line)), `the census never lists local type declarations as runtime files (found one): ${near()}`);
 });
 
 test('the runtime census lists shared/*.ts, not only .js', () => {
   const lines = censusOrEvidence();
-  const near = (marker: string) => {
+  const near = () => {
     const tail = lines.slice(-8).join(', ');
     return `census returned ${lines.length} files; last: ${tail}`;
   };
-  assert.ok(lines.includes('shared/canonical-order.ts'), `the census lists the .ts sources: ${near('shared/canonical-order.ts')}`);
-  assert.ok(!lines.some((line) => /^shared\/[^/]+\.js$/.test(line)), `the census never lists the emitted shared/*.js copies (found one): ${near('shared/*.js')}`);
+  assert.ok(lines.includes('shared/canonical-order.ts'), `the census lists the .ts sources: ${near()}`);
+  assert.ok(!lines.some((line) => /^shared\/[^/]+\.js$/.test(line)), `the census never lists the emitted shared/*.js copies (found one): ${near()}`);
 });
