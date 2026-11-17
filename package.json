@@ -27,7 +27,7 @@
     "store": "python scripts/release/build-store-package.py",
     "icons": "python scripts/dev/draw-icon.py",
     "gates:refresh": "node scripts/verify/gates.ts --refresh",
-    "check": "npm run types && node scripts/verify/check.ts",
+    "check": "npm run types && node scripts/verify/type-debt.ts && node scripts/verify/check.ts",
     "scope": "node scripts/verify/scope.ts",
     "scope:diff": "node scripts/verify/scope-check.ts"
   },

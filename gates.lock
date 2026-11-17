@@ -156,14 +156,14 @@
 #    tests/helpers/canonical-source-hash.ts strips the comment lines and collapses
 #    the whitespace before hashing a tool schema, so the pin holds the tool's
 #    contract and not its indentation.
-scripts/verify/check.ts 48502d94fbbbd325c69635dd3ed88d5e6184e90e
-scripts/verify/scope.ts f5895703e958e67c79a1f2f4392b037a84c26220
-scripts/verify/scope-check.ts 87e792d97bc6003f19a86ffbe6f137da683723bf
+scripts/verify/check.ts da6a0e71cb6a8bde2c9401f9d216a2361a81632f
+scripts/verify/scope.ts aa0e22fa3c0c14294a824d2c973c569b3e0ba10f
+scripts/verify/scope-check.ts 96203fa5b6ebfeb5e8eca8d4abfed50a43579634
 
 # --- the pins themselves: editing these is how a drift goes unnoticed ---
 tests/helpers/boundary-locks.ts dbcdc193c76a84ff74057eae2a48b92301da4682
 tests/helpers/canonical-source-hash.ts 1dc86adecde0273b27493d2981b6c75268940203
-tests/helpers/comment-format.ts 51bfb45fe28b4d850584555eace0457e00d49b6a
+tests/helpers/comment-format.ts f7fc99ea6416a6d48dd07e5bcbf446aac93d32e6
 tests/docs/comment-format.test.ts 82b8aef31ce01795999822150d04e598425e9683
 tests/docs/comment-claims.test.ts 2e7eb4fd43a56c8c08ce01a0ac3b378502d4294a
 

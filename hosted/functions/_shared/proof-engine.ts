@@ -42,7 +42,14 @@ const EXPECTED_TRUST = Object.freeze({
   BOUNDARY_OBSERVATION: 'BROWSER_SENSOR',
   EXTERNAL_ATTESTATION: 'AUTHENTICATED_EXTERNAL',
 });
-const VALIDATED_EVIDENCE = Symbol('validatedEvidenceDigest');
+const VALIDATED_EVIDENCE = new WeakMap<NormalizedEvidence, string>();
+
+function isNormalizedEvidence(value: unknown): value is NormalizedEvidence {
+  return isPlainObject(value)
+    && typeof value.evidenceId === 'string'
+    && typeof value.evidenceDigest === 'string'
+    && Array.isArray(value.dependencies);
+}
 
 
 interface NormalizedDependency {
@@ -135,13 +142,9 @@ function deepFreeze<T>(value: T): T {
 }
 
 function freezeEvidence(value: NormalizedEvidence): NormalizedEvidence {
-  Object.defineProperty(value, VALIDATED_EVIDENCE, {
-    value: value.evidenceDigest,
-    enumerable: false,
-    configurable: false,
-    writable: false,
-  });
-  return deepFreeze(value);
+  const frozen = deepFreeze(value);
+  VALIDATED_EVIDENCE.set(frozen, value.evidenceDigest);
+  return frozen;
 }
 
 function normalizeDependency(value: unknown, path: string): NormalizedDependency {
@@ -198,7 +201,7 @@ export async function createEvidence(input: unknown): Promise<NormalizedEvidence
 async function validateEvidence(input: unknown): Promise<NormalizedEvidence> {
   const digestInput = isPlainObject(input) && typeof input.evidenceDigest === 'string' ? input.evidenceDigest : '';
   if (!isPlainObject(input) || !SHA256_HEX.test(digestInput)) fail('INVALID_DIGEST', 'evidence.evidenceDigest is invalid.');
-  if (isPlainObject(input) && (input as Record<string | symbol, unknown>)[VALIDATED_EVIDENCE] === input.evidenceDigest && Object.isFrozen(input)) return input as unknown as NormalizedEvidence;
+  if (isNormalizedEvidence(input) && VALIDATED_EVIDENCE.get(input) === input.evidenceDigest && Object.isFrozen(input)) return input;
   const normalized = normalizeEvidence(input);
   const expected = await digestCanonical(normalized);
   if (expected !== input.evidenceDigest) fail('INVALID_DIGEST', 'Evidence digest does not match canonical content.');

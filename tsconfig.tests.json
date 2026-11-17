@@ -1,4 +1,11 @@
 {
+  // @title: tsconfig.tests - strict TypeScript over the test tree and the hosted files it exercises, with the debt recorded not hidden.
+  // @state: the count of errors under this project is ratchet-gated by scripts/verify/type-debt.ts; it may only go down.
+  // @dependencies: tsconfig.base.json, scripts/verify/type-debt.ts.
+  // WHY THE DEBT IS RECORDED HERE AND NOT FIXED BY HAND IN ONE DIFF.
+  // tests/ was written in JavaScript-flavoured TypeScript before the tree was ever strict; the 2026-11-17 migration measured 1796 errors.
+  // Fixing them in one change would be unreviewable and unverifiable; this gate makes the debt first-class so every subsequent change must leave it the same or smaller.
+  // The clean surfaces (shared, local, extension, scripts, site) stay pinned at zero in tsconfig.tooling.json; only this project holds the grandfathered debt.
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "noEmit": true,
@@ -7,11 +14,6 @@
     "types": [
       "node",
       "chrome"
-    ],
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
     ]
   },
   "include": [

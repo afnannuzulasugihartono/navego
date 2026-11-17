@@ -1,14 +1,29 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: edge-log — the structured log line every edge function writes.
+// @title: edge-log - the structured log line every edge function writes.
 // @state: the fields it carries, the message cap, and the level each call writes at.
 // @dependencies: none.
 
 const MAX_LOG_MESSAGE = 1000;
-export function createEdgeLog(context) {
+
+interface LogContext {
+  commandId?: unknown;
+  requestId?: unknown;
+}
+
+interface LogRecord {
+  t: string;
+  level: string;
+  code: string;
+  message: string;
+  commandId: string | null;
+  requestId: string | null;
+}
+
+export function createEdgeLog(context: LogContext) {
   const commandId = context && typeof context.commandId === 'string' ? context.commandId : null;
   const requestId = context && typeof context.requestId === 'string' ? context.requestId : null;
-  function emit(level, code, message) {
-    const record = {
+  function emit(level: string, code: unknown, message: unknown): LogRecord {
+    const record: LogRecord = {
       t: new Date().toISOString(),
       level,
       code: String(code || 'LOG').slice(0, 100),
@@ -22,8 +37,8 @@ export function createEdgeLog(context) {
     return record;
   }
   return {
-    debug: (code, message) => emit('debug', code, message),
-    warn: (code, message) => emit('warn', code, message),
-    error: (code, message) => emit('error', code, message)
+    debug: (code: unknown, message: unknown) => emit('debug', code, message),
+    warn: (code: unknown, message: unknown) => emit('warn', code, message),
+    error: (code: unknown, message: unknown) => emit('error', code, message)
   };
 }

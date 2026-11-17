@@ -207,7 +207,7 @@ function normalizeScope(value: unknown, path: string): LedgerScope {
 
 function normalizeConstraint(value: unknown, path: string): LedgerConstraint {
   assertAllowedFields(value, CONSTRAINT_FIELDS, path);
-  const output: Record<string, unknown> = {
+  const output: LedgerConstraint = {
     constraintId: normalizeId(value.constraintId, `${path}.constraintId`),
     kind: normalizeString(value.kind, `${path}.kind`, { maxBytes: 32 }),
     claimField: normalizeString(value.claimField, `${path}.claimField`, { maxBytes: 128 }),
@@ -221,13 +221,13 @@ function normalizeConstraint(value: unknown, path: string): LedgerConstraint {
   const valueField = valueFields[0];
   if (valueField === 'integerValue') {
     if (!Number.isSafeInteger(value.integerValue)) fail('INVALID_VALUE', `${path}.integerValue must be a safe integer.`);
-    output.integerValue = value.integerValue;
+    output.integerValue = value.integerValue as number;
   } else if (valueField === 'stringValue') output.stringValue = normalizeString(value.stringValue, `${path}.stringValue`);
   else if (valueField === 'booleanValue') {
     if (typeof value.booleanValue !== 'boolean') fail('INVALID_TYPE', `${path}.booleanValue must be boolean.`);
     output.booleanValue = value.booleanValue;
   } else output.stringValues = normalizeArray(value.stringValues, `${path}.stringValues`, 64, (item, itemPath) => normalizeString(item, itemPath));
-  return output as unknown as LedgerConstraint;
+  return output;
 }
 
 function normalizeAuthorization(value: unknown, path: string): LedgerAuthorization {
