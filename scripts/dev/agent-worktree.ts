@@ -84,7 +84,8 @@ const commands: Record<string, (arg?: string, base?: string, topic?: string) => 
   }
 };
 
-if (!name || !(name in commands)) {
+const fn = name ? commands[name] : undefined;
+if (!name || !fn) {
   console.log('usage: node scripts/dev/agent-worktree.ts <create|list|remove> [name] [base] [topic]');
   console.log('  create <name> [base] [topic]  a worktree at ../opera-agent-<name> on agent/<name>/<topic>');
   console.log('  list                          every worktree, and which branch it holds');
@@ -92,4 +93,4 @@ if (!name || !(name in commands)) {
   process.exit(1);
 }
 
-commands[name]!(arg ?? '', process.argv[4], process.argv[5]);
+fn(arg ?? '', process.argv[4], process.argv[5]);
