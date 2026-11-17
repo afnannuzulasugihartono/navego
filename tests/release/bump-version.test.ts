@@ -49,7 +49,8 @@ const ALLOW = [
   /^docs\/handoff\.md$/,
   /^tests\/helpers\/boundary-locks\.ts$/,
   /^hosted\/functions\/.*\/deno\.lock$/,
-  /^site\/package-lock\.json$/
+  /^site\/package-lock\.json$/,
+  /^server\.json$/
 ];
 
 const isText = (file: any) => /\.(md|mjs|js|ts|json|html|css|yml|yaml|py|sql|toml|txt|xml|svg|lock)$/i.test(file);
