@@ -52,9 +52,9 @@ export function configDir(env: NodeJS.ProcessEnv = process.env): string {
   if (env.OPERA_AGENT_MCP_CONFIG_HOME) return String(env.OPERA_AGENT_MCP_CONFIG_HOME);
   const home = os.homedir();
   if (process.platform === 'win32') {
-    return path.join(process.env.APPDATA || path.join(home, 'AppData', 'Roaming'), 'kemudi');
+    return path.join(process.env.APPDATA || path.join(home, 'AppData', 'Roaming'), 'navego');
   }
-  return path.join(home, '.config', 'kemudi');
+  return path.join(home, '.config', 'navego');
 }
 
 export function tokenPath(env: NodeJS.ProcessEnv = process.env): string {
@@ -219,7 +219,7 @@ export async function login({ env = process.env, fetchImpl = fetch, open = openB
 export function loginInstructions(_env?: unknown): string {
   return [
     'No Navego token yet. Sign in once with a browser:',
-    '  kemudi auth',
+    '  navego auth',
     '',
     'which opens this URL and stores the token beside this install:',
     `  ${AUTHZ_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${encodeURIComponent(SCOPE)}`,

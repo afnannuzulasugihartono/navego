@@ -143,7 +143,7 @@ test('without a token, the proxy names the sign-in and opens nothing', async () 
   const code = await new Promise((resolve) => child.on('close', resolve));
   assert.equal(code, 3, 'an install without a token exits named, not half-signed-in');
   assert.equal(out, '', 'and says nothing to the MCP client');
-  assert.match(err, /kemudi auth/, 'the sign-in named');
+  assert.match(err, /navego auth/, 'the sign-in named');
   assert.match(err, /oauth\/authorize/, 'and the URL is on the page');
   fs.rmSync(configHome, { recursive: true, force: true });
 });
@@ -159,7 +159,7 @@ test('the OAuth helpers size the home and point the sign-in', () => {
     assert.match(url, /code_challenge_method=S256/);
     assert.match(url, /state=state/);
     assert.match(url, /redirect_uri=/);
-    assert.match(loginInstructions({}), /kemudi auth/);
+    assert.match(loginInstructions({}), /navego auth/);
     assert.match(loginInstructions({}), /oauth\/authorize/);
   } finally {
     fs.rmSync(home, { recursive: true, force: true });
@@ -224,7 +224,7 @@ test('serveCloud without a token answers 3 on an already-closed stream', async (
   try {
     const code = await serveCloud({ env: { OPERA_AGENT_MCP_TOKEN: '', OPERA_AGENT_MCP_CONFIG_HOME: home }, input: Readable.from([]), stderr });
     assert.equal(code, 3);
-    assert.ok(lines.some((line) => /kemudi auth/.test(line)));
+    assert.ok(lines.some((line) => /navego auth/.test(line)));
   } finally {
     fs.rmSync(home, { recursive: true, force: true });
   }

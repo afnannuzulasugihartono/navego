@@ -13,9 +13,9 @@ export function meta() {
 const TOOLS = catalog as Array<{ group: string; items: Array<[string, string]> }>;
 
 const CONFIGS: Array<{ id: string; title: string; body: string }> = [
-  { id: 'cfg-opencode', title: 'OpenCode', body: '{\n  "mcp": {\n    "navego": {\n      "type": "local",\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-kilo', title: 'Kilo Code', body: '{\n  "mcpServers": {\n    "navego": {\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-claude', title: 'Claude Desktop', body: 'command: npx\nargs: ["-y", "opera-agent-mcp", "local"]' }
+  { id: 'cfg-opencode', title: 'OpenCode', body: '{\n  "mcp": {\n    "navego": {\n      "type": "local",\n      "command": "navego",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-kilo', title: 'Kilo Code', body: '{\n  "mcpServers": {\n    "navego": {\n      "command": "navego",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-claude', title: 'Claude Desktop', body: 'command: npx\nargs: ["-y", "navego", "local"]' }
 ];
 
 const SECTIONS = [
@@ -133,8 +133,8 @@ export default function Docs() {
           <p>Satu MCP (Model Context Protocol) per mesin: driver lokal, jalan di mesin Anda sendiri, tanpa biaya per panggilan dan tanpa melewati server orang lain. <Link to="/mcp.html">Pasang driver lokal</Link>.</p>
           <p>Koneksi driver lokal:</p>
           <div style={{ background: 'var(--ink)', borderRadius: 8, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 12, maxWidth: 640 }}>
-            <code style={{ background: 'transparent', color: '#d8f4ff' }}>npx -y opera-agent-mcp local</code>
-            <button onClick={() => copy('npx -y opera-agent-mcp local', 'mcp-url')} className="cf-copy">{copied === 'mcp-url' ? 'Tersalin' : 'Salin'}</button>
+            <code style={{ background: 'transparent', color: '#d8f4ff' }}>npx -y navego local</code>
+            <button onClick={() => copy('npx -y navego local', 'mcp-url')} className="cf-copy">{copied === 'mcp-url' ? 'Tersalin' : 'Salin'}</button>
           </div>
           {CONFIGS.map(({ id, title, body }) => (
             <div key={id}>
@@ -145,7 +145,7 @@ export default function Docs() {
               </div>
             </div>
           ))}
-          <p>Tidak perlu login atau langganan untuk memakai driver lokal. Quota paket Anda tetap dihitung di bridge Navego (jembatan ke mesin Anda) — sisa kuota bisa dilihat dengan <code>opera-agent-mcp doctor</code> kapan pun. Semua jalur dijelaskan di satu panduan: <a href="https://github.com/afnannuzulasugihartono/opera-agent/blob/main/docs/agent-call.md">docs/agent-call.md</a>.</p>
+          <p>Tidak perlu login atau langganan untuk memakai driver lokal. Quota paket Anda tetap dihitung di jembatan Navego — sisa kuotanya bisa dilihat dengan <code>navego doctor</code> kapanpun. Semua jalur dijelaskan dalam satu panduan: <a href="https://github.com/afnannuzulasugihartono/opera-agent/blob/main/docs/agent-call.md">docs/agent-call.md</a>.</p>
           <h3>ChatGPT dan harness lain</h3>
           <p>MCP harness = aplikasi AI Anda (Claude Desktop, OpenCode, dsb.). Konektor ChatGPT berbicara jarak jauh-HTTP; itu sudah berhenti eksis — kami tidak menyediakan jalur hosted lagi. Untuk ChatGPT dan harness serupa, gunakan harness lokal (atau Claude Desktop/OpenCode yang menerima MCP stdio).</p>
           <p>Setelah terpasang, alat baru muncul sesudah restart harness — itu perilaku harness, bukan error koneksi.</p>

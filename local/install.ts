@@ -41,7 +41,7 @@ update endpoint, installs it, and keeps it there. Deleting the policy entry remo
 the installed copy stays until you remove it at chrome://extensions (edge: edge://extensions, brave: brave://extensions).
 
 Uninstall: run \`navego uninstall\`. It removes exactly this extension's policy entries, nothing else.
-Pairing: run \`kemudi auth\` to sign in, then open the extension and pair the device.
+Pairing: run \`navego auth\` to sign in, then open the extension and pair the device.
 `;
 }
 
@@ -134,7 +134,7 @@ export async function install({
       if (entry.crx === 'written') return `${entry.id}: force-installed on the next browser start; backup written to ${entry.destination}`;
       return `${entry.id}: force-installed on the next browser start (the backup ZIP failed: ${entry.error})`;
     }),
-    'Sign in with `kemudi auth`, then open the extension and pair the device.',
+    'Sign in with `navego auth`, then open the extension and pair the device.',
   ].join('\n');
   print(message);
   return { ok, browsers: results, message };
@@ -207,13 +207,15 @@ export async function uninstall({
   } else {
     steps.push({ step: 'device pairing', result: 'not found' });
   }
-  // WHY BOTH NAMES: the package was published as opera-agent-mcp until the 1.6.60 rebrand; a machine that installed before that day carries the legacy name, and `npm uninstall -g kemudi` alone would leave it behind.
+  // WHY THREE NAMES: the package was published as opera-agent-mcp until the rebrand, then as kemudi; a machine that installed before today carries either name.
+  // `npm uninstall -g kemudi` alone would leave navego behind.
+  // WHY the three are uninstalled together: one command feels cleaner than three separate lines.
   // One spawn, both specs.
   try {
-    spawnImpl('npm', ['uninstall', '-g', 'kemudi', 'opera-agent-mcp'], { detached: true, stdio: 'ignore' });
+    spawnImpl('npm', ['uninstall', '-g', 'navego', 'kemudi', 'opera-agent-mcp'], { detached: true, stdio: 'ignore' });
     steps.push({ step: 'npm package', result: 'uninstall spawned in its own process (both names, new and legacy); it finishes after this command exits' });
   } catch (error: unknown) {
-    steps.push({ step: 'npm package', result: `could not spawn the uninstall (${String((error as Error)?.message ?? error)}); run \`npm uninstall -g kemudi opera-agent-mcp\` yourself` });
+    steps.push({ step: 'npm package', result: `could not spawn the uninstall (${String((error as Error)?.message ?? error)}); run \`npm uninstall -g navego kemudi opera-agent-mcp\` yourself` });
   }
   const instructions = [
     'The policy entries are gone; the browser no longer forces the extension.',

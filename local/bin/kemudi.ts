@@ -9,7 +9,7 @@
 // A caller that has to remember a flag has two ways to get it wrong; a caller that names the mode cannot.
 // The modes share every tool name and every answer shape, so the choice is only about who drives the browser.
 
-const USAGE = `kemudi <mode>
+const USAGE = `navego <mode>
 
   local      drive the everyday browser on this machine, over the loopback bridge
   cloud      drive it through the hosted Navego server

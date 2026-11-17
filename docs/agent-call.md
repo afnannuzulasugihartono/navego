@@ -1,11 +1,12 @@
 # Calling Navego
 
-One road, one command: `kemudi local`. Local on the machine where the browser already is.
+One road, one command: `navego local`. Local on the machine where the browser already is.
+`kemudi` dan `opera-agent-mcp` masih berfungsi sebagai alias lama — nama urutannya tidak berubah.
 
 The install is one command:
 
 ```bash
-npm i -g kemudi
+npm i -g navego
 ```
 
 ## The installer and the driver
@@ -22,7 +23,7 @@ Point a client at it (OpenCode reads `.mcp.servers` in `~/.config/opencode/openc
     "servers": {
       "opera-agent": {
         "type": "local",
-        "command": "kemudi",
+        "command": "navego",
         "args": ["local"],
         "timeout": { "startup": 60000, "catalog": 60000, "execution": 600000 }
       }
@@ -48,7 +49,7 @@ cloud cannot be reached. A command past the session allowance answers
 session ends, so the local road and the pairing account share one daily count —
 `plan.pilot` carries 200 commands per day and 50 per session;
 `plan.firm` carries 5000 and 500. The gate lives in the bridge — never in
-readable client code. `kemudi doctor` prints the bridge, the device,
+readable client code. `navego doctor` prints the bridge, the device,
 the extension version, the plan, and the quota.
 
 `browser_status` answers with the port the drive is really on, so read it
@@ -88,7 +89,7 @@ socket is one WebSocket on `127.0.0.1:9451`.
    `chrome://extensions` with developer mode on loads it unpacked.
 2. Pair the browser in the dashboard — the meter needs a paired device to name
    the account the session belongs to.
-3. Run `kemudi doctor`. It prints the bridge, the device, the
+3. Run `navego doctor`. It prints the bridge, the device, the
    extension version, the plan, and the quota; a `degraded` verdict names the
    one fix that applies.
 

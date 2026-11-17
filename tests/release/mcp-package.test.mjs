@@ -35,8 +35,8 @@ function importsOf(source) {
 }
 
 test('the package is named and run the way the guide says', () => {
-  assert.equal(manifest.name, 'kemudi');
-  assert.ok(manifest.bin['kemudi'], 'the package installs one command');
+  assert.equal(manifest.name, 'navego');
+  assert.ok(manifest.bin['navego'], 'the package installs one command');
   assert.equal(manifest.type, 'module');
   assert.ok(manifest.engines.node, 'the package says which node it needs');
 });
@@ -187,7 +187,7 @@ test('the docs name the two modes and where the gate lives', async () => {
   const readme = await readFile(new URL('../../README.md', import.meta.url), 'utf8');
   const agentCall = await readFile(new URL('../../docs/agent-call.md', import.meta.url), 'utf8');
   const localReadme = await readFile(new URL('../../local/README.md', import.meta.url), 'utf8');
-  assert.match(readme, /kemudi/, 'the README names the installed command');
+  assert.match(readme, /navego/, 'the README names the installed command');
   assert.match(readme, /local/);
   assert.match(readme, /cloud/);
   assert.match(agentCall, /PLAN_LIMIT_REACHED/, 'the refusal is named in the docs');

@@ -10,14 +10,14 @@ export function meta() {
 }
 
 const BLOCKS = [
-  { id: 'install', title: 'Pasang paketnya', body: 'npm install -g opera-agent-mcp', note: 'Satu perintah. Paket ini memakai browser yang sudah Anda gunakan; tidak ada proses tambahan yang perlu dijaga.' },
-  { id: 'doctor', title: 'Periksa yang terhubung', body: 'opera-agent-mcp doctor', note: 'Cetakan menyatakan nama device, paket plan, dan sisa quota hari ini. Kalau tidak ada yang terhubung, paket akan mencetak langkah perbaikan yang paling mungkin.' }
+  { id: 'install', title: 'Pasang paketnya', body: 'npm install -g navego', note: 'Satu perintah. Paket ini memakai browser yang sudah Anda gunakan; tidak ada proses tambahan yang perlu dijaga.' },
+  { id: 'doctor', title: 'Periksa yang terhubung', body: 'navego doctor', note: 'Cetakan menyatakan nama device, paket plan, dan sisa quota hari ini. Kalau tidak ada yang terhubung, paket akan mencetak langkah perbaikan yang paling mungkin.' }
 ];
 
 const HARNESS: Array<{ id: string; title: string; body: string }> = [
-  { id: 'cfg-opencode', title: 'OpenCode — opencode.json atau ~/.config/opencode/opencode.json', body: '{\n  "mcp": {\n    "navego": {\n      "type": "local",\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-kilo', title: 'Kilo Code — MCP settings (JSON)', body: '{\n  "mcpServers": {\n    "navego": {\n      "command": "opera-agent-mcp",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-claude', title: 'Claude Desktop — konfigurasi MCP lokal', body: 'command: npx\nargs: ["-y", "opera-agent-mcp", "local"]' }
+  { id: 'cfg-opencode', title: 'OpenCode — opencode.json atau ~/.config/opencode/opencode.json', body: '{\n  "mcp": {\n    "navego": {\n      "type": "local",\n      "command": "navego",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-kilo', title: 'Kilo Code — MCP settings (JSON)', body: '{\n  "mcpServers": {\n    "navego": {\n      "command": "navego",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-claude', title: 'Claude Desktop — konfigurasi MCP lokal', body: 'command: npx\nargs: ["-y", "navego", "local"]' }
 ];
 
 export default function Mcp() {
@@ -83,7 +83,7 @@ export default function Mcp() {
         <div className="page-foot">
           <div>
             <h2>Operator menunggu.</h2>
-            <p>Satu perintah <code>opera-agent-mcp local</code>, lalu harness Anda langsung bisa menjalankan browser.</p>
+            <p>Satu perintah <code>navego local</code>, lalu harness Anda langsung bisa menjalankan browser.</p>
           </div>
           <Link className="btn btn-solid" to="/docs.html">Baca Docs</Link>
         </div>

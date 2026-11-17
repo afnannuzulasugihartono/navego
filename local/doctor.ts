@@ -49,7 +49,7 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
   } else if (stored) {
     say('cloud login', `signed in (token expires ${new Date(Number(stored.expires_at) || 0).toISOString()})`);
   } else {
-    say('cloud login', 'not signed in — cloud mode needs it (`kemudi auth`, or OPERA_AGENT_MCP_TOKEN)');
+    say('cloud login', 'not signed in — cloud mode needs it (`navego auth`, or OPERA_AGENT_MCP_TOKEN)');
   }
 
   const probe = await probeBridge(port, fetchImpl);
@@ -97,6 +97,6 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
   const ready = problems.length === 0;
   say('verdict', ready ? 'ready' : `degraded: ${problems[0]}`);
   for (const problem of problems.slice(1)) say('  also', problem);
-  stdout.write(`kemudi doctor\n\n${lines.join('\n')}\n`);
+  stdout.write(`navego doctor\n\n${lines.join('\n')}\n`);
   return ready ? 0 : 1;
 }
