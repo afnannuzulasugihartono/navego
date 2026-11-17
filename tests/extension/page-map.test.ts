@@ -7,7 +7,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 await import('../../extension/lib/page-map.js');
-assert.ok(globalThis.OperaAgentPageMap, 'OperaAgentPageMap published');
+if (!globalThis.OperaAgentPageMap) throw new Error('OperaAgentPageMap published');
 const {
   PAGE_MAP_CLASSES, CLASS_FIELDS, PAGE_MAP_MAX_ELEMENTS,
   classify, isMapClass, isActionableClass, projectElement, paginate, summarizeClass

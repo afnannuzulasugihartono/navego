@@ -9,7 +9,7 @@
 # only the first is ours to maintain:
 #
 #   Layer 1 (this file). Every file that DEFINES an acceptance criterion is
-#   pinned here by git-blob SHA1, LF-normalized so a Windows checkout agrees with
+#   pinned here by git-blob SHA-256, LF-normalized so a Windows checkout agrees with
 #   CI. Changing one without deliberately re-pinning it fails `npm run check`
 #   before anything else runs. That does not stop a determined edit; it stops a
 #   SILENT one, and it forces the admission into the diff, where a reviewer can
@@ -38,7 +38,7 @@
 # reading this to find the soft spot in the design, that file is it, and the
 # honest answer is that closing it needs branch protection, not another hash.
 #
-# FORMAT: <path> <40-hex git blob sha1>. Re-pinning is a reviewed act: write the
+# FORMAT: <path> <64-hex git blob sha256>. Re-pinning is a reviewed act: write the
 # new hash here and say in the commit why the criterion it enforces did or did
 # not change. A pin with no stated reason is an obstacle to be routed around.
 
@@ -156,32 +156,32 @@
 #    tests/helpers/canonical-source-hash.ts strips the comment lines and collapses
 #    the whitespace before hashing a tool schema, so the pin holds the tool's
 #    contract and not its indentation.
-scripts/verify/check.ts da6a0e71cb6a8bde2c9401f9d216a2361a81632f
-scripts/verify/scope.ts b4ffa9f02ce0aac2e8f3846812ad3dec2fe078d3
-scripts/verify/scope-check.ts 96203fa5b6ebfeb5e8eca8d4abfed50a43579634
+scripts/verify/check.ts e40fafc2ea8f3be35bd9ae8309e4ff9637ae1a23ccbeafcf7848f51d8c3bd563
+scripts/verify/scope.ts be9814cb16f92be323822d99c1182a88c94a68696e30ebbfd3f3fedc3bec8d73
+scripts/verify/scope-check.ts 446f0471915b9ecb99caa3809eee2c44ae14ae8b23a0f907abeecb86e4397815
 
 # --- the pins themselves: editing these is how a drift goes unnoticed ---
-tests/helpers/boundary-locks.ts 38bd5e784f9b7d3187daab72c4442890cd9f6eb5
-tests/helpers/canonical-source-hash.ts 7b9b165d2b134f42d54cc3f370e1b810aedbe2eb
-tests/helpers/comment-format.ts 8d0b0df215ffe6151b25864dd27396f59c242583
-tests/docs/comment-format.test.ts c2ea20f7a653da95cc7d22742be1a42ad59c3ab6
-tests/docs/comment-claims.test.ts 03ddf706d00e8fe1ed617ce95dc60c4dc8e37666
+tests/helpers/boundary-locks.ts 3175bd9a0f42bcf329e88ee721f9612796788c0aa6af384fa426b550ba4825fb
+tests/helpers/canonical-source-hash.ts f156e8ebaa77f91cfb2199b40990b58a73ae70b80eeff625028426dcde01d614
+tests/helpers/comment-format.ts b2610553445fa3c095d02a779afc6170496c488e936559a1848212fae14d80d3
+tests/docs/comment-format.test.ts 1cd8037c4b51001900dfc54a7a63a2dadabda27fd5bd5fff9d6e7e773cd205f6
+tests/docs/comment-claims.test.ts 6f5eb92a639e93a2ff4d07483fd2a6b2ef99661b16e5491350b1d752700d74f9
 
 # --- structural rules a human reviewer would otherwise have to remember ---
-tests/tooling/hygiene.test.ts 145aa6ab96c10147428345a1439f49a22989ca4d
-tests/tooling/structure-gates.test.ts ceeecb0e2d41c4d19827658b4ca37de27856a8c1
-tests/tooling/boundary-locks.test.ts 33269292a20e1c985a143d18568b75bf628c85f1
+tests/tooling/hygiene.test.ts 43e71e64dd6a5c0db25690c6df6f346b73c478f0cc98cf90df45da8e6aff81d9
+tests/tooling/structure-gates.test.ts acbdeb14701470ceedc034b0165dbc49e1aea662b6ad61274b82f6960e379419
+tests/tooling/boundary-locks.test.ts bf7ec1c77b9e60603d8e602d9a3d37de942b02af00d7318bd39fbfadb58b4711
 
 # --- controls that decide what the product accepts at runtime ---
-extension/lib/protocol.ts 0134528a4b2fd1c89199866b75ee171fa8665ac7
+extension/lib/protocol.ts d98605ee1ca383693a2c7bd7706872b782524c9d33c9379d1f09a9558cb46722
 # The runtime-safety scan moved from shared/secret-pattern.js to shared/secret-pattern.ts when the core became strict TypeScript; the artifact is tsc output and is never committed, so the criterion pins the source.
-shared/secret-pattern.ts a486a9ce4f2f7205f6128f17fc6a799a8eef2792
+shared/secret-pattern.ts 6f4645b11979a776af33000eb68b438d15e60659a7847e5e376c9cc481c1b546
 # The one pinned shared edge module moved from .js to .ts unchanged; same bytes, same criterion, new path.
-hosted/functions/_shared/cors.ts 77d845c17e56f58f5c08aa464933a132101150f8
+hosted/functions/_shared/cors.ts c907e0747487a4ce72c845cd12bfc142b2ab9b9cf22e67887be314d67a8588db
 
 # --- surfaces an owner, not an agent, should have to look at ---
 # The merge took main's Kemudi manifest for the file and this branch's .gitleaks.toml bytes; both pins match what the merged tree actually holds.
-extension/manifest.json 06baefcad982fdabb73a871d946940c234354a17
-.gitleaks.toml 8171cc4f841be2dc8135d6158689f6768dcd24e2
-.github/CODEOWNERS ac3ba44e7903bea60c85f5f33db3afb1f85073d0
-.github/workflows/ci.yml d235ba38ef9059213d3b64fd5c3f168fed3a1f81
+extension/manifest.json 46af96ef36e8cab18c5e5d8ebf4659b6c216579f886d78b47ebec01aa65d94ed
+.gitleaks.toml 8146a2aa9a6a45482111e8f503f4cf5a0318f3bd61cd58a4bab7cbc1aa781d38
+.github/CODEOWNERS 3cb57783d6bc4c8feb45b0a0651b8e84144ab11cc2d1677f4b8e5894e32b4dca
+.github/workflows/ci.yml 27f2e409b0feef303df52a26a6f0080e2357709a5d0ea69514f8a3bec02024d6

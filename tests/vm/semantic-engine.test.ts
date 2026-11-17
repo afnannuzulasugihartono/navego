@@ -109,8 +109,8 @@ interface ViewsModule {
   createViewEngine: (options?: Record<string, unknown>) => ViewEngine;
 }
 
-assert.ok(globalThis.OperaAgentSemanticIdentity, 'semantic-identity.js did not install the global');
-assert.ok(globalThis.OperaAgentSemanticViews, 'semantic-views.js did not install the global');
+if (!globalThis.OperaAgentSemanticIdentity) throw new Error('semantic-identity.js did not install the global');
+if (!globalThis.OperaAgentSemanticViews) throw new Error('semantic-views.js did not install the global');
 const { createIdentityEngine } = globalThis.OperaAgentSemanticIdentity as unknown as IdentityModule;
 const { COMPLETION_STATUSES, classifyCompletion, createViewEngine } = globalThis.OperaAgentSemanticViews as unknown as ViewsModule;
 

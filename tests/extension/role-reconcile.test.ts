@@ -35,7 +35,7 @@ interface RoleReconcileRuntime {
 
 await import('../../extension/role-reconcile.js');
 const roleRuntime = globalThis.OperaAgentRoleReconcile;
-assert.ok(roleRuntime, 'OperaAgentRoleReconcile published');
+if (!roleRuntime) throw new Error('OperaAgentRoleReconcile published');
 const {
   GENERIC_ROLES,
   axRoleIndex,

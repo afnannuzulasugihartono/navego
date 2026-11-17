@@ -88,7 +88,7 @@ function repoFiles() {
 
 async function targets() {
   const inRepo = repoFiles();
-  const files = (await walk(root)).filter(shouldFormat).filter((file) => !inRepo || inRepo.has(file)).sort();
+  const files = (await walk(root)).filter(shouldFormat).filter((file) => !inRepo || inRepo.has(file)).sort((a, b) => a.localeCompare(b));
   return files.map((file) => ({ file, ext: path.extname(file).toLowerCase() }));
 }
 

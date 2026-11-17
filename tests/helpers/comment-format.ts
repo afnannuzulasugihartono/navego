@@ -553,12 +553,13 @@ function formatSentences(text: any, ext: any) {
   const groups = groupsOf(record(text, ext));
   const byStart = new Map(groups.map((group) => [group.start, group]));
   const out = [];
-  for (let i = 0; i < lines.length; i += 1) {
+  let i = 0;
+  while (i < lines.length) {
     const group = byStart.get(i);
-    if (!group) { out.push(lines[i]); continue; }
+    if (!group) { out.push(lines[i]); i += 1; continue; }
     const formatted = group.kind === 'line' ? formatLineGroup(group) : formatBlockGroup(group);
     out.push(...formatted);
-    i = group.end;
+    i = group.end + 1;
   }
   return out.join('\n');
 }
@@ -569,9 +570,10 @@ function addSpacing(text: any, ext: any) {
   const groups = groupsOf(records);
   const byStart = new Map(groups.map((group) => [group.start, group]));
   const out = [];
-  for (let i = 0; i < lines.length; i += 1) {
+  let i = 0;
+  while (i < lines.length) {
     const group = byStart.get(i);
-    if (!group) { out.push(lines[i]); continue; }
+    if (!group) { out.push(lines[i]); i += 1; continue; }
 
     const first = group.records[0];
     const header = first.indent === '' && !directiveTexts(group.records.map((line: any) => line.text));
@@ -585,7 +587,7 @@ function addSpacing(text: any, ext: any) {
       && records[group.end + 1] === null) {
       out.push('');
     }
-    i = group.end;
+    i = group.end + 1;
   }
   return out.join('\n');
 }

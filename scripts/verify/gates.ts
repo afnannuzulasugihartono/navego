@@ -1,6 +1,6 @@
 // @last-edited: 2026-10-10 UTC+7.
 // @title: gates — verify or deliberately re-pin the acceptance surface.
-// @state: reads gates.lock, compares git-blob SHA1s, reports drift; refresh never runs from the gate.
+// @state: reads gates.lock, compares git-blob SHA-256s, reports drift; refresh never runs from the gate.
 // @dependencies: node:fs, node:path, node:crypto, node:url.
 
 // WHY this is its own program and not a block inside scripts/verify/check.ts: the thing that verifies the gates must not be editable by editing the gate it verifies.
@@ -25,18 +25,19 @@ function readGateEntries(): GateEntry[] {
     .map((line) => line.trim())
     .filter((line) => line && !line.startsWith('#'))
     .map((line): GateEntry => {
-      const match = /^(\S+)\s+(?:([0-9a-f]{40})(?:\s.*)?|(.*))\s*$/.exec(line);
-      if (!match) throw new Error(`gates.lock has a malformed entry: ${line}`);
-      return { file: match[1] as string, sha: match[2] ?? null };
+      const parts = line.split(/\s+/);
+      if (parts.length > 2) throw new Error(`gates.lock has a malformed entry: ${line}`);
+      const [file, sha] = parts;
+      return { file: file as string, sha: sha ?? null };
     });
 }
 
-function sha1Blob(relativePath: string): string | null {
+function sha256Blob(relativePath: string): string | null {
   const absolute = path.join(root, relativePath);
   if (!fs.existsSync(absolute)) return null;
   const bytes = fs.readFileSync(absolute);
   const content = Buffer.from(bytes.toString('utf8').replace(/\r\n/g, '\n'), 'utf8');
-  return crypto.createHash('sha1')
+  return crypto.createHash('sha256')
     .update(Buffer.from(`blob ${content.length}\0`)).update(content).digest('hex');
 }
 
@@ -50,11 +51,11 @@ for (const { file, sha } of entries) {
   if (seen.has(file)) throw new Error(`gates.lock lists ${file} twice; one pin per criterion`);
   seen.add(file);
 
-  const actual = sha1Blob(file);
+  const actual = sha256Blob(file);
   if (actual === null) { missing.push(file); continue; }
 
   if (!sha) { unpinned.push(file); continue; }
-  if (!/^[0-9a-f]{40}$/.test(sha)) throw new Error(`gates.lock has a malformed pin for ${file}`);
+  if (!/^[0-9a-f]{64}$/.test(sha)) throw new Error(`gates.lock has a malformed pin for ${file}`);
   if (actual !== sha) drifted.push({ file, was: sha, now: actual });
 }
 
@@ -65,7 +66,7 @@ if (refreshing) {
     process.exit(1);
   }
   const toWrite = [
-    ...unpinned.map((file) => ({ file, was: null, now: sha1Blob(file) })),
+    ...unpinned.map((file) => ({ file, was: null, now: sha256Blob(file) })),
     ...drifted
   ];
   if (!toWrite.length) {

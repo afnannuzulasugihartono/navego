@@ -19,22 +19,42 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, copyFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, resolve, sep } from 'node:path';
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
 const git = (...args: string[]) => execFileSync('git', args, { cwd: repo, encoding: 'utf8' }).trim();
+
+const SEGMENT = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
+const requireName = (value: string | undefined, what: string): string => {
+  if (!value || !SEGMENT.test(value)) {
+    throw new Error(`${what} must match [A-Za-z0-9][A-Za-z0-9._-]{0,63}, got: ${JSON.stringify(value ?? '')}`);
+  }
+  return value;
+};
+const requireBranch = (value: string | undefined, what: string): string => {
+  const branch = value ?? 'main';
+  const segments = branch.split('/');
+  if (segments.length > 6 || segments.some((segment) => !SEGMENT.test(segment))) {
+    throw new Error(`${what} must be 1-6 slash-separated segments of [A-Za-z0-9][A-Za-z0-9._-]{0,63}, got: ${JSON.stringify(branch)}`);
+  }
+  return branch;
+};
 
 const name = process.argv[2];
 const arg = process.argv[3];
 
 const commands: Record<string, (arg?: string, base?: string, topic?: string) => void> = {
   create(wanted: string | undefined, base = 'main', topic?: string) {
-    if (!wanted || wanted.startsWith('-')) throw new Error('usage: agent-worktree.ts create <name> [base-branch] [topic]');
-    const branch = `agent/${wanted}/${topic}`;
-    const path = join(repo, '..', `opera-agent-${wanted}`);
+    const wantedName = requireName(wanted, 'name');
+    const baseRef = requireBranch(base, 'base');
+    const topicRef = requireName(topic ?? 'main', 'topic');
+    const branch = `agent/${wantedName}/${topicRef}`;
+    const parent = resolve(repo, '..');
+    const path = join(parent, `opera-agent-${wantedName}`);
+    if (!path.startsWith(parent + sep)) throw new Error(`refusing to escape ${parent}: ${path}`);
     if (existsSync(path)) throw new Error(`${path} already exists; pick another name, or remove it first`);
-    git('worktree', 'add', path, '-b', branch, base);
+    git('worktree', 'add', path, '-b', branch, baseRef);
     console.log(`worktree ${path} on ${branch}`);
 
     // WHY THE ENV FILES TRAVEL WITH THE WORKTREE.
@@ -66,9 +86,11 @@ const commands: Record<string, (arg?: string, base?: string, topic?: string) => 
   },
 
   remove(wanted?: string) {
-    if (!wanted) throw new Error('usage: agent-worktree.ts remove <name>');
-    const path = join(repo, '..', `opera-agent-${wanted}`);
-    const branch = `agent/${wanted}`;
+    const wantedName = requireName(wanted, 'name');
+    const parent = resolve(repo, '..');
+    const path = join(parent, `opera-agent-${wantedName}`);
+    if (!path.startsWith(parent + sep)) throw new Error(`refusing to escape ${parent}: ${path}`);
+    const branch = `agent/${wantedName}`;
 
     const merged = git('branch', '--merged', 'main').split('\n').map((line) => line.trim().replace('* ', ''));
 

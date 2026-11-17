@@ -16,7 +16,7 @@ import { extensionSource } from '../helpers/extension-source.ts';
 
 await import('../../extension/hover-settle.js');
 const hoverSettle = globalThis.OperaAgentHoverSettle;
-assert.ok(hoverSettle, 'the settle runtime must publish itself');
+if (!hoverSettle) throw new Error('the settle runtime must publish itself');
 const { DEFAULTS, normalize, plan } = hoverSettle;
 
 test('a hover with an expected submenu name settles only when it is observed', () => {

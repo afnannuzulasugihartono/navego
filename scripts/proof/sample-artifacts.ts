@@ -18,7 +18,11 @@ import { deckFromFile } from '../../local/decks.js';
 import { documentDocxFromFile } from '../../local/documents.js';
 
 const company = path.resolve('tests/fixtures/mock-company');
+const siteRoot = path.resolve('site');
 const outDir = path.resolve(process.argv[2] ?? 'site/public/contoh');
+if (outDir !== siteRoot && !outDir.startsWith(siteRoot + path.sep)) {
+  throw new Error(`refusing to write outside ${siteRoot}: ${outDir}`);
+}
 fs.mkdirSync(outDir, { recursive: true });
 
 const workbook = spreadsheetFromFile({

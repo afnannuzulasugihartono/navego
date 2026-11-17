@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 
 await import('../../extension/lib/agent-log.js');
 const log = globalThis.OperaAgentLog;
-assert.ok(log, 'agent-log.js must install globalThis.OperaAgentLog');
+if (!log) throw new Error('agent-log.js must install globalThis.OperaAgentLog');
 
 test('a repeated fault is one row with a count', () => {
   log.clearErrors();

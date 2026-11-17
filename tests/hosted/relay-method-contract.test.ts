@@ -20,9 +20,9 @@ const seedFiles = ['hosted/migrations/20261110230000_opera_methods_from_contract
 const migration = seedFiles.map((file) => fs.readFileSync(new URL(file, root), 'utf8')).join('\n');
 
 const specMatch = protocol.match(/export const METHOD_SPECS = Object\.freeze\(\{([\s\S]*?)\n\}\);/);
-assert.ok(specMatch, 'the protocol names METHOD_SPECS');
+if (!specMatch) throw new Error('the protocol names METHOD_SPECS');
 const spec = specMatch[1];
-assert.ok(spec, 'the protocol carries the METHOD_SPECS body');
+if (!spec) throw new Error('the protocol carries the METHOD_SPECS body');
 const methods = [...spec.matchAll(/'([a-z_]+\.[a-z_]+)':\s*\{\s*timeoutMs:\s*(\w+)\s*\}/g)]
   .map((match) => ({ method: match[1], timeout: match[2] }));
 

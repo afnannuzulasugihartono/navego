@@ -12,13 +12,13 @@ const r7MigrationName = fs.readdirSync(migrationDir)
   .filter((name) => name.endsWith('.sql') && name.includes('pre_8e_r7_transcript_cleanup'))
   .sort()
   .pop();
-assert.ok(r7MigrationName, 'R7 transcript cleanup migration must exist');
+if (!r7MigrationName) throw new Error('R7 transcript cleanup migration must exist');
 
 const r7Source = fs.readFileSync(new URL(`../../hosted/migrations/${r7MigrationName}`, import.meta.url), 'utf8');
 const workflowMatch = r7Source.match(/\$wf\$([\s\S]*?)\$wf\$::jsonb/);
-assert.ok(workflowMatch, 'migration must embed the workflow JSON');
+if (!workflowMatch) throw new Error('migration must embed the workflow JSON');
 const workflowBody = workflowMatch[1];
-assert.ok(workflowBody, 'migration must embed the workflow JSON');
+if (!workflowBody) throw new Error('migration must embed the workflow JSON');
 const workflow = JSON.parse(workflowBody);
 
 const walk = (steps: any, visit: any, parents: Array<{ via: string; step: unknown }> = []) => {
@@ -31,7 +31,7 @@ const walk = (steps: any, visit: any, parents: Array<{ via: string; step: unknow
 };
 
 test('v5 registers a parseable youtube.get_transcript workflow with clean output shape (T034)', () => {
-  assert.ok(r7MigrationName, 'R7 transcript cleanup migration must exist');
+  if (!r7MigrationName) throw new Error('R7 transcript cleanup migration must exist');
   assert.equal(workflow.steps[0].id, 'yt');
   assert.deepEqual(
     Object.keys(workflow.output).sort(),

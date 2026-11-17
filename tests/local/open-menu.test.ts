@@ -27,7 +27,7 @@ const row = (name: any, depth: any, extra = {}) => ({
 
 const BAR = [row('File', 0, { branch: true }), row('Insert', 0, { branch: true })];
 const INSERT_BAR = BAR[1];
-assert.ok(INSERT_BAR);
+if (!INSERT_BAR) throw new Error('the INSERT row fixture must exist');
 const INSERT = [row('Image', 1, { branch: true }), row('Chart', 1)];
 const IMAGE = [row('Upload from computer', 2), row('By URL', 2)];
 
