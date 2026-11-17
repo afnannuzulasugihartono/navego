@@ -1,9 +1,9 @@
 # Navego
 
-Drive your own browser from an MCP client, with no dependencies. Installed as `opera-agent-mcp`; commands are `navego`, `opera-agent-mcp` and `kemudi`:
+Drive your own browser from an MCP client, with no dependencies. One command:
 
 ```bash
-npm i -g opera-agent-mcp
+npm i -g navego
 ```
 
 | mode | what drives | what it needs |
@@ -13,7 +13,7 @@ npm i -g opera-agent-mcp
 | `navego auth` | sign in once, keep the token beside this install | a browser, or `OPERA_AGENT_MCP_TOKEN` |
 | `navego doctor` | print what is connected and what the plan allows | nothing but this install |
 
-`npx -y opera-agent-mcp` is the published form of the package.
+`npx -y navego` is the published form of the package.
 
 ## Why this exists
 

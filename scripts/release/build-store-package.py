@@ -26,7 +26,7 @@ EXT = os.path.join(REPO, "extension")
 OUT_ZIP = os.path.join(REPO, "docs", "store", "opera-agent-store.zip")
 OUT_MANIFEST = os.path.join(REPO, "docs", "store", "store-manifest.json")
 
-STORE_NAME = "Kemudi"
+STORE_NAME = "Navego"
 
 STORE_DESC = (
     "Bawa asisten AI Anda mengemudikan browser: klik, ketik, isi formulir, "

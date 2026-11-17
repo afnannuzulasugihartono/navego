@@ -71,7 +71,7 @@ The ~380 ms figure for a command through the hosted MCP function is the honest e
 Sub-256 ms for the whole surface is not available on the remote path: the transport alone spends ~380 ms before the page is asked anything, and the README's own figure for the cloud path is ~380 ms per action. The one road that gets there is the local driver on this machine:
 
 ```
-npm i -g opera-agent-mcp@latest  # replaces the stale 1.6.46 install on this machine
+npm i -g navego@latest  # replaces the stale 1.6.46 install on this machine
 ```
 
 then point the OpenCode MCP entry for `opera-agent` at `navego local` instead of the remote URL (as of 2026-11 this machine's `~/.config/opencode/opencode.json` registers the remote one), and restart the session. The README measures the same action as under 1 ms through that road — the remaining milliseconds are the device's settle waits, not the transport.

@@ -49,10 +49,10 @@ test('the packed tarball carries no .ts source, keeps the generated copies, and 
     }
 
     // The shebang must survive packing; without it `npx navego` dies on a machine that cannot guess the interpreter.
-    const bin = readFileSync(path.join(packageDir, 'bin', 'kemudi.js'), 'utf8');
-    assert.equal(bin.split('\n', 1)[0].trim(), '#!/usr/bin/env node', 'bin/kemudi.js keeps its shebang on line 1');
+    const bin = readFileSync(path.join(packageDir, 'bin', 'navego.js'), 'utf8');
+    assert.equal(bin.split('\n', 1)[0].trim(), '#!/usr/bin/env node', 'bin/navego.js keeps its shebang on line 1');
 
-    const help = spawnSync(process.execPath, [path.join(packageDir, 'bin', 'kemudi.js'), '--help'], { encoding: 'utf8' });
+    const help = spawnSync(process.execPath, [path.join(packageDir, 'bin', 'navego.js'), '--help'], { encoding: 'utf8' });
     assert.equal(help.status, 0, `the packed bin answers --help: ${help.stderr || help.stdout}`);
     assert.equal((help.stdout.match(/navego <mode>/g) || []).length, 1, 'the packed bin prints the usage block exactly once');
   } finally {

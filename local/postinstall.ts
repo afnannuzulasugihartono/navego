@@ -10,7 +10,10 @@
 // The person who typed npm install asked for the extension's tooling; printing the outcome is the polite maximum.
 
 const isGlobal = process.env.npm_config_global === 'true' || process.env.npm_config_global_old === 'true';
-const disabled = process.env.CI === 'true' || process.env.OPERA_AGENT_NO_INSTALL === '1';
+
+// WHY BOTH OPT-OUT NAMES: the opt-out was named OPERA_AGENT_NO_INSTALL when the package was named that; machines and scripts that set it keep silencing the install, while the new name is NAVEGO_NO_INSTALL.
+
+const disabled = process.env.CI === 'true' || process.env.OPERA_AGENT_NO_INSTALL === '1' || process.env.NAVEGO_NO_INSTALL === '1';
 
 if (!isGlobal || disabled) process.exit(0);
 

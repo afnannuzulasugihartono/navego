@@ -207,8 +207,8 @@ export async function uninstall({
   } else {
     steps.push({ step: 'device pairing', result: 'not found' });
   }
-  // WHY THREE NAMES: the package was published as opera-agent-mcp until the rebrand, then as kemudi; a machine that installed before today carries either name.
-  // `npm uninstall -g kemudi` alone would leave navego behind.
+  // WHY THREE NAMES: the package was published as opera-agent-mcp, then as kemudi, and now ships as navego; a machine that installed before today carries either legacy name.
+  // `npm uninstall -g navego` alone would leave the legacy installs behind.
   // WHY the three are uninstalled together: one command feels cleaner than three separate lines.
   // One spawn, both specs.
   try {

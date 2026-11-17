@@ -1,11 +1,11 @@
 # @last-edited: 2026-11-15 UTC+7.
 # @title: install - one command turns an empty Windows machine into a browser that has Navego.
 # @state: unmeasured as of 2026-11-15 on this machine: the mechanism changed to the forcelist policy on that date and no throwaway profile has been driven since. The 2026-11-12 measurements applied to the classic-key route, which is retired with this change; they are preserved in git history, not carried forward as claims.
-# @dependencies: `docs/external-install.md`, `docs/store/extension-forceinstall.reg`, `docs/store/extension-forceinstall-remove.reg`, `local/install.ts`, `local/postinstall.ts`, `local/registry.ts`, `local/bin/kemudi.ts`.
+# @dependencies: `docs/external-install.md`, `docs/store/extension-forceinstall.reg`, `docs/store/extension-forceinstall-remove.reg`, `local/install.ts`, `local/postinstall.ts`, `local/registry.ts`, `local/bin/navego.ts`.
 
 # WHAT THE COMMAND DOES
 
-`navego install` (and `npm i -g opera-agent-mcp`, via the postinstall hook):
+`navego install` (and `npm i -g navego`, via the postinstall hook):
 
 1. Only on Windows. On any other OS it prints the Web Store path and exits 0.
 2. Detects the Chromium browsers this machine carries - Chrome, Brave, Edge and Chrome for Testing - by probing the install paths each one lives at (`local/browsers.ts`, the same table the driver uses; no second list). Chrome for Testing has no canonical install path - it ships as pinned `chromium-<rev>` zips - so the probe is a one-level wildcard over the usual cache folders instead of an exact-path guess.
@@ -13,9 +13,9 @@
 4. Creates `%LOCALAPPDATA%\OperaAgent\{Chrome,Brave,Edge}\` only for the browsers found, containing a **verified** copy of the build (`opera-agent.zip`, sha256 checked against the `x-opera-sha256` header of the public update endpoint before the bytes are written) plus a README that explains the whole mechanism and the manual fallback. Chrome for Testing is detected but deliberately not force-installed - no verified policy path exists for the test binary - and it gets no folder; load it unpacked instead.
 5. Runs `navego doctor` and prints what remains human: sign in with `navego auth` (OAuth, one browser round trip), then click **Pasangkan browser ini** in the extension popup - the dashboard mints a single-use code and delivers it straight to the extension; nothing to type.
 
-`npm i -g opera-agent-mcp` performs the same install silently from the
+`npm i -g navego` performs the same install silently from the
 `postinstall` hook, but only when installed globally, never in CI, and only
-when `OPERA_AGENT_NO_INSTALL` is unset. `OPERA_AGENT_NO_INSTALL=1 npm i -g opera-agent-mcp` opts out. The postinstall hook can never turn an npm install red.
+when `NAVEGO_NO_INSTALL` is unset (`OPERA_AGENT_NO_INSTALL=1` still works). `NAVEGO_NO_INSTALL=1 npm i -g navego` opts out. The postinstall hook can never turn an npm install red.
 
 # WHAT THE UNINSTALL DOES
 
@@ -49,7 +49,7 @@ when `OPERA_AGENT_NO_INSTALL` is unset. `OPERA_AGENT_NO_INSTALL=1 npm i -g opera
 # THE TWO COMMANDS
 
 ```
-npm i -g opera-agent-mcp            # or: npx opera-agent-mcp install
+npm i -g navego            # or: npx navego install
 navego auth                 # the one human step: sign in
 # pair the device in the extension; that part takes one code and nothing else
 
