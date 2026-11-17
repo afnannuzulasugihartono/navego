@@ -48,9 +48,10 @@ function stripStar(text: any) {
 
 function yamlScalarRanges(lines: string[]): Array<{ start: number; end: number; node: boolean }> {
   const ranges: Array<{ start: number; end: number; node: boolean }> = [];
-  for (let i = 0; i < lines.length; i += 1) {
+  let i = 0;
+  while (i < lines.length) {
     const open = /^(\s*)[^\s#][^:]*:\s*[|>][-+]?\d?\s*$/.exec(lines[i] ?? '');
-    if (!open) continue;
+    if (!open) { i += 1; continue; }
     const keyIndent = open[1]?.length ?? 0;
     let end = i;
     let node = false;
@@ -62,7 +63,7 @@ function yamlScalarRanges(lines: string[]): Array<{ start: number; end: number; 
       end = j;
     }
     ranges.push({ start: i + 1, end, node });
-    i = end;
+    i = end + 1;
   }
   return ranges;
 }
@@ -109,7 +110,8 @@ function regexAllowed(line: any, index: any) {
 
 function templateAfter(line: any, inTemplate: any) {
   let state = inTemplate ? 'template' : 'code';
-  for (let i = 0; i < line.length; i += 1) {
+  let i = 0;
+  while (i < line.length) {
     const c = line[i];
     const d = line[i + 1];
     if (state === 'code') {
@@ -117,12 +119,12 @@ function templateAfter(line: any, inTemplate: any) {
       if (c === '/' && d === '*') {
         const end = line.indexOf('*/', i + 2);
         if (end === -1) break;
-        i = end + 1;
+        i = end + 2;
         continue;
       }
       if (c === '/' && regexAllowed(line, i)) {
         const end = regexEnd(line, i);
-        if (end !== -1) { i = end; continue; }
+        if (end !== -1) { i = end + 1; continue; }
       }
       if (c === "'" || c === '"') {
         const quote = c;
@@ -132,13 +134,16 @@ function templateAfter(line: any, inTemplate: any) {
           if (line[i] === quote) break;
           i += 1;
         }
+        i += 1;
         continue;
       }
-      if (c === '`') { state = 'template'; continue; }
-    } else {
-      if (c === '\\') { i += 1; continue; }
-      if (c === '`') { state = 'code'; continue; }
+      if (c === '`') { state = 'template'; i += 1; continue; }
+      i += 1;
+      continue;
     }
+    if (c === '\\') { i += 2; continue; }
+    if (c === '`') { state = 'code'; i += 1; continue; }
+    i += 1;
   }
   return state === 'template';
 }
@@ -292,9 +297,10 @@ function record(text: any, ext: any) {
 
 function groupsOf(records: any) {
   const groups = [];
-  for (let i = 0; i < records.length; i += 1) {
+  let i = 0;
+  while (i < records.length) {
     const current = records[i];
-    if (!current) continue;
+    if (!current) { i += 1; continue; }
     if (current.kind === 'line') {
       let end = i;
       while (end + 1 < records.length
@@ -303,7 +309,7 @@ function groupsOf(records: any) {
         && records[end + 1].marker === current.marker
         && records[end + 1].indent === current.indent) end += 1;
       groups.push({ kind: 'line', start: i, end, records: records.slice(i, end + 1) });
-      i = end;
+      i = end + 1;
       continue;
     }
     let end = i;
@@ -312,7 +318,7 @@ function groupsOf(records: any) {
       && records[end + 1].kind === 'block'
       && records[end + 1].id === current.id) end += 1;
     groups.push({ kind: 'block', start: i, end, records: records.slice(i, end + 1) });
-    i = end;
+    i = end + 1;
   }
   return groups;
 }
@@ -363,28 +369,57 @@ function inSpans(index: number, spans: Array<[number, number]>) {
   return spans.some(([start, end]) => index >= start && index < end);
 }
 
+function findSentenceCuts(text: any) {
+  const out: Array<{ index: number; run: string; punctuation: string }> = [];
+  for (let i = 0; i < text.length; i += 1) {
+    const c = text[i];
+    if (c !== '.' && c !== '!' && c !== '?') continue;
+    let runEnd = i + 1;
+    while (runEnd < text.length && '.!?'.includes(text[runEnd] ?? '')) runEnd += 1;
+    let tailEnd = runEnd;
+    while (tailEnd < text.length && '"\')]'.includes(text[tailEnd] ?? '')) tailEnd += 1;
+    let wsEnd = tailEnd;
+    while (wsEnd < text.length && /\s/.test(text[wsEnd] ?? '')) wsEnd += 1;
+    if (wsEnd === tailEnd) { i = runEnd - 1; continue; }
+    out.push({ index: i, run: text.slice(i, runEnd), punctuation: text.slice(i, tailEnd) });
+    i = wsEnd - 1;
+  }
+  return out;
+}
+
+function trailingToken(text: string) {
+  // WHY A MANUAL SCAN AND NOT /([A-Za-z][\w.]*|\d[\w.]*)$/.
+  // The two alternatives both swallow word characters and dots, which is the overlapping-alternation shape the linear-runtime rules forbid.
+  // The scan walks back over [\w.]
+  // once and then steps to the first letter or digit, which is the same string the regex found.
+  let end = text.length;
+  let start = end;
+  while (start > 0) {
+    const ch = text[start - 1] ?? '';
+    if (!/[\w.]/.test(ch)) break;
+    start -= 1;
+  }
+  while (start < end && !/[A-Za-z0-9]/.test(text.charAt(start))) start += 1;
+  return text.slice(start, end);
+}
+
 function sentenceCuts(text: any) {
   const code = codeSpans(text);
   const quotes = quotedSpans(text);
   const cuts = [];
-  for (const match of text.matchAll(/[.!?]+["')\]]*\s+/g)) {
+  for (const match of findSentenceCuts(text)) {
     const at = match.index;
     if (inSpans(at, code) || inSpans(at, quotes)) continue;
 
-    const runMatch = /^[.!?]+/.exec(match[0]);
-    if (!runMatch) continue;
-    const run = runMatch[0];
+    const run = match.run;
     if (/^\.{2,}$/.test(run)) continue;
 
     const before = text.slice(0, at).trimEnd();
-    const token = (/([A-Za-z][\w.]*|\d[\w.]*)$/.exec(before) || [])[1] || '';
+    const token = trailingToken(before);
     if (ABBREVIATIONS.has(token.toLowerCase())) continue;
     if (/^[A-Z]$/.test(token)) continue;
 
-    const punctuationMatch = /^[.!?]+["')\]]*/.exec(match[0]);
-    if (!punctuationMatch) continue;
-    const punctuation = punctuationMatch[0];
-    const cut = at + punctuation.length;
+    const cut = at + match.punctuation.length;
     if (cut < text.length) cuts.push(cut);
   }
   return cuts;
