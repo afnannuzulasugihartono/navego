@@ -1,0 +1,52 @@
+# Navego
+
+Drive your own signed-in browser from an MCP client — no cloud hop, no exported session, one npm install.
+
+## One command to try
+
+```bash
+npm i -g navego
+navego auth     # sign in once; the token stays on this machine
+navego doctor   # prints bridge, device, plan, quota — the fix when degraded
+```
+
+From any MCP client:
+
+```json
+{
+  "mcpServers": {
+    "navego": { "command": "navego", "args": ["local"] }
+  }
+}
+```
+
+## What it does
+
+- 45 `browser_*`/`artifact_*`/`delivery_*`/`wallet_*` tools over the loopback bridge — your own everyday browser, Canvas/UI paths (Google Sheets, Docs), plus the meter your plan pays for.
+- Reads pages, clicks, types, navigates, downloads artifacts, records sessions.
+- Publisher: `afnannuzulasugihartono/navego` (GitHub). Package: `navego` (npm). License: MIT.Protocol 1, 36-primitive wire allowlist.
+
+## What it does not do
+
+- Does not send browsing traffic to a remote browser or cloud driver.
+- Does not bypass paywalls, captchas, sign-in walls, or rate limits — nothing does and this cannot.
+- Does not run per-site code or free `eval` in the browser.
+
+## Docs
+
+- `README.md` — product boundary, boundary rules, runtime contract.
+- `docs/agent-friendly.md` — per-client copy-paste setup for Claude Code/Desktop, OpenCode, Cursor, Windsurf, Zed, Cherry Studio.
+- `docs/agent-call.md` — env vars, metering, PLAN_LIMIT_REACHED behavior, § the meter.
+- `docs/api.md` — the 36 primitives and the wire contract.
+- `docs/releases/` — release notes by version.
+- `ARCHITECTURE.md` / `AGENTS.md` — repo layout and the rules the repo enforces.
+- `SECURITY.md` — private vulnerability disclosure route.
+
+## Fast facts for agents
+
+- Claim a tab before any action: `browser_tabs_list`, then act on the `tabId` you claim; never guess a tab id.
+- Your first call should be `browser_get_guide` — it returns the 45 tools as tasks, not a list you have to read.
+- `browser_read_page` answers with the measured text and says `settled: null` when one sample cannot say yet; pair with `browser_wait_until`.
+- Google Sheets / Docs render to canvas; there is no element to write to or text to read back. The SERP/MEMO delivery kits cover the Google flow; the docs do not invent credentials for you.
+- `navego doctor` is the one command to reach for — its verdict names the fix.
+- `PLAN_LIMIT_REACHED` answers with the plan name; upgrade in the dashboard, not in code.
