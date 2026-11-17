@@ -21,7 +21,7 @@ import sys
 import tempfile
 import zipfile
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 EXT = os.path.join(REPO, "extension")
 OUT_ZIP = os.path.join(REPO, "docs", "store", "navego-store.zip")
 OUT_MANIFEST = os.path.join(REPO, "docs", "store", "store-manifest.json")
