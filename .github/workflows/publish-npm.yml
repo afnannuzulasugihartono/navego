@@ -10,8 +10,16 @@
 # npm is restricting the tokens that bypass two-factor authentication, and direct publishing with one ends in January 2027.
 # Trusted publishing replaces the token with the runner's own identity: the workflow asks GitHub for a signed token, npm reads the repository and the workflow out of it, and nothing is stored on any machine.
 # So the identity lives in the npm package settings (GitHub Actions: afnannuzulasugihartono / navego / publish-npm.yml) and this file is the other half of that pair.
+
+# WHY THERE IS A TOKEN FALLBACK, 2026-11-18.
+# The publish on the runner answered E404 on npm's side, which is what a missing or mismatched trusted-publisher entry looks like; the npm package settings are the owner's page to edit and the agent cannot see them.
+# Until npm answers OIDC, the step below falls back to the NPM_TOKEN secret (which the 1.7.5 release used) and says so in the job log.
+# The token stays inside GitHub secrets; nothing is printed, nothing is copied to a workstation.
+# When the npm trusted-publisher entry matches this repo and this workflow again, the OIDC path wins and the fallback is never taken.
+# The January 2027 sunset for 2FA-bypass tokens is unchanged; the fallback must not become the road.
 # WHY THE INSTALL IS IN THE GATES STEP.
-# `npm test` compiles the tree at pretest and then biome and the auditors walk it; a bare runner has none of those binaries, and the job exited 127 before the registry was ever reached. The install goes first, exactly as CI does it.
+# `npm test` compiles the tree at pretest and then biome and the auditors walk it; a bare runner has none of those binaries, and the job exited 127 before the registry was ever reached.
+# The install goes first, exactly as CI does it.
 
 name: Publish npm
 
@@ -68,9 +76,23 @@ jobs:
         working-directory: local
         run: npm pack --dry-run
 
-      - name: Publish with provenance
+      - name: Publish with provenance, or fall back to the token with the reason in the log
         working-directory: local
-        run: npm publish --provenance --access public
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if npm publish --provenance --access public; then
+            echo "published with the runner's OIDC identity"
+            exit 0
+          fi
+          code=$?
+          echo "OIDC publish refused (exit $code); npm answered E404, which is what a missing or mismatched trusted-publisher entry looks like"
+          if [ -z "${NPM_TOKEN}" ]; then
+            echo "no NPM_TOKEN secret configured; refusing to publish without either identity"
+            exit "$code"
+          fi
+          echo "falling back to the NPM_TOKEN secret; the OIDC entry on npmjs.com should be fixed so this branch is not taken"
+          NODE_AUTH_TOKEN="${NPM_TOKEN}" npm publish --access public
 
       - name: The registry answers with the version
         run: |
