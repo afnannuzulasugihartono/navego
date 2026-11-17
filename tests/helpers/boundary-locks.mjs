@@ -167,10 +167,13 @@
 // WHY background.ts was re-pinned on 2026-11-17: the owner unified the product name to Navego.
 // `product` on browser.ping now answers 'Navego'; the wire contract, the extension id and every other byte are untouched, so the pin moves with the reviewed one-line change and nothing else.
 
+// WHY these three were re-pinned on 2026-11-17: the 1.7.2 release rode them.
+// The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
+
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
   ['../extension/content.ts', '02365ade2ed83b234e7056ff51c3b7b41b1cacf66c74fdad41e1009b8f464fa5'],
   ['../extension/background.ts', 'b2e496988683da01a2248ba214edf8f18182d3eeeb25e0823603edd528752316'],
-  ['../extension/manifest.json', 'e00b38319a789c0dcfdb9fc2852c026fc505b483cb286cb46a566dbe5a5c2fd8'],
+  ['../extension/manifest.json', '7eeb2b33b2f82eb73238667a2ce020c21e7de8ee58c8f1efdc0069e00a29b669'],
 ]);
 
 export const OBSERVATION_STACK_LOCKS = Object.freeze([
