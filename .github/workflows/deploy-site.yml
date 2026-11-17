@@ -1,4 +1,4 @@
-# @last-edited: 2026-11-16 UTC+7.
+# @last-edited: 2026-11-18 UTC+7.
 # @title: deploy-site — builds site/ and publishes its build/client to Cloudflare Pages.
 # @state: manual only; CI runs on every push and this decides when the site moves.
 # @dependencies: wrangler, the site/ React Router + TypeScript project, CF_TOKEN and CF_ACCOUNT_ID secrets.
@@ -60,6 +60,7 @@ jobs:
             echo "::error::CF_TOKEN and CF_ACCOUNT_ID are unset; not publishing from a guess"
             exit 1
           fi
+          npx --yes wrangler@4 pages project list | grep -q navego || npx --yes wrangler@4 pages project create navego --production-branch=main
           npx --yes wrangler@4 pages deploy site/build/client \
             --project-name=navego \
             --branch=main \
