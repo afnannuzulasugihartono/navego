@@ -1,0 +1,84 @@
+# @last-edited: 2026-11-18 UTC+7.
+# @title: publish-mcp - publishes the local MCP server to the MCP Registry with the runner's own identity.
+# @state: the same tag that npm publishes pushes the server metadata into the registry.
+# @dependencies: npm trusted publishing (OIDC for npm), GitHub OIDC for the MCP registry.
+
+name: Publish MCP
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: The version to publish, matching local/package.json.
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: publish-mcp
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish the server to the MCP Registry
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      MCP_PUBLISHER_VERSION: v1.8.1
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: The version in the tree is the version asked for
+        env:
+          ASKED: ${{ inputs.version }}
+        run: |
+          VERSION="$(node -p "require('./local/package.json').version")"
+          if [ "${VERSION}" != "${ASKED}" ]; then
+            echo "the package says ${VERSION} and the dispatch asked for ${ASKED}"
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22.20.0
+
+      - name: Run tests
+        run: npm test --if-present || npm test
+
+      - name: Build package
+        run: npm run build --if-present
+
+# WHY THE COSIGN INSTALLER IS PINNED BY COMMIT SHA.
+# A mutable tag would let an attacker swap what the publish step accepts as a trusted binary.
+# The v4.1.2 release is the closest tag to this SHA; bump it deliberately, not by editing without a release commit.
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
+
+      - name: Download and verify mcp-publisher
+        run: |
+          set -euo pipefail
+          os="$(uname -s | tr '[:upper:]' '[:lower:]')"
+          arch="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
+          archive="mcp-publisher_${os}_${arch}.tar.gz"
+          base_url="https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}"
+
+          curl --fail --location --silent --show-error --output "$archive" "$base_url/$archive"
+          curl --fail --location --silent --show-error --output "$archive.sigstore.json" "$base_url/$archive.sigstore.json"
+          cosign verify-blob \
+            --bundle "$archive.sigstore.json" \
+            --certificate-identity "https://github.com/modelcontextprotocol/registry/.github/workflows/release.yml@refs/tags/${MCP_PUBLISHER_VERSION}" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            "$archive"
+          tar xzf "$archive" mcp-publisher
+          rm -f "$archive" "$archive.sigstore.json"
+
+      - name: Authenticate to MCP Registry
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish server to MCP Registry
+        run: ./mcp-publisher publish

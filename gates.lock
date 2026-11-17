@@ -156,12 +156,12 @@
 #    tests/helpers/canonical-source-hash.ts strips the comment lines and collapses
 #    the whitespace before hashing a tool schema, so the pin holds the tool's
 #    contract and not its indentation.
-scripts/verify/check.ts bb4f02dd9b906c73523bf6f1c6ec089e00c39a97a180c108d3f63db56e8c5444
+scripts/verify/check.ts 007af3449468e3ba999e9ad709412c8295b6042aef9782a6d38361a939c3b25f
 scripts/verify/scope.ts be9814cb16f92be323822d99c1182a88c94a68696e30ebbfd3f3fedc3bec8d73
 scripts/verify/scope-check.ts 446f0471915b9ecb99caa3809eee2c44ae14ae8b23a0f907abeecb86e4397815
 
 # --- the pins themselves: editing these is how a drift goes unnoticed ---
-tests/helpers/boundary-locks.ts 8430730351242d06f4ea546d3090c5e543f307df5447f46f556fafaadb58e908
+tests/helpers/boundary-locks.ts 9222b0efefc3186942de48756e37918df12849f6729dc2429935700b37e5cb28
 tests/helpers/canonical-source-hash.ts f156e8ebaa77f91cfb2199b40990b58a73ae70b80eeff625028426dcde01d614
 tests/helpers/comment-format.ts 1edb82d5a06669a056a9632a5d294aa22875f6b703b836dded31bbb855f7dd67
 tests/docs/comment-format.test.ts 1cd8037c4b51001900dfc54a7a63a2dadabda27fd5bd5fff9d6e7e773cd205f6
@@ -173,7 +173,7 @@ tests/tooling/structure-gates.test.ts acbdeb14701470ceedc034b0165dbc49e1aea662b6
 tests/tooling/boundary-locks.test.ts bf7ec1c77b9e60603d8e602d9a3d37de942b02af00d7318bd39fbfadb58b4711
 
 # --- controls that decide what the product accepts at runtime ---
-extension/lib/protocol.ts 99c8c37a1bb05d19d0b3f835cb6e4777dc3dfac199a7c9b72b610bd406fadef5
+extension/lib/protocol.ts bb3f36ab263cb99390d66746c2277d125ef40b83fb0836158658450106725a4f
 # The runtime-safety scan moved from shared/secret-pattern.js to shared/secret-pattern.ts when the core became strict TypeScript; the artifact is tsc output and is never committed, so the criterion pins the source.
 shared/secret-pattern.ts 6f4645b11979a776af33000eb68b438d15e60659a7847e5e376c9cc481c1b546
 # The one pinned shared edge module moved from .js to .ts unchanged; same bytes, same criterion, new path.
@@ -181,7 +181,7 @@ hosted/functions/_shared/cors.ts 73571947a10d95eddf4eb3625509b5568b7ceee9e60740f
 
 # --- surfaces an owner, not an agent, should have to look at ---
 # The merge took main's Kemudi manifest for the file and this branch's .gitleaks.toml bytes; both pins match what the merged tree actually holds.
-extension/manifest.json 4a6d4efbdd982f6d595f50002bdde3987f17b83197f50da6819f1e2c0ad19fa6
+extension/manifest.json 2f4fd56fff33a17f56d59bd769c694f03a066d253584dc5482f70978bf935f6f
 .gitleaks.toml 49d7c947ab6eddbe4b37de24f07c7811ea33ec87c423c627c7aefc5cde1d4f25
 .github/CODEOWNERS 3cb57783d6bc4c8feb45b0a0651b8e84144ab11cc2d1677f4b8e5894e32b4dca
 .github/workflows/ci.yml 27f2e409b0feef303df52a26a6f0080e2357709a5d0ea69514f8a3bec02024d6

@@ -193,7 +193,7 @@
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
   ['../extension/content.ts', '51b1c5cd5fc74537fdbea924c26f08e47422abe75bb84f0aeb49d82c6680adfe'],
   ['../extension/background.ts', '67b1744d986e6efa095a0bc6d9f02a029f9df42a1223acb502c5c7ea21bf40e0'],
-  ['../extension/manifest.json', '4a6d4efbdd982f6d595f50002bdde3987f17b83197f50da6819f1e2c0ad19fa6'],
+  ['../extension/manifest.json', '2f4fd56fff33a17f56d59bd769c694f03a066d253584dc5482f70978bf935f6f'],
 ]);
 
 // WHY collect and control-flow moved on 2026-11-17: the hosted functions are now type-checked by CI (deno check in ci.yml).
