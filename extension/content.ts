@@ -2310,13 +2310,11 @@ interface ListenCaptureState {
       source.connect(dest);
       stream = dest.stream;
     } catch (error) {
-      try { ctx.close(); } catch {}
+      void ctx.close().catch(() => {});
       throw new Error(`This media cannot be tapped: ${error instanceof Error ? error.message : String(error)}`);
     }
 
-    try {
-      ctx.resume().catch(() => {});
-    } catch {}
+    void ctx.resume().catch(() => {});
     const mimeType = (window.MediaRecorder && MediaRecorder.isTypeSupported('audio/webm;codecs=opus'))
       ? 'audio/webm;codecs=opus'
       : 'audio/webm';
@@ -2336,7 +2334,7 @@ interface ListenCaptureState {
     try {
       recorder = listenArmedRecorder();
     } catch (error) {
-      try { ctx.close(); } catch {}
+      void ctx.close().catch(() => {});
       listenCapture.ctx = null;
       listenCapture.active = false;
       throw new Error(`Recording is not supported here: ${error instanceof Error ? error.message : String(error)}`);
@@ -2347,7 +2345,7 @@ interface ListenCaptureState {
     } catch (error) {
       listenCapture.recorder = null;
       listenCapture.active = false;
-      try { ctx.close(); } catch {}
+      void ctx.close().catch(() => {});
       listenCapture.ctx = null;
       throw new Error(`Capture did not start: ${error instanceof Error ? error.message : String(error)}`);
     }

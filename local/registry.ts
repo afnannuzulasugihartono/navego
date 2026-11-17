@@ -43,10 +43,11 @@ export interface ForcelistEntry { number: number; data: string; }
 export function parseForcelistEntries(output: string): ForcelistEntry[] {
   const entries: ForcelistEntry[] = [];
   for (const line of String(output).split(/\r?\n/)) {
-    const match = /^\s+(\d+)\s+REG_SZ\s+(.+?)\s*$/.exec(line);
+    const match = /^\s+(\d+)\s+REG_SZ\s+(.*)$/.exec(line);
     if (!match) continue;
     const number = Number(match[1]);
-    if (Number.isFinite(number) && match[2]) entries.push({ number, data: match[2] as string });
+    const data = match[2]?.trim() ?? '';
+    if (Number.isFinite(number) && data) entries.push({ number, data });
   }
   return entries.sort((a, b) => a.number - b.number);
 }

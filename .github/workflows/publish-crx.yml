@@ -44,12 +44,18 @@ jobs:
         run: |
           node scripts/pack/stage-crx.ts "${GITHUB_WORKSPACE}/extension-stage"
 
-      - name: Check the version matches the manifest
+      - name: Check the version is asked for safely and matches the manifest
         shell: bash
+        env:
+          ASKED: ${{ inputs.version }}
         run: |
+          if ! [[ "$ASKED" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::dispatched version must be three dot-separated numbers"
+            exit 1
+          fi
           MANIFEST_VERSION="$(node -p "require('./extension/manifest.json').version")"
-          if [ "$MANIFEST_VERSION" != "${{ inputs.version }}" ]; then
-            echo "::error::dispatched ${{ inputs.version }} but the manifest says ${MANIFEST_VERSION}"
+          if [ "$MANIFEST_VERSION" != "$ASKED" ]; then
+            echo "::error::dispatched $ASKED but the manifest says $MANIFEST_VERSION"
             exit 1
           fi
 
@@ -198,7 +204,7 @@ jobs:
         run: |
           BASE="https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update"
           X="id%3D${EXTENSION_ID}%26v%3D${VERSION}%26uc%26nocache%3D1"
-          CODEBASE="$(curl --fail --silent --show-error --location "$BASE/update.xml?x=$X" \
+          CODEBASE="$(curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' "$BASE/update.xml?x=$X" \
             | grep -o 'codebase="[^"]*"' | head -1 | sed 's/codebase="//;s/"//')"
           echo "advertised: ${CODEBASE}"
           test -n "$CODEBASE" || { echo "::error::the endpoint advertised no CRX for ${EXTENSION_ID}"; exit 1; }
