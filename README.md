@@ -61,7 +61,7 @@ navego auth     # sign in once
 navego doctor   # prints bridge, device, plan, quota — verdict yes/no and the one fix
 ```
 
-Then point your agent at the package — see [`llms.txt`](llms.txt) and [`docs/agent-friendly.md`](docs/agent-friendly.md) for the exact copy-paste snippets for OpenCode, Claude Code, Claude Desktop, Cursor, Windsurf and Zed. Start every session with `browser_get_guide`.
+Then point your agent at the package — see [`llms.txt`](llms.txt), [`llms-install.md`](llms-install.md) and [`docs/agent-friendly.md`](docs/agent-friendly.md) for the exact copy-paste snippets for OpenCode, Claude Code, Claude Desktop, Cursor, Windsurf and Zed. Start every session with `browser_get_guide`.
 
 The local drive is metered where it happens: the local bridge calls the cloud once per session to open the meter and reads the plan from there, then enforces it locally and reports usage into the same daily count the hosted surface reads, so a command past the allowance answers `PLAN_LIMIT_REACHED` with the plan named. The gate lives in the bridge and in the plan's data in the database, never in readable client code. The package is
 on the registry: `npm i -g navego`, or from a clone with
