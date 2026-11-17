@@ -156,12 +156,12 @@
 #    tests/helpers/canonical-source-hash.mjs strips the comment lines and collapses
 #    the whitespace before hashing a tool schema, so the pin holds the tool's
 #    contract and not its indentation.
-scripts/verify/check.mjs 940ec0e639c0be6acad48aef46f035d91832ae3e
+scripts/verify/check.mjs b5ef335c388bcf0aa1bc5fbfcac13b9d249d8416
 scripts/verify/scope.mjs f5895703e958e67c79a1f2f4392b037a84c26220
 scripts/verify/scope-check.mjs 2a4ba5563b68a9979c40165363235f72cac0d4df
 
 # --- the pins themselves: editing these is how a drift goes unnoticed ---
-tests/helpers/boundary-locks.mjs bf1c70528f2d41a92eb0f813b19d2905214b0c77
+tests/helpers/boundary-locks.mjs 06114e575d1c74b694cbaa3c7920d071187339fc
 tests/helpers/canonical-source-hash.mjs a4ebaa0d40122afce47a52cba39309d7dfdb1af1
 tests/helpers/comment-format.mjs bced9e4c9b7a58b56e3317067d5e6717dd2040bf
 tests/docs/comment-format.test.mjs 32080dd4c31c64a6eb977072cd370f4e4c566722
@@ -173,14 +173,14 @@ tests/tooling/structure-gates.test.mjs 9c95d75ddd7e76c8952a75ff2098dce4059bbb32
 tests/tooling/boundary-locks.test.mjs 948f2c0637576bba79f11e526b99cd0b0cf2f644
 
 # --- controls that decide what the product accepts at runtime ---
-extension/lib/protocol.ts 2c5aee986beda4199345a9c2945761a26384d040
+extension/lib/protocol.ts 4f3b27011782022eb52ab199fef3fac859c1ed05
 # The runtime-safety scan moved from shared/secret-pattern.js to shared/secret-pattern.ts when the core became strict TypeScript; the artifact is tsc output and is never committed, so the criterion pins the source.
 shared/secret-pattern.ts 5392a31127fa25df3d9f55d0a9fa87562200418d
 # The one pinned shared edge module moved from .js to .ts unchanged; same bytes, same criterion, new path.`nhosted/functions/_shared/cors.ts dead4552d786ef0fdbaf71ad5bfb3c99e647b575
 
 # --- surfaces an owner, not an agent, should have to look at ---
 # The merge took main's Kemudi manifest for the file and this branch's .gitleaks.toml bytes; both pins match what the merged tree actually holds.
-extension/manifest.json 543e391236f10fa1162254e6c4e8c9bbe3fa306d
+extension/manifest.json 885161fe4038bd1e9b063b562d9d00bcd525e506
 .gitleaks.toml 9e2fabe35824000f8e5aeff06616766722637d31
 .github/CODEOWNERS ca0271e08aadabe56f86ae17620b36073df44cfb
 .github/workflows/ci.yml 1a473af40bbc6fe476b2764719f89a552d4eb39e

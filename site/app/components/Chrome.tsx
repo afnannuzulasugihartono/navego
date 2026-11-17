@@ -7,7 +7,7 @@ const NAV = [
   { href: '/docs.html', label: 'Docs' }
 ];
 
-const VERSION = '1.7.2';
+const VERSION = '1.7.3';
 
 export function SiteHeader({ current }: { current?: string }) {
   return (
