@@ -19,7 +19,7 @@ Yang didukung: **Chrome, Edge, Brave, Opera, Vivaldi, Chromium** — satu mesin 
 
 ## Yang sudah aktif (tanpa biaya, tanpa store)
 
-1. **CRX 1.7.6 live** di layanan update (`update.xml` → `navego-ofgemipoobcnbjkfanmofjbdonjapmgl-1.7.6.crx`) — terverifikasi 2026-11-18 setelah redeploy fungsi.
+1. **CRX live** di layanan update (`update.xml` → `navego-ofgemipoobcnbjkfanmofjbdonjapmgl-<versi>.crx`) — terverifikasi 2026-11-18 setelah redeploy fungsi; versi yang disajikan mengikuti rilis CRX terakhir (`ship-crx`).
 2. **Force-install kebijakan Windows**: `docs/store/extension-forceinstall.reg` — satu klik memasang dan mengunci extension di Chrome/Edge/Brave per-user (HKCU, tanpa admin). Trade-off tertulis di file itu sendiri (browser melapor "dikelola organisasi Anda", dan itu jujur).
 3. **GitHub Releases**: `release.yml` melampirkan CRX/zip/checksum ke setiap release.
 4. **Halaman `/unduh`**: unduh `.zip` per-browser + instruksi Load unpacked — satu build untuk lima browser.
