@@ -1,6 +1,7 @@
 // @last-edited: 2026-11-18 UTC+7.
 // @title: doctor - the operator's one question about this machine, answered in words and in JSON.
-// @state: the bridge's state, the device's meter, the pairing, the cloud login, and the CRX link. The --json flag emits the same answers as a single object for MCP clients and scripts.
+// @state: the bridge's state, the device's meter, the pairing, the cloud login, and the CRX link.
+// The --json flag emits the same answers as a single object for MCP clients and scripts.
 // @dependencies: ./wallet-client.js, ./oauth.js, ./lib/endpoints.js.
 
 // WHY THIS FILE EXISTS

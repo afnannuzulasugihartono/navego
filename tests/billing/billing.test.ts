@@ -583,8 +583,8 @@ test('one invoice keeps one payable transaction, and an older attempt cannot kil
 
 test('the operator link names the page host, and falls back to the function', () => {
   const fn = fs.readFileSync(new URL('../../hosted/functions/navego-billing/index.ts', import.meta.url), 'utf8');
-  assert.match(fn, /BILLING_PAGE_URL = \(Deno\.env\.get\("BILLING_PAGE_URL"\) \|\| ""\)\.replace\(\/\\\/\+\$\/, ""\)/,
-    'the setting is read once and its trailing slash cannot double the page path');
+  assert.match(fn, /let value = \(Deno\.env\.get\("BILLING_PAGE_URL"\) \|\| ""\);\s*while \(value\.endsWith\("\/"\)\) value = value\.slice\(0, -1\);\s*return value;\s*}\)\(\);/,
+    'the setting is read once and its trailing slashes are stripped inline without a regex');
   assert.match(fn, /const base = BILLING_PAGE_URL \|\| `\$\{SUPABASE_URL\}\/functions\/v1\/navego-billing`/,
     'a deployment without the setting still answers with a link that works');
   assert.match(fn, /const link = `\$\{base\}\?invoice_id=\$\{encodeURIComponent\(out\.invoice\.id\)\}&token=\$\{out\.token\}`/,
