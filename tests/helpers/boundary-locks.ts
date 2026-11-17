@@ -187,11 +187,13 @@
 // The public surface, the manifest and the protocol did not move, so only this pin moves.
 
 // WHY content.ts was re-pinned on 2026-11-18: the product-wide rename retire-Opera Agent/trademMark sweep replaced the remaining brand-token occurrences inside the frozen file (Opera Agent -> Navego throughout).
+// WHY content.ts was re-pinned a second time on 2026-11-18: the listen-capture error paths called AudioContext.close()/resume() as if they were synchronous and swallowed nothing; a rejection would have leaked to unhandledrejection.
+// They now close and resume through void .catch(() => {}), the same contract, no behavioural change (the failure is still ignored, but deliberately and silently, as the surrounding code always assumed).
 // The runtime surface, the dispatch tables and the primitives are unchanged; only the brand strings moved.
 // WHY background.ts was re-pinned on 2026-11-18: the product-wide rename retired Opera Agent/Kemudi/legacy tokens including type-only internal global names (example: `__operaAgentContentV1`, `__operaAgentCursorIdle`); the runtime dispatch table and wire contract are unchanged; the change set is the rename sweep itself.
 
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
-  ['../extension/content.ts', '51b1c5cd5fc74537fdbea924c26f08e47422abe75bb84f0aeb49d82c6680adfe'],
+  ['../extension/content.ts', '4d9cf6aec864f5c75f318aed43969ffbc37681ab71b19401985349d69d2a60fe'],
   ['../extension/background.ts', '67b1744d986e6efa095a0bc6d9f02a029f9df42a1223acb502c5c7ea21bf40e0'],
   ['../extension/manifest.json', '2f4fd56fff33a17f56d59bd769c694f03a066d253584dc5482f70978bf935f6f'],
 ]);

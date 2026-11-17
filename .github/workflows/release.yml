@@ -66,7 +66,7 @@ jobs:
               .join(''));
           ")"
           echo "extension id: ${EXTENSION_ID}"
-          curl --fail --silent --show-error --location \
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
             --dump-header "${RUNNER_TEMP}/crx.headers" \
             "https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/navego-${EXTENSION_ID}-${VERSION}.crx" \
             --output "Navego-${VERSION}.crx"

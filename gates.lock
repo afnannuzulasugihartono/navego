@@ -161,7 +161,7 @@ scripts/verify/scope.ts be9814cb16f92be323822d99c1182a88c94a68696e30ebbfd3f3fedc
 scripts/verify/scope-check.ts 446f0471915b9ecb99caa3809eee2c44ae14ae8b23a0f907abeecb86e4397815
 
 # --- the pins themselves: editing these is how a drift goes unnoticed ---
-tests/helpers/boundary-locks.ts 9222b0efefc3186942de48756e37918df12849f6729dc2429935700b37e5cb28
+tests/helpers/boundary-locks.ts 50f6d9abd177648b4dd08bb366cd002280f13e85fb1b6505a964f221f54584e4
 tests/helpers/canonical-source-hash.ts f156e8ebaa77f91cfb2199b40990b58a73ae70b80eeff625028426dcde01d614
 tests/helpers/comment-format.ts 1edb82d5a06669a056a9632a5d294aa22875f6b703b836dded31bbb855f7dd67
 tests/docs/comment-format.test.ts 1cd8037c4b51001900dfc54a7a63a2dadabda27fd5bd5fff9d6e7e773cd205f6
@@ -184,4 +184,4 @@ hosted/functions/_shared/cors.ts 73571947a10d95eddf4eb3625509b5568b7ceee9e60740f
 extension/manifest.json 2f4fd56fff33a17f56d59bd769c694f03a066d253584dc5482f70978bf935f6f
 .gitleaks.toml 49d7c947ab6eddbe4b37de24f07c7811ea33ec87c423c627c7aefc5cde1d4f25
 .github/CODEOWNERS 3cb57783d6bc4c8feb45b0a0651b8e84144ab11cc2d1677f4b8e5894e32b4dca
-.github/workflows/ci.yml 27f2e409b0feef303df52a26a6f0080e2357709a5d0ea69514f8a3bec02024d6
+.github/workflows/ci.yml d1eacfaaf881913f3037180b5da3c47431911cae2adbf6e54be8b6871cf36dd8
