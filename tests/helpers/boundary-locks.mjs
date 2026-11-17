@@ -179,10 +179,13 @@
 // WHY manifest.json was re-pinned again on 2026-11-17: the CSP lost its bare https: wildcard.
 // A wildcard connect-src admitted any https origin as an exfiltration path; named hosts are the shape the extension actually needs.
 
+// WHY these three were re-pinned on 2026-11-17: the 1.7.5 release rode them.
+// The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
+
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
   ['../extension/content.ts', '02365ade2ed83b234e7056ff51c3b7b41b1cacf66c74fdad41e1009b8f464fa5'],
   ['../extension/background.ts', 'b2e496988683da01a2248ba214edf8f18182d3eeeb25e0823603edd528752316'],
-  ['../extension/manifest.json', '65c09a593d5e051788d27fac593de2e4d2687c1701e21d790c8e0c487686f0da'],
+  ['../extension/manifest.json', '46af96ef36e8cab18c5e5d8ebf4659b6c216579f886d78b47ebec01aa65d94ed'],
 ]);
 
 export const OBSERVATION_STACK_LOCKS = Object.freeze([
