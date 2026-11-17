@@ -62,8 +62,11 @@ const files = [
 // WHY THIS FLAG EXISTS.
 // The census is the one thing a human cannot see from green alone; --list prints the files exactly as the scans read them, so a test can assert the census and an operator can audit one.
 
+// WHY writeSync AND NOT console.log + process.exit: on a pipe, process.exit(0) can cut off bytes that console.log still had buffered; fresh runners lost the tail of the list (local/ and shared/) between the build step and the test.
+// writeSync is synchronous; exit happens after the bytes are in the pipe.
+
 if (process.argv.includes('--list')) {
-  for (const file of files) console.log(file);
+  fs.writeSync(1, files.join('\n') + '\n');
   process.exit(0);
 }
 

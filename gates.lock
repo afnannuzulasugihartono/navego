@@ -156,7 +156,7 @@
 #    tests/helpers/canonical-source-hash.ts strips the comment lines and collapses
 #    the whitespace before hashing a tool schema, so the pin holds the tool's
 #    contract and not its indentation.
-scripts/verify/check.ts 007af3449468e3ba999e9ad709412c8295b6042aef9782a6d38361a939c3b25f
+scripts/verify/check.ts 5e5e3b5a51492699038048f723ad5721e4c35ad59823ce9401bd940732367cc5
 scripts/verify/scope.ts be9814cb16f92be323822d99c1182a88c94a68696e30ebbfd3f3fedc3bec8d73
 scripts/verify/scope-check.ts 446f0471915b9ecb99caa3809eee2c44ae14ae8b23a0f907abeecb86e4397815
 
