@@ -1,0 +1,51 @@
+# Navego
+
+Drive your own signed-in browser from an MCP client — no cloud hop, no exported session, one npm install.
+
+Site: https://navego.pages.dev/
+Source: https://github.com/afnannuzulasugihartono/navego
+Package: `navego` on npm. License: MIT.
+
+## One command to try
+
+```bash
+npm i -g navego
+navego doctor --json   # one object: bridge, device, plan, quota — the fix when degraded
+```
+
+From any MCP client:
+
+```json
+{
+  "mcpServers": {
+    "navego": { "command": "npx", "args": ["-y", "navego"] }
+  }
+}
+```
+
+## What it does
+
+- 45 `browser_*` / `artifact_*` / `delivery_*` / `wallet_*` tools over a loopback bridge.
+- Reads pages, clicks, types, navigates, downloads artifacts; your own everyday browser, not a sandboxed one.
+- 36 allowlisted browser primitives, no free `eval`, no per-site gadgets.
+- Structured output: `navego doctor --json` answers with `{ ready, port, bridge, problems[], crxUrl }`.
+- Metered by plan; a request past the allowance answers `PLAN_LIMIT_REACHED` naming the plan.
+
+## What it does not do
+
+- Does not send browsing traffic to a remote browser or cloud driver.
+- Does not bypass paywalls, captchas, sign-in walls, or rate limits.
+- Does not run per-site code or free `eval` in the browser.
+
+## Docs for agents
+
+- llms.txt and per-client snippets: https://github.com/afnannuzulasugihartono/navego/blob/main/llms.txt and https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-friendly.md
+- Install guide written for agents: https://github.com/afnannuzulasugihartono/navego/blob/main/llms-install.md
+- Product docs: https://navego.pages.dev/docs
+- MCP page: https://navego.pages.dev/mcp
+
+## Ground rules for agents
+
+- Claim a tab before driving it; never touch `chrome://`, password fields, or payment dialogs.
+- Read the page before acting on it; `browser_get_guide` is the right first call.
+- `PLAN_LIMIT_REACHED` means stop and tell the person, not retry.
