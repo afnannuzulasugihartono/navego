@@ -105,9 +105,7 @@ Local green is not acceptance. The acceptance rule is in [`AGENTS.md`](AGENTS.md
 | What primitives may the extension expose, and over what wire? | [`docs/api.md`](docs/api.md) |
 | What happens on a site nobody has a workflow for? | [`docs/unknown-site.md`](docs/unknown-site.md) |
 | How does this repo resist slop and silent drift? | [`docs/anti-drift.md`](docs/anti-drift.md) |
-| What is the statement job, and what does a delivery claim? | [`docs/jobs/statements.md`](docs/jobs/statements.md) |
-| How do the first bookkeepers get reached, and how does a session run? | [`docs/product/first-three-bookkeepers.md`](docs/product/first-three-bookkeepers.md) and [`docs/product/pilot-runbook.md`](docs/product/pilot-runbook.md) |
-| What is a delivery worth, and what may an agent hand to its own user? | [`docs/product/monetization.md`](docs/product/monetization.md) |
+| How much does a client-month cost, and what does a delivery claim? | [`docs/uec-north-star.md`](docs/uec-north-star.md) and the `opera_price_list` table (migrations under `hosted/migrations/`) |
 | What did a release contain, and why? | [`CHANGELOG.md`](CHANGELOG.md) and [`docs/releases/`](docs/releases/) |
 | What design references informed this? | [`docs/design-references.md`](docs/design-references.md) |
 | What is the product aiming at? | [`docs/uec-north-star.md`](docs/uec-north-star.md) |

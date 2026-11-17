@@ -121,7 +121,7 @@ answer names both and moves neither. Over the extension the browser's own folder
 watched instead of an armed one, because `chrome.debugger` refuses browser-level
 commands there. The last two tools are the statement job: a
 card that names the file before the drive, and a delivery that verifies it and adds the
-client-month to a manifest. See [`docs/jobs/statements.md`](../docs/jobs/statements.md).
+client-month to a manifest. See the statement job in the price list migration under `hosted/migrations/`.
 
 ## Recipes, measured
 

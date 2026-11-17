@@ -33,8 +33,7 @@ test('the guide and the README agree with the tool list', () => {
 test('every page a reader is sent to names the install that works today', () => {
   const pages = [
     ['the guide', read('docs/agent-call.md')],
-    ['the README', read('local/README.md')],
-    ['the runbook', read('docs/product/pilot-runbook.md')]
+    ['the README', read('local/README.md')]
   ];
   for (const [name, text] of pages) {
     assert.match(text, /npm i -g kemudi|npm install -g \./, `${name} must name the install that works today`);

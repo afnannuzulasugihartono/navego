@@ -1,7 +1,7 @@
 # @last-edited: 2026-11-15 UTC+7.
 # @title: rebrand-navego - the product is Navego; the research, the decision, and the cutover.
 # @state: the decision is made and shipped in the tree; the owner's acts are named at the end.
-# @dependencies: docs/product/monetization.md, docs/handoff.md.
+# @dependencies: docs/handoff.md. (the monetization doc it once pointed at is deleted; pricing lives in the `opera_price_list` migration.)
 
 # Navego - the name this project was always steering toward
 

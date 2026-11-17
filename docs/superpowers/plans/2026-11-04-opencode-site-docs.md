@@ -1,5 +1,5 @@
 @last-edited: 2026-11-04 UTC+7.
-@related: [`../../../AGENTS.md`](../../../AGENTS.md) - [`../specs/2026-11-03-dark-opencode-benchmark-design.md`](../specs/2026-11-03-dark-opencode-benchmark-design.md) - [`../../../docs/product/billing.md`](../../../docs/product/billing.md)
+@related: [`../../../AGENTS.md`](../../../AGENTS.md) - [`../specs/2026-11-03-dark-opencode-benchmark-design.md`](../specs/2026-11-03-dark-opencode-benchmark-design.md) - [`../../../pricing`](../../../hosted/migrations/20261015090000_opera_billing.sql)
 
 # Plan: Situs benchmark opencode.ai, diet teks, halaman /docs
 
