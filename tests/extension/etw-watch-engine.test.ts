@@ -10,6 +10,7 @@ import { extensionSource } from '../helpers/extension-source.ts';
 
 const read = (p: any) => fs.readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
 const { validateRule, evaluateRules, TRIGGER_KINDS } = await import('../../extension/lib/watch.js');
+type EngineState = ReturnType<typeof evaluateRules>['state'];
 
 const rule = (over = {}) => ({
   ruleId: 'r1',
@@ -34,19 +35,20 @@ test('trigger kinds are the documented set (fail-closed for unknown kinds)', () 
 test('selectorPresence fires and once-rules retire; gone fires only after presence', () => {
   let now = 1000;
   const snap = (present: any) => ({ facts: { r1: { present } }, url: 'https://x/', adState: false, mediaTime: 0 });
-  let st = {};
+  let st: EngineState = {};
   const r1 = rule();
   let out = evaluateRules([r1], snap(false), st, now);
   st = out.state;
   out = evaluateRules([r1], snap(true), st, now += 10);
   st = out.state;
   assert.equal(out.fired.length, 1);
+  assert.ok(st.r1);
   assert.equal(st.r1.fireCount, 1);
   const again = evaluateRules([r1], snap(true), st, now += 10);
   assert.equal(again.fired.length, 0, 'once-rule retires after firing');
 
   const g = rule({ ruleId: 'g1', trigger: { kind: 'selectorGone', selector: '.x' } });
-  let s2 = {};
+  let s2: EngineState = {};
   const absent = { facts: { g1: { present: false } }, url: '', adState: false, mediaTime: 0 };
   s2 = evaluateRules([g], absent, s2, now).state;
   s2 = evaluateRules([g], absent, s2, now += 10).state;
@@ -60,7 +62,7 @@ test('selectorPresence fires and once-rules retire; gone fires only after presen
 
 test('composition any/all + textMatch + urlChange + adState + mediaTime', () => {
   const snap = (o: any) => ({ facts: {}, url: o.url ?? 'https://x/', adState: !!o.ad, mediaTime: o.t ?? 0, text: o.text });
-  let st = {};
+  let st: EngineState = {};
   const rules = [
     rule({ ruleId: 'a1', trigger: { kind: 'textMatch', text: 'Skip', mode: 'contains' } }),
     rule({ ruleId: 'a2', trigger: { kind: 'urlChange' } }),
@@ -68,6 +70,7 @@ test('composition any/all + textMatch + urlChange + adState + mediaTime', () => 
     rule({ ruleId: 'a4', trigger: { kind: 'mediaTime', atSeconds: 30 } })
   ];
   st = evaluateRules(rules, snap({ url: 'https://x/', text: 'nope' }), st, 1000).state;
+  assert.ok(st.a2);
   const urlChanged = st.a2.baselineUrl ?? '';
   assert.notEqual(urlChanged, undefined, 'urlChange arms a baseline');
   const out = evaluateRules(rules, snap({ url: 'https://x/watch?v=1', text: 'Skip Ad now', ad: true, t: 31 }), st, 1100);
@@ -76,7 +79,7 @@ test('composition any/all + textMatch + urlChange + adState + mediaTime', () => 
 });
 
 test('already-true at arm fires immediately (the T041 lesson); debounce then throttles', () => {
-  let st = {};
+  let st: EngineState = {};
   const d = rule({ ruleId: 'd1', mode: 'repeat', maxEvents: 10, debounceMs: 500, deadlineMs: 5000 });
 
   const first = evaluateRules([d], { facts: { d1: { present: true } }, url: '', adState: false, mediaTime: 0 }, st, 100);
@@ -88,6 +91,7 @@ test('already-true at arm fires immediately (the T041 lesson); debounce then thr
   assert.equal(ok.fired.length, 1);
   const dead = evaluateRules([d], { facts: { d1: { present: true } }, url: '', adState: false, mediaTime: 0 }, ok.state, 6000);
   assert.equal(dead.fired.length, 0, 'past deadline the rule never fires again');
+  assert.ok(dead.state.d1);
   assert.equal(dead.state.d1.retired, true);
 });
 
@@ -95,6 +99,7 @@ test('evaluateRules state threads across evaluations (the watch round-trip)', ()
   const r = rule({ ruleId: 'rt1', trigger: { kind: 'urlChange' }, mode: 'repeat', maxEvents: 10 });
   const first = evaluateRules([r], { facts: {}, url: 'https://x/a', adState: false, mediaTime: 0 }, {}, 1000);
   assert.equal(first.fired.length, 0, 'first sight only arms the baseline');
+  assert.ok(first.state.rt1);
   assert.ok(first.state.rt1.baselineUrl, 'engine state carries the baseline');
   const second = evaluateRules([r], { facts: {}, url: 'https://x/b', adState: false, mediaTime: 0 }, first.state, 1100);
   assert.equal(second.fired.length, 1, 'the threaded baseline is what the change is detected against');

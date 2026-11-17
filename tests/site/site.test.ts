@@ -22,23 +22,24 @@ const ROUTES = [
   '/syarat.html', '/akun.html', '/404.html', '/oauth/consent.html', '/dashboard.html'
 ];
 
-const toFile = (route: any) => {
+const toFile = (route: string) => {
   if (route === '/') return 'index.html';
   return route.replace(/^\//, '');
 };
 
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-let built: any = null;
+let built: boolean | null = null;
 const siteDir = path.join(root, 'site');
 
 function buildSite() {
   if (built) return built;
   // WHY no --prefix: with --prefix npm re-registers the enclosing package (opera-agent) as a file: dependency of the site every run.
-  const quiet = (args: any) => {
+  const quiet = (args: string[]) => {
     try {
       execFileSync(npm, args, { cwd: siteDir, stdio: ['ignore', 'pipe', 'pipe'], shell: process.platform === 'win32' });
     } catch (error) {
-      const out = [error.stdout, error.stderr].filter(Boolean).map((b) => b.toString()).join('\n');
+      const failure = error as { stdout?: unknown; stderr?: unknown };
+      const out = [failure.stdout, failure.stderr].filter(Boolean).map((b) => String(b)).join('\n');
       assert.fail(`npm ${args.join(' ')} failed:\n${out}`);
     }
   };
@@ -51,7 +52,7 @@ function buildSite() {
   return built;
 }
 
-const readBuilt = (route: any) => fs.readFileSync(path.join(client, toFile(route)), 'utf8');
+const readBuilt = (route: string) => fs.readFileSync(path.join(client, toFile(route)), 'utf8');
 
 test('the build produces every prerendered route', () => {
   buildSite();
@@ -95,7 +96,9 @@ test('every inline script is covered by the CSP hashes in build/client/_headers'
   for (const route of ROUTES) {
     const html = readBuilt(route);
     for (const match of html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)) {
-      const hash = createHash('sha256').update(match[1], 'utf8').digest('base64');
+      const script = match[1];
+      if (script === undefined) continue;
+      const hash = createHash('sha256').update(script, 'utf8').digest('base64');
       assert.ok(covered.has(hash), `${route} carries an inline script the CSP does not allow`);
       checked += 1;
     }
@@ -143,7 +146,11 @@ test('_worker.js ships byte-identical to the checked-in source', () => {
 test('_headers covers every route, forbids inline scripts, denies framing everywhere', () => {
   buildSite();
   const rules = siteRules();
-  const byPath = new Map(rules.map((rule) => [rule.paths[0], rule.headers]));
+  const byPath = new Map<string, Record<string, string>>();
+  for (const rule of rules) {
+    const first = rule.paths[0];
+    if (first !== undefined) byPath.set(first, rule.headers);
+  }
   const variants = ROUTES.flatMap((route) => route === '/' ? ['/', '/index.html'] : [route, route.replace(/\.html$/, '')]);
   for (const variant of variants) {
     assert.ok(byPath.has(variant), `_headers carries the ${variant} block`);
@@ -181,8 +188,8 @@ test('the sitemap names exactly the routes the build carries (404 and unknowns a
 
 test('no i18n or legacy machinery files ride along in the site source', () => {
   buildSite();
-  const walk = (dir: any) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => entry.isDirectory() ? walk(path.join(dir, entry.name)) : [path.join(dir, entry.name)]);
-  const files = walk(site).filter((f: any) => !f.includes(`${path.sep}node_modules${path.sep}`) && !f.includes(`${path.sep}build${path.sep}`) && !f.includes(`${path.sep}.react-router${path.sep}`));
-  const banned = files.filter((f: any) => /i18n|palette\.js|reveal\.js|wayfind\.js/.test(path.basename(f)));
+  const walk = (dir: string): string[] => fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => entry.isDirectory() ? walk(path.join(dir, entry.name)) : [path.join(dir, entry.name)]);
+  const files = walk(site).filter((f) => !f.includes(`${path.sep}node_modules${path.sep}`) && !f.includes(`${path.sep}build${path.sep}`) && !f.includes(`${path.sep}.react-router${path.sep}`));
+  const banned = files.filter((f) => /i18n|palette\.js|reveal\.js|wayfind\.js/.test(path.basename(f)));
   assert.deepEqual(banned, [], 'no legacy machinery files');
 });

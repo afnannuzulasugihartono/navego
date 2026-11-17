@@ -29,12 +29,14 @@ test('an account with no active plan cannot connect, and the refusal names the p
 });
 
 test('the daily quota refuses at the command that breaks it, and names the plan', () => {
-  const atLimit = { ...pilot, usedToday: PLANS['plan.pilot'].dailyQuota };
+  const pilotPlan = PLANS['plan.pilot'];
+  assert.ok(pilotPlan);
+  const atLimit = { ...pilot, usedToday: pilotPlan.dailyQuota };
   const verdict = gateVerdict(atLimit, { method: 'page.read', params: {} });
   assert.equal(verdict.ok, false);
   assert.equal(verdict.code, 'PLAN_LIMIT_REACHED');
   assert.match(verdict.message, /200/);
-  const oneBefore = quotaAllowance('plan.pilot', PLANS['plan.pilot'].dailyQuota - 1);
+  const oneBefore = quotaAllowance('plan.pilot', pilotPlan.dailyQuota - 1);
   assert.equal(oneBefore.ok, true);
 });
 

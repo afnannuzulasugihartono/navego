@@ -29,7 +29,7 @@ test('the Chromium family is declared as one protocol, because it is one protoco
 
   for (const entry of BROWSERS) {
     assert.equal(entry.protocol, 'cdp', `${entry.id} is Chromium and must speak cdp`);
-    assert.equal(entry.full, undefined, `${entry.id} must not carry a partial-support flag`);
+    assert.equal((entry as { full?: unknown }).full, undefined, `${entry.id} must not carry a partial-support flag`);
   }
 });
 
@@ -69,8 +69,10 @@ test('detection returns the entry whose path resolved, not the raw candidate', (
   });
 
   assert.equal(found.length, 1);
-  assert.equal(found[0].id, 'chrome');
-  assert.equal(findBrowser(found[0].id), found[0], 'the detected entry must be the one launchArgs will be given');
+  const detected = found[0];
+  assert.ok(detected);
+  assert.equal(detected.id, 'chrome');
+  assert.equal(findBrowser(detected.id), detected, 'the detected entry must be the one launchArgs will be given');
 });
 
 test('detection on a machine with nothing installed returns an empty list rather than throwing', () => {
@@ -99,7 +101,9 @@ test('protocolsFor reports only what is actually installed, so a caller can refu
 test('a path in the table never names this machine, so the driver carries no local state', () => {
   for (const entry of BROWSERS) {
     for (const platform of ['win32', 'darwin', 'linux']) {
-      for (const path of entry.paths[platform]) {
+      const candidates = entry.paths[platform];
+      assert.ok(candidates, `${entry.id} has ${platform} candidates`);
+      for (const path of candidates) {
         assert.ok(!/ASUS|Users\\ASUS|opera-agent|opencode/i.test(path),
           `${entry.id} leaks a machine-specific path: ${path}`);
       }

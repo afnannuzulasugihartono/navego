@@ -18,7 +18,9 @@ interface OriginRequest {
   headers: Headers;
 }
 
-export function resolveAllowedOrigin(req: OriginRequest, defaults?: string[]): string | null {
+declare const Deno: { env?: { get(name: string): string | undefined } | undefined } | undefined;
+
+export function resolveAllowedOrigin(req: OriginRequest, defaults?: string[] | readonly string[]): string | null {
   const list = Array.isArray(defaults) && defaults.length > 0 ? defaults : FALLBACK_ORIGINS;
 
   const raw = typeof Deno !== 'undefined' && Deno.env

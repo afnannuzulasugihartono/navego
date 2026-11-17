@@ -19,7 +19,10 @@ const protocol = fs.readFileSync(new URL('extension/lib/protocol.js', root), 'ut
 const seedFiles = ['hosted/migrations/20261110230000_opera_methods_from_contract.sql', 'hosted/migrations/20261112000000_opera_methods_record_scan.sql', 'hosted/migrations/20261113000000_opera_methods_dump.sql'];
 const migration = seedFiles.map((file) => fs.readFileSync(new URL(file, root), 'utf8')).join('\n');
 
-const spec = protocol.match(/export const METHOD_SPECS = Object\.freeze\(\{([\s\S]*?)\n\}\);/)[1];
+const specMatch = protocol.match(/export const METHOD_SPECS = Object\.freeze\(\{([\s\S]*?)\n\}\);/);
+assert.ok(specMatch, 'the protocol names METHOD_SPECS');
+const spec = specMatch[1];
+assert.ok(spec, 'the protocol carries the METHOD_SPECS body');
 const methods = [...spec.matchAll(/'([a-z_]+\.[a-z_]+)':\s*\{\s*timeoutMs:\s*(\w+)\s*\}/g)]
   .map((match) => ({ method: match[1], timeout: match[2] }));
 

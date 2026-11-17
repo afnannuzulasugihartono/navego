@@ -11,11 +11,27 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
+
+interface Machine {
+  id: string;
+  kind: string;
+  where: string;
+  states: unknown[];
+  wrongIfConfused: string;
+  decision: string;
+  why: string;
+  rank: number;
+}
+
+interface Register {
+  version: number;
+  generated: string;
+  source: string;
+  machines: Machine[];
+}
 
 const root = new URL('../../', import.meta.url);
-const registerPath = new URL('docs/state-machines.json', root);
-const read = (path: any) => JSON.parse(fs.readFileSync(new URL(path, root), 'utf8'));
+const read = (path: string): Register => JSON.parse(fs.readFileSync(new URL(path, root), 'utf8')) as Register;
 
 const DECISIONS = new Set(['model', 'delete', 'tolerate']);
 
@@ -58,7 +74,7 @@ test('every location in the register resolves to a file in this repository', () 
 
 test('the register is sorted by rank, then id, so the urgent machine is first', () => {
   const register = read('docs/state-machines.json');
-  const keys = register.machines.map((m: any) => [m.rank, m.id]);
+  const keys = register.machines.map((m): [number, string] => [m.rank, m.id]);
   const sorted = [...keys].sort((a, b) => a[0] - b[0] || (a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0));
   assert.deepEqual(keys, sorted, 'state machines are registered by urgency: rank ascending, id as tiebreak — if the register is not sorted, an urgent machine can be hiding at the bottom');
 });

@@ -13,25 +13,22 @@ import fs from 'node:fs';
 
 import { cookieInstanceId, pairIdentity } from '../../extension/worker/instance-id.js';
 
-const storage = new Map();
+const storage = new Map<string, unknown>();
 
-function fakeChrome(seed = {}) {
-  for (const key of Object.keys(globalThis)) if (key.startsWith('oaTest')) delete globalThis[key];
+function fakeChrome(seed: Record<string, unknown> = {}) {
+  for (const key of Object.keys(globalThis)) if (key.startsWith('oaTest')) Reflect.deleteProperty(globalThis, key);
   storage.clear();
   for (const [key, value] of Object.entries(seed)) storage.set(key, value);
-  globalThis.chrome = {
-    storage: {
-      local: {
-        get: async (key) => (typeof key === 'string' ? { [key]: storage.get(key) } : Object.fromEntries(key.map((k: any) => [k, storage.get(k)]))),
-        set: async (obj) => { for (const [key, value] of Object.entries(obj)) storage.set(key, value); },
-        remove: async (keys) => { for (const key of Array.isArray(keys) ? keys : [keys]) storage.delete(key); }
-      }
-    }
+  const local = {
+    get: async (key: unknown) => (typeof key === 'string' ? { [key]: storage.get(key) } : Object.fromEntries((key as string[]).map((k) => [k, storage.get(k)]))),
+    set: async (obj: Record<string, unknown>) => { for (const [key, value] of Object.entries(obj)) storage.set(key, value); },
+    remove: async (keys: unknown) => { for (const key of Array.isArray(keys) ? keys : [keys]) storage.delete(String(key)); }
   };
+  Reflect.set(globalThis, 'chrome', { storage: { local } });
 }
 
 test.afterEach(() => {
-  delete globalThis.chrome;
+  Reflect.deleteProperty(globalThis, 'chrome');
 });
 
 test('pair time prefers the cookie identity, prefixed and bounded', async () => {
@@ -52,7 +49,7 @@ test('a browser that never saw the cookie sends no cookie identity, and pair tim
 test('the cookie identity is exactly the mirrored cookie value, nothing else', async () => {
   fakeChrome({ oaDeviceCookieId: 'deadbeef' });
   assert.equal(await cookieInstanceId(), 'b:deadbeef');
-  delete globalThis.chrome;
+  Reflect.deleteProperty(globalThis, 'chrome');
   fakeChrome({ oaDeviceCookieId: '' });
   assert.equal(await cookieInstanceId(), '');
 });

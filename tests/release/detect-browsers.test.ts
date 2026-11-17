@@ -5,11 +5,12 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import type { Dirent } from 'node:fs';
 import { detectBrowsers, BROWSERS, expandPath } from '../../local/browsers.js';
 
-const tree = (paths: any) => { const set = new Set(paths); return (p: any) => set.has(p); };
+const tree = (paths: string[]) => { const set = new Set(paths); return (p: string) => set.has(p); };
 
-const lower = (p: any) => String(p).toLowerCase().replace(/\\/g, '/');
+const lower = (p: string) => String(p).toLowerCase().replace(/\\/g, '/');
 
 test('finds chrome at the Program Files path', () => {
   const paths = BROWSERS.filter((b) => b.id === 'chrome').flatMap((b) => b.paths.win32).map((p) => lower(expandPath(p, {})));
@@ -46,8 +47,9 @@ test('finds chrome-for-testing through the playwright glob', () => {
     env: { LOCALAPPDATA: 'C:/Users/X/AppData/Local' },
     exists: (p) => p === 'c:/users/x/appdata/local/ms-playwright/chromium-1243/chrome-win64/chrome.exe',
     readdir: (p) => {
-      if (p === 'c:/users/x/appdata/local/ms-playwright') return [{ name: 'chromium-1243', isDirectory: () => true }];
-      if (p === 'c:/users/x/appdata/local/ms-playwright/chromium-1243') return [{ name: 'chrome-win64', isDirectory: () => true }];
+      const entry = (name: string) => ({ name, isDirectory: () => true }) as unknown as Dirent<string>;
+      if (p === 'c:/users/x/appdata/local/ms-playwright') return [entry('chromium-1243')];
+      if (p === 'c:/users/x/appdata/local/ms-playwright/chromium-1243') return [entry('chrome-win64')];
       return [];
     },
   });

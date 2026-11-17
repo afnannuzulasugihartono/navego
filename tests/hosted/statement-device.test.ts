@@ -28,18 +28,32 @@ const PDF = Buffer.from(
   + 'trailer<</Root 1 0 R>>\n%%EOF\n'
 );
 
-function fakeBrowser({ bytes = PDF, state = 'complete', interrupted = null } = {}) {
-  const storage = new Map();
-  const calls = { downloads: [], injected: [], verified: [] };
+interface DownloadCall {
+  filename: string;
+  conflictAction?: string;
+  saveAs?: boolean;
+}
+
+interface DownloadRecord {
+  id: number;
+  state: string;
+  error: string | null;
+  filename: string;
+  fileSize: number;
+}
+
+function fakeBrowser({ bytes = PDF, state = 'complete', interrupted = null }: { bytes?: Buffer; state?: string; interrupted?: string | null } = {}) {
+  const storage = new Map<string, unknown>();
+  const calls: { downloads: DownloadCall[]; injected: string[]; verified: unknown[] } = { downloads: [], injected: [], verified: [] };
   let nextId = 1;
 
   const globals = {
     chrome: {
       downloads: {
-        async download(options: any) {
+        async download(options: DownloadCall) {
           calls.downloads.push(options);
           const id = nextId++;
-          globals.chrome.downloads.search = async ({ id: wanted }) => [{
+          globals.chrome.downloads.search = async ({ id: wanted }: { id: number }) => [{
             id: wanted,
             state,
             error: interrupted,
@@ -48,26 +62,28 @@ function fakeBrowser({ bytes = PDF, state = 'complete', interrupted = null } = {
           }];
           return id;
         },
-        async search() { return []; }
+        async search(_query: { id: number }): Promise<DownloadRecord[]> { return []; }
       },
       storage: {
         local: {
-          async get(key: any) {
+          async get(key: string) {
             return storage.has(key) ? { [key]: storage.get(key) } : {};
           },
-          async set(bag: any) {
+          async set(bag: Record<string, unknown>) {
             for (const [key, value] of Object.entries(bag)) storage.set(key, value);
           }
         }
       },
       scripting: {
-        async executeScript(options: any) {
+        async executeScript(options: { files?: string[]; args?: Array<unknown> }) {
           if (options.files) {
             calls.injected.push(...options.files);
             return [];
           }
-          calls.verified.push(options.args[0]);
+          const args = options.args ?? [];
+          calls.verified.push(args[0]);
           const helpers = globalThis.OperaAgentStatementFile;
+          assert.ok(helpers, 'the page helpers are published');
           const kind = helpers.kindOf(new Uint8Array(bytes));
           const pages = kind === 'pdf' ? helpers.countPages(new Uint8Array(bytes)) : null;
           return [{ frameId: 0, result: { ok: true, bytes: bytes.length, kind, pages, pagesFrom: helpers.pagesFrom(kind, pages || 0) } }];
@@ -75,7 +91,7 @@ function fakeBrowser({ bytes = PDF, state = 'complete', interrupted = null } = {
       },
       tabs: {
         async query() { return [{ id: 7 }]; },
-        async get(id: any) { return { id, url: 'https://portal.test/statements' }; }
+        async get(id: number) { return { id, url: 'https://portal.test/statements' }; }
       }
     }
   };
@@ -83,10 +99,10 @@ function fakeBrowser({ bytes = PDF, state = 'complete', interrupted = null } = {
   return { globals, calls, storage };
 }
 
-async function withBrowser(options: any, run: any) {
+async function withBrowser(options: Parameters<typeof fakeBrowser>[0], run: (browser: ReturnType<typeof fakeBrowser>) => Promise<void>) {
   const browser = fakeBrowser(options);
   const previous = globalThis.chrome;
-  globalThis.chrome = browser.globals.chrome;
+  globalThis.chrome = browser.globals.chrome as unknown as typeof chrome;
   try {
     return await run(browser);
   } finally {
@@ -120,6 +136,7 @@ test('a delivery downloads the file under the name it was given and proves it', 
     assert.equal(out.row.bytes, PDF.length);
     assert.equal(out.row.path, '/home/user/Downloads/toko-sinar-jaya-bca-2026-09.pdf');
     assert.deepEqual(out.row.balance, { raw: 'Rp 8.900.000', digits: '8900000' });
+    assert.ok(out.row.balanceFrom, 'the balance names where it came from');
     assert.match(out.row.balanceFrom, /page/i);
     assert.equal(out.manifest.delivered, 1);
   });
@@ -153,6 +170,7 @@ test('a second delivery of the same client-month is refused, and replace correct
       client: 'A', portal: 'B', period: '2026-09', filename: 'a.pdf', url: 'https://portal.test/a.pdf'
     });
     assert.equal(again.duplicate, true, 'a second line would bill the same month twice');
+    assert.ok(again.why, 'the refusal names why');
     assert.match(again.why, /twice/);
     assert.equal((await statementManifest()).delivered, 1);
 
@@ -206,10 +224,12 @@ test('a workbook is proved as a workbook, with no pages to count', async () => {
 });
 
 test('the manifest that was written is the one the device reads back', async () => {
-  await withBrowser({}, async (browser: any) => {
+  await withBrowser({}, async () => {
     await statementDownload({ client: 'A', portal: 'B', period: '2026-09', filename: 'a.pdf', url: 'https://portal.test/a.pdf' });
     const manifest = await loadManifest();
     assert.equal(manifest.rows.length, 1);
-    assert.equal(manifest.rows[0].client, 'A');
+    const [row] = manifest.rows;
+    assert.ok(row, 'the row reads back');
+    assert.equal(row.client, 'A');
   });
 });

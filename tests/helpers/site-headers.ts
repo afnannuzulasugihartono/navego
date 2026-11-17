@@ -11,9 +11,14 @@ const deployed = 'site/build/client/_headers';
 const template = 'site/public/_headers';
 const headersPathOf = () => (fs.existsSync(new URL(deployed, root)) ? deployed : template);
 
-export function siteRules() {
-  const rules = [];
-  let current = null;
+export interface SiteRule {
+  paths: string[];
+  headers: Record<string, string>;
+}
+
+export function siteRules(): SiteRule[] {
+  const rules: SiteRule[] = [];
+  let current: SiteRule | null = null;
   for (const line of fs.readFileSync(new URL(headersPathOf(), root), 'utf8').split('\n')) {
     if (!line.trim() || line.startsWith('#')) continue;
     if (!/^\s/.test(line)) {
@@ -21,6 +26,7 @@ export function siteRules() {
       rules.push(current);
       continue;
     }
+    if (!current) throw new Error('a header rule appeared before any path line in the _headers file');
     const at = line.indexOf(':');
     current.headers[line.slice(0, at).trim()] = line.slice(at + 1).trim();
   }

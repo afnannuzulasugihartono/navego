@@ -7,13 +7,23 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { captureWorkerErrors } from '../../extension/lib/error-capture.js';
 
+interface CapturedCall {
+  readonly code: string;
+  readonly message: string;
+}
+
+type CaptureListener = (event: { error?: Error; reason?: unknown; message?: unknown; preventDefault?: () => void }) => void;
+
 function harness() {
-  const listeners = {};
-  const calls: any = [];
-  const target = { addEventListener: (type: any, fn: any) => { listeners[type] = fn; } };
-  const log = { error: (code: any, message: any) => calls.push({ code, message }) };
+  const listeners: Record<string, CaptureListener> = {};
+  const calls: CapturedCall[] = [];
+  const target = { addEventListener: (type: string, fn: CaptureListener) => { listeners[type] = fn; } };
+  const log = { error: (code: string, message: string) => { calls.push({ code, message }); } };
   captureWorkerErrors({ target, log });
-  return { listeners, calls };
+  const error = listeners.error;
+  const unhandledrejection = listeners.unhandledrejection;
+  assert.ok(error && unhandledrejection, 'both listeners are registered');
+  return { listeners: { error, unhandledrejection }, calls };
 }
 
 test('both worker channels are watched', () => {

@@ -7,8 +7,25 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { windowState, focusWindow } from '../../local/window-focus.js';
+import type { FocusResult, WindowStateResult } from '../../local/window-focus.js';
 import { createFocusGuard } from '../../local/focus-guard.js';
 import { TOOLS } from '../../local/mcp-server.js';
+
+function readAnswer(overrides: Partial<WindowStateResult> = {}): WindowStateResult {
+  return { platform: 'win32', foreground: '', windows: [], minimized: [], ...overrides };
+}
+
+function focusAnswer(overrides: Partial<FocusResult> = {}): FocusResult {
+  return { platform: 'win32', foreground: '', windows: [], minimized: [], match: '', focused: false, title: '', why: '', ...overrides };
+}
+
+interface GuardAnswer {
+  window: string;
+  checked: string;
+  foreground?: string;
+  focused?: boolean;
+  blocked?: boolean;
+}
 
 // WHY THESE CLAIMS EXIST.
 // Measured live on this machine, with the drive typing into a Google Docs document: a browser window behind another application still took the keys, and a minimized browser window did not.
@@ -38,9 +55,9 @@ test('focusing names the window it brought and whether the machine allowed it', 
 
 test('front with no match reads the machine and moves nothing', async () => {
   const calls: any = [];
-  const exec = async (command: any, args: any) => {
-    calls.push([command, args[args.length - 1]]);
-    return { stdout: 'FOREGROUND OpenCode\nPaper - Google Chrome\n' };
+  const exec = async (file: string, args: readonly string[]) => {
+    calls.push([file, args[args.length - 1]]);
+    return { stdout: 'FOREGROUND OpenCode\nPaper - Google Chrome\n', stderr: '' };
   };
 
   const out = await focusWindow('', { platform: 'win32', exec });
@@ -57,7 +74,7 @@ test('front with no match reads the machine and moves nothing', async () => {
 });
 
 test('a platform with no implementation refuses in words rather than answering false', async () => {
-  const state = await windowState({ platform: 'sunos' });
+  const state = await windowState({ platform: 'sunos' }) as WindowStateResult & { focused: boolean; why: string };
 
   assert.equal(state.focused, false);
   assert.match(state.why, /not implemented/);
@@ -95,11 +112,11 @@ test('a page that hears input costs one evaluation and never asks the machine', 
   let reads = 0;
   const ensure = createFocusGuard({
     clock: () => 0,
-    read: async () => { reads += 1; return { foreground: '', minimized: [] }; },
-    focus: async () => ({ focused: true, title: 'x' })
+    read: async () => { reads += 1; return readAnswer(); },
+    focus: async () => focusAnswer({ focused: true, title: 'x' })
   });
 
-  const out = await ensure({ hasFocus: async () => { asks += 1; return true; } });
+  const out = (await ensure({ hasFocus: async () => { asks += 1; return true; } })) as GuardAnswer;
 
   assert.equal(asks, 1, 'the page was asked');
   assert.equal(reads, 0, 'and the machine was left alone');
@@ -117,11 +134,11 @@ test('a page that cannot hear asks the machine once and says what it found', asy
   let focuses = 0;
   const ensure = createFocusGuard({
     clock: () => 0,
-    read: async () => { reads += 1; return { foreground: 'Typecelerate', windows: ['Typecelerate', 'Paper - Google Chrome'], minimized: [] }; },
-    focus: async () => { focuses += 1; return { focused: true, title: 'x' }; }
+    read: async () => { reads += 1; return readAnswer({ foreground: 'Typecelerate', windows: ['Typecelerate', 'Paper - Google Chrome'], minimized: [] }); },
+    focus: async () => { focuses += 1; return focusAnswer({ focused: true, title: 'x' }); }
   });
 
-  const out = await ensure({ hasFocus: async () => false, match: 'Paper' });
+  const out = (await ensure({ hasFocus: async () => false, match: 'Paper' })) as GuardAnswer;
 
   assert.equal(reads, 1, 'the shell was spent once');
   assert.equal(focuses, 0, 'and a window that is merely behind is left where the human put it');
@@ -140,11 +157,11 @@ test('a window the session owns is brought back without a name', async () => {
   const ensure = createFocusGuard({
     clock: () => 0,
     sleep: async () => {},
-    read: async () => ({ platform: 'win32', ownWindow: true, foreground: '', windows: [], minimized: ['the browser window'] }),
-    focus: async (match) => { wanted.push(match); restored = true; return { focused: true, title: 'the browser window' }; }
+    read: async () => readAnswer({ platform: 'win32', ownWindow: true, foreground: '', windows: [], minimized: ['the browser window'] }),
+    focus: async (match) => { wanted.push(match); restored = true; return focusAnswer({ focused: true, title: 'the browser window' }); }
   });
 
-  const out = await ensure({ hasFocus: async () => restored, match: 'Notes - Google Docs' });
+  const out = (await ensure({ hasFocus: async () => restored, match: 'Notes - Google Docs' })) as GuardAnswer;
 
   assert.deepEqual(wanted, ['the browser window'], 'the session\'s own window is the one restored');
   assert.equal(out.focused, true, 'and the page confirmed it hears input again');
@@ -158,11 +175,11 @@ test('a window on the taskbar is brought back, because that is where text goes t
   const ensure = createFocusGuard({
     clock: () => 0,
     sleep: async () => {},
-    read: async () => ({ foreground: 'OpenCode', windows: [], minimized: ['Paper - Google Chrome'] }),
-    focus: async (match) => { wanted.push(match); restored = true; return { focused: true, title: 'Paper - Google Chrome', foreground: 'Paper - Google Chrome' }; }
+    read: async () => readAnswer({ foreground: 'OpenCode', windows: [], minimized: ['Paper - Google Chrome'] }),
+    focus: async (match) => { wanted.push(match); restored = true; return focusAnswer({ focused: true, title: 'Paper - Google Chrome', foreground: 'Paper - Google Chrome' }); }
   });
 
-  const out = await ensure({ hasFocus: async () => restored, match: 'Paper' });
+  const out = (await ensure({ hasFocus: async () => restored, match: 'Paper' })) as GuardAnswer;
 
   assert.deepEqual(wanted, ['Paper - Google Chrome'], 'the window that was minimized is the one named');
   assert.equal(out.window, 'brought Paper - Google Chrome back from the taskbar');
@@ -176,11 +193,11 @@ test('a window that comes forward but leaves the page deaf is blocked, not promi
   const ensure = createFocusGuard({
     clock: () => 0,
     sleep: async () => {},
-    read: async () => ({ foreground: 'OpenCode', windows: [], minimized: ['Paper - Google Chrome'] }),
-    focus: async () => ({ focused: true, title: 'Paper - Google Chrome', foreground: 'Paper - Google Chrome' })
+    read: async () => readAnswer({ foreground: 'OpenCode', windows: [], minimized: ['Paper - Google Chrome'] }),
+    focus: async () => focusAnswer({ focused: true, title: 'Paper - Google Chrome', foreground: 'Paper - Google Chrome' })
   });
 
-  const out = await ensure({ hasFocus: async () => false, match: 'Paper' });
+  const out = (await ensure({ hasFocus: async () => false, match: 'Paper' })) as GuardAnswer;
 
   assert.equal(out.focused, false);
   assert.equal(out.blocked, true, 'and the caller is told not to send input');
@@ -196,11 +213,11 @@ test('a minimized window the caller did not name stays on the taskbar', async ()
   const wanted: any = [];
   const ensure = createFocusGuard({
     clock: () => 0,
-    read: async () => ({ foreground: 'OpenCode', windows: [], minimized: ['Settings', 'Paper - Google Chrome'] }),
-    focus: async (match) => { wanted.push(match); return { focused: true, title: 'Settings' }; }
+    read: async () => readAnswer({ foreground: 'OpenCode', windows: [], minimized: ['Settings', 'Paper - Google Chrome'] }),
+    focus: async (match) => { wanted.push(match); return focusAnswer({ focused: true, title: 'Settings' }); }
   });
 
-  const out = await ensure({ hasFocus: async () => false });
+  const out = (await ensure({ hasFocus: async () => false })) as GuardAnswer;
 
   assert.deepEqual(wanted, [], 'no window is touched without a name');
   assert.match(out.window, /in the background and hears input anyway/);
@@ -211,11 +228,11 @@ test('a minimized window that does not fit the name stays on the taskbar', async
   const wanted: any = [];
   const ensure = createFocusGuard({
     clock: () => 0,
-    read: async () => ({ foreground: 'Settings', windows: [], minimized: ['Settings'] }),
-    focus: async (match) => { wanted.push(match); return { focused: true, title: 'Settings' }; }
+    read: async () => readAnswer({ foreground: 'Settings', windows: [], minimized: ['Settings'] }),
+    focus: async (match) => { wanted.push(match); return focusAnswer({ focused: true, title: 'Settings' }); }
   });
 
-  const out = await ensure({ hasFocus: async () => false, match: 'Paper' });
+  const out = (await ensure({ hasFocus: async () => false, match: 'Paper' })) as GuardAnswer;
 
   assert.deepEqual(wanted, [], 'a different window is never brought forward');
   assert.match(out.window, /Settings is in front/);
@@ -224,11 +241,11 @@ test('a minimized window that does not fit the name stays on the taskbar', async
 test('a taskbar window the machine will not bring back says what it said', async () => {
   const ensure = createFocusGuard({
     clock: () => 0,
-    read: async () => ({ foreground: 'OpenCode', windows: [], minimized: ['Paper - Google Chrome'] }),
-    focus: async () => ({ focused: false, why: 'something is taking the focus back' })
+    read: async () => readAnswer({ foreground: 'OpenCode', windows: [], minimized: ['Paper - Google Chrome'] }),
+    focus: async () => focusAnswer({ focused: false, why: 'something is taking the focus back' })
   });
 
-  const out = await ensure({ hasFocus: async () => false, match: 'Paper' });
+  const out = (await ensure({ hasFocus: async () => false, match: 'Paper' })) as GuardAnswer;
 
   assert.match(out.window, /on the taskbar and the machine would not bring .* back: something is taking the focus back/);
 });
@@ -239,8 +256,8 @@ test('a burst on a page that cannot hear pays for one shell and keeps asking the
   let reads = 0;
   const ensure = createFocusGuard({
     clock: () => at,
-    read: async () => { reads += 1; return { foreground: 'OpenCode', windows: [], minimized: [] }; },
-    focus: async () => ({ focused: true, title: 'x' })
+    read: async () => { reads += 1; return readAnswer({ foreground: 'OpenCode', windows: [], minimized: [] }); },
+    focus: async () => focusAnswer({ focused: true, title: 'x' })
   });
 
   await ensure({ hasFocus: async () => { asks += 1; return false; } });
@@ -252,7 +269,7 @@ test('a burst on a page that cannot hear pays for one shell and keeps asking the
   assert.equal(second.checked, 'memory', 'the answer says it came from the machine it already asked');
 
   at = 1600;
-  const third = await ensure({ hasFocus: async () => { asks += 1; return false; } });
+  await ensure({ hasFocus: async () => { asks += 1; return false; } });
   assert.equal(reads, 2, 'a shell older than a beat is asked again, because a human brings windows back');
 
   at = 1700;
@@ -263,9 +280,9 @@ test('a burst on a page that cannot hear pays for one shell and keeps asking the
 });
 
 test('a driver that cannot see the page says so rather than pretending the window is fine', async () => {
-  const ensure = createFocusGuard({ clock: () => 0, read: async () => ({}), focus: async () => ({ focused: true, title: 'x' }) });
+  const ensure = createFocusGuard({ clock: () => 0, read: async () => readAnswer(), focus: async () => focusAnswer({ focused: true, title: 'x' }) });
 
-  const out = await ensure({});
+  const out = (await ensure({})) as GuardAnswer;
 
   assert.equal(out.checked, 'nothing');
   assert.match(out.window, /cannot tell/);

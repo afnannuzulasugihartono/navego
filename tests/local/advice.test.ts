@@ -36,7 +36,9 @@ test('every move names a call the server actually has', () => {
       for (const move of moves) {
         const call = /([a-z_]+)\(/.exec(move);
         if (!call) continue;
-        rows.push([call[1], names.has(call[1])]);
+        const name = call[1];
+        if (!name) continue;
+        rows.push([name, names.has(name)]);
       }
       break;
     }

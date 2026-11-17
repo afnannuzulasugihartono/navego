@@ -1,9 +1,13 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["shared/**/*.ts"],
+  "include": [
+    "shared/**/*.ts"
+  ],
   "exclude": [],
   "compilerOptions": {
     "outDir": ".",
-    "rootDir": "."
+    "rootDir": ".",
+    "declaration": true,
+    "rewriteRelativeImportExtensions": true
   }
 }

@@ -60,6 +60,8 @@ import { statementDownload, statementManifest } from './worker/statement.js';
 import { applyNewestBuild } from './worker/self-update.js';
 import { captureWorkerErrors } from './lib/error-capture.js';
 
+declare const self: Pick<EventTarget, 'addEventListener'> | undefined;
+
 captureWorkerErrors({ target: typeof self === 'undefined' ? null : self, log });
 
 chrome.debugger.onDetach.addListener(handleDebuggerDetach);

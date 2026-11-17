@@ -41,7 +41,8 @@ test('the cloud handshake accepts a per-browser identity and bounds it', () => {
   const identity = handshakePayload({ token: 't', deviceName: 'opera', instanceId: '  instance-a  ' });
   assert.deepEqual(identity, { token: 't', deviceName: 'opera', instanceId: 'instance-a' });
   const long = handshakePayload({ token: 't', deviceName: 'opera', instanceId: 'x'.repeat(200) });
-  assert.equal(long.instanceId.length, 64, 'the identity is bounded like every other handshake field');
+  assert.ok(long, 'a long identity still parses');
+  assert.equal(long.instanceId?.length, 64, 'the identity is bounded like every other handshake field');
   const absent = handshakePayload({ token: 't', deviceName: 'opera' });
   assert.deepEqual(absent, { token: 't', deviceName: 'opera' });
 });
@@ -55,7 +56,9 @@ test('a generated identity is unique per call', () => {
 test('the loopback bridge names the browser it heard, not only its socket', async () => {
   const bridge = createBridgeServer({ cloud: fakeCloud(), port: 0, heartbeatMs: 500 });
   await bridge.listen();
-  const { port } = bridge.address();
+  const address = bridge.address();
+  assert.ok(address, 'the bridge is listening');
+  const { port } = address;
   const socket = new WebSocket(`ws://127.0.0.1:${port}`);
   try {
     await new Promise((resolve, reject) => {
@@ -65,7 +68,7 @@ test('the loopback bridge names the browser it heard, not only its socket', asyn
     socket.send(handshakeFrame('', 'bridge', 'instance-a'));
     const deadline = Date.now() + 3000;
     while (!bridge.linked() && Date.now() < deadline) await sleep(20);
-    const health = await fetch(`http://127.0.0.1:${port}/health`).then((response) => response.json());
+    const health = await fetch(`http://127.0.0.1:${port}/health`).then((response) => response.json()) as { deviceInstanceId?: unknown };
     assert.equal(health.deviceInstanceId, 'instance-a');
   } finally {
     try { socket.close(); } catch { }

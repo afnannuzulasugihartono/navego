@@ -480,7 +480,6 @@ function formatLineGroup(group: any) {
       const text = line.text.trim();
       if (!text) { merged.push(null); continue; }
       const previous = merged[merged.length - 1];
-      if (previous === undefined) continue;
       const continuation = typeof previous === 'string'
         && previous.split(/\s+/).length >= 3
         && !/[.!?]["')\]]?$/.test(previous)

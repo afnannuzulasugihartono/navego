@@ -14,17 +14,18 @@ import { fetchVerifiedZip, installCrxInto } from '../../local/install.js';
 
 const makeZip = () => Buffer.from('zip-payload-of-the-opera-agent-build-for-tests');
 
-const serve = async (handler: any) => {
+const serve = async (handler: http.RequestListener) => {
   const server = http.createServer(handler);
-  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
-  const { port } = server.address();
-  return { server, url: `http://127.0.0.1:${port}/opera-agent.zip` };
+  await new Promise<void>((resolve) => { server.listen(0, '127.0.0.1', () => resolve()); });
+  const address = server.address();
+  if (!address || typeof address === 'string') assert.fail('server did not bind a port');
+  return { server, url: `http://127.0.0.1:${address.port}/opera-agent.zip` };
 };
 
 test('fetchVerifiedZip returns the bytes when the header hash matches', async () => {
   const bytes = makeZip();
   const sha = crypto.createHash('sha256').update(bytes).digest('hex');
-  const { server, url } = await serve((req: any, res: any) => {
+  const { server, url } = await serve((req, res) => {
     if (req.method === 'HEAD') { res.setHeader('x-opera-sha256', sha); res.end(); } else { res.setHeader('Content-Type', 'application/zip'); res.end(bytes); }
   });
   try {
@@ -38,7 +39,7 @@ test('fetchVerifiedZip returns the bytes when the header hash matches', async ()
 test('fetchVerifiedZip throws when the sha256 header disagrees', async () => {
   const bytes = makeZip();
   const wrong = crypto.createHash('sha256').update('different').digest('hex');
-  const { server, url } = await serve((req: any, res: any) => {
+  const { server, url } = await serve((req, res) => {
     if (req.method === 'HEAD') { res.setHeader('x-opera-sha256', wrong); res.end(); } else { res.end(bytes); }
   });
   try {
@@ -49,7 +50,7 @@ test('fetchVerifiedZip throws when the sha256 header disagrees', async () => {
 });
 
 test('fetchVerifiedZip throws when HEAD carries no hash header', async () => {
-  const { server, url } = await serve((req: any, res: any) => { res.end(''); });
+  const { server, url } = await serve((_req, res) => { res.end(''); });
   try {
     await assert.rejects(() => fetchVerifiedZip({ url }), /x-opera-sha256/);
   } finally {
@@ -58,7 +59,7 @@ test('fetchVerifiedZip throws when HEAD carries no hash header', async () => {
 });
 
 test('fetchVerifiedZip throws when the download fails', async () => {
-  const { server, url } = await serve((req: any, res: any) => {
+  const { server, url } = await serve((req, res) => {
     if (req.method === 'HEAD') { res.setHeader('x-opera-sha256', 'aa'); res.end(); } else { res.statusCode = 503; res.end(); }
   });
   try {

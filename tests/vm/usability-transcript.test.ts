@@ -12,13 +12,16 @@ const r7MigrationName = fs.readdirSync(migrationDir)
   .filter((name) => name.endsWith('.sql') && name.includes('pre_8e_r7_transcript_cleanup'))
   .sort()
   .pop();
+assert.ok(r7MigrationName, 'R7 transcript cleanup migration must exist');
 
-const workflow = JSON.parse(
-  fs.readFileSync(new URL(`../../hosted/migrations/${r7MigrationName}`, import.meta.url), 'utf8')
-    .match(/\$wf\$([\s\S]*?)\$wf\$::jsonb/)[1]
-);
+const r7Source = fs.readFileSync(new URL(`../../hosted/migrations/${r7MigrationName}`, import.meta.url), 'utf8');
+const workflowMatch = r7Source.match(/\$wf\$([\s\S]*?)\$wf\$::jsonb/);
+assert.ok(workflowMatch, 'migration must embed the workflow JSON');
+const workflowBody = workflowMatch[1];
+assert.ok(workflowBody, 'migration must embed the workflow JSON');
+const workflow = JSON.parse(workflowBody);
 
-const walk = (steps: any, visit: any, parents = []) => {
+const walk = (steps: any, visit: any, parents: Array<{ via: string; step: unknown }> = []) => {
   for (const step of steps || []) {
     visit(step, parents);
     if (Array.isArray(step?.then)) walk(step.then, visit, [...parents, { via: 'then', step }]);
@@ -86,8 +89,6 @@ test('keeps exactly one chunked reader, only as the segment-query fallback (comp
 });
 
 test('structural cost reduction is deterministic: commands and payload (T037)', () => {
-
-  const isCommand = (step: any) => step?.type === 'command';
 
   const v5 =
     1

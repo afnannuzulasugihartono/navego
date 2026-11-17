@@ -27,9 +27,29 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
 const root = new URL('../../', import.meta.url);
-const repo = (p: any) => new URL(p, root);
+const repo = (p: string) => new URL(p, root);
 
-const LANGUAGES = {
+interface LanguageSpec {
+  line: string[];
+  block: Array<[string, string]>;
+  strings: string[];
+  brace?: boolean;
+  regex?: boolean;
+  triple?: boolean;
+  indent?: boolean;
+  keyword?: RegExp;
+}
+
+interface FoundComment {
+  line: number;
+  col: number;
+  depth: number;
+  indent: number;
+  text: string;
+  aboveDeclaration?: boolean;
+}
+
+const LANGUAGES: Record<string, LanguageSpec> = {
   js: { line: ['//'], block: [['/*', '*/']], strings: ['\'', '"', '`'], brace: true, regex: true },
   mjs: { line: ['//'], block: [['/*', '*/']], strings: ['\'', '"', '`'], brace: true, regex: true },
   ts: { line: ['//'], block: [['/*', '*/']], strings: ['\'', '"', '`'], brace: true, regex: true },
@@ -44,7 +64,7 @@ const LANGUAGES = {
 const tracked = () => {
   const listed = execFileSync('git', ['ls-files'], { cwd: repo('.'), encoding: 'utf8' })
     .split('\n').filter(Boolean);
-  const known = (f: any) => LANGUAGES[path.extname(f).slice(1).toLowerCase()];
+  const known = (f: string) => LANGUAGES[path.extname(f).slice(1).toLowerCase()];
 
   const untracked = execFileSync('git', ['ls-files', '--others', '--exclude-standard'],
     { cwd: repo('.'), encoding: 'utf8' }).split('\n').filter(Boolean);
@@ -55,9 +75,10 @@ const tracked = () => {
 // A template spans lines, and the code inside it is not this repository's code: it is the page's.
 // Reading it as code once put a block comment inside a page expression in the middle of a file, and the scanner believed it until the next block-comment end somewhere else, which is how the depth counter in the biggest file in the tree ended up negative and the rule below it went unmeasured.
 
-function findComments(source: any, language: any) {
+function findComments(source: string, language: string): FoundComment[] {
   const spec = LANGUAGES[language];
-  const found = [];
+  assert.ok(spec, `no language spec for ${language}`);
+  const found: FoundComment[] = [];
   let i = 0;
   let line = 0;
   let col = 0;
@@ -67,6 +88,7 @@ function findComments(source: any, language: any) {
 
   while (i < source.length) {
     const c = source[i];
+    assert.ok(c !== undefined);
 
     if (c === '\n') {
       line += 1; i += 1; col = 0;
@@ -96,7 +118,7 @@ function findComments(source: any, language: any) {
       continue;
     }
 
-    const lineOpen = spec.line.find((open: any) => source.startsWith(open, i));
+    const lineOpen = spec.line.find((open) => source.startsWith(open, i));
     if (lineOpen) {
       const start = { line: line + 1, col, depth, indent: lastCodeIndent };
       let text = '';
@@ -188,8 +210,9 @@ function findComments(source: any, language: any) {
   return found;
 }
 
-const insideABody = (comment: any, language: any) => {
+const insideABody = (comment: FoundComment, language: string): boolean => {
   const spec = LANGUAGES[language];
+  assert.ok(spec, `no language spec for ${language}`);
   if (spec.brace) return comment.depth > 0 && !comment.aboveDeclaration;
   if (spec.keyword) return false;
   return comment.indent > 0 && !comment.aboveDeclaration;
@@ -208,12 +231,12 @@ const DECLARATION = [
   /^(async\s+)?[A-Za-z_$][\w$]*\s*\($/
 ];
 
-const documentsADeclaration = (sourceLines: any, comment: any) => {
+const documentsADeclaration = (sourceLines: string[], comment: FoundComment): boolean => {
   const own = sourceLines[comment.line - 1] ?? '';
   const ownIndent = own.length - own.trimStart().length;
   let index = comment.line; // the line after the comment's own line
   while (index < sourceLines.length) {
-    const text = sourceLines[index].trim();
+    const text = (sourceLines[index] ?? '').trim();
     if (text === '' || text.startsWith('//') || text.startsWith('/*') || text.startsWith('*')) {
       index += 1;
       continue;
@@ -222,6 +245,7 @@ const documentsADeclaration = (sourceLines: any, comment: any) => {
   }
   if (index >= sourceLines.length) return false;
   const line = sourceLines[index];
+  assert.ok(line !== undefined);
   const indent = line.length - line.trimStart().length;
   if (indent !== ownIndent) return false;
   const trimmed = line.trim();
@@ -263,16 +287,18 @@ test('a comment that interrupts a statement sequence is still caught', () => {
     aboveDeclaration: documentsADeclaration(source.split(/\r?\n/), comment)
   }));
   assert.equal(comments.length, 1);
-  assert.equal(comments[0].aboveDeclaration, false, 'a note above a call documents nothing');
-  assert.equal(insideABody(comments[0], 'js'), true, 'so it is still a misplaced comment');
+  const first = comments[0];
+  assert.ok(first);
+  assert.equal(first.aboveDeclaration, false, 'a note above a call documents nothing');
+  assert.equal(insideABody(first, 'js'), true, 'so it is still a misplaced comment');
 });
 
 test('the scanner knows a comment from a string, and a body from a top level', () => {
 
-  const at = (source: any, language: any) => findComments(source, language)
+  const at = (source: string, language: string) => findComments(source, language)
     .map((c) => ({ line: c.line, depth: c.depth, indent: c.indent }));
 
-  const cases = [
+  const cases: Array<[string, string, string, Array<{ line: number; depth: number; indent: number }>]> = [
     ['a URL is not a comment', 'js', "const u = 'https://x.test/a//b';", []],
     ['a glob is not a comment', 'js', 'const g = "/* not a comment */";', []],
     ['a template is not a comment', 'js', 'const t = `a // b`;', []],

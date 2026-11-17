@@ -16,10 +16,6 @@ const fn = fs.readFileSync(new URL('hosted/functions/opera-agent-billing/index.t
 const sql = fs.readFileSync(new URL('hosted/migrations/20261104120000_opera_wallet.sql', root), 'utf8');
 const api = fs.readFileSync(new URL('hosted/functions/_shared/wallet-api.ts', root), 'utf8');
 
-function called(source: any, rpc: any) {
-  return [...source.matchAll(new RegExp(`${rpc}",\\s*\\{([\\s\\S]*?)\\}\\)`, 'g'))].map((match) => match[1]);
-}
-
 test('every wallet rpc the function calls is declared by the migration', () => {
   for (const rpc of ['opera_wallet_balance', 'opera_wallet_available', 'opera_wallet_reserve', 'opera_wallet_settle', 'opera_wallet_refund', 'opera_wallet_credit']) {
     assert.match(fn, new RegExp(`"${rpc}"`), `${rpc} is not called by the function`);
@@ -35,7 +31,7 @@ test('every argument the function sends is a parameter the migration declares', 
     .filter((file) => file.endsWith('.sql'))
     .map((file) => fs.readFileSync(new URL(`hosted/migrations/${file}`, root), 'utf8')).join('\n');
   const declared = new Set([...migrations.matchAll(/p_[a-z_]+/g)].map((match) => match[0]));
-  const sent = new Set([...fn.matchAll(/^\s+(p_[a-z_]+):/gm)].map((match) => match[1]));
+  const sent = new Set([...fn.matchAll(/^\s+(p_[a-z_]+):/gm)].map((match) => match[1]).filter((group): group is string => group !== undefined));
   assert.ok(sent.size >= 9, 'the function should send the wallet parameters');
   for (const name of sent) assert.ok(declared.has(name), `${name} is sent but no migration declares it`);
 });

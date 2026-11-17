@@ -20,7 +20,7 @@ import {
 const names = (profile: any) => readLadder(profile).map((step) => step.strategy);
 
 test('an ordinary DOM page keeps its order', () => {
-  const ladder = readLadder({ textInDom: true, canvas: false, editable: false, axRich: false, focused: false });
+  const ladder = readLadder({ textInDom: true, canvas: false, editable: false, axRich: false, focused: false } as Parameters<typeof readLadder>[0]);
   assert.deepEqual(names({ textInDom: true, canvas: false, editable: false, axRich: false, focused: false }), [STRATEGY_DOM, STRATEGY_AX, STRATEGY_VISION]);
   assert.equal(ladder.every((step) => step.harm === HARM_NONE), true);
 });
@@ -31,8 +31,9 @@ test('a canvas editable surface leads with the accessibility tree', () => {
 });
 
 test('a canvas editable surface tags select-all as caret-moving', () => {
-  const ladder = readLadder({ textInDom: false, canvas: true, editable: true, axRich: true, focused: true });
+  const ladder = readLadder({ textInDom: false, canvas: true, editable: true, axRich: true, focused: true } as Parameters<typeof readLadder>[0]);
   const step = ladder.find((entry) => entry.strategy === STRATEGY_SELECT_ALL);
+  assert.ok(step, 'the ladder carries the select-all step');
   assert.equal(step.harm, HARM_CARET_MOVE);
   assert.ok(step.why.length > 0, 'every step names why it is in the ladder');
 });
@@ -48,7 +49,7 @@ test('an ax tree with no document text falls through to the DOM', () => {
 });
 
 test('contradictory signals still produce one ladder', () => {
-  const ladder = readLadder({ textInDom: true, canvas: true, editable: false, axRich: true, focused: false });
+  const ladder = readLadder({ textInDom: true, canvas: true, editable: false, axRich: true, focused: false } as Parameters<typeof readLadder>[0]);
   assert.ok(Array.isArray(ladder) && ladder.length >= 3);
   assert.equal(ladder.filter((step) => step.harm === HARM_CARET_MOVE).length, 0);
 });

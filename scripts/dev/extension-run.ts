@@ -85,8 +85,13 @@ export function extensionId(key: string): string {
   return id;
 }
 
+const bodyRecord = async (response: Response): Promise<Record<string, unknown> | null> => {
+  const body: unknown = await response.json();
+  return typeof body === 'object' && body !== null ? body as Record<string, unknown> : null;
+};
+
 const health = (port: number) => fetch(`http://127.0.0.1:${port}/health`, { signal: AbortSignal.timeout(2000) })
-  .then((response) => response.json())
+  .then(bodyRecord)
   .catch(() => null);
 
 // WHY THE RUN WAITS FOR THE LINK AND SAYS WHY IT DID NOT COME.
@@ -161,19 +166,19 @@ async function runExtensionProof({
       // So the version goes into the link-wait timeout instead: the link still has to arrive, and the wait is short so a dead extension is caught in seconds, while the failure names the flag limit as a suspect rather than as the verdict.
 
       const version = await fetch(`http://127.0.0.1:${debugPort}/json/version`)
-        .then((response) => response.json())
+        .then(bodyRecord)
         .catch(() => null);
       const link = await waitForLink(bridgePort, { timeoutMs: OWN_LINK_WAIT_MS })
         .then((answer) => answer, () => null);
       if (!link) {
-        const suspect = chromeIgnoresLoadExtension(version?.Browser)
-          ? ` The launched Chrome is major ${majorOf(version.Browser)}, and branded Chrome 137 and newer ignore --load-extension - Chrome for Testing and Chromium still honour it.`
+        const suspect = chromeIgnoresLoadExtension(String(version?.Browser ?? ''))
+          ? ` The launched Chrome is major ${majorOf(String(version?.Browser ?? ''))}, and branded Chrome 137 and newer ignore --load-extension - Chrome for Testing and Chromium still honour it.`
           : '';
         throw new Error(`the extension did not reach the bridge on 127.0.0.1:${bridgePort} within ${OWN_LINK_WAIT_MS} ms; health said ${JSON.stringify(link ? { ok: true, linked: true } : null)}.${suspect} Own mode launches its own browser; link the extension in an everyday browser instead and run with that bridge already up.`);
       }
     }
     const version = browser
-      ? await fetch(`http://127.0.0.1:${debugPort}/json/version`).then((response) => response.json())
+      ? await fetch(`http://127.0.0.1:${debugPort}/json/version`).then(bodyRecord)
       : await health(bridgePort);
 
     await waitForLink(bridgePort);

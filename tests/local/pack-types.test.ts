@@ -16,7 +16,7 @@ const root = fileURLToPath(new URL('../..', import.meta.url));
 const localDir = path.join(root, 'local');
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
-const walk = (dir: any) => readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+const walk = (dir: any): string[] => readdirSync(dir, { withFileTypes: true }).flatMap((entry): string[] => {
   const full = path.join(dir, entry.name);
   return entry.isDirectory() ? walk(full) : [full];
 });
@@ -50,7 +50,9 @@ test('the packed tarball carries no .ts source, keeps the generated copies, and 
 
     // The shebang must survive packing; without it `npx navego` dies on a machine that cannot guess the interpreter.
     const bin = readFileSync(path.join(packageDir, 'bin', 'navego.js'), 'utf8');
-    assert.equal(bin.split('\n', 1)[0].trim(), '#!/usr/bin/env node', 'bin/navego.js keeps its shebang on line 1');
+    const [firstLine] = bin.split('\n', 1);
+    assert.ok(firstLine);
+    assert.equal(firstLine.trim(), '#!/usr/bin/env node', 'bin/navego.js keeps its shebang on line 1');
 
     const help = spawnSync(process.execPath, [path.join(packageDir, 'bin', 'navego.js'), '--help'], { encoding: 'utf8' });
     assert.equal(help.status, 0, `the packed bin answers --help: ${help.stderr || help.stdout}`);

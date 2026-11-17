@@ -108,11 +108,15 @@ test('a live document names no file that is not in the tree', () => {
     const body = read(file);
     const dir = path.posix.dirname(file);
     for (const match of body.matchAll(/`((?:extension|shared|local|tests|hosted|docs|scripts|landing|proof)\/[A-Za-z0-9_./-]+\.(?:js|mjs|ts|py|sql|html|css|json|md|yml|yaml|toml|cmd|example))`/g)) {
-      const named = match[1].replace(/[.,;:'")`]+$/, '');
+      const captured = match[1];
+      assert.ok(captured, `${file} carries an empty named path`);
+      const named = captured.replace(/[.,;:'")`]+$/, '');
       if (!set.has(named)) dead.push(`${file} names ${named}`);
     }
     for (const match of body.matchAll(/\[[^\]]*\]\(([^)\s]+)\)/g)) {
-      const target = match[1].split('#')[0];
+      const captured = match[1];
+      assert.ok(captured, `${file} carries an empty link target`);
+      const target = captured.split('#')[0];
       if (!target || /^(?:[a-z]+:|\/)/i.test(target)) continue;
       // A link may point at a directory, which git does not list.
       const resolved = path.posix.normalize(path.posix.join(dir, target));

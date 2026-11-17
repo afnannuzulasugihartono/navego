@@ -19,7 +19,7 @@ async function workflowMigrations() {
   return files.filter((file) => file.endsWith('.sql'));
 }
 
-function collectBursts(node: any, found = []) {
+function collectBursts(node: any, found: unknown[][] = []) {
   if (Array.isArray(node)) {
     for (const item of node) collectBursts(item, found);
     return found;
@@ -34,7 +34,7 @@ test('every burst step references an earlier step in the same burst', async () =
   const offenders: any = [];
   for (const file of await workflowMigrations()) {
     const source = await readFile(new URL(file, DIR), 'utf8');
-    const blocks = [...source.matchAll(/\$wf\$(.*?)\$wf\$/gs)].map((match) => match[1]);
+    const blocks = [...source.matchAll(/\$wf\$(.*?)\$wf\$/gs)].flatMap((match) => (match[1] === undefined ? [] : [match[1]]));
     if (!blocks.length) continue;
     for (const block of blocks) {
       const definition = JSON.parse(block);
@@ -57,7 +57,9 @@ test('every embedded workflow definition is valid JSON', async () => {
     const source = await readFile(new URL(file, DIR), 'utf8');
     const blocks = [...source.matchAll(/\$wf\$(.*?)\$wf\$/gs)];
     for (const [index, match] of blocks.entries()) {
-      assert.doesNotThrow(() => JSON.parse(match[1]), `${file} block ${index} must parse as JSON`);
+      const blockBody = match[1];
+      assert.ok(blockBody !== undefined, `${file} block ${index} must have a body`);
+      assert.doesNotThrow(() => JSON.parse(blockBody), `${file} block ${index} must parse as JSON`);
     }
   }
 });

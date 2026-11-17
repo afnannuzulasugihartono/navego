@@ -195,9 +195,9 @@ test('an idle debugger session is released while a fresh one is kept', async () 
   const { registerDebuggerSession, releaseIdleDebuggerSessions, getDebuggerSessions } = await import(
     '../../extension/lib/debugger-session.js'
   );
-  const detached: any = [];
+  const detached: number[] = [];
   const previous = globalThis.chrome;
-  globalThis.chrome = { debugger: { detach: async (target) => { detached.push(target.tabId); } } };
+  (globalThis as { chrome: unknown }).chrome = { debugger: { detach: async (target: { tabId: number }) => { detached.push(target.tabId); } } };
   try {
     const old = { tabId: 5101, attached: true, lastUsedAt: 1000 };
     const fresh = { tabId: 5102, attached: true, lastUsedAt: 9000 };
@@ -215,8 +215,8 @@ test('an idle debugger session is released while a fresh one is kept', async () 
     assert.equal(fresh.attached, true);
     assert.equal(getDebuggerSessions().get(5102), fresh);
   } finally {
-    if (previous === undefined) delete globalThis.chrome;
-    else globalThis.chrome = previous;
+    if (previous === undefined) delete (globalThis as { chrome?: unknown }).chrome;
+    else (globalThis as { chrome: unknown }).chrome = previous;
     getDebuggerSessions().clear();
   }
 });

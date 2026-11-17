@@ -152,8 +152,10 @@ test('a sign-in fills the fields from the credential file and never says the sec
   assert.equal(out.signedIn, true);
   assert.equal(out.account, 'contoh.co.id');
   assert.equal(out.user, 'b***@example.com');
-  assert.equal(out.before.url, 'https://contoh.co.id/masuk');
-  assert.equal(out.after.url, 'https://contoh.co.id/beranda');
+  const before = out.before as { url: string };
+  const after = out.after as { url: string };
+  assert.equal(before.url, 'https://contoh.co.id/masuk');
+  assert.equal(after.url, 'https://contoh.co.id/beranda');
   const typed = driver.calls.filter((call: any) => call[0] === 'type').map((call: any) => call[1]);
   assert.ok(typed.includes('budi@example.com'), 'the username is typed');
   assert.ok(typed.includes('rahasia123'), 'the password reaches the page');
@@ -236,12 +238,13 @@ test('the captcha solver refuses a page outside the allowed domains', () => {
 
 test('the solver asks for a task, waits for the answer, and says what it paid', async () => {
   const asked: any = [];
-  const fetchImpl = async (url: any, init: any) => {
-    asked.push({ url, body: JSON.parse(init.body) });
-    if (url.endsWith('/createTask')) {
-      return { ok: true, json: async () => ({ errorId: 0, taskId: 42 }) };
+  const fetchImpl = async (url: unknown, init?: { body?: unknown }) => {
+    const target = String(url);
+    asked.push({ url: target, body: JSON.parse(String(init?.body ?? '')) });
+    if (target.endsWith('/createTask')) {
+      return new Response(JSON.stringify({ errorId: 0, taskId: 42 }));
     }
-    return { ok: true, json: async () => ({ errorId: 0, status: 'ready', solution: { text: 'A7B2' } }) };
+    return new Response(JSON.stringify({ errorId: 0, status: 'ready', solution: { text: 'A7B2' } }));
   };
 
   const out = await solveImageCaptcha({
@@ -261,7 +264,7 @@ test('the solver asks for a task, waits for the answer, and says what it paid', 
 });
 
 test('the solver reports a refusal from the service instead of pretending it solved', async () => {
-  const fetchImpl = async () => ({ ok: true, json: async () => ({ errorId: 1, errorCode: 'ERROR_KEY_DOES_NOT_EXIST', errorDescription: 'no key' }) });
+  const fetchImpl = async () => new Response(JSON.stringify({ errorId: 1, errorCode: 'ERROR_KEY_DOES_NOT_EXIST', errorDescription: 'no key' }));
 
   await assert.rejects(
     () => solveImageCaptcha({ baseUrl: 'https://solver.example', apiKey: 'bad', image: 'X', fetchImpl, sleep }),
@@ -270,9 +273,10 @@ test('the solver reports a refusal from the service instead of pretending it sol
 });
 
 test('the solver gives up when the service never finishes the task', async () => {
-  const fetchImpl = async (url: any) => {
-    if (url.endsWith('/createTask')) return { ok: true, json: async () => ({ errorId: 0, taskId: 7 }) };
-    return { ok: true, json: async () => ({ errorId: 0, status: 'processing' }) };
+  const fetchImpl = async (url: unknown) => {
+    const target = String(url);
+    if (target.endsWith('/createTask')) return new Response(JSON.stringify({ errorId: 0, taskId: 7 }));
+    return new Response(JSON.stringify({ errorId: 0, status: 'processing' }));
   };
 
   await assert.rejects(

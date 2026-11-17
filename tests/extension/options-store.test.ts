@@ -8,12 +8,12 @@ import assert from 'node:assert/strict';
 import { loadOptions, saveBridgeUrl, saveLogLevel, saveModelEndpoint, saveModelKey, saveModelName, readModelConfig, MODEL_PROVIDERS, DEFAULT_PROVIDER_ID } from '../../extension/lib/options-store.js';
 import { DEFAULT_BRIDGE_URL } from '../../extension/lib/endpoints.js';
 
-const fake = (seed = {}) => {
-  const data = { ...seed };
+const fake = (seed: Record<string, unknown> = {}) => {
+  const data: Record<string, unknown> = { ...seed };
   return {
     data,
-    async get(keys: any) { const out = {}; for (const k of keys) out[k] = data[k]; return out; },
-    async set(patch: any) { Object.assign(data, patch); }
+    async get(keys: string[]) { const out: Record<string, unknown> = {}; for (const k of keys) out[k] = data[k]; return out; },
+    async set(patch: Record<string, unknown>) { Object.assign(data, patch); }
   };
 };
 
@@ -100,6 +100,7 @@ test('loadOptions reports the default provider endpoint and model on empty stora
   const s = fake();
   const loaded = await loadOptions(s);
   const provider = MODEL_PROVIDERS.find((entry) => entry.id === DEFAULT_PROVIDER_ID);
+  assert.ok(provider);
   assert.equal(DEFAULT_PROVIDER_ID, 'nvidia');
   assert.equal(loaded.modelEndpoint, provider.endpoint);
   assert.equal(loaded.modelEndpoint, 'https://integrate.api.nvidia.com/v1/chat/completions');
@@ -134,31 +135,38 @@ test('MODEL_PROVIDERS is frozen, and every listed endpoint passes its own rule',
 
 test('the cloud providers name their exact endpoints and models', async () => {
   const byId = Object.fromEntries(MODEL_PROVIDERS.map((entry) => [entry.id, entry]));
-  assert.equal(byId.nvidia.endpoint, 'https://integrate.api.nvidia.com/v1/chat/completions');
-  assert.deepEqual(byId.nvidia.models.map((entry) => entry.id), [
+  const nvidia = byId.nvidia;
+  const groq = byId.groq;
+  assert.ok(nvidia && groq);
+  assert.equal(nvidia.endpoint, 'https://integrate.api.nvidia.com/v1/chat/completions');
+  assert.deepEqual(nvidia.models.map((entry) => entry.id), [
     'meta/llama-3.2-11b-vision-instruct',
     'meta/llama-3.2-90b-vision-instruct'
   ]);
-  assert.equal(byId.nvidia.defaultModel, 'meta/llama-3.2-11b-vision-instruct');
-  assert.equal(byId.groq.endpoint, 'https://api.groq.com/openai/v1/chat/completions');
-  assert.deepEqual(byId.groq.models.map((entry) => entry.id), [
+  assert.equal(nvidia.defaultModel, 'meta/llama-3.2-11b-vision-instruct');
+  assert.equal(groq.endpoint, 'https://api.groq.com/openai/v1/chat/completions');
+  assert.deepEqual(groq.models.map((entry) => entry.id), [
     'llama-3.1-8b-instant',
     'llama-3.3-70b-versatile',
     'qwen/qwen3.8-27b'
   ]);
-  assert.equal(byId.groq.defaultModel, 'llama-3.1-8b-instant');
+  assert.equal(groq.defaultModel, 'llama-3.1-8b-instant');
 });
 
 test('the local providers name loopback endpoints and guess no model name', async () => {
   const byId = Object.fromEntries(MODEL_PROVIDERS.map((entry) => [entry.id, entry]));
-  assert.equal(byId.ollama.endpoint, 'http://127.0.0.1:11434/v1/chat/completions');
-  assert.equal(byId.lmstudio.endpoint, 'http://127.0.0.1:1234/v1/chat/completions');
-  assert.deepEqual(byId.ollama.models, []);
-  assert.deepEqual(byId.lmstudio.models, []);
-  assert.equal(byId.ollama.defaultModel, '');
-  assert.equal(byId.lmstudio.defaultModel, '');
-  assert.equal(byId.custom.endpoint, '');
-  assert.equal(byId.custom.defaultModel, '');
+  const ollama = byId.ollama;
+  const lmstudio = byId.lmstudio;
+  const custom = byId.custom;
+  assert.ok(ollama && lmstudio && custom);
+  assert.equal(ollama.endpoint, 'http://127.0.0.1:11434/v1/chat/completions');
+  assert.equal(lmstudio.endpoint, 'http://127.0.0.1:1234/v1/chat/completions');
+  assert.deepEqual(ollama.models, []);
+  assert.deepEqual(lmstudio.models, []);
+  assert.equal(ollama.defaultModel, '');
+  assert.equal(lmstudio.defaultModel, '');
+  assert.equal(custom.endpoint, '');
+  assert.equal(custom.defaultModel, '');
 });
 
 test('stored endpoint and model still override the provider defaults', async () => {

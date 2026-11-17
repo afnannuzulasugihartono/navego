@@ -13,7 +13,29 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { extensionSource } from '../helpers/extension-source.ts';
 
+interface ReconciledElement {
+  readonly role: string;
+  readonly roleSource?: string | undefined;
+  readonly ref?: unknown;
+  readonly actionable?: boolean;
+  readonly stableKey?: string;
+}
+
+interface RoleReconcileRuntime {
+  readonly GENERIC_ROLES: readonly string[];
+  readonly ROLE_GAP_SAMPLE_SIZE: number;
+  readonly isGenericRole: (role: unknown) => boolean;
+  readonly hasRoleGap: (root: unknown, axIndex?: unknown) => boolean;
+  readonly implicitRole: (item: unknown) => string;
+  readonly normalizeAxRole: (role: unknown) => string;
+  readonly axRoleIndex: (items: unknown) => Map<string, string>;
+  readonly reconcileElementRole: (item: unknown, index: unknown) => ReconciledElement;
+  readonly reconcileElements: (items: unknown, index: unknown) => ReconciledElement[];
+}
+
 await import('../../extension/role-reconcile.js');
+const roleRuntime = globalThis.OperaAgentRoleReconcile;
+assert.ok(roleRuntime, 'OperaAgentRoleReconcile published');
 const {
   GENERIC_ROLES,
   axRoleIndex,
@@ -22,7 +44,7 @@ const {
   normalizeAxRole,
   reconcileElementRole,
   reconcileElements
-} = globalThis.OperaAgentRoleReconcile;
+} = roleRuntime as RoleReconcileRuntime;
 
 test('ordinary markup now yields the role the platform reports', () => {
   assert.equal(implicitRole({ tag: 'button' }), 'button');
@@ -107,7 +129,9 @@ test('reconciliation is read-only and grants no action authority', () => {
   assert.equal(after.ref, 'oa-5');
   assert.equal(after.actionable, false);
   assert.equal(after.stableKey, 'k');
-  assert.equal(reconcileElements([{ ref: 'oa-5', role: '', label: 'Apply' }], index)[0].ref, 'oa-5');
+  const [first] = reconcileElements([{ ref: 'oa-5', role: '', label: 'Apply' }], index);
+  assert.ok(first);
+  assert.equal(first.ref, 'oa-5');
 });
 
 test('a sensitive element is never annotated', () => {
@@ -146,7 +170,7 @@ test('the join uses the best available name and survives junk input', () => {
 
 test('a semantic gap justifies the accessibility walk even on a text-rich page', async () => {
 
-  const { hasRoleGap, ROLE_GAP_SAMPLE_SIZE } = globalThis.OperaAgentRoleReconcile;
+  const { hasRoleGap, ROLE_GAP_SAMPLE_SIZE } = roleRuntime as RoleReconcileRuntime;
   assert.equal(ROLE_GAP_SAMPLE_SIZE, 3);
 
   const gapped = [

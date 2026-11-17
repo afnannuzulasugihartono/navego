@@ -10,11 +10,13 @@ import { resolveMenuTarget } from '../../hosted/functions/_shared/docs-ui-map.ts
 
 test('every menu label the workflows use exists in the map', () => {
   const dir = new URL('../../hosted/migrations/', import.meta.url);
-  const texts = new Set();
+  const texts = new Set<string>();
   for (const file of fs.readdirSync(dir)) {
     if (!/_docs_/.test(file)) continue;
     const src = fs.readFileSync(new URL(`../../hosted/migrations/${file}`, import.meta.url), 'utf8');
-    for (const m of src.matchAll(/"action":"find","text":"([^"]+)"/g)) texts.add(m[1]);
+    for (const m of src.matchAll(/"action":"find","text":"([^"]+)"/g)) {
+      if (m[1] !== undefined) texts.add(m[1]);
+    }
   }
   assert.ok(texts.size > 5, 'expected several menu labels across workflows');
   for (const label of texts) {
@@ -24,8 +26,10 @@ test('every menu label the workflows use exists in the map', () => {
 
 test('resolveMenuTarget serves both locales with verify selectors', () => {
   const en = resolveMenuTarget(['Insert', 'Table'], 'en');
+  assert.ok(en);
   assert.deepEqual(en.labels, ['Insert', 'Table']);
   assert.ok(en.verify && en.verify.selector.includes('menu'));
   const id = resolveMenuTarget(['Insert', 'Table'], 'id');
+  assert.ok(id);
   assert.deepEqual(id.labels, ['Sisipkan', 'Tabel']);
 });

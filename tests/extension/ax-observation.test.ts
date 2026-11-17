@@ -8,11 +8,22 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildAxSummary, AX_SUMMARY_LIMITS } from '../../extension/lib/ax-summary.js';
 import { extensionSource } from '../helpers/extension-source.ts';
-const read = (relative: any) => fs.readFileSync(new URL(relative, import.meta.url), 'utf8');
+const read = (relative: string) => fs.readFileSync(new URL(relative, import.meta.url), 'utf8');
 const content = read('../../extension/content.js');
 const background = await extensionSource();
 
-function axNode(partial = {}) {
+interface AxNodePartial {
+  readonly nodeId?: string | undefined;
+  readonly backendDOMNodeId?: number | undefined;
+  readonly ignored?: boolean | undefined;
+  readonly parentId?: string | undefined;
+  readonly role?: string | undefined;
+  readonly name?: string | undefined;
+  readonly value?: string | undefined;
+  readonly properties?: unknown;
+}
+
+function axNode(partial: AxNodePartial = {}) {
   return {
     nodeId: partial.nodeId ?? '1',
     backendDOMNodeId: partial.backendDOMNodeId ?? 1,
@@ -52,11 +63,11 @@ test('buildAxSummary keeps named nodes including hidden-mirror StaticText', () =
   const summary = buildAxSummary(probeTree());
   assert.equal(summary.source, 'cdp-ax');
   const names = summary.items.map((item) => item.name);
-  assert.ok(names.includes('Save document'), names);
-  assert.ok(names.includes('Drawing tools'), names);
-  assert.ok(names.includes('Select tool'), names);
-  assert.ok(names.includes('Figma board'), names);
-  assert.ok(names.includes('Canvas layer Cat uploaded'), names);
+  assert.ok(names.includes('Save document'), names.join(', '));
+  assert.ok(names.includes('Drawing tools'), names.join(', '));
+  assert.ok(names.includes('Select tool'), names.join(', '));
+  assert.ok(names.includes('Figma board'), names.join(', '));
+  assert.ok(names.includes('Canvas layer Cat uploaded'), names.join(', '));
   assert.ok(!names.includes('AX probe'), 'RootWebArea (page title) must be skipped');
 });
 
@@ -72,7 +83,7 @@ test('buildAxSummary never surfaces editable values in any form', () => {
 test('buildAxSummary drops ignored nodes and InlineTextBox pseudo-nodes', () => {
   const summary = buildAxSummary(probeTree());
   const roles = summary.items.map((item) => item.role);
-  assert.ok(!roles.includes('InlineTextBox'), roles);
+  assert.ok(!roles.includes('InlineTextBox'), roles.join(', '));
   assert.ok(!summary.items.some((item) => item.name === ''), 'empty names are dropped');
 });
 
@@ -91,16 +102,18 @@ test('buildAxSummary dedupes repeated entries and caps the list', () => {
     axNode({ nodeId: `n${index}`, role: 'StaticText', name: `Item ${index % 5}` })
   );
   const summary = buildAxSummary(repeated);
-  assert.ok(summary.items.length <= AX_SUMMARY_LIMITS.maxEntries, summary.items.length);
+  assert.ok(summary.items.length <= AX_SUMMARY_LIMITS.maxEntries, String(summary.items.length));
   const seen = new Set(summary.items.map((item) => `${item.role}|${item.name}`));
   assert.equal(seen.size, summary.items.length, 'no duplicate role+name pairs');
-  assert.ok(seen.size <= 5, seen);
+  assert.ok(seen.size <= 5, [...seen].join(', '));
 });
 
 test('buildAxSummary truncates long names and returns empty-safe results', () => {
   const longTree = [axNode({ nodeId: 'a', role: 'StaticText', name: 'x'.repeat(5000) })];
   const summary = buildAxSummary(longTree);
-  assert.ok(summary.items[0].name.length <= AX_SUMMARY_LIMITS.maxNameChars, summary.items[0].name.length);
+  const firstItem = summary.items[0];
+  assert.ok(firstItem, 'a long-named item must survive');
+  assert.ok(firstItem.name.length <= AX_SUMMARY_LIMITS.maxNameChars, String(firstItem.name.length));
   const empty = buildAxSummary([]);
   assert.deepEqual(empty.items, []);
   const allIgnored = buildAxSummary([axNode({ ignored: true, name: 'nope' })]);

@@ -43,10 +43,11 @@ jobs:
       - name: Syntax gate
         run: npm run check
 
-      - name: Install and build the site
+      - name: Install, typecheck and build the site
         working-directory: site
         run: |
           npm ci --ignore-scripts --no-audit --no-fund
+          npm run typecheck
           npm run build
           node -e "const fs=require('fs');for (const d of ['build/client/index.html','build/client/beranda.html','build/client/_worker.js','build/client/_headers']){if(!fs.existsSync(d)){console.error('::error::site build is missing '+d);process.exit(1)}}"
 

@@ -13,7 +13,8 @@ import { requiredEnv } from '../../hosted/functions/_shared/required-env.ts';
 
 process.env.SUPABASE_URL ??= 'test';
 process.env.SUPABASE_SERVICE_ROLE_KEY ??= 'test';
-globalThis.Deno = { env: { get: (key: any) => process.env[key] } };
+const denoStub = { env: { get: (key: string) => process.env[key] } };
+(globalThis as { Deno?: typeof denoStub }).Deno = denoStub;
 
 const source = stripTypeScriptTypes(
   readFileSync(new URL('../../hosted/functions/opera-agent-feedback/index.ts', import.meta.url), 'utf8')

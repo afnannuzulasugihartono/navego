@@ -50,7 +50,9 @@ test('a hold expires in thirty minutes by default', () => {
 test('the wallet stores no balance that could disagree with the ledger', () => {
   const table = sql.match(/create table if not exists public\.opera_wallets \(([\s\S]*?)\);/);
   assert.ok(table, 'opera_wallets is missing');
-  assert.doesNotMatch(table[1], /balance/, 'a balance column is a number nobody can explain later');
+  const tableBody = table[1];
+  assert.ok(tableBody, 'opera_wallets is missing its column list');
+  assert.doesNotMatch(tableBody, /balance/, 'a balance column is a number nobody can explain later');
   assert.match(sql, /select coalesce\(sum\(amount_cents\), 0\)::bigint/, 'the balance is the sum of the movements');
 });
 

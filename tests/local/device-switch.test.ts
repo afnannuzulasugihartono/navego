@@ -25,14 +25,37 @@ import { createScriptedDevice } from '../helpers/scripted-device.ts';
 process.env.OPERA_BRIDGE_PORT = '0';
 
 const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
-const slotOf = (id: any) => Math.floor(Number(id) / 10000000000);
+
+interface TabReply {
+  ok?: boolean;
+  error?: { code: string; message: string };
+  result?: { where?: string };
+}
+
+interface PreferAnswer {
+  ok?: boolean;
+  preferred?: number | null;
+  device?: { deviceName?: string };
+  error?: { code: string; message: string };
+}
+
+interface HealthAnswer {
+  preferredSlot?: number | null;
+}
+
+interface ScriptedCommand {
+  method: string;
+  params?: Record<string, unknown> | null;
+}
+
+const makeDevice = (options: { url: string; instanceId: string; deviceName?: string; handle?: (command: ScriptedCommand) => unknown }) =>
+  createScriptedDevice(options as unknown as Parameters<typeof createScriptedDevice>[0]);
 
 test('a pinned browser answers tab-less commands until the pin is cleared', async () => {
   const bridge = createBridgeServer({ cloud: fakeCloud(), port: 0, heartbeatMs: 1000 });
-  await bridge.listen();
-  const { port } = bridge.address();
+  const { port } = await bridge.listen();
 
-  const chrome = createScriptedDevice({
+  const chrome = makeDevice({
     url: `ws://127.0.0.1:${port}`,
     instanceId: 'browser-chrome',
     deviceName: 'ChromeBox',
@@ -41,7 +64,7 @@ test('a pinned browser answers tab-less commands until the pin is cleared', asyn
       : { method: command.method, where: 'chrome' }
   });
   await chrome.connected;
-  const brave = createScriptedDevice({
+  const brave = makeDevice({
     url: `ws://127.0.0.1:${port}`,
     instanceId: 'browser-brave',
     deviceName: 'BraveBox',
@@ -53,48 +76,48 @@ test('a pinned browser answers tab-less commands until the pin is cleared', asyn
   await sleep(50);
 
   // Connected in order, so the slots are deterministic: chrome is slot 1, brave slot 2.
-  const health0 = await fetch(`http://127.0.0.1:${port}/health`).then((response) => response.json());
+  const health0 = (await fetch(`http://127.0.0.1:${port}/health`).then((response) => response.json())) as HealthAnswer;
   assert.equal(health0.preferredSlot, null, 'no pin starts unset');
 
-  const first = await bridge.send('tabs.open', { url: 'https://example.com/' }, { timeoutMs: 2000 });
+  const first = (await bridge.send('tabs.open', { url: 'https://example.com/' }, { timeoutMs: 2000 })) as TabReply;
   assert.equal(first.ok, true);
-  assert.equal(first.result.where, 'chrome', 'the first ready browser answers when nothing is pinned');
+  assert.equal(first.result?.where, 'chrome', 'the first ready browser answers when nothing is pinned');
 
   // Pin Brave by its device name; the answer names the slot it chose.
-  const pin = await fetch(`http://127.0.0.1:${port}/prefer`, {
+  const pin = (await fetch(`http://127.0.0.1:${port}/prefer`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ deviceName: 'BraveBox' })
-  }).then((response) => response.json());
+  }).then((response) => response.json())) as PreferAnswer;
   assert.equal(pin.ok, true);
   assert.equal(pin.preferred, 2, 'Brave was handshaken second, so slot 2');
-  assert.equal(pin.device.deviceName, 'BraveBox');
+  assert.equal(pin.device?.deviceName, 'BraveBox');
 
-  const health = await fetch(`http://127.0.0.1:${port}/health`).then((response) => response.json());
+  const health = (await fetch(`http://127.0.0.1:${port}/health`).then((response) => response.json())) as HealthAnswer;
   assert.equal(health.preferredSlot, 2, 'the health answer carries the pin');
 
-  const pinned = await bridge.send('tabs.open', { url: 'https://example.com/' }, { timeoutMs: 2000 });
+  const pinned = (await bridge.send('tabs.open', { url: 'https://example.com/' }, { timeoutMs: 2000 })) as TabReply;
   assert.equal(pinned.ok, true);
-  assert.equal(pinned.result.where, 'brave', 'tab-less commands follow the pin');
+  assert.equal(pinned.result?.where, 'brave', 'tab-less commands follow the pin');
 
   chrome.seen.length = 0;
   brave.seen.length = 0;
-  const cdp = await bridge.send('cdp', { tabId: 10000000003, method: 'Page.getLayoutMetrics' }, { timeoutMs: 2000 });
+  const cdp = (await bridge.send('cdp', { tabId: 10000000003, method: 'Page.getLayoutMetrics' }, { timeoutMs: 2000 })) as TabReply;
   assert.equal(cdp.ok, true);
   assert.equal(chrome.seen.filter((frame: any) => frame.method === 'cdp').length, 1, 'the tab names its own browser');
   assert.equal(brave.seen.filter((frame: any) => frame.method === 'cdp').length, 0, 'the pin did not steal a tab-scoped command');
 
   // Clear the pin; the first ready browser answers again.
-  const cleared = await fetch(`http://127.0.0.1:${port}/prefer`, {
+  const cleared = (await fetch(`http://127.0.0.1:${port}/prefer`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ slot: null })
-  }).then((response) => response.json());
+  }).then((response) => response.json())) as PreferAnswer;
   assert.equal(cleared.ok, true);
   assert.equal(cleared.preferred, null);
 
-  const back = await bridge.send('tabs.open', { url: 'https://example.com/' }, { timeoutMs: 2000 });
-  assert.equal(back.result.where, 'chrome', 'clearing the pin restores the first ready browser');
+  const back = (await bridge.send('tabs.open', { url: 'https://example.com/' }, { timeoutMs: 2000 })) as TabReply;
+  assert.equal(back.result?.where, 'chrome', 'clearing the pin restores the first ready browser');
 
   await chrome.stop();
   await brave.stop();
@@ -103,16 +126,15 @@ test('a pinned browser answers tab-less commands until the pin is cleared', asyn
 
 test('a pin whose browser is not awake is refused loudly, naming the awake ones', async () => {
   const bridge = createBridgeServer({ cloud: fakeCloud(), port: 0, heartbeatMs: 1000 });
-  await bridge.listen();
-  const { port } = bridge.address();
+  const { port } = await bridge.listen();
 
-  const chrome = createScriptedDevice({
+  const chrome = makeDevice({
     url: `ws://127.0.0.1:${port}`,
     instanceId: 'browser-chrome',
     deviceName: 'ChromeBox',
     handle: (command: any) => command.method === 'tabs.list' ? [{ id: 3, url: 'https://chrome/', title: 'Chrome' }] : { method: command.method, where: 'chrome' }
   });
-  const brave = createScriptedDevice({
+  const brave = makeDevice({
     url: `ws://127.0.0.1:${port}`,
     instanceId: 'browser-brave',
     deviceName: 'BraveBox',
@@ -121,31 +143,32 @@ test('a pin whose browser is not awake is refused loudly, naming the awake ones'
   await Promise.all([chrome.connected, brave.connected]);
   await sleep(50);
 
-  const pin = await fetch(`http://127.0.0.1:${port}/prefer`, {
+  const pin = (await fetch(`http://127.0.0.1:${port}/prefer`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ slot: 2 })
-  }).then((response) => response.json());
+  }).then((response) => response.json())) as PreferAnswer;
   assert.equal(pin.ok, true);
 
   await brave.stop();
   await sleep(120);
 
-  const refused = await bridge.send('tabs.open', { url: 'https://example.com/' }, { timeoutMs: 2000 });
+  const refused = (await bridge.send('tabs.open', { url: 'https://example.com/' }, { timeoutMs: 2000 })) as TabReply;
   assert.equal(refused.ok, false, 'the pinned browser is gone; the command is refused');
+  assert.ok(refused.error, 'the refusal names its error');
   assert.equal(refused.error.code, 'PREFERRED_DEVICE_NOT_READY');
   assert.match(refused.error.message, /awake:/);
   assert.match(refused.error.message, /"any"/);
 
-  const cleared = await fetch(`http://127.0.0.1:${port}/prefer`, {
+  const cleared = (await fetch(`http://127.0.0.1:${port}/prefer`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ deviceName: 'ChromeBox' })
-  }).then((response) => response.json());
+  }).then((response) => response.json())) as PreferAnswer;
   assert.equal(cleared.ok, true);
-  const back = await bridge.send('tabs.open', { url: 'https://example.com/' }, { timeoutMs: 2000 });
+  const back = (await bridge.send('tabs.open', { url: 'https://example.com/' }, { timeoutMs: 2000 })) as TabReply;
   assert.equal(back.ok, true);
-  assert.equal(back.result.where, 'chrome', 'switching to an awake browser takes effect immediately');
+  assert.equal(back.result?.where, 'chrome', 'switching to an awake browser takes effect immediately');
 
   await chrome.stop();
   await bridge.close();
@@ -153,10 +176,9 @@ test('a pin whose browser is not awake is refused loudly, naming the awake ones'
 
 test('the preference door refuses what it cannot pin, and names the awake browsers', async () => {
   const bridge = createBridgeServer({ cloud: fakeCloud(), port: 0, heartbeatMs: 1000 });
-  await bridge.listen();
-  const { port } = bridge.address();
+  const { port } = await bridge.listen();
 
-  const chrome = createScriptedDevice({
+  const chrome = makeDevice({
     url: `ws://127.0.0.1:${port}`,
     instanceId: 'browser-chrome',
     deviceName: 'ChromeBox',
@@ -165,20 +187,22 @@ test('the preference door refuses what it cannot pin, and names the awake browse
   await chrome.connected;
   await sleep(50);
 
-  const missing = await fetch(`http://127.0.0.1:${port}/prefer`, {
+  const missing = (await fetch(`http://127.0.0.1:${port}/prefer`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ slot: 7 })
-  }).then((response) => response.json());
+  }).then((response) => response.json())) as PreferAnswer;
   assert.equal(missing.ok, false, 'a pin on an absent slot is refused');
+  assert.ok(missing.error, 'the refusal names its error');
   assert.match(missing.error.message, /not awake/);
 
-  const unknown = await fetch(`http://127.0.0.1:${port}/prefer`, {
+  const unknown = (await fetch(`http://127.0.0.1:${port}/prefer`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ deviceName: 'NoSuchBrowser' })
-  }).then((response) => response.json());
+  }).then((response) => response.json())) as PreferAnswer;
   assert.equal(unknown.ok, false, 'a pin on an unknown name is refused');
+  assert.ok(unknown.error, 'the refusal names its error');
   assert.match(unknown.error.message, /awake:/);
 
   const malformed = await fetch(`http://127.0.0.1:${port}/prefer`, {

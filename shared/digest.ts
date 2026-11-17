@@ -84,3 +84,4 @@ export async function digestCanonical(value: unknown): Promise<string> {
   const digest = await crypto.subtle.digest('SHA-256', bytes);
   return `${DIGEST_PREFIX}${Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('')}`;
 }
+

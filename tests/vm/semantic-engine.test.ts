@@ -10,15 +10,116 @@ import test from 'node:test';
 await import('../../extension/semantic-identity.js');
 await import('../../extension/semantic-views.js');
 
-const { createIdentityEngine } = globalThis.OperaAgentSemanticIdentity;
-const { COMPLETION_STATUSES, classifyCompletion, createViewEngine } = globalThis.OperaAgentSemanticViews;
+interface SemanticItem {
+  logicalId?: string;
+  semanticRevision: number;
+  identityAmbiguous?: boolean;
+  stale?: boolean;
+}
+
+interface SemanticItems extends Array<SemanticItem> {
+  0: SemanticItem;
+  1: SemanticItem;
+}
+
+interface IdentityState {
+  entityCount: number;
+  ambiguityCount: number;
+  collisionCount: number;
+  excludedSensitiveCount: number;
+  cacheBytes: number;
+}
+
+interface DeltaChange {
+  type: string;
+  logicalId: string;
+  revision: number;
+  reason: string;
+  confidence: number;
+}
+
+interface DeltaChanges extends Array<DeltaChange> {
+  0: DeltaChange;
+}
+
+interface IdentityDelta {
+  classification: string;
+  resetReason: string;
+  completeSnapshotRequired: boolean;
+  changes: DeltaChanges;
+}
+
+interface IdentityObservation {
+  items: SemanticItems;
+  state: IdentityState;
+  delta: IdentityDelta;
+}
+
+interface InspectionEntity {
+  geometryRevision: number;
+  stale?: boolean;
+}
+
+interface IdentityInspection {
+  entityCount: number;
+  entities: [InspectionEntity, ...InspectionEntity[]];
+}
+
+interface IdentityEngine {
+  observe(input: unknown): IdentityObservation;
+  inspect(): IdentityInspection;
+  reset(reason: string): { resetReason: string; documentGeneration: number };
+}
+
+interface IdentityModule {
+  createIdentityEngine: (options?: Record<string, unknown>) => IdentityEngine;
+}
+
+interface ViewRegion {
+  loadedEntityCount: number;
+  visibleEntityCount: number;
+  uniqueCanonicalLinkCount: number;
+  duplicateKeyCount: number;
+  ambiguityCount: number;
+  viewRevision: number;
+  exhaustion: { status: string };
+  dependencies: { entitySet: { count: number } };
+  completion: { status: string };
+}
+
+interface ViewRegions extends Array<ViewRegion> {
+  0: ViewRegion;
+  1: ViewRegion;
+}
+
+interface ViewObservation {
+  regions: ViewRegions;
+  changedRegionIds: string[];
+  viewDelta: { invalidatedViews: Array<{ regionId: string }>; sourceClassification: string };
+  provenance: { category: string; observedAt: number; sourceRevision: number; sensor: string; confidence: number };
+}
+
+interface ViewEngine {
+  observe(input: unknown): ViewObservation;
+}
+
+interface ViewsModule {
+  COMPLETION_STATUSES: string[];
+  classifyCompletion: (input: Record<string, unknown>) => { status: string };
+  createViewEngine: (options?: Record<string, unknown>) => ViewEngine;
+}
+
+assert.ok(globalThis.OperaAgentSemanticIdentity, 'semantic-identity.js did not install the global');
+assert.ok(globalThis.OperaAgentSemanticViews, 'semantic-views.js did not install the global');
+const { createIdentityEngine } = globalThis.OperaAgentSemanticIdentity as unknown as IdentityModule;
+const { COMPLETION_STATUSES, classifyCompletion, createViewEngine } = globalThis.OperaAgentSemanticViews as unknown as ViewsModule;
 
 const corpus = JSON.parse(fs.readFileSync(new URL('../fixtures/semantic-replay-v1.json', import.meta.url), 'utf8'));
 const thresholds = JSON.parse(fs.readFileSync(new URL('../fixtures/semantic-baseline-thresholds-v1.json', import.meta.url), 'utf8'));
 const benchmark = fs.readFileSync(new URL('../../scripts/verify/semantic-baseline.ts', import.meta.url), 'utf8');
 const pkg = JSON.parse(fs.readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
 
-function keysDeep(value: any, output = []) {
+function keysDeep(value: any, output: string[] = []) {
   if (Array.isArray(value)) {
     for (const item of value) keysDeep(item, output);
   } else if (value && typeof value === 'object') {
@@ -432,7 +533,7 @@ test('a one-item delta is materially smaller than a 100-item snapshot', () => {
   const ratio = JSON.stringify(second.delta).length / JSON.stringify(first.items).length;
 
   assert.equal(second.delta.classification, 'UPDATE');
-  assert.ok(ratio <= 0.5, ratio);
+  assert.ok(ratio <= 0.5, String(ratio));
 });
 
 const read = (relative: any) => fs.readFileSync(new URL(relative, import.meta.url), 'utf8');
@@ -566,7 +667,7 @@ test('deterministic mutation fuzz preserves bounds, uniqueness, resets, and proo
     maxDeltaChanges: 12, maxDeltaBytes: 8_000, now: () => clock,
   });
   const views = createViewEngine({ maxRegions: 4, maxEntities: 40, now: () => clock });
-  let keys = [];
+  let keys: string[] = [];
   for (let step = 0; step < 250; step += 1) {
     clock += 2;
     const choice = Math.floor(rng() * 6);

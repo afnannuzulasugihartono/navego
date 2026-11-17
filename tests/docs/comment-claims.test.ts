@@ -22,13 +22,13 @@ import { execFileSync } from 'node:child_process';
 import { commentLineMask } from '../helpers/comment-format.ts';
 
 const root = new URL('../../', import.meta.url);
-const repo = (p: any) => new URL(p, root);
+const repo = (p: string) => new URL(p, root);
 
 const skipDirs = new Set(['.git', 'node_modules', '.kilo', 'dist', 'build', 'tmp', 'coverage', '__pycache__', '.vercel', '.next', '.temp']);
 const SOURCE_EXT = /\.(?:js|mjs|cjs|ts|jsx|tsx|py|html|htm|css|sql|yml|yaml|toml|cmd|bat|example)$/;
 
-const walk = (relative: any) => {
-  const out = [];
+const walk = (relative: string): string[] => {
+  const out: string[] = [];
   for (const entry of fs.readdirSync(repo(relative), { withFileTypes: true })) {
     if (skipDirs.has(entry.name)) continue;
     const next = relative ? `${relative}/${entry.name}` : relative;
@@ -38,9 +38,9 @@ const walk = (relative: any) => {
   return out;
 };
 
-const files = walk('.').filter((file: any) => SOURCE_EXT.test(file));
+const files = walk('.').filter((file) => SOURCE_EXT.test(file));
 const tracked = execFileSync('git', ['ls-files'], { cwd: repo('.'), encoding: 'utf8' }).split('\n').filter(Boolean);
-const treeText = files.map((file: any) => fs.readFileSync(repo(file), 'utf8')).join('\n');
+const treeText = files.map((file) => fs.readFileSync(repo(file), 'utf8')).join('\n');
 const nameText = tracked.join('\n');
 
 // A measurement has to say it was measured, and where.
@@ -48,21 +48,23 @@ const nameText = tracked.join('\n');
 const MEASURED = /\b(?:measured|observed)\b/i;
 const SOURCE = /\b(?:on this machine|here|on a real|in production|live|on the same|on that machine|on this project|on a real job)\b/i;
 
-const clean = (line: any) => line.replace(/^\s*(?:\/\/+|#+|--+|@?REM|::|\*|\/\*+|\*+\/|<!--|-->)\s?/i, '').trim();
+const clean = (line: string) => line.replace(/^\s*(?:\/\/+|#+|--+|@?REM|::|\*|\/\*+|\*+\/|<!--|-->)\s?/i, '').trim();
 
 // A number of three digits or more, standing on its own: not part of a longer one.
 
-const numbersIn = (text: any) => [...text.matchAll(/(?<![\w.])(\d[\d_]*)(?![\w.])/g)]
-  .map((match) => match[1].replace(/_/g, ''))
+const numbersIn = (text: string): string[] => [...text.matchAll(/(?<![\w.])(\d[\d_]*)(?![\w.])/g)]
+  .map((match) => (match[1] ?? '').replace(/_/g, ''))
   .filter((number) => number.length >= 3);
 
-export function unsupportedNumbers(text: any, ext: any) {
+export function unsupportedNumbers(text: string, ext: string) {
   const mask = commentLineMask(text, ext);
   const lines = text.split('\n');
-  const found = [];
+  const found: Array<{ line: number; number: string; body: string }> = [];
   for (let index = 0; index < lines.length; index += 1) {
     if (!mask[index]) continue;
-    const body = clean(lines[index]);
+    const sourceLine = lines[index];
+    assert.ok(sourceLine !== undefined);
+    const body = clean(sourceLine);
     if (!body || body.startsWith('@')) continue;
     for (const number of numbersIn(body)) {
       if (treeText.includes(number) || nameText.includes(number)) continue;
@@ -75,7 +77,7 @@ export function unsupportedNumbers(text: any, ext: any) {
 }
 
 test('every number a comment quotes exists somewhere in the tree', () => {
-  const problems = [];
+  const problems: string[] = [];
   for (const file of files) {
     const text = fs.readFileSync(repo(file), 'utf8');
     for (const row of unsupportedNumbers(text, path.extname(file).toLowerCase())) {
@@ -99,7 +101,9 @@ test('the rule has teeth: a number nothing holds is refused', () => {
   ].join('\n');
   const found = unsupportedNumbers(source, '.ts');
   assert.equal(found.length, 1, 'a number nothing in the tree holds must be refused');
-  assert.equal(found[0].number, fabricated);
+  const first = found[0];
+  assert.ok(first);
+  assert.equal(first.number, fabricated);
 });
 
 test('the rule has teeth: a measurement with no source is refused', () => {
@@ -114,7 +118,9 @@ test('the rule has teeth: a measurement with no source is refused', () => {
   ].join('\n');
   const found = unsupportedNumbers(source, '.ts');
   assert.equal(found.length, 1, 'a measurement must say where it was taken');
-  assert.equal(found[0].number, fabricated);
+  const first = found[0];
+  assert.ok(first);
+  assert.equal(first.number, fabricated);
 });
 
 test('the rule lets a measurement through when it says where it was taken', () => {

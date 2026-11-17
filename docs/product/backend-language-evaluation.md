@@ -26,7 +26,7 @@ That audit was generated against a stale branch (before the 2026-11-17 full migr
 - "AI refuses Rust because of `ARCHITECTURE.md`" — the gate does not forbid Rust or Go per se; it constrains the shape of the repo (root-level allowed directories, import direction, extra dependencies). Adding `backend/` with a Cargo workspace would need an architecture amendment, which is a deliberate product/architecture decision, not an accident of the tool.
 - TypeScript strict is already strong in this tree: `tsconfig.base.json` already sets `strict`, `noImplicitAny`, `strictNullChecks`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noImplicitOverride`, `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch`, `noEmitOnError`. Product code compiles with zero errors.
 - A full Rust port would not fix "AI ships stubbed logic" — AI can emit `todo!()` / `unimplemented!()` / empty `match` in Rust too. The wrong move is choosing a language to solve a process problem.
-- Rust makes the **local agent** (the product on users' machines alongside their everyday browsers) harder to reason about for end-users (install, permissions, debugging) and harder to ship; the npm install path is already live at `navego@1.7.5` and the `navego doctor` flow works against it.
+- Rust makes the **local agent** (the product on users' machines alongside their everyday browsers) harder to reason about for end-users (install, permissions, debugging) and harder to ship; the npm install path is already live (`npm i -g navego`) and the `navego doctor` flow works against it.
 - "Rust-first" for a solo founder without backend engineers would consume months of solo runway for no revenue-facing improvement.
 
 # What shipped between audit and this record
@@ -60,7 +60,7 @@ Until then, Rust/Go would solve a language problem for a product that has not ye
 3. Add Zod/Valibot-style runtime validation at the boundaries where JSON crosses into the system: MCP tool arguments, environment variables, API request bodies, and database row shapes before they are fed into typed code.
 4. Grep regression for stubs: `todo!`, `unimplemented!`, `panic!` (panic used as normal control flow), `@ts-ignore`, `as any` without approval, `process.exit` in library code, silently swallowing errors.
 5. Wire integration tests against a real Postgres for billing/wallet/invoice flows (Deno + Supabase local or testcontainers).
-6. Keep `docs/handoff.md` updated with the cutover facts: npm `navego` published, repo renamed to `navego`, CRX 1.7.5 live, `type-debt.lock` lineage recorded.
+6. Keep `docs/handoff.md` updated with the cutover facts: npm `navego` published, repo renamed to `navego`, the CRX release live, `type-debt.lock` lineage recorded.
 
 # What this file is not
 

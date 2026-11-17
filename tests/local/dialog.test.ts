@@ -57,7 +57,7 @@ test('the catalogue names the dialog roads, and says they are outside the browse
 });
 
 test('the guide says a dialog is answerable now, not only avoidable', () => {
-  const { recipes } = guide();
+  const { recipes } = guide(undefined);
   const chooser = recipes.find((recipe) => /chooser has no input/i.test(recipe.task));
 
   assert.ok(chooser, 'the recipe for a chooser with no input is there');
@@ -65,10 +65,14 @@ test('the guide says a dialog is answerable now, not only avoidable', () => {
 });
 
 test('the guide declares what the dialog call does to the machine', () => {
-  const { sideEffects } = guide();
+  const { sideEffects } = guide(undefined);
   const byTool = Object.fromEntries(sideEffects.map((entry) => [entry.tool, entry.effects]));
+  const readDialog = byTool.browser_read_dialog;
+  const typeDialog = byTool.browser_type_into_dialog;
+  const pressDialog = byTool.browser_press_dialog_button;
+  assert.ok(readDialog && typeDialog && pressDialog, 'all three dialog tools declare side effects');
 
-  assert.ok(byTool.browser_read_dialog.some((line) => /outside the browser/.test(line)), 'and names the outside browser');
-  assert.ok(byTool.browser_type_into_dialog.some((line) => /writes text/.test(line)), 'type writes');
-  assert.ok(byTool.browser_press_dialog_button.some((line) => /presses a button/.test(line)), 'press presses');
+  assert.ok(readDialog.some((line) => /outside the browser/.test(line)), 'and names the outside browser');
+  assert.ok(typeDialog.some((line) => /writes text/.test(line)), 'type writes');
+  assert.ok(pressDialog.some((line) => /presses a button/.test(line)), 'press presses');
 });

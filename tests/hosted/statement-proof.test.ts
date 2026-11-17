@@ -19,37 +19,38 @@ const contract = JSON.parse(
 // Another agent hands this object to its own user and is believed because of it, so a field that changes shape is a change to what a promise means.
 // The contract says which fields exist and what each one holds; this test says the delivery really answers with that, and the two agree.
 
-const CHECKS = {
-  string: (value: any) => assert.equal(typeof value, 'string', 'expected a string'),
-  integer: (value: any) => assert.ok(Number.isInteger(value), 'expected an integer'),
-  'string[]': (value: any) => {
+const CHECKS: Record<string, (value: unknown) => void> = {
+  string: (value) => assert.equal(typeof value, 'string', 'expected a string'),
+  integer: (value) => assert.ok(Number.isInteger(value), 'expected an integer'),
+  'string[]': (value) => {
     assert.ok(Array.isArray(value), 'expected an array');
     for (const item of value) assert.equal(typeof item, 'string', 'expected strings inside');
   },
-  'integer|null': (value: any) => {
+  'integer|null': (value) => {
     if (value !== null) assert.ok(Number.isInteger(value), 'expected an integer or null');
   },
-  'string|null': (value: any) => {
+  'string|null': (value) => {
     if (value !== null) assert.equal(typeof value, 'string', 'expected a string or null');
   },
-  'ISO-8601': (value: any) => {
+  'ISO-8601': (value) => {
     assert.equal(typeof value, 'string', 'expected a string');
-    assert.ok(!Number.isNaN(Date.parse(value)), 'expected a date the machine can read');
+    assert.ok(!Number.isNaN(Date.parse(String(value))), 'expected a date the machine can read');
   },
-  'pdf|zip|ole|other': (value: any) => {
-    assert.ok(['pdf', 'zip', 'ole', 'other'].includes(value), `unexpected kind: ${value}`);
+  'pdf|zip|ole|other': (value) => {
+    assert.ok(['pdf', 'zip', 'ole', 'other'].includes(String(value)), `unexpected kind: ${String(value)}`);
   },
-  'YYYY-MM': (value: any) => {
+  'YYYY-MM': (value) => {
     assert.match(String(value), /^\d{4}-(0[1-9]|1[0-2])$/, 'expected a month');
   },
-  '{ raw: string, digits: string|null }|null': (value: any) => {
+  '{ raw: string, digits: string|null }|null': (value) => {
     if (value === null) return;
-    assert.equal(typeof value.raw, 'string', 'the balance keeps the text the portal printed');
-    if (value.digits !== null) assert.equal(typeof value.digits, 'string', 'the digits are a string');
+    const balance = value as { raw: unknown; digits: unknown };
+    assert.equal(typeof balance.raw, 'string', 'the balance keeps the text the portal printed');
+    if (balance.digits !== null) assert.equal(typeof balance.digits, 'string', 'the digits are a string');
   }
 };
 
-function check(shape: any, value: any, where: any) {
+function check(shape: string, value: unknown, where: string) {
   const check_ = CHECKS[shape];
   assert.ok(check_, `the contract names a shape no test knows: ${shape} (${where})`);
   check_(value);
@@ -84,23 +85,30 @@ test('a delivered client-month answers with the frozen proof', () => {
     manifest
   });
 
+  const record = Object.fromEntries(Object.entries(out.record));
+  const manifestAnswer = Object.fromEntries(Object.entries(out.manifest));
+
   assert.deepEqual(Object.keys(out.record).sort(), Object.keys(contract.record).sort(),
     'the record carries exactly the fields the contract names');
   for (const [field, shape] of Object.entries(contract.record)) {
-    check(shape, out.record[field], field);
+    check(String(shape), record[field], field);
   }
 
   assert.deepEqual(Object.keys(out.manifest).sort(), Object.keys(contract.manifest).sort(),
     'the manifest answer carries exactly the fields the contract names');
   for (const [field, shape] of Object.entries(contract.manifest)) {
-    check(shape, out.manifest[field], field);
+    check(String(shape), manifestAnswer[field], field);
   }
 
   assert.equal(out.record.kind, 'pdf');
   assert.equal(out.record.pages, 2);
-  assert.equal(out.record.balance.digits, '8900000');
-  assert.equal(out.record.balance.raw, 'Rp 8.900.000');
-  assert.match(out.record.balanceFrom, /page/i, 'the balance names where it came from');
+  const balance = out.record.balance;
+  assert.ok(balance, 'a balance was read from the page');
+  assert.equal(balance.digits, '8900000');
+  assert.equal(balance.raw, 'Rp 8.900.000');
+  const balanceFrom = out.record.balanceFrom;
+  assert.ok(balanceFrom, 'the balance names where it came from');
+  assert.match(balanceFrom, /page/i, 'the balance names where it came from');
   assert.equal(out.record.bytes, PDF.length);
 });
 
@@ -118,7 +126,8 @@ test('a workbook is proved as a workbook, and a missing balance is proved as mis
   assert.equal(out.record.pages, null, 'a workbook has no pages to count');
   assert.equal(out.record.balance, null, 'a balance that was not read is not invented');
   assert.equal(out.record.balanceFrom, null);
-  for (const [field, shape] of Object.entries(contract.record)) check(shape, out.record[field], field);
+  const record = Object.fromEntries(Object.entries(out.record));
+  for (const [field, shape] of Object.entries(contract.record)) check(String(shape), record[field], field);
 });
 
 test('the manifest on disk carries the same proof as the answer', () => {
@@ -135,5 +144,5 @@ test('the manifest on disk carries the same proof as the answer', () => {
   assert.equal(rows.length, 1);
   assert.deepEqual(Object.keys(rows[0]).sort(), Object.keys(contract.record).sort(),
     'the stored line is the same proof the answer gave');
-  for (const [field, shape] of Object.entries(contract.record)) check(shape, rows[0][field], field);
+  for (const [field, shape] of Object.entries(contract.record)) check(String(shape), rows[0][field], field);
 });

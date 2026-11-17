@@ -62,7 +62,7 @@ test('api.md documents no path the gateway stopped serving', async () => {
 test('api.md documents every error code the gateway emits', async () => {
   const gateway = await readFile(gatewayPath, 'utf8');
   const doc = await readFile(docPath, 'utf8');
-  const codes = [...new Set([...gateway.matchAll(/code: "([A-Z_]+)"/g)].map((m) => m[1]))];
+  const codes = [...new Set([...gateway.matchAll(/code: "([A-Z_]+)"/g)].flatMap((m) => (m[1] === undefined ? [] : [m[1]])))];
   assert.ok(codes.length >= 9, `expected the full gateway error set, found ${codes.length}`);
   const rows = tableRows(doc);
   for (const code of codes) {

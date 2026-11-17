@@ -65,12 +65,12 @@ import {
   payLinkState
 } from "../_shared/billing.ts";
 import { DEPOSIT_KIND } from "../_shared/wallet.ts";
-import { handleWalletAction, isWalletAction } from "../_shared/wallet-api.ts";
+import { handleWalletAction, isWalletAction, type ReserveOutcome, type SettleOutcome } from "../_shared/wallet-api.ts";
 import { toDynamicQris } from "../_shared/qris.ts";
 import { FEED_URL, TOKEN_URL, detectorPlan, feedHeaders, feedQuery, matchOpenInvoices, parseFeed, refreshBody, sessionHeaders } from "../_shared/qris-detector.ts";
 
 type PriceRow = { kind: string; unit: string; amount_cents: number; currency: string; active: boolean };
-type Line = { kind: string; unit?: string; description?: string | null; quantity: number; amountCents: number; reason?: string };
+type Line = { kind: string; unit?: string; description?: string | null; quantity: number; amountCents?: number; reason?: string };
 type InvoiceRow = {
   id: string;
   customer_id: string;
@@ -149,7 +149,7 @@ const GOBIZ_MERCHANT_ID = Deno.env.get("GOBIZ_MERCHANT_ID") || "";
 // The first customers pay by transfer; the account line is theirs to read, so it is configuration and never code.
 
 const BILLING_BANK = Deno.env.get("BILLING_BANK") || "";
-const log = createEdgeLog("opera-agent-billing");
+const log = createEdgeLog({});
 
 let clientPromise: Promise<import("@supabase/supabase-js").SupabaseClient> | null = null;
 function db() {
@@ -452,7 +452,7 @@ async function createInvoice({ customer_id, period, lines, rail = "midtrans" }: 
   // A row written between the migration and the deploy carries its attempt in the scalar and an empty array; counting only the array would lose the order id a later close has to ask about.
   // And when a re-price cannot open a charge, the old attempt is still the thing the provider may be holding, so its pointer stays: the next opener closes it before it charges.
   const history = Array.isArray(existing?.provider_order_ids) && existing.provider_order_ids.length
-    ? existing.provider_order_ids.filter((orderId) => typeof orderId === "string" && orderId)
+    ? existing.provider_order_ids.filter((orderId: unknown) => typeof orderId === "string" && orderId)
     : existing?.provider_order_id ? [existing.provider_order_id] : [];
   let link: Link = {
     pay_url: null,
@@ -510,9 +510,9 @@ async function settleManual({ invoice_id, amount_cents, note }: { invoice_id: st
   if (error) throw new Error(`invoice unreadable: ${error.message}`);
   const check = manualSettlement(invoice, {
     amountCents: amount_cents === undefined || amount_cents === null || amount_cents === "" ? null : Number(amount_cents),
-    note
+    note: note === undefined || note === null ? undefined : String(note)
   });
-  if (!check.ok) throw new HttpError(409, check.why);
+  if (!check.ok) throw new HttpError(409, check.why ?? "the settlement is refused");
   const text = String(note || "").trim();
   const at = new Date().toISOString();
   const { data, error: updateError } = await supabase.from("opera_invoices")
@@ -756,11 +756,11 @@ async function activatePlanFromInvoice(invoice: InvoiceRow): Promise<void> {
 // A refusal is the database saying "no" about money, and it arrives as a body with a reason.
 // A transport error is this function having no idea what happened, and answering "insufficient" for it would teach a customer to top up for a fault on our side.
 
-async function walletRpc(name: string, args: Record<string, unknown>): Promise<Record<string, unknown>> {
+async function walletRpc<T extends Record<string, unknown> = Record<string, unknown>>(name: string, args: Record<string, unknown>): Promise<T> {
   const supabase = await db();
   const { data, error } = await supabase.rpc(name, args);
   if (error) throw new Error(`${name} refused: ${error.message}`);
-  return (data || {}) as Record<string, unknown>;
+  return (data || {}) as T;
 }
 
 async function walletNumber(name: string, args: Record<string, unknown>): Promise<number> {
@@ -834,19 +834,19 @@ function walletDeps(req: Request) {
       ].sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 50);
       return entries;
     },
-    reserve: (args: { owner: string; kind: string; amountCents: number; actionsPlanned: number }) => walletRpc("opera_wallet_reserve", {
+    reserve: (args: { owner: string; kind: string; amountCents: number; actionsPlanned: number }) => walletRpc<ReserveOutcome>("opera_wallet_reserve", {
       p_owner: args.owner,
       p_kind: args.kind,
       p_amount_cents: args.amountCents,
       p_actions_planned: args.actionsPlanned
     }),
-    settle: (args: { owner: string; reservationId: string; artifactHash: string; actionsActual: number | null }) => walletRpc("opera_wallet_settle", {
+    settle: (args: { owner: string; reservationId: string; artifactHash: string; actionsActual: number | null }) => walletRpc<SettleOutcome>("opera_wallet_settle", {
       p_reservation: args.reservationId,
       p_owner: args.owner,
       p_artifact_hash: args.artifactHash,
       p_actions_actual: args.actionsActual
     }),
-    refund: (args: { owner: string; reservationId: string; reason: string | null }) => walletRpc("opera_wallet_refund", {
+    refund: (args: { owner: string; reservationId: string; reason: string | null }) => walletRpc<SettleOutcome>("opera_wallet_refund", {
       p_reservation: args.reservationId,
       p_owner: args.owner,
       p_reason: args.reason
@@ -1107,7 +1107,7 @@ const cors = {
           .limit(5);
         const reusable = (openRows || []).find((row) => {
           const lines = Array.isArray(row?.lines?.priced) ? row.lines.priced : [];
-          return lines.some((line) => line?.kind === "plan.firm");
+          return lines.some((line: Record<string, unknown> | null | undefined) => line?.kind === "plan.firm");
         });
         if (reusable) {
           const token = invoiceToken(String(reusable.id), BILLING_SECRET);
@@ -1223,13 +1223,13 @@ const cors = {
           if (derived.refused.length) {
             return json({ error: "the plan cannot be billed", refused: derived.refused.map((row) => row.reason) }, 400, cors);
           }
-          lines = derived.lines;
+          lines = derived.lines as Line[];
         } else if (deliveries.length) {
           const derived = linesFromDeliveries(deliveries);
           if (derived.refused.length) {
             return json({ error: "some deliveries cannot be billed", refused: derived.refused.map((row) => row.reason) }, 400, cors);
           }
-          lines = derived.lines;
+          lines = derived.lines as Line[];
         }
         if (!lines.length) return json({ error: "no deliveries to charge for" }, 400, cors);
         const out = await createInvoice({ customer_id: customerId, period, lines });

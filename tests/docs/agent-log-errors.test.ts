@@ -8,6 +8,7 @@ import assert from 'node:assert/strict';
 
 await import('../../extension/lib/agent-log.js');
 const log = globalThis.OperaAgentLog;
+assert.ok(log, 'agent-log.js must install globalThis.OperaAgentLog');
 
 test('a repeated fault is one row with a count', () => {
   log.clearErrors();
@@ -15,10 +16,13 @@ test('a repeated fault is one row with a count', () => {
   log.error('WORKER_UNCAUGHT_ERROR', 'boom');
   const rows = log.errors();
   assert.equal(rows.length, 1);
-  assert.equal(rows[0].code, 'WORKER_UNCAUGHT_ERROR');
-  assert.equal(rows[0].message, 'boom');
-  assert.equal(rows[0].count, 2);
-  assert.ok(rows[0].firstAt <= rows[0].lastAt);
+  const first = rows[0];
+  assert.ok(first);
+  assert.equal(first.code, 'WORKER_UNCAUGHT_ERROR');
+  assert.equal(first.message, 'boom');
+  assert.equal(first.count, 2);
+  assert.ok(first.firstAt !== undefined && first.lastAt !== undefined);
+  assert.ok(first.firstAt <= first.lastAt);
 });
 
 test('a different message is a different fault, newest first', () => {
@@ -33,8 +37,12 @@ test('the list keeps twenty unique faults and drops the oldest', () => {
   for (let index = 0; index < 25; index += 1) log.error('E' + index, 'm' + index);
   const rows = log.errors();
   assert.equal(rows.length, 20);
-  assert.equal(rows[0].code, 'E24');
-  assert.equal(rows.at(-1).code, 'E5');
+  const head = rows[0];
+  const tail = rows.at(-1);
+  assert.ok(head);
+  assert.ok(tail);
+  assert.equal(head.code, 'E24');
+  assert.equal(tail.code, 'E5');
 });
 
 test('debug and warn never fill the fault list, and the ring keeps every level', () => {

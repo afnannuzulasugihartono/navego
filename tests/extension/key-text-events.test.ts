@@ -25,6 +25,7 @@ test('lowercase, upper, digit, and space map to US key events', () => {
 
 test('punctuation maps with its shift state', () => {
   const [period, comma, bang, colon] = resolveTextKeys('.,!:');
+  assert.ok(period && comma && bang && colon);
 
   assert.equal(period.shift, false);
   assert.equal(comma.code, 'Comma');
@@ -48,5 +49,7 @@ test('text beyond the shared bound is rejected', () => {
 });
 
 test('burst key steps allow the keyEvents flag', () => {
-  assert.ok(BURST_STEP_KEYS.key.includes('keyEvents'), 'key steps carry keyEvents');
+  const keyStep = BURST_STEP_KEYS.key;
+  assert.ok(keyStep);
+  assert.ok(keyStep.includes('keyEvents'), 'key steps carry keyEvents');
 });

@@ -15,6 +15,7 @@ const MERCHANT = 'G274351871';
 
 test('the feed query carries exactly the fields that were accepted', () => {
   const query = feedQuery({ merchantId: MERCHANT, from: 0, size: 50, startTime: '2026-11-04T00:00:00Z', endTime: '2026-11-04T23:59:59Z' });
+  assert.ok(query);
   assert.ok(query.includes('merchant_id=G274351871'));
   assert.ok(query.includes('from=0'));
   assert.ok(query.includes('size=50'));
@@ -31,6 +32,7 @@ test('the feed query carries exactly the fields that were accepted', () => {
 
 test('the feed headers carry one stable device id', () => {
   const headers = feedHeaders({ accessToken: 'tok', uniqueId: 'device-1' });
+  assert.ok(headers);
   assert.equal(headers['x-uniqueid'], 'device-1');
   assert.equal(headers.authorization, 'Bearer tok');
   assert.equal(feedHeaders({ accessToken: '', uniqueId: 'device-1' }), null);
@@ -39,15 +41,18 @@ test('the feed headers carry one stable device id', () => {
 
 test('the token route has its own headers and a nested body', () => {
   const headers = sessionHeaders({ accessToken: 'tok', uniqueId: 'device-1' });
+  assert.ok(headers);
   assert.equal(headers['x-uniqueid'], 'device-1');
   assert.equal(headers['x-appId'], 'go-biz-web-dashboard');
   assert.equal(headers['X-User-Type'], 'merchant');
   assert.equal(sessionHeaders({ accessToken: '', uniqueId: 'device-1' }), null);
   assert.equal(sessionHeaders({ accessToken: 'tok', uniqueId: '' }), null);
   const body = refreshBody('refresh-token');
+  assert.ok(body);
   assert.equal(body.client_id, 'go-biz-web-new');
   assert.equal(body.grant_type, 'refresh_token');
-  assert.equal(body.data.refresh_token, 'refresh-token');
+  assert.ok(body.data && typeof body.data === 'object');
+  assert.equal((body.data as Record<string, unknown>).refresh_token, 'refresh-token');
   assert.equal(refreshBody(''), null);
 });
 
@@ -65,11 +70,14 @@ test('the feed parser reads the fields the feed really returns', () => {
     { id: 'tx-3', transaction_time: '2026-11-04T15:30:00+07:00' }
   ] });
   assert.equal(rows.length, 2, 'a row without an amount is dropped');
-  assert.equal(rows[0].amount, 100000, 'the feed counts minor units');
-  assert.equal(rows[0].at, '2026-11-04T15:29:04+07:00');
-  assert.equal(rows[0].method, 'qris');
-  assert.equal(rows[0].usable, true, 'our own dynamic QR money is usable');
-  assert.equal(rows[1].usable, false, 'money paid against the printed static QR belongs to the merchant, not to a wallet');
+  const [first, second] = rows;
+  assert.ok(first);
+  assert.ok(second);
+  assert.equal(first.amount, 100000, 'the feed counts minor units');
+  assert.equal(first.at, '2026-11-04T15:29:04+07:00');
+  assert.equal(first.method, 'qris');
+  assert.equal(first.usable, true, 'our own dynamic QR money is usable');
+  assert.equal(second.usable, false, 'money paid against the printed static QR belongs to the merchant, not to a wallet');
 });
 
 test('matching is exact amount, FIFO, one transaction per invoice, and after the invoice opened', () => {
@@ -85,7 +93,9 @@ test('matching is exact amount, FIFO, one transaction per invoice, and after the
   ] });
   const matches = matchOpenInvoices(invoices, txns, 'minor');
   assert.deepEqual(matches.map((m) => m.invoiceId), ['inv-a', 'inv-b'], 'oldest open invoice first, paid invoices skipped, one transaction per invoice');
-  assert.equal(matches[0].amountRupiah, 10000);
+  const [oldest] = matches;
+  assert.ok(oldest);
+  assert.equal(oldest.amountRupiah, 10000);
 });
 
 test('money that arrived before the invoice opened never closes it', () => {
@@ -107,7 +117,7 @@ test('unsettled or non-QRIS money closes nothing', () => {
 
 test('dry mode closes nothing and live closes only the measured minor reading', () => {
   const byUnit = {
-    rupiah: [{ invoiceId: 'inv-a', transactionId: 'tx-1', amountRupiah: 10000 }],
+    rupiah: [{ invoiceId: 'inv-a', transactionId: 'tx-1', amountRupiah: 10000, at: '2026-11-04T15:29:04+07:00', method: 'qris' }],
     minor: []
   };
   const dry = detectorPlan('dry', byUnit);

@@ -23,7 +23,7 @@ import {
 test('every allowlisted key resolves at runtime', () => {
   assert.ok(KEY_ALLOWLIST.length > 0, 'the allowlist carries keys');
   for (const key of KEY_ALLOWLIST) {
-    assert.doesNotThrow(() => resolveChord(key), `${key} must resolve`);
+    assert.doesNotThrow(() => resolveChord(key, undefined), `${key} must resolve`);
   }
 });
 
@@ -31,7 +31,9 @@ test('every modifier alias maps to a canonical modifier', () => {
   const canonical = new Set(Object.values(MODIFIER_ALIASES));
   assert.equal(canonical.size, 4, 'the runtime keeps four modifiers: shift, control, alt, meta');
   for (const alias of Object.keys(MODIFIER_ALIASES)) {
-    assert.ok(canonical.has(MODIFIER_ALIASES[alias]), `${alias} maps to a canonical modifier`);
+    const mapped = MODIFIER_ALIASES[alias];
+    assert.ok(mapped, `${alias} maps to a canonical modifier`);
+    assert.ok(canonical.has(mapped), `${alias} maps to a canonical modifier`);
   }
   assert.doesNotThrow(() => resolveModifiers(['control']));
 });

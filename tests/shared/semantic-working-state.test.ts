@@ -10,6 +10,58 @@ import {
   createSemanticWorkingStateStore,
 } from '../../shared/semantic-working-state.js';
 
+interface WorkingStateEntity {
+  logicalId: string;
+  semanticRevision: number;
+  stableKey: string;
+  stableKeySource: string;
+  tag: string;
+  role: string;
+  regionKey: string;
+  inViewport: boolean;
+  sensitive: boolean;
+  text?: string;
+  label?: string;
+  href?: string;
+  value?: string;
+  identityAmbiguous?: boolean;
+}
+
+interface StateDeltaChange {
+  type: string;
+  logicalId: string;
+  revision: number;
+  reason?: string;
+  confidence?: number;
+}
+
+interface ObservationInput {
+  sourceRevision?: number;
+  resultingRevision?: number;
+  classification?: string;
+  changes?: StateDeltaChange[];
+  entities?: WorkingStateEntity[];
+  viewRevision?: number;
+  changedRegionIds?: string[];
+  removedRegionIds?: string[];
+  documentGeneration?: number;
+  ambiguityCount?: number;
+  completeSnapshotRequired?: boolean;
+  resetReason?: string | undefined;
+}
+
+interface ObsInput {
+  source?: number;
+  result?: number;
+  classification?: string;
+  changes?: StateDeltaChange[];
+  elements?: WorkingStateEntity[];
+  viewRevision?: number;
+  changed?: string[];
+  removed?: string[];
+  full?: boolean;
+}
+
 const identity = (overrides = {}) => ({
   tenantId: 'tenant-a',
   deviceId: 'device-a',
@@ -19,7 +71,7 @@ const identity = (overrides = {}) => ({
   ...overrides,
 });
 
-function entity(logicalId: any, revision = 1, overrides = {}) {
+function entity(logicalId: string, revision = 1, overrides: Partial<WorkingStateEntity> = {}): WorkingStateEntity {
   return {
     logicalId,
     semanticRevision: revision,
@@ -75,7 +127,7 @@ function observation({
   ambiguityCount = 0,
   completeSnapshotRequired = classification === 'RESET',
   resetReason = classification === 'RESET' ? 'INITIAL_OBSERVATION' : undefined,
-} = {}) {
+}: ObservationInput = {}) {
   return {
     semanticState: {
       schemaVersion: 1,
@@ -164,9 +216,13 @@ test('P1 contiguous delta application reconstructs the same canonical entity/vie
     ['a', 2, false],
     ['b', 1, true],
   ]);
-  assert.equal(inspected.views[0].regionId, 'rg_feed');
-  assert.equal(inspected.views[0].viewRevision, 2);
-  assert.equal(inspected.dependencies[0].regionId, 'rg_feed');
+  const firstView = inspected.views[0];
+  const firstDependency = inspected.dependencies[0];
+  assert.ok(firstView);
+  assert.ok(firstDependency);
+  assert.equal(firstView.regionId, 'rg_feed');
+  assert.equal(firstView.viewRevision, 2);
+  assert.equal(firstDependency.regionId, 'rg_feed');
 });
 
 test('P1 exact duplicate replay is idempotent while incompatible duplicate fails closed', () => {
@@ -188,7 +244,9 @@ test('P1 exact duplicate replay is idempotent while incompatible duplicate fails
   assert.equal(replay.semanticRevision, 2);
 
   const incompatible = structuredClone(second);
-  incompatible.elements[0].inViewport = false;
+  const incompatibleFirst = incompatible.elements[0];
+  assert.ok(incompatibleFirst);
+  incompatibleFirst.inViewport = false;
   assertCode(() => store.apply(initial.stateId, identity(), incompatible), 'INCOMPATIBLE_DUPLICATE');
 });
 
@@ -322,7 +380,7 @@ test('P1 RESET observations require a fresh bootstrap rather than being merged i
 
 const id = { tenantId: 't', deviceId: 'd', tabId: 'tab', documentGeneration: 1, runtimeEpoch: 'e' };
 
-function item(logicalId: any, semanticRevision = 1, overrides = {}) {
+function item(logicalId: string, semanticRevision = 1, overrides: Partial<WorkingStateEntity> = {}): WorkingStateEntity {
   return {
     logicalId,
     semanticRevision,
@@ -360,7 +418,7 @@ function region(viewRevision = 1, count = 1, overrides = {}) {
   };
 }
 
-function obs({ source = 0, result = 1, classification = 'RESET', changes = [], elements = [item('a')], viewRevision = result, changed = ['feed'], removed = [], full = classification === 'RESET' } = {}) {
+function obs({ source = 0, result = 1, classification = 'RESET', changes = [], elements = [item('a')], viewRevision = result, changed = ['feed'], removed = [], full = classification === 'RESET' }: ObsInput = {}) {
   return {
     semanticState: {
       schemaVersion: 1,
@@ -424,7 +482,9 @@ test('P1 reconstructs INSERT, MOVE, and REMOVE without replacing the canonical s
     changes: [{ type: 'MOVE', logicalId: 'b', revision: 1 }],
     viewRevision: 3,
   }));
-  assert.equal(store.inspect(start.stateId, id).entities.find((value) => value.logicalId === 'b').inViewport, false);
+  const movedB = store.inspect(start.stateId, id).entities.find((value) => value.logicalId === 'b');
+  assert.ok(movedB);
+  assert.equal(movedB.inViewport, false);
 
   store.apply(start.stateId, id, obs({
     source: 3,

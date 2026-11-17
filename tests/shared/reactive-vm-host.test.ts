@@ -33,7 +33,7 @@ const TAIL = 'abcdefghijklmnopqrstuvwx';
 const TAIL2 = 'SyA0123456789abcdefghijklmnopqrstuvw';
 const JWT_HEADER = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
 const JWT_BODY = 'eyJzdWIiOiIxMjM0NTY3ODkwIn0';
-const SECRET_SHAPES = [
+const SECRET_SHAPES: Array<[string, string]> = [
   ['a PEM private key', '-----BEGIN RSA PRIVATE KEY-----\nMIIEow=='],
   ['a JWT', `${JWT_HEADER}.${JWT_BODY}.abc`],
   ['a Supabase key', `sb_secret_${BODY}`],
@@ -41,11 +41,23 @@ const SECRET_SHAPES = [
 ];
 
 const codeOf = async (fn: any) => {
-  try { await fn(); return null; } catch (error) { return error.code ?? error.message; }
+  try { await fn(); return null; } catch (error) {
+    if (error instanceof Error) {
+      const code = (error as Error & { code?: unknown }).code;
+      return typeof code === 'string' ? code : error.message;
+    }
+    return String(error);
+  }
 };
 
 const codeOfSync = (fn: any) => {
-  try { fn(); return null; } catch (error) { return error.code ?? error.message; }
+  try { fn(); return null; } catch (error) {
+    if (error instanceof Error) {
+      const code = (error as Error & { code?: unknown }).code;
+      return typeof code === 'string' ? code : error.message;
+    }
+    return String(error);
+  }
 };
 
 test('the secret scan covers four families, and the gap is named rather than assumed', async () => {
@@ -54,8 +66,10 @@ test('the secret scan covers four families, and the gap is named rather than ass
       'SENSITIVE_VALUE', `${label} is refused`);
   }
 
+  const skShape = SECRET_SHAPES[3];
+  assert.ok(skShape);
   assert.equal(await codeOf(() => deriveVmEffectIdempotencyKey(idempotency({
-    tenantId: `prefix-${SECRET_SHAPES[3][1]}-suffix`
+    tenantId: `prefix-${skShape[1]}-suffix`
   }))), 'SENSITIVE_VALUE', 'a credential embedded in a longer string is refused');
 
   const UNCOVERED = [
@@ -108,7 +122,7 @@ test('the idempotency key is a digest of exactly the five fields', async () => {
       `${field} alone changes the key, and its own value is still accepted`);
   }
 
-  for (const [label, over] of [
+  const invalidCases: Array<[string, Record<string, unknown>]> = [
     ['an empty tenantId', { tenantId: '' }],
     ['a 129-character tenantId', { tenantId: 't'.repeat(129) }],
     ['an empty runId', { runId: '' }],
@@ -120,7 +134,8 @@ test('the idempotency key is a digest of exactly the five fields', async () => {
     ['a non-digest programDigest', { programDigest: 'not-a-digest' }],
     ['a 63-character digest', { programDigest: `sha256:${'a'.repeat(63)}` }],
     ['an uppercase digest', { programDigest: `sha256:${'A'.repeat(64)}` }]
-  ]) {
+  ];
+  for (const [label, over] of invalidCases) {
     assert.equal(await codeOf(() => deriveVmEffectIdempotencyKey(idempotency(over))), 'INVALID_HOST_STATE', label);
   }
 
@@ -129,7 +144,7 @@ test('the idempotency key is a digest of exactly the five fields', async () => {
 });
 
 test('an unexpected or missing field is refused, so nothing is smuggled past a check', async () => {
-  for (const [label, value] of [
+  const unexpectedCases: Array<[string, unknown]> = [
     ['an extra field', { surprise: 'value' }],
     ['a prototype key', { constructor: 'x' }],
     ['an undefined required field', { tenantId: undefined }],
@@ -137,7 +152,8 @@ test('an unexpected or missing field is refused, so nothing is smuggled past a c
     ['null', null],
     ['a string', 'x'],
     ['a number', 7]
-  ]) {
+  ];
+  for (const [label, value] of unexpectedCases) {
     assert.equal(await codeOf(() => deriveVmEffectIdempotencyKey(value)), 'INVALID_HOST_STATE', label);
   }
 
@@ -149,7 +165,7 @@ test('an unexpected or missing field is refused, so nothing is smuggled past a c
       'INVALID_HOST_STATE', `a field named ${field} is refused, empty or not`);
   }
 
-  const deleted = idempotency();
+  const deleted: { tenantId?: string; runId: string; programDigest: string; requestDigest: string; attemptClass: string } = idempotency();
   delete deleted.tenantId;
   assert.equal(await codeOf(() => deriveVmEffectIdempotencyKey(deleted)), 'INVALID_HOST_STATE', 'a deleted key');
 
@@ -169,11 +185,11 @@ test('a secret is refused, and a cycle is refused rather than walked', async () 
       'SENSITIVE_VALUE', `${label} is refused`);
   }
 
-  const cyclic = idempotency();
+  const cyclic: Record<string, unknown> = { ...idempotency() };
   cyclic.self = cyclic;
   assert.equal(await codeOf(() => deriveVmEffectIdempotencyKey(cyclic)), 'INVALID_HOST_STATE', 'a self-reference');
 
-  const mutual = idempotency();
+  const mutual: Record<string, unknown> = { ...idempotency() };
   mutual.other = { back: mutual };
   assert.equal(await codeOf(() => deriveVmEffectIdempotencyKey(mutual)), 'INVALID_HOST_STATE', 'a mutual reference');
 });
@@ -204,13 +220,14 @@ test('persistence is classified from the state, and the clock never runs backwar
   assert.equal(classifyVmPersistence({ status: 'RUNNING' }, { kind: 'WAITING_EVENT', nextPollAtMs: NOW + 1.5 }, NOW).availableAtMs,
     NOW, 'a fractional poll time is ignored');
 
-  for (const [label, args] of [
+  const classifyCases: Array<[string, [unknown, unknown, unknown]]> = [
     ['a non-object state', ['x', { kind: 'IDLE' }, NOW]],
     ['a non-object transition', [{ status: 'RUNNING' }, 'x', NOW]],
     ['a negative clock', [{ status: 'RUNNING' }, { kind: 'IDLE' }, -1]],
     ['a fractional clock', [{ status: 'RUNNING' }, { kind: 'IDLE' }, NOW + 0.5]],
     ['a string clock', [{ status: 'RUNNING' }, { kind: 'IDLE' }, String(NOW)]]
-  ]) {
+  ];
+  for (const [label, args] of classifyCases) {
     assert.equal(codeOfSync(() => classifyVmPersistence(...args)), 'INVALID_HOST_STATE', label);
   }
 });
@@ -222,7 +239,7 @@ test('the limits are frozen, and an observation reconcile returns a frozen recor
   assert.ok(LIMITS.retryDelayMsBase < LIMITS.retryDelayMsMax);
   assert.ok(LIMITS.tenantRunningRuns < LIMITS.tenantOutstandingRuns);
 
-  assert.throws(() => { 'use strict'; LIMITS.requestBytes = 1; }, TypeError);
+  assert.throws(() => { 'use strict'; (LIMITS as { requestBytes: number }).requestBytes = 1; }, TypeError);
   assert.equal(LIMITS.requestBytes, 196608);
 
   const observation = { kind: 'ELEMENT_SETTLED', ref: 'e1' };

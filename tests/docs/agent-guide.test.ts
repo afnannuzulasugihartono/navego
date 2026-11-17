@@ -10,6 +10,7 @@ import { RECIPES, SIDE_EFFECTS, guide } from '../../local/agent-guide.js';
 import { TOOLS } from '../../local/mcp-server.js';
 
 const names = new Set(TOOLS.map((tool) => tool.name));
+const guideAll = guide as (topic?: string) => ReturnType<typeof guide>;
 
 // WHY THE GUIDE IS PINNED AGAINST THE TOOL LIST AND NOT AGAINST ITSELF.
 // A guide that names a tool which no longer exists is worse than no guide: the agent follows the road, the call fails, and the guide is the thing it stops trusting.
@@ -55,7 +56,7 @@ test('a topic returns the roads for that task and nothing else', () => {
 });
 
 test('no topic returns every road and every side effect', () => {
-  const whole = guide();
+  const whole = guideAll();
 
   assert.equal(whole.recipes.length, RECIPES.length);
   assert.equal(whole.sideEffects.length, names.size);
@@ -73,7 +74,7 @@ test('an unknown topic is an empty answer, not a wrong one', () => {
 // The three lines are the ones that cost real time today: a native dialog that cannot be touched, a read-only question that looks like a free script, a tool reporting success when the page says otherwise, and a drive that cannot tell a page which ignored it from a window that was behind something the whole time.
 
 test('the guide names the things it will not pretend to do', () => {
-  const { refusals } = guide();
+  const { refusals } = guideAll();
 
   assert.equal(refusals.length, 6);
   assert.ok(refusals.some((line) => /native operating-system dialog/i.test(line)));

@@ -169,9 +169,12 @@ for (const surface of surfaces) {
     assert.ok(levels.length > 0, 'the document has headings');
     assert.equal(levels[0], 1, 'the first heading is h1');
     for (let i = 1; i < levels.length; i += 1) {
+      const current = levels[i];
+      const previous = levels[i - 1];
+      assert.ok(current !== undefined && previous !== undefined);
       assert.ok(
-        levels[i] - levels[i - 1] <= 1,
-        `heading level jumped from h${levels[i - 1]} to h${levels[i]}`
+        current - previous <= 1,
+        `heading level jumped from h${previous} to h${current}`
       );
     }
   });

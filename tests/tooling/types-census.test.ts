@@ -23,7 +23,7 @@ const census = () => {
 };
 
 const snapshot = () => {
-  const out = {};
+  const out: Record<string, string[] | string> = {};
   for (const dir of ['local', 'shared']) {
     try {
       out[dir] = fs.readdirSync(path.join(repo, dir));

@@ -11,14 +11,19 @@ import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-import worker from '../../site/public/_worker.js';
+interface PagesWorker {
+  fetch(request: Request, env: { ASSETS: { fetch(request: Request): Promise<Response> } }): Promise<Response>;
+}
+
+const worker = (await import(new URL('../../site/public/_worker.js', import.meta.url).href) as { default: PagesWorker }).default;
 
 const PAGE = 'https://opera-agent.pages.dev/invoice?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234';
 const UPSTREAM = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-billing?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234';
 
 const calls: any = [];
 const assetCalls: any = [];
-let answer = () => new Response('');
+type FetchAnswer = (url: string, init: RequestInit) => Response;
+let answer: FetchAnswer = () => new Response('');
 
 const realFetch = globalThis.fetch;
 globalThis.fetch = async (url, init = {}) => {
@@ -38,7 +43,7 @@ const env = {
   }
 };
 
-function reset(next: any) {
+function reset(next: FetchAnswer) {
   calls.length = 0;
   assetCalls.length = 0;
   answer = next;
@@ -63,6 +68,7 @@ test('the page is fetched from the function with the same query and answered as 
   assert.equal(response.headers.get('x-frame-options'), 'DENY');
   assert.equal(response.headers.get('x-robots-tag'), 'noindex, nofollow');
   const policy = response.headers.get('content-security-policy');
+  assert.ok(policy, 'the worker sets a policy');
   assert.match(policy, /default-src 'none'/);
   assert.match(policy, /style-src 'unsafe-inline'/);
   assert.match(policy, /form-action 'self'/, 'the refresh form posts back to this origin');

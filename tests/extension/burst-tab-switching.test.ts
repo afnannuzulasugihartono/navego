@@ -39,9 +39,10 @@ const VALID_STEP = Object.freeze({
 test('tabId is an accepted optional key on every existing burst step', () => {
 
   for (const action of Object.keys(VALID_STEP)) {
-    const withoutTab = validateBurst({ tabId: 7, steps: [burstStep(action, VALID_STEP[action])] });
+    const stepPayload = VALID_STEP[action as keyof typeof VALID_STEP];
+    const withoutTab = validateBurst({ tabId: 7, steps: [burstStep(action, stepPayload)] });
     assert.equal(withoutTab.ok, true, `${action} without tabId: ${withoutTab.error || ''}`);
-    const withTab = validateBurst({ tabId: 7, steps: [burstStep(action, { ...VALID_STEP[action], tabId: 3 })] });
+    const withTab = validateBurst({ tabId: 7, steps: [burstStep(action, { ...stepPayload, tabId: 3 })] });
     assert.equal(withTab.ok, true, `${action} with tabId: ${withTab.error || ''}`);
   }
 });
@@ -221,6 +222,9 @@ test('runBurst enforces the navigate staleness check with its own code', () => {
 test('per-step tabId does not widen the primitive count', () => {
   const protocol = fs.readFileSync(new URL('../../extension/lib/protocol.js', import.meta.url), 'utf8');
   const block = protocol.match(/export const METHOD_SPECS = Object\.freeze\(\{([\s\S]*?)\n\}\);/);
-  const count = [...block[1].matchAll(/^\s*'([^']+)':\s*\{/gm)].length;
+  assert.ok(block);
+  const blockBody = block[1];
+  assert.ok(blockBody);
+  const count = [...blockBody.matchAll(/^\s*'([^']+)':\s*\{/gm)].length;
   assert.equal(count, 36, 'the agent may pull an update, so extension.update is a primitive too; the armed recorder and the mirror join the tool surface; page.dump joins it for whole-page content; burst parameters are not');
 });

@@ -101,3 +101,4 @@ export function makeGuards(defaultCode: string): Guards {
 
   return { fail, isPlainObject, assertPlainObject, assertExactKeys, byteLength, assertSafeInteger, cloneJson, deepFreeze, assertNoSensitive };
 }
+

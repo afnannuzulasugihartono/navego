@@ -106,6 +106,22 @@ const language = raw.startsWith('id') ? 'id' : 'en';
 
 export { language };
 
+interface I18nElement {
+  textContent: string | null;
+  getAttribute(name: string): string | null;
+  setAttribute(name: string, value: string): void;
+}
+
+export interface I18nRoot {
+  querySelectorAll(selector: string): Iterable<I18nElement>;
+  querySelector?(selector: string): I18nElement | null | undefined;
+  readonly documentElement?: I18nElement | null | undefined;
+}
+
+type I18nDocument = I18nRoot & { title: string };
+
+const globalI18nDocument = (): I18nDocument | undefined => (globalThis as { document?: I18nDocument | undefined }).document;
+
 export function t(key: string, vars: Record<string, unknown> = {}) {
   const table: Readonly<Record<string, string>> = DICTIONARIES[language] ?? DICTIONARIES.en;
   const template: string | undefined = table[key] ?? (DICTIONARIES.en as Readonly<Record<string, string>>)[key];
@@ -116,7 +132,7 @@ export function t(key: string, vars: Record<string, unknown> = {}) {
 // WHY THE APPLIER IS ONE PASS OVER THE MARKUP.
 // The words are declared where they are shown, so the layout can never drift from the table; one pass fills them on load.
 
-export function applyI18n(root = document) {
+export function applyI18n(root: I18nRoot | undefined = globalI18nDocument()) {
   if (typeof root?.querySelectorAll !== 'function') return;
   for (const node of root.querySelectorAll('[data-i18n]')) {
     node.textContent = t(node.getAttribute('data-i18n') || '');
@@ -134,5 +150,6 @@ export function applyI18n(root = document) {
   if (langNode) langNode.setAttribute('lang', language);
   const titleNode = root.querySelector?.('title[data-i18n]');
   const i18nAttr = titleNode?.getAttribute('data-i18n');
-  if (i18nAttr) document.title = t(i18nAttr);
+  const doc = globalI18nDocument();
+  if (i18nAttr && doc) doc.title = t(i18nAttr);
 }

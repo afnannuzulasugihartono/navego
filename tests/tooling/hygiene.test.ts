@@ -19,8 +19,8 @@ import { FOCUS_GATE_ATTEMPTS } from '../../extension/lib/focus-gate.js';
 import { checkFormat } from '../../scripts/dev/format-comments.ts';
 import { extensionSource } from '../helpers/extension-source.ts';
 
-const collectTests = async (dir: any) => {
-  const out = [];
+const collectTests = async (dir: string): Promise<string[]> => {
+  const out: string[] = [];
   for (const entry of await readdir(new URL(dir, import.meta.url), { withFileTypes: true })) {
     const p = `${dir}/${entry.name}`;
     if (entry.isDirectory()) {
@@ -50,11 +50,11 @@ test('no document says Do X and another says Don\'t X', async () => {
 
   const hub = await readFile(new URL('../../AGENTS.md', import.meta.url), 'utf8');
   assert.match(hub, /^## Always$/m, 'sanity: the hub is the file that carries the commands');
-  assert.match(hub, /100 percent freedom/, 'the hub still binds the agent');
+  assert.match(hub, /SCOPE AND REGRESSION PROTECTION/, 'the hub still binds the agent to the scope rules');
 
   const dir = fileURLToPath(root);
   const commands = new Map();
-  const collect = (file: any) => {
+  const collect = (file: string) => {
     const body = fsSync.readFileSync(path.join(dir, file), 'utf8');
     const dos = new Set();
     const donts = new Map();
@@ -84,25 +84,37 @@ const REQUIRED_SECTIONS = ['Always', 'Goals', 'Priority order'];
 
 test('the three sections an agent reads every turn exist, in order', async () => {
   const body = await readFile(new URL('../../AGENTS.md', import.meta.url), 'utf8');
-  const headings = [...body.matchAll(/^## (.+)$/gm)].map((m) => ({ name: m[1].trim(), at: m.index }));
+  const headings = [...body.matchAll(/^## (.+)$/gm)].map((m) => {
+    const name = m[1];
+    assert.ok(name, 'the heading capture is present');
+    return { name: name.trim(), at: m.index ?? 0 };
+  });
   const found = REQUIRED_SECTIONS.map((name) => headings.find((h) => h.name === name));
-  const missing = REQUIRED_SECTIONS.filter((name, i) => !found[i]);
+  const missing = REQUIRED_SECTIONS.filter((_, i) => !found[i]);
   assert.deepEqual(missing, [], `AGENTS.md is missing: ${missing.join(', ')}`);
   assert.deepEqual(headings.map((h) => h.name), REQUIRED_SECTIONS, 'nothing rides beside the three');
   for (let i = 1; i < found.length; i += 1) {
-    assert.ok(found[i].at > found[i - 1].at, `${found[i].name} must come after ${found[i - 1].name}`);
+    const prev = found[i - 1];
+    const curr = found[i];
+    assert.ok(prev && curr, 'every required section was found');
+    assert.ok(curr.at > prev.at, `${curr.name} must come after ${prev.name}`);
   }
-  for (const { name, at } of found) {
-    const section = body.slice(at).split('\n## ')[0];
+  for (const item of found) {
+    assert.ok(item, 'every required section was found');
+    const section = body.slice(item.at).split('\n## ')[0] ?? '';
 
     const bullets = (section.match(/^(?:- |\d+\. )/gm) || []).length;
-    assert.ok(bullets >= 3, `${name} carries ${bullets} instruction lines; it must actually instruct`);
+    assert.ok(bullets >= 3, `${item.name} carries ${bullets} instruction lines; it must actually instruct`);
   }
 });
 
 test('every section the rules point at exists', async () => {
   const body = await readFile(new URL('../../AGENTS.md', import.meta.url), 'utf8');
-  const headings = new Set([...body.matchAll(/^## (.+)$/gm)].map((m) => m[1].trim()));
+  const headings = new Set([...body.matchAll(/^## (.+)$/gm)].map((m) => {
+    const name = m[1];
+    assert.ok(name, 'the heading capture is present');
+    return name.trim();
+  }));
 
   const referenced = new Set(['Always', 'Goals', 'Priority order']);
   const dangling = [...referenced].filter((name) => !headings.has(name));
@@ -113,7 +125,7 @@ const DUPLICATE_OVERLAP = 0.6;
 
 test('no rule is stated twice in two forms', async () => {
   const dir = fileURLToPath(new URL('../../', import.meta.url));
-  const rules: any = [];
+  const rules: Array<{ file: string; line: number; tokens: Set<string> }> = [];
   for (const file of execFileSync('git', ['ls-files'], { cwd: dir, encoding: 'utf8' })
     .split('\n')
     .filter((f) => f.endsWith('.md'))) {
@@ -121,7 +133,9 @@ test('no rule is stated twice in two forms', async () => {
     body.split('\n').forEach((line, i) => {
       const match = line.match(/^\s*[-*]?\s*Do(?:n't)?\s+(.+?)\.?\s*$/);
       if (!match) return;
-      const tokens = new Set(match[1].toLowerCase()
+      const capture = match[1];
+      assert.ok(capture, 'the rule capture is present');
+      const tokens = new Set(capture.toLowerCase()
         .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
         .replace(/[`*_]/g, '')
         .replace(/[^a-z0-9\s-]/g, ' ')
@@ -133,11 +147,15 @@ test('no rule is stated twice in two forms', async () => {
   assert.ok(rules.length > 0, 'the gate looked at a rule set');
   const duplicates = [];
   for (let i = 0; i < rules.length; i += 1) {
+    const ruleI = rules[i];
+    assert.ok(ruleI);
     for (let j = i + 1; j < rules.length; j += 1) {
+      const ruleJ = rules[j];
+      assert.ok(ruleJ);
       let shared = 0;
-      for (const token of rules[i].tokens) if (rules[j].tokens.has(token)) shared += 1;
-      const overlap = shared / (rules[i].tokens.size + rules[j].tokens.size - shared);
-      if (overlap >= DUPLICATE_OVERLAP) duplicates.push(`${rules[i].file}:${rules[i].line} and ${rules[j].file}:${rules[j].line}`);
+      for (const token of ruleI.tokens) if (ruleJ.tokens.has(token)) shared += 1;
+      const overlap = shared / (ruleI.tokens.size + ruleJ.tokens.size - shared);
+      if (overlap >= DUPLICATE_OVERLAP) duplicates.push(`${ruleI.file}:${ruleI.line} and ${ruleJ.file}:${ruleJ.line}`);
     }
   }
   assert.deepEqual(duplicates, [], duplicates.slice(0, 8).join('\n'));
@@ -167,11 +185,13 @@ test('every relative link in a document resolves to a file in the tree', async (
   const dead = [];
   for (const file of tracked) {
     const body = fsSync.readFileSync(path.join(dir, file), 'utf8');
-    for (const [, target] of body.matchAll(/\[[^\]]+\]\(([^)\s]+)\)/g)) {
-      if (/^(?:[a-z]+:|#)/i.test(target)) continue;
-      const wanted = target.split('#')[0];
+    for (const match of body.matchAll(/\[[^\]]+\]\(([^)\s]+)\)/g)) {
+      const captured = match[1];
+      assert.ok(captured, 'the link capture is present');
+      if (/^(?:[a-z]+:|#)/i.test(captured)) continue;
+      const wanted = captured.split('#')[0];
       if (!wanted) continue;
-      if (!fsSync.existsSync(path.resolve(dir, path.dirname(file), wanted))) dead.push(`${file} -> ${target}`);
+      if (!fsSync.existsSync(path.resolve(dir, path.dirname(file), wanted))) dead.push(`${file} -> ${captured}`);
     }
   }
   assert.deepEqual(dead, [], `documents point at files that are not there:\n${dead.join('\n')}`);
@@ -185,7 +205,14 @@ test('every gitleaks allowlist path still names a file in the tree', async () =>
   const config = await readFile(new URL('../../.gitleaks.toml', import.meta.url), 'utf8');
 
   const patterns = [...config.matchAll(/paths\s*=\s*\[([^\]]*)\]/g)]
-    .flatMap((m) => [...m[1].matchAll(/'''([^']+)'''/g)].map((n) => n[1]));
+    .flatMap((m): string[] => {
+      const group = m[1] ?? '';
+      return [...group.matchAll(/'''([^']+)'''/g)].map((n) => {
+        const allowlist = n[1];
+        assert.ok(allowlist, 'the allowlist path capture is present');
+        return allowlist;
+      });
+    });
   const stale = [];
   for (const pattern of patterns) {
 
@@ -257,19 +284,24 @@ test('the focus gate loop is bounded by construction', () => {
 test('the shared runtimes are frozen, so a sibling script cannot mutate them', () => {
   const roles = globalThis.OperaAgentRoleReconcile;
   const hover = globalThis.OperaAgentHoverSettle;
+  assert.ok(roles, 'the role runtime must be installed');
+  assert.ok(hover, 'the hover runtime must be installed');
   assert.equal(Object.isFrozen(roles), true, 'the role runtime must be frozen');
   assert.equal(Object.isFrozen(hover), true, 'the hover runtime must be frozen');
 
   assert.equal(Array.isArray(roles.GENERIC_ROLES), true, 'GENERIC_ROLES must be an array, not a Set');
   assert.equal(Object.isFrozen(roles.GENERIC_ROLES), true);
-  assert.throws(() => { roles.GENERIC_ROLES.push('button'); }, TypeError);
+  assert.throws(() => { (roles.GENERIC_ROLES as string[]).push('button'); }, TypeError);
   assert.equal(roles.isGenericRole('button'), false, 'a rejected mutation must not take effect');
-  assert.throws(() => { hover.DEFAULTS.timeoutMs = 99999; }, TypeError);
+  const hoverDefaults = hover.DEFAULTS as { timeoutMs: number };
+  assert.throws(() => { hoverDefaults.timeoutMs = 99999; }, TypeError);
   assert.equal(hover.DEFAULTS.timeoutMs, 1500, 'the settle budget must be unchanged');
 });
 
 test('the role gap sample is a positive integer, not an accidental truthy value', () => {
-  const { ROLE_GAP_SAMPLE_SIZE } = globalThis.OperaAgentRoleReconcile;
+  const rolesRuntime = globalThis.OperaAgentRoleReconcile;
+  assert.ok(rolesRuntime, 'the role runtime must be installed');
+  const { ROLE_GAP_SAMPLE_SIZE } = rolesRuntime;
   assert.equal(Number.isInteger(ROLE_GAP_SAMPLE_SIZE), true);
   assert.ok(ROLE_GAP_SAMPLE_SIZE > 0);
 });
@@ -294,8 +326,8 @@ test('the R9 modules expose no unused surface', async () => {
 test('no module under extension/, shared/, scripts/ or hosted/functions/ exports a symbol nothing reaches', async () => {
 
   const runtimeRoots = ['../../extension', '../../shared'];
-  const collect = async (dir: any, match: any) => {
-    const out = [];
+  const collect = async (dir: string, match: RegExp): Promise<string[]> => {
+    const out: string[] = [];
     for (const entry of await readdir(new URL(dir, import.meta.url), { withFileTypes: true })) {
       const p = `${dir}/${entry.name}`;
       if (entry.isDirectory()) out.push(...await collect(p, match));
@@ -321,7 +353,7 @@ test('no module under extension/, shared/, scripts/ or hosted/functions/ exports
       .map(async (p) => ({ p, text: await readFile(new URL(p, import.meta.url), 'utf8') }))
   );
 
-  const pattern = (name: any) => `\\b${name.replace(/\$/g, '\\$')}\\b`;
+  const pattern = (name: string) => `\\b${name.replace(/\$/g, '\\$')}\\b`;
   const dead = [];
   const noCaller = [];
 
@@ -331,23 +363,29 @@ test('no module under extension/, shared/, scripts/ or hosted/functions/ exports
   ]));
   const textByPath = new Map(consumers.map(({ p, text }) => [p, text]));
 
-  const collectExports = (p: any, text: any, visited: any) => {
+  const collectExports = (p: string, text: string, visited: Set<string>): string[] => {
     if (visited.has(p)) return [];
     visited.add(p);
     const names = [...text.matchAll(
       /^export\s+(?:async\s+)?(?:function\*?|const|let|var|class)\s+([A-Za-z_$][\w$]*)/gm
-    )].map((m) => m[1]);
+    )].map((m) => {
+      const name = m[1];
+      assert.ok(name, 'the export capture is present');
+      return name;
+    });
     for (const m of text.matchAll(/^export\s*\{([^}]*)\}(\s*from\s*['"][^'"]+['"])?/gm)) {
+      const exportList = m[1] ?? '';
       const reexport = Boolean(m[2]);
-      for (const item of m[1].split(',')) {
-        const parts = item.split(/\s+as\s+/).map((s: any) => s.trim().replace(/^type\s+/, '').split(/\s+/)[0]).filter(Boolean);
+      for (const item of exportList.split(',')) {
+        const parts = item.split(/\s+as\s+/).map((s) => s.trim().replace(/^type\s+/, '').split(/\s+/)[0]).filter((s): s is string => Boolean(s));
         if (parts.length === 0) continue;
         const local = reexport ? parts[parts.length - 1] : parts[0];
-        if (/^[A-Za-z_$][\w$]*$/.test(local)) names.push(local);
+        if (local && /^[A-Za-z_$][\w$]*$/.test(local)) names.push(local);
       }
     }
     for (const m of text.matchAll(/^export\s*\*\s*from\s*['"]([^'"]+)['"]/gm)) {
       const spec = m[1];
+      assert.ok(spec, 'the star re-export capture is present');
       const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(p), spec));
       const target = textByPath.get(resolved);
       if (target === undefined) throw new Error(`unresolvable star re-export ${p} -> ${spec} (resolved ${resolved})`);
@@ -356,10 +394,10 @@ test('no module under extension/, shared/, scripts/ or hosted/functions/ exports
     return [...new Set(names)];
   };
   for (const { p, text } of consumers.filter(({ p }) => modules.includes(p))) {
-    const names = collectExports(p, text, new Set());
+    const names = collectExports(p, text, new Set<string>());
     for (const name of names) {
       const usedElsewhere = consumers.some(
-        (other) => other.p !== p && new RegExp(pattern(name)).test(callerText.get(other.p))
+        (other) => other.p !== p && new RegExp(pattern(name)).test(callerText.get(other.p) ?? '')
       );
 
       const usesHere = (text.match(new RegExp(pattern(name), 'g')) || []).length;
@@ -385,8 +423,8 @@ const STAGED_FOR_THE_OPEN_TASK = new Map([
 test('a module with its own code is reached by the product, not only by its own test', async () => {
   const dir = fileURLToPath(new URL('../../', import.meta.url));
   const skipDirs = new Set(['.git', 'node_modules', '.kilo', 'dist', 'build', 'tmp', 'coverage', '__pycache__', '.vercel', '.next']);
-  const walk = (relative: any) => {
-    const out = [];
+  const walk = (relative: string): string[] => {
+    const out: string[] = [];
     for (const entry of fsSync.readdirSync(path.join(dir, relative), { withFileTypes: true })) {
       if (skipDirs.has(entry.name)) continue;
       const next = relative ? `${relative}/${entry.name}` : entry.name;
@@ -400,8 +438,8 @@ test('a module with its own code is reached by the product, not only by its own 
   const edgeFiles = present.filter((file) => /\.(js|mjs|cjs|ts|html)$/.test(file));
   const textOf = new Map(edgeFiles.map((file) => [file, fsSync.readFileSync(path.join(dir, file), 'utf8')]));
 
-  const resolve = (from: any, spec: any) => {
-    if (!spec.startsWith('.')) return null;
+  const resolve = (from: string, spec: string | undefined): string | null => {
+    if (!spec || !spec.startsWith('.')) return null;
     const base = path.posix.normalize(path.posix.join(path.posix.dirname(from), spec));
     for (const candidate of [base, `${base}.js`, `${base}.ts`, `${base}.ts`, `${base}/index.js`]) {
       if (textOf.has(candidate)) return candidate;
@@ -409,9 +447,9 @@ test('a module with its own code is reached by the product, not only by its own 
     return null;
   };
 
-  const edges = new Map();
+  const edges = new Map<string, string[]>();
   for (const [file, text] of textOf) {
-    const targets = new Set();
+    const targets = new Set<string>();
     for (const match of text.matchAll(/from\s*['"](\.[^'"]+)['"]/g)) {
       const hit = resolve(file, match[1]);
       if (hit) targets.add(hit);
@@ -430,14 +468,18 @@ test('a module with its own code is reached by the product, not only by its own 
     }
     for (const match of text.matchAll(/<script[^>]+src=["']([^"']+)["']/g)) {
       const spec = match[1];
+      assert.ok(spec, 'the script src capture is present');
       const hit = resolve(file, spec.startsWith('.') ? spec : `./${spec}`);
       if (hit) targets.add(hit);
     }
     // WHY executeScript files are edges: the worker reaches a module by injecting it by file name (content/record-main.js, lib/statement-file.js), never by import - a MAIN-world encoder runs in the page's realm and cannot be imported into the worker.
     // An entry that is not extension-relative is left alone; a path that does not resolve adds no edge, like every other rule here.
     for (const match of text.matchAll(/files:\s*\[([^\]]+)\]/g)) {
-      for (const quoted of match[1].matchAll(/["']([^"']+)["']/g)) {
+      const inner = match[1];
+      assert.ok(inner, 'the files array capture is present');
+      for (const quoted of inner.matchAll(/["']([^"']+)["']/g)) {
         const spec = quoted[1];
+        assert.ok(spec, 'the file name capture is present');
         if (!spec.endsWith('.js')) continue;
         const hit = spec.startsWith('.') ? resolve(file, spec) : resolve('extension/placeholder.js', `./${spec}`);
         if (hit) targets.add(hit);
@@ -448,7 +490,7 @@ test('a module with its own code is reached by the product, not only by its own 
 
   // The build emits shared/<stem>.js from shared/<stem>.ts, and every road imports the artifact by construction; the source is reached exactly when its artifact is, so the census counts the pair as one module.
   // The browser half compiles beside sources too (extension/lib, extension/worker, ...).
-  for (const [file, targets] of edges) {
+  for (const [, targets] of edges) {
     for (const target of [...targets]) {
       const match = /^(shared|local|extension)\/(.+)\.js$/.exec(target);
       if (match && textOf.has(`${match[1]}/${match[2]}.ts`)) targets.push(`${match[1]}/${match[2]}.ts`);
@@ -456,7 +498,7 @@ test('a module with its own code is reached by the product, not only by its own 
   }
 
   // The entry points: what the product actually runs.
-  const roots = new Set();
+  const roots = new Set<string>();
   for (const file of present) {
     if (/^hosted\/functions\/[^/]+\/index\.ts$/.test(file)) roots.add(file);
     if (/^scripts\/.*\.(ts|py)$/.test(file)) roots.add(file);
@@ -477,9 +519,12 @@ test('a module with its own code is reached by the product, not only by its own 
   if (fsSync.existsSync(localManifestPath)) {
     const localManifest = JSON.parse(fsSync.readFileSync(localManifestPath, 'utf8'));
     for (const value of Object.values(localManifest.scripts ?? {})) {
-      const match = /^node\s+(\S+)/.exec(value);
+      const text = typeof value === 'string' ? value : String(value);
+      const match = /^node\s+(\S+)/.exec(text);
       if (!match) continue;
-      const candidate = path.posix.normalize(path.posix.join('local', match[1]));
+      const script = match[1];
+      assert.ok(script, 'the lifecycle script capture is present');
+      const candidate = path.posix.normalize(path.posix.join('local', script));
       if (textOf.has(candidate)) roots.add(candidate);
     }
   }
@@ -490,18 +535,19 @@ test('a module with its own code is reached by the product, not only by its own 
     if (match && textOf.has(`${match[1]}/${match[2]}.ts`)) roots.add(`${match[1]}/${match[2]}.ts`);
   }
 
-  const reached = new Set();
+  const reached = new Set<string>();
   const queue = [...roots];
   while (queue.length) {
     const current = queue.pop();
+    if (current === undefined) break;
     if (reached.has(current)) continue;
     reached.add(current);
     for (const target of edges.get(current) || []) if (!reached.has(target)) queue.push(target);
   }
 
   // A file that only re-exports another module is a bridge to live code, not dead code.
-  const isShim = (text: any) => {
-    const code = text.split('\n').filter((line: any) => !/^\s*(\/\/|\/\*|\*|#)/.test(line)).join('\n');
+  const isShim = (text: string) => {
+    const code = text.split('\n').filter((line) => !/^\s*(\/\/|\/\*|\*|#)/.test(line)).join('\n');
     const withoutReexports = code.replace(/export\s*\*\s*from\s*['"][^'"]+['"];?/g, '').replace(/export\s*\{[^}]*\}\s*from\s*['"][^'"]+['"];?/g, '').trim();
     return withoutReexports === '';
   };
@@ -513,7 +559,11 @@ test('a module with its own code is reached by the product, not only by its own 
       || (/^(extension|local)\//.test(file) && file.endsWith('.ts')))
     && !file.endsWith('.d.ts')
     && !/^shared\/[^/]+\.js$/.test(file));
-  const unreachable = runtimeFiles.filter((file) => !reached.has(file) && !isShim(textOf.get(file)));
+  const unreachable = runtimeFiles.filter((file) => {
+    const text = textOf.get(file);
+    if (text === undefined) throw new Error(`the census never read ${file}`);
+    return !reached.has(file) && !isShim(text);
+  });
   const unexpected = unreachable.filter((file) => !STAGED_FOR_THE_OPEN_TASK.has(file));
   assert.deepEqual(unexpected, [],
     `these modules are reached by nothing but their own test:\n${unexpected.join('\n')}`);
@@ -521,7 +571,9 @@ test('a module with its own code is reached by the product, not only by its own 
   assert.deepEqual(staleAllowance, [],
     `these modules are reached by the product now, so the staged list must drop them:\n${staleAllowance.join('\n')}`);
   for (const file of unreachable) {
-    assert.ok(STAGED_FOR_THE_OPEN_TASK.get(file).length > 20, `${file} must say why it is staged`);
+    const why = STAGED_FOR_THE_OPEN_TASK.get(file);
+    assert.ok(why, `${file} is staged, so it carries a written reason`);
+    assert.ok(why.length > 20, `${file} must say why it is staged`);
   }
 });
 
@@ -548,27 +600,21 @@ const CHANGELOG_STATE = /^(?:fix|feat|refactor|chore|perf|test|docs|build|ci)\(|
 
 test('every source file carries a header that says what the file is and what it holds', async () => {
   const dir = fileURLToPath(new URL('../../', import.meta.url));
-  const skipDirs = new Set(['.git', 'node_modules', '.kilo', 'dist', 'build', 'tmp', 'coverage', '__pycache__', '.vercel', '.next', '.temp']);
-  const walk = (relative: any) => {
-    const out = [];
-    for (const entry of fsSync.readdirSync(path.join(dir, relative), { withFileTypes: true })) {
-      if (skipDirs.has(entry.name)) continue;
-      const next = relative ? `${relative}/${entry.name}` : entry.name;
-      if (entry.isDirectory()) out.push(...walk(next));
-      else out.push(next);
-    }
-    return out;
-  };
-  const roots = ['extension', 'shared', 'local', 'scripts', 'hosted', 'tests', '.github'];
-  const files = roots.flatMap(walk)
+  // WHY site/ IS EXCLUDED.
+  // The site is a separate package with its own toolchain and style, and the header rule never judged it when the file list was read from disk instead of git.
+  // This gate judges what it always judged; widening it is a different decision, not a side effect of skipping build output.
+  const files = execFileSync('git', ['ls-files'], { cwd: dir, encoding: 'utf8' })
+    .split('\n')
+    .filter(Boolean)
     .filter((file) => /\.(?:js|mjs|cjs|ts|py|html|css|yml|yaml|toml|cmd|example)$/.test(file))
-    .filter((file) => !file.startsWith('hosted/migrations/'));
+    .filter((file) => !file.startsWith('hosted/migrations/'))
+    .filter((file) => !file.startsWith('site/'));
 
   const problems = [];
   for (const file of files) {
     const text = fsSync.readFileSync(path.join(dir, file), 'utf8');
     const head = text.split('\n').slice(0, 8).join('\n');
-    const clean = (value: any) => (value ?? '').replace(/(-->|\*\/)\s*$/, '').trim();
+    const clean = (value?: string) => (value ?? '').replace(/(-->|\*\/)\s*$/, '').trim();
     const title = clean(/@title:\s*(.+)/.exec(head)?.[1]);
     const state = clean(/@state:\s*(.+)/.exec(head)?.[1]);
     if (!title || !state || !/@last-edited:/.test(head) || !/@dependencies:/.test(head)) {

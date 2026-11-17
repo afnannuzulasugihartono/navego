@@ -31,9 +31,13 @@ test('the record and scan primitives are allowlisted and bounded', () => {
   assert.ok(ALLOWED_METHODS.includes('page.record_start'));
   assert.ok(ALLOWED_METHODS.includes('page.record_stop'));
   assert.ok(ALLOWED_METHODS.includes('page.scan'));
-  assert.equal(METHOD_SPECS['page.record_start'].timeoutMs, 10000);
-  assert.equal(METHOD_SPECS['page.record_stop'].timeoutMs, 30000);
-  assert.equal(METHOD_SPECS['page.scan'].timeoutMs, 55000);
+  const recordStartSpec = METHOD_SPECS['page.record_start'];
+  const recordStopSpec = METHOD_SPECS['page.record_stop'];
+  const scanSpec = METHOD_SPECS['page.scan'];
+  assert.ok(recordStartSpec && recordStopSpec && scanSpec);
+  assert.equal(recordStartSpec.timeoutMs, 10000);
+  assert.equal(recordStopSpec.timeoutMs, 30000);
+  assert.equal(scanSpec.timeoutMs, 55000);
   assert.equal(validateCommand({ id: 'abcdefgh', method: 'page.record_start', params: { tabId: 1 } }).ok, true);
   assert.equal(validateCommand({ id: 'abcdefgh', method: 'page.record_start', params: { tabId: 1, fps: 15, maxWidth: 1280, quality: 60, scroll: true, filename: 'mirror.webm' } }).ok, true);
   assert.equal(validateCommand({ id: 'abcdefgh', method: 'page.record_start', params: { bogus: true } }).ok, false);
@@ -69,6 +73,7 @@ test('bounded browser burst accepts only linear page actions', () => {
   assert.equal(validateBurst({ steps: [{ action: 'pointer', pointerAction: 'drag', x: 1, y: 2 }] }).ok, false);
   const command = validateCommand({ id: 'burst-123', method: 'browser.burst', params: { steps: [{ action: 'read' }] }, timeoutMs: 30000 });
   assert.equal(command.ok, true);
+  assert.ok(command.command);
   assert.equal(command.command.timeoutMs, 12000);
 });
 
@@ -78,6 +83,7 @@ test('command validation rejects unknown methods and malformed params', () => {
   assert.equal(validateCommand({ id: '12345678', method: 'page.read', params: [] }).ok, false);
   const ok = validateCommand({ id: 'abcdefgh', method: 'page.read', params: { limit: 6000 }, timeoutMs: 999999 });
   assert.equal(ok.ok, true);
+  assert.ok(ok.command);
   assert.equal(ok.command.timeoutMs, 55000);
   assert.equal(validateCommand({ id: 'abcdefgh', method: 'page.pointer', params: { action: 'drag', x: 5, y: 6 } }).ok, false);
   assert.equal(validateCommand({ id: 'abcdefgh', method: 'page.pointer', params: { action: 'drag', x: 5, y: 6, endX: 7, endY: 8 } }).ok, true);
@@ -126,7 +132,11 @@ test('burst tabId refuses booleans instead of coercing false to tab 0', () => {
 
 test('execution modes are explicit and structured foreground errors survive normalization', () => {
   assert.deepEqual(EXECUTION_MODES, ['background', 'foreground']);
-  const error = new Error('Foreground permission is required.');
+  interface CodedError extends Error {
+    code?: string;
+    details?: Record<string, unknown>;
+  }
+  const error: CodedError = new Error('Foreground permission is required.');
   error.code = 'FOREGROUND_REQUIRED';
   error.details = { targetTabId: 42, requiredExecutionMode: 'foreground' };
   assert.deepEqual(normalizeError(error), {
@@ -139,11 +149,15 @@ test('execution modes are explicit and structured foreground errors survive norm
 test('safeUrl accepts only http/https', () => {
   assert.equal(safeUrl('javascript:alert(1)'), null);
   assert.equal(safeUrl('file:///tmp/x'), null);
-  assert.match(safeUrl('https://example.com/a'), /^https:\/\/example\.com/);
+  const url = safeUrl('https://example.com/a');
+  assert.ok(url);
+  assert.match(url, /^https:\/\/example\.com/);
 });
 
 test('a page read is given the time a whole-document scan needs', () => {
-  assert.equal(METHOD_SPECS['page.read'].timeoutMs, 30000);
+  const readSpec = METHOD_SPECS['page.read'];
+  assert.ok(readSpec);
+  assert.equal(readSpec.timeoutMs, 30000);
 });
 
 test('a full-page capture can be walked tile by tile', () => {

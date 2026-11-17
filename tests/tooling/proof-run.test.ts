@@ -14,18 +14,11 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { installedBrowsers } from '../../local/driver.js';
 import { launchProofBrowser, runProof, serveCompany, sha256, speakMcp } from '../../scripts/proof/proof-run.ts';
 
 const root = path.resolve(fileURLToPath(new URL('../../', import.meta.url)));
 const company = path.join(root, 'tests', 'fixtures', 'mock-company');
 
-const browsers = installedBrowsers();
-const canShowWindow = process.platform !== 'linux'
-  || Boolean(process.env.DISPLAY || process.env.WAYLAND_DISPLAY);
-const noBrowser = browsers.length > 0 && canShowWindow
-  ? false
-  : 'this machine cannot start a browser window';
 const noExtensionBrowser = process.env.OPERA_PROOF_BROWSER
   ? false
   : 'this run has no extension-capable browser; set OPERA_PROOF_BROWSER to one (Chrome for Testing or Chromium)';
@@ -53,7 +46,7 @@ test('the proof browser answers its own port and is gone when the run ends', { s
   const browser = await launchProofBrowser();
   const { port } = browser;
   try {
-    const version = await (await fetch(`http://127.0.0.1:${port}/json/version`)).json();
+    const version = (await (await fetch(`http://127.0.0.1:${port}/json/version`)).json()) as { Browser?: unknown };
     assert.match(String(version.Browser ?? ''), /Chrome|Chromium/);
   } finally {
     browser.close();
@@ -73,7 +66,7 @@ test('the server opens the portal tab and reads the page', { skip: noExtensionBr
   const browser = await launchProofBrowser();
   const mcp = speakMcp({ port: browser.port, cwd: root });
   try {
-    const ready = await mcp.initialize();
+    const ready = (await mcp.initialize()) as { serverInfo?: { name?: string } } | undefined;
     assert.equal(ready?.serverInfo?.name, 'navego');
     const names = await mcp.listTools();
     for (const wanted of ['browser_open_url', 'browser_read_page', 'browser_download_file', 'artifact_build_workbook', 'artifact_build_slides', 'artifact_build_document', 'browser_screenshot', 'browser_close_tab']) {
@@ -109,12 +102,14 @@ test('one drive downloads the CSV and leaves the four files the site ships', { s
     assert.equal(result.hashes.length, 4, 'four artifacts were compared');
 
     for (const row of result.hashes) {
+      assert.ok(row.file, 'each hash row names the file it compared');
       const name = path.basename(row.file);
       assert.equal(row.sha256, sha256(path.join(root, 'site', 'public', 'contoh', name)), `${name} is not the file the site ships`);
       assert.equal(row.bytes, fs.statSync(path.join(work, 'out', name)).size, `${name} is the file the run made`);
     }
 
     const downloaded = result.steps.find((step) => step.tool === 'browser_download_file');
+    assert.ok(downloaded, 'the run took the CSV download step');
     assert.equal(downloaded.ok, true);
     assert.equal(downloaded.sha256, sha256(path.join(company, 'transaksi-2026-09.csv')), 'the CSV came off the portal unchanged');
     assert.ok(result.jpeg && result.jpeg.length > 1000, 'the run captured the portal it read');

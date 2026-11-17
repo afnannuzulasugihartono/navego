@@ -14,7 +14,9 @@ const migration = fs.readFileSync(
 function definition() {
   const match = migration.match(/\$wf\$(.*?)\$wf\$/s);
   assert.ok(match, 'migration must embed the workflow JSON');
-  return JSON.parse(match[1]);
+  const [, workflowJson] = match;
+  assert.ok(workflowJson, 'migration must embed the workflow JSON');
+  return JSON.parse(workflowJson);
 }
 
 test('find_in_list checks first, crawls bounded, reports honestly', () => {

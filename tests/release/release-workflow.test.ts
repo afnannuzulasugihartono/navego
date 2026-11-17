@@ -15,7 +15,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 const root = new URL('../../', import.meta.url);
-const read = (name: any) => fs.readFileSync(new URL(name, root), 'utf8');
+const read = (name: string) => fs.readFileSync(new URL(name, root), 'utf8');
 const workflow = read('.github/workflows/release.yml');
 
 const BASH = findBash();
@@ -26,7 +26,7 @@ function findBash() {
     'bash',
     'C:/Program Files/Git/bin/bash.exe',
     'C:/Program Files/Git/usr/bin/bash.exe'
-  ].filter(Boolean);
+  ].filter((candidate): candidate is string => Boolean(candidate));
   for (const candidate of candidates) {
     const probe = spawnSync(candidate, ['-c', 'echo ok'], { encoding: 'utf8' });
     if (probe.status === 0 && String(probe.stdout).trim() === 'ok') return candidate;
@@ -37,25 +37,27 @@ function findBash() {
 function releaseStep() {
   const lines = workflow.split('\n');
   for (let i = 0; i < lines.length; i += 1) {
-    if (!/^\s*- name:/.test(lines[i]) || !/release/i.test(lines[i])) continue;
+    const head = lines[i] ?? '';
+    if (!/^\s*- name:/.test(head) || !/release/i.test(head)) continue;
     let runAt = -1;
     for (let j = i + 1; j < lines.length; j += 1) {
-      if (/^\s*- name:/.test(lines[j])) break;
-      if (/^\s*run:\s*\|\s*$/.test(lines[j])) {
+      const candidate = lines[j] ?? '';
+      if (/^\s*- name:/.test(candidate)) break;
+      if (/^\s*run:\s*\|\s*$/.test(candidate)) {
         runAt = j;
         break;
       }
     }
     if (runAt === -1) continue;
-    const indent = /^\s*/.exec(lines[runAt])[0].length + 2;
-    const body = [];
+    const indent = (/^\s*/.exec(lines[runAt] ?? '')?.[0]?.length ?? 0) + 2;
+    const body: string[] = [];
     for (let j = runAt + 1; j < lines.length; j += 1) {
-      const line = lines[j];
+      const line = lines[j] ?? '';
       if (line.trim() === '') {
         body.push('');
         continue;
       }
-      const lineIndent = /^\s*/.exec(line)[0].length;
+      const lineIndent = /^\s*/.exec(line)?.[0]?.length ?? 0;
       if (lineIndent < indent) break;
       body.push(line.slice(indent));
     }
@@ -77,6 +79,7 @@ gh() {
 `;
 
 function runStep({ version = '1.6.27', assetCount = 4, viewStatus = 0, tags = ['v1.6.25', 'v1.6.26', 'v1.6.27'] } = {}) {
+  assert.ok(BASH, 'bash is available on this machine');
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-workflow-'));
   const log = path.join(dir, 'gh.log');
   const tagFile = path.join(dir, 'tags.txt');

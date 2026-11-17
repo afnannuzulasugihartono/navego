@@ -14,7 +14,34 @@
 export const FEED_URL = 'https://api.gojekapi.com/merchant-analytics/v2/merchants/transactions';
 export const TOKEN_URL = 'https://api.gobiz.co.id/goid/token';
 
-const RFC3339 = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:?\d{2})$/;`n`ninterface ParsedRow {`n  id: string;`n  amount: number;`n  at: string;`n  method: string;`n  payment: string;`n  channel: string;`n  status: string;`n  usable: boolean;`n}`n`ninterface Match {`n  invoiceId: string;`n  transactionId: string;`n  amountRupiah: number;`n  at: string;`n  method: string;`n}`n`ninterface DetectorPlan {`n  mode: string;`n  closes: Match[];`n  wouldClose: Match[];`n  rupiahMatches: Match[];`n  minorMatches: Match[];`n}
+const RFC3339 = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:?\d{2})$/;
+
+interface ParsedRow {
+  id: string;
+  amount: number;
+  at: string;
+  method: string;
+  payment: string;
+  channel: string;
+  status: string;
+  usable: boolean;
+}
+
+interface Match {
+  invoiceId: string;
+  transactionId: string;
+  amountRupiah: number;
+  at: string;
+  method: string;
+}
+
+interface DetectorPlan {
+  mode: string;
+  closes: Match[];
+  wouldClose: Match[];
+  rupiahMatches: Match[];
+  minorMatches: Match[];
+}
 
 // WHY THE PAGE IS CAPPED AT 100 AND NOT 200.
 // The API answered 422 for size=200 on 2026-11-04 and 200 for size=100, so the page is capped here instead of failing at runtime.
@@ -98,10 +125,12 @@ export function refreshBody(refreshToken: unknown): Record<string, unknown> | nu
 // That is the field the live feed carries, measured on 2026-11-04: a Rp1.000 payment reads 100000, so the feed counts minor units.
 
 export function parseFeed(body: unknown): ParsedRow[] {
-  const list = Array.isArray(body?.data) ? body.data : Array.isArray(body?.transactions) ? body.transactions : [];
-  const out = [];
-  for (const row of list) {
-    if (!row || typeof row !== 'object') continue;
+  const carrier = (body && typeof body === 'object' && !Array.isArray(body) ? body : {}) as Record<string, unknown>;
+  const list = Array.isArray(carrier.data) ? carrier.data : Array.isArray(carrier.transactions) ? carrier.transactions : [];
+  const out: ParsedRow[] = [];
+  for (const raw of list) {
+    if (!raw || typeof raw !== 'object') continue;
+    const row = raw as Record<string, unknown>;
     const amount = Number(row.gross_amount ?? row.real_gross_amount ?? row.amount ?? row.nominal ?? row.total);
     if (!Number.isFinite(amount)) continue;
     const payment = String(row.payment_type ?? '').toUpperCase();
@@ -140,17 +169,18 @@ function paidAfterInvoice(transactionAt: unknown, invoiceCreatedAt: unknown): bo
 export function matchOpenInvoices(invoices: unknown, transactions: unknown, unit: unknown): Array<Match> {
   const scale = unit === 'minor' ? 100 : 1;
   const open = (Array.isArray(invoices) ? invoices : [])
-    .filter((invoice) => String(invoice.status || '') === 'open')
-    .map((invoice) => ({ invoice, cents: Number(invoice.amount_cents) }))
+    .map((invoice) => ({ invoice: invoice as Record<string, unknown>, cents: Number((invoice as Record<string, unknown>).amount_cents) }))
+    .filter((entry) => String(entry.invoice.status || '') === 'open')
     .sort((a, b) => String(a.invoice.created_at).localeCompare(String(b.invoice.created_at)));
-  const used = new Set();
+  const txs = (Array.isArray(transactions) ? transactions : []) as ParsedRow[];
+  const used = new Set<string>();
   const matches: Match[] = [];
   for (const entry of open) {
     const wantRupiah = entry.cents / 100;
-    const hit = transactions.find((tx) => !used.has(tx.id) && tx.usable && tx.amount / scale === wantRupiah && paidAfterInvoice(tx.at, entry.invoice.created_at));
+    const hit = txs.find((tx) => !used.has(tx.id) && tx.usable && tx.amount / scale === wantRupiah && paidAfterInvoice(tx.at, entry.invoice.created_at));
     if (hit) {
       used.add(hit.id);
-      matches.push({ invoiceId: entry.invoice.id, transactionId: hit.id, amountRupiah: wantRupiah, at: hit.at, method: hit.method });
+      matches.push({ invoiceId: String(entry.invoice.id), transactionId: hit.id, amountRupiah: wantRupiah, at: hit.at, method: hit.method });
     }
   }
   return matches;

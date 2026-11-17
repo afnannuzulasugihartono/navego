@@ -25,21 +25,27 @@ test('a hello frame carries the identity and the protocol version', () => {
 });
 
 test('a complete frame states success or failure, never both', () => {
-  const good = parseFrame(completionFrame('c1', true, { ok: true })).message;
+  const goodParse = parseFrame(completionFrame('c1', true, { ok: true }));
+  assert.ok(goodParse.ok);
+  const good = goodParse.message;
   assert.equal(good.ok, true);
   assert.deepEqual(good.result, { ok: true });
   assert.equal(good.error, undefined);
 
-  const bad = parseFrame(completionFrame('c1', false, null, { code: 'X', message: 'y' })).message;
+  const badParse = parseFrame(completionFrame('c1', false, null, { code: 'X', message: 'y' }));
+  assert.ok(badParse.ok);
+  const bad = badParse.message;
   assert.equal(bad.ok, false);
-  assert.equal(bad.error.code, 'X');
+  assert.equal((bad.error as Record<string, unknown>).code, 'X');
   assert.equal(bad.result, undefined);
 });
 
 test('a command frame is only runnable when it has an id and a method', () => {
   const runnable = { type: 'command', command: { id: 'c1', method: 'tabs.list' } };
   assert.equal(isRunnableCommand(runnable), true);
-  assert.deepEqual(normalizeCommand(runnable).method, 'tabs.list');
+  const normalized = normalizeCommand(runnable);
+  assert.ok(normalized);
+  assert.deepEqual(normalized.method, 'tabs.list');
   assert.equal(isRunnableCommand({ type: 'command', command: { method: 'tabs.list' } }), false);
   assert.equal(isRunnableCommand({ type: 'command', command: { id: 'c1' } }), false);
   assert.equal(isRunnableCommand({ type: 'pong' }), false);

@@ -23,7 +23,7 @@ const source = stripTypeScriptTypes(readFileSync(new URL('../../hosted/functions
 
 process.env.SUPABASE_URL ??= 'test';
 process.env.SUPABASE_SERVICE_ROLE_KEY ??= 'test';
-globalThis.Deno = { env: { get: (key: any) => process.env[key] } };
+Object.assign(globalThis, { Deno: { env: { get: (key: string) => process.env[key] } } });
 
 // The upgrade path is stripped out of the harness source so a body test cannot be dragged into socket territory, and is supplied here instead.
 // The real symbols are used rather than a stand-in: a fake upgrade detector would pass these tests while the production one still hijacked a normal POST.
@@ -51,16 +51,20 @@ function harness() {
     Deno: { env: { get: () => 'test' }, serve: (fn: any) => { handler = fn; } },
     Request, Response, Headers, URL, TextEncoder, TextDecoder, crypto
   });
-  const post = (body: any, init = {}) => handler(new Request('https://example.test/functions/v1/opera-agent-bridge', {
+  interface PostInit {
+    headers?: Record<string, string>;
+    duplex?: 'half';
+  }
+  const post = (body: ReadableStream<Uint8Array>, init: PostInit = {}) => handler(new Request('https://example.test/functions/v1/opera-agent-bridge', {
     method: 'POST', headers: { 'Content-Type': 'application/json', ...init.headers }, body, ...init
   }));
   return { calls, post };
 }
 
-function streamBody(payload: any) {
+function streamBody(payload: string) {
   const bytes = new TextEncoder().encode(payload);
   const stream = new ReadableStream({ start(controller) { controller.enqueue(bytes); controller.close(); } });
-  return { body: stream, duplex: 'half' };
+  return { body: stream, duplex: 'half' as const };
 }
 
 test('the bridge reads through a bounded reader, never a full buffer', () => {

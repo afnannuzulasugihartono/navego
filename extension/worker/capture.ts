@@ -18,6 +18,28 @@ type ScreenshotMemo = Record<string, unknown> & {
   cached?: boolean | undefined;
 };
 
+interface CapturePageLabel {
+  readonly textContent: string | null;
+}
+
+interface CapturePageElement {
+  getAttribute(name: string): string | null;
+  getBoundingClientRect(): { width: number; height: number };
+  labels?: Iterable<CapturePageLabel> | null | undefined;
+}
+
+interface CaptureInputElement extends CapturePageElement {}
+interface CaptureTextAreaElement extends CapturePageElement {}
+interface CaptureSelectElement extends CapturePageElement {}
+interface CaptureButtonElement extends CapturePageElement {}
+
+declare const document: { querySelectorAll(selector: string): Iterable<CapturePageElement> };
+declare const getComputedStyle: (element: CapturePageElement) => { display: string; readonly visibility: string; readonly opacity: string };
+declare const HTMLInputElement: new () => CaptureInputElement;
+declare const HTMLTextAreaElement: new () => CaptureTextAreaElement;
+declare const HTMLSelectElement: new () => CaptureSelectElement;
+declare const HTMLButtonElement: new () => CaptureButtonElement;
+
 interface ScreenshotCacheEntry {
   cacheKey: string;
   savedAt: number;
@@ -194,6 +216,22 @@ export async function collectAxSummary(tabId: number, context?: CaptureContext |
     return null;
   }
 }
+
+interface CaptureImageBitmap {
+  close?(): void;
+}
+
+interface CaptureCanvasContext {
+  drawImage(bitmap: CaptureImageBitmap, dx: number, dy: number, dw: number, dh: number): void;
+  getImageData(x: number, y: number, width: number, height: number): { data: Uint8ClampedArray };
+}
+
+interface CaptureOffscreenCanvas {
+  getContext(id: '2d', options?: { willReadFrequently?: boolean }): CaptureCanvasContext | null;
+}
+
+declare const createImageBitmap: ((blob: Blob) => Promise<CaptureImageBitmap>) | undefined;
+declare const OffscreenCanvas: (new (width: number, height: number) => CaptureOffscreenCanvas) | undefined;
 
 export function screenshotBytes(data: string): number {
   try { return atob(data).length; } catch (error) { log.debug('SCREENSHOT_BYTES_PARSE_FAILED', errorMessage(error)); return Number.POSITIVE_INFINITY; }

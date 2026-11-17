@@ -22,7 +22,7 @@ await import('../../extension/role-reconcile.js');
 test('the log publishes exactly the declared members', () => {
   const log = globalThis.OperaAgentLog;
   assert.ok(log, 'OperaAgentLog published');
-  const expected = ['configure', 'log', 'debug', 'warn', 'error', 'entries', 'clear', 'errors', 'clearErrors', 'errorCount'];
+  const expected = ['configure', 'log', 'debug', 'warn', 'error', 'entries', 'clear', 'errors', 'clearErrors', 'errorCount'] as const;
   assert.deepEqual(Object.keys(log).sort(), [...expected].sort());
   for (const member of expected) assert.equal(typeof log[member], 'function', `log.${member} is a function`);
 });
@@ -34,6 +34,7 @@ test('the log names the browser before it is asked', () => {
 
 test('the log counts a fault it was asked to record', () => {
   const log = globalThis.OperaAgentLog;
+  assert.ok(log, 'OperaAgentLog published');
   const before = log.errorCount();
   log.error('GLOBAL_CONTRACT_TEST_FAULT', 'recorded by the contract test');
   assert.equal(log.errorCount(), before + 1);
@@ -67,7 +68,7 @@ test('the semantic identity engine is created per document and carries a stable 
   assert.deepEqual(Object.keys(si).sort(), ['createIdentityEngine', 'stableHash']);
   assert.equal(si.stableHash('same'), si.stableHash('same'));
   const engine = si.createIdentityEngine({ documentId: 'contract-test' });
-  for (const member of ['reset', 'observe', 'inspect']) {
+  for (const member of ['reset', 'observe', 'inspect'] as const) {
     assert.equal(typeof engine[member], 'function', `engine.${member} is a function`);
   }
 });

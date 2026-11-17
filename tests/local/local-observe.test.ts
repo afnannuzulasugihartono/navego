@@ -17,7 +17,7 @@ const SCROLL_CDP = (answer: any) => {
   const calls: any = [];
   return {
     calls,
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       calls.push({ method, params });
       if (method === 'Runtime.evaluate' && String(params.expression).includes('opera-scroll')) {
         return { result: { value: answer } };
@@ -161,7 +161,7 @@ const COMPUTED_CDP = (answer: any) => {
   const calls: any = [];
   return {
     calls,
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       calls.push({ method, params });
       if (method === 'Runtime.evaluate' && String(params.expression).includes('opera-computed')) {
         return { result: { value: answer } };
@@ -239,7 +239,7 @@ test('a computed read without a target is refused before it costs a round trip',
 test('a snapshot costs one round trip, whatever the page holds', async () => {
   const calls: any = [];
   const cdp = {
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       calls.push({ method, params });
       if (method === 'Runtime.evaluate') {
         return {
@@ -284,8 +284,8 @@ test('the page expression keeps every role the old tree filter kept', () => {
 test('a snapshot carries its limit into the page, because the page does the filtering', async () => {
   let expression = '';
   const cdp = {
-    send: async (method: any, params = {}) => {
-      if (method === 'Runtime.evaluate') { expression = params.expression; return { result: { value: [] } }; }
+    send: async (method: any, params: Record<string, unknown> = {}) => {
+      if (method === 'Runtime.evaluate') { expression = String(params.expression); return { result: { value: [] } }; }
       return {};
     }
   };
@@ -298,7 +298,7 @@ test('a snapshot carries its limit into the page, because the page does the filt
 test('a snapshot clamps its limit, so a wild request cannot walk the whole document', async () => {
   const limits: any = [];
   const cdp = {
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       if (method === 'Runtime.evaluate') { limits.push(params.expression); return { result: { value: [] } }; }
       return {};
     }
@@ -338,6 +338,7 @@ test('a capture is clipped to the clickable viewport at one to one, or every vis
   await createPrimitives(cdp).capture();
 
   const shot = cdp.calls.find((c: any) => c.method === 'Page.captureScreenshot');
+  assert.ok(shot);
   assert.deepEqual(shot.params.clip, { x: 0, y: 0, width: 1136, height: 770, scale: 1 },
     'a pixel in the picture must be a coordinate clickAt accepts');
 });
@@ -348,6 +349,7 @@ test('a full-page capture spans the content size beyond the viewport', async () 
   await createPrimitives(cdp).capture({ fullPage: true });
 
   const shot = cdp.calls.find((c: any) => c.method === 'Page.captureScreenshot');
+  assert.ok(shot);
   assert.equal(shot.params.captureBeyondViewport, true);
   assert.deepEqual(shot.params.clip, { x: 0, y: 0, width: 1136, height: 2400, scale: 1 });
 });
@@ -356,7 +358,7 @@ test('a full-page capture spans the content size beyond the viewport', async () 
 test('a huge document scales the full page down instead of hanging the capture', async () => {
   const calls: any = [];
   const cdp = {
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       calls.push({ method, params });
       if (method === 'Page.getLayoutMetrics') {
         return { contentSize: { x: 0, y: 0, width: 800, height: 4800 } };
@@ -418,7 +420,7 @@ test('createObserveMethods exposes the reads of the page', () => {
   const methods = createObserveMethods({
     cdp: { send: async () => ({ result: { value: [] } }) },
     primitives: { waitForRow: async () => ({}), resolveHandle: async () => ({}), clickAt: async () => ({}), hoverRow: async () => ({}), settle: async () => ({}) },
-    capped: (limit) => limit
+    capped: (limit: unknown) => Number(limit)
   });
 
   assert.deepEqual(Object.keys(methods).sort(),
@@ -446,16 +448,19 @@ test('the page look answers the rows and the state in one evaluation', async () 
       }
     },
     primitives: {},
-    capped: (limit) => limit
+    capped: (limit: unknown) => Number(limit)
   });
 
   const look = await methods.pageLook();
 
   assert.equal(sends.length, 1, 'one evaluation answers both halves');
-  assert.equal(look.rows[0].name, 'Row 1');
-  assert.equal(look.rows[0].node, undefined, 'the node handle stays in the page');
-  assert.equal(look.state.title, 'X');
-  assert.equal(look.state.textChars, 4);
+  const firstRow = look.rows[0];
+  assert.ok(firstRow, 'one row came back');
+  assert.equal(firstRow.name, 'Row 1');
+  assert.equal(firstRow.node, undefined, 'the node handle stays in the page');
+  const lookState = look.state as { url: string; title?: string; textChars?: number };
+  assert.equal(lookState.title, 'X');
+  assert.equal(lookState.textChars, 4);
 });
 
 // WHY THE PAGE READ MASKS A CREDENTIAL IN THE ADDRESS.
@@ -466,14 +471,14 @@ test('the page reads mask a password that sits in the address', async () => {
   const methods = createObserveMethods({
     cdp: { send: async () => ({ result: { value: { url: 'https://contoh.co.id/beranda?email=budi@example.com&password=rahasia123', title: 'Beranda', text: 'halo', textChars: 4, focus: null } } }) },
     primitives: {},
-    capped: (limit) => limit
+    capped: (limit: unknown) => Number(limit)
   });
 
   const state = await methods.pageState();
   const read = await methods.readState();
 
-  assert.ok(!state.url.includes('rahasia123'), 'the page state carries no secret');
-  assert.ok(!read.url.includes('rahasia123'), 'the page read carries no secret');
-  assert.match(state.url, /password=\*\*\*/);
+  assert.ok(!String(state.url).includes('rahasia123'), 'the page state carries no secret');
+  assert.ok(!String(read.url).includes('rahasia123'), 'the page read carries no secret');
+  assert.match(String(state.url), /password=\*\*\*/);
 });
 

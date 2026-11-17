@@ -26,17 +26,17 @@ test('the probe expression is one expression that names no site', () => {
 // Measured on a real Google Doc: the first version of this probe referenced the module's own constant inside the string, and the whole profile came back false.
 // Running the string against a stub is the only cheap way to catch that before a browser does.
 
-const runProbe = (page: any) => {
+const runProbe = (page: { document: unknown; window: unknown }) => {
   const factory = new Function('document', 'window', `return ${SURFACE_PROBE_EXPRESSION}`);
   return factory(page.document, page.window);
 };
 
-const stubPage = ({ text = '', canvases = [], editable = null, focused = false, innerWidth = 1200, innerHeight = 800 }) => {
-  const box = (w: any, h: any) => ({ width: w, height: h, x: 0, y: 0, top: 0, left: 0 });
+const stubPage = ({ text = '', canvases = [], editable = null, focused = false, innerWidth = 1200, innerHeight = 800 }: { text?: string; canvases?: Array<[number, number]>; editable?: { getAttribute: () => string } | null; focused?: boolean; innerWidth?: number; innerHeight?: number }) => {
+  const box = (w: number, h: number) => ({ width: w, height: h, x: 0, y: 0, top: 0, left: 0 });
   return {
     document: {
       body: { innerText: text },
-      querySelectorAll: (selector: any) => (selector === 'canvas' ? canvases.map(([w, h]) => ({ getBoundingClientRect: () => box(w, h) })) : []),
+      querySelectorAll: (selector: string) => (selector === 'canvas' ? canvases.map(([w, h]) => ({ getBoundingClientRect: () => box(w, h) })) : []),
       querySelector: () => editable,
       hasFocus: () => focused
     },
@@ -98,15 +98,15 @@ test('a canvas editor profiles as canvas and editable', async () => {
 
 // A tree shaped the way Chrome answers: parentId and childIds on every node, chrome in one subtree and the document in another.
 
-const axTree = ({ chrome, document: doc }) => {
+const axTree = ({ chrome, document: doc }: { chrome: string[]; document: string[] }) => {
   const nodes = [];
   nodes.push({ nodeId: 'root', parentId: undefined, childIds: ['chromeRoot', 'docRoot'], role: { value: 'RootWebArea' }, name: { value: '' } });
-  nodes.push({ nodeId: 'chromeRoot', parentId: 'root', childIds: chrome.map((_: any, i: any) => `chrome${i}`), role: { value: 'toolbar' }, name: { value: '' } });
-  chrome.forEach((text: any, i: any) => nodes.push({
+  nodes.push({ nodeId: 'chromeRoot', parentId: 'root', childIds: chrome.map((_, i) => `chrome${i}`), role: { value: 'toolbar' }, name: { value: '' } });
+  chrome.forEach((text, i) => nodes.push({
     nodeId: `chrome${i}`, parentId: 'chromeRoot', childIds: [], role: { value: 'InlineTextBox' }, name: { value: text }
   }));
-  nodes.push({ nodeId: 'docRoot', parentId: 'root', childIds: doc.map((_: any, i: any) => `doc${i}`), role: { value: 'generic' }, name: { value: '' } });
-  doc.forEach((text: any, i: any) => nodes.push({
+  nodes.push({ nodeId: 'docRoot', parentId: 'root', childIds: doc.map((_, i) => `doc${i}`), role: { value: 'generic' }, name: { value: '' } });
+  doc.forEach((text, i) => nodes.push({
     nodeId: `doc${i}`, parentId: 'docRoot', childIds: [], role: { value: 'InlineTextBox' }, name: { value: text }
   }));
   return { nodes };
@@ -114,7 +114,7 @@ const axTree = ({ chrome, document: doc }) => {
 
 test('the accessibility measurement keeps the subtree that carries the document', async () => {
   const document = ['PROPOSAL PENAWARAN LOKASI', 'Kepada Yth.', 'Tim Pengembangan Lokasi', 'PT Indomarco Prismatama', 'Perihal penawaran lokasi', '1. Identitas Pengusul', '2. Latar Belakang', '3. Rincian Penawaran', '4. Nilai Investasi', '5. Jadwal'];
-  const ask = async (method: any, params = {}) => {
+  const ask = async (method: string) => {
     if (method !== 'Accessibility.getFullAXTree') throw new Error(`unexpected ${method}`);
     return axTree({
       chrome: ['Insert', 'Mode tampilan', 'Screen reader support enabled'],
@@ -131,7 +131,7 @@ test('the accessibility measurement keeps the subtree that carries the document'
 });
 
 test('a tree of pure chrome is not rich enough to lead', async () => {
-  const ask = async (method: any) => {
+  const ask = async (method: string) => {
     if (method !== 'Accessibility.getFullAXTree') throw new Error(`unexpected ${method}`);
     return axTree({ chrome: ['Mode tampilan', 'Share', 'Video', 'Banner hidden', 'Caption', 'Screen'], document: [] });
   };
@@ -141,7 +141,7 @@ test('a tree of pure chrome is not rich enough to lead', async () => {
 });
 
 test('a small document is not rich enough to lead, and its text is not thrown away', async () => {
-  const ask = async (method: any) => {
+  const ask = async (method: string) => {
     if (method !== 'Accessibility.getFullAXTree') throw new Error(`unexpected ${method}`);
     return axTree({ chrome: ['Insert'], document: ['Hello', 'World'] });
   };
@@ -158,7 +158,7 @@ test('a failed accessibility call answers empty rather than throwing', async () 
 });
 
 test('a tree whose nodes carry no ids answers empty rather than looping', async () => {
-  const ask = async (method: any) => {
+  const ask = async (method: string) => {
     if (method !== 'Accessibility.getFullAXTree') throw new Error(`unexpected ${method}`);
     return { nodes: [{ role: { value: 'InlineTextBox' }, name: { value: 'orphan' } }] };
   };
@@ -174,7 +174,7 @@ test('a tree whose nodes carry no ids answers empty rather than looping', async 
 // Measured before the fix: this fixture never returned and the run had to be killed at the command timeout.
 
 test('a tree with a cycle answers instead of hanging', async () => {
-  const ask = async (method: any) => {
+  const ask = async (method: string) => {
     if (method !== 'Accessibility.getFullAXTree') throw new Error(`unexpected ${method}`);
     return { nodes: [
       { nodeId: 'root', parentId: null, childIds: ['a'], role: { value: 'RootWebArea' }, name: { value: '' } },
@@ -188,7 +188,7 @@ test('a tree with a cycle answers instead of hanging', async () => {
 });
 
 test('a tree that points a node at itself answers instead of hanging', async () => {
-  const ask = async (method: any) => {
+  const ask = async (method: string) => {
     if (method !== 'Accessibility.getFullAXTree') throw new Error(`unexpected ${method}`);
     return { nodes: [
       { nodeId: 'root', parentId: null, childIds: ['self'], role: { value: 'RootWebArea' }, name: { value: '' } },
@@ -227,7 +227,7 @@ test('the profile the ladder reads carries the evidence under every claim', () =
 
 test('a tree cut at the depth cap says so, so short text is not read as a whole document', async () => {
   // One node per level down to the cap, with the text on the last one: a document this deep has almost certainly been cut by the request.
-  const nodes = [{ nodeId: 'root', parentId: undefined, childIds: ['n1'], role: { value: 'RootWebArea' }, name: { value: '' } }];
+  const nodes: Array<{ nodeId: string; parentId: string | undefined; childIds: string[]; role: { value: string }; name: { value: string } }> = [{ nodeId: 'root', parentId: undefined, childIds: ['n1'], role: { value: 'RootWebArea' }, name: { value: '' } }];
   let parent = 'root';
   for (let depth = 1; depth <= 60; depth += 1) {
     const leaf = depth === 60;
@@ -246,7 +246,7 @@ test('a tree cut at the depth cap says so, so short text is not read as a whole 
 });
 
 test('the description names what was measured, not where it was measured', () => {
-  const line = describeProfile({ textInDom: false, canvas: true, editable: true, axRich: true, focused: true });
+  const line = describeProfile({ canvas: true, editable: true, axRich: true, focused: true });
   assert.ok(line.includes('canvas'));
   assert.ok(line.includes('editable'));
   for (const forbidden of ['docs.google', 'kix']) assert.ok(!line.includes(forbidden));

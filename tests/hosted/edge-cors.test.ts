@@ -20,9 +20,10 @@ import { gateVerdict } from '../../hosted/functions/opera-agent-bridge/plan-gate
 
 process.env.SUPABASE_URL ??= 'test';
 process.env.SUPABASE_SERVICE_ROLE_KEY ??= 'test';
-globalThis.Deno = { env: { get: (key: any) => process.env[key] } };
+const denoStub = { env: { get: (key: string) => process.env[key] } };
+(globalThis as { Deno?: typeof denoStub }).Deno = denoStub;
 
-const req = (origin: any) => ({ headers: { get: (name: any) => (name.toLowerCase() === 'origin' ? origin : null) } });
+const req = (origin: string | null) => ({ headers: new Headers(origin ? { origin } : {}) });
 
 test('default origins are exactly the extension and the site', () => {
 

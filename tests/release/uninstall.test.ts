@@ -5,12 +5,15 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import type { ChildProcess, SpawnOptions } from 'node:child_process';
 import { mkdtemp, mkdir, writeFile, rm, stat } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { uninstall, deviceFile } from '../../local/install.js';
 
-const withRoots = async (fn: any) => {
+interface Roots { root: string; home: string }
+
+const withRoots = async (fn: (roots: Roots) => Promise<unknown>) => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'oa-uninstall-root-'));
   const home = await mkdtemp(path.join(os.tmpdir(), 'oa-uninstall-home-'));
   try {
@@ -21,10 +24,10 @@ const withRoots = async (fn: any) => {
   }
 };
 
-const env = (root: any, home: any) => ({ LOCALAPPDATA: root, OPERA_AGENT_HOME: home });
-const quietExec = () => {};
-const noSpawn = () => ({ unref() {} });
-const absentKey = () => { const e = new Error('Unable to find the specified registry key or value.'); e.status = 1; throw e; };
+const env = (root: string, home: string) => ({ LOCALAPPDATA: root, OPERA_AGENT_HOME: home });
+const quietExec = () => '';
+const noSpawn = () => ({ unref() {} }) as unknown as ChildProcess;
+const absentKey = () => { const e = new Error('Unable to find the specified registry key or value.') as Error & { status: number }; e.status = 1; throw e; };
 
 test('clean machine reports nothing removed and exits ok', async () => {
   await withRoots(async ({ root, home }) => {
@@ -48,7 +51,7 @@ test('clean machine reports nothing removed and exits ok', async () => {
 
 test('deletes our entries from the three policy lists, chromeForTesting untouched', async () => {
   await withRoots(async ({ root, home }) => {
-    const calls: any = [];
+    const calls: string[][] = [];
     const result = await uninstall({
       platform: 'win32',
       env: env(root, home),
@@ -61,7 +64,7 @@ test('deletes our entries from the three policy lists, chromeForTesting untouche
       root: path.join(home, 'OperaAgent'),
       home,
     });
-    const vendors = calls.filter(([cmd, op]) => op === 'delete').map(([, , key]) => String(key).includes('Google\\Chrome\\') ? 'chrome' : String(key).includes('Brave') ? 'brave' : String(key).includes('Microsoft\\Edge') ? 'edge' : '??');
+    const vendors = calls.filter(([, op]) => op === 'delete').map(([, , key]) => String(key).includes('Google\\Chrome\\') ? 'chrome' : String(key).includes('Brave') ? 'brave' : String(key).includes('Microsoft\\Edge') ? 'edge' : '??');
     assert.deepEqual(new Set(vendors), new Set(['chrome', 'brave', 'edge']));
     assert.match(result.message, /policy entry for chrome/);
     assert.match(result.message, /policy entry for edge/);
@@ -124,12 +127,12 @@ test('deletes the paired device file by default', async () => {
 
 test('spawns npm uninstall -g with both names, new and legacy, detached:true', async () => {
   await withRoots(async ({ root, home }) => {
-    const calls: any = [];
+    const calls: (string | SpawnOptions)[][] = [];
     await uninstall({
       platform: 'win32',
       env: env(root, home),
       exec: quietExec,
-      spawnImpl: (cmd, args, opts) => { calls.push([cmd, ...args, opts]); return { unref() {} }; },
+      spawnImpl: (cmd, args, opts) => { calls.push([cmd, ...args, opts]); return noSpawn(); },
       root,
       home,
     });

@@ -58,7 +58,7 @@ function fakeDriver() {
       calls.push(['waitForText', text, options]);
       return { url: 'https://example.test/', title: 'Example', text: `the ${text} is here` };
     },
-    waitForRow: async (options: any) => {
+    waitForRow: async (options: any): Promise<{ found: boolean; role?: unknown; name?: unknown; row?: { role?: unknown; name?: unknown }; rows?: never[] }> => {
       calls.push(['waitForRow', options]);
       return { found: true, role: options.role, name: options.name, row: { role: options.role, name: options.name } };
     }
@@ -115,9 +115,11 @@ test('a step carries its own answer, with no second box around it', async () => 
 
   const out = await runLocalBurst({ driver, steps: normalized.steps, timeoutMs: normalized.timeoutMs });
 
-  assert.equal(out.results[0].handle, 'opera-7', 'the row the step found is right there');
-  assert.equal(out.results[0].action, 'browser_find_element');
-  assert.equal(out.results[0].result, undefined, 'and there is no wrapper to open');
+  const first = out.results[0];
+  assert.ok(first, 'the first step answer is there');
+  assert.equal(first.handle, 'opera-7', 'the row the step found is right there');
+  assert.equal(first.action, 'browser_find_element');
+  assert.equal(first.result, undefined, 'and there is no wrapper to open');
 });
 
 // WHY A BURST REPORTS THE SETTLE IT ALREADY PAID.
@@ -128,12 +130,12 @@ test('a burst that held a wait settled the page, and one that did not says nothi
   const waited = fakeDriver();
   const withWait = normalizeBurst({ steps: [{ action: 'browser_find_element', role: 'row', name: 'Row 1' }, { action: 'browser_wait_until', text: 'Row 2' }] });
   const quiet = await runLocalBurst({ driver: waited, steps: withWait.steps, timeoutMs: withWait.timeoutMs });
-  assert.equal(quiet.settled, true, 'the wait looked until the page stopped');
+  assert.equal('settled' in quiet ? quiet.settled : undefined, true, 'the wait looked until the page stopped');
 
   const reads = fakeDriver();
   const withoutWait = normalizeBurst({ steps: [{ action: 'browser_find_element', role: 'row', name: 'Row 1' }] });
   const plain = await runLocalBurst({ driver: reads, steps: withoutWait.steps, timeoutMs: withoutWait.timeoutMs });
-  assert.equal(plain.settled, undefined, 'a burst of reads never claimed the page stopped moving');
+  assert.equal('settled' in plain ? plain.settled : undefined, undefined, 'a burst of reads never claimed the page stopped moving');
 });
 
 test('a row that the click raises, and text that lands, happen in one call', async () => {
@@ -150,8 +152,8 @@ test('a row that the click raises, and text that lands, happen in one call', asy
 
   assert.equal(out.ok, true);
   assert.equal(out.completedSteps, 3);
-  assert.equal(out.settled, true, 'both waits looked until the page stopped');
-  assert.deepEqual(driver.calls.map(([name]) => name), ['clickRow', 'waitForRow', 'waitForText']);
+  assert.equal('settled' in out ? out.settled : undefined, true, 'both waits looked until the page stopped');
+  assert.deepEqual(driver.calls.map(([name]: [string, ...unknown[]]) => name), ['clickRow', 'waitForRow', 'waitForText']);
 });
 
 test('a row that never appears stops the burst where it did', async () => {
@@ -167,7 +169,8 @@ test('a row that never appears stops the burst where it did', async () => {
   const out = await runLocalBurst({ driver, steps: normalized.steps, timeoutMs: normalized.timeoutMs });
 
   assert.equal(out.ok, false);
-  assert.equal(out.failedAt, 1);
+  assert.equal('failedAt' in out ? out.failedAt : undefined, 1);
+  if (!('error' in out)) assert.fail('the burst failed with an error');
   assert.match(out.error.message, /Row 101/);
 });
 
@@ -183,10 +186,11 @@ test('the first failure stops the burst and keeps the steps that finished', asyn
   const out = await runLocalBurst({ driver, steps: normalized.steps, timeoutMs: normalized.timeoutMs });
 
   assert.equal(out.ok, false);
-  assert.equal(out.failedAt, 0);
+  assert.equal('failedAt' in out ? out.failedAt : undefined, 0);
   assert.equal(out.completedSteps, 0);
+  if (!('error' in out)) assert.fail('the burst failed with an error');
   assert.match(out.error.message, /menu is gone/);
-  assert.ok(!driver.calls.some(([name]) => name === 'browser_type_text'), 'the next step never fired');
+  assert.ok(!driver.calls.some(([name]: [string, ...unknown[]]) => name === 'browser_type_text'), 'the next step never fired');
 });
 
 test('the deadline is checked before the next step, so a burst cannot overrun it', async () => {
@@ -202,8 +206,8 @@ test('the deadline is checked before the next step, so a burst cannot overrun it
   });
 
   assert.equal(out.ok, false);
-  assert.equal(out.timedOut, true);
-  assert.equal(out.failedAt, 0);
+  assert.equal('timedOut' in out ? out.timedOut : undefined, true);
+  assert.equal('failedAt' in out ? out.failedAt : undefined, 0);
   assert.deepEqual(driver.calls, [], 'nothing was clicked after the budget was gone');
 });
 
@@ -221,7 +225,8 @@ test('a wait that never sees its text fails the step instead of walking into the
   });
 
   assert.equal(out.ok, false);
-  assert.equal(out.failedAt, 0);
+  assert.equal('failedAt' in out ? out.failedAt : undefined, 0);
+  if (!('error' in out)) assert.fail('the burst failed with an error');
   assert.match(out.error.message, /timed out/);
-  assert.ok(!driver.calls.some(([name]) => name === 'key'), 'the next step never fired');
+  assert.ok(!driver.calls.some(([name]: [string, ...unknown[]]) => name === 'key'), 'the next step never fired');
 });

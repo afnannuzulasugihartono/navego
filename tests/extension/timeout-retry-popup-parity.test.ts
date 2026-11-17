@@ -15,7 +15,9 @@ test('popup event log records opener-tab creations', () => {
   recordPopup(log, { openerTabId: 7, id: 43, url: 'https://a.example.com' }, 2_000);
   const since = popupsSince(log, 7, 0);
   assert.deepEqual(since.map((e) => e.tabId), [42, 43]);
-  assert.equal(since[0].url, 'https://oauth.example.com/auth');
+  const firstPopup = since[0];
+  assert.ok(firstPopup);
+  assert.equal(firstPopup.url, 'https://oauth.example.com/auth');
 });
 
 test('popup event log is bounded per opener', () => {
@@ -23,7 +25,9 @@ test('popup event log is bounded per opener', () => {
   for (let i = 0; i < 12; i += 1) recordPopup(log, { openerTabId: 3, id: i, url: `u${i}` }, i * 10);
   const list = popupsSince(log, 3, 0);
   assert.equal(list.length, 8);
-  assert.equal(list[0].url, 'u4');
+  const oldest = list[0];
+  assert.ok(oldest);
+  assert.equal(oldest.url, 'u4');
 });
 
 test('popupsSince filters by timestamp', () => {
@@ -83,7 +87,6 @@ test('the local burst guidance covers dependent steps across state, not fixed re
   const guide = fs.readFileSync(new URL('../../local/agent-guide.ts', import.meta.url), 'utf8');
   const burstStart = guide.indexOf('run');
   assert.ok(burstStart >= 0, 'the burst capability must be documented in the guide');
-  const slice = guide.slice(burstStart, burstStart + 600);
   assert.match(guide, /refFromStep/, 'the guide must name refFromStep for cross-step handles');
   assert.match(guide, /stops at the first failure|first failure/, 'the guide must name the stop-on-failure semantics');
 });

@@ -15,7 +15,9 @@ import { BURST_ACTION_METHODS, BURST_STEP_KEYS, validateBurst } from '../../exte
 import { extensionSource } from '../helpers/extension-source.ts';
 
 await import('../../extension/hover-settle.js');
-const { DEFAULTS, normalize, plan } = globalThis.OperaAgentHoverSettle;
+const hoverSettle = globalThis.OperaAgentHoverSettle;
+assert.ok(hoverSettle, 'the settle runtime must publish itself');
+const { DEFAULTS, normalize, plan } = hoverSettle;
 
 test('a hover with an expected submenu name settles only when it is observed', () => {
   const waiting = plan({ text: 'page numbers', observedText: 'insert', timeoutMs: 1500, elapsedMs: 10 });

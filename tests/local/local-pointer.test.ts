@@ -20,7 +20,7 @@ test('a click answers with the element under the point', async () => {
 
 test('a click on canvas says canvas, because elementFromPoint cannot see through it', async () => {
   const cdp = {
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       if (method === 'Runtime.evaluate' && String(params.expression).includes('opera-hit')) {
         return { result: { value: { tag: 'CANVAS', role: '', name: '' } } };
       }
@@ -70,8 +70,8 @@ test('a click on the edge of the viewport is still allowed', async () => {
 
 test('a tap says when something else owns the point it clicked', async () => {
   const cdp = {
-    calls: [],
-    send: async (method: any, params = {}) => {
+    calls: [] as Array<{ method: string; params: Record<string, unknown> }>,
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       cdp.calls.push({ method, params });
       if (method === 'DOM.getBoxModel') return { model: { content: [100, 200, 300, 200, 300, 260, 100, 260] } };
       if (method === 'DOM.resolveNode') return { object: { objectId: 'o-9' } };
@@ -94,8 +94,8 @@ test('a tap says when something else owns the point it clicked', async () => {
 
 test('a tap whose point belongs to the row says so, and one that belongs to nothing claims nothing', async () => {
   const owned = {
-    calls: [],
-    send: async (method: any, params = {}) => {
+    calls: [] as Array<{ method: string; params: Record<string, unknown> }>,
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       owned.calls.push({ method, params });
       if (method === 'DOM.getBoxModel') return { model: { content: [100, 200, 300, 200, 300, 260, 100, 260] } };
       if (method === 'DOM.resolveNode') return { object: { objectId: 'o-9' } };
@@ -106,8 +106,8 @@ test('a tap whose point belongs to the row says so, and one that belongs to noth
   assert.equal((await createPrimitives(owned).clickHandle('opera-4321')).covered, false);
 
   const silent = {
-    calls: [],
-    send: async (method: any, params = {}) => {
+    calls: [] as Array<{ method: string; params: Record<string, unknown> }>,
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       silent.calls.push({ method, params });
       if (method === 'DOM.getBoxModel') return { model: { content: [100, 200, 300, 200, 300, 260, 100, 260] } };
       return { result: {} };
@@ -121,7 +121,7 @@ test('a tap whose point belongs to the row says so, and one that belongs to noth
 test('a click fires move, press and release together', async () => {
   const cdp = pipelinedCdp();
 
-  await createPrimitives(cdp).clickAt(10, 20);
+  await createPrimitives(cdp as unknown as Parameters<typeof createPrimitives>[0]).clickAt(10, 20);
 
   assert.equal(cdp.stats().max, 4, 'spotlight and three mouse events overlap');
 });
@@ -137,8 +137,11 @@ test('a click is a real press and release at the browser level, not an element c
 
   const events = cdp.calls.filter((c: any) => c.method === 'Input.dispatchMouseEvent');
   assert.deepEqual(events.map((e: any) => e.params.type), ['mouseMoved', 'mousePressed', 'mouseReleased']);
-  assert.equal(events[1].params.x, 384);
-  assert.equal(events[2].params.y, 46);
+  const moveEvent = events[1];
+  const releaseEvent = events[2];
+  assert.ok(moveEvent && releaseEvent);
+  assert.equal(moveEvent.params.x, 384);
+  assert.equal(releaseEvent.params.y, 46);
 });
 
 
@@ -148,8 +151,10 @@ test('a hover moves the pointer and stops, because a submenu opens on hover and 
 
   const calls = cdp.calls.filter((c: any) => c.method === 'Input.dispatchMouseEvent');
   assert.equal(calls.length, 1, 'a hover must not press anything');
-  assert.equal(calls[0].params.type, 'mouseMoved');
-  assert.equal(calls[0].params.buttons, 0);
+  const first = calls[0];
+  assert.ok(first);
+  assert.equal(first.params.type, 'mouseMoved');
+  assert.equal(first.params.buttons, 0);
 });
 
 
@@ -166,27 +171,30 @@ test('every pointer action marks its spot for the watcher, red for click and blu
   await p.clickAt(200, 220);
 
   const marks = cdp.calls.filter((c: any) => c.method === 'Runtime.evaluate' && c.params.expression.includes('opera-spot'));
+  const firstMark = marks[0];
+  const secondMark = marks[1];
+  assert.ok(firstMark && secondMark);
   assert.equal(marks.length, 2);
-  assert.match(marks[0].params.expression, /66,133,244/);
-  assert.match(marks[1].params.expression, /255,60,60/);
+  assert.match(String(firstMark.params.expression), /66,133,244/);
+  assert.match(String(secondMark.params.expression), /255,60,60/);
 
   const at = (expression: any, axis: any) => {
     const found = new RegExp(`el\\.style\\.${axis} = '(\\d+)px'`).exec(expression);
     return found ? Number(found[1]) : null;
   };
-  assert.equal(at(marks[0].params.expression, 'left'), 87, 'the ring is centred on the hovered point');
-  assert.equal(at(marks[0].params.expression, 'top'), 87);
-  assert.equal(at(marks[1].params.expression, 'left'), 187, 'and on the clicked point');
-  assert.equal(at(marks[1].params.expression, 'top'), 207);
+  assert.equal(at(firstMark.params.expression, 'left'), 87, 'the ring is centred on the hovered point');
+  assert.equal(at(firstMark.params.expression, 'top'), 87);
+  assert.equal(at(secondMark.params.expression, 'left'), 187, 'and on the clicked point');
+  assert.equal(at(secondMark.params.expression, 'top'), 207);
 
-  assert.match(marks[1].params.expression, /el\.remove\(\)/, 'and the mark takes itself off the page, because a mark that stays is a ring over the next picture');
+  assert.match(String(secondMark.params.expression), /el\.remove\(\)/, 'and the mark takes itself off the page, because a mark that stays is a ring over the next picture');
 });
 
 
 test('a refused spotlight never breaks the click it decorates', async () => {
   const cdp = {
-    calls: [],
-    send: async (method: any, params = {}) => {
+    calls: [] as Array<{ method: string; params: Record<string, unknown> }>,
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       cdp.calls.push({ method, params });
       if (method === 'Runtime.evaluate') throw new Error('script not allowed here');
       return { result: {} };
@@ -212,12 +220,16 @@ test('a click asks for focus emulation, and gives it back', async () => {
 
   const asked = cdp.calls.filter((call: any) => call.method === 'Emulation.setFocusEmulationEnabled');
   assert.equal(asked.length, 2, 'the emulation is asked for and handed back');
-  assert.equal(asked[0].params.enabled, true);
-  assert.equal(asked[1].params.enabled, false);
+  const firstAsk = asked[0];
+  const secondAsk = asked[1];
+  assert.ok(firstAsk && secondAsk);
+  assert.equal(firstAsk.params.enabled, true);
+  assert.equal(secondAsk.params.enabled, false);
   const firstMove = cdp.calls.findIndex((call: any) => call.method === 'Input.dispatchMouseEvent');
-  const lastMove = cdp.calls.findLastIndex((call: any) => call.method === 'Input.dispatchMouseEvent');
-  assert.ok(cdp.calls.indexOf(asked[0]) < firstMove, 'the emulation is on before the pointer moves');
-  assert.ok(cdp.calls.indexOf(asked[1]) > lastMove, 'and off after the pointer is done');
+  let lastMove = -1;
+  cdp.calls.forEach((call: any, index: number) => { if (call.method === 'Input.dispatchMouseEvent') lastMove = index; });
+  assert.ok(cdp.calls.indexOf(firstAsk) < firstMove, 'the emulation is on before the pointer moves');
+  assert.ok(cdp.calls.indexOf(secondAsk) > lastMove, 'and off after the pointer is done');
 });
 
 test('a hover asks for focus emulation too', async () => {
@@ -227,8 +239,11 @@ test('a hover asks for focus emulation too', async () => {
 
   const asked = cdp.calls.filter((call: any) => call.method === 'Emulation.setFocusEmulationEnabled');
   assert.equal(asked.length, 2, 'the emulation is asked for and handed back');
-  assert.equal(asked[0].params.enabled, true);
-  assert.equal(asked[1].params.enabled, false);
+  const hoverAsk = asked[0];
+  const hoverAskBack = asked[1];
+  assert.ok(hoverAsk && hoverAskBack);
+  assert.equal(hoverAsk.params.enabled, true);
+  assert.equal(hoverAskBack.params.enabled, false);
 });
 
 // WHY THIS USED TO BE THE OTHER WAY ROUND.
@@ -239,11 +254,11 @@ test('a hover asks for focus emulation too', async () => {
 
 test('a hover waits for the move it dispatched, or it has not hovered', async () => {
   let moves = 0;
-  const cdp = {
-    send: (method: any) => {
+  const cdp: Parameters<typeof createPrimitives>[0] = {
+    send: (method: string) => {
       if (method === 'Input.dispatchMouseEvent') {
         moves += 1;
-        return new Promise(() => {});
+        return new Promise<never>(() => {});
       }
       return Promise.resolve({});
     }
@@ -278,10 +293,10 @@ function handleCdp(rows: any) {
   const calls: any = [];
   return {
     calls,
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}): Promise<Record<string, unknown>> => {
       calls.push({ method, params });
       if (method === 'Runtime.evaluate') {
-        if (/^window\.__operaNodes\[\d+\]$/.test(params.expression)) return { result: { objectId: 'o-1' } };
+        if (/^window\.__operaNodes\[\d+\]$/.test(String(params.expression))) return { result: { objectId: 'o-1' } };
         return { result: { value: rows } };
       }
       if (method === 'DOM.describeNode') return { node: { backendNodeId: 4321 } };
@@ -327,8 +342,9 @@ test('a missing row names what is visible instead of guessing', async () => {
   const p = createPrimitives(cdp);
 
   await assert.rejects(() => p.resolveRow({ role: 'menuitem', name: 'Footnote' }), (error) => {
-    assert.match(error.message, /no menuitem matching "Footnote"/);
-    assert.match(error.message, /Insert \| Image/);
+    const message = error instanceof Error ? error.message : String(error);
+    assert.match(message, /no menuitem matching "Footnote"/);
+    assert.match(message, /Insert \| Image/);
     return true;
   });
 });
@@ -355,7 +371,7 @@ test('a handle is measured from the node at the moment of the click', async () =
 
 test('a handle that is gone says so instead of clicking a stale point', async () => {
   const cdp = handleCdp([]);
-  cdp.send = async (method, params = {}) => {
+  cdp.send = async (method: any, params: Record<string, unknown> = {}): Promise<Record<string, unknown>> => {
     cdp.calls.push({ method, params });
     if (method === 'Runtime.evaluate') return { result: { value: [{ role: 'menuitem', name: 'Gone', x: 1, y: 1, node: 0 }] } };
     if (method === 'DOM.describeNode') return { node: { backendNodeId: 4321 } };

@@ -23,7 +23,7 @@ test('a canvas surface with a rich accessibility tree still leads with coordinat
 });
 
 test('every step names why it is in the ladder', () => {
-  for (const step of actionLadder({ textInDom: false, canvas: true, editable: true, axRich: true, focused: true })) {
+  for (const step of actionLadder({ textInDom: false, canvas: true, editable: true, axRich: true, focused: true } as Parameters<typeof actionLadder>[0])) {
     assert.ok(step.why.length > 0);
   }
 });

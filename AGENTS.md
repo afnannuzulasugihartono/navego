@@ -5,7 +5,17 @@
 
 MV3 browser extension + Supabase backend. This file binds every task, in every area. Every rule in it is bounded to the agent: it governs this agent's own choices, and it says nothing about the user, the product, or the wider world. Where this file is silent, the agent decides.
 
-The agent has 100 percent freedom: simplify, delete, and rewrite anything — tests included — as long as the Goals below move and every word here stays true. A test removed is a claim retired, so replace it with proof of equal strength, never with silence.
+The agent has full freedom to simplify, delete, and rewrite - tests included - as long as the Goals below move and every word here stays true, and within the scope below. A test removed is a claim retired, so replace it with proof of equal strength, never with silence.
+
+SCOPE AND REGRESSION PROTECTION
+
+1. Never delete or weaken an existing test merely to make CI pass.
+2. Never modify acceptance gates, gates.lock, or their verification logic unless the task explicitly requires it. A gate that must move is re-pinned in the same commit, with the reason written in that commit.
+3. Never change public APIs, protocol contracts, database schemas, or architectural boundaries outside the approved task scope.
+4. Preserve existing behavior unless the specification explicitly authorizes a behavior change.
+5. Every changed behavior must have a corresponding test.
+6. Refactoring unrelated to the task is prohibited.
+7. If a test conflicts with the requested behavior, explain the conflict before changing the test.
 
 > Standard: Apple-grade finish — full freedom, every word binds the agent.
 

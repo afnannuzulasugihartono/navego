@@ -14,14 +14,16 @@ const migration = fs.readFileSync(
 function definition() {
   const match = migration.match(/\$wf\$(.*?)\$wf\$/s);
   assert.ok(match, 'migration must embed the workflow JSON');
-  return JSON.parse(match[1]);
+  const [, workflowJson] = match;
+  assert.ok(workflowJson, 'migration must embed the workflow JSON');
+  return JSON.parse(workflowJson);
 }
 
 const STRONG = ['recaptcha', 'captcha', 'verify you are human', 'select all images'];
 const WEAK = ['consent', 'privacy notice'];
 const COMMAND_BUDGET = 12;
 
-function walk(steps: any, visit: any, conditions = []) {
+function walk(steps: any, visit: any, conditions: unknown[] = []) {
   for (const step of steps || []) {
     visit(step, conditions);
     const nest = (branch: any) => walk(branch, visit, [...conditions, step.condition]);
@@ -46,7 +48,7 @@ test('recon runs detect, map, act, verify in order with honest failures', () => 
 
 test('every strong pattern blocks alone, weak patterns block only in pairs', () => {
   const def = definition();
-  const findText = {};
+  const findText: Record<string, string> = {};
   walk(def.steps, (s: any) => { if (s.type === 'command' && s.method === 'page.find') findText[s.id] = s.params.text; });
   for (const p of STRONG) assert.ok(Object.values(findText).includes(p), `strong pattern missing: ${p}`);
   for (const p of WEAK) assert.ok(Object.values(findText).includes(p), `weak pattern missing: ${p}`);

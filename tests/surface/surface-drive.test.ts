@@ -12,21 +12,29 @@ import { HARM_CARET_MOVE, STRATEGY_AX } from '../../local/read-strategy.js';
 const richAx = ['PROPOSAL PENAWARAN', 'Kepada Yth.', 'Tim Pengembangan Lokasi', 'PT Indomarco Prismatama', 'Perihal penawaran lokasi', '1. Identitas Pengusul', '2. Latar Belakang', '3. Rincian Penawaran', '4. Nilai Investasi', '5. Jadwal'];
 const poorAx = ['Share'];
 
-const axTree = (texts: any) => {
+const axTree = (texts: string[]) => {
   const nodes = [
     { nodeId: 'root', parentId: undefined, childIds: ['chromeRoot', 'docRoot'], role: { value: 'RootWebArea' }, name: { value: '' } },
     { nodeId: 'chromeRoot', parentId: 'root', childIds: [], role: { value: 'toolbar' }, name: { value: '' } },
     { nodeId: 'docRoot', parentId: 'root', childIds: [], role: { value: 'generic' }, name: { value: '' } }
   ];
-  texts.forEach((text: any, i: any) => nodes.push({ nodeId: `doc${i}`, parentId: 'docRoot', childIds: [], role: { value: 'InlineTextBox' }, name: { value: text } }));
+  texts.forEach((text, i) => nodes.push({ nodeId: `doc${i}`, parentId: 'docRoot', childIds: [], role: { value: 'InlineTextBox' }, name: { value: text } }));
   return { nodes };
 };
 
-const fakeCdp = ({ probe, ax = richAx, copy, domText = '', caret = null }) => {
-  const sent: any = [];
+interface FakeCdpOptions {
+  probe: unknown;
+  ax?: string[];
+  copy?: string | undefined;
+  domText?: string | undefined;
+  caret?: { rangeCount: number; collapsed: boolean | null; anchorOffset: number; hostTextLength: number } | null | undefined;
+}
+
+const fakeCdp = ({ probe, ax = richAx, copy, domText = '', caret = null }: FakeCdpOptions) => {
+  const sent: Array<{ method: string; expression: unknown }> = [];
   return {
     sent,
-    async send(method: any, params = {}) {
+    async send(method: string, params: Record<string, unknown> = {}) {
       sent.push({ method, expression: params.expression });
       const expression = String(params.expression ?? '');
       // The probe is keyed on the canvas-coverage arithmetic, which no other expression in the driver contains, so readState is not mistaken for it.
@@ -68,7 +76,7 @@ test('a read with no consent skips the caret-moving step and says why', async ()
   const cdp = fakeCdp({ probe: canvasProbe, ax: poorAx, copy: '' });
   const primitives = createPrimitives(cdp, { sleep: async () => {} });
   const out = await primitives.read({ allowCaretMove: false });
-  const skipped = out.skipped.find((entry: any) => entry.harm === HARM_CARET_MOVE);
+  const skipped = out.skipped.find((entry: { harm: string; why: string }) => entry.harm === HARM_CARET_MOVE);
   assert.ok(skipped, 'the caret-moving step is reported as skipped');
   assert.match(skipped.why, /consent/i);
   assert.equal(out.text, '', 'nothing was read from a step that was refused');

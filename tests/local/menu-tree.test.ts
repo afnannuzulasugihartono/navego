@@ -32,14 +32,18 @@ test('a command with a closed popup is unrevealed, and says how it opens', () =>
   const node = { branch: true, expanded: false, disabled: false };
 
   assert.equal(stateOf(node), 'unrevealed');
-  assert.match(revealOf(node), /hover the parent/);
+  const reveal = revealOf(node);
+  assert.ok(reveal);
+  assert.match(reveal, /hover the parent/);
 });
 
 test('an open popup is a branch whose children are readable', () => {
   const node = { branch: true, expanded: true, disabled: false };
 
   assert.equal(stateOf(node), 'branch');
-  assert.match(revealOf(node), /children are open/);
+  const reveal = revealOf(node);
+  assert.ok(reveal);
+  assert.match(reveal, /children are open/);
 });
 
 // WHY DISABLED IS ITS OWN STATE AND NOT A LEAF.
@@ -59,13 +63,17 @@ test('an exact row beats a container carrying the same names', () => {
     { name: 'Upload from computer', depth: 2 }
   ];
 
-  assert.equal(findNode('Upload from computer', rows).depth, 2, 'the row, not the menu around it');
+  const found = findNode('Upload from computer', rows);
+  assert.ok(found, 'the row is found');
+  assert.equal(found.depth, 2, 'the row, not the menu around it');
 });
 
 test('a name that is only part of a row still finds it', () => {
   const rows = [{ name: 'Upload from computer\nSearch the web', depth: 2 }];
 
-  assert.equal(looseMatch('upload from comp', rows).depth, 2);
+  const loose = looseMatch('upload from comp', rows);
+  assert.ok(loose, 'the row is found');
+  assert.equal(loose.depth, 2);
   assert.equal(exactMatch('upload from comp', rows), null, 'exact stays exact');
 });
 

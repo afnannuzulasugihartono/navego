@@ -26,7 +26,7 @@ function fakeSession() {
       calls.push(['snapshot', options]);
       return [{ role: 'menuitem', name: 'Insert', x: 1, y: 2 }];
     },
-    resolveRow: async ({ role, name }) => {
+    resolveRow: async ({ role, name }: { role: string; name: string }): Promise<{ role: string; name: string; x: number; y: number; handle: string | null }> => {
       calls.push(['resolveRow', role, name]);
       return { role, name: 'Insert', x: 1, y: 2, handle: 'opera-77' };
     },
@@ -46,10 +46,12 @@ function fakeSession() {
 // So the dialog verbs are driven through the adapter like every other verb, and the fake session has to carry the primitives for the calls to reach them.
 
 test('the adapter speaks the dialog verbs too', async () => {
-  const session = fakeSession();
-  session.dialogState = async () => { session.calls.push(['dialogState']); return { open: false }; };
-  session.dialogType = async (text: any) => { session.calls.push(['dialogType', text]); return { open: false }; };
-  session.dialogPress = async (name: any) => { session.calls.push(['dialogPress', name]); return { open: false }; };
+  const session = {
+    ...fakeSession(),
+    dialogState: async () => { session.calls.push(['dialogState']); return { open: false }; },
+    dialogType: async (text: string) => { session.calls.push(['dialogType', text]); return { open: false }; },
+    dialogPress: async (name: string) => { session.calls.push(['dialogPress', name]); return { open: false }; }
+  };
   const driver = asDriver(session);
 
   await driver.dialogState();
@@ -93,12 +95,14 @@ test('the adapter speaks driver verbs over primitive nouns', async () => {
 // Measured live: a tap answered with its row and its point while a dialog owned the point and took the click, and the adapter's rebuilt answer had thrown that fact away before anyone could read it.
 
 test('a deaf page asks the session window, not the operating system shell', async () => {
-  const session = fakeSession();
-  session.hasFocus = async () => false;
-  session.windowState = async () => { session.calls.push(['windowState']); return { foreground: '', windows: [], minimized: [] }; };
-  session.focusWindow = async () => { session.calls.push(['focusWindow']); return { focused: true, title: 'x' }; };
+  const session = {
+    ...fakeSession(),
+    hasFocus: async () => false,
+    windowState: async () => { session.calls.push(['windowState']); return { foreground: '', windows: [], minimized: [] }; },
+    focusWindow: async () => { session.calls.push(['focusWindow']); return { focused: true, title: 'x' }; }
+  };
 
-  const out = await asDriver(session).ensureFront({ match: 'Paper' });
+  const out = await asDriver(session).ensureFront({ match: 'Paper' }) as { window: string };
 
   assert.ok(session.calls.some((c: any) => c[0] === 'windowState'), 'the session was asked about the window');
   assert.ok(!session.calls.some((c: any) => c[0] === 'focusWindow'), 'a background window is left where the human put it');
@@ -106,12 +110,14 @@ test('a deaf page asks the session window, not the operating system shell', asyn
 });
 
 test('a minimized session window is brought back through the session, not a shell', async () => {
-  const session = fakeSession();
-  session.hasFocus = async () => false;
-  session.windowState = async () => { session.calls.push(['windowState']); return { foreground: '', windows: [], minimized: ['Paper - Google Chrome'] }; };
-  session.focusWindow = async (match: any) => { session.calls.push(['focusWindow', match]); return { focused: true, title: 'Paper - Google Chrome' }; };
+  const session = {
+    ...fakeSession(),
+    hasFocus: async () => false,
+    windowState: async () => { session.calls.push(['windowState']); return { foreground: '', windows: [], minimized: ['Paper - Google Chrome'] }; },
+    focusWindow: async (match: string) => { session.calls.push(['focusWindow', match]); return { focused: true, title: 'Paper - Google Chrome' }; }
+  };
 
-  const out = await asDriver(session).ensureFront({ match: 'Paper' });
+  const out = await asDriver(session).ensureFront({ match: 'Paper' }) as { window: string };
 
   assert.deepEqual(session.calls.filter((c: any) => c[0] === 'focusWindow'), [['focusWindow', 'Paper - Google Chrome']]);
   assert.match(out.window, /brought Paper - Google Chrome back/);
@@ -153,8 +159,9 @@ test('a missing row names what is visible instead of clicking blind', async () =
   await assert.rejects(
     () => asDriver(session).clickRow('menuitem', 'Footnote'),
     (error) => {
-      assert.match(error.message, /no menuitem matching "Footnote"/);
-      assert.match(error.message, /Insert/);
+      const message = error instanceof Error ? error.message : String(error);
+      assert.match(message, /no menuitem matching "Footnote"/);
+      assert.match(message, /Insert/);
       return true;
     }
   );

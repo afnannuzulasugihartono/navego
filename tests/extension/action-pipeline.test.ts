@@ -27,7 +27,8 @@ test('classifyResolve maps resolve states', () => {
   assert.equal(classifyResolve({ present: true, actionable: true }), 'ready');
   assert.equal(classifyResolve({ present: false }), 'not-found');
   assert.equal(classifyResolve({ present: true, actionable: false }), 'not-actionable');
-  assert.equal(classifyResolve({ present: true, actionable: false, ambiguous: true, candidates: ['a', 'b'] }), 'ambiguous');
+  const ambiguousSnapshot = { present: true, actionable: false, ambiguous: true, candidates: ['a', 'b'] };
+  assert.equal(classifyResolve(ambiguousSnapshot), 'ambiguous');
 });
 
 test('makeNotReady shape: ambiguous carries candidates, others do not', () => {
@@ -49,7 +50,9 @@ test('makeNotReady names the ref state, and omits it when unknown', () => {
 });
 
 test('attachResolution adds resolved and omits absent verified', () => {
-  const env = attachResolution({ ok: true, method: 'debugger' }, { attempts: 3, waitedMs: 175, healed: true });
+  const base = { ok: true, method: 'debugger' };
+  const env = attachResolution(base, { attempts: 3, waitedMs: 175, healed: true });
+  assert.ok('ok' in env);
   assert.equal(env.ok, true);
   assert.deepEqual(env.resolved, { attempts: 3, waitedMs: 175, healed: true });
   assert.equal('verified' in env.resolved, false);
@@ -58,7 +61,7 @@ test('attachResolution adds resolved and omits absent verified', () => {
 });
 
 import fs from 'node:fs';
-const read = (p: any) => fs.readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
+const read = (p: string) => fs.readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
 
 test('content exposes page.action_state for the U-V pipeline', () => {
   const src = read('extension/content.js');

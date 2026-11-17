@@ -30,8 +30,10 @@ test('the cron function is server-only and posts only the detect action', () => 
 test('one schedule, every five minutes, named so it can be found in cron.job', () => {
   const schedules = [...sql.matchAll(/cron\.schedule\('([^']+)', '([^']+)'/g)];
   assert.equal(schedules.length, 1, 'exactly one schedule is created');
-  assert.equal(schedules[0][1], 'opera-qris-detect');
-  assert.equal(schedules[0][2], '*/5 * * * *');
+  const schedule = schedules[0];
+  assert.ok(schedule, 'exactly one schedule is created');
+  assert.equal(schedule[1], 'opera-qris-detect');
+  assert.equal(schedule[2], '*/5 * * * *');
 });
 
 test('the cron asks pg_net for a request id, because pg_net returns no answer', () => {

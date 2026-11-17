@@ -9,6 +9,11 @@ import { compileGoalPlan } from '../../extension/lib/goal-plan.js';
 import { advanceCollectVm, createCollectVm, validateCollectProgram } from '../../shared/reactive-vm-collect.js';
 import { digestCanonical } from '../../hosted/functions/_shared/goal-ledger.ts';
 
+interface VmFailure {
+  code: string;
+  message: string;
+}
+
 const reply = JSON.stringify({
   root: {
     type: 'SEQUENCE',
@@ -45,8 +50,9 @@ test('a sealed VM-true program passes the VM validator unchanged', async () => {
   const target = { deviceId: 'opera', tabId: 1 };
   const compiled = compileGoalPlan(reply, { target, budgets: fullBudgets() });
   assert.equal(compiled.ok, true, JSON.stringify(compiled).slice(0, 300));
-  const program = { ...compiled.program, tenantId: 'caller', budgets: fullBudgets() };
-  program.programDigest = await digestCanonical(program);
+  assert.ok('program' in compiled, 'expected a compiled program');
+  const sealed = { ...compiled.program, tenantId: 'caller', budgets: fullBudgets() };
+  const program = { ...sealed, programDigest: await digestCanonical(sealed) };
   const accepted = await validateCollectProgram(program);
   assert.ok(accepted, 'VM validator must accept sealed VM-true programs as-is');
 });
@@ -55,6 +61,7 @@ test('a non-allowlisted method never reaches the VM validator', () => {
   const bad = JSON.stringify({ root: { type: 'COMMAND', method: 'page.evil', arguments: {} } });
   const refused = compileGoalPlan(bad, { target: { deviceId: 'opera', tabId: 1 }, budgets: {} });
   assert.equal(refused.ok, false);
+  assert.ok('code' in refused, 'expected a refusal');
   assert.match(refused.code, /METHOD_NOT_ALLOWED/);
 });
 
@@ -86,8 +93,9 @@ async function commandProgram() {
   });
   const compiled = compileGoalPlan(replyCommand, { target: { deviceId: 'opera', tabId: 1 }, budgets: smallBudgets() });
   assert.equal(compiled.ok, true, JSON.stringify(compiled).slice(0, 300));
-  const program = { ...compiled.program, tenantId: 'caller', budgets: smallBudgets() };
-  program.programDigest = await digestCanonical(program);
+  assert.ok('program' in compiled, 'expected a compiled program');
+  const sealed = { ...compiled.program, tenantId: 'caller', budgets: smallBudgets() };
+  const program = { ...sealed, programDigest: await digestCanonical(sealed) };
   return program;
 }
 
@@ -131,8 +139,9 @@ test('advancing a terminal checkpoint is refused: no second terminal', async () 
   try {
     await advanceCollectVm(program, terminal, { logicalNowMs: 5 });
   } catch (error) {
-    assert.equal(error.code, 'INVALID_SEMANTICS');
-    assert.match(error.message, /cannot advance/);
+    const caught = error as VmFailure;
+    assert.equal(caught.code, 'INVALID_SEMANTICS');
+    assert.match(caught.message, /cannot advance/);
     return;
   }
   assert.fail('advancing a terminal checkpoint must be refused so a run holds at most one terminal');
@@ -148,8 +157,9 @@ async function collectProgram() {
   });
   const compiled = compileGoalPlan(replyCollect, { target: { deviceId: 'opera', tabId: 1 }, budgets: smallBudgets() });
   assert.equal(compiled.ok, true, JSON.stringify(compiled).slice(0, 300));
-  const program = { ...compiled.program, tenantId: 'caller', budgets: smallBudgets() };
-  program.programDigest = await digestCanonical(program);
+  assert.ok('program' in compiled, 'expected a compiled program');
+  const sealed = { ...compiled.program, tenantId: 'caller', budgets: smallBudgets() };
+  const program = { ...sealed, programDigest: await digestCanonical(sealed) };
   return program;
 }
 
@@ -166,7 +176,8 @@ test('bindings and observation metadata share one budget: disjoint seeds are ref
       initialObservationMeta: { m1: metaEntry(fingerprint), m2: metaEntry(fingerprint) }
     });
   } catch (error) {
-    assert.equal(error.code, 'BINDING_BUDGET_EXCEEDED');
+    const caught = error as VmFailure;
+    assert.equal(caught.code, 'BINDING_BUDGET_EXCEEDED');
     return;
   }
   assert.fail('disjoint seeds holding 2N entries against a budget of N must be refused');
@@ -203,7 +214,8 @@ test('a resumed checkpoint with disjoint bindings and metadata is refused', asyn
   try {
     await advanceCollectVm(program, tampered, { logicalNowMs: 2 });
   } catch (error) {
-    assert.equal(error.code, 'BINDING_BUDGET_EXCEEDED');
+    const caught = error as VmFailure;
+    assert.equal(caught.code, 'BINDING_BUDGET_EXCEEDED');
     return;
   }
   assert.fail('a resumed checkpoint holding 2N entries against a budget of N must be refused');

@@ -11,10 +11,13 @@ import { BURST_STEP_KEYS, validateBurst, expandGridSteps } from '../../extension
 import { extensionSource } from '../helpers/extension-source.ts';
 
 test('burst click/fill steps accept refFromStep passthrough keys', () => {
-  assert.ok(BURST_STEP_KEYS.click.includes('refFromStep'), 'click must allow refFromStep');
-  assert.ok(BURST_STEP_KEYS.click.includes('refIndex'), 'click must allow refIndex');
-  assert.ok(BURST_STEP_KEYS.fill.includes('refFromStep'), 'fill must allow refFromStep');
-  assert.ok(BURST_STEP_KEYS.fill.includes('refIndex'), 'fill must allow refIndex');
+  const clickKeys = BURST_STEP_KEYS.click;
+  const fillKeys = BURST_STEP_KEYS.fill;
+  assert.ok(clickKeys && fillKeys);
+  assert.ok(clickKeys.includes('refFromStep'), 'click must allow refFromStep');
+  assert.ok(clickKeys.includes('refIndex'), 'click must allow refIndex');
+  assert.ok(fillKeys.includes('refFromStep'), 'fill must allow refFromStep');
+  assert.ok(fillKeys.includes('refIndex'), 'fill must allow refIndex');
 });
 
 test('validateBurst accepts a find -> click passthrough plan referencing an earlier step', () => {
@@ -110,7 +113,9 @@ test('expandGridSteps unrolls a grid into arrow keys plus Enter', () => {
   const passthrough = [{ action: 'click', ref: 'r1' }];
   assert.equal(expandGridSteps(passthrough)[0], passthrough[0], 'non-grid steps pass through untouched');
   const mixed = expandGridSteps([{ action: 'grid', rows: 1, cols: 2 }, { action: 'find', text: 'x' }, { action: 'click', refFromStep: 1 }]);
-  assert.equal(mixed[3].refFromStep, 2, 'a ref keeps pointing at its find step after expansion');
+  const expandedStep = mixed[3];
+  assert.ok(expandedStep);
+  assert.equal(expandedStep.refFromStep, 2, 'a ref keeps pointing at its find step after expansion');
 });
 
 test('burst file steps reach the content file setter', () => {
@@ -126,7 +131,7 @@ test('burst file steps reach the content file setter', () => {
 // Measured against the live Docs grid on 2026-10-14: one ArrowDown left the label at 1 x 1, ArrowRight moved it to 2 x 1, so the sequence below is the observed one, written out rather than compared against a helper that nothing but this test imports.
 
 test('burst grid expansion walks the measured picker sequence exactly', () => {
-  for (const [rows, cols] of [[1, 1], [2, 1], [2, 3], [5, 4]]) {
+  for (const [rows, cols] of [[1, 1], [2, 1], [2, 3], [5, 4]] as Array<[number, number]>) {
     const expanded = expandGridSteps([{ action: 'grid', rows, cols }]).map((s) => s.key);
     const expected = [
       ...Array.from({ length: cols - 1 }, () => 'ArrowRight'),

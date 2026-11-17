@@ -132,8 +132,14 @@ test('the mock company leaves a workbook whose figures match the rows they came 
   const table = parseDelimited(csvText());
   const revenue = table.rows
     .filter((row) => row.Akun === 'Pendapatan Penjualan')
-    .reduce((sum, row) => sum + parseMoney(row.Jumlah), 0);
+    .reduce((sum, row) => {
+      assert.ok(row.Jumlah);
+      const value = parseMoney(row.Jumlah);
+      assert.ok(value !== null, `the money cell parses: ${row.Jumlah}`);
+      return sum + value;
+    }, 0);
   const reported = workbook.figures.find((figure) => figure.id === 'group:Pendapatan Penjualan');
+  assert.ok(reported);
   assert.equal(reported.cents, revenue, 'the workbook total is the sum of the rows it names');
 
   const reportSheet = entries.get('xl/worksheets/sheet1.xml').toString('utf8');
@@ -152,6 +158,7 @@ test('a deck carries a figure the report checked, and refuses one it does not ho
 
   const slide = entries.get('ppt/slides/slide4.xml').toString('utf8');
   const figure = workbook.figures.find((item) => item.id === 'group:Pendapatan Penjualan');
+  assert.ok(figure);
   assert.ok(slide.includes(figure.display), 'the slide shows the checked value');
 
   const spec = path.join(dir, 'salah.json');
@@ -213,6 +220,7 @@ test('the deck opens on a cover, and every slide carries the house style', () =>
   assert.match(slide, />02</, 'the slide carries its own number');
 
   const figure = workbook.figures.find((item) => item.id === 'group:Pendapatan Penjualan');
+  assert.ok(figure);
   const figureSlide = entries.get('ppt/slides/slide4.xml').toString('utf8');
   assert.ok(figureSlide.includes(figure.display), 'the slide shows the checked value');
   assert.match(figureSlide, /prst="roundRect"/, 'the checked figure sits in a card of its own');

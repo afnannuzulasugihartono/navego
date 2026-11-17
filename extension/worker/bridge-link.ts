@@ -48,6 +48,7 @@ import { isRecord } from '../lib/guards.js';
 
 const CONFIGURED_WS = globalThis.OPERA_BRIDGE_WS || 'ws://127.0.0.1:9451';
 const CANDIDATE_PORTS = [9451, 19451, 9333, 9222];
+const NO_STORE_GET = { method: 'GET', cache: 'no-store' as const };
 
 // WHY THE PROBE IS AN HTTP FETCH AND NOT A SOCKET.
 // Opening and closing a WebSocket against the real bridge disturbs it: measured, the server saw the device leave and dropped the command in flight.
@@ -59,7 +60,7 @@ export const probePort = async (port: number): Promise<boolean> => {
   // Measured on this machine: the extension reported "port 9222 discovered" and never linked, while the real bridge sat one candidate away.
   // So the probe asks the bridge's own question, and a responder that cannot answer it is not a bridge.
   try {
-    const response = await fetch(`http://127.0.0.1:${port}/health`, { method: 'GET', cache: 'no-store' });
+    const response = await fetch(`http://127.0.0.1:${port}/health`, NO_STORE_GET);
     if (!response.ok) return false;
     const body: unknown = await response.json();
     return isRecord(body) && body.ok === true && Array.isArray(body.devices);
@@ -145,7 +146,7 @@ function handleTimeoutMs() {
 }
 
 function withHandleTimeout<T>(promise: Promise<T>): Promise<T> {
-  let timer: number | undefined;
+  let timer: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<never>((_, reject) => {
     timer = setTimeout(() => reject(new Error(`bridge: no answer from the tab within ${handleTimeoutMs()} ms`)), handleTimeoutMs());
   });

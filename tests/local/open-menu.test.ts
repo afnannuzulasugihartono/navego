@@ -26,6 +26,8 @@ const row = (name: any, depth: any, extra = {}) => ({
 });
 
 const BAR = [row('File', 0, { branch: true }), row('Insert', 0, { branch: true })];
+const INSERT_BAR = BAR[1];
+assert.ok(INSERT_BAR);
 const INSERT = [row('Image', 1, { branch: true }), row('Chart', 1)];
 const IMAGE = [row('Upload from computer', 2), row('By URL', 2)];
 
@@ -39,7 +41,7 @@ const BOX_QUAD = [450, 110, 470, 110, 450, 130, 470, 130];
 // A tree that answered the same rows however the walk behaved could not tell a walk that opened the Insert menu from one that never did, which is the whole claim here: the bar item is clicked, the submenu parent is hovered, and the next level appears only then.
 
 const OPENED = {
-  press: (params: any) => params?.type === 'mousePressed' && params.x === BAR[1].x && params.y === BAR[1].y,
+  press: (params: any) => params?.type === 'mousePressed' && params.x === INSERT_BAR.x && params.y === INSERT_BAR.y,
   hover: (params: any) => params?.type === 'mouseMoved' && params.x === 460 && params.y === 120
 };
 
@@ -49,13 +51,18 @@ function menuCdp() {
   const tree = () => (level === 0 ? [...BAR] : level === 1 ? [...BAR, ...INSERT] : [...BAR, ...INSERT, ...IMAGE]);
   return {
     calls,
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       calls.push({ method, params });
       if (OPENED.press(params)) level = Math.max(level, 1);
       if (OPENED.hover(params)) level = Math.max(level, 2);
       if (method === 'Runtime.evaluate') {
-        if (String(params.expression).includes('window.__operaMenuNodes[')) return { result: { objectId: `obj-${params.expression.match(/\d+/)[0]}` } };
-        if (String(params.expression).includes('document.querySelectorAll')) {
+        const expr = String(params.expression);
+        if (expr.includes('window.__operaMenuNodes[')) {
+          const match = expr.match(/\d+/);
+          assert.ok(match);
+          return { result: { objectId: `obj-${match[0]}` } };
+        }
+        if (expr.includes('document.querySelectorAll')) {
           return { result: { value: tree() } };
         }
       }
@@ -101,7 +108,7 @@ test('a branch below the bar is opened by hovering it, because hovering activate
   assert.deepEqual(clicks(cdp).map((c: any) => [c.params.x, c.params.y]), [[300, 80]],
     'clicking Image would run whatever it holds');
   const hovered = moves(cdp).map((c: any) => [c.params.x, c.params.y]);
-  assert.ok(hovered.some(([x, y]) => x === 460 && y === 120), 'the pointer went onto Image');
+  assert.ok(hovered.some(([x, y]: [number, number]) => x === 460 && y === 120), 'the pointer went onto Image');
   assert.ok(hovered.length >= 3, 'and came from somewhere else first, which is the enter the menu waits for');
 });
 

@@ -43,11 +43,11 @@ const GZIP_FRAME_VERSION = 1;
 // On garbage input the reader rejects, and if the writer already threw first nothing awaits the pump anymore — leaving that rejection unhandled, which outlives the test and fails the file.
 // The catch marks it handled; the await below still surfaces whatever the pump decided whenever it is reached.
 
-async function gunzipCapped(bytes, maxBytes) {
+async function gunzipCapped(bytes: Uint8Array<ArrayBuffer>, maxBytes: number): Promise<string | null> {
   const stream = new DecompressionStream('gzip');
   const writer = stream.writable.getWriter();
   const reader = stream.readable.getReader();
-  const chunks = [];
+  const chunks: Uint8Array[] = [];
   let total = 0;
   const pump = (async () => {
     for (;;) {
@@ -71,8 +71,8 @@ async function gunzipCapped(bytes, maxBytes) {
   return new TextDecoder().decode(out);
 }
 
-async function bytesOf(raw) {
-  if (raw instanceof Uint8Array) return raw;
+async function bytesOf(raw: unknown): Promise<Uint8Array<ArrayBuffer> | null> {
+  if (raw instanceof Uint8Array) return new Uint8Array(raw);
   if (raw instanceof ArrayBuffer) return new Uint8Array(raw);
   if (typeof Blob !== 'undefined' && raw instanceof Blob) {
     if (raw.size > MAX_FRAME_BYTES + 1) return null;
@@ -81,7 +81,11 @@ async function bytesOf(raw) {
   return null;
 }
 
-export async function parseDeviceFrame(raw, maxBytes = MAX_FRAME_BYTES, maxDecompressed = MAX_DECOMPRESSED_BYTES) {
+export interface DeviceMessage { type: string; [key: string]: unknown }
+
+export type DeviceFrame = { ok: true; message: DeviceMessage } | { ok: false; error: string }
+
+export async function parseDeviceFrame(raw: unknown, maxBytes = MAX_FRAME_BYTES, maxDecompressed = MAX_DECOMPRESSED_BYTES): Promise<DeviceFrame> {
   if (typeof raw === 'string') {
     if (raw.length > maxBytes) return { ok: false, error: 'Frame too large.' };
     return parseTextFrame(raw);
@@ -94,7 +98,7 @@ export async function parseDeviceFrame(raw, maxBytes = MAX_FRAME_BYTES, maxDecom
     return { ok: false, error: 'Unknown binary frame.' };
   }
 
-  let text: string | undefined;
+  let text: string | null = null;
   try {
     text = await gunzipCapped(bytes.slice(1), maxDecompressed);
   } catch {
@@ -104,15 +108,15 @@ export async function parseDeviceFrame(raw, maxBytes = MAX_FRAME_BYTES, maxDecom
   return parseTextFrame(text);
 }
 
-function parseTextFrame(raw) {
+function parseTextFrame(raw: string): DeviceFrame {
   let message: unknown;
   try {
     message = JSON.parse(raw);
   } catch {
     return { ok: false, error: 'Frame must be JSON.' };
   }
-  if (!message || typeof message.type !== 'string') return { ok: false, error: 'Frame needs a type.' };
-  return { ok: true, message };
+  if (!message || typeof (message as Record<string, unknown>).type !== 'string') return { ok: false, error: 'Frame needs a type.' };
+  return { ok: true, message: message as DeviceMessage };
 }
 export const KEEPALIVE_MS = 20000;
 
@@ -127,7 +131,7 @@ export const KEEPALIVE_MS = 20000;
 // WHY twenty seconds.
 // The worker dies at thirty, so the interval has to be comfortably inside it; twenty leaves a full missed frame of slack before a slow or delayed delivery is enough to lose the device.
 
-export function frameForKeepalive(serverTime) {
+export function frameForKeepalive(serverTime: unknown): string {
   return JSON.stringify({ type: "ping", serverTime });
 }
 
@@ -140,7 +144,7 @@ export function frameForKeepalive(serverTime) {
 // Closing on the first missing answer would drop healthy sockets whenever a reply is merely late, which trades a rare silent hang for a routine reconnect.
 // Waiting one tick means a peer has to miss a full interval before it is declared gone.
 
-export function keepaliveDecision(counts) {
+export function keepaliveDecision(counts: { pings: number; pongs: number }): string {
   if (counts.pings === 0) return "wait";
   if (counts.pings > counts.pongs) return "close";
   return "wait";
@@ -148,7 +152,7 @@ export function keepaliveDecision(counts) {
 
 // Dependencies are injected so the protocol is testable without a socket, a database, or a browser, and so the channel opens only after auth: a socket that has not proven its token never receives another device's command.
 
-export function isUpgradeRequest(req) {
+export function isUpgradeRequest(req: Request): boolean {
   const upgrade = req.headers.get("upgrade");
   return Boolean(upgrade && upgrade.toLowerCase() === "websocket");
 }
@@ -156,16 +160,19 @@ export function isUpgradeRequest(req) {
 // WHY the token travels in the first frame rather than a header.
 // A service worker cannot set arbitrary headers on a WebSocket handshake, and the alternative, a query parameter, puts a credential into every access log on the path.
 
-export function handshakePayload(message) {
+export interface HandshakeIdentity { token: string; deviceName: string; instanceId?: string }
+
+export function handshakePayload(message: unknown): HandshakeIdentity | null {
   if (!message || typeof message !== "object") return null;
-  const token = typeof message.token === "string" ? message.token.trim() : "";
-  const deviceName = typeof message.deviceName === "string" ? message.deviceName.trim() : "";
+  const m = message as Record<string, unknown>;
+  const token = typeof m.token === "string" ? m.token.trim() : "";
+  const deviceName = typeof m.deviceName === "string" ? m.deviceName.trim() : "";
   if (!token || !deviceName) return null;
-  const instanceId = typeof message.instanceId === "string" ? message.instanceId.trim().slice(0, 64) : "";
+  const instanceId = typeof m.instanceId === "string" ? m.instanceId.trim().slice(0, 64) : "";
   return instanceId ? { token, deviceName, instanceId } : { token, deviceName };
 }
 
-export function frameForCommand(command, serverTime) {
+export function frameForCommand(command: Record<string, unknown>, serverTime: string): string {
   return JSON.stringify({
     type: "command",
     command: {
@@ -190,23 +197,44 @@ export function frameForCommand(command, serverTime) {
 // Deno closes a socket whose peer misses a protocol-level pong, and not every client answers those: observed live, a healthy probe was closed with "No response from ping frame".
 // Liveness here is decided one layer up, where an unanswered application ping closes the socket with 4003 — a verdict with a reason, rather than a transport guess.
 
-export function serveDeviceSocket(req, { verifyDevice, complete, subscribe, log, handshakeTimeoutMs = HANDSHAKE_TIMEOUT_MS, verifyTimeoutMs = VERIFY_TIMEOUT_MS }) {
+declare const Deno: {
+  upgradeWebSocket(request: Request, options?: { idleTimeout?: number }): { socket: WebSocket; response: Response };
+};
+
+declare const EdgeRuntime: { waitUntil(promise: Promise<unknown>): void } | undefined;
+
+type SocketLog = {
+  info?: (code: string, message: unknown) => void;
+  warn?: (code: string, message: unknown) => void;
+  error?: (code: string, message: unknown) => void;
+} | null | undefined;
+
+interface ServeDeviceSocketDeps {
+  verifyDevice: (identity: HandshakeIdentity) => Promise<{ ok: boolean; message?: unknown } | null | undefined>;
+  complete: (args: HandshakeIdentity & Record<string, unknown>) => Promise<unknown>;
+  subscribe: (identity: HandshakeIdentity, send: (command: Record<string, unknown>) => void) => () => void;
+  log?: SocketLog;
+  handshakeTimeoutMs?: number;
+  verifyTimeoutMs?: number;
+}
+
+export function serveDeviceSocket(req: Request, { verifyDevice, complete, subscribe, log, handshakeTimeoutMs = HANDSHAKE_TIMEOUT_MS, verifyTimeoutMs = VERIFY_TIMEOUT_MS }: ServeDeviceSocketDeps): { upgraded: boolean; response: Response | null; socket?: WebSocket } {
   const upgrade = isUpgradeRequest(req);
   if (!upgrade) return { upgraded: false, response: null };
 
   const { socket, response } = Deno.upgradeWebSocket(req, { idleTimeout: 0 });
 
-  const state = { ready: false, identity: null };
+  const state: { ready: boolean; identity: HandshakeIdentity | null } = { ready: false, identity: null };
   const counts = { pings: 0, pongs: 0 };
-  let unsubscribe = null;
+  let unsubscribe: (() => void) | null = null;
 
-  let resolveClosed = null;
+  let resolveClosed: (() => void) | null = null;
   if (typeof EdgeRuntime !== "undefined" && typeof EdgeRuntime.waitUntil === "function") {
-    const closed = new Promise((resolve) => { resolveClosed = resolve; });
+    const closed = new Promise<void>((resolve) => { resolveClosed = resolve; });
     EdgeRuntime.waitUntil(closed);
   }
-  let handshakeTimer = null;
-  let keepaliveTimer = null;
+  let handshakeTimer: ReturnType<typeof setTimeout> | null = null;
+  let keepaliveTimer: ReturnType<typeof setInterval> | null = null;
 
   const disarmHandshake = () => {
     if (handshakeTimer) clearTimeout(handshakeTimer);
@@ -224,7 +252,7 @@ export function serveDeviceSocket(req, { verifyDevice, complete, subscribe, log,
     disarmHandshake();
     if (keepaliveTimer) clearInterval(keepaliveTimer);
     keepaliveTimer = null;
-    if (typeof unsubscribe === "function") {
+    if (unsubscribe) {
       try { unsubscribe(); } catch { }
       unsubscribe = null;
     }
@@ -235,12 +263,12 @@ export function serveDeviceSocket(req, { verifyDevice, complete, subscribe, log,
     }
   };
 
-  const sendCommand = (command) => {
+  const sendCommand = (command: Record<string, unknown>) => {
     if (!state.ready || socket.readyState !== WebSocket.OPEN) return;
     socket.send(frameForCommand(command, new Date().toISOString()));
   };
 
-  const dispatch = async (message) => {
+  const dispatch = async (message: DeviceMessage) => {
     if (message.type === "pong") {
       counts.pongs += 1;
       return;
@@ -291,11 +319,12 @@ export function serveDeviceSocket(req, { verifyDevice, complete, subscribe, log,
     }
 
     if (message.type === "complete") {
-      if (!state.ready) {
+      const identity = state.identity;
+      if (!state.ready || !identity) {
         socket.send(JSON.stringify({ type: "error", error: "Handshake first." }));
         return;
       }
-      const result = await complete({ ...state.identity, ...message });
+      const result = await complete({ ...identity, ...message });
       socket.send(JSON.stringify({ type: "ack", commandId: message.commandId ?? null, result }));
     }
   };
@@ -304,7 +333,7 @@ export function serveDeviceSocket(req, { verifyDevice, complete, subscribe, log,
     handshakeTimer = setTimeout(timeOutHandshake, handshakeTimeoutMs);
   };
 
-  socket.onmessage = async (event) => {
+  socket.onmessage = async (event: MessageEvent) => {
     const parsed = await parseDeviceFrame(event.data);
     if (!parsed.ok) {
       socket.send(JSON.stringify({ type: "error", error: parsed.error }));
@@ -313,7 +342,8 @@ export function serveDeviceSocket(req, { verifyDevice, complete, subscribe, log,
     try {
       await dispatch(parsed.message);
     } catch (error) {
-      log?.error?.("bridge socket dispatch failed", String(error?.message || error));
+      const why = error instanceof Error ? error.message : String(error);
+      log?.error?.("bridge socket dispatch failed", why);
       socket.send(JSON.stringify({ type: "error", error: "Dispatch failed." }));
     }
   };

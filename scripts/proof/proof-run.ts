@@ -19,6 +19,11 @@ import { launchArgs } from '../../local/browsers.js';
 import { waitForBrowser } from '../../local/transport.js';
 import { startFakeCloud } from '../../tests/helpers/fake-cloud.ts';
 
+const NO_STORE_GET = { method: 'GET', cache: 'no-store' as const };
+
+const bodyRecord = (body: unknown): Record<string, unknown> | null =>
+  typeof body === 'object' && body !== null ? body as Record<string, unknown> : null;
+
 // WHY THE CLOUD METER IS ANSWERED BY A LOCAL STUB IN THIS RUN.
 // The bridge opens every session against the cloud meter, which knows an account and its plan; a throwaway Chrome with a throwaway profile has neither, so the meter refuses it with "Unauthorized device" and the extension is dropped before the first command.
 // Measured on 2026-11-15: the proof's first open_url came back empty, then the bridge's own health answered linked:false with meterRefusal "Unauthorized device." - the drive was refused, not slow.
@@ -137,9 +142,9 @@ async function waitForBridgeDevice(bridgePort: number, timeoutMs = 30000) {
   let last = 'the bridge never answered';
   while (Date.now() < deadline) {
     try {
-      const response = await fetch(`http://127.0.0.1:${bridgePort}/health`, { method: 'GET', cache: 'no-store' });
+      const response = await fetch(`http://127.0.0.1:${bridgePort}/health`, NO_STORE_GET);
       if (response.ok) {
-        const body = await response.json();
+        const body = bodyRecord(await response.json());
         last = JSON.stringify(body);
         if (body && body.ok === true && Array.isArray(body.devices) && body.devices.length > 0) return true;
       }
@@ -160,9 +165,9 @@ async function waitForBridge(bridgePort: number, timeoutMs = 15000) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     try {
-      const response = await fetch(`http://127.0.0.1:${bridgePort}/health`, { method: 'GET', cache: 'no-store' });
+      const response = await fetch(`http://127.0.0.1:${bridgePort}/health`, NO_STORE_GET);
       if (response.ok) {
-        const body = await response.json();
+        const body = bodyRecord(await response.json());
         if (body && body.ok === true) return true;
       }
     } catch {

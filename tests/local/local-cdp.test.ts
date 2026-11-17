@@ -22,7 +22,7 @@ import { createCdpClient } from '../../local/cdp.js';
 
 function fakeTransport() {
   const sent: any = [];
-  let onMessage = () => {};
+  let onMessage: (raw: string) => void = () => {};
   let closed = false;
   return {
     sent,
@@ -74,8 +74,9 @@ test('a CDP error rejects with the code and message, so a caller can tell it fro
   h.reply({ id: h.last().id, error: { code: -32602, message: 'Invalid parameters' } });
 
   await assert.rejects(pending, (error) => {
-    assert.equal(error.code, -32602);
-    assert.match(error.message, /Invalid parameters/);
+    const err = error as { code?: unknown; message: string };
+    assert.equal(err.code, -32602);
+    assert.match(err.message, /Invalid parameters/);
     return true;
   });
 });

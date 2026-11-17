@@ -115,19 +115,3 @@ export function stripComments(src: any, kind: any) {
   }
   return out.join('');
 }
-
-async function collectSources(dir: any, extensions: any) {
-  const { readdir, readFile } = await import('node:fs/promises');
-  const out = [];
-  for (const entry of await readdir(dir, { withFileTypes: true })) {
-    const url = new URL(`${entry.name}${entry.isDirectory() ? '/' : ''}`, dir);
-    if (entry.isDirectory()) {
-      out.push(...await collectSources(url, extensions));
-      continue;
-    }
-    if (extensions.some((ext: any) => entry.name.endsWith(ext))) {
-      out.push({ name: entry.name, url, src: await readFile(url, 'utf8') });
-    }
-  }
-  return out;
-}

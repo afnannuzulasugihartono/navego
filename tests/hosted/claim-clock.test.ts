@@ -61,7 +61,10 @@ test('exactly one overload of the claim function can exist', () => {
   const declared = migration.match(/create or replace function public\.opera_claim_next_wait\(/g) || [];
   assert.equal(declared.length, 1, 'the migration declares the function exactly once');
 
-  const signature = /create or replace function public\.opera_claim_next_wait\(([^)]*)\)/.exec(migration)[1];
+  const signatureMatch = /create or replace function public\.opera_claim_next_wait\(([^)]*)\)/.exec(migration);
+  assert.ok(signatureMatch, 'the migration declares the function signature');
+  const signature = signatureMatch[1];
+  assert.ok(signature, 'the signature body is present');
   const types = signature.split(',').map((s) => s.trim().split(/\s+/)[1]);
   assert.deepEqual(types, ['text', 'text', 'text', 'integer', 'jsonb', 'integer'],
     'and its parameter types are the ones the database already holds');
@@ -75,12 +78,17 @@ test('the signature the migration writes is the signature the bridge calls', () 
 
   const call = /rpc\("opera_claim_next_wait", \{([\s\S]*?)\}/.exec(bridge);
   assert.ok(call, 'the bridge calls the long-poll claim with a named-argument object');
-  const named = [...call[1].matchAll(/^\s*(p_[a-z_]+):/gm)].map((m) => m[1]);
+  const namedArgs = call[1];
+  assert.ok(namedArgs, 'the named-argument object is present');
+  const named = [...namedArgs.matchAll(/^\s*(p_[a-z_]+):/gm)].map((m) => m[1]);
   assert.deepEqual(named,
     ['p_device_name', 'p_token_hash', 'p_extension_version', 'p_protocol_version', 'p_capabilities', 'p_wait_ms'],
     'and it sends exactly the parameters the function declares, in the declared order, so no overload is ambiguous');
 
-  const declared = /create or replace function public\.opera_claim_next_wait\(([^)]*)\)/.exec(migration)[1];
+  const declaredMatch = /create or replace function public\.opera_claim_next_wait\(([^)]*)\)/.exec(migration);
+  assert.ok(declaredMatch, 'the migration declares the function signature');
+  const declared = declaredMatch[1];
+  assert.ok(declared, 'the signature body is present');
   const declaredNames = declared.split(',').map((s) => s.trim().split(/\s+/)[0]);
   assert.deepEqual(declaredNames, named,
     'the migration declares the same names in the same order the bridge sends them');

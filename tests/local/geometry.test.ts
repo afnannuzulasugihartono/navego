@@ -19,7 +19,7 @@ const sizedCdp = (viewport = VIEWPORT) => {
   const calls: any = [];
   return {
     calls,
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       calls.push({ method, params });
       if (method === 'Runtime.evaluate') {
         if (String(params.expression).includes('devicePixelRatio')) return { result: { value: viewport } };

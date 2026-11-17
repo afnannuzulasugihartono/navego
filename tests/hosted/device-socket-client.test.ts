@@ -17,8 +17,16 @@ import assert from 'node:assert/strict';
 import { createSocketClient, connectionPatch } from '../../extension/lib/socket-client.js';
 
 class FakeSocket {
+  static last: FakeSocket;
   static OPEN = 1;
-  constructor(url: any) {
+  url: string;
+  readyState: number;
+  sent: string[];
+  closes: number;
+  onopen?: (() => void) | null;
+  onmessage?: ((event: { data: unknown }) => void) | null;
+  onclose?: ((event: { code: number; reason: string }) => void) | null;
+  constructor(url: string) {
     this.url = url;
     this.readyState = 0;
     this.sent = [];
@@ -26,8 +34,8 @@ class FakeSocket {
     FakeSocket.last = this;
   }
   open() { this.readyState = 1; this.onopen?.(); }
-  receive(data: any) { this.onmessage?.({ data }); }
-  send(text: any) { this.sent.push(text); }
+  receive(data: unknown) { this.onmessage?.({ data }); }
+  send(text: string) { this.sent.push(text); }
   close() { this.closes += 1; this.readyState = 3; }
   peerClosing() { this.readyState = 2; }
   drop(code = 1006, reason = '') { this.readyState = 3; this.onclose?.({ code, reason }); }
@@ -44,11 +52,11 @@ function harness(overrides = {}) {
     url: 'wss://bridge.example/socket',
     token: 'secret',
     deviceName: 'opera',
-    WebSocketImpl: function (url: any) {
+    WebSocketImpl: function (url: string) {
       const s = new FakeSocket(url);
       sockets.push(s);
       return s;
-    },
+    } as unknown as typeof WebSocket,
     execute: async (command) => {
       executed.push(command);
       return { ok: true, result: { done: true } };
@@ -344,8 +352,8 @@ test('a stored completion goes out on the reconnected socket once the bridge is 
 
 test('a command that is still running blocks the next one, so work stays ordered', async () => {
   const order: any = [];
-  let release;
-  const gate = new Promise((resolve) => { release = resolve; });
+  let release: () => void = () => { };
+  const gate = new Promise<void>((resolve) => { release = resolve; });
   const { client, sockets } = harness({
     execute: async (command: any) => {
       order.push(`start:${command.id}`);
@@ -398,8 +406,8 @@ test('a dropped socket keeps the work it already took, so a completion is not lo
 
 test('stop ends a drain that is already running, so queued work is not run for a stopped device', async () => {
   const executed: any = [];
-  let release;
-  const gate = new Promise((resolve) => { release = resolve; });
+  let release: () => void = () => { };
+  const gate = new Promise<void>((resolve) => { release = resolve; });
   const { client, sockets } = harness({
     execute: async (command: any) => {
       executed.push(command.id);
@@ -527,12 +535,14 @@ test('a rejected handshake says the bridge refused this device, not a code', () 
 test('a dropped socket carries its reason into the reported state', () => {
   const patch = connectionPatch({ status: 'reconnecting', code: 1006, reason: '' }, 'stamp');
   assert.equal(patch.status, 'reconnecting');
+  assert.ok(patch.lastError, 'the drop carries a reason');
   assert.match(patch.lastError, /1006/);
 });
 
 test('a stale socket reports reconnecting, because a new socket is already opening', () => {
   const patch = connectionPatch({ status: 'stale', silenceMs: 61400 }, 'stamp');
   assert.equal(patch.status, 'reconnecting');
+  assert.ok(patch.lastError, 'the stale socket says how long it was silent');
   assert.match(patch.lastError, /61400/);
 });
 
@@ -603,8 +613,8 @@ test('an idle socket past its age is replaced before the platform kills it', () 
 });
 
 test('a socket past its age keeps serving while a command is running', async () => {
-  let release;
-  const gate = new Promise((resolve) => { release = resolve; });
+  let release: () => void = () => { };
+  const gate = new Promise<void>((resolve) => { release = resolve; });
   const executed: any = [];
   const time = trackTime();
   const env = harness({

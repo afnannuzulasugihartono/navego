@@ -12,6 +12,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { EventEmitter } from 'node:events';
+import { Readable, Writable } from 'node:stream';
+import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 
 import {
@@ -73,13 +76,14 @@ test('the file verbs are a driver of their own', () => {
   const verbs = filePrimitives({}, {
     cdp: { send: async () => ({}) },
     sleep: async () => {},
-    fs: {},
-    os: {},
+    fs,
+    os,
     path,
     readState: async () => ({ url: '' })
   });
+  const functions = verbs as Record<string, unknown>;
   for (const verb of ['upload', 'dropFile', 'interceptFileChooser', 'download']) {
-    assert.equal(typeof verbs[verb], 'function', `${verb} must be offered`);
+    assert.equal(typeof functions[verb], 'function', `${verb} must be offered`);
   }
 });
 
@@ -126,21 +130,21 @@ test('the installed browsers are listed, and a missing binary is named as missin
 
 test('a page is found on the port, and a browser that answers with no page gets one', async () => {
   const calls: any = [];
-  const fetch = async (url: any) => {
+  const fetch = async (url: unknown) => {
     calls.push(url);
     if (String(url).includes('/json/list')) {
-      return { ok: true, json: async () => [{ type: 'page', id: 'A', url: 'https://a.test/', webSocketDebuggerUrl: 'ws://a.test/devtools' }] };
+      return new Response(JSON.stringify([{ type: 'page', id: 'A', url: 'https://a.test/', webSocketDebuggerUrl: 'ws://a.test/devtools' }]));
     }
-    return { ok: true, json: async () => ({ type: 'page', id: 'B', url: 'https://b.test/', webSocketDebuggerUrl: 'ws://b.test/devtools' }) };
+    return new Response(JSON.stringify({ type: 'page', id: 'B', url: 'https://b.test/', webSocketDebuggerUrl: 'ws://b.test/devtools' }));
   };
   const url = await discoverPageWebSocket(9333, { fetch });
   assert.equal(url, 'ws://a.test/devtools', 'the caller gets the websocket url of a page it may drive');
   assert.match(calls[0], /127\.0\.0\.1:9333\/json\/list/);
 
   const created = await discoverPageWebSocket(9333, {
-    fetch: async (url) => (String(url).includes('/json/list')
-      ? { ok: true, json: async () => [] }
-      : { ok: true, json: async () => ({ type: 'page', id: 'B', url: 'https://b.test/', webSocketDebuggerUrl: 'ws://b.test/devtools' }) })
+    fetch: async (url: unknown) => (String(url).includes('/json/list')
+      ? new Response(JSON.stringify([]))
+      : new Response(JSON.stringify({ type: 'page', id: 'B', url: 'https://b.test/', webSocketDebuggerUrl: 'ws://b.test/devtools' })))
   });
   assert.equal(created, 'ws://b.test/devtools', 'a browser with no page is given one');
 });
@@ -155,18 +159,22 @@ test('a browser that never answers is named, not waited on forever', async () =>
 
 test('attaching to a page returns the page and the transport it opened', async () => {
   class FakeSocket {
-    constructor(url: any) {
+    url: unknown;
+    sent: unknown[];
+    closed: boolean;
+    onopen?: () => void;
+    constructor(url: unknown) {
       this.url = url;
       this.sent = [];
       this.closed = false;
       setTimeout(() => this.onopen?.(), 0);
     }
-    send(raw: any) { this.sent.push(raw); }
+    send(raw: unknown) { this.sent.push(raw); }
     close() { this.closed = true; }
   }
   const attached = await attachToPage(9333, {
-    Socket: FakeSocket,
-    fetch: async () => ({ ok: true, json: async () => [{ type: 'page', id: 'A', url: 'https://a.test/', webSocketDebuggerUrl: 'ws://a.test/devtools' }] })
+    Socket: FakeSocket as unknown as NonNullable<NonNullable<Parameters<typeof attachToPage>[1]>['Socket']>,
+    fetch: async () => new Response(JSON.stringify([{ type: 'page', id: 'A', url: 'https://a.test/', webSocketDebuggerUrl: 'ws://a.test/devtools' }]))
   });
   assert.equal(attached.url, 'ws://a.test/devtools');
   assert.equal(typeof attached.transport.send, 'function', 'the caller gets a transport it can send on');
@@ -185,11 +193,13 @@ test('an origin is allowed only when it is on the list', () => {
 
 test('a bridge socket carries a request and answers with a frame', () => {
   const sent: any = [];
-  const socket = new EventEmitter();
-  socket.write = (text: any) => sent.push(text);
-  socket.destroyed = false;
-  socket.close = () => {};
-  const bridge = new BridgeSocket(socket, { id: 'r1', method: 'browser.ping', params: {} });
+  const bridgeSocket = Object.assign(new EventEmitter(), {
+    write: (text: unknown) => { sent.push(text); },
+    destroyed: false,
+    close: () => {}
+  });
+  const bridgeRequest = { id: 'r1', method: 'browser.ping', params: {} } as unknown as ConstructorParameters<typeof BridgeSocket>[1];
+  const bridge = new BridgeSocket(bridgeSocket as unknown as ConstructorParameters<typeof BridgeSocket>[0], bridgeRequest);
   assert.ok(bridge.id, 'every socket carries an id');
   bridge.send('hello');
   assert.equal(sent.length, 1, 'a message reaches the socket');
@@ -197,10 +207,12 @@ test('a bridge socket carries a request and answers with a frame', () => {
 });
 
 test('the stdio server answers a request and refuses a broken one', async () => {
-  const written: any = [];
-  const input = new EventEmitter();
-  input.setEncoding = () => {};
-  const output = { write: (text: any) => written.push(text) };
+  const written: string[] = [];
+  const input = new Readable({ read() {} });
+  input.setEncoding('utf8');
+  const output = new Writable({
+    write: (chunk, _encoding, callback) => { written.push(String(chunk)); callback(); }
+  });
   const context = {
     driver: {
       tabs: async () => [],
@@ -214,7 +226,7 @@ test('the stdio server answers a request and refuses a broken one', async () => 
     sessionOptions: {}
   };
 
-  startStdio({ input, output, context });
+  startStdio({ input, output, context: context as unknown as NonNullable<Parameters<typeof startStdio>[0]['context']> });
   input.emit('data', `${JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: {} })}\n`);
   input.emit('data', 'not json\n');
 

@@ -66,8 +66,11 @@ test('both session doors are service-role only, like the device plan door', () =
 test('the restated numbers match the module, so the SQL and the JavaScript cannot drift apart', () => {
   assert.match(migration, /then 5000 else 200 end/);
   assert.match(migration, /then 500 else 50 end/);
-  assert.equal(String(PLANS['plan.firm'].dailyQuota), '5000');
-  assert.equal(String(PLANS['plan.pilot'].dailyQuota), '200');
-  assert.equal(String(PLANS['plan.firm'].sessionAllowance), '500');
-  assert.equal(String(PLANS['plan.pilot'].sessionAllowance), '50');
+  const firm = PLANS['plan.firm'];
+  const pilot = PLANS['plan.pilot'];
+  assert.ok(firm && pilot, 'the module holds both plans');
+  assert.equal(String(firm.dailyQuota), '5000');
+  assert.equal(String(pilot.dailyQuota), '200');
+  assert.equal(String(firm.sessionAllowance), '500');
+  assert.equal(String(pilot.sessionAllowance), '50');
 });

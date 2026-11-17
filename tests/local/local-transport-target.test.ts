@@ -18,7 +18,7 @@ const PAGES = [
   { id: 'DDD', type: 'page', title: 'no socket', webSocketDebuggerUrl: undefined }
 ];
 
-const fakeFetch = (body: any) => async () => ({ ok: true, json: async () => body });
+const fakeFetch = (body: unknown) => async () => new Response(JSON.stringify(body));
 
 test('only page targets with a websocket are listed', async () => {
   const pages = await listPageWebSockets(1, { fetch: fakeFetch(PAGES) });
@@ -40,9 +40,10 @@ test('an unknown tab is refused with the open tabs named', async () => {
   await assert.rejects(
     () => pageWebSocketById(1, 'NOPE', { fetch: fakeFetch(PAGES) }),
     (error) => {
-      assert.match(error.message, /No page target NOPE/);
-      assert.match(error.message, /AAA/);
-      assert.match(error.message, /BBB/);
+      const message = error instanceof Error ? error.message : String(error);
+      assert.match(message, /No page target NOPE/);
+      assert.match(message, /AAA/);
+      assert.match(message, /BBB/);
       return true;
     }
   );
@@ -58,22 +59,28 @@ test('a browser with no page target fails loudly', async () => {
 // A session that names its tab must land on that tab's socket, not the first page's.
 // Measured live: every tabId call before this fix drove the same first tab, because the session resolved before it looked at the name.
 
-function stubBrowser(sockets: any, { reachable = true, urls = [] } = {}) {
+function stubBrowser(sockets: any, { reachable = true, urls = [] as string[] } = {}) {
   const realFetch = globalThis.fetch;
   const realSocket = globalThis.WebSocket;
   globalThis.fetch = async (url) => {
     urls.push(String(url));
     if (!reachable) throw new Error('connection refused');
-    return fakeFetch(PAGES)(url);
+    return new Response(JSON.stringify(PAGES));
   };
-  globalThis.WebSocket = class {
+  class FakeSocket {
+    static readonly CONNECTING = 0;
+    static readonly OPEN = 1;
+    static readonly CLOSING = 2;
+    static readonly CLOSED = 3;
+    onopen?: () => void;
     constructor(url: any) {
       sockets.push(url);
       queueMicrotask(() => this.onopen?.());
     }
     send() {}
     close() {}
-  };
+  }
+  globalThis.WebSocket = FakeSocket as unknown as typeof WebSocket;
   return () => {
     globalThis.fetch = realFetch;
     globalThis.WebSocket = realSocket;

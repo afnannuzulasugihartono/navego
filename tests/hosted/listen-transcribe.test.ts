@@ -20,15 +20,25 @@ import { requiredEnv } from '../../hosted/functions/_shared/required-env.ts';
 
 process.env.SUPABASE_URL ??= 'test';
 process.env.SUPABASE_SERVICE_ROLE_KEY ??= 'test';
-globalThis.Deno = { env: { get: (key: any) => process.env[key] } };
+const denoStub = { env: { get: (key: string) => process.env[key] } };
+(globalThis as { Deno?: typeof denoStub }).Deno = denoStub;
 
 const source = stripTypeScriptTypes(readFileSync(new URL('../../hosted/functions/opera-agent-listen/index.ts', import.meta.url), 'utf8')
   .replace(/^import .*;\r?\n/gm, ''));
 
 const TOKEN = 'a'.repeat(64);
-const TOKEN_HASH_PLACEHOLDER = 'hash';
 
-function store() {
+interface ListenStore {
+  opera_devices: Array<{ id: string; device_name: string; token_hash: string; user_id: string; status: string }>;
+  opera_listen_sessions: Array<Record<string, unknown>>;
+  opera_listen_chunks: Array<Record<string, unknown>>;
+  opera_listen_segments: Array<Record<string, unknown>>;
+  opera_audit: Array<Record<string, unknown>>;
+  __hideLiveOnce?: boolean;
+  [table: string]: unknown;
+}
+
+function store(): ListenStore {
   return {
     opera_devices: [{ id: 'dev-1', device_name: 'opera', token_hash: 'x', user_id: 'user-1', status: 'online' }],
     opera_listen_sessions: [],
@@ -38,23 +48,24 @@ function store() {
   };
 }
 
-function harness(db: any, fetchImpl: any) {
+function harness(db: ListenStore, fetchImpl?: (url: string | URL | Request, init?: RequestInit) => Promise<unknown>) {
   let handler: any;
   const fetchCalls: any = [];
-  const table = (name: any) => db[name];
-  const match = (rows: any, filters: any) => rows.filter((r: any) => filters.every(([op, col, val]) => {
+  const table = (name: string): Array<Record<string, unknown>> => db[name] as Array<Record<string, unknown>>;
+  const match = (rows: Array<Record<string, unknown>>, filters: Array<[string, string, unknown]>) => rows.filter((r) => filters.every(([op, col, val]) => {
     if (op === 'eq') return r[col] === val;
     if (op === 'neq') return r[col] !== val;
-    if (op === 'in') return val.includes(r[col]);
+    if (op === 'in') return Array.isArray(val) && val.includes(r[col]);
     return true;
   }));
   const builder = (name: any) => {
-    const filters: any = [];
+    const filters: Array<[string, string, unknown]> = [];
     let orderCol: any = null;
     let limitN: any = null;
     let pendingUpdate: any = null;
     let pendingDelete = false;
     let pendingError: any = null;
+    const orderRank = (v: unknown): number | string => (typeof v === 'number' ? v : String(v));
     const liveHidden = () => name === 'opera_listen_sessions' && db.__hideLiveOnce
       && filters.some(([op, col, val]) => op === 'eq' && col === 'status' && val === 'live');
     const self = {
@@ -68,7 +79,7 @@ function harness(db: any, fetchImpl: any) {
 
         if (liveHidden()) { db.__hideLiveOnce = false; return { data: null, error: null }; }
         let rows = match(table(name), filters);
-        if (orderCol) rows = [...rows].sort((a, b) => (a[orderCol] > b[orderCol] ? 1 : -1));
+        if (orderCol) rows = [...rows].sort((a, b) => (orderRank(a[orderCol]) > orderRank(b[orderCol]) ? 1 : -1));
         if (limitN !== null) rows = rows.slice(0, limitN);
         return { data: rows[0] || null, error: pendingError };
       },
@@ -76,11 +87,11 @@ function harness(db: any, fetchImpl: any) {
         const rows = Array.isArray(row) ? row : [row];
         rows.forEach((r, i) => {
           if (name === 'opera_listen_sessions' && r.status === 'live'
-            && table(name).some((x: any) => x.device_id === r.device_id && x.status === 'live')) {
+            && table(name).some((x) => x.device_id === r.device_id && x.status === 'live')) {
             pendingError = { code: '23505', message: 'duplicate key value violates unique constraint "opera_listen_sessions_device_live_uniq"' };
             return;
           }
-          db[name].push({ id: '00000000-0000-4000-8000-' + String(db[name].length + i).padStart(12, '0'), ...r });
+          table(name).push({ id: '00000000-0000-4000-8000-' + String(table(name).length + i).padStart(12, '0'), ...r });
         });
         return self;
       },
@@ -89,30 +100,30 @@ function harness(db: any, fetchImpl: any) {
       upsert(row: any) {
         const rows = Array.isArray(row) ? row : [row];
         for (const r of rows) {
-          if (!db[name].some((x: any) => x.session_id === r.session_id && x.seq === r.seq)) db[name].push({ id: `c-${db[name].length}`, ...r });
+          if (!table(name).some((x) => x.session_id === r.session_id && x.seq === r.seq)) table(name).push({ id: `c-${table(name).length}`, ...r });
         }
         return self;
+      },
+      then(resolve: (value: { data: unknown; error: unknown }) => void) {
+        if (pendingUpdate) for (const r of match(table(name), filters)) Object.assign(r, pendingUpdate);
+        if (pendingDelete) db[name] = table(name).filter((r) => !match([r], filters).length);
+        if (liveHidden()) { db.__hideLiveOnce = false; resolve({ data: [], error: pendingError }); return; }
+        let rows = match(table(name), filters);
+        if (orderCol) rows = [...rows].sort((a, b) => (orderRank(a[orderCol]) > orderRank(b[orderCol]) ? 1 : -1));
+        if (limitN !== null) rows = rows.slice(0, limitN);
+        resolve({ data: rows, error: pendingError });
       }
     };
 
-    self.then = (resolve: any) => {
-      if (pendingUpdate) for (const r of match(table(name), filters)) Object.assign(r, pendingUpdate);
-      if (pendingDelete) db[name] = db[name].filter((r: any) => !match([r], filters).length);
-      if (liveHidden()) { db.__hideLiveOnce = false; resolve({ data: [], error: pendingError }); return; }
-      let rows = match(table(name), filters);
-      if (orderCol) rows = [...rows].sort((a, b) => (a[orderCol] > b[orderCol] ? 1 : -1));
-      if (limitN !== null) rows = rows.slice(0, limitN);
-      resolve({ data: rows, error: pendingError });
-    };
     return self;
   };
   const client = {
     from: (name: any) => builder(name),
     auth: { async getUser() { return { data: { user: null }, error: { message: 'no' } }; } }
   };
-  const fakeFetch = fetchImpl || (async (url: any, opts: any) => {
+  const fakeFetch = fetchImpl || (async (url: string | URL | Request) => {
     fetchCalls.push({ url });
-    assert.match(url, /api\.groq\.com\/openai\/v1\/audio\/transcriptions/);
+    assert.match(String(url), /api\.groq\.com\/openai\/v1\/audio\/transcriptions/);
     return { ok: true, status: 200, json: async () => ({ text: 'halo dunia test', segments: [
       { start: 1, end: 3, text: 'halo dunia', no_speech_prob: 0.1 },
       { start: 3, end: 4, text: 'you', no_speech_prob: 0.9 }
@@ -135,7 +146,9 @@ function harness(db: any, fetchImpl: any) {
 
 test('start refuses unknown devices and second live sessions', async () => {
   const db = store();
-  db.opera_devices[0].token_hash = createHash('sha256').update(TOKEN.toLowerCase()).digest('hex');
+  const device = db.opera_devices[0];
+  assert.ok(device, 'the fixture holds the device');
+  device.token_hash = createHash('sha256').update(TOKEN.toLowerCase()).digest('hex');
   const h = harness(db);
   const bad = await h.call({ action: 'start', token: 'b'.repeat(64), deviceName: 'opera', tabId: 1 });
   assert.equal(bad.status, 401, h.errors.join('; '));
@@ -149,7 +162,9 @@ test('one complete window transcribes on arrival, then stop ends and deletes', a
   const db = store();
   const h = harness(db);
 
-  db.opera_devices[0].token_hash = createHash('sha256').update(TOKEN.toLowerCase()).digest('hex');
+  const device = db.opera_devices[0];
+  assert.ok(device, 'the fixture holds the device');
+  device.token_hash = createHash('sha256').update(TOKEN.toLowerCase()).digest('hex');
   const started = await (await h.call({ action: 'start', token: TOKEN, deviceName: 'opera', tabId: 7 })).json();
   assert.equal(started.ok, true);
   const sid = started.sessionId;
@@ -160,18 +175,24 @@ test('one complete window transcribes on arrival, then stop ends and deletes', a
   assert.equal(first.ok, true);
   assert.equal(first.transcribed, 1);
   assert.equal(db.opera_listen_segments.length, 1);
-  assert.equal(db.opera_listen_segments[0].start_s, 1);
-  assert.equal(db.opera_listen_segments[0].text, 'halo dunia');
+  const segment = db.opera_listen_segments[0];
+  assert.ok(segment, 'the segment was stored');
+  assert.equal(segment.start_s, 1);
+  assert.equal(segment.text, 'halo dunia');
   assert.equal(db.opera_listen_chunks.length, 0, 'consumed audio is deleted');
   const stopped = await (await h.call({ action: 'stop', token: TOKEN, sessionId: sid })).json();
   assert.equal(stopped.ok, true);
-  assert.equal(db.opera_listen_sessions[0].status, 'ended');
+  const ended = db.opera_listen_sessions[0];
+  assert.ok(ended, 'the session row exists');
+  assert.equal(ended.status, 'ended');
   assert.equal(h.fetchCalls.length, 1, 'one transcription call for one full window');
 });
 
 test('a concurrent second start takes the live session, never a duplicate', async () => {
   const db = store();
-  db.opera_devices[0].token_hash = createHash('sha256').update(TOKEN.toLowerCase()).digest('hex');
+  const device = db.opera_devices[0];
+  assert.ok(device, 'the fixture holds the device');
+  device.token_hash = createHash('sha256').update(TOKEN.toLowerCase()).digest('hex');
   const h = harness(db);
   const first = await (await h.call({ action: 'start', token: TOKEN, deviceName: 'opera', tabId: 7 })).json();
   assert.equal(first.ok, true);

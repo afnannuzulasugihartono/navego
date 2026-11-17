@@ -3,7 +3,8 @@
 // @state: the signal kinds, the epochs they group into, and the relevance each epoch produces.
 // @dependencies: delta-first-observation, canonical-order.
 
-import { createDeltaFirstObservationPipeline, type DeltaFirstObservationResult, type ReasoningObservation } from './delta-first-observation.js';
+import { createDeltaFirstObservationPipeline } from './delta-first-observation.js';
+import type { DeltaFirstObservationResult, ReasoningObservation } from './delta-first-observation.ts';
 import { codeUnitCompare } from './canonical-order.js';
 
 export interface MultiSignalRelevanceOptions {

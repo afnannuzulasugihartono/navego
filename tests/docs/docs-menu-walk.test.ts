@@ -14,7 +14,9 @@ const migration = fs.readFileSync(
 function definition() {
   const match = migration.match(/\$wf\$(.*?)\$wf\$/s);
   assert.ok(match, 'migration must embed the workflow JSON');
-  return JSON.parse(match[1]);
+  const embedded = match[1];
+  assert.ok(embedded !== undefined);
+  return JSON.parse(embedded);
 }
 
 test('menu.walk tries keyboard first, then hover, and proves the walk', () => {

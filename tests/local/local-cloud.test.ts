@@ -5,7 +5,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Readable } from 'node:stream';
+import { Readable, Writable } from 'node:stream';
 import {
   accessToken,
   configDir,
@@ -31,6 +31,14 @@ const bin = path.join(root, 'local', 'bin', 'navego.js');
 // WHY THE FAKE SPEAKS MCP OVER HTTP.
 // The proxy has no opinions about methods, so a fake that answers initialize, tools/list and tools/call proves the pipe forwards a call intact, which is the only claim worth making about a proxy.
 
+interface HostedMessage {
+  result?: {
+    serverInfo?: { name?: string };
+    tools?: Array<{ name?: string }>;
+    content?: Array<{ text?: string }>;
+  };
+}
+
 function collect(child: any) {
   const waiters = new Map();
   let buffer = '';
@@ -51,9 +59,9 @@ function collect(child: any) {
     }
   });
   const send = (payload: any) => child.stdin.write(`${JSON.stringify(payload)}\n`);
-  const waitFor = (id: any, timeoutMs = 8000) => new Promise((resolve, reject) => {
+  const waitFor = (id: any, timeoutMs = 8000) => new Promise<HostedMessage>((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error(`no answer for ${id} within ${timeoutMs} ms`)), timeoutMs);
-    waiters.set(id, (message: any) => { clearTimeout(timer); resolve(message); });
+    waiters.set(id, (message: HostedMessage) => { clearTimeout(timer); resolve(message); });
   });
   return { send, waitFor };
 }
@@ -88,8 +96,10 @@ async function fakeHosted() {
       return reply({});
     });
   });
-  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
-  return { server, url: `http://127.0.0.1:${server.address().port}/mcp`, requests, close: () => new Promise((resolve) => server.close(resolve)) };
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', () => resolve()));
+  const address = server.address();
+  assert.ok(address && typeof address === 'object', 'the fake hosted server is listening');
+  return { server, url: `http://127.0.0.1:${address.port}/mcp`, requests, close: () => new Promise((resolve) => server.close(resolve)) };
 }
 
 test('a tool call round-trips through the cloud proxy to the hosted server', async () => {
@@ -104,17 +114,17 @@ test('a tool call round-trips through the cloud proxy to the hosted server', asy
     const init = io.waitFor(1);
     io.send({ jsonrpc: '2.0', id: 1, method: 'initialize', params: {} });
     const initialized = await init;
-    assert.equal(initialized.result.serverInfo.name, 'fake-hosted');
+    assert.equal(initialized.result?.serverInfo?.name, 'fake-hosted');
 
     const list = io.waitFor(2);
     io.send({ jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} });
     const listed = await list;
-    assert.deepEqual(listed.result.tools.map((tool: any) => tool.name), ['ping']);
+    assert.deepEqual(listed.result?.tools?.map((tool) => tool.name), ['ping']);
 
     const call = io.waitFor(3);
     io.send({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'ping', arguments: {} } });
     const answered = await call;
-    assert.equal(answered.result.content[0].text, '{"ok":true}', 'the tool answer survives the proxy verbatim');
+    assert.equal(answered.result?.content?.[0]?.text, '{"ok":true}', 'the tool answer survives the proxy verbatim');
 
     assert.equal(host.requests.length, 3);
     for (const seen of host.requests) {
@@ -168,13 +178,12 @@ test('the OAuth helpers size the home and point the sign-in', () => {
 
 test('the exchange and the refresh speak to the token endpoint and keep what they are given', async () => {
   const answers: any = [];
-  const fake = async (endpoint: any, init: any) => {
+  const fake = async (endpoint: unknown, init?: { body?: unknown }) => {
     answers.push({ endpoint, body: String(init?.body ?? '') });
-    return {
-      ok: true,
+    return new Response(JSON.stringify({ access_token: 'at-1', refresh_token: 'rt-1', token_type: 'bearer', expires_in: 3600 }), {
       status: 200,
-      json: async () => ({ access_token: 'at-1', refresh_token: 'rt-1', token_type: 'bearer', expires_in: 3600 })
-    };
+      headers: { 'content-type': 'application/json' }
+    });
   };
   const exchanged = await exchangeCode({ code: 'code-1', verifier: 'verifier-1', fetchImpl: fake });
   assert.equal(exchanged.access_token, 'at-1');
@@ -211,7 +220,7 @@ test('the browser is opened detached with an ignored stream and unreported error
     opened.push({ command, args, detached: opts?.detached, stdio: opts?.stdio });
     return { on: () => {}, unref: () => {} };
   };
-  openBrowser('https://example.test/consent', runner);
+  openBrowser('https://example.test/consent', runner as unknown as Parameters<typeof openBrowser>[1]);
   assert.equal(opened.length, 1);
   assert.equal(opened[0].detached, true);
   assert.deepEqual(opened[0].stdio, 'ignore');
@@ -219,12 +228,14 @@ test('the browser is opened detached with an ignored stream and unreported error
 
 test('serveCloud without a token answers 3 on an already-closed stream', async () => {
   const home = fs.mkdtempSync(path.join(os.tmpdir(), 'opera-oauth-'));
-  const lines: any = [];
-  const stderr = { write: (line: any) => lines.push(line) };
+  const lines: string[] = [];
+  const stderr = new Writable({
+    write: (chunk, _encoding, callback) => { lines.push(String(chunk)); callback(); }
+  });
   try {
     const code = await serveCloud({ env: { OPERA_AGENT_MCP_TOKEN: '', OPERA_AGENT_MCP_CONFIG_HOME: home }, input: Readable.from([]), stderr });
     assert.equal(code, 3);
-    assert.ok(lines.some((line: any) => /navego auth/.test(line)));
+    assert.ok(lines.some((line) => /navego auth/.test(line)));
   } finally {
     fs.rmSync(home, { recursive: true, force: true });
   }

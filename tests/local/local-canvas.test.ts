@@ -42,11 +42,11 @@ const axTree = (texts: any) => {
 
 const CANVAS_CARET = { frame: 0, hostPath: '0/3/2:1', rangeCount: 1, collapsed: true, anchorOffset: 0, text: '', hostTextLength: 0 };
 
-const canvasCdp = ({ probe = CANVAS_PROBE, ax = RICH_AX, copy = null, caret = CANVAS_CARET, domText = '' } = {}) => {
+const canvasCdp = ({ probe = CANVAS_PROBE, ax = RICH_AX, copy = null as string | null, caret = CANVAS_CARET, domText = '' } = {}) => {
   const calls: any = [];
   return {
     calls,
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       calls.push({ method, params });
       const expression = String(params.expression ?? '');
       if (method === 'Runtime.evaluate' && expression.includes('window.innerHeight')) {
@@ -215,11 +215,12 @@ test('a page that holds its own text is read through the DOM and nothing is gate
 });
 
 test('createCanvasMethods exposes read and caretLine', () => {
-  const methods = createCanvasMethods({
+  const options = {
     cdp: { send: async () => ({}) },
     primitives: { evaluate: async () => null, ask: async () => ({ nodes: [] }), key: async () => ({}), settle: async () => ({}) },
     readState: async () => ({ url: 'https://example.com', title: '', text: '' })
-  });
+  };
+  const methods = createCanvasMethods(options);
 
   assert.deepEqual(Object.keys(methods).sort(), ['caretLine', 'read']);
 });

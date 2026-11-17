@@ -94,11 +94,11 @@ test('worker modules stay under their ceiling, and background.js does not grow',
 
   const worker = new URL('extension/worker/', root);
 
-  let names: any;
+  let names: string[];
   try {
     names = (await readdir(worker)).filter((n) => /\.(js|ts)$/.test(n)).sort();
   } catch (error) {
-    if (error?.code !== 'ENOENT') throw error;
+    if (!(error instanceof Error) || !('code' in error) || error.code !== 'ENOENT') throw error;
     names = [];
   }
   for (const name of names) {

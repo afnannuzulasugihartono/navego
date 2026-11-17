@@ -26,19 +26,23 @@ const crcTable = (() => {
   return table;
 })();
 
-const crc32 = (bytes: any) => {
+const crc32 = (bytes: Uint8Array) => {
   let crc = 0xffffffff;
-  for (const byte of bytes) crc = crcTable[(crc ^ byte) & 0xff] ^ (crc >>> 8);
+  for (const byte of bytes) {
+    const cell = crcTable[(crc ^ byte) & 0xff];
+    if (cell === undefined) throw new Error('crc table entry missing');
+    crc = cell ^ (crc >>> 8);
+  }
   return (crc ^ 0xffffffff) >>> 0;
 };
 
 // WHY THE FIXTURE IS BUILT HERE AND NOT READ FROM A FILE.
 // The build the update service serves is packed by Chrome and deflated, so the reader has to read that shape; a fixture made by the same writer as the office files would be stored and would prove nothing about it.
 
-const buildZip = (entries: any) => {
+const buildZip = (entries: Array<{ name: string; text: string }>) => {
   const encoder = new TextEncoder();
-  const local = [];
-  const central = [];
+  const local: Uint8Array[] = [];
+  const central: Uint8Array[] = [];
   let offset = 0;
   for (const entry of entries) {
     const name = encoder.encode(entry.name);
@@ -87,19 +91,33 @@ const buildZip = (entries: any) => {
   return new Uint8Array(Buffer.concat([localBytes, centralBytes, end]));
 };
 
-const fakeFolder = () => {
-  const files = new Map();
-  const folders = new Map();
-  const folder = {
+interface FakeFileHandle {
+  createWritable: () => Promise<{ write: (bytes: Uint8Array) => Promise<void>; close: () => Promise<void> }>;
+}
+interface FakeFolder {
+  files: Map<string, Uint8Array>;
+  folders: Map<string, FakeFolder>;
+  getDirectoryHandle: (name: string) => Promise<FakeFolder>;
+  getFileHandle: (name: string) => Promise<FakeFileHandle>;
+}
+
+const fakeFolder = (): FakeFolder => {
+  const files = new Map<string, Uint8Array>();
+  const folders = new Map<string, FakeFolder>();
+  const folder: FakeFolder = {
     files,
     folders,
-    getDirectoryHandle: async (name: any) => {
-      if (!folders.has(name)) folders.set(name, fakeFolder());
-      return folders.get(name);
+    getDirectoryHandle: async (name: string) => {
+      let child = folders.get(name);
+      if (!child) {
+        child = fakeFolder();
+        folders.set(name, child);
+      }
+      return child;
     },
-    getFileHandle: async (name: any) => ({
+    getFileHandle: async (name: string) => ({
       createWritable: async () => ({
-        write: async (bytes: any) => files.set(name, new Uint8Array(bytes)),
+        write: async (bytes: Uint8Array) => { files.set(name, new Uint8Array(bytes)); },
         close: async () => {}
       })
     })
@@ -107,18 +125,20 @@ const fakeFolder = () => {
   return folder;
 };
 
-const buildResponse = (body: any, headers = {}) => ({
+const asResponse = (stub: unknown): Response => stub as unknown as Response;
+
+const buildResponse = (body: Uint8Array, headers: Record<string, string> = {}): Response => asResponse({
   ok: true,
   status: 200,
-  headers: { get: (name: any) => headers[String(name).toLowerCase()] ?? null },
-  json: async () => JSON.parse(body),
+  headers: { get: (name: string) => headers[String(name).toLowerCase()] ?? null },
+  json: async () => JSON.parse(new TextDecoder().decode(body)),
   arrayBuffer: async () => body.buffer.slice(body.byteOffset, body.byteOffset + body.byteLength)
 });
 
-const fetchImpl = (version: any, zip: any) => async (url: any, options: any) => {
+const fetchImpl = (version: string, zip: Uint8Array) => async (url: string | URL | Request, options?: RequestInit): Promise<Response> => {
   const u = String(url);
   if (u.includes('/download/opera-agent.zip') && options?.method === 'HEAD') {
-    return { ok: true, status: 200, headers: { get: (name: any) => (String(name).toLowerCase() === 'x-opera-version' ? version : null) } };
+    return asResponse({ ok: true, status: 200, headers: { get: (name: string) => (String(name).toLowerCase() === 'x-opera-version' ? version : null) } });
   }
   if (u.includes('/download/opera-agent.zip')) return buildResponse(zip, { 'x-opera-version': version });
   throw new Error(`unexpected url ${u}`);
@@ -138,7 +158,9 @@ test('the zip reader gives back the files the archive holds', async () => {
   ]);
   const entries = await readZip(zip);
   assert.deepEqual(entries.map((entry) => entry.name), ['manifest.json', 'lib/browser-id.js']);
-  assert.equal(new TextDecoder().decode(entries[0].bytes), '{"name":"Navego","version":"1.6.38"}');
+  const [firstEntry] = entries;
+  assert.ok(firstEntry);
+  assert.equal(new TextDecoder().decode(firstEntry.bytes), '{"name":"Navego","version":"1.6.38"}');
 });
 
 test('a newer build is written over the folder, file by file', async () => {
@@ -153,6 +175,7 @@ test('a newer build is written over the folder, file by file', async () => {
   assert.equal(outcome.version, '1.6.38');
   assert.equal(folder.files.has('manifest.json'), true, 'the manifest is written');
   const lib = folder.folders.get('lib');
+  assert.ok(lib);
   assert.equal(new TextDecoder().decode(lib.files.get('browser-id.js')), 'export const family = () => "Brave";', 'and the folder inside it');
 });
 
@@ -174,23 +197,25 @@ test('a build that is not ours is refused', async () => {
 });
 
 test('the served version is the one the build carries, asked by a head on the archive', async () => {
-  const seen: any = [];
-  const probe = async (url: any, options: any) => {
+  const seen: Array<{ url: string; method: string }> = [];
+  const probe = async (url: string | URL | Request, options?: RequestInit): Promise<Response> => {
     seen.push({ url: String(url), method: options?.method ?? 'GET' });
-    return { ok: true, status: 200, headers: { get: (name: any) => (String(name).toLowerCase() === 'x-opera-version' ? '1.6.41' : null) } };
+    return asResponse({ ok: true, status: 200, headers: { get: (name: string) => (String(name).toLowerCase() === 'x-opera-version' ? '1.6.41' : null) } });
   };
   const version = await servedVersion(probe);
   assert.equal(version, '1.6.41', 'the version the build carries is read, not the health page of the legacy extension');
   assert.equal(seen.length, 1);
-  assert.equal(seen[0].method, 'HEAD', 'and it is asked for cheaply, without carrying the build');
-  assert.match(seen[0].url, /\/download\/opera-agent\.zip$/, 'and it is the archive this extension is updated from, not another surface');
+  const [probeCall] = seen;
+  assert.ok(probeCall);
+  assert.equal(probeCall.method, 'HEAD', 'and it is asked for cheaply, without carrying the build');
+  assert.match(probeCall.url, /\/download\/opera-agent\.zip$/, 'and it is the archive this extension is updated from, not another surface');
 });
 
 test('a head that cannot say leaves the download to decide, and the write still happens', async () => {
   const zip = buildZip([{ name: 'manifest.json', text: '{"name":"Navego","version":"1.6.38"}' }]);
   const folder = fakeFolder();
-  const blind = async (url: any, options: any) => {
-    if (options?.method === 'HEAD') return { ok: false, status: 503, headers: { get: () => null } };
+  const blind = async (_url: string | URL | Request, options?: RequestInit): Promise<Response> => {
+    if (options?.method === 'HEAD') return asResponse({ ok: false, status: 503, headers: { get: () => null } });
     return buildResponse(zip, { 'x-opera-version': '1.6.38' });
   };
   const outcome = await applyBuild({ folder, installedVersion: '1.6.37', fetchImpl: blind });

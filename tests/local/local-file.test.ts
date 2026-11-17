@@ -12,10 +12,13 @@ import {
   dragMimeType
 } from '../../local/page-expressions.js';
 import { createPrimitives } from '../../local/primitives.js';
+import type { CdpResult } from '../../local/cdp.js';
 import { recordingCdp } from '../helpers/local-page.ts';
 
-function fakeUploadFs() {
-  const calls: any = [];
+type FakeFs = typeof import('node:fs') & { calls: Array<[string, ...unknown[]]> };
+
+function fakeUploadFs(): FakeFs {
+  const calls: Array<[string, ...unknown[]]> = [];
   return {
     calls,
     existsSync: (p: any) => { calls.push(['exists', p]); return p === '/files/pic.png'; },
@@ -24,20 +27,22 @@ function fakeUploadFs() {
     writeFileSync: (p: any, bytes: any) => { calls.push(['write', p, bytes.length]); },
     unlinkSync: (p: any) => { calls.push(['unlink', p]); },
     rmdirSync: (p: any) => { calls.push(['rmdir', p]); }
-  };
+  } as unknown as FakeFs;
 }
 
 
-const fakeUploadOs = { tmpdir: () => '/tmp' };
+const fakeUploadOs = { tmpdir: () => '/tmp' } as unknown as typeof import('node:os');
 
-const fakeUploadPath = { join: (...parts) => parts.join('/'), basename: (p: any) => p.split('/').pop() };
+const fakeUploadPath = { join: (...parts: string[]) => parts.join('/'), basename: (p: string) => p.split('/').pop() } as unknown as typeof import('node:path');
+
+const fakeDownloadOs = (home: string) => ({ homedir: () => home }) as unknown as typeof import('node:os');
 
 
 function uploadCdp() {
   const calls: any = [];
   return {
     calls,
-    send: async (method: any, params = {}) => {
+    send: async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
       calls.push({ method, params });
       if (method === 'Runtime.evaluate') return { result: { objectId: 'o1' } };
       return { result: {} };
@@ -54,11 +59,11 @@ function piercedUploadCdp() {
   const calls: any = [];
   return {
     calls,
-    send: async (method: any, params = {}) => {
+    send: async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
       calls.push({ method, params });
       if (method === 'DOM.getDocument') return { root: { nodeId: 1 } };
       if (method === 'DOM.querySelectorAll') return { nodeIds: [42] };
-      if (method === 'DOM.describeNode') return { node: { backendNodeId: 'b7' } };
+      if (method === 'DOM.describeNode') return { node: { backendNodeId: 'b7' } } as unknown as CdpResult;
       if (method === 'Runtime.evaluate') return { result: { subtype: 'null' } };
       return { result: {} };
     }
@@ -132,7 +137,7 @@ test('a frame the browser refuses to pierce is still found by the page script', 
   const fs = fakeUploadFs();
   const cdp = piercedUploadCdp();
   const original = cdp.send;
-  cdp.send = async (method, params = {}) => {
+  cdp.send = async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
     if (method === 'DOM.querySelectorAll') return { nodeIds: [] };
     if (method === 'Runtime.evaluate') return { result: { objectId: 'o1' } };
     return original(method, params);
@@ -156,14 +161,14 @@ test('an input inside a child frame is found through the frame owner', async () 
   const calls: any = [];
   const cdp = {
     calls,
-    send: async (method: any, params = {}) => {
+    send: async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
       calls.push({ method, params });
       if (method === 'DOM.getDocument') return { root: { nodeId: 1 } };
       if (method === 'Page.getFrameTree') return { frameTree: { frame: { id: 'F1' }, childFrames: [{ frame: { id: 'F2' } }] } };
-      if (method === 'DOM.getFrameOwner') return params.frameId === 'F2' ? { backendNodeId: 'owner-2' } : {};
+      if (method === 'DOM.getFrameOwner') return params.frameId === 'F2' ? { backendNodeId: 'owner-2' } as unknown as CdpResult : {};
       if (method === 'DOM.describeNode') {
         if (params.backendNodeId === 'owner-2') return { node: { contentDocument: { nodeId: 99 } } };
-        return { node: { backendNodeId: 'b9' } };
+        return { node: { backendNodeId: 'b9' } } as unknown as CdpResult;
       }
       if (method === 'DOM.querySelectorAll') {
         return params.nodeId === 99 ? { nodeIds: [7] } : { nodeIds: [] };
@@ -188,7 +193,7 @@ test('an input inside a child frame is found through the frame owner', async () 
 test('a page with no file input is reported, not filled', async () => {
   const fs = fakeUploadFs();
   const cdp = uploadCdp();
-  cdp.send = async (method, params = {}) => {
+  cdp.send = async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
     cdp.calls.push({ method, params });
     if (method === 'Runtime.evaluate') return { result: { subtype: 'null' } };
     return { result: {} };
@@ -273,10 +278,13 @@ test('a drop walks the drag phases in order and releases interception after', as
     'front tab, interception on, the drag phases, interception off'
   );
   const last = cdp.calls.at(-1);
+  assert.ok(last, 'the drag released');
   assert.equal(last.params.enabled, false, 'and the tab is handed back its real pointer');
   const dropped = cdp.calls.find((c: any) => c.params.type === 'drop');
-  assert.deepEqual(dropped.params.data.files, ['/files/pic.png']);
-  assert.deepEqual(dropped.params.data.items, [{ mimeType: 'image/png', title: 'pic.png', data: '' }]);
+  assert.ok(dropped, 'the drop event was sent');
+  const droppedData = dropped.params.data as { files?: unknown; items?: unknown };
+  assert.deepEqual(droppedData.files, ['/files/pic.png']);
+  assert.deepEqual(droppedData.items, [{ mimeType: 'image/png', title: 'pic.png', data: '' }]);
 });
 
 
@@ -290,8 +298,10 @@ test('a refused drop still hands the tab its pointer back', async () => {
   const p = createPrimitives(cdp, { fs: fakeUploadFs(), os: fakeUploadOs, path: fakeUploadPath });
 
   await assert.rejects(() => p.dropFile({ x: 1, y: 2, filename: 'pic.png', path: '/files/pic.png' }), /page said no/);
-  assert.equal(cdp.calls.at(-1).method, 'Input.setInterceptDrags');
-  assert.equal(cdp.calls.at(-1).params.enabled, false, 'a failure does not leave drags intercepted');
+  const lastCall = cdp.calls.at(-1);
+  assert.ok(lastCall, 'the tab was handed back after the failure');
+  assert.equal(lastCall.method, 'Input.setInterceptDrags');
+  assert.equal(lastCall.params.enabled, false, 'a failure does not leave drags intercepted');
 });
 
 
@@ -321,8 +331,8 @@ test('a drop types the file by its name, and admits what it does not know', () =
 // The point of a handle is that the click lands on the element, not on the point it once occupied, so these tests read the row, read the node behind it, and read the box the browser reports for that node at the moment of the click.
 
 
-function fakeDisk() {
-  const files = new Map();
+function fakeDisk(): typeof import('node:fs') & { files: Map<string, { bytes: number; mtimeMs: number }>; put: (file: string, bytes: number) => void } {
+  const files = new Map<string, { bytes: number; mtimeMs: number }>();
   return {
     files,
     mkdirSync() {},
@@ -342,15 +352,15 @@ function fakeDisk() {
       files.set(to, hit);
     },
     put(file: any, bytes: any) { files.set(file, { bytes, mtimeMs: Date.now() }); }
-  };
+  } as unknown as typeof import('node:fs') & { files: Map<string, { bytes: number; mtimeMs: number }>; put: (file: string, bytes: number) => void };
 }
 
 
-function downloadCdp(disk: any, { onRelease = null } = {}) {
+function downloadCdp(_disk: unknown, { onRelease = null }: { onRelease?: (() => void) | null } = {}) {
   const calls: any = [];
   return {
     calls,
-    send: async (method: any, params = {}) => {
+    send: async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
       calls.push({ method, params });
       if (method === 'Input.dispatchMouseEvent' && params.type === 'mouseReleased' && onRelease) onRelease();
       if (method === 'Runtime.evaluate') {
@@ -398,7 +408,7 @@ test('over the extension the file lands in the browser folder and is moved to th
   const cdp = downloadCdp(disk, {
     onRelease: () => disk.put(path.join(browserFolder, 'statement-2026-09.pdf'), 1234)
   });
-  const p = createPrimitives(cdp, { fs: disk, os: { homedir: () => home }, path, bridge: true });
+  const p = createPrimitives(cdp, { fs: disk, os: fakeDownloadOs(home), path, bridge: true });
 
   const out = await p.download({ x: 10, y: 10, dir, saveAs: 'klien-2026-09.pdf', settleMs: 0 });
 
@@ -425,7 +435,7 @@ test('two finished files in the watched folder is a refusal, not a guess', async
       disk.put(path.join(browserFolder, 'invoice-copy.pdf'), 99);
     }
   });
-  const p = createPrimitives(cdp, { fs: disk, os: { homedir: () => home }, path, bridge: true });
+  const p = createPrimitives(cdp, { fs: disk, os: fakeDownloadOs(home), path, bridge: true });
 
   const out = await p.download({ x: 10, y: 10, dir, saveAs: 'klien-2026-09.pdf', settleMs: 0 });
 
@@ -448,7 +458,7 @@ test('a redirected Downloads folder is watched too, and the failure names both f
   const cdp = downloadCdp(disk, {
     onRelease: () => disk.put(path.join(redirected, 'statement-2026-09.pdf'), 1234)
   });
-  const p = createPrimitives(cdp, { fs: disk, os: { homedir: () => home }, path, bridge: true });
+  const p = createPrimitives(cdp, { fs: disk, os: fakeDownloadOs(home), path, bridge: true });
 
   const out = await p.download({ x: 10, y: 10, dir, saveAs: 'klien-2026-09.pdf', settleMs: 0 });
 
@@ -456,7 +466,7 @@ test('a redirected Downloads folder is watched too, and the failure names both f
   assert.equal(out.landedAt, path.join(redirected, 'statement-2026-09.pdf'));
 
   const empty = downloadCdp(fakeDisk());
-  const missed = await createPrimitives(empty, { fs: fakeDisk(), os: { homedir: () => home }, path, bridge: true, sleep: async () => {} })
+  const missed = await createPrimitives(empty, { fs: fakeDisk(), os: fakeDownloadOs(home), path, bridge: true, sleep: async () => {} })
     .download({ x: 5, y: 5, dir, timeoutMs: 500, settleMs: 0 });
   assert.equal(missed.downloaded, false);
   assert.ok(missed.why.includes(path.join(home, 'Downloads')), 'the failure names the home downloads folder');
@@ -476,7 +486,7 @@ test('a file with a name the other watched folder already holds is still new', a
   const cdp = downloadCdp(disk, {
     onRelease: () => disk.put(path.join(browserFolder, 'statement-2026-09.pdf'), 1234)
   });
-  const p = createPrimitives(cdp, { fs: disk, os: { homedir: () => home }, path, bridge: true });
+  const p = createPrimitives(cdp, { fs: disk, os: fakeDownloadOs(home), path, bridge: true });
 
   const out = await p.download({ x: 10, y: 10, dir, saveAs: 'klien-2026-09.pdf', settleMs: 0 });
 

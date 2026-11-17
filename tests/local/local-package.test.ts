@@ -40,6 +40,7 @@ const reachable = (entry: any) => {
     const file = join(local, `${name}.js`);
     const source = readFileSync(file, 'utf8');
     for (const [, specifier] of source.matchAll(IMPORT)) {
+      assert.ok(specifier);
       const absolute = resolve(dirname(file), specifier).replace(/\\/g, '/');
       if (!absolute.startsWith(`${local}/`) && absolute !== local) {
         outside.push(`${name} imports ${specifier}`);

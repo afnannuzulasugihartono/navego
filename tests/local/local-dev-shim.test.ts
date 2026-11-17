@@ -13,54 +13,57 @@ import assert from 'node:assert/strict';
 import { createSupervisor } from '../../local/dev-shim.js';
 
 function fakeChild() {
-  const listeners = {};
+  const listeners: Record<string, Array<(arg?: unknown) => void>> = {};
   const child = {
-    written: [],
-    killSignals: [],
+    written: [] as string[],
+    killSignals: [] as string[],
     stdin: {
       write: (text: any) => {
         child.written.push(text);
       }
     },
     stdout: {
-      on: (event: any, fn: any) => {
-        listeners[event] = listeners[event] ?? [];
-        listeners[event].push(fn);
+      on: (event: any, fn: (arg?: unknown) => void) => {
+        const list = listeners[event] ?? [];
+        list.push(fn);
+        listeners[event] = list;
       },
       setEncoding: () => {}
     },
-    on: (event: any, fn: any) => {
-      listeners[event] = listeners[event] ?? [];
-      listeners[event].push(fn);
+    on: (event: any, fn: (arg?: unknown) => void) => {
+      const list = listeners[event] ?? [];
+      list.push(fn);
+      listeners[event] = list;
     },
     kill: (signal: any) => {
       child.killSignals.push(signal ?? 'SIGTERM');
       setTimeout(() => child.exit(0), 0);
     },
     emitStdout: (text: any) => {
-      for (const fn of listeners.data ?? []) fn(text);
+      for (const fn of listeners['data'] ?? []) fn(text);
     },
     exit: (code: any) => {
-      for (const fn of listeners.exit ?? []) fn(code);
+      for (const fn of listeners['exit'] ?? []) fn(code);
     }
   };
   return child;
 }
 
 function fakePipe() {
-  const listeners = {};
+  const listeners: Record<string, Array<(arg?: unknown) => void>> = {};
   const pipe = {
-    written: [],
-    on: (event: any, fn: any) => {
-      listeners[event] = listeners[event] ?? [];
-      listeners[event].push(fn);
+    written: [] as string[],
+    on: (event: any, fn: (arg?: unknown) => void) => {
+      const list = listeners[event] ?? [];
+      list.push(fn);
+      listeners[event] = list;
     },
     write: (text: any) => {
       pipe.written.push(text);
     },
     setEncoding: () => {},
     emit: (text: any) => {
-      for (const fn of listeners.data ?? []) fn(text);
+      for (const fn of listeners['data'] ?? []) fn(text);
     }
   };
   return pipe;

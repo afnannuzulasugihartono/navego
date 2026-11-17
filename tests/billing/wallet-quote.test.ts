@@ -9,7 +9,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ACTION_CAP, HOLD_MS, classifyPlan, quotePlan, splitBatch } from '../../hosted/functions/_shared/wallet.ts';
+import { ACTION_CAP, HOLD_MS, quotePlan, splitBatch } from '../../hosted/functions/_shared/wallet.ts';
 
 const PRICES = [
   { kind: 'wallet.deposit', amount_cents: 1000000, currency: 'IDR' },

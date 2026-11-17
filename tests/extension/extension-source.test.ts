@@ -22,7 +22,7 @@ test('the helper reads background.ts itself, and lists it first', async () => {
 test('the bundle order keeps every cross-module indexOf anchor valid', async () => {
   const src = await extensionSource();
   const files = extensionSourceFiles();
-  const idx = (name: any) => files.indexOf(name);
+  const idx = (name: string) => files.indexOf(name);
 
   if (files.includes('extension/lib/serialize.ts') && files.includes('extension/worker/watch-registry.ts')) {
     assert.ok(idx('extension/lib/serialize.ts') < idx('extension/worker/watch-registry.ts'),
@@ -62,8 +62,8 @@ test('no state is declared twice across the bundle', async () => {
     ].map((m) => m[1]);
 
     for (const m of text.matchAll(/^(?:export\s+)?(?:const|let|var)\s*[{[]([^}\]]*)[}\]]/gm)) {
-      for (const piece of m[1].split(',')) {
-        const name = piece.trim().split(':').pop().trim();
+      for (const piece of (m[1] ?? '').split(',')) {
+        const name = piece.trim().split(':').pop()?.trim() ?? '';
         if (/^[A-Za-z_$][\w$]*$/.test(name)) names.push(name);
       }
     }
@@ -82,9 +82,9 @@ test('every cross-module name is imported where it is used', async () => {
   const files = extensionSourceFiles();
   if (files.length === 1) return;
 
-  const strip = (text: any) => {
+  const strip = (text: string) => {
     let out = '', i = 0;
-    const keep = (s: any) => (s.match(/\n/g) || ['']).join('');
+    const keep = (s: string) => (s.match(/\n/g) || ['']).join('');
     while (i < text.length) {
       const c = text[i], c2 = text.slice(i, i + 2);
       if (c2 === '//') { const s = i; while (i < text.length && text[i] !== '\n') i++; out += keep(text.slice(s, i)); continue; }
@@ -109,8 +109,8 @@ test('every cross-module name is imported where it is used', async () => {
     const exp = new Set();
     for (const m of text.matchAll(/export\s+(?:async\s+)?(?:function|const|let|var|class)\s+([A-Za-z_$][\w$]*)/g)) exp.add(m[1]);
     for (const b of text.matchAll(/export\s*\{([^}]*)\}/g)) {
-      for (const n of b[1].split(',')) {
-        const name = n.trim().split(/\s+as\s+/).pop().trim();
+      for (const n of (b[1] ?? '').split(',')) {
+        const name = n.trim().split(/\s+as\s+/).pop()?.trim() ?? '';
         if (/^[A-Za-z_$][\w$]*$/.test(name)) exp.add(name);
       }
     }
@@ -118,8 +118,8 @@ test('every cross-module name is imported where it is used', async () => {
 
     const imp = new Set();
     for (const b of code.matchAll(/import\s*\{([^}]*)\}/g)) {
-      for (const n of b[1].split(',')) {
-        const name = n.trim().split(/\s+as\s+/).pop().trim();
+      for (const n of (b[1] ?? '').split(',')) {
+        const name = n.trim().split(/\s+as\s+/).pop()?.trim() ?? '';
         if (/^[A-Za-z_$][\w$]*$/.test(name)) imp.add(name);
       }
     }
@@ -131,8 +131,8 @@ test('every cross-module name is imported where it is used', async () => {
     for (const m of code.matchAll(/(?:^|[^\w$.])(?:function|const|let|var|class)\s*\(?[^)]*\b([A-Za-z_$][\w$]*)\s*[)=,]/g)) dec.add(m[1]);
 
     for (const m of code.matchAll(/^(?:export\s+)?(?:const|let|var)\s*[{[]([^}\]]*)[}\]]/gm)) {
-      for (const piece of m[1].split(',')) {
-        const name = piece.trim().split(':').pop().trim();
+      for (const piece of (m[1] ?? '').split(',')) {
+        const name = piece.trim().split(':').pop()?.trim() ?? '';
         if (/^[A-Za-z_$][\w$]*$/.test(name)) dec.add(name);
       }
     }
@@ -142,8 +142,8 @@ test('every cross-module name is imported where it is used', async () => {
     for (const m of code.matchAll(/^(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)/gm)) top.add(m[1]);
     for (const m of code.matchAll(/^(?:export\s+)?(?:const|let|var)\s+([A-Za-z_$][\w$]*)/gm)) top.add(m[1]);
     for (const m of code.matchAll(/^(?:export\s+)?(?:const|let|var)\s*[{[]([^}\]]*)[}\]]/gm)) {
-      for (const piece of m[1].split(',')) {
-        const name = piece.trim().split(':').pop().trim();
+      for (const piece of (m[1] ?? '').split(',')) {
+        const name = piece.trim().split(':').pop()?.trim() ?? '';
         if (/^[A-Za-z_$][\w$]*$/.test(name)) top.add(name);
       }
     }
@@ -172,7 +172,7 @@ test('the ensureContent script list still matches the manifest', async () => {
   const manifest = JSON.parse(await readFile(new URL('../../extension/manifest.json', import.meta.url), 'utf8'));
   const expected = manifest.content_scripts[0].js;
   const src = await extensionSource();
-  const literal = `files: [${expected.map((f: any) => `'${f}'`).join(', ')}]`;
+  const literal = `files: [${expected.map((f: string) => `'${f}'`).join(', ')}]`;
   assert.ok(src.includes(literal),
     `the runtime injection list must stay byte-identical to manifest.content_scripts[0].js:\n  ${literal}`);
 });
@@ -209,15 +209,16 @@ test('no import brings in a name its own file never uses', async () => {
     }
 
     for (const m of text.matchAll(/import\s*{([^}]*)}\s*from/gs)) {
-      for (const raw of m[1].split(',')) {
-        const token = raw.trim().split(/\s+as\s+/).pop().trim();
+      for (const raw of (m[1] ?? '').split(',')) {
+        const token = raw.trim().split(/\s+as\s+/).pop()?.trim() ?? '';
 
         if (!/^[A-Za-z_$][\w$]*$/.test(token)) continue;
         let uses = 0;
         for (let i = 0; i < lines.length; i++) {
           if (insideImport[i]) continue;
 
-          if (lines[i].split(/[^A-Za-z0-9_$]+/).includes(token)) uses++;
+          const sourceLine = lines[i];
+          if (sourceLine !== undefined && sourceLine.split(/[^A-Za-z0-9_$]+/).includes(token)) uses++;
         }
         if (uses === 0) dead.push(`${rel}: ${token}`);
       }

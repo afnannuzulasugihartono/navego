@@ -6,13 +6,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = new URL('../../', import.meta.url);
 const script = new URL('../../local/postinstall.js', import.meta.url);
 
-const run = (env: any) => {
+const run = (env: Record<string, string>) => {
   const result = execFileSync(process.execPath, [fileURLToPath(script)], {
     encoding: 'utf8',
     env: { ...process.env, ...env },

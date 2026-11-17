@@ -11,11 +11,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import path from 'node:path';
 
 const root = new URL('../../', import.meta.url);
-const repo = (p: any) => new URL(p, root);
-const read = (name: any) => fs.readFileSync(repo(name), 'utf8');
+const repo = (p: string) => new URL(p, root);
+const read = (name: string) => fs.readFileSync(repo(name), 'utf8');
 const readme = read('README.md');
 
 // The primitives: the allowlist the protocol actually exports, read from the source, not the emit's indent style.
@@ -26,7 +25,6 @@ const primitives = [...specs.matchAll(/^\s*'([a-z_]+\.[a-z_]+)':/gm)].map((m) =>
 
 // The local tools: what the local server registers.
 
-const localServer = read('local/mcp-server.js');
 const localTools = new Set([...read('local/tools.js').matchAll(/name:\s*'([a-z_]+)'/g)].map((m) => m[1]));
 
 // The edge functions: the directories that hold an entrypoint.
@@ -37,12 +35,12 @@ const edgeFunctions = fs.readdirSync(repo('hosted/functions'))
 
 // The row of the contract table that says what this is.
 
-const row = (label: any) => {
+const row = (label: string) => {
   const line = readme.split('\n').find((candidate) => candidate.startsWith(`| ${label} |`));
   assert.ok(line, `the README must have a ${label} row in its contract table`);
   return line;
 };
-const countIn = (label: any) => {
+const countIn = (label: string) => {
   const match = /\*\*(\d+)\*\*/.exec(row(label));
   assert.ok(match, `the README ${label} row must state a number`);
   return Number(match[1]);

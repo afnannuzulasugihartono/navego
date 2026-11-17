@@ -10,11 +10,10 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
 import { readFileSync } from 'node:fs';
 
 const root = new URL('../../', import.meta.url);
-const source = (rel: any) => readFileSync(new URL(rel, root), 'utf8');
+const source = (rel: string) => readFileSync(new URL(rel, root), 'utf8');
 
 test('the local stdio surface answers through tidyForAi', () => {
   const mcp = source('local/mcp-server.js');
@@ -22,8 +21,14 @@ test('the local stdio surface answers through tidyForAi', () => {
 });
 
 test('the local tool table advertises explicit descriptions and argument docs', async () => {
-  const mod = await import(new URL('../../local/tools.js', import.meta.url));
-  const undocumented = [];
+  const mod = (await import(new URL('../../local/tools.js', import.meta.url).href)) as {
+    TOOLS: Array<{
+      name: string;
+      description?: string;
+      inputSchema?: { properties?: Record<string, { description?: string }> };
+    }>;
+  };
+  const undocumented: string[] = [];
   for (const tool of mod.TOOLS) {
     if (!tool.description || tool.description.trim().length < 60) {
       undocumented.push(`${tool.name}: description too short`);

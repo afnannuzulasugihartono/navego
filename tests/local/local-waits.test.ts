@@ -10,6 +10,7 @@ import {
   SETTLE_POLL_MS
 } from '../../local/page-expressions.js';
 import { createPrimitives } from '../../local/primitives.js';
+import type { CdpResult } from '../../local/cdp.js';
 import { createWaits } from '../../local/waits.js';
 import { recordingCdp, DOC_URL } from '../helpers/local-page.ts';
 
@@ -24,10 +25,10 @@ test('settle watches the page from Node, so a hidden tab cannot clamp its timer'
   const disarm = calls.find((call: any) => call.params.expression.includes('opera-settle-disarm'));
 
   assert.ok(arm, 'settle installs a mutation watcher');
-  assert.match(arm.params.expression, /MutationObserver/);
+  assert.match(String(arm.params.expression), /MutationObserver/);
   assert.equal(arm.params.awaitPromise, undefined, 'no page-side promise waits on a throttled timer');
   assert.ok(read, 'settle asks the watcher how quiet the page is');
-  assert.match(read.params.expression, /__operaSettle/);
+  assert.match(String(read.params.expression), /__operaSettle/);
   assert.equal(disarm, undefined, 'the watcher stays on the page, so nothing removes it between settles');
   assert.equal(out.why, 'quiet');
   assert.equal(out.changes, 1);
@@ -66,8 +67,8 @@ test('the watcher is installed once and stays between settles', async () => {
 test('a page that lost the watcher is watched again', async () => {
   let reads = 0;
   const cdp = {
-    calls: [],
-    send: async (method: any, params = {}) => {
+    calls: [] as Array<{ method: string; params: Record<string, unknown> }>,
+    send: async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
       cdp.calls.push({ method, params });
       if (method === 'Runtime.evaluate' && String(params.expression).includes('opera-settle-read')) {
         reads += 1;
@@ -90,7 +91,7 @@ test('settle stops at the cap when the page never goes quiet', async () => {
   const cdp = recordingCdp();
   cdp.send = async (method, params = {}) => {
     cdp.calls.push({ method, params });
-    if (params.expression.includes('opera-settle-read')) {
+    if (String((params as Record<string, unknown>).expression ?? '').includes('opera-settle-read')) {
       return { result: { value: { changes: 0, quietMs: 0, elapsedMs: 0, visibility: 'visible' } } };
     }
     return { result: { value: true } };
@@ -109,8 +110,8 @@ test('a text wait settles the page between checks instead of sleeping a fixed ga
   let ask = 0;
   const slept: any = [];
   const cdp = {
-    calls: [],
-    send: async (method: any, params = {}) => {
+    calls: [] as Array<{ method: string; params: Record<string, unknown> }>,
+    send: async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
       cdp.calls.push({ method, params });
       if (method === 'Runtime.evaluate' && String(params.expression).includes('document.title')) {
         return { result: { value: { title: 't', url: 'u', text: texts[Math.min(ask++, texts.length - 1)], ready: 'complete' } } };
@@ -132,8 +133,8 @@ test('a text wait settles the page between checks instead of sleeping a fixed ga
   const out = await p.waitForText('Heading', { timeoutMs: 200, intervalMs: 100 });
 
   assert.equal(out.text, 'Heading is here');
-  assert.ok(cdp.calls.some((call) => call.params?.expression?.includes('opera-settle-arm')), 'the wait waits on a mutation settle');
-  assert.ok(cdp.calls.some((call) => call.params?.expression?.includes('opera-settle-read')), 'and asks the page how quiet it is');
+  assert.ok(cdp.calls.some((call) => String(call.params?.expression ?? '').includes('opera-settle-arm')), 'the wait waits on a mutation settle');
+  assert.ok(cdp.calls.some((call) => String(call.params?.expression ?? '').includes('opera-settle-read')), 'and asks the page how quiet it is');
   assert.ok(!slept.includes(100), 'the fixed interval is not the method anymore');
 });
 
@@ -188,8 +189,8 @@ test('a read on a page still filling in says so, and answers with the later samp
   ];
   let ask = 0;
   const cdp = {
-    calls: [],
-    send: async (method: any, params = {}) => {
+    calls: [] as Array<{ method: string; params: Record<string, unknown> }>,
+    send: async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
       cdp.calls.push({ method, params });
       if (method === 'Runtime.evaluate' && String(params.expression).includes('document.title')) {
         return { result: { value: samples[Math.min(ask++, samples.length - 1)] } };
@@ -244,8 +245,8 @@ test('a text wait on a canvas surface reaches past the chrome in the DOM', async
   };
   const chrome = ['Insert', 'Mode tampilan', 'Share', 'Video', 'Banner hidden', 'Caption', 'Screen reader support enabled', 'Terakhir disunting', 'Comment', 'Edit', 'Format', 'Tools', 'Extensions', 'Help', 'History'].join('\n');
   const cdp = {
-    calls: [],
-    send: async (method: any, params = {}) => {
+    calls: [] as Array<{ method: string; params: Record<string, unknown> }>,
+    send: async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
       cdp.calls.push({ method, params });
       const expression = String(params.expression ?? '');
       if (method === 'Runtime.evaluate' && expression.includes('window.innerHeight')) {
@@ -274,8 +275,8 @@ test('a text wait on a canvas surface reaches past the chrome in the DOM', async
 test('waitForMutation uses the page settle between reads instead of a fixed gap', async () => {
   const slept: any = [];
   const cdp = {
-    calls: [],
-    send: async (method: any, params = {}) => {
+    calls: [] as Array<{ method: string; params: Record<string, unknown> }>,
+    send: async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
       cdp.calls.push({ method, params });
       if (method === 'Runtime.evaluate' && String(params.expression).includes('opera-settle-arm')) return { result: { value: true } };
       if (method === 'Runtime.evaluate' && String(params.expression).includes('opera-settle-read')) return { result: { value: { changes: 1, quietMs: 40, elapsedMs: 40, visibility: 'visible' } } };
@@ -319,7 +320,7 @@ function rowsCdp(reads: any) {
   const calls: any = [];
   return {
     calls,
-    send: async (method: any, params = {}) => {
+    send: async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
       calls.push({ method, params });
       if (method === 'Runtime.evaluate' && String(params.expression).includes('opera-settle-arm')) {
         return { result: { value: true } };
@@ -395,8 +396,8 @@ test('stillness ends on two identical reads and names how long it took', async (
 test('a page that never settles says so instead of pretending', async () => {
   let tick = 0;
   const cdp = {
-    calls: [],
-    send: async (method: any, params = {}) => {
+    calls: [] as Array<{ method: string; params: Record<string, unknown> }>,
+    send: async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
       cdp.calls.push({ method, params });
       if (method === 'Runtime.evaluate' && String(params.expression).includes('opera-settle-arm')) {
         return { result: { value: true } };
@@ -445,8 +446,8 @@ test('a url wait ends on the first read that holds the url it asked for', async 
   const urls = ['https://example.test/login', 'https://example.test/dashboard'];
   let ask = 0;
   const cdp = {
-    calls: [],
-    send: async (method: any, params = {}) => {
+    calls: [] as Array<{ method: string; params: Record<string, unknown> }>,
+    send: async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
       cdp.calls.push({ method, params });
       const expression = String(params?.expression ?? '');
       if (method === 'Runtime.evaluate' && expression.includes('document.title')) {
@@ -469,8 +470,8 @@ test('a url wait ends on the first read that holds the url it asked for', async 
 
 test('a url wait that runs out reports instead of failing', async () => {
   const cdp = {
-    calls: [],
-    send: async (method: any, params = {}) => {
+    calls: [] as Array<{ method: string; params: Record<string, unknown> }>,
+    send: async (method: string, params: Record<string, unknown> = {}): Promise<CdpResult> => {
       const expression = String(params?.expression ?? '');
       if (method === 'Runtime.evaluate' && expression.includes('document.title')) {
         return { result: { value: { title: 't', url: 'https://example.test/login', text: 'x', ready: 'complete' } } };

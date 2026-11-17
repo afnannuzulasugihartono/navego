@@ -15,7 +15,7 @@ interface UnknownError {
 interface CommandEnvelope {
   ok?: unknown;
   error?: unknown;
-  result?: { ok?: unknown; error?: unknown } | null;
+  result?: unknown;
 }
 
 function parts(error: unknown): { code: string; message: string; details: object | null } {
@@ -32,8 +32,8 @@ export function commandFailure(result: CommandEnvelope | null | undefined): Retu
   if (!result || result.ok !== true) {
     return parts(result?.error);
   }
-  if (result.result && result.result.ok === false) {
-    return parts(result.result.error);
+  if (result.result && typeof result.result === 'object' && 'ok' in result.result && (result.result as { ok?: unknown }).ok === false) {
+    return parts((result.result as Record<string, unknown>).error);
   }
   return null;
 }

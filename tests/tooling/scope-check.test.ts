@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 
 import { parseBrief, classify } from '../../scripts/verify/scope-check.ts';
 
-const fixture = (name: any) =>
+const fixture = (name: string) =>
   fs.readFileSync(fileURLToPath(new URL('../fixtures/scope-check/' + name, import.meta.url)), 'utf8');
 
 test('a brief reads into the exact set of files it declared', () => {
@@ -52,6 +52,7 @@ test('an undeclared file outside tests/ is a violation', () => {
   const brief = parseBrief(fixture('clean.brief.md'));
   const result = classify(brief, ['extension/worker/burst.js', 'extension/lib/log.js']);
   const log = result.rows.find((row) => row.file === 'extension/lib/log.js');
+  assert.ok(log, 'the row for extension/lib/log.js is named');
   assert.equal(log.status, 'undeclared');
   assert.equal(result.escalations.length, 0);
 });
@@ -65,6 +66,7 @@ test('a re-pin side-effect is recorded, not accused', () => {
     'tests/helpers/boundary-locks.ts',
   ]);
   const rePin = result.rows.find((row) => row.file === 'tests/helpers/boundary-locks.ts');
+  assert.ok(rePin, 'the row for the re-pin file is named');
   assert.equal(rePin.status, 'side-effect');
   assert.equal(result.escalations.length, 0);
 });
@@ -78,6 +80,7 @@ test('the default side-effect list matches the repo re-pin habit', () => {
     'tests/helpers/boundary-locks.ts',
   ]);
   const rePin = result.rows.find((row) => row.file === 'tests/helpers/boundary-locks.ts');
+  assert.ok(rePin, 'the row for the re-pin file is named');
   assert.equal(rePin.status, 'side-effect');
 });
 
@@ -90,6 +93,7 @@ test('an undeclared tests/ edit demands escalation', () => {
   ]);
   assert.deepEqual(result.escalations, ['tests/extension/ax-observation.test.ts']);
   const hit = result.rows.find((row) => row.file === 'tests/extension/ax-observation.test.ts');
+  assert.ok(hit, 'the row for the undeclared tests/ file is named');
   assert.equal(hit.status, 'undeclared');
   assert.equal(hit.escalate, true);
 });
@@ -107,6 +111,7 @@ test('an unparseable brief warns, it does not accuse', () => {
   assert.deepEqual(result.escalations, [], 'an incomplete declaration cannot prove a violation');
   assert.equal(result.reliable, false);
   const hit = result.rows.find((row) => row.file === 'tests/extension/ax-observation.test.ts');
+  assert.ok(hit, 'the row for the undeclared tests/ file is named');
   assert.equal(hit.status, 'undeclared', 'the row is still shown, just not promoted');
   assert.equal(hit.escalate, false);
 });
@@ -186,6 +191,7 @@ test('a directory declaration does not reach outside its own folder', () => {
   const result = classify(brief, ['extension/background.js', 'extension/lib/keyboard.js']);
 
   const outside = result.rows.find((row) => row.file === 'extension/background.js');
+  assert.ok(outside, 'the row for the outside file is named');
   assert.equal(outside.status, 'undeclared');
   assert.deepEqual(result.escalations, [], 'outside tests/, so it is named, not escalated');
 });
@@ -195,6 +201,7 @@ test('a plain path is still exact, not a prefix', () => {
   const brief = parseBrief(['**Files:**', '- Modify: `extension/lib/loop.js`', ''].join('\n'));
   const result = classify(brief, ['extension/lib/loop.js', 'extension/lib/loop-engine.js']);
   const sibling = result.rows.find((row) => row.file === 'extension/lib/loop-engine.js');
+  assert.ok(sibling, 'the row for the sibling file is named');
   assert.equal(sibling.status, 'undeclared');
 });
 
@@ -202,6 +209,7 @@ test('every declared file is accounted for, whatever else happened', () => {
   const brief = parseBrief(fixture('clean.brief.md'));
   const result = classify(brief, ['extension/worker/burst.js']);
   const burst = result.rows.find((row) => row.file === 'extension/worker/burst.js');
+  assert.ok(burst, 'the row for the declared file is named');
   assert.equal(burst.status, 'declared');
   assert.equal(result.clean, false, 'a declared file that never moved is worth naming');
 });

@@ -30,10 +30,20 @@ test('children resolve by id and find filters by role and name', () => {
 
   assert.equal(kids.length, 3);
   assert.deepEqual(axFind(nodes, { role: 'menu' }).length, 2);
-  assert.equal(axFind(nodes, { role: 'menuitem', nameIncludes: 'page ELEM' })[0].nodeId, '3');
-  assert.equal(axSubmenu(nodes, kids[1]).nodeId, '5');
-  assert.equal(axSubmenu(nodes, kids[0]), null);
-  assert.equal(axRowIndex(kids, kids[2]), 2);
+  const first = axFind(nodes, { role: 'menuitem', nameIncludes: 'page ELEM' })[0];
+  assert.ok(first);
+  assert.equal(first.nodeId, '3');
+  const kid1 = kids[1];
+  const kid0 = kids[0];
+  const kid2 = kids[2];
+  assert.ok(kid1);
+  assert.ok(kid0);
+  assert.ok(kid2);
+  const submenu = axSubmenu(nodes, kid1);
+  assert.ok(submenu);
+  assert.equal(submenu.nodeId, '5');
+  assert.equal(axSubmenu(nodes, kid0), null);
+  assert.equal(axRowIndex(kids, kid2), 2);
 });
 
 test('a walk plan downs to the 1-based row: nothing selected, Down lands on first', () => {
@@ -46,13 +56,15 @@ test('opening a submenu walks to the named row and proves a new menu appeared', 
   const closed = fixture().filter((n) => n.nodeId !== '5' && n.nodeId !== '6' && n.nodeId !== '7');
   const opened = fixture();
   const trees = [closed, opened];
-  const keys: any = [];
+  const keys: string[] = [];
+  const closedRoot = closed[0];
+  assert.ok(closedRoot);
   const submenu = await openSubmenu(
     {
       ax: async () => ({ nodes: trees.shift() ?? opened }),
       key: async (k) => { keys.push(k); }
     },
-    closed[0],
+    closedRoot,
     'page elements'
   );
 
@@ -62,11 +74,13 @@ test('opening a submenu walks to the named row and proves a new menu appeared', 
 
 test('a submenu that never appears fails naming the row, not hammering keys', async () => {
   const nodes = fixture();
-  const keys: any = [];
+  const keys: string[] = [];
+  const root = nodes[0];
+  assert.ok(root);
   await assert.rejects(
     () => openSubmenu(
       { ax: async () => ({ nodes }), key: async (k) => { keys.push(k); }, sleep: async () => {} },
-      nodes[0],
+      root,
       'comment',
       { timeoutMs: 30 }
     ),
@@ -77,14 +91,17 @@ test('a submenu that never appears fails naming the row, not hammering keys', as
 
 test('a missing row aborts naming what is visible instead of hammering keys', async () => {
   const nodes = fixture();
+  const root = nodes[0];
+  assert.ok(root);
   let keys = 0;
   await assert.rejects(
     () => openSubmenu(
       { ax: async () => ({ nodes }), key: async () => { keys += 1; } },
-      nodes[0],
+      root,
       'Footnote'
     ),
     (error) => {
+      if (!(error instanceof Error)) return false;
       assert.match(error.message, /not found/);
       assert.match(error.message, /Page elements/);
       return true;
@@ -102,7 +119,7 @@ test('accelerators are parsed from the row name, or honestly absent', () => {
   assert.equal(menuAccel('Table of contents'), null);
   assert.equal(menuAccel('Tab f11 Shift+F11'), null);
   assert.equal(menuAccel(''), null);
-  assert.equal(menuAccel(null), null);
+  assert.equal((menuAccel as (name: unknown) => ReturnType<typeof menuAccel>)(null), null);
 });
 
 test('a wait returns the satisfying tree, or null when the budget runs out', async () => {
@@ -115,6 +132,7 @@ test('a wait returns the satisfying tree, or null when the budget runs out', asy
     (candidates) => candidates.length > 0,
     { sleep: async () => {}, timeoutMs: 1000 }
   );
+  assert.ok(nodes);
   assert.equal(nodes.length, 1);
   assert.equal(polls, 3);
   const missed = await waitAx(async () => ({ nodes: [] }), (candidates) => candidates.length > 0, { sleep: async () => {}, timeoutMs: 30 });
@@ -125,14 +143,16 @@ test('an accelerator opens the submenu with one keypress', async () => {
   const closed = fixture().filter((n) => n.nodeId !== '5' && n.nodeId !== '6' && n.nodeId !== '7');
   const opened = fixture();
   const trees = [closed, opened];
-  const keys: any = [];
+  const keys: string[] = [];
+  const closedRoot = closed[0];
+  assert.ok(closedRoot);
   const submenu = await pressMenuAccel(
     {
       ax: async () => ({ nodes: trees.shift() ?? opened }),
       key: async (k) => { keys.push(k); },
       sleep: async () => {}
     },
-    closed[0],
+    closedRoot,
     'page elements'
   );
 
@@ -146,10 +166,12 @@ test('a row without an accelerator refuses before any key moves', async () => {
     { nodeId: '2', role: { value: 'menuitem' }, name: { value: 'Table of contents' }, childIds: [] }
   ];
   let keys = 0;
+  const root = nodes[0];
+  assert.ok(root);
   await assert.rejects(
     () => pressMenuAccel(
       { ax: async () => ({ nodes }), key: async () => { keys += 1; } },
-      nodes[0],
+      root,
       'contents'
     ),
     /no accelerator/
@@ -160,6 +182,8 @@ test('a row without an accelerator refuses before any key moves', async () => {
 test('a row click resolves a fresh box and clicks its center', async () => {
   const nodes = fixture();
   let clicked = null;
+  const target = nodes[4];
+  assert.ok(target);
   await clickMenuRow(
     {
       ax: async () => ({ nodes }),
@@ -169,7 +193,7 @@ test('a row click resolves a fresh box and clicks its center', async () => {
       },
       click: async (x, y) => { clicked = [x, y]; }
     },
-    nodes[4],
+    target,
     'table of contents'
   );
 

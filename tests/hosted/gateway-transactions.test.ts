@@ -17,17 +17,36 @@ import { requiredEnv } from '../../hosted/functions/_shared/required-env.ts';
 
 process.env.SUPABASE_URL ??= 'test';
 process.env.SUPABASE_SERVICE_ROLE_KEY ??= 'test';
-globalThis.Deno = { env: { get: (key: any) => process.env[key] } };
+const denoStub = { env: { get: (key: string) => process.env[key] } };
+(globalThis as { Deno?: typeof denoStub }).Deno = denoStub;
 
 const source = stripTypeScriptTypes(readFileSync(new URL('../../hosted/functions/opera-agent-gateway/index.ts', import.meta.url), 'utf8')
   .replace(/^import .*;\r?\n/gm, ''));
 const commandId = '00000000-0000-4000-8000-000000000001';
 
-function harness({ merged = { ok: true, commandId }, user = null, enqueue = { ok: true, commandId }, result = { ok: true, commandId, result: { tabs: [] } }, fail, release, env = {} } = {}) {
+interface MergedAnswer {
+  ok?: boolean;
+  commandId?: string;
+  error?: string;
+  reused?: boolean;
+  lastSeenAt?: string | null;
+}
+
+interface HarnessOptions {
+  merged?: MergedAnswer | null;
+  user?: { id: string; device: string } | null;
+  enqueue?: { ok?: boolean; commandId?: string };
+  result?: unknown;
+  fail?: string;
+  release?: Promise<unknown>;
+  env?: Record<string, string>;
+}
+
+function harness({ merged = { ok: true, commandId }, user = null, enqueue = { ok: true, commandId }, result = { ok: true, commandId, result: { tabs: [] } }, fail, release, env = {} }: HarnessOptions = {}) {
   const calls: any = [];
   let handler: any;
   let committed = false;
-  const savedEnv = {};
+  const savedEnv: Record<string, string | undefined> = {};
   for (const [key, value] of Object.entries(env)) {
     savedEnv[key] = process.env[key];
     process.env[key] = value;
@@ -85,8 +104,8 @@ function harness({ merged = { ok: true, commandId }, user = null, enqueue = { ok
 }
 
 test('one caller request authenticates and enqueues in a single call, then adaptive await with unchanged arguments', async () => {
-  let release;
-  const gate = new Promise((resolve) => { release = resolve; });
+  let release: () => void = () => { };
+  const gate = new Promise<void>((resolve) => { release = resolve; });
   const h = harness({ release: gate });
   const response = h.request({ params: { active: false }, waitMs: 2000, requestId: 'retry-1' });
   const deadline = Date.now() + 2000;
@@ -215,7 +234,7 @@ test('openapi servers url is the full public base path from SUPABASE_URL, never 
   assert.equal(spec.servers[0].url, 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-agent-gateway');
 });
 
-function streamRequest(payload: any, { chunked = true } = {}) {
+function streamRequest(payload: string) {
 
   const bytes = new TextEncoder().encode(payload);
   const stream = new ReadableStream({ start(controller) { controller.enqueue(bytes); controller.close(); } });

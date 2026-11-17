@@ -23,7 +23,31 @@ const identity = (overrides = {}) => ({
   ...overrides,
 });
 
-function entity(logicalId: any, revision = 1, overrides = {}) {
+interface EntityFixture {
+  logicalId: string;
+  semanticRevision: number;
+  stableKey: string;
+  stableKeySource: string;
+  tag: string;
+  role: string;
+  regionKey: string;
+  inViewport: boolean;
+  identityConfidence: number;
+  sensitive: boolean;
+  text: string;
+  label: string;
+  href: string;
+  value: string;
+  identityAmbiguous?: boolean;
+}
+
+interface DeltaChange {
+  type: string;
+  logicalId: string;
+  revision: number;
+}
+
+function entity(logicalId: string, revision = 1, overrides: Partial<EntityFixture> = {}): EntityFixture {
   return {
     logicalId,
     semanticRevision: revision,
@@ -67,6 +91,23 @@ function view(revision = 1, overrides = {}) {
   };
 }
 
+interface ObservationInput {
+  sourceRevision?: number;
+  resultingRevision?: number;
+  classification?: string;
+  changes?: DeltaChange[];
+  entities?: EntityFixture[];
+  regions?: Array<ReturnType<typeof view>>;
+  changedRegionIds?: string[];
+  removedRegionIds?: string[];
+  documentGeneration?: number;
+  ambiguityCount?: number;
+  completeSnapshotRequired?: boolean;
+  resetReason?: string | undefined;
+  bodyText?: string;
+  confidence?: number;
+}
+
 function observation({
   sourceRevision = 0,
   resultingRevision = 1,
@@ -82,7 +123,7 @@ function observation({
   resetReason = classification === 'RESET' ? 'INITIAL_OBSERVATION' : undefined,
   bodyText = `RAW_PAGE_BODY_${'z'.repeat(16_000)}`,
   confidence = ambiguityCount ? 0.4 : 0.96,
-} = {}) {
+}: ObservationInput = {}) {
   return {
     text: bodyText,
     title: 'RAW_PAGE_TITLE',
@@ -136,7 +177,18 @@ function observation({
   };
 }
 
-function nextObservation(previous: any, {
+interface NextObservationInput {
+  type?: string;
+  logicalId?: string;
+  classification?: string;
+  entityOverrides?: Partial<EntityFixture>;
+  changedRegionIds?: string[];
+  removedRegionIds?: string[];
+  regions?: Array<ReturnType<typeof view>>;
+  changes?: DeltaChange[] | undefined;
+}
+
+function nextObservation(previous: ReturnType<typeof observation>, {
   type = 'UPDATE',
   logicalId = 'a',
   classification = type,
@@ -145,10 +197,10 @@ function nextObservation(previous: any, {
   removedRegionIds = [],
   regions,
   changes,
-} = {}) {
+}: NextObservationInput = {}) {
   const sourceRevision = previous.semanticDelta.resultingRevision;
   const resultingRevision = sourceRevision + 1;
-  const priorEntities = previous.elements.filter((item: any) => !item.sensitive).map((item: any) => structuredClone(item));
+  const priorEntities = previous.elements.filter((item) => !item.sensitive).map((item) => structuredClone(item));
   let entities = priorEntities;
   let effectiveChanges = changes;
   if (!effectiveChanges) {
@@ -156,10 +208,10 @@ function nextObservation(previous: any, {
       entities.push(entity(logicalId, resultingRevision, entityOverrides));
       effectiveChanges = [{ type, logicalId, revision: resultingRevision }];
     } else if (type === 'REMOVE') {
-      entities = entities.filter((item: any) => item.logicalId !== logicalId);
+      entities = entities.filter((item) => item.logicalId !== logicalId);
       effectiveChanges = [{ type, logicalId, revision: resultingRevision }];
     } else {
-      entities = entities.map((item: any) => item.logicalId === logicalId
+      entities = entities.map((item) => item.logicalId === logicalId
         ? { ...item, semanticRevision: resultingRevision, ...entityOverrides }
         : item);
       effectiveChanges = [{ type, logicalId, revision: resultingRevision }];
@@ -251,7 +303,9 @@ test('INSERT, MOVE, and REMOVE are represented without direct action handles', (
   out = patch(pipeline.observe(identity(), removed));
   assert.deepEqual(out.patch.removedLogicalIds, ['new']);
   assert.deepEqual(out.patch.insertedEntities, []);
-  assert.equal(pipeline.inspect(identity()).entities.some((item) => item.logicalId === 'new'), false);
+  const inspected = pipeline.inspect(identity());
+  assert.ok(inspected);
+  assert.equal(inspected.entities.some((item) => item.logicalId === 'new'), false);
 });
 
 test('MIXED delta carries inserted/updated/moved/removed entities and affected views', () => {
@@ -367,7 +421,9 @@ test('ambiguity and working-state overflow fail closed without stale continuatio
   bootstrap(pipeline, identity(), first);
   const ambiguous = nextObservation(first);
   ambiguous.semanticState.ambiguityCount = 1;
-  ambiguous.elements[0].identityAmbiguous = true;
+  const ambiguousFirst = ambiguous.elements[0];
+  assert.ok(ambiguousFirst);
+  ambiguousFirst.identityAmbiguous = true;
   const ambiguity = pipeline.observe(identity(), ambiguous);
   assert.equal(ambiguity.reasoningObservation.resetRequired, true);
   assert.equal(pipeline.hasContinuity(identity()), false);
@@ -415,6 +471,7 @@ test('RESET always delivers full snapshot and rebuilds a fresh canonical chain',
   const rebuilt = pipeline.observe(identity({ documentGeneration: 2 }), reset);
   assert.equal(rebuilt.reasoningObservation.kind, 'FULL_SNAPSHOT');
   assert.equal(rebuilt.reasoningObservation.resetRequired, false);
+  assert.ok(rebuilt.canonicalState);
   assert.notEqual(rebuilt.canonicalState.stateId, boot.canonicalState.stateId);
   assert.equal(rebuilt.canonicalState.documentGeneration, 2);
 });
@@ -496,9 +553,12 @@ test('canonical reconstructed state remains equal to the trusted rich observatio
   current = nextObservation(current, { type: 'REMOVE', logicalId: 'new' });
   const result = pipeline.observe(identity(), current);
   assert.deepEqual(result.canonicalState, pipeline.inspect(identity()));
+  assert.ok(result.canonicalState);
   const ids = result.canonicalState.entities.map((item) => item.logicalId);
   assert.deepEqual(ids, ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']);
-  assert.equal(result.canonicalState.entities.find((item) => item.logicalId === 'a').inViewport, false);
+  const entityA = result.canonicalState.entities.find((item) => item.logicalId === 'a');
+  assert.ok(entityA);
+  assert.equal(entityA.inViewport, false);
 });
 
 test('fallback never silently continues stale state and requires a trusted reset to resume compact delivery', () => {
@@ -537,6 +597,7 @@ test('explicit verification/fresh-observation requirement keeps full snapshot wi
   assert.equal(result.reasoningObservation.resetRequired, false);
   assert.equal(result.reasoningObservation.verification.freshObservationRequired, true);
   assert.equal(result.reasoningObservation.verification.reason, 'PROOF_RECHECK');
+  assert.ok(result.canonicalState);
   assert.equal(result.canonicalState.semanticRevision, 2);
   assert.equal(pipeline.hasContinuity(identity()), true);
 });
@@ -555,7 +616,11 @@ test('does not synthesize completion or foreground/browser authority', () => {
 
 test('keeps the R4-authorized read projection inside the frozen public boundary', async () => {
 
-  const files = new Map(PUBLIC_SURFACE_LOCKS);
+  const files = new Map<string, string>();
+  for (const entry of PUBLIC_SURFACE_LOCKS) {
+    const [relativePath, expected] = entry;
+    if (relativePath !== undefined && expected !== undefined) files.set(relativePath, expected);
+  }
   for (const [relativePath, expected] of files) {
     const bytes = await readFile(new URL(relativePath.replace(/^\.\.\//, '../../'), import.meta.url));
     assert.equal(sha256Blob(bytes), expected, `${relativePath} must remain byte-for-byte unchanged in P2`);
@@ -588,10 +653,10 @@ test('paired controlled small-change benchmark reduces median reasoning payload 
     const richBytes = reasoningPayloadBytes(current);
     const compactBytes = reasoningPayloadBytes(out);
     reductions.push(1 - (compactBytes / richBytes));
-    const changed = out.patch.updatedEntities.find((item) => item.logicalId === logicalId);
+    const changed = out.patch?.updatedEntities.find((item) => item.logicalId === logicalId);
     if (!changed || changed.semanticRevision !== current.semanticDelta.resultingRevision) relevantSemanticInformationLoss += 1;
     if (!result.canonicalState || result.canonicalState.semanticRevision !== current.semanticDelta.resultingRevision) staleStateContinuation += 1;
-    if (out.patch.changedViews.some((item) => item.completionStatus !== 'PARTIAL')) falseCompletion += 1;
+    if (out.patch?.changedViews.some((item) => item.completionStatus !== 'PARTIAL')) falseCompletion += 1;
     if (/activate_tab|foreground|executionMode/i.test(JSON.stringify(out))) foregroundTakeover += 1;
   }
 

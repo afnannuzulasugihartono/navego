@@ -13,7 +13,7 @@ import fs from 'node:fs';
 
 import { TOOLS } from '../../local/tools.js';
 
-const read = (name: any) => fs.readFileSync(new URL(`../../${name}`, import.meta.url), 'utf8');
+const read = (name: string) => fs.readFileSync(new URL(`../../${name}`, import.meta.url), 'utf8');
 const tools = TOOLS.map((entry) => entry.name);
 
 test('the call guide names the one surface, and no dead one', () => {
@@ -31,7 +31,7 @@ test('the guide and the README agree with the tool list', () => {
 });
 
 test('every page a reader is sent to names the install that works today', () => {
-  const pages = [
+  const pages: Array<[string, string]> = [
     ['the guide', read('docs/agent-call.md')],
     ['the README', read('local/README.md')]
   ];
@@ -47,7 +47,8 @@ test('every page a reader is sent to names the install that works today', () => 
 test('the guide says the bridge is the one road, with no transport flag left', () => {
   const guide = read('docs/agent-call.md');
   const readme = read('local/README.md');
-  for (const [name, text] of [['the guide', guide], ['the README', readme]]) {
+  const bridge: Array<[string, string]> = [['the guide', guide], ['the README', readme]];
+  for (const [name, text] of bridge) {
     assert.doesNotMatch(text, /OPERA_LOCAL_TRANSPORT/, `${name} does not carry the dead flag`);
   }
   assert.match(guide, /loopback bridge/i, 'the guide names the road');

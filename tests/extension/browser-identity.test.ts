@@ -56,7 +56,7 @@ test('the page copy answers the same as the worker copy', async () => {
 
   for (const { ua } of cases) {
     Object.defineProperty(globalThis, 'navigator', { value: { userAgent: ua }, configurable: true });
-    delete globalThis.OperaAgentBrowserId;
+    delete (globalThis as { OperaAgentBrowserId?: { browserName: string } | undefined }).OperaAgentBrowserId;
     await import(`../../extension/lib/agent-log.js?ua=${encodeURIComponent(ua)}`);
     const fromPage = globalThis.OperaAgentBrowserId?.browserName;
     assert.equal(fromPage, browserFamily({ ua }), `both copies call ${ua.slice(-24)} the same browser`);

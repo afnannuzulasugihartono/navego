@@ -15,15 +15,18 @@ const root = new URL('../../', import.meta.url);
 const sql = fs.readFileSync(new URL('hosted/migrations/20261010090000_opera_agent_konsol_tables.sql', root), 'utf8');
 
 const mapRows = [...sql.matchAll(/^ {4}\('([a-z0-9_]+)', '(owner|operator)', '(.*)'\),?$/gm)]
-  .map((match) => ({ table: match[1], scope: match[2], qual: match[3] }));
+  .map((match) => ({ table: match[1], scope: match[2], qual: match[3] }))
+  .filter((row): row is { table: string; scope: string; qual: string } => row.table !== undefined && row.scope !== undefined && row.qual !== undefined);
 const map = new Map(mapRows.map((row) => [row.table, row]));
 
 const policyRows = [...sql.matchAll(/^create policy (\w+) on public\.([a-z0-9_]+) for select to authenticated using \((.*)\);$/gm)]
-  .map((match) => ({ name: match[1], table: match[2], qual: match[3] }));
+  .map((match) => ({ name: match[1], table: match[2], qual: match[3] }))
+  .filter((row): row is { name: string; table: string; qual: string } => row.name !== undefined && row.table !== undefined && row.qual !== undefined);
 const dropRows = [...sql.matchAll(/^drop policy if exists (\w+) on public\.([a-z0-9_]+);$/gm)]
-  .map((match) => ({ name: match[1], table: match[2] }));
+  .map((match) => ({ name: match[1], table: match[2] }))
+  .filter((row): row is { name: string; table: string } => row.name !== undefined && row.table !== undefined);
 
-const balanced = (text: any) => {
+const balanced = (text: string) => {
   let depth = 0;
   for (const ch of text) {
     if (ch === '(') depth += 1;
@@ -137,7 +140,9 @@ test('the tautology is gone and workflow runs stay owned', () => {
 
   const code = sql.split('\n').filter((line) => !line.trim().startsWith('--')).join('\n');
   assert.doesNotMatch(code, /device_name = d\.device_name/, 'the silent drift that opened every run to every device is not reintroduced');
-  assert.match(map.get('opera_workflow_runs').qual, /\(opera_workflow_runs\.user_id = auth\.uid\(\)\) or exists/, 'a run is readable to its user and to the owner of its device');
+  const runs = map.get('opera_workflow_runs');
+  assert.ok(runs, 'the scope map names workflow runs');
+  assert.match(runs.qual, /\(opera_workflow_runs\.user_id = auth\.uid\(\)\) or exists/, 'a run is readable to its user and to the owner of its device');
   assert.equal((sql.match(/auth\.uid\(\)/g) || []).length >= 20, true, 'the map filters by session identity throughout');
 });
 

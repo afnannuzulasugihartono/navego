@@ -22,13 +22,21 @@ import assert from 'node:assert/strict';
 
 import { formatComments, commentLineMask } from '../helpers/comment-format.ts';
 
-const source = (...lines) => [...lines, ''].join('\n');
-const format = (ext: any, ...lines) => formatComments(source(...lines), ext);
+interface CaseEntry {
+  name: string;
+  ext?: string;
+  lines?: string[];
+  expected?: string;
+  checks?: Array<{ ext: string; lines: string[]; expected: string }>;
+}
 
-const codeOf = (text: any, ext: any) => {
+const source = (...lines: string[]) => [...lines, ''].join('\n');
+const format = (ext: string, ...lines: string[]) => formatComments(source(...lines), ext);
+
+const codeOf = (text: string, ext: string) => {
   const mask = commentLineMask(text, ext);
   return text.split('\n')
-    .filter((line: any, index: any) => !mask[index] && line.trim() !== '')
+    .filter((line: string, index: number) => !mask[index] && line.trim() !== '')
     .join('\n');
 };
 
@@ -36,7 +44,7 @@ const codeOf = (text: any, ext: any) => {
 // A case without an expected output is a case the formatter must leave exactly as it found it.
 // The table is the only place a case is written, so a case cannot drift from its own regression check.
 
-const CASES = [
+const CASES: CaseEntry[] = [
   {
     name: 'a comment block at column zero is a header, and it is spaced from the code',
     ext: '.ts',
@@ -221,7 +229,8 @@ const CASES = [
 
 // A case holding checks is one test with more than one input, and it still contributes every input to the corpus.
 
-const runsOf = (entry: any) => entry.checks ?? [entry];
+const runsOf = (entry: CaseEntry): Array<{ ext: string; lines: string[]; expected: string | undefined }> =>
+  entry.checks ?? [{ ext: entry.ext ?? '', lines: entry.lines ?? [], expected: entry.expected }];
 const CORPUS = CASES.flatMap(runsOf);
 
 for (const entry of CASES) {

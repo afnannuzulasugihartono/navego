@@ -4,13 +4,15 @@
 // @dependencies: semantic-working-state.
 
 import {
-  type PublicWorkingState,
-  type SemanticEntity,
-  type SemanticView,
   SemanticWorkingStateError,
-  type StoreOptions,
   createSemanticWorkingStateStore,
 } from './semantic-working-state.js';
+import type {
+  PublicWorkingState,
+  SemanticEntity,
+  SemanticView,
+  StoreOptions,
+} from './semantic-working-state.ts';
 
 export interface ReasoningProvenance {
   category: string;

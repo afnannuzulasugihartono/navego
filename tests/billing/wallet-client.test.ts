@@ -23,11 +23,11 @@ function home() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'opera-wallet-'));
 }
 
-function fakeFetch(answer: any, status = 200) {
+function fakeFetch(answer: unknown, status = 200) {
   const calls: any = [];
-  const impl = async (url: any, options: any) => {
-    calls.push({ url, body: JSON.parse(options.body) });
-    return { ok: status < 400, status, json: async () => answer };
+  const impl = async (url: string | URL | Request, options?: RequestInit) => {
+    calls.push({ url, body: JSON.parse(String(options?.body)) });
+    return new Response(JSON.stringify(answer), { status });
   };
   return { impl, calls };
 }
@@ -39,8 +39,10 @@ test('a pairing that the server accepts writes the device file and keeps the tok
   assert.equal(out.deviceName, 'laptop');
   assert.equal(calls[0].body.action, 'pair');
   assert.match(calls[0].body.token, /^[a-f0-9]{64}$/, 'the token is generated, not chosen by the server');
-  assert.equal(readDevice({ home: dir }).token, calls[0].body.token);
-  assert.equal(readDevice({ home: dir }).deviceName, 'laptop');
+  const device = readDevice({ home: dir });
+  assert.ok(device, 'the device file was written');
+  assert.equal(device.token, calls[0].body.token);
+  assert.equal(device.deviceName, 'laptop');
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
@@ -55,7 +57,7 @@ test('a pairing the server refuses writes nothing', async () => {
 test('an unpaired machine refuses to call the wallet before any request is made', async () => {
   const dir = home();
   let called = false;
-  const impl = async () => { called = true; return { ok: true, status: 200, json: async () => ({}) }; };
+  const impl = async () => { called = true; return new Response('{}', { status: 200 }); };
   await assert.rejects(() => walletBalance({ home: dir, fetchImpl: impl }), /not paired/);
   assert.equal(called, false, 'a wallet call without a device must not reach the network');
   fs.rmSync(dir, { recursive: true, force: true });

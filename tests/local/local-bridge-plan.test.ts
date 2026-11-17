@@ -17,8 +17,28 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { createBridgeServer, createCloudMeter } from '../../local/bridge-ws.js';
+import type { CloudMeter } from '../../local/bridge-ws.js';
 import { createScriptedDevice } from '../helpers/scripted-device.ts';
 import { fakeCloud, pilotSession } from '../helpers/fake-cloud.ts';
+
+interface BridgeAnswer {
+  ok?: boolean;
+  error?: { code?: string; message?: string };
+  result?: Array<{ id: number; url: string; title: string }>;
+}
+
+interface HealthAnswer {
+  linked?: boolean;
+  meterRefusal?: string;
+}
+
+interface ScriptedCommand {
+  method: string;
+  params?: Record<string, unknown> | null;
+}
+
+const makeDevice = (options: { url: string; instanceId: string; deviceName?: string; handle?: (command: ScriptedCommand) => unknown }) =>
+  createScriptedDevice(options as unknown as Parameters<typeof createScriptedDevice>[0]);
 
 const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -31,16 +51,16 @@ const waitFor = (promise: any, ms: any, what: any) => Promise.race([
   sleep(ms).then(() => { throw new Error(`timed out waiting for ${what}`); })
 ]);
 
-async function startBridge({ cloud, heartbeatMs = 1000 } = {}) {
-  const bridge = createBridgeServer({ port: 0, heartbeatMs, cloud });
-  await bridge.listen();
-  return { bridge, ...bridge.address() };
+async function startBridge({ cloud, heartbeatMs = 1000 }: { cloud?: ReturnType<typeof fakeCloud>; heartbeatMs?: number } = {}) {
+  const bridge = createBridgeServer({ port: 0, heartbeatMs, ...(cloud ? { cloud: cloud as unknown as CloudMeter } : {}) });
+  const { port, host } = await bridge.listen();
+  return { bridge, port, host };
 }
 
 test('a session the cloud cannot reach is refused, and the refusal names the meter', async () => {
-  const cloud = fakeCloud({ open: new Error('fetch failed') });
+  const cloud = fakeCloud({ open: new Error('fetch failed') as unknown as Record<string, unknown> });
   const { bridge, port } = await startBridge({ cloud });
-  const device = createScriptedDevice({ url: `ws://127.0.0.1:${port}`, instanceId: 'no-cloud' });
+  const device = makeDevice({ url: `ws://127.0.0.1:${port}`, instanceId: 'no-cloud' });
   await device.connected;
 
   const close = await waitFor(device.closed, 1500, 'the refused device to close');
@@ -48,7 +68,7 @@ test('a session the cloud cannot reach is refused, and the refusal names the met
   const error = device.events.find((frame: any) => frame.type === 'error');
   assert.match(String(error?.error ?? ''), /meter/i, 'the refusal message names the meter');
 
-  const health = await fetch(`http://127.0.0.1:${port}/health`).then((response) => response.json());
+  const health = (await fetch(`http://127.0.0.1:${port}/health`).then((response) => response.json())) as HealthAnswer;
   assert.equal(health.linked, false, 'an unaccounted session never becomes a ready device');
   assert.match(String(health.meterRefusal ?? ''), /meter/i, 'the health report carries the refusal');
 
@@ -59,7 +79,7 @@ test('a session the cloud refuses because the day is spent never becomes ready',
   const spentDay = { ok: false, message: "today's quota of 200 commands for plan.pilot is used; resets tomorrow" };
   const cloud = fakeCloud({ open: spentDay });
   const { bridge, port } = await startBridge({ cloud });
-  const device = createScriptedDevice({ url: `ws://127.0.0.1:${port}`, instanceId: 'spent-day' });
+  const device = makeDevice({ url: `ws://127.0.0.1:${port}`, instanceId: 'spent-day' });
   await device.connected;
 
   const close = await waitFor(device.closed, 1500, 'the refused device to close');
@@ -74,7 +94,7 @@ test('a session the cloud refuses because the day is spent never becomes ready',
 test('the allowance refuses the command past it, and names the plan', async () => {
   const cloud = fakeCloud({ open: pilotSession({ sessionAllowance: 2 }) });
   const { bridge, port } = await startBridge({ cloud });
-  const device = createScriptedDevice({
+  const device = makeDevice({
     url: `ws://127.0.0.1:${port}`,
     instanceId: 'allowance',
     handle: () => ({ read: 1 })
@@ -82,9 +102,9 @@ test('the allowance refuses the command past it, and names the plan', async () =
   await device.connected;
   await sleep(50);
 
-  const first = await bridge.send('page.read', { view: 'viewport' }, { timeoutMs: 2000 });
-  const second = await bridge.send('page.read', { view: 'viewport' }, { timeoutMs: 2000 });
-  const third = await bridge.send('page.read', { view: 'viewport' }, { timeoutMs: 2000 });
+  const first = (await bridge.send('page.read', { view: 'viewport' }, { timeoutMs: 2000 })) as BridgeAnswer;
+  const second = (await bridge.send('page.read', { view: 'viewport' }, { timeoutMs: 2000 })) as BridgeAnswer;
+  const third = (await bridge.send('page.read', { view: 'viewport' }, { timeoutMs: 2000 })) as BridgeAnswer;
 
   assert.equal(first.ok, true);
   assert.equal(second.ok, true);
@@ -101,7 +121,7 @@ test('the allowance refuses the command past it, and names the plan', async () =
 test('the ping proof is never metered, so proving a link cannot spend the allowance', async () => {
   const cloud = fakeCloud({ open: pilotSession({ sessionAllowance: 1 }) });
   const { bridge, port } = await startBridge({ cloud });
-  const device = createScriptedDevice({
+  const device = makeDevice({
     url: `ws://127.0.0.1:${port}`,
     instanceId: 'ping-proof',
     handle: () => ({ read: 1 })
@@ -109,11 +129,11 @@ test('the ping proof is never metered, so proving a link cannot spend the allowa
   await device.connected;
   await sleep(50);
 
-  const ping = await bridge.send('ping', {}, { timeoutMs: 2000 });
+  const ping = (await bridge.send('ping', {}, { timeoutMs: 2000 })) as BridgeAnswer;
   assert.equal(ping.ok, true);
-  const spent = await bridge.send('page.read', {}, { timeoutMs: 2000 });
+  const spent = (await bridge.send('page.read', {}, { timeoutMs: 2000 })) as BridgeAnswer;
   assert.equal(spent.ok, true);
-  const pingAgain = await bridge.send('ping', {}, { timeoutMs: 2000 });
+  const pingAgain = (await bridge.send('ping', {}, { timeoutMs: 2000 })) as BridgeAnswer;
   assert.equal(pingAgain.ok, true, 'the proof answers even when the allowance is spent');
 
   await device.stop();
@@ -123,7 +143,7 @@ test('the ping proof is never metered, so proving a link cannot spend the allowa
 test('the usage report lands once when the session ends, with the device credentials', async () => {
   const cloud = fakeCloud({ open: pilotSession({ sessionAllowance: 50 }) });
   const { bridge, port } = await startBridge({ cloud });
-  const device = createScriptedDevice({
+  const device = makeDevice({
     url: `ws://127.0.0.1:${port}`,
     deviceName: 'meter-report',
     instanceId: 'report',
@@ -139,9 +159,11 @@ test('the usage report lands once when the session ends, with the device credent
 
   const reports = cloud.reports.filter((entry) => entry.phase === 'report');
   assert.equal(reports.length, 1, 'one report per session');
-  assert.equal(reports[0].commands, 2, 'the report carries the counted commands');
-  assert.equal(reports[0].deviceName, 'meter-report');
-  assert.equal(typeof reports[0].token, 'string');
+  const [report] = reports;
+  assert.ok(report, 'the report landed');
+  assert.equal(report.commands, 2, 'the report carries the counted commands');
+  assert.equal(report.deviceName, 'meter-report');
+  assert.equal(typeof report.token, 'string');
 
   await bridge.close();
   await sleep(50);
@@ -151,7 +173,7 @@ test('the usage report lands once when the session ends, with the device credent
 test('a fresh session that ran nothing reports nothing, so an idle browser never spends a round trip', async () => {
   const cloud = fakeCloud({ open: pilotSession() });
   const { bridge, port } = await startBridge({ cloud });
-  const device = createScriptedDevice({ url: `ws://127.0.0.1:${port}`, instanceId: 'idle' });
+  const device = makeDevice({ url: `ws://127.0.0.1:${port}`, instanceId: 'idle' });
   await device.connected;
   await sleep(50);
 
@@ -169,11 +191,13 @@ test('the cloud meter speaks exactly the two calls the cloud answers', async () 
   const meter = createCloudMeter({
     url: 'http://cloud.invalid/',
     fetchImpl: async (url, init) => {
-      seen.push({ url, body: JSON.parse(init.body) });
+      const body = typeof init?.body === 'string' ? init.body : String(init?.body ?? '');
+      seen.push({ url, body: JSON.parse(body) });
       return new Response(JSON.stringify(answer), { status: 200, headers: { 'content-type': 'application/json' } });
     }
   });
   const opened = await meter.sessionOpen({ deviceName: 'meter-test', token: 't'.repeat(64) });
+  assert.ok(opened, 'the cloud answered the session open');
   assert.equal(opened.plan, 'plan.pilot');
   assert.equal(seen[0].body.action, 'session_open');
   assert.equal(seen[0].body.deviceName, 'meter-test');
@@ -181,6 +205,7 @@ test('the cloud meter speaks exactly the two calls the cloud answers', async () 
   const reported = await meter.sessionReport({ deviceName: 'meter-test', token: 't'.repeat(64), commands: 3 });
   assert.equal(seen[1].body.action, 'session_report');
   assert.equal(seen[1].body.commands, 3);
+  assert.ok(reported, 'the cloud answered the session report');
   assert.equal(reported.ok, true);
 });
 

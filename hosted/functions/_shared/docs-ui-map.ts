@@ -56,12 +56,15 @@ export function resolveMenuTarget(path: string | string[], locale = 'en') {
   const lowered = Object.fromEntries(
     Object.keys(MENU_MAP).map((name) => [name.toLowerCase(), name])
   );
-  const labels: string[] = [];
+  const resolved: Array<{ label: string; verify: string }> = [];
   for (const segment of segments) {
-    const canonical = lowered[String(segment).toLowerCase()] as keyof typeof MENU_MAP | undefined;
-    if (!canonical) return null;
-    labels.push(locale === 'id' ? MENU_MAP[canonical].id : canonical);
+    const canonical = lowered[String(segment).toLowerCase()];
+    if (typeof canonical !== 'string') return null;
+    const entry = MENU_MAP[canonical];
+    if (!entry) return null;
+    resolved.push({ label: locale === 'id' ? entry.id : canonical, verify: entry.verify });
   }
-  const targetName = lowered[String(segments[segments.length - 1]).toLowerCase()] as keyof typeof MENU_MAP;
-  return { labels, verify: { selector: MENU_MAP[targetName].verify } };
+  const last = resolved[resolved.length - 1];
+  if (!last) return null;
+  return { labels: resolved.map((item) => item.label), verify: { selector: last.verify } };
 }

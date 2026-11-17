@@ -7,11 +7,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-const read = (name: any) => {
+const read = (name: string) => {
   const migration = fs.readFileSync(new URL(`../../hosted/migrations/${name}`, import.meta.url), 'utf8');
   const match = migration.match(/\$wf\$(.*?)\$wf\$/s);
   assert.ok(match, `${name} must embed the workflow JSON`);
-  return JSON.parse(match[1]);
+  const embedded = match[1];
+  assert.ok(embedded !== undefined);
+  return JSON.parse(embedded);
 };
 
 test('footnote inserts and proves the note exists', () => {

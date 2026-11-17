@@ -69,7 +69,8 @@ test('a balance that cannot cover the price is refused with 402, after the price
   assert.equal(out.status, 402);
   assert.equal(out.body.why, 'insufficient');
   assert.equal(out.body.availableCents, 500);
-  assert.equal(out.body.quote.amountCents, 100000);
+  const quote = out.body.quote as { amountCents: number };
+  assert.equal(quote.amountCents, 100000);
 });
 
 test('a plan too long for one job is refused before the reserve is called', async () => {
@@ -123,6 +124,7 @@ test('the history is one timeline the dashboard reads, and it carries no price o
   const { deps: d, calls } = deps();
   const out = await handleWalletAction('wallet-history', { amount_cents: 1, owner_id: 'x' }, d);
   assert.equal(out.status, 200);
-  assert.equal(out.body.entries[0].kind, 'deposit');
+  const entries = out.body.entries as Array<{ kind: string }>;
+  assert.equal(entries[0]?.kind, 'deposit');
   assert.deepEqual(calls, [], 'a history is a read, so nothing that changes money is called');
 });

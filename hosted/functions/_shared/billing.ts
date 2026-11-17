@@ -215,13 +215,15 @@ export function snapPaymentMethods(amountCents: unknown, currency = 'IDR'): { ch
 // The prefix does name the environment today - sandbox keys start SB-Mid-server-, production keys Mid-server- - but a host inferred from a string the provider controls breaks silently the day the format changes, and the failure looks like a bad key.
 // So the environment is stated, and the refusal log names the host that was used so a mismatch is visible instead of silent.
 
+const SNAP_PRODUCTION_URL = 'https://app.midtrans.com/snap/v1/transactions';
+
 const SNAP_ENVIRONMENTS: Record<string, string> = Object.freeze({
-  production: 'https://app.midtrans.com/snap/v1/transactions',
+  production: SNAP_PRODUCTION_URL,
   sandbox: 'https://app.sandbox.midtrans.com/snap/v1/transactions'
 });
 
 export function snapUrlFor(environment: unknown): string {
-  return SNAP_ENVIRONMENTS[String(environment || 'production')] || SNAP_ENVIRONMENTS.production;
+  return SNAP_ENVIRONMENTS[String(environment || 'production')] ?? SNAP_PRODUCTION_URL;
 }
 
 // WHY THE EXPIRY IS PASSED IN AND NOT INVENTED HERE.

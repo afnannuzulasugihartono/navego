@@ -3,8 +3,7 @@
 // @state: the pilot and the firm, their daily quota, their session allowance, and the features only the firm gets.
 // @dependencies: none.
 
-// WHY THIS FILE EXISTS
-// The gate lives in the service, never in the binary, so the service needs one place that says what a plan allows.
+// WHY THIS FILE EXISTS The gate lives in the service, never in the binary, so the service needs one place that says what a plan allows.
 // Two surfaces read it: the hosted MCP for the account's plan, and the loopback bridge for the session allowance a paired device gets for that account.
 
 // WHY THE NUMBERS ARE MIRRORED IN SQL.
@@ -40,7 +39,9 @@ export const DEFAULT_PLAN = 'plan.pilot';
 export type PlanName = keyof typeof PLANS | (string & {});
 
 export function planFor(name: string): PlanDefinition {
-  return PLANS[name] ?? PLANS[DEFAULT_PLAN];
+  const plan = PLANS[name] ?? PLANS[DEFAULT_PLAN];
+  if (!plan) throw new Error('the default plan definition is missing');
+  return plan;
 }
 
 export function allowsFeature(name: string, feature: keyof PlanFeatures): boolean {

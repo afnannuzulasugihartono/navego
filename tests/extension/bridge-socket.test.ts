@@ -156,23 +156,23 @@ test('a handshake needs both a token and a device name, and never accepts a part
 // The device sends completions over 2 KiB as versioned gzip, because page JSON shrinks five to fifty times and the transfer dominates on a slow link.
 // The bridge must read exactly what the device writes — same version byte, same cap relation — or large results die in transit with no error the device can act on.
 
-async function gzipFrame(payload: any, version = 1) {
+async function gzipFrame(payload: unknown, version = 1) {
   const text = JSON.stringify(payload);
   const stream = new CompressionStream('gzip');
   const writer = stream.writable.getWriter();
   const reader = stream.readable.getReader();
-  const chunks: any = [];
+  const chunks: Uint8Array[] = [];
   const pump = (async () => {
     for (;;) {
       const { done, value } = await reader.read();
-      if (done) return;
+      if (done || value === undefined) return;
       chunks.push(value);
     }
   })();
   await writer.write(new TextEncoder().encode(text));
   await writer.close();
   await pump;
-  const total = chunks.reduce((n: any, c: any) => n + c.length, 0);
+  const total = chunks.reduce((n, c) => n + c.length, 0);
   const out = new Uint8Array(total + 1);
   out[0] = version;
   let offset = 1;
@@ -218,9 +218,27 @@ test('binary garbage that is not gzip is refused, not thrown', async () => {
 // The timer used to guard a verified socket while verification itself awaited an RPC plus a database connect, so a cold isolate timed out valid devices and closed them, then kept verifying into the closed socket.
 // These three drive the real socket server with small budgets: arrival answers the first timer, absence still closes, and a hung verify is still bounded.
 
-const sleepMs = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleepMs = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function fakeDeviceSocket() {
+interface FakeDeviceSocket {
+  readyState: number;
+  sent: string[];
+  closed: { code: number; reason: string } | null;
+  onopen: (() => void) | null;
+  onmessage: ((event: { data: unknown }) => unknown) | null;
+  onclose: (() => void) | null;
+  onerror: (() => void) | null;
+  send(text: unknown): void;
+  close(code: number, reason: string): void;
+}
+
+interface ServeTestSocketOptions {
+  verify: (identity: { token: string; deviceName: string; instanceId?: string }) => Promise<{ ok: boolean; deviceId?: string }>;
+  handshakeTimeoutMs: number;
+  verifyTimeoutMs: number;
+}
+
+function fakeDeviceSocket(): FakeDeviceSocket {
   return {
     readyState: 1,
     sent: [],
@@ -229,10 +247,10 @@ function fakeDeviceSocket() {
     onmessage: null,
     onclose: null,
     onerror: null,
-    send(text: any) {
+    send(text) {
       this.sent.push(String(text));
     },
-    close(code: any, reason: any) {
+    close(code, reason) {
       if (this.closed) return;
       this.closed = { code, reason };
       this.readyState = 3;
@@ -241,16 +259,16 @@ function fakeDeviceSocket() {
   };
 }
 
-function installFakeUpgrade(socket: any) {
-  const previous = globalThis.Deno;
-  globalThis.Deno = { upgradeWebSocket: () => ({ socket, response: new Response('upgraded') }) };
+function installFakeUpgrade(socket: FakeDeviceSocket) {
+  const previous = Reflect.get(globalThis, 'Deno');
+  Reflect.set(globalThis, 'Deno', { upgradeWebSocket: () => ({ socket, response: new Response('upgraded') }) });
   return () => {
-    if (previous === undefined) delete globalThis.Deno;
-    else globalThis.Deno = previous;
+    if (previous === undefined) Reflect.deleteProperty(globalThis, 'Deno');
+    else Reflect.set(globalThis, 'Deno', previous);
   };
 }
 
-function serveTestSocket({ verify, handshakeTimeoutMs, verifyTimeoutMs }) {
+function serveTestSocket({ verify, handshakeTimeoutMs, verifyTimeoutMs }: ServeTestSocketOptions) {
   const socket = fakeDeviceSocket();
   const restore = installFakeUpgrade(socket);
   serveDeviceSocket(upgradeRequest(), {
@@ -264,12 +282,12 @@ function serveTestSocket({ verify, handshakeTimeoutMs, verifyTimeoutMs }) {
   return { socket, restore };
 }
 
-function closeTestSocket({ socket, restore }) {
+function closeTestSocket({ socket, restore }: { socket: FakeDeviceSocket; restore: () => void }) {
   socket.close(1000, 'test done');
   restore();
 }
 
-async function waitClosed(socket: any, limitMs: any) {
+async function waitClosed(socket: FakeDeviceSocket, limitMs: number) {
   const started = Date.now();
   while (!socket.closed && Date.now() - started < limitMs) {
     await sleepMs(10);
@@ -287,8 +305,12 @@ test('a hello that verifies slowly still becomes ready instead of timing out', a
     verifyTimeoutMs: 400
   });
   try {
-    server.socket.onopen();
-    await server.socket.onmessage({ data: handshakeFrame('tok', 'dev') });
+    const open = server.socket.onopen;
+    const onmessage = server.socket.onmessage;
+    assert.ok(open);
+    assert.ok(onmessage);
+    open();
+    await onmessage({ data: handshakeFrame('tok', 'dev') });
     const types = server.socket.sent.map((raw) => JSON.parse(raw).type);
     assert.deepEqual(types, ['ready']);
     assert.equal(server.socket.closed, null);
@@ -304,7 +326,9 @@ test('a socket that never says hello is still timed out and closed', async () =>
     verifyTimeoutMs: 400
   });
   try {
-    server.socket.onopen();
+    const open = server.socket.onopen;
+    assert.ok(open);
+    open();
     const waited = await waitClosed(server.socket, 2000);
     assert.ok(server.socket.closed, 'a silent socket was never closed');
     assert.ok(waited < 2000, `a silent socket took ${waited} ms to close`);
@@ -325,8 +349,12 @@ test('a verify that never answers is still bounded instead of holding the socket
     verifyTimeoutMs: 60
   });
   try {
-    server.socket.onopen();
-    void server.socket.onmessage({ data: handshakeFrame('tok', 'dev') });
+    const open = server.socket.onopen;
+    const onmessage = server.socket.onmessage;
+    assert.ok(open);
+    assert.ok(onmessage);
+    open();
+    void onmessage({ data: handshakeFrame('tok', 'dev') });
     const waited = await waitClosed(server.socket, 2000);
     assert.ok(server.socket.closed, 'a hung verify held the socket past its budget');
     assert.ok(waited < 2000, `a hung verify held the socket for ${waited} ms`);

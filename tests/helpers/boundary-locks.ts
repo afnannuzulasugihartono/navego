@@ -182,19 +182,31 @@
 // WHY these three were re-pinned on 2026-11-17: the 1.7.5 release rode them.
 // The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
 
+// WHY background.ts was re-pinned on 2026-11-17: the worker file gained an ambient declaration for the two reads of `self`.
+// `declare const self: Pick<EventTarget, 'addEventListener'> | undefined` names the browser script scope without binding an address TypeScript does not know; the emitted background.js is byte-identical.
+// The public surface, the manifest and the protocol did not move, so only this pin moves.
+
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
   ['../extension/content.ts', '02365ade2ed83b234e7056ff51c3b7b41b1cacf66c74fdad41e1009b8f464fa5'],
-  ['../extension/background.ts', 'b2e496988683da01a2248ba214edf8f18182d3eeeb25e0823603edd528752316'],
+  ['../extension/background.ts', '0590232b5cb0fad3344459ccc4ab14f61b0d9a82ba9107159e94c54b6eb01da6'],
   ['../extension/manifest.json', '46af96ef36e8cab18c5e5d8ebf4659b6c216579f886d78b47ebec01aa65d94ed'],
 ]);
 
+// WHY collect and control-flow moved on 2026-11-17: the hosted functions are now type-checked by CI (deno check in ci.yml).
+// Deno does not resolve a ./x.js import to its .ts or .d.ts twin, so collect and control-flow derive their guards type from the runtime value they already import instead of importing the type, and collect's type-only import names the .ts file it means.
+// Every edit is type-only; the emitted shared/*.js twins are byte-for-byte unchanged, verified in the same commit by hashing every file before and after the conversion.
+
 export const OBSERVATION_STACK_LOCKS = Object.freeze([
   ['../shared/reactive-vm.ts', '7d15b2764ef9eb8f9929d0e6095d6f8fa1442898678b563d00852f7dc3b74d06'],
-  ['../shared/reactive-vm-control-flow.ts', '7a07c7dd2ea1c896c2eb2f9f87b22fc670fef09da9b33fdd0a45cacb7c3ea5b9'],
-  ['../shared/reactive-vm-collect.ts', '8a29d80023a93c856dbd8bd9690f473b03d3469fef4c36d8c94a04363f09ed44'],
+  ['../shared/reactive-vm-control-flow.ts', '25145d90fa9d9db026e32f829da75ed040fc790fe1670fab7d4ab56f8dd8c5d4'],
+  ['../shared/reactive-vm-collect.ts', 'e7901a77a8072899293342e97973c26d0ab2323117177a3dfdf229353e7a8647'],
 ]);
 
+// WHY multi-signal-relevance and delta-first-observation moved on 2026-11-17: the hosted functions are now type-checked by CI (deno check in ci.yml).
+// Deno does not resolve a ./x.js import to its .ts or .d.ts twin, so the type-only imports inside these frozen sources now name the .ts file they mean; the runtime import stays on the .js twin.
+// Every edit is type-only; the emitted shared/*.js twins are byte-for-byte unchanged, verified in the same commit by hashing every file before and after the conversion.
+
 export const RELEVANCE_STACK_LOCKS = Object.freeze([
-  ['../shared/multi-signal-relevance.ts', '05c95a51a4d6f9d7fafc877977a0bec7de518dc8eabf63591ddbe2d13260e85c'],
-  ['../shared/delta-first-observation.ts', '3d053f319619fee9839981dc14228d775ff528390030cb1b3804f5fc74bcdc2a'],
+  ['../shared/multi-signal-relevance.ts', '40b6a2d33789fb02f61d1910ee5dd0d64c5f9198c908a77b378a2246111d549d'],
+  ['../shared/delta-first-observation.ts', '25d55f8f547b5361da4a6423d300d36a7450afa375d2470c40f62ee936a8b143'],
 ]);

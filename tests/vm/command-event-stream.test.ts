@@ -73,7 +73,9 @@ test('emit refuses a kind outside the allowlist, so a device cannot ship arbitra
   const kinds = migration().match(/kind\s*=\s*any\s*\(\s*array\s*\[([^\]]+)\]/i);
   assert.ok(kinds, 'the allowlist must be enforced with an array membership test');
 
-  const listed = [...kinds[1].matchAll(/'([a-z_]+)'/g)].map((m) => m[1]);
+  const listedBody = kinds[1];
+  assert.ok(listedBody, 'the allowlist match must carry the array body');
+  const listed = [...listedBody.matchAll(/'([a-z_]+)'/g)].map((m) => m[1]);
   assert.deepEqual(listed.sort(), ['done', 'note', 'observation', 'received', 'step'],
     'the allowlist drifted from the documented set');
 });

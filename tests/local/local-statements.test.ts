@@ -70,6 +70,7 @@ test('a delivered PDF is checked on disk and its pages counted from the file', (
   assert.equal(out.record.pagesFrom, 'counted from the file structure');
   assert.equal(out.record.bytes, PDF.length);
   assert.deepEqual(out.record.balance, { raw: 'Rp 8.900.000', digits: '8900000' });
+  assert.ok(out.record.balanceFrom);
   assert.match(out.record.balanceFrom, /page/);
   assert.equal(out.manifest.delivered, 1);
   assert.deepEqual(out.manifest.periods, ['2026-09']);
@@ -107,6 +108,7 @@ test('a second line for the same client-month is refused before it can bill twic
 
   assert.equal(again.duplicate, true);
   assert.equal(again.manifest.delivered, 1);
+  assert.ok(again.why);
   assert.match(again.why, /twice/);
 
   const replaced = statementDelivered({ ...job, balance: 'Rp 9.100.000', replace: true });

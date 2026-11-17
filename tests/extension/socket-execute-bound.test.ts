@@ -36,13 +36,15 @@ test('a hung command still releases the queue for the next one', async () => {
   const previous = globalThis.OPERA_SOCKET_EXECUTE_TIMEOUT_MS;
   globalThis.OPERA_SOCKET_EXECUTE_TIMEOUT_MS = '40';
   try {
+    const command = { id: 'c1', method: 'tabs.list', params: {}, timeoutMs: 40_000 };
     const slow = () => new Promise(() => {});
-    await assert.rejects(() => module.withExecuteTimeout(slow, '2026-10-14T00:00:00Z'), /no answer from the tab within 40 ms/);
+    await assert.rejects(() => module.withExecuteTimeout(slow, command), /no answer from the tab within 40 ms/);
 
-    const after = await module.withExecuteTimeout(async () => ({ ok: true, tabs: [] }), '2026-10-14T00:00:01Z');
+    const after = await module.withExecuteTimeout(async () => ({ ok: true, tabs: [] }), command);
+    assert.ok(after && typeof after === 'object' && 'ok' in after);
     assert.equal(after.ok, true, 'the queue walks free behind the abandoned command');
   } finally {
-    if (previous === undefined) delete globalThis.OPERA_SOCKET_EXECUTE_TIMEOUT_MS;
+    if (previous === undefined) delete (globalThis as { OPERA_SOCKET_EXECUTE_TIMEOUT_MS?: number | string | undefined }).OPERA_SOCKET_EXECUTE_TIMEOUT_MS;
     else globalThis.OPERA_SOCKET_EXECUTE_TIMEOUT_MS = previous;
   }
 });

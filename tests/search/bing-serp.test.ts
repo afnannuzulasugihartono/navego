@@ -16,7 +16,10 @@ const fixture = JSON.parse(
 
 test('the parser reads the real page-1 SERP into the external results, in order, with snippets', () => {
   const { results, nextFirst } = parseBingSerp(fixture, { currentFirst: 1 });
+  const first = results[0];
+  const fifth = results[4];
   assert.equal(results.length, 10);
+  assert.ok(first && fifth, 'the SERP yields at least five cards');
   assert.deepEqual(results.map((r) => r.site), [
     'mcpmarket.com',
     'docs.agentopera.ai',
@@ -29,12 +32,12 @@ test('the parser reads the real page-1 SERP into the external results, in order,
     'press.opera.com',
     'tejima.jp'
   ]);
-  assert.equal(results[0].rank, 1);
-  assert.equal(results[0].title, 'Opera Agent: Private Local MCP Browser Automation Bridge');
-  assert.equal(results[0].url, 'https://mcpmarket.com/server/opera-agent');
-  assert.ok(results[0].snippet.includes('Connect MCP clients'), 'snippet carries the card description');
-  assert.equal(results[4].title, 'GitHub - operasoftware/opera-devtools-mcp');
-  assert.ok(results[4].snippet.includes('opera-devtools-mcp'), 'the date prefix stays part of the snippet, verbatim');
+  assert.equal(first.rank, 1);
+  assert.equal(first.title, 'Opera Agent: Private Local MCP Browser Automation Bridge');
+  assert.equal(first.url, 'https://mcpmarket.com/server/opera-agent');
+  assert.ok(first.snippet.includes('Connect MCP clients'), 'snippet carries the card description');
+  assert.equal(fifth.title, 'GitHub - operasoftware/opera-devtools-mcp');
+  assert.ok(fifth.snippet.includes('opera-devtools-mcp'), 'the date prefix stays part of the snippet, verbatim');
   assert.ok(results.every((r) => r.snippet.length > 0), 'every card ships its snippet');
   assert.equal(nextFirst, 11, 'the pagination link names the next page, whatever the page size is today');
 });
@@ -77,8 +80,10 @@ test('a card with only a display anchor falls back to the site as its title, nev
     links: [{ href: 'https://example.com/page', text: 'example.com https://example.com › page' }]
   });
   assert.equal(results.length, 1);
-  assert.equal(results[0].title, 'example.com');
-  assert.equal(results[0].url, 'https://example.com/page');
+  const first = results[0];
+  assert.ok(first, 'the card comes back');
+  assert.equal(first.title, 'example.com');
+  assert.equal(first.url, 'https://example.com/page');
 });
 
 test('an empty SERP answers with zero results and no pagination claim', () => {

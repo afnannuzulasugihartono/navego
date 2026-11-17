@@ -17,6 +17,20 @@
 import { readZip } from './zip-read.js';
 import { UPDATE_BASE_URL } from './endpoints.js';
 
+export interface BuildWritableStream {
+  write(chunk: Uint8Array): Promise<void>;
+  close(): Promise<void>;
+}
+
+export interface BuildWritableFileHandle {
+  createWritable(): Promise<BuildWritableStream>;
+}
+
+export interface BuildFolderHandle {
+  getDirectoryHandle(name: string, options?: { create?: boolean | undefined }): Promise<BuildFolderHandle>;
+  getFileHandle(name: string, options?: { create?: boolean | undefined }): Promise<BuildWritableFileHandle>;
+}
+
 export const newerThan = (installed: string | undefined, served: string | undefined) => {
   const a = String(installed || '').split('.').map((part) => Number(part) || 0);
   const b = String(served || '').split('.').map((part) => Number(part) || 0);
@@ -31,9 +45,12 @@ export const newerThan = (installed: string | undefined, served: string | undefi
 // The served version of this extension rides on the build itself: a HEAD on the archive carries it in a header, and the archive is one call away when the header cannot be read.
 // A caller that cannot learn the version therefore does the read that decides anyway, and the write stays refused unless the manifest inside the build says it is this product and it is newer.
 
+const NO_STORE_HEAD = { method: 'HEAD', cache: 'no-store' as const };
+const NO_STORE = { method: 'GET', cache: 'no-store' as const };
+
 export async function servedVersion(fetchImpl: typeof fetch = fetch) {
   try {
-    const response = await fetchImpl(`${UPDATE_BASE_URL}/download/opera-agent.zip`, { method: 'HEAD', cache: 'no-store' });
+    const response = await fetchImpl(`${UPDATE_BASE_URL}/download/opera-agent.zip`, NO_STORE_HEAD);
     if (!response.ok) return null;
     const version = String(response.headers?.get('x-opera-version') ?? '').trim();
     return /^\d+\.\d+\.\d+$/.test(version) ? version : null;
@@ -58,7 +75,7 @@ const isSafePath = (name: string) => {
   return !parts.includes('..');
 };
 
-async function writeBuild(folder: FileSystemDirectoryHandle, entries: ReadonlyArray<{ name: string; bytes: Uint8Array }>) {
+async function writeBuild(folder: BuildFolderHandle, entries: ReadonlyArray<{ name: string; bytes: Uint8Array }>) {
   for (const entry of entries ?? []) {
     if (entry.name.endsWith('/')) continue;
     if (!isSafePath(entry.name)) throw new Error('the build carries a path outside the folder');
@@ -80,14 +97,14 @@ async function writeBuild(folder: FileSystemDirectoryHandle, entries: ReadonlyAr
   return true;
 }
 
-export async function applyBuild({ folder, installedVersion, fetchImpl = fetch }: { folder?: FileSystemDirectoryHandle | undefined; installedVersion?: string | undefined; fetchImpl?: typeof fetch }) {
+export async function applyBuild({ folder, installedVersion, fetchImpl = fetch }: { folder?: BuildFolderHandle | undefined; installedVersion?: string | undefined; fetchImpl?: typeof fetch }) {
   if (!folder) return { ok: false, reason: 'no-folder' };
   const served = await servedVersion(fetchImpl);
   if (served && !newerThan(installedVersion, served)) {
     return { ok: true, changed: false, version: served };
   }
 
-  const response = await fetchImpl(`${UPDATE_BASE_URL}/download/opera-agent.zip`, { cache: 'no-store' });
+  const response = await fetchImpl(`${UPDATE_BASE_URL}/download/opera-agent.zip`, NO_STORE);
   if (!response.ok) return { ok: false, reason: 'download-failed' };
   const entries = await readZip(new Uint8Array(await response.arrayBuffer()));
   // WHY TWO NAMES: every install shipped before the 1.6.60 rebrand verifies the zip it downloads against the name it shipped with ('Opera Agent'); a machine that hears the same check back from this build for a Navego-named zip would refuse every future folder-apply and be forced through the browser updater forever.

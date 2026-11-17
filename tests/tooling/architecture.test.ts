@@ -23,8 +23,6 @@ const arch = fs.readFileSync(path.join(repo, 'ARCHITECTURE.md'), 'utf8');
 // - The root table: every line starting with `| \`name/\`` or `| \`name\`` names a top-level entry that must exist.
 // - Root enumeration: every top-level file/dir (minus a written exemption list) must appear in the map.
 
-const read = (file: any) => fs.readFileSync(path.join(repo, file), 'utf8');
-
 const PATH_RE = /`([A-Za-z0-9_./-]+\/[A-Za-z0-9_./-]*\.(?:js|mjs|cjs|ts|py|json|yml|yaml|toml|md|html|css|sql|cmd|bat|lock))`/g;
 const DIR_RE = /`([A-Za-z0-9_.-]+\/)`/g;
 
@@ -32,10 +30,12 @@ test('ARCHITECTURE.md names files that exist', () => {
   const missing = [];
   for (const match of arch.matchAll(PATH_RE)) {
     const p = match[1];
+    assert.ok(p, 'the path capture is present');
     if (!fs.existsSync(path.join(repo, p))) missing.push(p);
   }
   for (const match of arch.matchAll(DIR_RE)) {
     const p = match[1];
+    assert.ok(p, 'the directory capture is present');
     if (!fs.existsSync(path.join(repo, p))) missing.push(p);
   }
   assert.deepEqual(missing, [], missing.join('\n'));
@@ -44,6 +44,7 @@ test('ARCHITECTURE.md names files that exist', () => {
 test('ARCHITECTURE.md names directories that exist, including every top-level entry it claims', () => {
   for (const match of arch.matchAll(DIR_RE)) {
     const p = match[1];
+    assert.ok(p, 'the directory capture is present');
     if (!fs.existsSync(path.join(repo, p))) {
       assert.fail(`ARCHITECTURE.md names a missing path: ${p}`);
     }
@@ -74,11 +75,12 @@ const IMPORT_RULES = [
 
 const IMPORT_RE = /(?:^|\n|['"])(?:import|export)\s+(?:[^'"]*\s+from\s+)?['"]([^'"]+)['"]/g;
 
-function importsOf(file: any) {
+function importsOf(file: string) {
   const text = fs.readFileSync(file, 'utf8');
-  const out = [];
+  const out: string[] = [];
   for (const match of text.matchAll(IMPORT_RE)) {
     const spec = match[1];
+    assert.ok(spec, 'the import capture is present');
     if (spec.startsWith('node:') || spec.startsWith('npm:') || spec.startsWith('jsr:') || spec.startsWith('https:')) continue;
     if (!spec.startsWith('.') && !spec.startsWith('/')) continue;
     const base = path.posix.dirname(path.relative(repo, file).split(path.sep).join('/'));
@@ -89,9 +91,9 @@ function importsOf(file: any) {
 
 for (const { root, allowedPrefixes, reason } of IMPORT_RULES) {
   test(`${reason}`, () => {
-    const offenders: any = [];
+    const offenders: string[] = [];
     const dir = path.join(repo, root);
-    const walk = (d: any) => {
+    const walk = (d: string) => {
       for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
         const p = path.join(d, entry.name);
         if (entry.isDirectory()) { walk(p); continue; }
@@ -108,12 +110,12 @@ for (const { root, allowedPrefixes, reason } of IMPORT_RULES) {
 }
 
 test('every function package imports only hosted or shared', () => {
-  const offenders: any = [];
+  const offenders: string[] = [];
   for (const entry of fs.readdirSync(path.join(repo, 'hosted', 'functions'), { withFileTypes: true })) {
     if (entry.name === '_shared') continue;
     const p = path.join(repo, 'hosted', 'functions', entry.name);
     if (!entry.isDirectory()) continue;
-    const walk = (d: any) => {
+    const walk = (d: string) => {
       for (const f of fs.readdirSync(d, { withFileTypes: true })) {
         const full = path.join(d, f.name);
         if (f.isDirectory()) { walk(full); continue; }
@@ -150,8 +152,8 @@ test('shared modules import only within shared/', () => {
 
 const GENERATED_ALLOW = [/^local\/lib\//];
 
-const walkFiles = (dir: any) => {
-  const out = [];
+const walkFiles = (dir: string): string[] => {
+  const out: string[] = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) out.push(...walkFiles(full));
@@ -167,8 +169,8 @@ test('an emitted .js has a .ts source beside it and is never tracked', () => {
     const dir = path.join(repo, folder);
     if (!fs.existsSync(dir)) continue;
     const files = walkFiles(dir);
-    if (!files.some((f: any) => f.endsWith('.ts'))) continue;
-    for (const file of files.filter((f: any) => f.endsWith('.js'))) {
+    if (!files.some((f) => f.endsWith('.ts'))) continue;
+    for (const file of files.filter((f) => f.endsWith('.js'))) {
       const rel = path.relative(repo, file).split(path.sep).join('/');
       if (GENERATED_ALLOW.some((re) => re.test(rel))) continue;
       if (tracked.has(rel)) { offenders.push(`${rel}: a tracked .js in a folder that carries .ts sources`); continue; }

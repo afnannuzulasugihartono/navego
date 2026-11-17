@@ -13,7 +13,7 @@ import {
   createControlFlowVm,
   validateControlFlowProgram,
 } from './reactive-vm-control-flow.js';
-import { makeGuards, type Guards } from './reactive-vm-core.js';
+import { makeGuards } from "./reactive-vm-core.js";
 
 // WHY A GUARD FACTORY AND NOT A LIBRARY OF NINETY EXPORTS.
 // The collect, control-flow and host modules used to carry these helpers verbatim; the factory hands each module the exact same guards with its own default code, and the semantics stay byte-identical.
@@ -22,7 +22,7 @@ import { makeGuards, type Guards } from './reactive-vm-core.js';
 // The factory hands back untyped helpers, and this module is where a JSON value becomes a checked shape: `fail` is declared never-returning so the compiler trusts that a guarded branch does not continue, and the object checks are declared as assertion functions so a checked value narrows.
 // Each adapter forwards to the shared guard, so the runtime is unchanged.
 
-const guards: Guards = makeGuards('INVALID_SEMANTICS');
+const guards: ReturnType<typeof makeGuards> = makeGuards('INVALID_SEMANTICS');
 
 const fail: (code: string, message: string, details?: unknown) => never = (code, message, details) => {
   guards.fail(code, message, details);
@@ -61,7 +61,7 @@ const assertNoSensitive: (value: unknown, path?: string) => void = (value, path)
 type JsonObject = Record<string, unknown>;
 type VmPathSegment = string | number;
 
-type ReactiveProgram = {
+export type ReactiveProgram = {
   schemaVersion: string;
   programId: string;
   tenantId: string;
@@ -69,14 +69,16 @@ type ReactiveProgram = {
   goalRevision: number;
   target: ProgramTarget;
   budgets: ProgramBudgets;
+  taskDependencies?: JsonObject | null;
   root: ReactiveNode;
   programDigest: string;
 };
 
-interface ProgramTarget {
+export interface ProgramTarget {
   deviceId: string;
   tabId: number;
   documentGeneration?: string;
+  [key: string]: unknown;
 }
 
 interface ProgramBudgets {
@@ -129,7 +131,7 @@ interface ControlFrame {
   notBeforeMs?: number | null;
 }
 
-interface PendingEffect {
+export interface PendingEffect {
   requestDigest: string;
   purpose: string;
   method: string;
@@ -138,6 +140,7 @@ interface PendingEffect {
   resultBinding: string | null;
   nodePath: VmPathSegment[];
   ordinal: number;
+  [key: string]: unknown;
 }
 
 interface PendingDigestHost {

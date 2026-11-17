@@ -37,7 +37,7 @@ test('a canvas caret that is not in the DOM cannot be promised back', () => {
   assert.equal(mark.restorable, false);
   const verdict = restoreVerdict({ before: mark, after: { rangeCount: 1, collapsed: true, anchorOffset: 0, hostTextLength: 0 } });
   assert.equal(verdict.restored, false);
-  assert.ok(verdict.why.length > 0);
+  assert.ok(String(verdict.why).length > 0);
 });
 
 // WHY THE OFFSET ALONE IS NOT ENOUGH TO SAY A CARET IS BACK.
@@ -88,5 +88,5 @@ test('the guard reports a canvas caret as something it cannot put back', async (
   assert.equal(mark.restorable, false);
   const verdict = await guard.verdict(mark);
   assert.equal(verdict.restored, false);
-  assert.match(verdict.why, /nothing to put back/);
+  assert.match(String(verdict.why), /nothing to put back/);
 });

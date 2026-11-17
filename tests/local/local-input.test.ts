@@ -28,7 +28,9 @@ test('a newline is sent through untouched, because it is what produces a real pa
 
   const inserts = cdp.calls.filter((c: any) => c.method === 'Input.insertText');
   assert.equal(inserts.length, 1);
-  assert.equal(inserts[0].params.text, 'Title\nBody');
+  const insert = inserts[0];
+  assert.ok(insert);
+  assert.equal(insert.params.text, 'Title\nBody');
   assert.equal(out.chars, 10);
 });
 
@@ -65,7 +67,7 @@ test('text typed into a field is found in the field, because a field never touch
   ];
   let asks = 0;
   const cdp = {
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       if (method === 'Runtime.evaluate' && String(params.expression).includes('opera-locate')) {
         return { result: { value: { index: 0, field: true, before: '', after: '', len: 9 } } };
       }
@@ -92,7 +94,7 @@ test('type outlasts a slow mirror instead of failing over text that landed', asy
   let reads = 0;
   const slept: any = [];
   const cdp = {
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       if (method === 'Runtime.evaluate' && String(params.expression).includes('isContentEditable')) {
         reads += 1;
         const moved = reads >= 7;
@@ -121,7 +123,7 @@ test('type survives an unfindable probe, because the page moved even if the prob
   ];
   let asks = 0;
   const cdp = {
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       if (method === 'Runtime.evaluate' && String(params.expression).includes('opera-locate')) {
         return { result: { value: { index: -1, before: 'body textHello', after: '', len: 14 } } };
       }
@@ -148,7 +150,9 @@ test('append puts the text at the end and proves nothing follows it', async () =
   assert.match(out.atEndWhy, /nothing follows/);
   const endKey = cdp.calls.filter((c: any) => c.method === 'Input.dispatchKeyEvent');
   assert.ok(endKey.length >= 2, 'the caret is asked for the end before anything is typed');
-  assert.match(cdp.calls.find((c: any) => c.method === 'Input.dispatchKeyEvent').params.key, /End/);
+  const endEvent = cdp.calls.find((c: any) => c.method === 'Input.dispatchKeyEvent');
+  assert.ok(endEvent);
+  assert.match(String(endEvent.params.key), /End/);
 });
 
 test('append waits for the page to be quiet, not for a fixed beat', async () => {
@@ -179,7 +183,7 @@ test('append admits it cannot see where the text went rather than claiming the e
   ];
   let asks = 0;
   const cdp = {
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       if (method === 'Runtime.evaluate' && String(params.expression).includes('opera-locate')) {
         return { result: { value: { index: -1, field: false, before: 'body texttail text', after: '', len: 18 } } };
       }
@@ -210,14 +214,16 @@ test('a chord is two masked events with codes and no text, because separate modi
 
   const events = cdp.calls.filter((c: any) => c.method === 'Input.dispatchKeyEvent');
   assert.equal(events.length, 2, 'key down, key up, nothing else');
-  assert.equal(events[0].params.type, 'rawKeyDown');
-  assert.equal(events[0].params.key, 'a');
-  assert.equal(events[0].params.modifiers, 2);
-  assert.equal(events[0].params.text, undefined);
-  assert.equal(events[0].params.windowsVirtualKeyCode, 65);
-  assert.equal(events[0].params.nativeVirtualKeyCode, 65);
-  assert.equal(events[1].params.type, 'keyUp');
-  assert.equal(events[1].params.modifiers, 2);
+  const [rawDown, keyUp] = events;
+  assert.ok(rawDown && keyUp);
+  assert.equal(rawDown.params.type, 'rawKeyDown');
+  assert.equal(rawDown.params.key, 'a');
+  assert.equal(rawDown.params.modifiers, 2);
+  assert.equal(rawDown.params.text, undefined);
+  assert.equal(rawDown.params.windowsVirtualKeyCode, 65);
+  assert.equal(rawDown.params.nativeVirtualKeyCode, 65);
+  assert.equal(keyUp.params.type, 'keyUp');
+  assert.equal(keyUp.params.modifiers, 2);
   assert.deepEqual(out, { key: 'a', modifiers: 2 });
 });
 
@@ -237,6 +243,7 @@ test('a bare key carries no modifier bits', async () => {
   await createPrimitives(cdp).key('a');
 
   const down = cdp.calls.find((c: any) => c.method === 'Input.dispatchKeyEvent' && c.params.type === 'keyDown');
+  assert.ok(down);
   assert.equal(down.params.modifiers, 0);
 });
 
@@ -251,6 +258,7 @@ test('Tab carries no text, because text on Tab stranded Sheets focus in the form
   await createPrimitives(cdp).key('Tab');
 
   const down = cdp.calls.find((c: any) => c.method === 'Input.dispatchKeyEvent' && c.params.type !== 'keyUp');
+  assert.ok(down);
   assert.equal(down.params.text, undefined);
   assert.equal(down.params.windowsVirtualKeyCode, 9);
   assert.equal(down.params.code, 'Tab');
@@ -261,6 +269,7 @@ test('punctuation types through its US key, because values carry underscores', a
   await createPrimitives(cdp).key('_');
 
   const down = cdp.calls.find((c: any) => c.method === 'Input.dispatchKeyEvent' && c.params.type === 'keyDown');
+  assert.ok(down);
   assert.equal(down.params.text, '_');
   assert.equal(down.params.code, 'Minus');
   assert.equal(down.params.windowsVirtualKeyCode, 189);
@@ -280,6 +289,7 @@ test('a named key like Enter is dispatched with its virtual key code', async () 
   await createPrimitives(cdp).key('Enter');
 
   const down = cdp.calls.find((c: any) => c.method === 'Input.dispatchKeyEvent' && c.params.type === 'keyDown');
+  assert.ok(down);
   assert.equal(down.params.windowsVirtualKeyCode, 13);
   assert.equal(down.params.code, 'Enter');
 });
@@ -288,6 +298,7 @@ test('Space types a real blank, because Sheets values carry them', async () => {
   await createPrimitives(cdp).key('Space');
 
   const down = cdp.calls.find((c: any) => c.method === 'Input.dispatchKeyEvent' && c.params.type === 'keyDown');
+  assert.ok(down);
   assert.equal(down.params.key, ' ');
   assert.equal(down.params.code, 'Space');
   assert.equal(down.params.windowsVirtualKeyCode, 32);
@@ -343,7 +354,7 @@ test('text that lands is reported as landed, and the page is asked once on the w
 
 test('a page with no caret fails the edit instead of counting the characters it inserted', async () => {
   const cdp = {
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       if (method === 'Runtime.evaluate' && String(params.expression).includes('isContentEditable')) {
         return { result: { value: { body: '19:Untitled document\n\n', value: '', holds: true } } };
       }
@@ -361,8 +372,8 @@ test('a page with no caret fails the edit instead of counting the characters it 
 
 test('a type that lands nowhere names the element that had focus', async () => {
   const cdp = {
-    calls: [],
-    send: async (method: any, params = {}) => {
+    calls: [] as Array<{ method: string; params: Record<string, unknown> }>,
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       cdp.calls.push({ method, params });
       if (method === 'Runtime.evaluate' && String(params.expression).includes('trail')) {
         return { result: { value: { trail: 'button#button', tag: 'BUTTON', editable: false } } };
@@ -386,7 +397,7 @@ test('a type that lands nowhere names the element that had focus', async () => {
 
 test('a page with nothing to type into says so in the words of that fact', async () => {
   const cdp = {
-    send: async (method: any, params = {}) => {
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       if (method === 'Runtime.evaluate' && String(params.expression).includes('isContentEditable')) {
         return { result: { value: { body: '0:', value: '', holds: false } } };
       }
@@ -400,8 +411,8 @@ test('a page with nothing to type into says so in the words of that fact', async
 test('text typed into a field counts as landed, because a field does not change the page text', async () => {
   let value = '';
   const cdp = {
-    send: async (method: any, params = {}) => {
-      if (method === 'Input.insertText') value += params.text;
+    send: async (method: any, params: Record<string, unknown> = {}) => {
+      if (method === 'Input.insertText') value += String(params.text);
       if (method === 'Runtime.evaluate' && String(params.expression).includes('isContentEditable')) {
         return { result: { value: { body: '9:no change', value: `${value.length}:${value}`, holds: true } } };
       }
@@ -417,7 +428,7 @@ test('text typed into a field counts as landed, because a field does not change 
 test('a stream reports whether the page moved, because a shortcut in it can move the page on its own', async () => {
   const cdp = pipelinedCdp();
 
-  const out = await createPrimitives(cdp).keys([{ key: 'a', modifiers: ['Control'] }, { text: 'Hi' }]);
+  const out = await createPrimitives(cdp as unknown as Parameters<typeof createPrimitives>[0]).keys([{ key: 'a', modifiers: ['Control'] }, { text: 'Hi' }]);
 
   assert.equal(out.moved, true, 'the text moved the page, and the stream says so');
 });
@@ -425,7 +436,7 @@ test('a stream reports whether the page moved, because a shortcut in it can move
 test('a run reaches the wire in the order it was written', async () => {
   const cdp = pipelinedCdp();
 
-  await createPrimitives(cdp, { sleep: async () => {} }).keys([
+  await createPrimitives(cdp as unknown as Parameters<typeof createPrimitives>[0], { sleep: async () => {} }).keys([
     { key: '1', modifiers: ['Control'] },
     { text: 'Hi' },
     { key: 'Enter' }
@@ -450,7 +461,7 @@ test('a run reaches the wire in the order it was written', async () => {
 test('a gap splits the run, so a beat for the UI is a real beat', async () => {
   const slept: any = [];
   const cdp = pipelinedCdp();
-  const p = createPrimitives(cdp, { sleep: async (ms) => { slept.push(ms); } });
+  const p = createPrimitives(cdp as unknown as Parameters<typeof createPrimitives>[0], { sleep: async (ms) => { slept.push(ms); } });
 
   await p.keys([{ text: 'a', gapMs: 50 }, { text: 'b' }]);
 
@@ -464,7 +475,7 @@ test('a gap splits the run, so a beat for the UI is a real beat', async () => {
 test('type chunks fire together', async () => {
   const cdp = pipelinedCdp();
 
-  await createPrimitives(cdp, { chunkSize: 10 }).type('x'.repeat(35));
+  await createPrimitives(cdp as unknown as Parameters<typeof createPrimitives>[0], { chunkSize: 10 }).type('x'.repeat(35));
 
   assert.equal(cdp.stats().max, 4);
 });
@@ -475,10 +486,12 @@ test('a modified key sends no text, because text under a modifier is typed liter
 
   const downs = cdp.calls.filter((c: any) => c.method === 'Input.dispatchKeyEvent' && c.params.type === 'rawKeyDown');
   assert.equal(downs.length, 1, 'one keyDown carries the whole chord');
-  assert.equal(downs[0].params.key, '2');
-  assert.equal(downs[0].params.text, undefined, 'sending text here types a literal 2 into the document');
-  assert.equal(downs[0].params.code, 'Digit2');
-  assert.equal(downs[0].params.modifiers, 3, 'control and alt both held');
+  const firstDown = downs[0];
+  assert.ok(firstDown);
+  assert.equal(firstDown.params.key, '2');
+  assert.equal(firstDown.params.text, undefined, 'sending text here types a literal 2 into the document');
+  assert.equal(firstDown.params.code, 'Digit2');
+  assert.equal(firstDown.params.modifiers, 3, 'control and alt both held');
 });
 
 test('an unmodified character still types, or ordinary typing would break', async () => {
@@ -486,6 +499,7 @@ test('an unmodified character still types, or ordinary typing would break', asyn
   await createPrimitives(cdp).key('a');
 
   const down = cdp.calls.find((c: any) => c.method === 'Input.dispatchKeyEvent' && c.params.type === 'keyDown');
+  assert.ok(down);
   assert.equal(down.params.text, 'a');
 });
 
@@ -495,8 +509,10 @@ test('a modified letter sends no text either, or Ctrl+A would type an a', async 
 
   const downs = cdp.calls.filter((c: any) => c.method === 'Input.dispatchKeyEvent' && c.params.type === 'rawKeyDown');
   assert.equal(downs.length, 1);
-  assert.equal(downs[0].params.key, 'a');
-  assert.equal(downs[0].params.text, undefined);
+  const firstDown = downs[0];
+  assert.ok(firstDown);
+  assert.equal(firstDown.params.key, 'a');
+  assert.equal(firstDown.params.text, undefined);
 });
 
 test('every keyUp carries the same mask as its keyDown, so the chord reads whole on both edges', async () => {
@@ -505,8 +521,10 @@ test('every keyUp carries the same mask as its keyDown, so the chord reads whole
 
   const events = cdp.calls.filter((c: any) => c.method === 'Input.dispatchKeyEvent');
   assert.deepEqual(events.map((e: any) => e.params.type), ['rawKeyDown', 'keyUp']);
-  assert.equal(events[1].params.modifiers, 3);
-  assert.equal(events[1].params.text, undefined);
+  const firstUp = events[1];
+  assert.ok(firstUp);
+  assert.equal(firstUp.params.modifiers, 3);
+  assert.equal(firstUp.params.text, undefined);
 });
 
 test('clear selects all and then deletes, because typing does not replace a selection', async () => {
@@ -562,8 +580,8 @@ test('a chord-only stream settles once instead of polling for an edit that never
 test('a text stream with nothing focused fails fast instead of polling for text that cannot land', async () => {
   const slept: any = [];
   const cdp = {
-    calls: [],
-    send: async (method: any, params = {}) => {
+    calls: [] as Array<{ method: string; params: Record<string, unknown> }>,
+    send: async (method: any, params: Record<string, unknown> = {}) => {
       cdp.calls.push({ method, params });
       if (method === 'Runtime.evaluate' && String(params.expression).includes('shadowRoot')) {
         return { result: { value: { trail: 'button', tag: 'BUTTON', editable: false } } };
@@ -594,11 +612,12 @@ test('createInputMethods exposes the typing and key verbs', () => {
 });
 
 test('all four arrows dispatch with their virtual key codes', async () => {
-  for (const [name, vk, code] of [['ArrowLeft', 37, 'ArrowLeft'], ['ArrowRight', 39, 'ArrowRight'], ['ArrowUp', 38, 'ArrowUp'], ['ArrowDown', 40, 'ArrowDown']]) {
+  for (const [name, vk, code] of ([['ArrowLeft', 37, 'ArrowLeft'], ['ArrowRight', 39, 'ArrowRight'], ['ArrowUp', 38, 'ArrowUp'], ['ArrowDown', 40, 'ArrowDown']] as Array<[string, number, string]>)) {
     const cdp = recordingCdp();
     await createPrimitives(cdp).key(name);
 
     const down = cdp.calls.find((c: any) => c.method === 'Input.dispatchKeyEvent' && c.params.type === 'rawKeyDown');
+    assert.ok(down);
     assert.equal(down.params.windowsVirtualKeyCode, vk, name);
     assert.equal(down.params.code, code, name);
   }

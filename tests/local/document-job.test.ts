@@ -11,6 +11,13 @@ import path from 'node:path';
 
 import { parseDocument, buildDocument, verifyDocument, documentFromFile } from '../../local/documents.js';
 
+function firstOf<T>(items: readonly T[] | undefined, what: string): T {
+  assert.ok(items && items.length > 0, `the fixture still holds ${what}`);
+  const [item] = items;
+  assert.ok(item, `the fixture still holds ${what}`);
+  return item;
+}
+
 const DOC = {
   title: 'Menu inventory',
   author: 'Navego',
@@ -39,32 +46,42 @@ test('a document without a title is refused', () => {
 
 test('a section without a heading is refused', () => {
   const bad = structuredClone(DOC);
-  bad.sections[0].heading = '';
+  firstOf(bad.sections, 'its section').heading = '';
   assert.throws(() => buildDocument({ doc: bad }), /heading/);
 });
 
 test('an image without alt text is refused', () => {
   const bad = structuredClone(DOC);
-  bad.sections[0].images[0].alt = '';
+  firstOf(firstOf(bad.sections, 'its section').images, 'its image').alt = '';
   assert.throws(() => buildDocument({ doc: bad }), /alt/);
 });
 
 test('a graph with no data is refused', () => {
   const bad = structuredClone(DOC);
-  bad.sections[0].graphs[0].data = [];
+  firstOf(firstOf(bad.sections, 'its section').graphs, 'its graph').data = [];
   assert.throws(() => buildDocument({ doc: bad }), /no data/);
 });
 
 test('a table with the wrong number of cells is refused', () => {
   const bad = structuredClone(DOC);
-  bad.sections[0].tables[0].rows[0] = ['Image'];
+  const table = firstOf(firstOf(bad.sections, 'its section').tables, 'its table');
+  table.rows[0] = ['Image'];
   assert.throws(() => buildDocument({ doc: bad }), /cells/);
 });
 
 // WHY THE GRAPH DATA HERE IS OUT OF TABLE ORDER.
 // The artifact must carry the rows it recomputed, not the caller's array; keeping the fixture reversed makes the difference visible to the test below.
 
-const SUM_DOC = {
+type SumDoc = {
+  title: string;
+  sections: Array<{
+    heading: string;
+    tables: Array<{ headers: string[]; rows: string[][] }>;
+    graphs: Array<{ kind: string; title: string; source?: Record<string, unknown>; data: Array<{ label: string; value: number }> }>;
+  }>;
+};
+
+const SUM_DOC: SumDoc = {
   title: 'Revenue',
   sections: [{
     heading: 'Revenue',
@@ -80,19 +97,19 @@ const SUM_DOC = {
 
 test('a graph without a source is refused', () => {
   const bad = structuredClone(SUM_DOC);
-  delete bad.sections[0].graphs[0].source;
+  delete firstOf(firstOf(bad.sections, 'its section').graphs, 'its graph').source;
   assert.throws(() => buildDocument({ doc: bad }), /source/);
 });
 
 test('a count graph without a table is refused', () => {
   const bad = structuredClone(DOC);
-  bad.sections[0].tables = [];
+  firstOf(bad.sections, 'its section').tables = [];
   assert.throws(() => buildDocument({ doc: bad }), /table/);
 });
 
 test('a sum graph is computed from the rows it names', () => {
   const built = buildDocument({ doc: SUM_DOC });
-  const figure = built.figures[0];
+  const figure = firstOf(built.figures, 'its figure');
   assert.equal(figure.aggregate, 'sum');
   assert.deepEqual(figure.data, [{ label: 'A', value: 10 }, { label: 'B', value: 20 }]);
   assert.deepEqual(figure.source.rows, [0, 1]);
@@ -101,26 +118,30 @@ test('a sum graph is computed from the rows it names', () => {
 
 test('a sum graph with a wrong value is refused', () => {
   const bad = structuredClone(SUM_DOC);
-  bad.sections[0].graphs[0].data[0].value = 999;
+  const point = firstOf(firstOf(firstOf(bad.sections, 'its section').graphs, 'its graph').data, 'its data point');
+  point.value = 999;
   assert.throws(() => buildDocument({ doc: bad }), /does not match its table source/);
 });
 
 test('a graph naming a missing column is refused', () => {
   const bad = structuredClone(SUM_DOC);
-  bad.sections[0].graphs[0].source.labelColumn = 'Missing';
+  const graph = firstOf(firstOf(bad.sections, 'its section').graphs, 'its graph');
+  assert.ok(graph.source, 'the fixture graph carries its source');
+  graph.source.labelColumn = 'Missing';
   assert.throws(() => buildDocument({ doc: bad }), /Missing/);
 });
 
 test('a graph with a non-numeric value is refused', () => {
   const bad = structuredClone(SUM_DOC);
-  bad.sections[0].tables[0].rows[0][1] = 'ten';
+  const row = firstOf(firstOf(firstOf(bad.sections, 'its section').tables, 'its table').rows, 'its row');
+  row[1] = 'ten';
   assert.throws(() => buildDocument({ doc: bad }), /non-numeric/);
 });
 
 test('verify catches a graph that lost a source row', () => {
   const built = buildDocument({ doc: SUM_DOC });
   const forged = structuredClone(built);
-  forged.figures[0].source.rows = [0];
+  firstOf(forged.figures, 'its figure').source.rows = [0];
   const out = verifyDocument({ document: forged, doc: SUM_DOC });
   assert.equal(out.ok, false);
   assert.equal(out.mismatches.length, 1);
@@ -133,7 +154,7 @@ test('verify catches a graph that was deleted from the plan', () => {
   forged.docplan.totals.graphs = 0;
   const out = verifyDocument({ document: forged, doc: SUM_DOC });
   assert.equal(out.ok, false);
-  assert.match(out.mismatches[0].why, /every graph/);
+  assert.match(firstOf(out.mismatches, 'its mismatch').why, /every graph/);
 });
 
 test('verify catches a title that was changed after the build', () => {
@@ -144,12 +165,12 @@ test('verify catches a title that was changed after the build', () => {
   const out = verifyDocument({ document: forged, doc: SUM_DOC });
   assert.equal(out.ok, false);
   assert.equal(out.mismatches.length, 1);
-  assert.match(out.mismatches[0].why, /title/);
+  assert.match(firstOf(out.mismatches, 'its mismatch').why, /title/);
 });
 
 test('every graph carries the section and rows that produced it', () => {
   const built = buildDocument({ doc: DOC });
-  const figure = built.figures[0];
+  const figure = firstOf(built.figures, 'its figure');
   assert.equal(figure.id, 'graph:0:0');
   assert.equal(figure.section, 0);
   assert.equal(figure.source.table, 0);
@@ -176,7 +197,8 @@ test('the recheck passes when every figure still equals its source', () => {
 test('the recheck catches a graph that was edited after it was computed', () => {
   const built = buildDocument({ doc: DOC });
   const forged = structuredClone(built);
-  forged.figures[0].data[0].value += 1;
+  const point = firstOf<{ label: string; value: number }>(firstOf(forged.figures, 'its figure').data, 'its data point');
+  point.value += 1;
   const out = verifyDocument({ document: forged, doc: DOC });
   assert.equal(out.ok, false);
   assert.equal(out.mismatches.length, 1);

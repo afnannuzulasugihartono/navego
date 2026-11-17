@@ -61,7 +61,7 @@ test('a file with no version says which kind of nothing it is', () => {
 });
 
 test('the counts the map states are the counts the map holds', () => {
-  const counted = {};
+  const counted: Record<string, number> = {};
   for (const entry of map.map) counted[entry.evidence] = (counted[entry.evidence] || 0) + 1;
   assert.deepEqual(counted, map.counts, 'a stated count that moved is a claim nobody re-measured');
   assert.equal(map.treeFiles, treeFiles.length);

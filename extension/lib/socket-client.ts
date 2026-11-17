@@ -208,7 +208,7 @@ export function createSocketClient({
   WebSocketImpl = globalThis.WebSocket,
   now = () => Date.now(),
   setTimer = (fn: () => void, ms: number) => setTimeout(fn, ms),
-  isOnline = () => globalThis.navigator?.onLine !== false,
+  isOnline = () => (globalThis as { navigator?: { onLine?: boolean | undefined } | undefined }).navigator?.onLine !== false,
   setWatchTimer = setTimer
 }: SocketClientOptions = {} as SocketClientOptions) {
   let socket: WebSocket | null = null;

@@ -14,20 +14,41 @@ import { createBridgeServer } from '../../local/bridge-ws.js';
 import { fakeCloud } from '../helpers/fake-cloud.ts';
 import { encodeText } from '../../local/ws-server.js';
 
-const listeners = {};
-function event(name: any) {
-  const fns: any = [];
+type ChromeListener = (...args: unknown[]) => unknown;
+const listeners: Record<string, ChromeListener[]> = {};
+function event(name: string) {
+  const fns: ChromeListener[] = [];
   listeners[name] = fns;
-  return { addListener: (fn: any) => { fns.push(fn); } };
+  return { addListener: (fn: ChromeListener) => { fns.push(fn); } };
 }
 
-const debugged: any = [];
-globalThis.chrome = {
+function listenerCount(name: string): number {
+  const fns = listeners[name];
+  assert.ok(fns, `${name} has a listener bucket`);
+  return fns.length;
+}
+
+interface DebuggedCall {
+  readonly tabId: unknown;
+  readonly method: unknown;
+  readonly params: unknown;
+}
+const debugged: DebuggedCall[] = [];
+
+interface BridgeAnswer {
+  readonly ok: boolean;
+  readonly result?: unknown;
+  readonly error?: { readonly message?: unknown } | undefined;
+  readonly ms: number;
+}
+const asAnswer = (value: unknown): BridgeAnswer => value as BridgeAnswer;
+
+Reflect.set(globalThis, 'chrome', {
   debugger: {
     onDetach: event('debugger.onDetach'),
     attach: async () => {},
     detach: async () => {},
-    sendCommand: async (target, method, params) => {
+    sendCommand: async (target: { tabId?: number }, method: string, params: unknown) => {
       debugged.push({ tabId: target.tabId, method, params });
       return { method, tabId: target.tabId, params };
     }
@@ -38,9 +59,9 @@ globalThis.chrome = {
     onUpdated: event('tabs.onUpdated'),
     onActivated: event('tabs.onActivated'),
     query: async () => [{ id: 5, url: 'https://example/', title: 'Example' }],
-    create: async ({ url }) => ({ id: 6, url, title: '' }),
-    remove: async (id) => ({ removed: id }),
-    get: async (id) => (Number.isInteger(id) ? { id, url: 'https://tab/', title: 'Tab' } : null)
+    create: async ({ url }: { url?: string }) => ({ id: 6, url, title: '' }),
+    remove: async (id: number) => ({ removed: id }),
+    get: async (id: number) => (Number.isInteger(id) ? { id, url: 'https://tab/', title: 'Tab' } : null)
   },
   runtime: {
     onMessage: event('runtime.onMessage'),
@@ -50,7 +71,7 @@ globalThis.chrome = {
   },
   alarms: { onAlarm: event('alarms.onAlarm'), create: async () => {} },
   storage: { onChanged: event('storage.onChanged'), local: { get: async () => ({}), set: async () => {} } }
-};
+});
 
 // Its own port, because another test process imports the same worker graph and would otherwise fight this one for the device connection.
 // The server and the global exist before the import, because the worker dials out the moment it loads: a test that connected it by hand would be testing its own wiring.
@@ -104,12 +125,14 @@ test('a port that answers but is not a bridge is refused', async () => {
     res.writeHead(200, { 'content-type': 'application/json' });
     res.end(JSON.stringify({ Browser: 'Chrome/120.0', webSocketDebuggerUrl: 'ws://127.0.0.1/x' }));
   });
-  await new Promise((resolve) => impostor.listen(0, '127.0.0.1', resolve));
-  const impostorPort = impostor.address().port;
+  await new Promise<void>((resolve) => { impostor.listen(0, '127.0.0.1', () => resolve()); });
+  const impostorAddress = impostor.address();
+  assert.ok(impostorAddress && typeof impostorAddress === 'object');
+  const impostorPort = impostorAddress.port;
   try {
     assert.equal(await probePort(impostorPort), false, 'something that answers is not enough; it has to answer as a bridge');
   } finally {
-    await new Promise((resolve) => impostor.close(resolve));
+    await new Promise<void>((resolve) => { impostor.close(() => resolve()); });
   }
 });
 
@@ -127,7 +150,7 @@ test('discovery walks past a dead configured port to one that answers', async ()
   assert.equal(await probePort(dead), false, 'the configured port is dead');
   assert.equal(await probePort(live), true, 'and a port with the bridge on it answers');
 
-  const walked = [];
+  const walked: number[] = [];
   for (const port of order) {
     if (await probePort(port)) { walked.push(port); break; }
   }
@@ -141,31 +164,35 @@ test('the worker connects on its own, without being asked', () => {
 });
 
 test('tabs.get answers the tab the caller names', async () => {
-  const answer = await bridge.send('tabs.get', { tabId: 5 });
+  const answer = asAnswer(await bridge.send('tabs.get', { tabId: 5 }));
+  const result = answer.result as { id: number; url: string };
   assert.equal(answer.ok, true);
-  assert.equal(answer.result.id, 5);
-  assert.equal(answer.result.url, 'https://tab/');
+  assert.equal(result.id, 5);
+  assert.equal(result.url, 'https://tab/');
 });
 
 test('a pushed command runs and its answer comes back over the same socket', async () => {
-  const answer = await bridge.send('tabs.list', {});
+  const answer = asAnswer(await bridge.send('tabs.list', {}));
+  const rows = answer.result as Array<{ id: number }>;
+  const firstRow = rows[0];
+  assert.ok(firstRow);
   assert.equal(answer.ok, true);
-  assert.equal(answer.result[0].id % 10000000000, 5, 'the row is namespaced by the browser that owns it');
+  assert.equal(firstRow.id % 10000000000, 5, 'the row is namespaced by the browser that owns it');
   assert.ok(answer.ms < 500, `a loopback round trip is milliseconds (took ${answer.ms} ms)`);
 });
 
 test('a CDP command reaches the browser with its tab and method intact', async () => {
   debugged.length = 0;
-  const answer = await bridge.send('cdp', { tabId: 9, method: 'Page.getLayoutMetrics' });
+  const answer = asAnswer(await bridge.send('cdp', { tabId: 9, method: 'Page.getLayoutMetrics' }));
   assert.equal(answer.ok, true);
-  assert.deepEqual(debugged.map((c: any) => [c.tabId, c.method]), [[9, 'Page.getLayoutMetrics']]);
+  assert.deepEqual(debugged.map((c) => [c.tabId, c.method]), [[9, 'Page.getLayoutMetrics']]);
 });
 
 test('a command the bridge refuses answers with the refusal, never silence', async () => {
-  const pong = await bridge.send('ping');
+  const pong = asAnswer(await bridge.send('ping'));
   assert.equal(pong.ok, true);
   assert.deepEqual(pong.result, { pong: true });
-  const bad = await bridge.send('tabs.nope', {});
+  const bad = asAnswer(await bridge.send('tabs.nope', {}));
   assert.equal(bad.ok, false);
   assert.match(String(bad.error?.message ?? ''), /unknown method/);
 });
@@ -180,9 +207,9 @@ test('the state a ping reports carries the evidence the last silence needs', () 
 });
 
 test('the module registers the listeners that restart it', () => {
-  assert.ok(listeners['alarms.onAlarm'].length >= 1);
-  assert.ok(listeners['runtime.onInstalled'].length >= 1);
-  assert.ok(listeners['runtime.onStartup'].length >= 1);
+  assert.ok(listenerCount('alarms.onAlarm') >= 1);
+  assert.ok(listenerCount('runtime.onInstalled') >= 1);
+  assert.ok(listenerCount('runtime.onStartup') >= 1);
 });
 
 test('the frame writer the server uses is the one the client decodes', () => {

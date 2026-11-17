@@ -109,6 +109,7 @@ local/lib/*
 # The compiled twin of every TypeScript source: written by scripts/pack/build-shared.ts beside the .ts, never committed; the map gate fails on a tracked .js in a folder that carries .ts.
 
 shared/*.js
+shared/*.d.ts
 
 # The compiled twin of every TypeScript source: written by scripts/pack/build-local.ts beside the .ts, never committed; the map gate fails on a tracked .js in a folder that carries .ts.
 

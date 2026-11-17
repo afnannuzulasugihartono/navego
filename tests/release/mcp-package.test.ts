@@ -18,10 +18,12 @@ const exec = promisify(execFile);
 
 const root = new URL('../../', import.meta.url);
 const local = new URL('local/', root);
-const manifest = JSON.parse(await readFile(new URL('local/package.json', root), 'utf8'));
+interface PackageManifest { name: string; bin: Record<string, string>; type: string; engines: { node?: string }; files: string[] }
 
-async function sourceFiles(dir: any) {
-  const out = [];
+const manifest: PackageManifest = JSON.parse(await readFile(new URL('local/package.json', root), 'utf8'));
+
+async function sourceFiles(dir: URL): Promise<URL[]> {
+  const out: URL[] = [];
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     const child = new URL(entry.name + (entry.isDirectory() ? '/' : ''), dir);
     if (entry.isDirectory()) out.push(...await sourceFiles(child));
@@ -30,8 +32,8 @@ async function sourceFiles(dir: any) {
   return out;
 }
 
-function importsOf(source: any) {
-  return [...source.matchAll(/from\s+['"]([^'"]+)['"]/g)].map((match) => match[1]).filter((specifier) => specifier.startsWith('.'));
+function importsOf(source: string): string[] {
+  return [...source.matchAll(/from\s+['"]([^'"]+)['"]/g)].map((match) => match[1]).filter((specifier): specifier is string => specifier !== undefined && specifier.startsWith('.'));
 }
 
 test('the package is named and run the way the guide says', () => {
@@ -68,7 +70,7 @@ test('the packaged copy of the shared endpoint module still pins the region', as
 
 const bin = fileURLToPath(new URL('../../local/bin/navego.js', import.meta.url));
 
-async function fakeHealthBridge(payload: any) {
+async function fakeHealthBridge(payload: unknown) {
   const server = http.createServer((req, res) => {
     if (req.url !== '/health') {
       res.writeHead(404).end();
@@ -77,9 +79,11 @@ async function fakeHealthBridge(payload: any) {
     res.writeHead(200, { 'content-type': 'application/json' });
     res.end(JSON.stringify(payload));
   });
-  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  await new Promise<void>((resolve) => { server.listen(0, '127.0.0.1', () => resolve()); });
+  const address = server.address();
+  if (!address || typeof address === 'string') assert.fail('bridge did not bind a port');
   return {
-    port: server.address().port,
+    port: address.port,
     close: () => new Promise((resolve) => server.close(resolve))
   };
 }
@@ -91,7 +95,7 @@ async function fakeHome() {
   return home;
 }
 
-async function runDoctor(env: any) {
+async function runDoctor(env: Record<string, string>) {
   const clean = { ...process.env };
   delete clean.OPERA_AGENT_MCP_TOKEN;
   try {
@@ -101,7 +105,8 @@ async function runDoctor(env: any) {
     });
     return { out: stdout, code: 0 };
   } catch (error) {
-    return { out: String(error?.stdout ?? ''), code: Number(error?.code ?? 1) };
+    const e = (error ?? {}) as { stdout?: unknown; code?: unknown };
+    return { out: String(e.stdout ?? ''), code: Number(e.code ?? 1) };
   }
 }
 

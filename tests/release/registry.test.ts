@@ -14,12 +14,12 @@ const KEYS = {
 };
 
 const ENTRY = `${EXTENSION_ID};${UPDATE_URL}`;
-const queryOut = (entries: any) => entries.map(([number, data]) => `    ${number}    REG_SZ    ${data}`).join('\r\n');
-const absent = () => { const e = new Error('Unable to find the specified registry key.'); e.status = 1; throw e; };
+const queryOut = (entries: Array<[number, string]>) => entries.map(([number, data]) => `    ${number}    REG_SZ    ${data}`).join('\r\n');
+const absent = () => { const e = new Error('Unable to find the specified registry key.') as Error & { status: number }; e.status = 1; throw e; };
 
 test('fresh machine: writes value 1 for each vendor, nothing deleted', () => {
   for (const [vendor, key] of Object.entries(KEYS)) {
-    const calls: any = [];
+    const calls: string[][] = [];
     const result = writeExtensionKey({ vendor, exec: (cmd, args) => { calls.push([cmd, ...args]); if (args[0] === 'query') absent(); return ''; } });
     assert.equal(result.ok, true, vendor);
     assert.equal(result.value, '1');
@@ -29,7 +29,7 @@ test('fresh machine: writes value 1 for each vendor, nothing deleted', () => {
 });
 
 test('a foreign entry keeps its number; ours takes the next free one', () => {
-  const calls: any = [];
+  const calls: string[][] = [];
   const result = writeExtensionKey({
     vendor: 'chrome',
     exec: (cmd, args) => {
@@ -40,13 +40,13 @@ test('a foreign entry keeps its number; ours takes the next free one', () => {
   });
   assert.equal(result.ok, true);
   assert.equal(result.value, '2');
-  const deletes = calls.filter(([cmd, op]) => op === 'delete');
+  const deletes = calls.filter(([, op]) => op === 'delete');
   assert.deepEqual(deletes, [], 'the foreign entry must not be touched');
-  assert.ok(calls.some(([cmd, op, key, v]) => op === 'add' && v === '/v' && key === KEYS.chrome));
+  assert.ok(calls.some(([, op, key, v]) => op === 'add' && v === '/v' && key === KEYS.chrome));
 });
 
 test('re-converges: own stale entry is deleted and rewritten at the next free number', () => {
-  const calls: any = [];
+  const calls: string[][] = [];
   const result = writeExtensionKey({
     vendor: 'edge',
     exec: (cmd, args) => {
@@ -57,8 +57,8 @@ test('re-converges: own stale entry is deleted and rewritten at the next free nu
   });
   assert.equal(result.ok, true);
   assert.equal(result.value, '2');
-  assert.ok(calls.some(([cmd, op, key, , number]) => op === 'delete' && key === KEYS.edge && number === '3'), 'own stale entry deleted');
-  assert.ok(calls.some(([cmd, op, key, , number]) => op === 'add' && key === KEYS.edge && number === '2'), 'entry rewritten at next free number');
+  assert.ok(calls.some(([, op, key, , number]) => op === 'delete' && key === KEYS.edge && number === '3'), 'own stale entry deleted');
+  assert.ok(calls.some(([, op, key, , number]) => op === 'add' && key === KEYS.edge && number === '2'), 'entry rewritten at next free number');
 });
 
 test('parseForcelistEntries reads CRLF output and ignores junk lines', () => {
@@ -70,23 +70,25 @@ test('parseForcelistEntries reads CRLF output and ignores junk lines', () => {
 });
 
 test('chromeForTesting has no policy path - unknown vendor, nothing executed', () => {
-  const calls: any = [];
-  const result = writeExtensionKey({ vendor: 'chromeForTesting', exec: (cmd) => calls.push(cmd) });
+  const calls: string[] = [];
+  const result = writeExtensionKey({ vendor: 'chromeForTesting', exec: (cmd) => { calls.push(cmd); return ''; } });
   assert.equal(result.ok, false);
+  assert.ok(result.error);
   assert.match(result.error, /unknown vendor/);
   assert.deepEqual(calls, []);
 });
 
 test('unknown vendor fails cleanly, nothing executed', () => {
-  const calls: any = [];
-  const result = writeExtensionKey({ vendor: 'firefox', exec: (cmd) => calls.push(cmd) });
+  const calls: string[] = [];
+  const result = writeExtensionKey({ vendor: 'firefox', exec: (cmd) => { calls.push(cmd); return ''; } });
   assert.equal(result.ok, false);
+  assert.ok(result.error);
   assert.match(result.error, /unknown vendor/);
   assert.deepEqual(calls, []);
 });
 
 test('add failure returns ok:false with the message, foreign entries untouched', () => {
-  const calls: any = [];
+  const calls: string[][] = [];
   const result = writeExtensionKey({
     vendor: 'brave',
     exec: (cmd, args) => {
@@ -96,12 +98,13 @@ test('add failure returns ok:false with the message, foreign entries untouched',
     },
   });
   assert.equal(result.ok, false);
+  assert.ok(result.error);
   assert.match(result.error, /access denied/i);
-  assert.equal(calls.filter(([cmd, op]) => op === 'delete').length, 0);
+  assert.equal(calls.filter(([, op]) => op === 'delete').length, 0);
 });
 
 test('uninstall deletes exactly our entries, never a foreign one', () => {
-  const calls: any = [];
+  const calls: string[][] = [];
   const result = deleteExtensionKey({
     vendor: 'chrome',
     exec: (cmd, args) => {
@@ -112,7 +115,7 @@ test('uninstall deletes exactly our entries, never a foreign one', () => {
   });
   assert.equal(result.ok, true);
   assert.equal(result.deleted, 2);
-  const deletes = calls.filter(([cmd, op]) => op === 'delete').map(([, , , , number]) => number);
+  const deletes = calls.filter(([, op]) => op === 'delete').map(([, , , , number]) => number);
   assert.deepEqual(deletes, ['2', '7']);
 });
 
@@ -123,9 +126,10 @@ test('uninstall with the key absent is a clean no-op', () => {
 });
 
 test('unknown vendor on delete fails cleanly, nothing executed', () => {
-  const calls: any = [];
-  const result = deleteExtensionKey({ vendor: 'safari', exec: (cmd) => calls.push(cmd) });
+  const calls: string[] = [];
+  const result = deleteExtensionKey({ vendor: 'safari', exec: (cmd) => { calls.push(cmd); return ''; } });
   assert.equal(result.ok, false);
+  assert.ok(result.error);
   assert.match(result.error, /unknown vendor/);
   assert.deepEqual(calls, []);
 });

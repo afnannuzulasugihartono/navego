@@ -12,14 +12,14 @@
 // A silent refusal is a bug report nobody writes; a named one is a support question that names the fix.
 // Every refusal below carries the plan that ran out.
 
-import { PLANS } from '../_shared/plans.ts';
+import { DEFAULT_PLAN, planFor } from '../_shared/plans.ts';
 
-const FIRM_FEATURES = Object.freeze({
+const FIRM_FEATURES: Record<string, string> = Object.freeze({
   all: 'the whole-page map',
   statements: 'statement delivery'
 });
 
-export function planIsActive(status) {
+export function planIsActive(status: unknown): boolean {
   return String(status || '') === 'active';
 }
 
@@ -27,9 +27,12 @@ function firmOnlyMethods() {
   return [{ prefix: 'statement.', feature: 'statements' }];
 }
 
-export function capabilityAllowed(plan, method, params = {}) {
+interface CapabilityResult { ok: boolean; feature?: string }
+
+export function capabilityAllowed(plan: unknown, method: unknown, params: unknown = {}): CapabilityResult {
+  const p = (params && typeof params === 'object' ? params : {}) as Record<string, unknown>;
   const name = String(method ?? '');
-  const mode = params?.all === true && params?.view === 'map';
+  const mode = p.all === true && p.view === 'map';
   if (name === 'page.read' && mode) return { ok: plan === 'plan.firm', feature: 'all' };
   for (const { prefix, feature } of firmOnlyMethods()) {
     if (name.startsWith(prefix)) return { ok: plan === 'plan.firm', feature };
@@ -37,23 +40,26 @@ export function capabilityAllowed(plan, method, params = {}) {
   return { ok: true };
 }
 
-export function dailyQuota(plan) {
-  return PLANS[plan]?.dailyQuota ?? PLANS['plan.pilot'].dailyQuota;
+export function dailyQuota(plan: unknown): number {
+  return planFor(String(plan ?? DEFAULT_PLAN)).dailyQuota;
 }
 
-export function handshakeVerdict(profile) {
+export interface PlanProfile { status?: unknown; plan?: unknown; usedToday?: unknown }
+export interface GateCommand { method?: unknown; params?: unknown }
+
+export function handshakeVerdict(profile: PlanProfile | null | undefined): { ok: true } | { ok: false; code: string; message: string } {
   if (!planIsActive(profile?.status)) {
     return { ok: false, code: 'PLAN_LIMIT_REACHED', message: `plan ${profile?.plan ?? 'plan.pilot'} is not active for this account` };
   }
   return { ok: true };
 }
 
-export function quotaAllowance(plan, usedToday) {
+export function quotaAllowance(plan: unknown, usedToday: unknown): { ok: boolean; quota: number; used: number } {
   const quota = dailyQuota(plan);
   return { ok: Number(usedToday) < quota, quota, used: Number(usedToday) || 0 };
 }
 
-export function gateVerdict(profile, command) {
+export function gateVerdict(profile: PlanProfile | null | undefined, command: GateCommand | null | undefined): { ok: true; plan: string; quota: number; used: number } | { ok: false; code: string; message: string } {
   const plan = String(profile?.plan ?? 'plan.pilot');
   const standing = handshakeVerdict(profile);
   if (!standing.ok) return standing;
@@ -62,10 +68,11 @@ export function gateVerdict(profile, command) {
   const params = command?.params && typeof command.params === 'object' ? command.params : {};
   const capability = capabilityAllowed(plan, method, params);
   if (!capability.ok) {
+    const feature = capability.feature ?? 'statements';
     return {
       ok: false,
       code: 'PLAN_LIMIT_REACHED',
-      message: `${FIRM_FEATURES[capability.feature]} requires plan.firm; plan is ${plan}`
+      message: `${FIRM_FEATURES[feature] ?? feature} requires plan.firm; plan is ${plan}`
     };
   }
   const allowance = quotaAllowance(plan, profile?.usedToday);

@@ -64,14 +64,17 @@ test('a non-command frame is never runnable, so an ack or an error cannot execut
 
 test('a command arrives with params defaulted and a timeout that cannot be zero or negative', () => {
   const bare = normalizeCommand({ type: 'command', command: { id: 'a', method: 'browser.ping' } });
+  assert.ok(bare, 'a command with id and method normalizes');
   assert.deepEqual(bare.params, {});
   assert.equal(bare.timeoutMs, 30000);
 
   const given = normalizeCommand({ type: 'command', command: { id: 'b', method: 'page.key', params: { key: 'a' }, timeoutMs: 9000 } });
+  assert.ok(given, 'a command with params and timeout normalizes');
   assert.deepEqual(given.params, { key: 'a' });
   assert.equal(given.timeoutMs, 9000);
 
   const bad = normalizeCommand({ type: 'command', command: { id: 'c', method: 'x', timeoutMs: -5 } });
+  assert.ok(bad, 'a negative timeout still normalizes');
   assert.equal(bad.timeoutMs, 30000);
 });
 
@@ -105,7 +108,7 @@ test('a frame near the product bound parses on the device side too', () => {
 
 test('a small completion stays a text frame', async () => {
   const frame = await encodeCompletionFrame('c-1', true, { ok: true }, null);
-  assert.equal(typeof frame, 'string');
+  assert.ok(typeof frame === 'string', 'a small completion stays text');
   assert.equal(JSON.parse(frame).commandId, 'c-1');
 });
 
@@ -117,13 +120,14 @@ test('a large completion becomes a versioned gzip frame', async () => {
 });
 
 test('a runtime without compression still sends text, never throws', async () => {
-  const real = globalThis.CompressionStream;
-  globalThis.CompressionStream = undefined;
+  const globals = globalThis as { CompressionStream?: typeof CompressionStream | undefined };
+  const real = globals.CompressionStream;
+  globals.CompressionStream = undefined;
   try {
     const frame = await encodeCompletionFrame('c-3', true, { blob: 'y'.repeat(100000) }, null);
     assert.equal(typeof frame, 'string');
   } finally {
-    globalThis.CompressionStream = real;
+    globals.CompressionStream = real;
   }
 });
 

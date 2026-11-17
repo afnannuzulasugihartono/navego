@@ -9,6 +9,11 @@ import { fileURLToPath } from 'node:url';
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const productRoots = ['shared', 'local', 'hosted', 'extension'];
+const siteRoots = ['site/app'];
+const SOURCE_EXTENSIONS = ['.ts', '.tsx', '.mts', '.cts'];
+
+// WHY site is a separate list.
+// The site is a standalone React app under site/ with its own TypeScript project, Vite pipeline and tsconfig.json; its files still carry product value (dasbor, akun, unduhan) and must be held to the same anti-cheat rules as the browser-half code.
 
 // WHY PER-OCCURRENCE AND NOT PER-FILE.
 // A file in this list is not a blanket pass: the gate fails when a file carries MORE matches than its declared count, so one added cast stops the build.
@@ -42,8 +47,8 @@ function relativeFile(dir: string, file: string): string {
   return path.relative(dir, file).split(path.sep).join('/');
 }
 
-const forbidden = /(?:@ts-ignore|@ts-expect-error|@ts-nocheck|@ts-ignore-next-line|\bas\s+any(?![A-Za-z])|\brequire\s*\(|\bmodule\.exports\b)/g;
-const unknownCast = /(?:as\s+unknown\s+as)/g;
+  const forbidden = /(?:@ts-ignore|@ts-expect-error|@ts-nocheck|@ts-ignore-next-line|\bas\s+any(?![A-Za-z])|\brequire\s*\(|\bmodule\.exports\b)/g;
+  const unknownCast = /(?:as\s+unknown\s+as)/g;
 
 const findings: string[] = [];
 const counts = new Map<string, number>();
@@ -52,20 +57,21 @@ const countFinding = (file: string) => {
   counts.set(file, (counts.get(file) ?? 0) + 1);
 };
 
-for (const root of productRoots) {
+for (const root of [...productRoots, ...siteRoots]) {
   const absolute = path.join(repo, root);
   for (const file of walk(absolute)) {
-    if (!file.endsWith('.ts')) continue;
+    if (!SOURCE_EXTENSIONS.some((ext) => file.endsWith(ext))) continue;
     const rel = relativeFile(absolute, file);
     const text = fs.readFileSync(file, 'utf8');
     const lines = text.split('\n');
     for (let index = 0; index < lines.length; index += 1) {
       const line = lines[index];
       forbidden.lastIndex = 0;
-      const forbiddenMatch = forbidden.exec(line ?? '');
-      if (forbiddenMatch) {
+      let forbiddenMatch = forbidden.exec(line ?? '');
+      while (forbiddenMatch) {
         findings.push(`${root}/${rel}:${index + 1}: ${forbiddenMatch[0].trim()}\n  > ${(line ?? '').trim().slice(0, 120)}`);
         countFinding(`${root}/${rel}`);
+        forbiddenMatch = forbidden.exec(line ?? '');
       }
       unknownCast.lastIndex = 0;
       let castMatch = unknownCast.exec(line ?? '');

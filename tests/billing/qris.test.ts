@@ -34,24 +34,33 @@ test('parse and serialize round-trip a payload', () => {
   const payload = staticPayload();
   const fields = parseQris(payload);
   assert.equal(serializeQris(fields), payload);
-  assert.equal(fields.at(-1).tag, '63');
-  assert.equal(fields.at(-1).value.length, 4);
+  const last = fields.at(-1);
+  assert.ok(last, 'the payload carries a CRC tag');
+  assert.equal(last.tag, '63');
+  assert.equal(last.value.length, 4);
 });
 
 test('a static payload converts to the dynamic form BRImo accepted on 2026-11-04', () => {
   const dynamic = toDynamicQris(staticPayload(), 1000);
   assert.ok(dynamic, 'the conversion must produce a payload');
   const fields = parseQris(dynamic);
-  assert.equal(fields.find((f) => f.tag === '01').value, '12', 'tag 01 must say dynamic');
-  assert.equal(fields.find((f) => f.tag === '54').value, '1000', 'the amount is a whole rupiah string; BRImo refused "1000.00" with kode th 03');
+  const tag01 = fields.find((f) => f.tag === '01');
+  const tag54 = fields.find((f) => f.tag === '54');
+  assert.ok(tag01, 'tag 01 must be present');
+  assert.ok(tag54, 'tag 54 must be present');
+  assert.equal(tag01.value, '12', 'tag 01 must say dynamic');
+  assert.equal(tag54.value, '1000', 'the amount is a whole rupiah string; BRImo refused "1000.00" with kode th 03');
   assert.equal(qrisCategory(dynamic), 'A01', 'tag 62/07 is left as the merchant printed it: BRImo accepted A01 and refused A02, ShopeePay the reverse, so the acquirer-issued value wins');
   assert.equal(qrisAmount(dynamic), 1000);
   const body = serializeQris(fields.filter((f) => f.tag !== '63'));
-  assert.equal(fields.at(-1).value, crc16CcittFalse(`${body}6304`), 'the CRC must cover everything before tag 63');
+  const crc = fields.at(-1);
+  assert.ok(crc, 'the payload carries a CRC tag');
+  assert.equal(crc.value, crc16CcittFalse(`${body}6304`), 'the CRC must cover everything before tag 63');
 });
 
 test('the amount tag lands before the country tag, the order that was scanned and accepted', () => {
   const dynamic = toDynamicQris(staticPayload(), 10000);
+  assert.ok(dynamic, 'the conversion must produce a payload');
   const tags = parseQris(dynamic).map((f) => f.tag);
   assert.ok(tags.indexOf('54') < tags.indexOf('58'), `tag 54 must come before tag 58, got ${tags.join(',')}`);
 });
@@ -64,6 +73,7 @@ test('a merchant payload without tag 62 stays without one', () => {
   ];
   const body = serializeQris(fields);
   const dynamic = toDynamicQris(`${body}6304${crc16CcittFalse(`${body}6304`)}`, 10000);
+  assert.ok(dynamic, 'the conversion must produce a payload');
   assert.equal(qrisCategory(dynamic), null, 'the conversion must not invent a category tag the merchant never printed');
   assert.equal(qrisAmount(dynamic), 10000);
 });
@@ -80,5 +90,7 @@ test('a payload whose CRC does not match is detectable', () => {
   const tampered = `${payload.slice(0, -4)}0000`;
   const fields = parseQris(tampered);
   const body = serializeQris(fields.filter((f) => f.tag !== '63'));
-  assert.notEqual(fields.at(-1).value, crc16CcittFalse(`${body}6304`), 'a rewritten amount without a new CRC is detectable');
+  const last = fields.at(-1);
+  assert.ok(last, 'the payload carries a CRC tag');
+  assert.notEqual(last.value, crc16CcittFalse(`${body}6304`), 'a rewritten amount without a new CRC is detectable');
 });

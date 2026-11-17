@@ -11,12 +11,21 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { acceptKey, encodeText, createFrameReader, isWebSocketUpgrade } from '../../local/ws-server.js';
+import type { ControlEvent } from '../../local/ws-server.js';
+import type { IncomingMessage } from 'node:http';
 
-function maskedFrame(opcode: any, text: any, { fin = true } = {}) {
+const upgradeRequest = (headers: Record<string, string>): IncomingMessage => ({ headers }) as unknown as IncomingMessage;
+
+function maskedFrame(opcode: number, text: string, { fin = true } = {}) {
   const payload = Buffer.from(text, 'utf8');
   const mask = Buffer.from([0x12, 0x34, 0x56, 0x78]);
   const masked = Buffer.from(payload);
-  for (let i = 0; i < masked.length; i += 1) masked[i] ^= mask[i % 4];
+  for (let i = 0; i < masked.length; i += 1) {
+    const byte = masked[i];
+    const maskByte = mask[i % 4];
+    assert.ok(byte !== undefined && maskByte !== undefined);
+    masked[i] = byte ^ maskByte;
+  }
   const first = (fin ? 0x80 : 0x00) | opcode;
   let header;
   if (payload.length < 126) {
@@ -40,9 +49,9 @@ test('the handshake answers the RFC key the browser will verify', () => {
 });
 
 test('an upgrade is recognised only with both headers', () => {
-  assert.equal(isWebSocketUpgrade({ headers: { upgrade: 'websocket', connection: 'Upgrade' } }), true);
-  assert.equal(isWebSocketUpgrade({ headers: { upgrade: 'websocket', connection: 'keep-alive' } }), false);
-  assert.equal(isWebSocketUpgrade({ headers: { connection: 'Upgrade' } }), false);
+  assert.equal(isWebSocketUpgrade(upgradeRequest({ upgrade: 'websocket', connection: 'Upgrade' })), true);
+  assert.equal(isWebSocketUpgrade(upgradeRequest({ upgrade: 'websocket', connection: 'keep-alive' })), false);
+  assert.equal(isWebSocketUpgrade(upgradeRequest({ connection: 'Upgrade' })), false);
 });
 
 test('text encodes in all three length forms the device can produce', () => {
@@ -51,6 +60,7 @@ test('text encodes in all three length forms the device can produce', () => {
     const frame = encodeText(text);
     assert.equal(frame[0], 0x81, 'FIN plus text opcode');
     const second = frame[1];
+    assert.ok(second !== undefined);
     const declared = second < 126 ? second
       : second === 126 ? frame.readUInt16BE(2)
         : Number(frame.readBigUInt64BE(2));
@@ -60,13 +70,15 @@ test('text encodes in all three length forms the device can produce', () => {
 });
 
 test('a masked client frame decodes to its text', () => {
-  const seen: any = [];
+  const seen: string[] = [];
   createFrameReader((text) => seen.push(text))(maskedFrame(0x1, JSON.stringify({ type: 'hello', deviceName: 'opera' })));
-  assert.deepEqual(JSON.parse(seen[0]), { type: 'hello', deviceName: 'opera' });
+  const first = seen[0];
+  assert.ok(first);
+  assert.deepEqual(JSON.parse(first), { type: 'hello', deviceName: 'opera' });
 });
 
 test('a frame split across reads decodes once, not twice', () => {
-  const seen: any = [];
+  const seen: string[] = [];
   const read = createFrameReader((text) => seen.push(text));
   const frame = maskedFrame(0x1, 'a'.repeat(300));
   read(frame.subarray(0, 7));
@@ -77,24 +89,24 @@ test('a frame split across reads decodes once, not twice', () => {
 });
 
 test('two frames in one read decode in order', () => {
-  const seen: any = [];
+  const seen: string[] = [];
   const read = createFrameReader((text) => seen.push(text));
   read(Buffer.concat([maskedFrame(0x1, 'first'), maskedFrame(0x1, 'second')]));
   assert.deepEqual(seen, ['first', 'second']);
 });
 
 test('a ping is answered and a close ends the reader', () => {
-  const controls: any = [];
+  const controls: ControlEvent[] = [];
   createFrameReader(() => {}, (kind) => controls.push(kind))(maskedFrame(0x9, ''));
   assert.deepEqual(controls, ['ping']);
 
-  const closing: any = [];
+  const closing: ControlEvent[] = [];
   createFrameReader(() => {}, (kind) => closing.push(kind))(maskedFrame(0x8, ''));
   assert.deepEqual(closing, ['close']);
 });
 
 test('a binary frame is refused by name instead of parsed as text', () => {
-  const controls: any = [];
+  const controls: ControlEvent[] = [];
   createFrameReader(() => {}, (kind) => controls.push(kind))(maskedFrame(0x2, 'x'));
   assert.deepEqual(controls, ['binary']);
 });
@@ -104,7 +116,7 @@ test('a binary frame is refused by name instead of parsed as text', () => {
 // That was measured live as captures failing on whichever tab happened to fragment.
 
 test('a message in three fragments arrives whole', () => {
-  const seen: any = [];
+  const seen: string[] = [];
   const read = createFrameReader((text) => seen.push(text));
 
   read(maskedFrame(0x1, '{"a":1,', { fin: false }));
@@ -113,12 +125,14 @@ test('a message in three fragments arrives whole', () => {
   assert.deepEqual(seen, [], 'nor is a middle one');
   read(maskedFrame(0x0, '"c":3}', { fin: true }));
 
-  assert.deepEqual(JSON.parse(seen[0]), { a: 1, b: 2, c: 3 });
+  const fragment = seen[0];
+  assert.ok(fragment);
+  assert.deepEqual(JSON.parse(fragment), { a: 1, b: 2, c: 3 });
 });
 
 test('a ping between fragments is answered without losing the message', () => {
-  const seen: any = [];
-  const controls: any = [];
+  const seen: string[] = [];
+  const controls: ControlEvent[] = [];
   const read = createFrameReader((text) => seen.push(text), (kind) => controls.push(kind));
 
   read(maskedFrame(0x1, 'half-', { fin: false }));
@@ -130,16 +144,18 @@ test('a ping between fragments is answered without losing the message', () => {
 });
 
 test('a completion-sized frame decodes where screenshots travel', () => {
-  const seen: any = [];
+  const seen: string[] = [];
 
   createFrameReader((text) => seen.push(text))(maskedFrame(0x1, 'x'.repeat(300000)));
 
-  assert.equal(seen[0].length, 300000);
+  const decoded = seen[0];
+  assert.ok(decoded);
+  assert.equal(decoded.length, 300000);
 });
 
 test('an oversized message is skipped while the link carries on', () => {
-  const seen: any = [];
-  const controls: any = [];
+  const seen: string[] = [];
+  const controls: Array<[ControlEvent, number | undefined]> = [];
   const read = createFrameReader((text) => seen.push(text), (kind, code) => controls.push([kind, code]));
 
   read(maskedFrame(0x1, 'x'.repeat(17 * 1024 * 1024)));
@@ -150,8 +166,8 @@ test('an oversized message is skipped while the link carries on', () => {
 });
 
 test('a fragment flood is skipped the same way', () => {
-  const seen: any = [];
-  const controls: any = [];
+  const seen: string[] = [];
+  const controls: Array<[ControlEvent, number | undefined]> = [];
   const read = createFrameReader((text) => seen.push(text), (kind, code) => controls.push([kind, code]));
 
   read(maskedFrame(0x1, 'x'.repeat(10 * 1024 * 1024), { fin: false }));
@@ -163,7 +179,7 @@ test('a fragment flood is skipped the same way', () => {
 });
 
 test('a continuation without a start closes as a protocol error', () => {
-  const controls: any = [];
+  const controls: Array<[ControlEvent, number | undefined]> = [];
 
   createFrameReader(() => {}, (kind, code) => controls.push([kind, code]))(maskedFrame(0x0, 'orphan'));
 
@@ -171,14 +187,14 @@ test('a continuation without a start closes as a protocol error', () => {
 });
 
 test('frame sizes are visible on request and silent otherwise', () => {
-  const errors: any = [];
+  const errors: string[] = [];
   const real = console.error;
-  console.error = (line) => errors.push(line);
+  console.error = (line) => errors.push(String(line));
   const previous = process.env.OPERA_BRIDGE_DEBUG_FRAMES;
   try {
     process.env.OPERA_BRIDGE_DEBUG_FRAMES = '1';
     createFrameReader(() => {})(maskedFrame(0x1, 'hi'));
-    assert.ok(errors.some((line: any) => line.includes('length=2')), 'sizes go to stderr when asked');
+    assert.ok(errors.some((line) => line.includes('length=2')), 'sizes go to stderr when asked');
     errors.length = 0;
     delete process.env.OPERA_BRIDGE_DEBUG_FRAMES;
     createFrameReader(() => {})(maskedFrame(0x1, 'hi'));

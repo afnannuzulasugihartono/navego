@@ -33,9 +33,11 @@ test('a quoted field keeps its comma and a BOM is not part of the first header',
   const table = parseDelimited(CSV);
   assert.deepEqual(table.headers, ['Tanggal', 'Kategori', 'Penjualan']);
   assert.equal(table.rows.length, 3);
-  assert.equal(table.rows[0].Kategori, 'Retail');
-  assert.equal(table.rows[0].Penjualan, '1.250.000');
-  assert.equal(table.rows[0].__line, 2);
+  const firstRow = table.rows[0];
+  assert.ok(firstRow);
+  assert.equal(firstRow.Kategori, 'Retail');
+  assert.equal(firstRow.Penjualan, '1.250.000');
+  assert.equal(firstRow.__line, 2);
 });
 
 test('an Indonesian money string becomes integer cents, and a value that is not money is null', () => {
@@ -80,12 +82,14 @@ test('a table with no rows stops the report', () => {
 test('every figure carries the exact rows that produced it', () => {
   const report = buildReport({ table: parseDelimited(CSV), spec: SPEC });
   const total = report.figures.find((figure) => figure.id === 'total');
+  assert.ok(total);
   assert.equal(total.cents, 400000000);
   assert.equal(total.display, 'Rp 4.000.000');
   assert.deepEqual(total.source.rows, [2, 3, 4]);
   assert.equal(total.source.column, 'Penjualan');
 
   const retail = report.figures.find((figure) => figure.id === 'group:Retail');
+  assert.ok(retail);
   assert.equal(retail.cents, 200000000);
   assert.deepEqual(retail.source.rows, [2, 4]);
 });
@@ -93,6 +97,7 @@ test('every figure carries the exact rows that produced it', () => {
 test('the group totals add up to the grand total', () => {
   const report = buildReport({ table: parseDelimited(CSV), spec: SPEC });
   const total = report.figures.find((figure) => figure.id === 'total');
+  assert.ok(total);
   const groups = report.figures.filter((figure) => figure.id.startsWith('group:'));
   const sum = groups.reduce((cents, figure) => cents + figure.cents, 0);
   assert.equal(sum, total.cents);
@@ -101,9 +106,11 @@ test('the group totals add up to the grand total', () => {
 test('the docplan is the report a person reads, in the same numbers', () => {
   const report = buildReport({ table: parseDelimited(CSV), spec: SPEC });
   const table = report.docplan.blocks.find((block) => block.kind === 'table');
+  assert.ok(table);
   assert.deepEqual(table.headers, ['Kategori', 'Total']);
   assert.deepEqual(table.rows, [['Grosir', 'Rp 2.000.000'], ['Retail', 'Rp 2.000.000']]);
   const total = report.docplan.blocks.find((block) => block.id === 'total');
+  assert.ok(total);
   assert.equal(total.text, 'Total: Rp 4.000.000');
 });
 
@@ -111,7 +118,9 @@ test('a blank line is skipped, and the line after it keeps its own number', () =
   const withBlank = CSV.replace('2026-09-02', '\r\n2026-09-02');
   const table = parseDelimited(withBlank);
   assert.equal(table.rows.length, 3);
-  assert.equal(table.rows[1].__line, 4);
+  const secondRow = table.rows[1];
+  assert.ok(secondRow);
+  assert.equal(secondRow.__line, 4);
 });
 
 test('the recheck passes when every figure still equals its source', () => {
@@ -126,13 +135,17 @@ test('the recheck catches a figure that was edited after it was computed', () =>
   const table = parseDelimited(CSV);
   const report = buildReport({ table, spec: SPEC });
   const forged = structuredClone(report);
-  forged.figures[0].cents += 1;
-  forged.figures[0].display = 'Rp 4.000.000,01';
+  const forgedFigure = forged.figures[0];
+  assert.ok(forgedFigure);
+  forgedFigure.cents += 1;
+  forgedFigure.display = 'Rp 4.000.000,01';
 
   const out = verifyReport({ report: forged, table });
   assert.equal(out.ok, false);
   assert.equal(out.mismatches.length, 1);
-  assert.equal(out.mismatches[0].id, forged.figures[0].id);
+  const mismatch = out.mismatches[0];
+  assert.ok(mismatch);
+  assert.equal(mismatch.id, forgedFigure.id);
 });
 
 test('a CSV file becomes a checked report file beside it', () => {

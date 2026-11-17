@@ -44,9 +44,10 @@ test('every popup message lands in a catch the user can read', () => {
   assert.ok(handlers.length >= 4, 'no popup click handlers found to check');
 
   for (const [, id, body] of handlers) {
+    assert.ok(body, 'handler body capture group must exist');
     if (!body.includes('call(')) continue;
     assert.match(body, /catch\s*\(/,
-      `$(' + id + ') sends a message with no catch, so a worker restart surfaces as an unchecked lastError`);
+      `$('${id}') sends a message with no catch, so a worker restart surfaces as an unchecked lastError`);
   }
 });
 
@@ -95,8 +96,9 @@ test('only the socket stamps lastConnectedAt, because only the socket knows when
   const writes = [...device.matchAll(/lastConnectedAt:(?!\s*null)/g)];
   assert.equal(writes.length, 1,
     `lastConnectedAt is written in ${writes.length} places; one writer owns it or two of them disagree`);
-
-  const owner = device.slice(Math.max(0, writes[0].index - 700), writes[0].index);
+  const write = writes[0];
+  assert.ok(write);
+  const owner = device.slice(Math.max(0, write.index - 700), write.index);
   assert.match(owner, /connectionPatch/, 'lastConnectedAt is not written by the socket state mapping');
 });
 
@@ -204,16 +206,36 @@ test('R6 YouTube recommendation prefers local SPA click with bounded navigation 
   const section = latest.slice(latest.indexOf("'youtube.play_recommendation'"));
   const workflowMatch = section.match(/\$wf\$([\s\S]*?)\$wf\$::jsonb/);
   assert.ok(workflowMatch, 'latest youtube.play_recommendation definition must contain JSON workflow data');
-  const workflow = JSON.parse(workflowMatch[1]);
+  const workflowJson = workflowMatch[1];
+  assert.ok(workflowJson, 'workflow JSON capture group must exist');
+  const workflow: { steps?: unknown } = JSON.parse(workflowJson);
 
-  const matchingSteps = (id: any) => {
-    const found: any = [];
-    const walk = (steps: any) => {
-      for (const step of steps || []) {
-        if (step?.id === id) found.push(step);
-        if (Array.isArray(step?.then)) walk(step.then);
-        if (Array.isArray(step?.else)) walk(step.else);
-        if (Array.isArray(step?.steps)) walk(step.steps);
+  interface WorkflowParams {
+    readonly ref?: unknown;
+    readonly trusted?: unknown;
+    readonly timeoutMs?: unknown;
+    readonly url?: unknown;
+    readonly wait?: unknown;
+  }
+  interface WorkflowStep {
+    readonly id?: unknown;
+    readonly method?: unknown;
+    readonly params?: WorkflowParams;
+    readonly then?: unknown;
+    readonly else?: unknown;
+    readonly steps?: unknown;
+  }
+  const matchingSteps = (id: string): WorkflowStep[] => {
+    const found: WorkflowStep[] = [];
+    const walk = (steps: unknown) => {
+      if (!Array.isArray(steps)) return;
+      for (const raw of steps) {
+        if (!raw || typeof raw !== 'object') continue;
+        const step = raw as WorkflowStep;
+        if (step.id === id) found.push(step);
+        if (Array.isArray(step.then)) walk(step.then);
+        if (Array.isArray(step.else)) walk(step.else);
+        if (Array.isArray(step.steps)) walk(step.steps);
       }
     };
     walk(workflow.steps);

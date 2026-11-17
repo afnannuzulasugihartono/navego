@@ -161,26 +161,27 @@ scripts/verify/scope.ts b4ffa9f02ce0aac2e8f3846812ad3dec2fe078d3
 scripts/verify/scope-check.ts 96203fa5b6ebfeb5e8eca8d4abfed50a43579634
 
 # --- the pins themselves: editing these is how a drift goes unnoticed ---
-tests/helpers/boundary-locks.ts dbcdc193c76a84ff74057eae2a48b92301da4682
-tests/helpers/canonical-source-hash.ts 1dc86adecde0273b27493d2981b6c75268940203
-tests/helpers/comment-format.ts f7fc99ea6416a6d48dd07e5bcbf446aac93d32e6
-tests/docs/comment-format.test.ts 82b8aef31ce01795999822150d04e598425e9683
-tests/docs/comment-claims.test.ts 2e7eb4fd43a56c8c08ce01a0ac3b378502d4294a
+tests/helpers/boundary-locks.ts 38bd5e784f9b7d3187daab72c4442890cd9f6eb5
+tests/helpers/canonical-source-hash.ts 7b9b165d2b134f42d54cc3f370e1b810aedbe2eb
+tests/helpers/comment-format.ts 8d0b0df215ffe6151b25864dd27396f59c242583
+tests/docs/comment-format.test.ts c2ea20f7a653da95cc7d22742be1a42ad59c3ab6
+tests/docs/comment-claims.test.ts 03ddf706d00e8fe1ed617ce95dc60c4dc8e37666
 
 # --- structural rules a human reviewer would otherwise have to remember ---
-tests/tooling/hygiene.test.ts 3bd4006624f7bf0fbf7e6da6c53b06533249cd2f
-tests/tooling/structure-gates.test.ts 3a9f622c6c65285bd2f23adfffc5ef86b8f2b7c5
-tests/tooling/boundary-locks.test.ts 6abe4c26b0bed725623e4854a0ef42dfb98dcda8
+tests/tooling/hygiene.test.ts 145aa6ab96c10147428345a1439f49a22989ca4d
+tests/tooling/structure-gates.test.ts ceeecb0e2d41c4d19827658b4ca37de27856a8c1
+tests/tooling/boundary-locks.test.ts 33269292a20e1c985a143d18568b75bf628c85f1
 
 # --- controls that decide what the product accepts at runtime ---
 extension/lib/protocol.ts 0134528a4b2fd1c89199866b75ee171fa8665ac7
 # The runtime-safety scan moved from shared/secret-pattern.js to shared/secret-pattern.ts when the core became strict TypeScript; the artifact is tsc output and is never committed, so the criterion pins the source.
-shared/secret-pattern.ts 7c2c83a2a96c43e6cf9b8ca2621c12773c4eda44
-# The one pinned shared edge module moved from .js to .ts unchanged; same bytes, same criterion, new path.`nhosted/functions/_shared/cors.ts dead4552d786ef0fdbaf71ad5bfb3c99e647b575
+shared/secret-pattern.ts a486a9ce4f2f7205f6128f17fc6a799a8eef2792
+# The one pinned shared edge module moved from .js to .ts unchanged; same bytes, same criterion, new path.
+hosted/functions/_shared/cors.ts 77d845c17e56f58f5c08aa464933a132101150f8
 
 # --- surfaces an owner, not an agent, should have to look at ---
 # The merge took main's Kemudi manifest for the file and this branch's .gitleaks.toml bytes; both pins match what the merged tree actually holds.
 extension/manifest.json 06baefcad982fdabb73a871d946940c234354a17
 .gitleaks.toml 8171cc4f841be2dc8135d6158689f6768dcd24e2
 .github/CODEOWNERS ac3ba44e7903bea60c85f5f33db3afb1f85073d0
-.github/workflows/ci.yml 1a473af40bbc6fe476b2764719f89a552d4eb39e
+.github/workflows/ci.yml d235ba38ef9059213d3b64fd5c3f168fed3a1f81

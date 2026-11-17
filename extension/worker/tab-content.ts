@@ -22,14 +22,15 @@ export async function fetchJson(url: string | URL, body: Record<string, unknown>
     if (signal.aborted) relay();
     else signal.addEventListener('abort', relay, { once: true });
   }
+  const fetchInit = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    signal: controller.signal,
+    cache: 'no-store' as const
+  };
   try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      signal: controller.signal,
-      cache: 'no-store'
-    });
+    const response = await fetch(url, fetchInit);
     const text = await response.text();
     let data: Record<string, unknown> = {};
     try { data = text ? JSON.parse(text) : {}; } catch (error) { log.error('RESPONSE_BODY_PARSE_FAILED', error instanceof Error && error.message ? error.message : String(error)); data = { error: text || `HTTP ${response.status}` }; }

@@ -19,8 +19,11 @@ describe('the tab claim', () => {
     const answer = leases.claim('7', 'agent-a');
 
     assert.equal(answer.granted, true);
+    assert.ok(answer.holder);
     assert.equal(answer.holder.owner, 'agent-a');
-    assert.equal(leases.state('7').owner, 'agent-a');
+    const claimed = leases.state('7');
+    assert.ok(claimed);
+    assert.equal(claimed.owner, 'agent-a');
   });
 
   test('a second agent is refused, and the refusal names the holder and the expiry', () => {
@@ -30,9 +33,12 @@ describe('the tab claim', () => {
     const answer = leases.claim('7', 'agent-b');
 
     assert.equal(answer.granted, false, 'the tab is held');
+    assert.ok(answer.holder);
     assert.equal(answer.holder.owner, 'agent-a', 'and the refusal says by whom');
     assert.equal(answer.holder.expiresAt - Date.now() < 5000 + 5000, true, 'and until when');
-    assert.equal(leases.state('7').owner, 'agent-a', 'and the claim is unchanged');
+    const refused = leases.state('7');
+    assert.ok(refused);
+    assert.equal(refused.owner, 'agent-a', 'and the claim is unchanged');
   });
 
   test('the same agent claiming again is a renewal, not a refusal', () => {
@@ -43,6 +49,8 @@ describe('the tab claim', () => {
     const second = leases.claim('7', 'agent-a');
 
     assert.equal(second.granted, true, 'the holder keeps its own tab');
+    assert.ok(second.holder);
+    assert.ok(first.holder);
     assert.ok(second.holder.expiresAt > first.holder.expiresAt, 'and its expiry moves with the work');
   });
 
@@ -62,7 +70,9 @@ describe('the tab claim', () => {
     leases.claim('7', 'agent-a');
 
     assert.equal(leases.release('7', 'agent-b'), false, 'another agent cannot evict the holder');
-    assert.equal(leases.state('7').owner, 'agent-a', 'and the claim stands');
+    const held = leases.state('7');
+    assert.ok(held);
+    assert.equal(held.owner, 'agent-a', 'and the claim stands');
     assert.equal(leases.release('7', 'agent-a'), true, 'the holder gives the tab up');
     assert.equal(leases.state('7'), null, 'and it is free for anyone');
   });
@@ -72,14 +82,18 @@ describe('the tab claim', () => {
     leases.claim('7', 'agent-a');
 
     assert.equal(leases.claim('8', 'agent-b').granted, true, 'a different tab is a different claim');
-    assert.equal(leases.release('8', null), true, 'and a claim with no owner named still releases');
-    assert.equal(leases.state('7').owner, 'agent-a', 'while the first claim is untouched');
+    assert.equal(leases.release('8', null!), true, 'and a claim with no owner named still releases');
+    const first = leases.state('7');
+    assert.ok(first);
+    assert.equal(first.owner, 'agent-a', 'while the first claim is untouched');
   });
 
   test('the default window is long enough for a drive and short enough to clear', () => {
     assert.equal(DEFAULT_TTL_MS, 60000);
     const leases = createLeaseTable();
     leases.claim('7', 'agent-a');
-    assert.ok(leases.state('7').expiresAt > Date.now(), 'the claim outlives the call that made it');
+    const claimed = leases.state('7');
+    assert.ok(claimed);
+    assert.ok(claimed.expiresAt > Date.now(), 'the claim outlives the call that made it');
   });
 });
