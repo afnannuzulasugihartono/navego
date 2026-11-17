@@ -1,6 +1,7 @@
 {
   "name": "navego",
-  "version": "1.7.5",
+  "version": "1.7.6",
+  "mcpName": "io.github.afnannuzulasugihartono/navego",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/afnannuzulasugihartono/navego.git"

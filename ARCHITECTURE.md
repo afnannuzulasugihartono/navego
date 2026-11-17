@@ -32,7 +32,7 @@ flow). They carry no tool surface for MCP clients.
 
 # Where everything lives
 
-Root files, each with its job: `AGENTS.md` rules and acceptance bar · `ARCHITECTURE.md` this map · `README.md` product, boundary, the tool surface · `CONTRIBUTING.md` how a change is reviewed · `CHANGELOG.md` what each release contained · `SECURITY.md` the private route · `LICENSE` terms · `llms.txt` the LLM-facing index · `package.json` scripts · `package-lock.json` npm's lockfile · `gates.lock` acceptance surface · `.editorconfig`/`.gitattributes`/`.gitignore`/`.gitleaks.toml`/`.sonarcloud.properties`/`opencode.json` tooling state.
+Root files, each with its job: `AGENTS.md` rules and acceptance bar · `ARCHITECTURE.md` this map · `README.md` product, boundary, the tool surface · `CONTRIBUTING.md` how a change is reviewed · `CHANGELOG.md` what each release contained · `SECURITY.md` the private route · `LICENSE` terms · `llms.txt` the LLM-facing index · `package.json` scripts · `package-lock.json` npm's lockfile · `gates.lock` acceptance surface · `server.json` the MCP Registry manifest that the publish-mcp workflow publishes · `.editorconfig`/`.gitattributes`/`.gitignore`/`.gitleaks.toml`/`.sonarcloud.properties`/`opencode.json` tooling state.
 
 | Entry | What it is | Contract pinning its path |
 |---|---|---|

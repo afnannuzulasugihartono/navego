@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.afnannuzulasugihartono/navego",
+  "title": "Navego",
+  "description": "Navego drives your own signed-in browser from an MCP client - Canvas/Sheets/Docs, artifacts, and wallet on-device.",
+  "repository": {
+    "url": "https://github.com/afnannuzulasugihartono/navego",
+    "source": "github"
+  },
+  "version": "1.7.6",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "navego",
+      "version": "1.7.6",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
