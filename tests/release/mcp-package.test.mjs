@@ -35,7 +35,7 @@ function importsOf(source) {
 }
 
 test('the package is named and run the way the guide says', () => {
-  assert.equal(manifest.name, 'navego');
+  assert.equal(manifest.name, 'opera-agent-mcp');
   assert.ok(manifest.bin['navego'], 'the package installs one command');
   assert.equal(manifest.type, 'module');
   assert.ok(manifest.engines.node, 'the package says which node it needs');

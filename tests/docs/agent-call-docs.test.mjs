@@ -36,7 +36,7 @@ test('every page a reader is sent to names the install that works today', () => 
     ['the README', read('local/README.md')]
   ];
   for (const [name, text] of pages) {
-    assert.match(text, /npm i -g navego|npm install -g \./, `${name} must name the install that works today`);
+    assert.match(text, /npm i -g opera-agent-mcp|npm install -g \./, `${name} must name the install that works today`);
   }
 });
 
