@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { NavegoMark, NavegoWordmark } from './NavegoMark';
+import { readConsent, storeConsent, type ConsentChoice } from '../lib/consent.js';
 
 const NAV = [
   { key: 'fitur', href: '/fitur', label: 'Fitur' },
@@ -266,8 +267,42 @@ export function SiteHeader({ current }: { current?: string }) {
   return <SiteNav current={current} />;
 }
 
+// WHY the banner is a sibling of the footer and not a page-level overlay: every page already ends in the footer, so the consent bar belongs there and nowhere else.
+// It renders nothing on the server and nothing for anyone who already chose, so the page a search engine sees carries no consent UI at all.
+
+function CookieConsent() {
+  const [ready, setReady] = useState(false);
+  const [choice, setChoice] = useState<ConsentChoice>(null);
+
+  useEffect(() => {
+    setChoice(readConsent());
+    setReady(true);
+  }, []);
+
+  if (!ready || choice) return null;
+
+  const decide = (value: 'granted' | 'denied') => {
+    storeConsent(value);
+    setChoice(value);
+    window.dispatchEvent(new CustomEvent('navego:consent', { detail: value }));
+  };
+
+  return (
+    <div className="consent-banner" role="region" aria-label="Persetujuan cookie">
+      <div className="wrap consent-inner">
+        <p>Navego memakai dua cookie first-party: <code>navego_consent</code> (mengingat pilihan ini) dan <code>navego_region</code> (mengingat kawasan harga Anda). Tidak ada analytics, iklan, atau pelacakan. <Link to="/privasi#cookie">Detail di Kebijakan Privasi</Link></p>
+        <div className="hero-cta">
+          <button className="btn btn-solid btn-sm" type="button" onClick={() => decide('granted')}>Accept cookies</button>
+          <button className="btn btn-ghost btn-sm" type="button" onClick={() => decide('denied')}>Tolak</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function SiteFooter() {
   return (
+    <>
     <footer className="site-footer">
       <div className="wrap">
         <div className="footer-cols">
@@ -305,5 +340,7 @@ export function SiteFooter() {
         </div>
       </div>
     </footer>
+    <CookieConsent />
+    </>
   );
 }

@@ -34,7 +34,10 @@ export default function Privasi() {
           <p>Kunci API model dan token device tersimpan di browser Anda masing-masing dan tidak pernah ditampilkan kembali ke halaman web mana pun, termasuk halaman situs ini.</p>
           <h2 id="ditolak">Yang selalu ditolak</h2>
           <p>Screenshot dan pembacaan halaman ditolak di halaman yang menampilkan password, kode sekali pakai, atau kolom pembayaran, serta di tab pribadi dan mode penyamaran.</p>
-          <h2 id="kontak">Kontak</h2>
+          <h2 id="cookie">Cookie</h2>
+<p>Situs ini memakai dua cookie first-party dan tidak membawa yang lain: <code>navego_consent</code> menyimpan pilihan Anda pada banner cookie (Accept cookies atau Tolak), dan <code>navego_region</code> menyimpan kawasan harga yang Anda lihat (dua huruf negara), hanya setelah Anda menerima. Tidak ada cookie analytics, iklan, atau pelacakan, dan tidak ada cookie dari pihak ketiga mana pun. Menolak tidak memblokir apa pun: deteksi kawasan tetap berjalan setiap kunjungan, hanya tidak tersimpan. Anda bisa membersihkan keduanya kapan pun dari pengaturan browser Anda.</p>
+
+<h2 id="kontak">Kontak</h2>
           <p>Pertanyaan tentang data Anda: semua kendali mandiri ada di halaman <Link to="/akun">Akun</Link> — lihat device yang ter-pairing, cabut yang tidak dikenal, keluar dari sesi. Temuan keamanan jangan dibuka sebagai isu publik; laporkan privat lewat tab Security di repositori.</p>
         </div>
       </main>
