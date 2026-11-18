@@ -85,7 +85,7 @@ export default function Harga() {
       <ul>
         <li>{plan.quota}</li>
         <li>36 primitive browser</li>
-        <li>{plan.premium ? 'Semua fitur Firm (statement, VM, remote drive) + prioritas' : 'Plan dasar'}</li>
+        <li>{plan.premium ? 'Semua fitur (statement, VM, remote drive) + prioritas' : 'Plan dasar'}</li>
       </ul>
       <button className="btn btn-solid btn-sm" type="button" onClick={() => buy(plan.id)} style={{ width: '100%' }}>Beli dengan PayPal</button>
     </section>
