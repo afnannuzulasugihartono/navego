@@ -25,7 +25,7 @@ const CONFIGS: Array<{ id: string; title: string; body: string }> = [
 const MULAI = [
   { title: 'Pasang', body: 'Arsip .zip dari halaman Unduh, muat di chrome://extensions.' },
   { title: 'Pair', body: 'Satu klik "Pasangkan browser ini". Tidak ada kode yang diketik.' },
-  { title: 'Perintah', body: 'Satu kalimat dalam bahasa Anda. Satu pekerjaan, satu hasil.' },
+  { title: 'Perintah', body: 'Satu kalimat. Satu pekerjaan. Satu hasil.' },
   { title: 'Berkas', body: 'Hasilnya .xlsx, .docx, .pptx, atau .csv di folder Anda.' }
 ];
 
@@ -65,7 +65,7 @@ export default function Docs() {
         <section className="page-hero">
           <div className="wrap">
             <h1>Docs.</h1>
-            <p className="lede">Empat langkah sampai pekerjaan pertama. Semua perintah bisa disalin.</p>
+            <p className="lede">Empat langkah. Semua bisa disalin.</p>
           </div>
         </section>
 
@@ -111,7 +111,7 @@ export default function Docs() {
               <p>Device yang tidak dikenali bisa dicabut kapan saja di Dashboard.</p>
 
               <h2 id="tugas">Tugas pertama</h2>
-              <p>Satu perintah, browser bekerja, hasilnya jadi berkas. Contoh: <em>Buka Google Maps, cari kopi dekat Monas, tulis hasilnya ke sheet.</em></p>
+              <p><em>Buka Google Maps, cari kopi dekat Monas, tulis hasilnya ke sheet.</em></p>
               <ul>
                 <li>Satu pekerjaan berarti satu hasil: satu halaman, satu laporan, atau satu daftar.</li>
                 <li>Jumlah aksi dibatasi. Perkiraan yang lebih besar ditolak di depan — dengan tawaran dipecah, bukan gagal di tengah. Lihat <Link to="/harga">Harga</Link>.</li>
@@ -126,10 +126,10 @@ export default function Docs() {
                 <li><a href="/contoh/riset-promo.docx" download>Riset promo</a> — Word: judul, bagian, tabel, grafik.</li>
                 <li><a href="/contoh/rencana-pemasaran-2027.docx" download>Rencana pemasaran 2027</a> — Word: positioning, segmentasi, rencana kanal.</li>
               </ul>
-              <p>Portal yang minta masuk tidak menghentikan pekerjaan: agen membaca halaman lebih dulu, tahu ada sign-in atau captcha, lalu menunggu Anda menyelesaikannya di browser Anda sendiri sebelum lanjut di tab yang sama.</p>
+              <p>Portal yang minta masuk: Anda menyelesaikannya dulu. Lalu Navego lanjut di tab yang sama.</p>
 
               <h2 id="paket">Paket dan pembayaran</h2>
-              <p>Paket dibayar dengan PayPal, sekali beli, langsung aktif: $1–$9 per bulan, $17 untuk Business (6 bulan), $33 untuk Enterprise (1 tahun). Akun diaktifkan otomatis begitu PayPal menyelesaikan pembayaran; tidak ada saldo yang perlu diisi ulang dan tidak ada langganan yang tidak Anda pilih. Kuota, fitur, dan masa berlaku ada di <Link to="/harga">Harga</Link>.</p>
+              <p>Sekali beli, langsung aktif. $1–$9 per bulan, $17 Business (6 bulan), $33 Enterprise (1 tahun). Detail di <Link to="/harga">Harga</Link>.</p>
 
               <h2 id="tools">Tools MCP</h2>
               <p>45 tool dalam empat keluarga — <code>browser_</code>, <code>artifact_</code>, <code>delivery_</code>, <code>wallet_</code> — di atas 36 primitive browser.</p>

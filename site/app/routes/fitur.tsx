@@ -8,7 +8,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 export function meta() {
   return seoMeta({
     title: 'Fitur — Navego',
-    description: 'Yang dikerjakan Navego: 45 tool MCP di atas 36 primitive browser, enam izin yang dijelaskan satu per satu, model milik Anda, pairing device yang bisa dicabut, dan empat berkas contoh yang bisa diunduh.',
+    description: '45 tool MCP di atas 36 primitive browser, enam izin, empat berkas contoh.',
     path: '/fitur'
   });
 }
@@ -20,28 +20,28 @@ const ROLES = [
 ] as const;
 
 const LANGKAH = [
-  ['Tulis', 'Satu kalimat: ringkas cek onboarding Q4.'],
-  ['Baca', 'Halaman, tombol, dan baris dibaca dari tab yang terbuka.'],
-  ['Isi', 'Formulir dan sel diisi sesuai instruksi, bukan diklik asal.'],
-  ['Simpan', 'Berkas hasil tersimpan, dengan jejaknya di dashboard.']
+  ['Tulis', 'Satu kalimat. Selesai.'],
+  ['Baca', 'Halaman dan tombol dibaca dari tab terbuka.'],
+  ['Isi', 'Diisi sesuai instruksi Anda.'],
+  ['Simpan', 'Berkasnya tersimpan. Jejaknya di dashboard.']
 ] as const;
 
 const KEMAMPUAN = [
-  ['baca', 'Baca halaman', 'Judul, teks, dan struktur tab yang Anda sebut — bukan semua tab.'],
-  ['isi', 'Isi formulir', 'Kolom ditemukan dari label dan struktur, bukan alamat tetap.'],
-  ['klik', 'Klik dan gulir', 'Tombol, menu, dan daftar bergulir ikut dijangkau.'],
-  ['tunggu', 'Tunggu perubahan', 'Halaman yang memuat lama ditunggu, bukan ditebak.'],
-  ['simpan', 'Simpan berkas', 'Excel, Word, PowerPoint, dan CSV mendarat di folder Anda.'],
-  ['verifikasi', 'Verifikasi hasil', 'Setiap berkas membawa sidik jari SHA-256 sendiri.']
+  ['baca', 'Baca halaman', 'Teks dan tabel tab yang Anda sebut — bukan semua tab.'],
+  ['isi', 'Isi formulir', 'Ditemukan dari label.'],
+  ['klik', 'Klik dan gulir', 'Tombol, menu, dan daftar yang bergulir.'],
+  ['tunggu', 'Tunggu perubahan', 'Halaman lambat ditunggu, bukan ditebak.'],
+  ['simpan', 'Simpan berkas', 'Excel, Word, dan CSV di folder Anda.'],
+  ['verifikasi', 'Verifikasi hasil', 'Setiap berkas membawa SHA-256.']
 ] as const;
 
 const PERMISSIONS = [
-  ['tabs', 'Membuka dan menavigasi tab yang Anda tunjuk.'],
-  ['scripting', 'Menjaga skrip di halaman tetap hidup selama pekerjaan berjalan.'],
-  ['storage', 'Menyimpan token dan pengaturan lokal Anda.'],
-  ['alarms', 'Menjadwalkan pemeriksaan berkala di latar.'],
-  ['debugger', 'Klik tepercaya, tangkapan layar, dan pembacaan aksesibilitas.'],
-  ['downloads', 'Menyimpan berkas hasil kerja ke folder Anda.']
+  ['tabs', 'Buka dan navigasi tab yang Anda tunjuk.'],
+  ['scripting', 'Skrip tetap hidup selama bekerja.'],
+  ['storage', 'Menyimpan token Anda.'],
+  ['alarms', 'Menjadwalkan pemeriksaan di latar.'],
+  ['debugger', 'Klik tepercaya dan tangkapan layar.'],
+  ['downloads', 'Menyimpan berkas hasil kerja.']
 ] as const;
 
 const PATHS: Record<string, string> = {

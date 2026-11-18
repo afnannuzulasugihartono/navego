@@ -40,14 +40,14 @@ export default function AiBrowserIndonesia() {
 
           <div className="article-body">
             <h2 id="sandbox">Browser Anda bukan sandbox.</h2>
-            <p>Asisten yang menjalankan Chrome di server orang lain memulai setiap sesi dari nol: tanpa cookies Anda, tanpa histori, tanpa sesi masuk ke aplikasi kerja Anda. Menyerahkan kredensial ke server itu bukan pilihan yang masuk akal.</p>
-            <p>Asisten yang benar-benar berguna harus melihat halaman yang sama dengan yang Anda lihat: portal karyawan, dasbor internal, spreadsheet langganan, feed sosial yang hanya Anda bisa akses. Semua itu hidup di satu tempat — browser yang sedang Anda pakai.</p>
+            <p>Asisten di server orang lain mulai dari nol. Tanpa cookies Anda. Tanpa histori. Tanpa sesi aplikasi kerja Anda. Kredensial Anda bukan bahan bakar asisten itu.</p>
+            <p>Asisten yang benar-benar berguna harus melihat halaman yang sama dengan Anda: portal karyawan, dasbor internal, spreadsheet langganan. Semua itu hidup di satu tempat — browser Anda.</p>
 
             <div className="callout"><strong>Poinnya.</strong> Keunggulan bukan model yang lebih pintar; keunggulan adalah konteks yang sudah ada di browser Anda.</div>
 
             <h2 id="luar">Bukan otomasi dari luar.</h2>
-            <p>Hampir semua solusi hari ini memasang Chrome baru, mengisinya lewat protokol DevTools, lalu menjalankan skrip yang ditulis di muka untuk tiap situs. Cara itu bekerja sampai tata letak situs berubah — dan berhenti diam-diam.</p>
-            <p>Navego memakai browser Anda, dengan semua sesi dan data yang sudah ada di sana. Ia tidak menulis skrip per situs: halaman dibaca apa adanya, kolom yang dimaksud ditemukan dari label dan struktur, lalu tindakan dilakukan terhadapnya.</p>
+            <p>Solusi lain memasang Chrome baru di server. Skrip ditulis di muka untuk tiap situs. Bekerja sampai tata letak berubah — lalu berhenti diam-diam.</p>
+            <p>Navego memakai browser Anda, dengan sesi yang sudah ada. Halaman dibaca apa adanya. Kolom ditemukan dari label. Tindakan dilakukan terhadapnya.</p>
 
             <div className="pull">Yang dibaca struktur halaman, bukan alamat tetap. Itu yang membuat satu perintah berlaku di situs yang belum pernah dilihat.</div>
 

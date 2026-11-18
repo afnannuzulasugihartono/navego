@@ -62,7 +62,7 @@ export default function Bandingkan() {
               </table>
             </div>
             <p className="section-note" style={{ marginTop: 'var(--s-4)' }}>
-              Tabel ini tentang kelas pendekatan, bukan klaim bahwa tool tertentu lebih buruk — kami tidak menguji produk orang lain.
+              Tabel ini soal kelas pendekatan, bukan klaim. Kami tidak menguji produk orang lain.
               Kalau Anda butuh regresi UI yang identik setiap malam, WebDriver lebih tepat. Kalau Anda butuh asisten yang bisa diajak bicara
               untuk pekerjaan berantakan sehari-hari — formulir, portal, berkas — itu wilayah Navego.
             </p>
