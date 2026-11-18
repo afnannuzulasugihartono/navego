@@ -466,6 +466,15 @@
         "kind": "user",
         "ref": "user 2026-11-18: \"ini masih dobel kenapa yak\" - the panel repeated the eight links already visible in the bar; user wants no duplicate"
       }
+    },
+    {
+      "id": "D51",
+      "scope": "web/components",
+      "decision": "The header carries only the brand and one amber CTA; the flat nav row and the mega panel are deleted; the chevron is the only navigation surface, opening the full fifteen-link panel at every width.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: \"Hilangkan bar nav atas\" - the flat Beranda..Dukungan row was still displayed on top, duplicating what the chevron panel already carries"
+      }
     }
   ]
 }
