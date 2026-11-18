@@ -1,0 +1,21 @@
+; Navego - force install through a policy, Windows, per-user.
+; @last-edited: 2026-11-15 UTC+7.
+; @title: extension force install - one double-click asks every Chromium browser in this user profile to install the extension and keep it.
+; @state: per-user policy (HKCU), admin rights not required. Chrome and Brave honor HKCU policies; Edge honors HKCU too. Remove the trigger again with extension-forceinstall-remove.reg.
+; @dependencies: Windows, the extension published at the update URL, one browser restart.
+; WHAT IT COSTS YOU, READ THIS FIRST:
+; (1) Every browser touched by this file starts reporting itself as "managed by your organization" - the policy you set yourself shows up at chrome://policy. That is honest, not a bug.
+; (2) The extension cannot be disabled or removed from chrome://extensions while the policy stands; it reinstalls on the next start.
+; (3) On an actual managed machine (school, company), the administrator's policy wins or the write is refused - no file in this repository can override an administrator, and none should try.
+; (4) Value "1" is used. If ExtensionInstallForcelist already carries entries of your own, merge rather than overwrite; see docs/external-install.md.
+
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\Policies\Google\Chrome\ExtensionInstallForcelist]
+"1"="ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"
+
+[HKEY_CURRENT_USER\Software\Policies\Microsoft\Edge\ExtensionInstallForcelist]
+"1"="ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"
+
+[HKEY_CURRENT_USER\Software\Policies\BraveSoftware\Brave-Browser\ExtensionInstallForcelist]
+"1"="ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"
