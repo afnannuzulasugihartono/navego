@@ -1,12 +1,13 @@
 import { Link } from 'react-router';
+import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 
-
 export function meta() {
-  return [
-    { title: 'Halaman tidak ditemukan — Navego' },
-    { name: 'description', content: 'Alamatnya mungkin salah ketik, atau halaman itu sudah dipindahkan. Lima jalan keluar.' }
-  ];
+  return seoMeta({
+    title: 'Halaman tidak ditemukan — Navego',
+    description: 'Alamatnya mungkin salah ketik, atau halaman itu sudah dipindahkan. Lima jalan keluar.',
+    path: '/404'
+  });
 }
 
 const EXITS = [
@@ -21,21 +22,26 @@ export default function NotFound() {
   return (
     <>
       <SiteHeader current="/404.html" />
-      <main className="wrap">
-        <header className="page-head" style={{ paddingBottom: 4 }}>
-          <h1>Halaman ini tidak ada</h1>
-          <p className="lede">Alamatnya mungkin salah ketik, atau halaman itu sudah dipindahkan. Lima jalan keluar:</p>
-        </header>
-        <ul style={{ listStyle: 'none', display: 'grid', gap: 10, maxWidth: 620, margin: '20px 0 40px' }}>
-          {EXITS.map(([href, title, body]) => (
-            <li key={href}>
-              <Link to={href} style={{ display: 'grid', gap: 2, background: 'var(--panel)', border: '1px solid var(--line)', boxShadow: 'var(--panel-shadow)', borderRadius: 12, padding: '13px 16px', textDecoration: 'none' }}>
-                <strong style={{ fontSize: 14.5 }}>{title}</strong>
-                <span style={{ fontSize: 12, color: 'var(--muted-2)' }}>{body}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+      <main>
+        <section className="page-hero">
+          <div className="wrap">
+            <p className="crumb">404</p>
+            <h1>Halaman ini tidak ada.</h1>
+            <p className="lede">Alamatnya mungkin salah ketik, atau halaman itu sudah dipindahkan. Lima jalan keluar:</p>
+          </div>
+        </section>
+        <div className="wrap" style={{ paddingBlock: 'var(--s-7)' }}>
+          <ul style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-3)', maxWidth: '36rem' }}>
+            {EXITS.map(([href, title, body]) => (
+              <li key={href}>
+                <Link to={href} className="card" style={{ display: 'grid', gap: 'var(--s-1)', textDecoration: 'none' }}>
+                  <strong style={{ color: 'var(--navy-deep)' }}>{title}</strong>
+                  <span style={{ color: 'var(--muted-2)', fontSize: 'var(--text-sm)' }}>{body}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </main>
       <SiteFooter />
     </>

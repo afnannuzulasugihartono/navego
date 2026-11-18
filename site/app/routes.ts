@@ -17,6 +17,8 @@ const PAGES: Array<[string, string]> = [
   ['syarat', './routes/syarat.tsx'],
   ['akun', './routes/akun.tsx'],
   ['dashboard', './routes/dashboard.tsx'],
+  ['artikel', './routes/artikel.tsx'],
+  ['artikel/ai-browser-indonesia', './routes/artikel-ai-browser-indonesia.tsx'],
   ['oauth/consent', './routes/consent.tsx']
 ];
 

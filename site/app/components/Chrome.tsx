@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import { NavegoMark, NavegoWordmark } from './NavegoMark';
 
@@ -9,32 +10,67 @@ const NAV = [
 
 const VERSION = '1.7.6';
 
-export function SiteHeader({ current }: { current?: string }) {
+// One nav tree, two presentations: inline when it fits, native popover when it does not.
+// The header measures itself on every resize and toggles `is-wide`; without script the popover still opens.
+
+function SiteNav({ current }: { current?: string }) {
+  const headerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
+    const measure = () => {
+      const row = header.querySelector<HTMLElement>('.site-header-row');
+      if (!row) return;
+      const fits = row.scrollWidth <= row.clientWidth + 1;
+      header.classList.toggle('is-wide', fits);
+      const menu = header.querySelector<HTMLElement>('#site-menu');
+      if (menu) {
+        if (fits) menu.removeAttribute('popover');
+        else menu.setAttribute('popover', 'auto');
+      }
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(header);
+    const row = header.querySelector('.site-header-row');
+    if (row) observer.observe(row);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <header className="site-header">
-      <div className="wrap">
+    <header className="site-header" ref={headerRef}>
+      <div className="wrap site-header-row">
         <Link className="brand" to="/beranda.html" aria-label="Navego — beranda">
-          <NavegoMark size={22} />
-          <NavegoWordmark size={16} />
+          <NavegoMark size={26} />
+          <NavegoWordmark size={15} />
           <span className="brand-version">v{VERSION}</span>
         </Link>
+
         <nav className="nav" aria-label="Navigasi utama">
           {NAV.map((item) => (
             <Link key={item.href} to={item.href} aria-current={current === item.href ? 'page' : undefined}>
               {item.label}
             </Link>
           ))}
-          <Link className="btn btn-solid btn-sm" to="/unduh.html">Pasang navego</Link>
         </nav>
-        <details className="nav-menu">
-          <summary aria-label="Menu halaman"><span className="bars" /></summary>
-          <div className="nav-panel">
-            {NAV.map((item) => (
-              <Link key={item.href} to={item.href}>{item.label}</Link>
-            ))}
-            <Link className="btn btn-solid" to="/unduh.html">Pasang navego</Link>
-          </div>
-        </details>
+
+        <Link className="btn btn-solid btn-sm" to="/unduh.html">Pasang navego</Link>
+
+        <button className="nav-toggle" type="button" popoverTarget="site-menu" aria-controls="site-menu" aria-label="Menu">
+          <span className="bars" aria-hidden="true" />
+        </button>
+
+        <ul className="nav-menu" id="site-menu" popover="auto">
+          {NAV.map((item) => (
+            <li key={item.href}>
+              <Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link>
+            </li>
+          ))}
+          <li><Link className="btn btn-solid" to="/unduh.html">Pasang navego</Link></li>
+        </ul>
       </div>
     </header>
   );
@@ -45,7 +81,8 @@ const PRODUK = [
   { href: '/harga.html', label: 'Harga' },
   { href: '/unduh.html', label: 'Unduh' },
   { href: '/docs.html', label: 'Docs' },
-  { href: '/mcp.html', label: 'MCP' }
+  { href: '/mcp.html', label: 'Pasang MCP' },
+  { href: '/artikel.html', label: 'Artikel' }
 ];
 
 const LEGAL = [
@@ -54,28 +91,37 @@ const LEGAL = [
   { href: '/syarat.html', label: 'Syarat' }
 ];
 
+export function SiteHeader({ current }: { current?: string }) {
+  return <SiteNav current={current} />;
+}
+
 export function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="wrap">
         <div className="footer-cols">
           <div>
-            <div className="footer-brand">
-              <NavegoMark size={40} />
-              <NavegoWordmark size={20} />
-            </div>
-            <p className="footer-tag">Huginn &amp; Muninn — Odin&#x27;s ravens. Browser Anda, atas perintah Anda.</p>
-            <a className="footer-badge" href="/beranda.html" aria-label="Navego — pasang badge di situs Anda">
-              <img src="/assets/badge-88x31.svg" width={88} height={31} alt="Navego — Asisten AI di browser Anda" loading="lazy" />
-            </a>
+            <Link className="brand" to="/beranda.html" aria-label="Navego — beranda" style={{ color: '#ffffff' }}>
+              <NavegoMark size={36} />
+              <NavegoWordmark size={16} />
+            </Link>
+            <p className="footer-tag">Huginn &amp; Muninn — raven Odin. Browser Anda, atas perintah Anda.</p>
           </div>
           <nav aria-label="Produk">
             <h3>Produk</h3>
             <ul>{PRODUK.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}</ul>
           </nav>
-          <nav aria-label="Legal">
-            <h3>Legal</h3>
+          <nav aria-label="Bantuan">
+            <h3>Bantuan</h3>
             <ul>{LEGAL.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}</ul>
+          </nav>
+          <nav aria-label="Buka sumber">
+            <h3>Open source</h3>
+            <ul>
+              <li><a href="https://github.com/afnannuzulasugihartono/navego" rel="noreferrer">GitHub</a></li>
+              <li><a href="https://www.npmjs.com/package/navego" rel="noreferrer">npm</a></li>
+              <li><Link to="/mcp.html">Pasang sebagai MCP</Link></li>
+            </ul>
           </nav>
         </div>
         <div className="footer-bar">

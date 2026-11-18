@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
+import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { AUTH_HOST, clearSession, ensureSession, headersFor, REST } from '../lib/auth';
 
 export function meta() {
-  return [
-    { title: 'Akun Anda — Navego' },
-    { name: 'description', content: 'Identitas akun, penyedia tertaut, device Anda, dan sesi.' }
-  ];
+  return seoMeta({
+    title: 'Akun Anda — Navego',
+    description: 'Identitas akun, penyedia tertaut, device Anda, dan sesi.',
+    path: '/akun'
+  });
 }
 
 const PROVIDER_LABEL: Record<string, string> = { google: 'Google', github: 'GitHub', email: 'Tautan email' };
@@ -125,76 +127,82 @@ export default function Akun() {
   return (
     <>
       <SiteHeader current="/akun.html" />
-      <main className="wrap" style={{ padding: '28px 0 40px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
-          <div>
-          <header className="page-head" style={{ padding: '8px 0' }}>
-            <h1>Akun Anda</h1>
+      <main>
+        <section className="page-hero">
+          <div className="wrap">
+            <p className="crumb">Akun</p>
+            <h1>Akun Anda.</h1>
             <p className="lede">Akun ini yang dipakai device dan perintah Anda.</p>
-          </header>
-          </div>
-          <Link className="btn btn-solid" to="/dashboard.html">Buka Dashboard</Link>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 320px) minmax(0, 1fr)', gap: 18, marginTop: 22, alignItems: 'start' }} className="akun-split">
-          <aside>
-            <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-              <span aria-hidden="true" style={{ width: 54, height: 54, borderRadius: '50%', background: 'var(--ink)', color: 'var(--paper)', display: 'grid', placeItems: 'center', fontWeight: 800, letterSpacing: '0.04em' }}>{user ? initialsOf(name, email) : '…'}</span>
-              <span>
-                <span style={{ display: 'block', fontWeight: 800 }}>{name}</span>
-                <span style={{ display: 'block', fontSize: 12, color: 'var(--muted-2)' }}>{email}</span>
-                <span style={{ display: 'block', fontSize: 11, color: 'var(--muted)' }}>{user ? `Masuk lewat ${PROVIDER_LABEL[provider] || provider}` : 'Akun Navego'}</span>
-              </span>
+            <div className="hero-cta">
+              <Link className="btn btn-solid" to="/dashboard.html">Buka Dashboard</Link>
             </div>
-            <nav className="card" style={{ marginTop: 12, display: 'grid', gap: 6, fontSize: 13 }} aria-label="Bagian akun">
-              <strong style={{ fontSize: 12, color: 'var(--muted)' }}>Di halaman ini</strong>
-              {['identitas', 'penyedia', 'device', 'sesi'].map((id) => (
-                <a key={id} href={`#${id}`} style={{ textDecoration: 'none', color: 'var(--muted-2)' }}>{id.charAt(0).toUpperCase() + id.slice(1)}</a>
-              ))}
-            </nav>
-          </aside>
+          </div>
+        </section>
 
-          <div style={{ display: 'grid', gap: 14 }}>
-            <section className="panel" id="identitas" style={{ background: 'var(--card)' }}>
-              <h2 style={{ fontSize: 16, marginBottom: 6 }}>Identitas akun</h2>
-              <p style={{ fontSize: 12, color: 'var(--muted-2)' }}>Data ini datang dari penyedia yang Anda pakai masuk, bukan dari kami.</p>
-              <dl className="sheet" style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', marginTop: 10 }}>
-                {[['Alamat', email], ['Penyedia', PROVIDER_LABEL[provider] || provider], ['Masuk terakhir', relativeTime(user?.last_sign_in_at)], ['ID akun', user?.id || '—']].map(([k, v]) => (
-                  <div key={k as string} style={{ display: 'contents' }}>
-                    <div style={{ padding: '8px 12px', color: 'var(--muted-2)', background: '#fff', borderBottom: '1px solid var(--card-2)', fontSize: 12 }}>{k}</div>
-                    <div style={{ padding: '8px 12px', background: '#fff', borderBottom: '1px solid var(--card-2)', fontSize: 12, fontFamily: k === 'ID akun' ? "'Lucida Console', Consolas, monospace" : 'inherit' }}>{v}</div>
-                  </div>
-                ))}
-              </dl>
-              <button className="btn btn-ghost btn-sm" type="button" onClick={copyId} style={{ marginTop: 10 }}>Salin ID akun</button>
-            </section>
-
-            <section className="panel" id="penyedia">
-              <h2 style={{ fontSize: 16, marginBottom: 6 }}>Penyedia tertaut</h2>
-              <p style={{ fontSize: 12, color: 'var(--muted-2)' }}>Akun yang sama dapat masuk lewat lebih dari satu penyedia. Hanya yang tertaut yang bisa mengenali Anda.</p>
-              <ul style={{ listStyle: 'none', display: 'grid', gap: 6, marginTop: 10, fontSize: 13 }}>
-                {user ? linkedProviders(user).map((p) => <li key={p}><code>{p}</code> — {PROVIDER_LABEL[p] || p}</li>) : <li className="meta">Memeriksa…</li>}
-              </ul>
-            </section>
-
-            <section className="panel" id="device">
-              <h2 style={{ fontSize: 16, marginBottom: 6 }}>Device Anda</h2>
-              <p style={{ fontSize: 13, color: 'var(--muted-2)' }}>{state.deviceText}</p>
-              <div className="hero-cta" style={{ marginTop: 10 }}>
-                <Link className="btn btn-solid" to="/dashboard.html">Buka dashboard</Link>
-                <Link className="btn btn-ghost" to="/beranda.html#install">Pasang di device lain</Link>
+        <div className="wrap" style={{ paddingBlock: 'var(--s-7)' }}>
+          <div className="akun-split" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 20rem) minmax(0, 1fr)', gap: 'var(--s-5)', alignItems: 'start' }}>
+            <aside style={{ display: 'grid', gap: 'var(--s-4)' }}>
+              <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 'var(--s-4)' }}>
+                <span aria-hidden="true" style={{ width: '3.25rem', height: '3.25rem', borderRadius: '50%', background: 'var(--navy)', color: '#f4f7ff', display: 'grid', placeItems: 'center', fontWeight: 800, letterSpacing: '0.04em' }}>{user ? initialsOf(name, email) : '…'}</span>
+                <span style={{ minWidth: 0 }}>
+                  <span style={{ display: 'block', fontWeight: 800, overflowWrap: 'anywhere' }}>{name}</span>
+                  <span style={{ display: 'block', fontSize: 'var(--text-sm)', color: 'var(--muted-2)', overflowWrap: 'anywhere' }}>{email}</span>
+                  <span style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>{user ? `Masuk lewat ${PROVIDER_LABEL[provider] || provider}` : 'Akun Navego'}</span>
+                </span>
               </div>
-            </section>
+              <nav className="card" aria-label="Bagian akun" style={{ display: 'grid', gap: 'var(--s-2)', fontSize: 'var(--text-sm)' }}>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)' }}>Di halaman ini</p>
+                {[['identitas', 'Identitas'], ['penyedia', 'Penyedia'], ['device', 'Device'], ['sesi', 'Sesi']].map(([id, label]) => (
+                  <a key={id} href={`#${id}`} style={{ textDecoration: 'none', color: 'var(--navy)', fontWeight: 700 }}>{label}</a>
+                ))}
+              </nav>
+            </aside>
 
-            <section className="panel" id="sesi">
-              <h2 style={{ fontSize: 16, marginBottom: 6 }}>Sesi</h2>
-              <p style={{ fontSize: 12, color: 'var(--muted-2)' }}>Keluar menghapus token dari browser ini. Device yang sudah ter-pairing tetap ter-pairing, dan Anda perlu masuk lagi sebelum bisa menjalankan perintah.</p>
-              <button className="btn btn-ghost" type="button" onClick={signOut} style={{ marginTop: 10, color: 'var(--danger)' }}>Keluar</button>
-              <p className="status" role="status" aria-live="polite">{state.status}</p>
-            </section>
+            <div style={{ display: 'grid', gap: 'var(--s-4)' }}>
+              <section className="card" id="identitas">
+                <h2 className="card-title">Identitas akun</h2>
+                <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)', margin: 'var(--s-2) 0 var(--s-3)' }}>Data ini datang dari penyedia yang Anda pakai masuk, bukan dari kami.</p>
+                <div className="table-wrapper" tabIndex={0} role="region" aria-label="Identitas akun">
+                  <table className="table">
+                    <tbody>
+                      {[['Alamat', email], ['Penyedia', PROVIDER_LABEL[provider] || provider], ['Masuk terakhir', relativeTime(user?.last_sign_in_at)], ['ID akun', user?.id || '—']].map(([k, v]) => (
+                        <tr key={k as string}>
+                          <th scope="row" style={{ width: '40%' }}>{k}</th>
+                          <td style={k === 'ID akun' ? { fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)' } : undefined}>{v}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <button className="btn btn-ghost btn-sm" type="button" onClick={copyId} style={{ marginTop: 'var(--s-3)' }}>Salin ID akun</button>
+              </section>
+
+              <section className="card" id="penyedia">
+                <h2 className="card-title">Penyedia tertaut</h2>
+                <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)', margin: 'var(--s-2) 0 var(--s-3)' }}>Akun yang sama dapat masuk lewat lebih dari satu penyedia. Hanya yang tertaut yang bisa mengenali Anda.</p>
+                <ul style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-2)', fontSize: 'var(--text-sm)' }}>
+                  {user ? linkedProviders(user).map((p) => <li key={p}><code>{p}</code> — {PROVIDER_LABEL[p] || p}</li>) : <li style={{ color: 'var(--muted)' }}>Memeriksa…</li>}
+                </ul>
+              </section>
+
+              <section className="card" id="device">
+                <h2 className="card-title">Device Anda</h2>
+                <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)', margin: 'var(--s-2) 0 var(--s-4)' }}>{state.deviceText}</p>
+                <div className="hero-cta" style={{ marginTop: 0 }}>
+                  <Link className="btn btn-solid" to="/dashboard.html">Buka dashboard</Link>
+                  <Link className="btn btn-ghost" to="/unduh.html">Pasang di device lain</Link>
+                </div>
+              </section>
+
+              <section className="card" id="sesi">
+                <h2 className="card-title">Sesi</h2>
+                <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)', margin: 'var(--s-2) 0 var(--s-4)' }}>Keluar menghapus token dari browser ini. Device yang sudah ter-pairing tetap ter-pairing, dan Anda perlu masuk lagi sebelum bisa menjalankan perintah.</p>
+                <button className="btn btn-ghost" type="button" onClick={signOut} style={{ color: 'var(--danger)' }}>Keluar</button>
+                <p className="status" role="status" aria-live="polite">{state.status}</p>
+              </section>
+            </div>
           </div>
         </div>
-        <p style={{ marginTop: 14 }}><Link to="/index.html" style={{ fontSize: 12, color: 'var(--muted)' }}>Ke halaman masuk</Link></p>
       </main>
       <SiteFooter />
     </>

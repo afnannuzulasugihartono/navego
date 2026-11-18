@@ -1,11 +1,13 @@
 import { Link } from 'react-router';
+import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
-  return [
-    { title: 'Dukungan — Navego' },
-    { name: 'description', content: 'Lima perbaikan paling sering, kontak yang tepat, dan langkah berikutnya — jawaban yang bisa langsung diikuti.' }
-  ];
+  return seoMeta({
+    title: 'Dukungan — Navego',
+    description: 'Lima perbaikan paling sering, kontak yang tepat, dan langkah berikutnya — jawaban yang bisa langsung diikuti.',
+    path: '/dukungan'
+  });
 }
 
 const FIXES = [
@@ -35,39 +37,38 @@ export default function Dukungan() {
   return (
     <>
       <SiteHeader current="/dukungan.html" />
-      <main className="wrap" style={{ maxWidth: 880 }}>
-        <header className="page-head" style={{ paddingBottom: 6 }}>
-          <h1>Dukungan</h1>
-          <p className="lede">Lima perbaikan paling sering. Kalau jawaban Anda tidak ada di sini, gunakan tiga pintu di bawah.</p>
-        </header>
-
-        <div className="faq" style={{ marginTop: 24 }}>
-          {FIXES.map((fix) => (
-            <details key={fix.id} id={fix.id}>
-              <summary>{fix.title}</summary>
-              <p>{fix.body}</p>
-              {fix.id === 'mcp' ? <p style={{ marginTop: 6 }}><Link to="/docs.html#mcp">Ke Docs → Hubungkan AI harness</Link></p> : null}
-              {fix.id === 'device' ? <p style={{ marginTop: 6 }}><Link to="/dashboard.html">Buka Dashboard</Link></p> : null}
-              {fix.id === 'ext' ? <p style={{ marginTop: 6 }}><Link to="/unduh.html">Ke halaman Unduh</Link></p> : null}
-            </details>
-          ))}
-        </div>
-
-        <section className="panel" style={{ marginTop: 26 }} aria-labelledby="kontakTitle">
-          <h2 id="kontakTitle" style={{ fontSize: 18, letterSpacing: '-0.01em' }}>Belum ketemu?</h2>
-          <p style={{ color: 'var(--muted-2)', fontSize: 13, margin: '8px 0 12px' }}>Tiga pintu, dan semuanya dibaca orang.</p>
-          <ul style={{ listStyle: 'none', display: 'grid', gap: 8, fontSize: 13.5 }}>
-            <li><span style={{ display: 'inline-block', width: 86, color: 'var(--muted)' }}>Email</span> <a href="mailto:afnannuzulasugihartono@gmail.com">afnannuzulasugihartono@gmail.com</a></li>
-            <li><span style={{ display: 'inline-block', width: 86, color: 'var(--muted)' }}>Isu publik</span> <a href="https://github.com/afnannuzulasugihartono/navego/issues">Buka isu baru</a></li>
-            <li><span style={{ display: 'inline-block', width: 86, color: 'var(--muted)' }}>Keamanan</span> <a href="https://github.com/afnannuzulasugihartono/navego/security/advisories/new">Laporkan secara privat</a></li>
-          </ul>
-        </section>
-        <div className="page-foot">
-          <div>
-            <h2>Macet di tengah?</h2>
-            <p>Catat apa yang terjadi, lalu buka isu publik — atau laporkan secara privat kalau menyangkut keamanan.</p>
+      <main>
+        <section className="page-hero">
+          <div className="wrap">
+            <p className="crumb">Dukungan</p>
+            <h1>Dukungan.</h1>
+            <p className="lede">Lima perbaikan paling sering. Kalau jawaban Anda tidak ada di sini, gunakan tiga pintu di bawah.</p>
           </div>
-          <a className="btn btn-solid" href="https://github.com/afnannuzulasugihartono/navego/issues/new">Laporkan</a>
+        </section>
+
+        <div className="wrap" style={{ paddingBlock: 'var(--s-7)' }}>
+          <div className="faq" style={{ marginBottom: 'var(--s-6)' }}>
+            {FIXES.map((fix) => (
+              <details key={fix.id} id={fix.id}>
+                <summary>{fix.title}</summary>
+                <p>{fix.body}</p>
+                {fix.id === 'mcp' ? <p style={{ marginTop: 'var(--s-3)' }}><Link to="/docs.html#mcp">Ke Docs → Hubungkan AI harness</Link></p> : null}
+                {fix.id === 'device' ? <p style={{ marginTop: 'var(--s-3)' }}><Link to="/dashboard.html">Buka Dashboard</Link></p> : null}
+                {fix.id === 'ext' ? <p style={{ marginTop: 'var(--s-3)' }}><Link to="/unduh.html">Ke halaman Unduh</Link></p> : null}
+              </details>
+            ))}
+          </div>
+
+          <section className="card" aria-labelledby="kontakTitle">
+            <p className="kicker">Kontak</p>
+            <h2 id="kontakTitle" className="section-title" style={{ fontSize: 'var(--text-xl)', marginTop: 'var(--s-2)' }}>Belum ketemu?</h2>
+            <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-sm)', margin: 'var(--s-3) 0 var(--s-4)' }}>Tiga pintu, dan semuanya dibaca orang.</p>
+            <ul style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-3)', fontSize: 'var(--text-base)' }}>
+              <li><span style={{ display: 'inline-block', minWidth: '5rem', color: 'var(--muted)', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Email</span> <a href="mailto:afnannuzulasugihartono@gmail.com">afnannuzulasugihartono@gmail.com</a></li>
+              <li><span style={{ display: 'inline-block', minWidth: '5rem', color: 'var(--muted)', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Isu publik</span> <a href="https://github.com/afnannuzulasugihartono/navego/issues">Buka isu baru</a></li>
+              <li><span style={{ display: 'inline-block', minWidth: '5rem', color: 'var(--muted)', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Keamanan</span> <a href="https://github.com/afnannuzulasugihartono/navego/security/advisories/new">Laporkan secara privat</a></li>
+            </ul>
+          </section>
         </div>
       </main>
       <SiteFooter />

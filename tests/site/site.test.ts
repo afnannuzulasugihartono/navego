@@ -19,7 +19,8 @@ const client = path.join(site, 'build', 'client');
 const ROUTES = [
   '/', '/beranda.html', '/fitur.html', '/harga.html', '/unduh.html', '/docs.html',
   '/mcp.html', '/dukungan.html', '/privasi.html',
-  '/syarat.html', '/akun.html', '/404.html', '/oauth/consent.html', '/dashboard.html'
+  '/syarat.html', '/akun.html', '/404.html', '/oauth/consent.html', '/dashboard.html',
+  '/artikel.html', '/artikel/ai-browser-indonesia.html'
 ];
 
 const toFile = (route: string) => {
@@ -120,6 +121,8 @@ const CLAIMS = {
   '/oauth/consent.html': ['Izin aplikasi'],
   '/dashboard.html': ['Memeriksa sesi'],
   '/404.html': ['Halaman ini tidak ada'],
+  '/artikel.html': ['Artikel', 'AI yang mengenal browser'],
+  '/artikel/ai-browser-indonesia.html': ['Navego', 'browser Anda'],
   '/': ['Masuk atau daftar', 'magic link']
 };
 
@@ -133,12 +136,15 @@ for (const [route, needles] of Object.entries(CLAIMS)) {
   });
 }
 
-test('_worker.js ships byte-identical to the checked-in source', () => {
+test('_worker.js is compiled from the checked-in TypeScript source', () => {
   buildSite();
-  const fromPublic = fs.readFileSync(path.join(site, 'public', '_worker.js'), 'utf8');
   const fromBuild = fs.readFileSync(path.join(client, '_worker.js'), 'utf8');
-  assert.equal(fromBuild, fromPublic);
-  assert.ok(fromPublic.includes('navego-billing'), 'the invoice proxy is intact');
+  assert.ok(fromBuild.includes('navego-billing'), 'the invoice proxy is intact');
+  assert.ok(fromBuild.includes('/invoice'), 'the worker owns /invoice');
+  assert.ok(fromBuild.includes('x-frame-options'), 'the page denies framing');
+  assert.ok(fromBuild.includes('env.ASSETS') || fromBuild.includes('ASSETS.fetch'), 'everything else is the asset server');
+  assert.ok(fs.existsSync(path.join(site, 'worker', '_worker.ts')), 'site/worker/_worker.ts is the source of truth');
+  assert.equal(fs.existsSync(path.join(site, 'public', '_worker.js')), false, 'the hand-written twin is gone');
 });
 
 // WHY robots.txt and sitemap.xml carry no CSP: static policy files, not HTML.
@@ -170,7 +176,7 @@ test('the client router answers the file URL and the legacy pretty URL alike', (
   const manifest = assets.find((f) => f.startsWith('manifest-') && f.endsWith('.js'));
   assert.ok(manifest, 'the build ships a router manifest');
   const source = fs.readFileSync(path.join(client, 'assets', manifest), 'utf8');
-  const slugs = ['beranda', 'fitur', 'harga', 'unduh', 'docs', 'mcp', 'dukungan', 'privasi', 'syarat', 'akun', 'dashboard', 'oauth/consent'];
+  const slugs = ['beranda', 'fitur', 'harga', 'unduh', 'docs', 'mcp', 'dukungan', 'privasi', 'syarat', 'akun', 'dashboard', 'artikel', 'artikel/ai-browser-indonesia', 'oauth/consent'];
   for (const slug of slugs) {
     assert.ok(source.includes(`"path":"${slug}"`), `the router knows /${slug}`);
     assert.ok(source.includes(`"path":"${slug}.html"`), `the router knows /${slug}.html`);
@@ -182,7 +188,7 @@ test('the sitemap names exactly the routes the build carries (404 and unknowns a
   buildSite();
   const sitemap = fs.readFileSync(path.join(client, 'sitemap.xml'), 'utf8');
   const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => String(m[1]).replace('https://navego.pages.dev', ''));
-  const expected = ['/beranda', '/fitur', '/harga', '/unduh', '/docs', '/mcp', '/dukungan', '/privasi', '/syarat', '/akun', '/dashboard', '/oauth/consent', '/'];
+  const expected = ['/beranda', '/fitur', '/harga', '/unduh', '/docs', '/mcp', '/dukungan', '/privasi', '/syarat', '/akun', '/dashboard', '/artikel', '/artikel/ai-browser-indonesia', '/oauth/consent', '/'];
   assert.deepEqual([...locs].sort(), [...expected].sort());
 });
 
