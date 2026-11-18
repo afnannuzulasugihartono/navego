@@ -27,6 +27,23 @@ body {
 a, a:any-link { color: inherit; text-decoration-color: var(--cf-amber); text-underline-offset: 4px; }
 button, input { font: inherit; }
 
+/*
+ * WHY THESE TWO RULES EXIST.
+ * The site had no visible keyboard focus anywhere; the browser default was all that stood between a keyboard user and a lost focus.
+ * On cream grounds the ink ring clears 3:1 easily; on navy grounds it would vanish, so the dark sections carry the amber instead.
+ */
+
+:where(a:any-link, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--cf-ink);
+  outline-offset: 2px;
+}
+.cf-hero :where(a:any-link, button, input, select, textarea):focus-visible,
+.cf-intro :where(a:any-link, button, input, select, textarea):focus-visible,
+.chapter.dark :where(a:any-link, button, input, select, textarea):focus-visible,
+.site-footer :where(a:any-link, button, input, select, textarea):focus-visible {
+  outline-color: var(--cf-amber);
+}
+
 .cf-wrap { width: 100%; max-width: var(--cf-max); margin-inline: auto; padding-inline: var(--cf-gutter); }
 .cf-bleed { background: var(--cf-navy); color: #f4f1e9; }
 
