@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36 (no eyebrows, h1 first)
+
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
@@ -46,7 +48,6 @@ export default function Dukungan() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Dukungan</p>
             <h1>Ada yang macet?</h1>
             <p className="lede">Lima perbaikan paling sering. Kalau tidak ada di sini, tiga pintu di bawah dibaca orang.</p>
           </div>
@@ -56,7 +57,6 @@ export default function Dukungan() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Perbaikan cepat</p>
                 <h2 id="fixTitle" className="section-title">Lima yang paling sering.</h2>
               </div>
             </div>
@@ -78,7 +78,6 @@ export default function Dukungan() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Kontak</p>
                 <h2 id="kontakTitle" className="section-title">Tiga pintu.</h2>
               </div>
               <p className="section-note">Pilih yang paling cocok; semuanya dibaca orang.</p>

@@ -69,7 +69,7 @@ test('a table with the wrong number of cells is refused', () => {
   assert.throws(() => buildDocument({ doc: bad }), /cells/);
 });
 
-// WHY THE GRAPH DATA HERE IS OUT OF TABLE ORDER.
+// THE GRAPH DATA HERE IS OUT OF TABLE ORDER.
 // The artifact must carry the rows it recomputed, not the caller's array; keeping the fixture reversed makes the difference visible to the test below.
 
 type SumDoc = {

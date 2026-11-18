@@ -3,7 +3,7 @@
 // @state: the merged list, the routed CDP call, and the health report, each proven against two scripted devices over real sockets.
 // @dependencies: node:test, strict, ../local/bridge-ws.js, ./helpers/scripted-device.ts, ../extension/lib/socket-protocol.js.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // Chrome and Brave on one machine used to fight over one device slot, so the second browser was closed out and the first was told nothing about it.
 // The bridge now keeps every browser it is given, hands each a numeric namespace, and carries each command to the browser that owns the target it names.
@@ -47,7 +47,7 @@ interface ScriptedCommand {
 const makeDevice = (options: { url: string; instanceId: string; deviceName?: string; handle?: (command: ScriptedCommand) => unknown }) =>
   createScriptedDevice(options as unknown as Parameters<typeof createScriptedDevice>[0]);
 
-// WHY BOTH DEVICES ARE STARTED AT ONCE.
+// BOTH DEVICES ARE STARTED AT ONCE.
 // The race the old bridge lost was the second browser's arrival while the first held the slot; starting both together proves neither is closed out by the other connecting first.
 
 test('two browsers connect at once, and the merged list names both', async () => {
@@ -98,7 +98,6 @@ test('a browser that disconnects and reconnects keeps its namespaced tab ids', a
 
   await fetch(`http://127.0.0.1:${port}/health`).then((response) => response.json());
   const id1 = await once('browser-chrome', 'https://reconnect/');
-  // After a fresh connection cycle, a fresh tab read should keep the same namespaced id because the slot map is keyed by instanceId.
   const id2 = await once('browser-chrome', 'https://reconnect/');
   assert.equal(id1, id2, 'the same browser keeps the same tab id across reconnects');
 
@@ -146,7 +145,7 @@ test('a command for one browser reaches only that browser, and carries its tab n
 });
 
 test('a 32-bit tab id from a real Chromium build round trips without crossing the namespace', async () => {
-  // WHY THIS TEST EXISTS Chrome and Brave mint tab ids that fill a 32-bit int now; a namespace stride that sits inside that range makes every routed id ambiguous, and the drive blackholes every per-tab command.
+  // THIS TEST EXISTS Chrome and Brave mint tab ids that fill a 32-bit int now; a namespace stride that sits inside that range makes every routed id ambiguous, and the drive blackholes every per-tab command.
   const BIG = 1517047131;
   const bridge = createBridgeServer({ cloud: fakeCloud(), port: 0, heartbeatMs: 1000 });
   const { port } = await bridge.listen();
@@ -177,7 +176,7 @@ test('a 32-bit tab id from a real Chromium build round trips without crossing th
 });
 
 test('two sockets from the same browser collapse to one device', async () => {
-  // WHY THIS TEST EXISTS A browser that reconnects before its old socket is reaped was listed twice, and every caller that counts devices counted a phantom: the merged list returned the same tabs twice and the meter charged both sockets for one list.
+  // THIS TEST EXISTS A browser that reconnects before its old socket is reaped was listed twice, and every caller that counts devices counted a phantom: the merged list returned the same tabs twice and the meter charged both sockets for one list.
   const bridge = createBridgeServer({ cloud: fakeCloud(), port: 0, heartbeatMs: 1000 });
   const { port } = await bridge.listen();
 

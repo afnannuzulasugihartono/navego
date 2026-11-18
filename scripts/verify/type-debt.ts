@@ -3,7 +3,7 @@
 // @state: the count of TypeScript errors under tsconfig.tests.json was ratcheted to 0 on 2026-11-17; the gate now holds the tree at zero forever.
 // @dependencies: typescript compiler, tsconfig.tests.json.
 
-// WHY THIS FILE EXISTS The repo compiles shared/, local/, extension/ and scripts/ under strict TypeScript, and those surfaces are pinned at zero errors.
+// THIS FILE EXISTS The repo compiles shared/, local/, extension/ and scripts/ under strict TypeScript, and those surfaces are pinned at zero errors.
 // tests/ and hosted/functions/ (Deno edge functions) were not: the 2026-11-17 migration recorded 1796 errors there, and the ratchet was supposed to make the debt first-class.
 // The lock was then set to 23 by a commit that changed no test file, so the debt the gate enforced was never paid on the way in; a later audit measured the same tree at ~1700 errors.
 // The real debt of ~1700 errors was paid down file by file with every assertion kept, and the count reached zero on 2026-11-17; the lock now says 0, and the gate can never let an error back in.

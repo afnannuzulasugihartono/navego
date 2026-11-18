@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36 (no eyebrows, h1 first)
+
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
@@ -17,7 +19,6 @@ export default function Privasi() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Privasi</p>
             <h1>Kebijakan Privasi</h1>
             <p className="lede">Terakhir diperbarui: 5 Oktober 2026.</p>
           </div>

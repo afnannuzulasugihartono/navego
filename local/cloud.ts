@@ -3,19 +3,19 @@
 // @state: stdio in, HTTP out; the token from the environment or the login file; nothing renamed on the way through.
 // @dependencies: node:readline, ./oauth.js.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // Every local tool speaks to the browser it can reach.
 // The same tools, through the same names, through the hosted server, drive the browser paired to the account instead.
 // Nothing about the call changes except where it lands, which is why the proxy has no opinions: a request goes in, the answer comes back, and neither side learns the other is there.
 
-// WHY THE TOKEN IS READ AND NEVER PASSED ON.
+// THE TOKEN IS READ AND NEVER PASSED ON.
 // The hosted server trusts the account, not the client that relays it, so the token is the account's credential on this machine and nothing more.
 
-// WHY PROTOCOL DETAILS ARE FORWARDED UNTOUCHED.
+// PROTOCOL DETAILS ARE FORWARDED UNTOUCHED.
 // Tool outputs are a contract with callers; a proxy that renamed or reshaped a field would be a second protocol to keep in sync, and every clause in it would be a place the two could drift apart.
 
-// WHY THE DEVICE HEADER IS SENT.
+// THE DEVICE HEADER IS SENT.
 // A tab id lives inside one browser, so the hosted relay has to answer every call of one session on the same browser or the agent holds a tab id that exists on neither.
 // The paired device file already names the browser this machine drives, so the pin is sent from there; without it the relay is free to pick a different browser per call, which is the failure the pin exists to prevent.
 
@@ -24,7 +24,7 @@ import readline from 'node:readline';
 import { HOSTED_MCP_URL, accessToken, loginInstructions } from './oauth.js';
 import { readDevice } from './wallet-client.js';
 
-// WHY THE WIRE STILL SAYS navego-mcp.
+// THE WIRE STILL SAYS navego-mcp.
 // The provider pin is a wire identifier matched by the server's per-provider routing (opera_provider_pins); renaming the default on release day would orphan every pin a caller already set without a word about it.
 // The product says Navego everywhere a human reads; the pin is a machine word and stays until a reviewed migration moves the table too.
 

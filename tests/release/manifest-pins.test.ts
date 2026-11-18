@@ -16,7 +16,7 @@ test('the worker may reach exactly the hosted bridge and loopback, nothing wider
   assert.match(csp, /https:\/\/\*\.supabase\.co/);
 });
 
-// WHY this lock exists.
+// this lock exists.
 // connect-src governs WebSocket the same as fetch, and the two schemes never substitute for each other: `https://*.supabase.co` does not admit `wss://`, and `http://127.0.0.1:*` does not admit `ws://`.
 // The device opened no socket at all, with no error anywhere, because of exactly that.
 // A silent transport that never connects is the worst shape of failure there is, so the permission is pinned rather than left to be rediscovered.

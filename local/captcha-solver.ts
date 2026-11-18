@@ -3,15 +3,15 @@
 // @state: one settings reader, one domain allowlist, one task-then-poll client over an injected fetch.
 // @dependencies: none.
 
-// WHY THIS MODULE IS OPT-IN AND SEPARATE.
+// THIS MODULE IS OPT-IN AND SEPARATE.
 // Reading a captcha for the person is a capability, not a default: it spends their money at a third party and defeats a control a site chose to put there.
 // So it is off until the person sets three environment values, it only runs on the domains they named, and the gate that reported the captcha is the only caller.
 
-// WHY THE DOMAIN ALLOWLIST IS NOT OPTIONAL.
+// THE DOMAIN ALLOWLIST IS NOT OPTIONAL.
 // The same key would otherwise answer a captcha on any page an agent wandered onto, which is a paid action nobody agreed to.
 // The list is what makes the spend the person's decision, per host, before the request leaves the machine.
 
-// WHY THE SERVICE CONTRACT IS THE ONE EVERY SUCH SERVICE SPEAKS.
+// THE SERVICE CONTRACT IS THE ONE EVERY SUCH SERVICE SPEAKS.
 // createTask returns a task id, getTaskResult is polled until the solution is ready; the exact JSON shapes here are the ones a solver run by this product already uses, so pointing it at a compatible service needs no adapter.
 
 export interface CaptchaSettings {
@@ -22,7 +22,7 @@ export interface CaptchaSettings {
 }
 
 export function solverSettings(env: NodeJS.ProcessEnv = {}): CaptchaSettings {
-  // WHY A LOOP AND NOT A REGEX FOR THE TRAILING SLASHES.
+  // A LOOP AND NOT A REGEX FOR THE TRAILING SLASHES.
   // /\/+$/ is the shape the linter flags for variable-length backtracking on long strings; a loop strips the tail in one pass and says exactly that.
   let baseUrl = String(env.NAVEGO_CAPTCHA_API_URL ?? '').trim();
   while (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
@@ -47,7 +47,7 @@ export function captchaAllowed(settings: Partial<CaptchaSettings> | null | undef
 
 const defaultSleep = (ms: number) => new Promise<void>((resolve) => { setTimeout(resolve, ms); });
 
-// WHY THE ANSWER IS READ AND NOT ASSUMED.
+// THE ANSWER IS READ AND NOT ASSUMED.
 // A solver that returns errorId 0 with processing forever costs the person money and time, so the poll has a ceiling and says it came back without an answer rather than inventing one.
 // A refusal from the service is raised with its own code, so a bad key reads as a bad key instead of a captcha that was simply hard.
 

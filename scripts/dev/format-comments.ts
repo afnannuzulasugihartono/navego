@@ -3,7 +3,7 @@
 // @state: `--write` rewrites every source file to the canonical form, and `--check` exits non-zero when any file is not canonical; the agent-tool directories are not repo code and are not read.
 // @dependencies: node:fs/promises, node:path, node:url, tests/helpers/comment-format.ts.
 
-// WHY THIS PROGRAM EXISTS.
+// THIS PROGRAM EXISTS.
 // The rule is a formatter, so the gate is an equality: format(file) === file.
 // That is checkable by anyone, and a file the formatter cannot read is a file it does not touch.
 // The list of files it reads is written down here, once, and the hygiene gate calls this program rather than walking the tree a second way.
@@ -28,7 +28,7 @@ const NAMES = new Set([
   '.assetsignore', '.vercelignore', 'CODEOWNERS', 'Dockerfile', 'Makefile',
 ]);
 
-// WHY THE AGENT-TOOL DIRECTORIES ARE SKIPPED.
+// THE AGENT-TOOL DIRECTORIES ARE SKIPPED.
 // A skill installed into the tree is machine-local tool state and not repository code, and its comments follow the tool's style rather than this repository's.
 // The gate reads the files a person would ship, and a skill that a colleague never installs must not turn the suite red.
 
@@ -37,7 +37,7 @@ const SKIP_DIRS = new Set([
   '.next', '.vercel', '__pycache__', '.temp',
 ]);
 
-// WHY site/public/_headers IS NOT HERE.
+// site/public/_headers IS NOT HERE.
 // Cloudflare parses that file block by block, and a blank line inside a rule block is the host's business, not ours.
 // Its comments are written in the canonical shape by hand, and the file stays out of the formatter's reach.
 
@@ -61,7 +61,7 @@ function shouldFormat(file: string) {
   return NAMES.has(path.basename(file));
 }
 
-// WHY GIT DECIDES WHICH FILES ARE THE REPOSITORY.
+// GIT DECIDES WHICH FILES ARE THE REPOSITORY.
 // An uncommitted build artifact (shared/<stem>.js emitted by tsc, the copies pack-mcp writes into local/lib) is not repository code, and its formatting is the compiler's business; the rule judges the source, which git tracks.
 // A file git lists is exactly the set a person would ship: tracked files, plus untracked-but-not-ignored new files, which is what `git add` would stage.
 // Outside a git checkout the filesystem is all there is, and the rule falls back to it.
@@ -105,7 +105,7 @@ async function apply(write: boolean) {
   return { total: files.length, changed };
 }
 
-// WHY THIS IS EXPOSED.
+// THIS IS EXPOSED.
 // The hygiene gate asserts the equality over the whole tree, and it must walk the same files this program walks.
 
 export async function checkFormat() {

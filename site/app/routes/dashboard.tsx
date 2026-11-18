@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots)
+
 import { useEffect, useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
@@ -70,7 +72,7 @@ function duration(from?: string, to?: string): string {
 const isDeviceLive = (device: Device) => /online|active|live|awake/i.test(String(device.status || ''));
 const deviceStatusText = (device: Device) => String(device.status || 'tidak diketahui');
 
-// WHY THE PAIR INTENT SURVIVES LOGIN: the popup's one-click door deep-links with ?pair=1; a freshly installed browser that is not logged in yet hits the login gate first.
+// THE PAIR INTENT SURVIVES LOGIN because the popup one-click door deep-links with ?pair=1 - a freshly installed, not-logged-in browser hits the login gate first, and dropping the intent here would strand the pairing.
 // Dropping the intent here would send pair=1 users to a logged-out dashboard and leave the pairing unfinished.
 
 const wantPairIntent = (): boolean => {
@@ -392,7 +394,7 @@ export default function Dashboard() {
                   ) : null}
                   <div style={{ display: 'grid', gap: 'var(--s-3)' }}>
                     {(devices ?? []).map((device) => (
-                      <div key={device.id} className="panel" style={{ background: 'var(--card)' }}>
+                      <div key={device.id} className="panel">
                         <div className="panel-head">
                           <h2 style={{ fontSize: 'var(--text-base)', display: 'flex', alignItems: 'center', gap: 'var(--s-2)' }}>
                             <span aria-hidden="true" style={{ width: 10, height: 10, borderRadius: '50%', background: isDeviceLive(device) ? 'var(--good)' : 'var(--danger)', display: 'inline-block' }} />
@@ -676,7 +678,7 @@ function KonsolView({ deviceCount }: { deviceCount: number }) {
       <div className="konsol-split">
         <nav className="panel" style={{ minWidth: 190, display: 'grid', gap: 'var(--s-1)', alignContent: 'start' }} aria-label="Daftar tabel">
           {!state.ready ? <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Memuat…</span> : state.tables.length === 0 ? <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Konsol data belum bisa dimuat.</span> : state.tables.map((table) => (
-            <button key={table.name} className="rail-item" style={{ color: 'var(--ink)', background: state.selected === table.name ? 'var(--card-2)' : 'transparent', borderRadius: 'var(--radius-sm)', border: 0, padding: 'var(--s-2) var(--s-3)', textAlign: 'left', cursor: 'pointer', fontSize: 'var(--text-sm)' }} onClick={() => openTable(table.name)}>
+            <button key={table.name} className="rail-item" style={{ color: 'var(--ink)', background: state.selected === table.name ? 'var(--panel-2)' : 'transparent', borderRadius: 'var(--radius-sm)', border: 0, padding: 'var(--s-2) var(--s-3)', textAlign: 'left', cursor: 'pointer', fontSize: 'var(--text-sm)' }} onClick={() => openTable(table.name)}>
               {table.label || table.name}{typeof table.count === 'number' ? <span style={{ color: 'var(--muted)' }}> · {table.count}</span> : null}
             </button>
           ))}

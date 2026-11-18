@@ -27,7 +27,7 @@ interface GuardAnswer {
   blocked?: boolean;
 }
 
-// WHY THESE CLAIMS EXIST.
+// THESE CLAIMS EXIST.
 // Measured live on this machine, with the drive typing into a Google Docs document: a browser window behind another application still took the keys, and a minimized browser window did not.
 // So the window is a thing the driver reports and a thing a drive can bring forward \u2014 and a machine that cannot do it says so instead of answering false and letting the drive wonder.
 
@@ -80,7 +80,7 @@ test('a platform with no implementation refuses in words rather than answering f
   assert.match(state.why, /not implemented/);
 });
 
-// WHY THE REFUSAL IS HELD TO THE SAME SHAPE.
+// THE REFUSAL IS HELD TO THE SAME SHAPE.
 // Measured on CI: the Linux runner took the refusal path and the answer had no `title` key at all, so a caller reading the title of a refusal found undefined where a caller on Windows found an empty string.
 // The keys a caller reads have to exist whether the machine answered or refused.
 
@@ -100,10 +100,10 @@ test('a refusal carries every key a real answer carries', async () => {
   assert.ok(Array.isArray(real.windows), 'the real answer still answers');
 });
 
-// WHY THE READ AND THE WRITE ARE BOTH OFFERED.
+// THE READ AND THE WRITE ARE BOTH OFFERED.
 // An agent that cannot type needs to know whether the window is behind something before it starts clicking, and an agent that has just been told needs one call that fixes it \u2014 not a paragraph about window managers.
 
-// WHY THE GUARD IS MEASURED HERE, NOT ASSUMED.
+// THE GUARD IS MEASURED HERE, NOT ASSUMED.
 // The two live measurements came out opposite ways, and a guard built on either one alone would have been wrong: a browser behind another application still hears input, and a minimized browser does not.
 // So the guard asks the page, which answers for free and gets both cases right, and pays for the machine only when the page says it is deaf.
 
@@ -124,7 +124,7 @@ test('a page that hears input costs one evaluation and never asks the machine', 
   assert.equal(out.checked, 'page', 'the answer says which of the two ran');
 });
 
-// WHY THESE THREE CLAIMS ARE ONE CLAIM.
+// THESE THREE CLAIMS ARE ONE CLAIM.
 // Measured live: a background tab and a minimized window report exactly the same thing to the page - no focus, not visible
 // - and need opposite answers, because text lands in the first and goes nowhere in the second.
 //   Only the machine can tell them apart, so it is asked once, and only when the page is deaf.
@@ -147,7 +147,7 @@ test('a page that cannot hear asks the machine once and says what it found', asy
   assert.equal(out.checked, 'machine');
 });
 
-// WHY AN OWNED WINDOW NEEDS NO NAME.
+// AN OWNED WINDOW NEEDS NO NAME.
 // A CDP session answers "is my window minimized" through Browser.getWindowForTarget, and it carries no title - only the fact that this is the window the session is attached to.
 // So the guard restores it on the session's own word; requiring a name there left a minimized browser on the taskbar for every drive that arrived through a debugging port.
 
@@ -185,7 +185,7 @@ test('a window on the taskbar is brought back, because that is where text goes t
   assert.equal(out.window, 'brought Paper - Google Chrome back from the taskbar');
 });
 
-// WHY A WINDOW THAT CAME FORWARD IS NOT ENOUGH.
+// A WINDOW THAT CAME FORWARD IS NOT ENOUGH.
 // Measured live on this machine: two Chrome windows held the same page title, and the machine brought forward the one that was awake while the minimized one stayed on the taskbar.
 // The answer said a window was back, the page was still deaf, and the drive would have typed into nothing - so the page is asked again, and a deaf page blocks the action.
 
@@ -204,7 +204,7 @@ test('a window that comes forward but leaves the page deaf is blocked, not promi
   assert.match(out.window, /brought Paper - Google Chrome back from the taskbar, but the page still cannot hear input/);
 });
 
-// WHY THE GUARD NEVER TAKES WHATEVER IS ON THE TASKBAR.
+// THE GUARD NEVER TAKES WHATEVER IS ON THE TASKBAR.
 // Measured live on this machine: a read-only burst on a page that was merely behind another application brought a minimized Settings window to the front, because nothing had named the browser and the guard took the first taskbar window it found.
 // The next drive that typed would have typed into Settings.
 // A window is restored only when the caller names a piece of it.

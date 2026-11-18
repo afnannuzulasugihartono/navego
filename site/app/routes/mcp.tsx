@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36 (no eyebrows, h1 first)
+
 import { useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
@@ -47,7 +49,6 @@ export default function Mcp() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Pasang MCP</p>
             <h1>Driver lokal, di mesin Anda.</h1>
             <p className="lede">Stdio, tanpa login, tanpa biaya per panggilan. Yang dibutuhkan hanya browser yang masuk akun dan ekstensi terpasang.</p>
           </div>
@@ -57,7 +58,6 @@ export default function Mcp() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Langkah</p>
                 <h2 id="stepsTitle" className="section-title">Tiga perintah.</h2>
               </div>
               <p className="section-note">Salin, jalankan, selesai. Tidak ada server yang perlu dijaga.</p>
@@ -82,7 +82,6 @@ export default function Mcp() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Harness</p>
                 <h2 id="harnessTitle" className="section-title">Daftarkan ke AI Anda.</h2>
               </div>
               <p className="section-note">Server lokal menambah 45 tool MCP di atas 36 primitive browser.</p>
@@ -105,7 +104,6 @@ export default function Mcp() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker" style={{ color: 'var(--amber-hi)' }}>Batas</p>
                 <h2 id="limitsTitle" className="section-title">Yang dijaga, apa adanya.</h2>
               </div>
             </div>

@@ -3,13 +3,13 @@
 // @state: the pin, the clear, the loud refusal, and the door's validation, each proven against two scripted devices over real sockets.
 // @dependencies: node:test, strict, ../local/bridge-ws.js, ./helpers/scripted-device.ts, ../extension/lib/socket-protocol.js.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // Tab-less commands used to follow the first ready browser, so an agent asked to drive Brave typed into Chrome whenever both were up.
 // The pin is the answer: a person names the browser, every tab-less command follows it until another pin says otherwise, and a missing pin is refused by name instead of falling back into the wrong signed-in profile.
 // Tab-scoped commands never consult the pin; a tab id already names its browser, so a drive never jumps mid-drive.
 
-// WHY THE WRAPPER: the loopback bridge gates its /health and /prefer doors on a bridge token; every fetch in this file then carries it.
+// THE WRAPPER: the loopback bridge gates its /health and /prefer doors on a bridge token; every fetch in this file then carries it.
 
 process.env.NAVEGO_BRIDGE_TOKEN = 'test-bridge-token';
 const realFetch = globalThis.fetch;

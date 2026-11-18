@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36 (no eyebrows, h1 first)
+
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
@@ -37,7 +39,6 @@ export default function Metodologi() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Metodologi</p>
             <h1>Diukur, bukan diklaim.</h1>
             <p className="lede">Angka di halaman ini datang dari mesin nyata dan halaman nyata — dan daftar hal yang belum diukur ada di bagian bawah, dengan sengaja.</p>
           </div>
@@ -47,7 +48,6 @@ export default function Metodologi() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Cara mengukur</p>
                 <h2 id="caraTitle" className="section-title">Lima aturan kerja, selalu sama.</h2>
               </div>
             </div>
@@ -66,7 +66,6 @@ export default function Metodologi() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Yang sudah diukur</p>
                 <h2 id="terukurTitle" className="section-title">Sebelum dan sesudah, satu mesin.</h2>
               </div>
               <p className="section-note">Data penuh: <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/product/browser-latency.md" rel="noreferrer">docs/product/browser-latency.md</a></p>
@@ -94,7 +93,6 @@ export default function Metodologi() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Yang belum diukur</p>
                 <h2 id="belumTitle" className="section-title">Jujur soal batasnya.</h2>
               </div>
             </div>

@@ -1,7 +1,7 @@
 // Flattens the prerendered directory layout to the flat .html URLs the site has always served.
 // react-router v7 writes <route>/index.html; Cloudflare Pages and our tests expect <route> as a file.
 // The rewrite is a pure rename — bytes never change.
-// WHY the walk and not a list: a hardcoded route list is the drift the build hides — the page is emitted, the flat file is not, and nothing warns until a 404.
+// The walk, not a hardcoded list, because a hardcoded route list is the drift the build hides — the page is emitted, the flat file is not, and nothing warns until a 404.
 // Any directory under build/client that carries an index.html is a route; the root index.html stays where it is.
 
 import { existsSync, readdirSync, renameSync, rmdirSync, statSync } from 'node:fs';
@@ -21,7 +21,7 @@ function collectRoutes(dir: string, prefix: string, out: string[]): string[] {
   return out;
 }
 
-// WHY deepest first: /artikel/ai-browser-indonesia must be moved out of build/client/artikel before the parent dir is removed.
+// deepest first because /artikel/ai-browser-indonesia must move out of build/client/artikel before the parent directory is removed.
 
 const routes = collectRoutes(client, '', []).sort((a, b) => b.split('/').length - a.split('/').length);
 

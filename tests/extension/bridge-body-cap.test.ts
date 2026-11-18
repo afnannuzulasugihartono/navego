@@ -17,7 +17,7 @@ import { gateVerdict } from '../../hosted/functions/navego-bridge/plan-gate.ts';
 const source = stripTypeScriptTypes(readFileSync(new URL('../../hosted/functions/navego-bridge/index.ts', import.meta.url), 'utf8')
   .replace(/^import .*;\r?\n/gm, ''));
 
-// WHY THE PROCESS GETS A Deno AND THESE TWO.
+// THE PROCESS GETS A Deno AND THESE TWO.
 // required-env is the real module the edge bundle uses, not a stand-in; it reads Deno from its own closure, which is this process.
 // The bundle demands the same two vars the deploy demands; everything else unset, so the CORS default path runs.
 

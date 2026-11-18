@@ -87,7 +87,7 @@ function stubBrowser(sockets: any, { reachable = true, urls = [] as string[] } =
   };
 }
 
-// WHY THE PORT ROAD IS GONE AND THE LINK IS THE ONLY WAY.
+// THE PORT ROAD IS GONE AND THE LINK IS THE ONLY WAY.
 // Chrome refuses a debugging port on the profile the person is signed into, so that road could only ever open a fresh profile with nothing in it.
 // The bridge reaches the everyday profile at the same speed, over the same commands, and it is the road the plan is metered on.
 

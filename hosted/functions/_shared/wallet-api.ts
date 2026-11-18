@@ -3,12 +3,12 @@
 // @state: the routing of wallet and task actions, the owner that comes from the request and never from the body, and the status each refusal deserves.
 // @dependencies: ./wallet.ts.
 
-// WHY THE HANDLERS ARE HERE AND NOT IN THE FUNCTION THAT SERVES THEM.
+// THE HANDLERS ARE HERE AND NOT IN THE FUNCTION THAT SERVES THEM.
 // The function owns secrets and the database client; this module owns the order of decisions, and that order is what decides whether a refusal happens before or after money is promised.
 // Keeping the order here lets a test drive every branch without a network, a provider or a key.
 // The dependency object is the whole surface: a caller that cannot be shown a helper cannot be tested for calling it in the wrong order.
 
-// WHY THE OWNER IS A PARAMETER OF THE CALL AND NOT A FIELD OF THE BODY.
+// THE OWNER IS A PARAMETER OF THE CALL AND NOT A FIELD OF THE BODY.
 // A body is what the caller wrote, so an owner read from it is an owner the caller chose.
 // Every action below takes the owner from the resolver the function gives it, which reads a signed session or a paired device and nothing else.
 
@@ -80,7 +80,7 @@ function refusal(why: string, extra: Record<string, unknown> = {}): { status: nu
   return { status: 409, body: { ok: false, why, ...extra } };
 }
 
-// WHY A QUOTE IS SERVED BEFORE A RESERVE RATHER THAN INSIDE IT.
+// A QUOTE IS SERVED BEFORE A RESERVE RATHER THAN INSIDE IT.
 // The person sees the price, the number of chunks and the balance they will have left before they agree to anything.
 // A reserve that both priced and committed would make the first sight of the number the moment the money was already spoken for.
 

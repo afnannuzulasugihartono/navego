@@ -3,7 +3,7 @@
 // @state: 4 locks; the clock invariant, the overload count, the signature the bridge calls, and the grants.
 // @dependencies: node:test, assert, fs.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // opera_claim_next_wait holds ONE transaction for up to 25 seconds while it waits for a command.
 // In PostgreSQL now() is transaction_timestamp(), frozen at BEGIN, so every now() inside it reads a clock that is up to 25 seconds stale.
@@ -14,7 +14,7 @@
 
 // The second read was worse in kind: expires_at > now() in the candidate SELECT meant a command that expired while the caller waited was still handed out.
 
-// WHY THIS RUNS WITHOUT POSTGRES, AND WHY THAT IS STILL A LOCK
+// THIS RUNS WITHOUT POSTGRES, AND WHY THAT IS STILL A LOCK
 
 // The behavioural proof needs a real database and was run by hand against one while writing this fix.
 // This file pins the things that can be checked from the migration and the call site, and the second of those four is the one that would have caught the mistake actually made while writing the fix: it was first written with the parameter order (text,text,integer,text,integer,jsonb).

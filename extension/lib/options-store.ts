@@ -5,7 +5,7 @@
 
 // Validation and persistence for the Options page: the bridge URL override and the log level, stored in chrome.storage.local.
 
-// WHY https only: the bridge URL is where the device token is posted, so plain http to a remote host is refused.
+// https only: the bridge URL is where the device token is posted, so plain http to a remote host is refused.
 // Loopback is served over http and is handled by the caller, not here.
 
 // The model endpoint, key and model name are the user's own, entered here and kept in chrome.storage.local so they never reach our server.
@@ -15,7 +15,7 @@
 import { DEFAULT_BRIDGE_URL } from './endpoints.js';
 import { isString } from './guards.js';
 
-// WHY NOT chrome.storage.StorageArea.
+// NOT chrome.storage.StorageArea.
 // lib/ is the chrome-free home: the storage area is injected so the module loads without a browser.
 // Naming the chrome namespace here would chain the type dependency through every caller.
 // This is the structural slice of the injected area those callers pass.

@@ -3,7 +3,7 @@
 // @state: 7 locks; table shape, device-scoped emit, kind allowlist, cursor long-poll, bounded wait, grants, and retention.
 // @dependencies: node:test, assert, fs.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // A command is one opaque wait for the model.
 // The device is the only thing that knows what happened in between, and it had no way to say so.

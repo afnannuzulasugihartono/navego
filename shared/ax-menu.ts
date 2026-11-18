@@ -3,7 +3,7 @@
 // @state: tree queries, accelerator fast path, polled waits, verified walks.
 // @dependencies: none.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // Menus defeat every other locator.
 // They render outside the queried DOM (find_elements returns nothing), their screen position drifts whenever the window changes (one calibration died within the hour), and blind key counts rot the moment the vendor reorders items.
@@ -11,7 +11,7 @@
 // A menu drive becomes: read the tree, walk to the named row, prove the submenu appeared, repeat.
 // Measured live: a 748-node tree in 73 ms, menu rows with names, boxes exact to the pixel.
 
-// WHY IT IS GENERIC.
+// IT IS GENERIC.
 // Nothing here names an application.
 // Menus are role=menu, rows are role=menuitem, submenus are child menus: the same shape in Docs, Sheets, Slides, and every ARIA-conformant web app.
 // Site-specific knowledge is a list of row names passed in by the caller, and the Docs table-of-contents path is the first client, not the design.
@@ -86,7 +86,7 @@ function axMenuIds(nodes: AxNode[]): Set<string> {
 // Measured on the live Docs Insert menu 2026-10-13: pressing the parsed letter opened the Table grid.
 
 export function menuAccel(rowName: string): string | null {
-  const tokens = String(rowName ?? '').replace(/►/g, ' ').trim().split(/\s+/);
+  const tokens = String(rowName ?? '').replace(/â–º/g, ' ').trim().split(/\s+/);
   for (let i = tokens.length - 1; i >= 0; i--) {
     const token = tokens[i] as string;
     if (token.includes('+')) continue;
@@ -125,7 +125,7 @@ export function menuWalkPlan(rowIndex1Based: number): Array<{ key: string }> {
 // Tools arrive injected: ax reads the tree, key sends one chord, box resolves a node to clickable coordinates.
 // Returns the open submenu node.
 
-// WHY NEWNESS, NOT PARENTHOOD.
+// NEWNESS, NOT PARENTHOOD.
 // A submenu is not a child of its row in the accessibility tree; it appears as a sibling menu node when opened.
 // Detection therefore snapshots the menu id set before Right and takes the node that was not there before.
 // Measured live: the Insert menu, its submenus, and the document outline all surface as separate menu nodes in one tree.

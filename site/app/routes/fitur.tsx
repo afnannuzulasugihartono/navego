@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots)
+
 import { useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
@@ -85,7 +87,6 @@ export default function Fitur() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Fitur</p>
             <h1>Yang bisa dikerjakan Navego.</h1>
             <p className="lede">Satu perintah. Browser Anda membaca, mengisi, mengklik, lalu menyimpan hasilnya sebagai berkas.</p>
             <div className="hero-cta">
@@ -99,7 +100,6 @@ export default function Fitur() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Cara kerja</p>
                 <h2 id="taskTitle" className="section-title">Empat langkah.</h2>
               </div>
               <p className="section-note">Tiap langkah memakai primitive yang sama — bukan trik per situs.</p>
@@ -120,7 +120,6 @@ export default function Fitur() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Kemampuan</p>
                 <h2 id="kemampuanTitle" className="section-title">Enam hal, satu mesin.</h2>
               </div>
               <p className="section-note">45 tool MCP di atas 36 primitive browser.</p>
@@ -141,7 +140,6 @@ export default function Fitur() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Jalur</p>
                 <h2 id="roleTitle" className="section-title">Satu produk, tiga pintu.</h2>
               </div>
               <p className="section-note">Operator, analis, pengembang — primitive yang sama.</p>
@@ -154,7 +152,6 @@ export default function Fitur() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker" style={{ color: 'var(--amber-hi)' }}>Izin</p>
                 <h2 id="permTitle" className="section-title">Enam izin, tidak lebih.</h2>
               </div>
               <p className="section-note">Tidak ada izin lain di luar daftar ini.</p>

@@ -3,21 +3,21 @@
 // @state: the in-page probe expression, the accessibility measurement, and the profile both halves build.
 // @dependencies: none.
 
-// WHY EVERY CLAIM CARRIES ITS EVIDENCE.
+// EVERY CLAIM CARRIES ITS EVIDENCE.
 // The read this replaces guessed a surface from its URL, so a wrong guess was invisible.
 // A profile that reports the number it measured makes a wrong classification something a reader can see and a test can pin.
 
-// WHY THE PROBE NAMES NO SITE.
+// THE PROBE NAMES NO SITE.
 // A selector or a domain in this file would be the per-site code this change exists to remove.
 // Everything here is a property any page has: how much text it holds in the DOM, how much of the viewport a canvas covers, whether an editable host exists, and whether the page has focus.
 
-// WHY THIS IS A CHEAP PRE-FILTER AND NOT THE DECISION.
+// THIS IS A CHEAP PRE-FILTER AND NOT THE DECISION.
 // The wait uses it to avoid paying a full read on every poll of a page that plainly holds its own text.
 // It is deliberately small, because a length bar cannot tell a short page's text from a canvas editor's chrome - the canvas signal in the profile is what makes that call, and this only skips the obvious case.
 
 export const MIN_DOM_TEXT = 40;
 
-// WHY THE BAR IS WRITTEN INTO THE EXPRESSION AND NOT IMPORTED INTO IT.
+// THE BAR IS WRITTEN INTO THE EXPRESSION AND NOT IMPORTED INTO IT.
 // A page expression is a string evaluated in a page that knows nothing about this module, so a constant named here is a name the page has never heard of.
 // Measured on a real Google Doc: the first version of this probe referenced the module's own constant inside the string, the page threw a ReferenceError, and the whole profile came back false - which reads exactly like a page with no canvas, no text and no editor.
 
@@ -75,22 +75,22 @@ export async function probeSurface({ evaluate }: { evaluate: (expression: string
   };
 }
 
-// WHY THE DOCUMENT REGION IS FOUND BY ITS SUBTREE AND NOT BY A FRAME.
+// THE DOCUMENT REGION IS FOUND BY ITS SUBTREE AND NOT BY A FRAME.
 // Measured on a real Google Doc, three ways that do not work: Accessibility.getFullAXTree returns one flat tree of 866 nodes in which a single node carries a frameId, so reading frameId off every node separates nothing; Page.getFrameTree names eight frames, and Accessibility.getPartialAXTree refuses a frame id on its own, asking for a node id, a backend node id or an object id instead.
 // What the tree does carry on every node is parentId and childIds, so the tree can be rebuilt and the region that dominates its own siblings is the document - the toolbar, the menus and the notices are separate subtrees, and they lose.
 // Naming a frame, or filtering chrome by the strings it happens to print, would be per-site code wearing a structural disguise.
 
-// WHY THE REGION IS FOUND BY DESCENDING AND NOT BY TAKING THE BIGGEST SUBTREE.
+// THE REGION IS FOUND BY DESCENDING AND NOT BY TAKING THE BIGGEST SUBTREE.
 // The biggest subtree in any tree is its root, which holds the chrome as well as the document, so taking it returns the toolbar and the notices along with the prose.
 // Descending into whichever child holds the most text stops at the region that dominates its own siblings, which is the document and not the page around it.
 
-// WHY THE TEST IS AGAINST THE SIBLINGS AND NOT AGAINST THE PARENT.
+// THE TEST IS AGAINST THE SIBLINGS AND NOT AGAINST THE PARENT.
 // The parent's total is the sum of every child, so no child ever outgrows it and a descent that compares against the parent stops at the root and takes the chrome with the document.
 // A region is the document when it holds more than the rest of the page put together, so that is the comparison.
 
 const TEXT_ROLES = new Set(['InlineTextBox', 'StaticText']);
 
-// WHY THE CHILDREN ARE BUILT FROM parentId AND NOT READ FROM childIds.
+// THE CHILDREN ARE BUILT FROM parentId AND NOT READ FROM childIds.
 // A tree can answer with one and not the other, and a walk that trusts only childIds finds nothing in a tree that carries only parentId - which answers exactly like a page with no text.
 // Measured while writing this: the first fixture listed children on the parent and left childIds empty, and the walk came back with zero text nodes on a tree that plainly held four.
 
@@ -168,7 +168,7 @@ const documentRegion = (nodes: AxNode[]): RegionSummary & { deepest: number } =>
     if (!here || sum.count > here.sum.count) here = { id, sum };
   }
   if (!here) return { count: 0, length: 0, parts: [], deepest: 0 };
-  // WHY THE DESCENT CARRIES A VISITED SET AND NOT A COUNTER.
+  // THE DESCENT CARRIES A VISITED SET AND NOT A COUNTER.
   // A tree that names a node's ancestor as its child makes a cycle, and the descent follows it: a node in the cycle holds as much text as everything beside it, so it keeps winning the comparison against its own siblings.
   // Measured with a three-node tree hanging off a real root: measureAx never returned, and the hang is synchronous, so read, probe and wait all stopped with no error and no timeout.
   // A visited set ends the walk at the first node it has already stood on, which is the answer a depth cap would reach only after walking the same loop.
@@ -191,7 +191,7 @@ const documentRegion = (nodes: AxNode[]): RegionSummary & { deepest: number } =>
     hereRow = winning;
     visited.add(hereRow.id);
   }
-  // WHY THE DEPTH OF THE WHOLE TREE IS MEASURED AS WELL.
+  // THE DEPTH OF THE WHOLE TREE IS MEASURED AS WELL.
   // The tree is requested with a depth cap, and a document deeper than the cap comes back cut: its text ends early and nothing in the answer says so.
   // Reaching the cap is the only evidence available that the text may be incomplete, so it is reported rather than guessed at.
   let deepest = 0;
@@ -212,7 +212,7 @@ const documentRegion = (nodes: AxNode[]): RegionSummary & { deepest: number } =>
   return { count: hereRow.sum.count, length: hereRow.sum.length, parts: hereRow.sum.parts, deepest };
 };
 
-// WHY THE TREE IS ASKED FOR AT A STATED DEPTH.
+// THE TREE IS ASKED FOR AT A STATED DEPTH.
 // Chrome truncates an accessibility tree at the depth it was asked for, so the request and the report of it have to agree: a document cut at the cap answers with text that looks complete.
 
 const MAX_AX_DEPTH = 60;
@@ -229,7 +229,7 @@ export async function measureAx({ ask, method = 'Accessibility.getFullAXTree' }:
   if (!nodes.length) return empty;
 
   const region = documentRegion(nodes);
-  // WHY THE BAR IS TEN TEXT BOXES.
+  // THE BAR IS TEN TEXT BOXES.
   // Measured on a real Google Doc: the document region carries 155 of them and the chrome around it carries 60, so a document clears this by an order of magnitude.
   // A toolbar alone carries a handful, and reading that first would answer with menu labels - so below this the DOM is the cheaper and the cleaner answer.
   // The bar decides which read leads.
@@ -263,7 +263,7 @@ export interface BuiltProfile {
 }
 
 export function buildProfile({ probe = {}, ax = {} }: { probe?: Partial<ProbeAnswers>; ax?: Partial<AxMeasurement> | null } = {}): BuiltProfile {
-  // WHY THE DEFAULTS ARE PER CLAIM.
+  // THE DEFAULTS ARE PER CLAIM.
   // A caller with only one probe passes an empty rest; every read below is optional-chained so an absent claim answers as not-true rather than as a hole in the profile.
   const evidenceAx = ax ?? {};
   return {
@@ -273,7 +273,7 @@ export function buildProfile({ probe = {}, ax = {} }: { probe?: Partial<ProbeAns
     axRich: evidenceAx.axRich === true,
     truncated: evidenceAx.truncated === true,
     focused: probe.focused?.value === true,
-    // WHY THE NUMBERS RIDE ALONG WITH THE BOOLEANS.
+    // THE NUMBERS RIDE ALONG WITH THE BOOLEANS.
     // A boolean is the decision; the number is why the decision was made, and the number is what a reader needs when the decision turns out wrong.
     // Without it a misclassification is silent again, which is the exact thing this profile exists to end.
     evidence: {
@@ -290,7 +290,7 @@ export function buildProfile({ probe = {}, ax = {} }: { probe?: Partial<ProbeAns
   };
 }
 
-// WHY THE DESCRIPTION NAMES WHAT WAS MEASURED.
+// THE DESCRIPTION NAMES WHAT WAS MEASURED.
 // It is the one line a caller reads to know what it is dealing with, so it names the surface's shape and nothing about where that shape was found.
 
 export function describeProfile(profile: { canvas?: boolean; editable?: boolean; axRich?: boolean; truncated?: boolean; focused?: boolean } = {}): string {

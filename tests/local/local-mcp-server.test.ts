@@ -3,12 +3,12 @@
 // @state: 8 locks; the protocol handshake, the advertised tools, and the ways a call can fail.
 // @dependencies: node:test, strict, ../local/mcp-server.js.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // The driver runs in a process with no stdio contract, which makes it unusable by anything that speaks MCP.
 // This file is that contract, and it is the difference between "works on the machine it was written on" and "npx opera-local".
 
-// WHY the server is built around a plain function.
+// the server is built around a plain function.
 // A stdio server that only runs as a process cannot be tested without spawning one, and a test that spawns a real browser is a test that fails on someone else's machine.
 // handle() takes a request and a context and returns a response, so every rule below is checked against a fake driver, and the stdio wrapper stays thin enough to be obvious.
 
@@ -29,7 +29,7 @@ const serpFixture = JSON.parse(
   fs.readFileSync(new URL('../fixtures/bing-serp-page1.json', import.meta.url), 'utf8')
 );
 
-// WHY THE FAILURE IS READ FROM THE ANSWER.
+// THE FAILURE IS READ FROM THE ANSWER.
 // A refused tool answers the way the hosted wire answers: the call came back and it says what failed, so the message is read from the answer rather than from a protocol frame.
 
 type DriverCall = [string, ...unknown[]];
@@ -45,7 +45,7 @@ const failureOf = (res: McpFrame | undefined): string => {
   }
 };
 
-// WHY every method here is async.
+// every method here is async.
 // The real driver is async on every call, and a synchronous fake made the server's missing await invisible: it serialised a promise as {} and the lock still passed.
 // A fake that is shaped like the thing it stands in for is the only kind that can catch a bug in the real one.
 
@@ -92,7 +92,7 @@ function fakeDriver() {
   };
 }
 
-// WHY THE TEST SERVER GETS A LEASE OF ITS OWN.
+// THE TEST SERVER GETS A LEASE OF ITS OWN.
 // The real lease lives in the bridge, and binding a bridge from a unit test would ask this machine's browser for a table it does not have.
 // The table itself is proven over HTTP in tests/local/local-bridge.test.ts; here a lease that grants is enough, because what is under test is what the server does with the answer.
 
@@ -111,7 +111,7 @@ const openLease = () => {
   };
 };
 
-// WHY THE SEARCH SESSION IS A SECOND FAKE.
+// THE SEARCH SESSION IS A SECOND FAKE.
 // search opens its own tab through the fallback driver and then drives a fresh named session on it; the session is the only thing that can evaluate the SERP expression, so the fake carries exactly navigate and evaluate.
 
 function fakeSearchSession(calls: DriverCall[]) {
@@ -219,7 +219,7 @@ test('the surface covers what the driver can actually do', async () => {
   }
 });
 
-// WHY THE PORT IS A NUMBER AND NOT A PROMISE.
+// THE PORT IS A NUMBER AND NOT A PROMISE.
 // The entry point hands the server a function that answers the port per call, because the pipe is chosen per call.
 // The status answer used to hand that promise straight to the caller, and JSON turned it into an empty object, so an agent asking "where am I" was told nothing at all - and the answer that names the road is the one an agent reads first.
 
@@ -277,7 +277,7 @@ test('status names the port the drive is on', async () => {
   assert.equal(payload.port, 9451);
 });
 
-// WHY THIS ONE IS DRIVEN WITHOUT A BROWSER.
+// THIS ONE IS DRIVEN WITHOUT A BROWSER.
 // A report that needs the browser open fails exactly when a bookkeeper wants it: at month end, on a laptop with no tab.
 // The tool answers from the file, so the test proves the server does not reach for a driver it does not need.
 
@@ -369,7 +369,7 @@ test('doc refuses a graph with no source and writes nothing', async () => {
   }
 });
 
-// WHY THE CAPTURE SAYS WHAT IT CANNOT DO.
+// THE CAPTURE SAYS WHAT IT CANNOT DO.
 // Measured live on a Google Doc: fullPage answered 2000x937 pixels for an 18-page document - one viewport, not the page - while its own note claimed the whole document.
 // An agent that reads that note plans a one-shot review of a thesis and gets a screenshot of page one.
 // The description states the boundary so the plan is paging, not hoping.
@@ -389,7 +389,7 @@ test('type says where the proof lives when its own placement check cannot see it
   assert.match(type.description, /read\(\)/);
 });
 
-// WHY THE TYPE-WITH-ATEND PATH IS DESCRIBED BY WHAT IT SETTLES.
+// THE TYPE-WITH-ATEND PATH IS DESCRIBED BY WHAT IT SETTLES.
 // An agent needs to know it does not land in a table cell — it lands at the end of the document, and it says so.
 
 test('the type description says how atEnd decides it reached the end, and when it cannot know', () => {
@@ -402,11 +402,11 @@ test('the type description says how atEnd decides it reached the end, and when i
   assert.deepEqual(tool.inputSchema.required, ['text']);
 });
 
-// WHY THE SCROLL'S ARGUMENTS ARE FOUR AND NOT ONE.
+// THE SCROLL'S ARGUMENTS ARE FOUR AND NOT ONE.
 // An agent knows three different things - how far to move, that it wants the end, and the thing it wants to see - and merging them into one string argument would make every one of them a guess about which form was meant.
 // Four optional arguments, each unambiguous.
 
-// WHY THE COMPUTED READ IS DESCRIBED BY WHAT IT ANSWERS.
+// THE COMPUTED READ IS DESCRIBED BY WHAT IT ANSWERS.
 // An agent reads a tool description to decide whether a call can settle a question, so the description names the questions it settles - a button that turned blue, a modal that opened, text past the viewport - rather than the properties it returns.
 
 test('browser_type_text atEnd=true reaches the driver as one call with the text intact', async () => {
@@ -494,11 +494,11 @@ test('browser_find_element row-less returns every row of that role as readable t
   assert.match(unwrap(res).content[0].text, /204/);
 });
 
-  // WHY THE CAPTURE SAYS WHAT SPACE IT IS IN.
+  // THE CAPTURE SAYS WHAT SPACE IT IS IN.
   // Measured live by resizing the window: viewport 1144x714 -> 1186x670, capture 1430x963 -> 1483x838, scale steady at 1.25.
   // An agent handed a picture and nothing else divides by eye and clicks the wrong thing while every answer says the click landed.
 
-// WHY AN INPUT ACTION BRINGS ITS OWN WINDOW.
+// AN INPUT ACTION BRINGS ITS OWN WINDOW.
 // Measured live on this product's own author, repeatedly: with the browser behind another window, clicks and typing went nowhere, Google Docs took the keys and dropped them, and every answer said the click was delivered.
 // Asking the human to press a key in the middle of a drive is the one thing this product promised not to need - so the check happens where the action happens, and every input answer says which of the two things happened.
 
@@ -516,7 +516,7 @@ test('an input action brings the window forward and says so', async () => {
   assert.equal(out.window, 'the page hears input', 'and the answer says what it found');
 });
 
-// WHY A DEAF PAGE IS A FAILURE AND NOT AN ANSWER.
+// A DEAF PAGE IS A FAILURE AND NOT AN ANSWER.
 // Measured live on this machine: two windows can carry the same page title, so the one that comes forward is not always the one holding the tab.
 // The guard confirms the page hears input after a restore; when it does not, a keystroke sent anyway disappears without a word, which is the one failure this product must never report as success.
 
@@ -552,7 +552,7 @@ test('a read pays nothing for the window, because it changes nothing about it', 
   assert.ok(!c.driver.calls.some(([name]) => name === 'ensureFront'), 'reading does not steal the human attention');
 });
 
-// WHY THESE CLAIMS EXIST.
+// THESE CLAIMS EXIST.
 // Measured live on this machine: status answered focused true with Brave in front while the drive was on a Chrome tab, because the answer asked "is any browser in front" and the machine had three browsers on it.
 // An agent that reads that never learns the window it is driving is somewhere else, so the answer now names the browser in front and means "ours" by the titles of the tabs we actually drive.
 
@@ -595,7 +595,7 @@ test('an application that is not a browser says what is in front instead of gues
   assert.match(window.why, /another window is in front/);
 });
 
-// WHY THESE CLAIMS EXIST.
+// THESE CLAIMS EXIST.
 // An agent holds an eight-digit id it copied from a list and cannot read it back off anything; it can read a title.
 // So a tab may be named, an answer says which tab that turned out to be, and a name that fits two tabs is refused with both - because typing into the wrong document while saying nothing is the worst thing this product can do.
 
@@ -671,7 +671,7 @@ test('a number that is a tab is used as itself and says nothing about names', as
   assert.deepEqual(out.tab, { id: '333', title: 'Notes - Google Docs', named: false });
 });
 
-// WHY THE WINDOW MATCH HAS TO BE THE TAB'S TITLE, AS A STRING.
+// THE WINDOW MATCH HAS TO BE THE TAB'S TITLE, AS A STRING.
 // The guard turns the match into text to pick a window off the taskbar, and a promise sent as the match becomes "[object Promise]" - so a minimized browser is never brought back and the drive types into nothing while the answer says the window was checked.
 // Measured live on this machine through the MCP surface: the guard received a promise, which is why the taskbar path only ever worked when a person named the window by hand.
 
@@ -705,7 +705,7 @@ test('a call that names no tab names the window the driver is attached to', asyn
   assert.deepEqual(front[1], { match: 'Paper' }, 'the page the driver is on is the one its window carries');
 });
 
-// WHY A PARSE OF A NAMED TAB OPENS A NEW TAB ANYWAY.
+// A PARSE OF A NAMED TAB OPENS A NEW TAB ANYWAY.
 // The tool's contract is that a drive never navigates a tab that is already open, so nobody who hands a tabId can lose the page they were reading to a silent move.
 // A caller who passes tabId anyway does not get the silent navigation either - browser_open_url never moves an existing tab.
 
@@ -812,7 +812,7 @@ test('a missing required argument is refused before the driver is touched', asyn
   assert.deepEqual(c.driver.calls, [], 'a refused call must not reach the browser');
 });
 
-// WHY THIS CLAIM EXISTS.
+// THIS CLAIM EXISTS.
 // An agent that has to ask for the page after every action spends two calls on one decision, and the looking half is the one that costs.
 // On the reference implementation roughly thirty per cent of all tool calls were snapshots, nearly all of them right after something the agent had just done.
 // Handing the page back with the action makes one decision cost one call — and this fails the moment an action returns something flat, because the model would then be reasoning about a page it cannot see.
@@ -902,11 +902,11 @@ test('a notification is answered with nothing at all, because JSON-RPC says so',
   assert.equal(res, undefined);
 });
 
-// WHY THIS CLAIM EXISTS.
+// THIS CLAIM EXISTS.
 // A Chrome tab id is a number, the tool schema says string, and an agent copies the id straight out of the tab list it was just handed.
 // Comparing with === refused the id the product itself printed — so a drive that could see six tabs decided none of them was real.
 
-// WHY THE COVER IS PROVEN WITH A LEASE THAT REFUSES.
+// THE COVER IS PROVEN WITH A LEASE THAT REFUSES.
 // A grant-only lease shows the claim is asked; only a refusal shows the server stops the call instead of driving a tab it was told it cannot have.
 // The claim must be asked even when the session is cached: a cached session is a socket, not a permission.
 
@@ -981,7 +981,7 @@ test('a tab id is found whether the caller sends a number or a string', async ()
   }
 });
 
-// WHY A WAIT IS TESTED AGAINST READS, NOT TIME.
+// A WAIT IS TESTED AGAINST READS, NOT TIME.
 // The contract is evidential: the wait ends on the same text a read would show, and a wait that runs out of budget reports instead of failing — found:false with the page as it stands, which is what the next decision needs.
 // The clock on a CI runner can step, so the spent budget is proven by the budget handed to the wait primitive, not by wall milliseconds.
 
@@ -1053,7 +1053,7 @@ test('key vocabularies are enumerated so a misspelling fails before the browser'
   assert.match(byName.browser_press_key.inputSchema.properties.key.description, /Enter.*ArrowLeft.*ArrowRight.*single printable ASCII/s);
 });
 
-// WHY THE CHANGE SET IS TESTED AS A HINT, NOT A TRUTH.
+// THE CHANGE SET IS TESTED AS A HINT, NOT A TRUTH.
 // The full page rides every action so the agent is never stranded; changed names what moved since the last look at the same tab.
 // Rows match by value — role, name, position — and the first look reports null, because its elements ARE the baseline.
 
@@ -1139,7 +1139,7 @@ test('a replaced page says reshaped instead of listing sixty new rows', async ()
   assert.equal(out.page.rows, 2, 'the count says what the page holds now');
 });
 
-// WHY THE SETTLE IS ASSERTED BY ORDER, NOT BY A FLOOR.
+// THE SETTLE IS ASSERTED BY ORDER, NOT BY A FLOOR.
 // The old lock said the call took at least a hundred milliseconds, which only proved the timer existed.
 // The page is now settled by watching it, so the proof is that the driver's settle ran once before the snapshot - not that the process was made to wait.
 
@@ -1156,7 +1156,7 @@ test('an action that already settled does not pay for a second settle', async ()
   assert.equal(c.driver.calls.filter(([name]) => name === 'settle').length, 0, 'the action settled once, and the page look trusts it');
 });
 
-// WHY A WAIT THAT FOUND WHAT IT ASKED FOR DOES NOT LOOK AGAIN.
+// A WAIT THAT FOUND WHAT IT ASKED FOR DOES NOT LOOK AGAIN.
 // wait, wait and wait each settle the page while they look, so the answer they return is already the page as it stands.
 // A wait that ends on found:true paying a second settle before the snapshot is one round trip billed twice, measured at 42.0 ms of 48.1 ms for wait on a settled fixture.
 
@@ -1277,7 +1277,7 @@ test('an invalid burst is refused before the browser is touched', async () => {
 });
 
 
-// WHY A PAGE WITH NO FILE INPUT IS A FAILURE.
+// A PAGE WITH NO FILE INPUT IS A FAILURE.
 // Measured live on Google Docs: upload answered inputFound: false as a successful tool call, so an agent reading it as done moved on with nothing in the document, and the road in - a drop - was fill.
 // So it fails, names that, and carries the drop with it.
 
@@ -1323,11 +1323,11 @@ test('chooser toggles without touching the page', async () => {
   assert.deepEqual(facts, { intercepting: true, ok: true });
 });
 
-// WHY THE STRAY TAB IS CLOSED AND NAMED, NOT LEFT.
+// THE STRAY TAB IS CLOSED AND NAMED, NOT LEFT.
 // A drop the page refused is answered by Chrome the only way it can be: the file opens in a tab.
 // Every rejected drop in the live drill left one behind and every accepted drop left none, so the tab is the failure signal as well as the litter — and the answer says so instead of quietly opening windows on the person screen.
 
-// WHY THE TAB APPEARS ONLY AFTER THE DROP.
+// THE TAB APPEARS ONLY AFTER THE DROP.
 // Chrome opens the file when the page refuses the drop, so the stray tab exists between the look before and the look after, and not one moment earlier — a stub that had it from the start would prove nothing about which look found it.
 
 test('a drop Chrome answered by opening the file closes that tab and says so', async () => {
@@ -1373,7 +1373,7 @@ test('a drop the page took leaves no tab and reports a clean drop', async () => 
   assert.ok(!c.driver.calls.some((call) => call[0] === 'close'), 'nothing to close, nothing closed');
 });
 
-// WHY THE FIXTURE KEEPS ITS OLD TITLE: the tests read a captured Bing results page, and the card names it the way Bing served it.
+// THE FIXTURE KEEPS ITS OLD TITLE: the tests read a captured Bing results page, and the card names it the way Bing served it.
 // The parser reads what the page said; the site's own name today is a different fact, held elsewhere.
 
 test('browser_search_web answers with the structured results and closes its tab', async () => {
@@ -1433,7 +1433,7 @@ test('search refuses an empty query with the reason named', async () => {
   assert.ok(!c.driver.calls.some((call) => call[0] === 'open'), 'nothing reached the browser');
 });
 
-// WHY THE TAB IS ASKED WHERE IT IS BEFORE IT IS READ.
+// THE TAB IS ASKED WHERE IT IS BEFORE IT IS READ.
 // A background tab at about:blank reports zero rows and zero changes, which is the most still a page can be, so the call used to answer count: 0 before Bing had loaded.
 // The fake below never reaches bing.com; the call must answer with a named refusal, not with an empty list.
 

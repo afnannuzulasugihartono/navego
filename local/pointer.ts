@@ -3,7 +3,7 @@
 // @state: clickAt, clickFraction, hover, hoverRow, clickHandle, handleBox and resolveHandle, with the mark a person watching can see.
 // @dependencies: ./page-expressions.js.
 
-// WHY THIS MODULE EXISTS
+// THIS MODULE EXISTS
 
 // Every pointer action is a coordinate sent into a page that may have moved, and the answer it gives back is a fact about what was under that coordinate.
 // Keeping the dispatch, the mark and the ownership read together means a click can never claim it landed without asking who owns the point first.
@@ -13,7 +13,7 @@
 // A debugger overlay was tried first and discarded: it answers ok and renders nothing.
 // The mark is best-effort by design: a page that refuses the script still gets its click.
 
-// WHY THE SPOT TAKES ITSELF AWAY.
+// THE SPOT TAKES ITSELF AWAY.
 // Measured live on this product's own author: a click marker that never goes leaves a red ring sitting on the page for the rest of the session, and every capture after it carries that ring - so the picture an agent reads its own click out of has a 26-pixel circle drawn on top of the thing it just clicked.
 // The mark is worth having for the beat in which the person watching sees where the drive went; it is not worth leaving on the page.
 
@@ -25,7 +25,7 @@
 // A lone mouse move is the one dispatch whose acknowledgement Chrome answers on page time — measured 700 ms to 5 s on ordinary pages, while the same move inside a click answers in milliseconds.
 // The move is sent and the mark awaited; the effect is proven by the snapshot read that follows every hover, which is also what makes a dead tab fail loudly one call later instead of silently now.
 
-// WHY A CLICK ASKS WHO OWNS THE POINT BEFORE IT PRESSES.
+// A CLICK ASKS WHO OWNS THE POINT BEFORE IT PRESSES.
 // Measured live on YouTube: a cookie wall covered the page, tap on the search box answered with the row's name and its point as if the click had reached it, focus never left the wall's button, and the type that followed had nothing to say but a guess.
 // The point either belongs to the row or to something laid over it, and that is one question with one answer.
 // When the page cannot answer, nothing is claimed.
@@ -97,7 +97,7 @@ export function createPointerMethods({ cdp, primitives }: { cdp: { send(method: 
     const backendNodeId = Number(raw.slice(HANDLE_PREFIX.length));
     if (!Number.isFinite(backendNodeId)) return {};
 
-    // WHY THE DOM AGENT IS SWITCHED ON FIRST.
+    // THE DOM AGENT IS SWITCHED ON FIRST.
     // Measured live: without it resolveNode answers an error, the catch below swallowed it, and the click reported no fact at all - a silent fallback that looks the same as a page that cannot answer.
     try {
       await cdp.send('DOM.enable').catch(() => null);
@@ -128,7 +128,7 @@ export function createPointerMethods({ cdp, primitives }: { cdp: { send(method: 
     }
   };
 
-  // WHY A POINTER EVENT ASKS FOR FOCUS EMULATION.
+  // A POINTER EVENT ASKS FOR FOCUS EMULATION.
   // Measured live on this machine: a synthetic click in a tab Chrome had not drawn went nowhere.
   // The page never saw the click, the file never landed, and the answer still said the link was hit.
   // Chrome hands pointer input to a widget it believes is focused, and a background tab is not.
@@ -164,7 +164,7 @@ export function createPointerMethods({ cdp, primitives }: { cdp: { send(method: 
     return { x, y, hit: await hitAt(x, y) };
   }
 
-  // WHY A CLICK TAKES A FRACTION AS WELL AS A PIXEL.
+  // A CLICK TAKES A FRACTION AS WELL AS A PIXEL.
   // Measured live by resizing this machine's browser window: the viewport went 1144x714 to 1186x670 while the device scale stayed at 1.25, so the same CSS pixel stopped meaning the same place.
   // A fraction is resolved against the viewport as it is at the moment of the click, which survives that, and the answer says which pixels it became and in what space - so a caller that meant a fixed pixel still gets the truth about the space it landed in.
   async function clickFraction(at: { x?: unknown; y?: unknown }) {
@@ -184,11 +184,11 @@ export function createPointerMethods({ cdp, primitives }: { cdp: { send(method: 
     return { x, y };
   }
 
-  // WHY A SUBMENU IS HOVERED AND NOT CLICKED.
+  // A SUBMENU IS HOVERED AND NOT CLICKED.
   // Clicking a row that turns out to be a branch runs whatever it was — Delete, Remove, Send.
   // Hover opens the same submenu and activates nothing, so it is what the walker uses, and only a click is used when the caller says the item is a command.
 
-  // WHY THE POINTER LEAVES FIRST.
+  // THE POINTER LEAVES FIRST.
   // Measured live: a submenu that would not open on hover opened once the pointer was sent somewhere else first and came back.
   // A menu that has never seen the pointer arrive from outside does not treat the hover as entering it, so the away-and-back is not politeness, it is the enter transition the menu is waiting for.
   async function hoverRow(row: import('./types.js').AxRow) {
@@ -201,7 +201,7 @@ export function createPointerMethods({ cdp, primitives }: { cdp: { send(method: 
     return here;
   }
 
-  // WHY A MENU ROW RESOLVES THE SAME WAY A SNAPSHOT ROW DOES.
+  // A MENU ROW RESOLVES THE SAME WAY A SNAPSHOT ROW DOES.
   // Both are places on the screen that stop being true when the menu closes, so both are held on to as elements and measured again at the moment of the click.
   async function resolveHandle(row: import('./types.js').AxRow): Promise<import('./types.js').AxRow> {
     if (row.handle || row.node === undefined) return row;

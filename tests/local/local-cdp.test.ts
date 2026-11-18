@@ -3,7 +3,7 @@
 // @state: 8 locks; id correlation under concurrency, error rejection, event dispatch, and clean close.
 // @dependencies: node:test, strict, ../local/cdp.js.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // The local path is the fast one, and the measurement that justifies it is small: a CDP command on loopback answered in 0.52ms at p50 over 240 commands, against roughly 380ms for the same work through the cloud, which is two 190ms round trips.
 // Everything the local driver can do is bounded above by that transport.

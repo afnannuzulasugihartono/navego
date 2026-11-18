@@ -3,28 +3,28 @@
 // @state: one socket to the local server, CDP routed by tab, one command at a time, traceable.
 // @dependencies: socket-client, capture, debugger-session, log.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // Chrome refuses a debugging port on the Default profile, and the relay road to this extension costs ~2 s a call through Singapore.
 // The extension can, however, reach this machine over loopback, and a CDP frame fits in one JSON body: method in, result out, debugger calls between them.
 // The local driver speaks identical CDP over that conversation, so the whole MCP surface runs on the everyday profile at localhost milliseconds with no flags and no queue.
 
-// WHY A SOCKET NOW, AFTER A HELD POLL.
+// A SOCKET NOW, AFTER A HELD POLL.
 // This road was a WebSocket first, and it read as OPEN while it heard nothing; the diagnosis was that this Chrome drops inbound loopback frames, and the replacement was a twenty-second held fetch.
 // Both conclusions were wrong, and the poll it bought cost more than it saved: every command paid a fresh request and a held connection, a hung one wedged the queue for a hundred and forty seconds, and commands went missing without a word.
 // The real rule is narrower and better known: Chrome ends an idle service worker after about thirty seconds and an inbound frame does not wake it.
 // So the socket carries a heartbeat - a frame that asks nothing - and the worker never goes idle in the first place.
 // That heartbeat is not new: the cloud socket client already proved it works on this very worker.
 
-// WHY IT IS THE SAME CLIENT AS THE CLOUD ROAD.
+// IT IS THE SAME CLIENT AS THE CLOUD ROAD.
 // One drain, one queue, one failure story, for a device on loopback and a device on a relay.
 // Two roads meant two sets of wedges, and the second one was always the stranger.
 
-// WHY one command at a time.
+// one command at a time.
 // Two browser actions racing over one tab leave the page in neither of the two states anybody asked for.
 // Commands run in the order they arrived and the socket stays open meanwhile, so a slow command costs the next one its place in line and nothing else.
 
-// WHY the debugger attach is held per tab.
+// the debugger attach is held per tab.
 // Attaching per message would put a hundred milliseconds on every CDP call; holding it makes the second call as cheap as the twentieth.
 // The shared-session machinery heals both ways this goes stale - a user opening DevTools, another road releasing the tab - and the infobar Chrome pins on an attached tab doubles as the agent-is-here sign.
 
@@ -42,7 +42,7 @@ import { withDebugger } from './capture.js';
 import { getConfig } from './utils.js';
 import { isRecord } from '../lib/guards.js';
 
-// WHY THE PORT IS DISCOVERED AND NOT ASSUMED.
+// THE PORT IS DISCOVERED AND NOT ASSUMED.
 // Measured: a stale extension dialled ws://127.0.0.1:19451 while the local server listened on 9451, the connection was refused, and every command silently took the cloud relay instead - 268 to 797 ms a call where loopback answers in 8 to 13 ms. The port is the one thing a stale build gets wrong, and getting it wrong costs twenty to fifty times the latency with nothing in the answer that says so.
 // So the candidates are probed, the one that answers is used, and the state names the port it found - a reader can see which road is live rather than inferring it from how slow everything is.
 
@@ -50,12 +50,12 @@ const CONFIGURED_WS = globalThis.NAVEGO_BRIDGE_WS || 'ws://127.0.0.1:9451';
 const CANDIDATE_PORTS = [9451, 19451, 9333, 9222];
 const NO_STORE_GET = { method: 'GET', cache: 'no-store' as const };
 
-// WHY THE PROBE IS AN HTTP FETCH AND NOT A SOCKET.
+// THE PROBE IS AN HTTP FETCH AND NOT A SOCKET.
 // Opening and closing a WebSocket against the real bridge disturbs it: measured, the server saw the device leave and dropped the command in flight.
 // A fetch to the same port proves something is listening without joining the conversation - the bridge answers 404 to a plain GET, which is exactly the fact being looked for.
 
 export const probePort = async (port: number): Promise<boolean> => {
-  // WHY THE PROBE ASKS WHETHER THE ANSWER IS A BRIDGE AND NOT WHETHER SOMETHING ANSWERED.
+  // THE PROBE ASKS WHETHER THE ANSWER IS A BRIDGE AND NOT WHETHER SOMETHING ANSWERED.
   // A Chrome started with a remote debugging port answers on 9222, and a probe that only asked "did anything answer" took that port for a bridge - the extension then dialled a debugging endpoint forever and the local road was dead while it believed it was connected.
   // Measured on this machine: the extension reported "port 9222 discovered" and never linked, while the real bridge sat one candidate away.
   // So the probe asks the bridge's own question, and a responder that cannot answer it is not a bridge.
@@ -72,7 +72,7 @@ export const probePort = async (port: number): Promise<boolean> => {
 // The configured address is tried first, because an operator who set one meant it.
 // Everything after it is a guess, and the first one that answers wins - the order is the order they were seen in the wild, not a ranking.
 
-// WHY THE SOCKET IS NOT OPENED WHEN THE PROBE ANSWERS NOTHING.
+// THE SOCKET IS NOT OPENED WHEN THE PROBE ANSWERS NOTHING.
 // The earlier discovery returned a configured address even when nothing listened: the extension then fired a WebSocket at a dead port on every wake, the browser's errors page filled with connection refused, and the bridge-died message stayed visible even after the bridge came back.
 // The probe now answers with no url when no candidate answers, the socket is not opened, and the extension re-asks in five seconds.
 
@@ -117,7 +117,7 @@ function note(event: string): void {
   trace = [...trace.slice(-11), { at: Date.now(), event }];
 }
 
-// WHY THE PORT IS IN THE ANSWER.
+// THE PORT IS IN THE ANSWER.
 // A reader checking why every call is slow needs to know which road is live, and the port is the whole of that answer: loopback is 8-13 ms and the relay is 268-797 ms. Naming it turns "the agent feels slow" into a fact someone can act on.
 
 export function bridgeLinkState() {
@@ -135,7 +135,7 @@ function publicBridgeTab(tab?: chrome.tabs.Tab | undefined) {
   return { id: tab?.id, url: tab?.url ?? '', title: tab?.title ?? '' };
 }
 
-// WHY THE BOUND SITS UNDER THE CALLER'S TIMEOUT.
+// THE BOUND SITS UNDER THE CALLER'S TIMEOUT.
 // The local side gives a command ten seconds and then stops listening.
 // This side used to hold a command for a minute before giving up on it, so one hung call did not just fail — it kept the worker busy long after the caller had walked away, and every command queued behind it died too.
 // A loopback round trip has no network in it: a browser that needs eight seconds to answer one call is not slow, it is stuck, and saying so in eight seconds is worth more than being patient for a minute.
@@ -301,7 +301,7 @@ chrome.tabs.onActivated.addListener(() => {
   if (!running) ensureBridgeLink();
 });
 
-// WHY a closed tab still costs a line here.
+// a closed tab still costs a line here.
 // The debugger registry is shared and `chrome.debugger.onDetach` already heals the attach flag on the object it finds — but that handler only reaches a session it can look up, and this map is the one place a session for a tab that is gone can still be found.
 // Dropped, it is an entry per closed tab for as long as the worker lives.
 
@@ -314,7 +314,7 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 chrome.runtime.onStartup.addListener(() => ensureBridgeLink());
 chrome.runtime.onInstalled.addListener(() => ensureBridgeLink());
 
-// WHY the alarm is armed here and not where it is read.
+// the alarm is armed here and not where it is read.
 // Its handler is the only thing that releases an idle debugger session, and the infobar Chrome pins on an attached tab is the person's evidence of where the agent is.
 // An alarm that is listened for but never created leaves that bar up forever, silently, and nothing else in the worker would ever notice.
 // The same alarm is the beat that brings a link back after Chrome retired the worker.

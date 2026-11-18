@@ -14,7 +14,7 @@ import { sha256 } from '../../hosted/functions/_shared/sha256.ts';
 import { isUpgradeRequest, serveDeviceSocket } from '../../hosted/functions/navego-bridge/bridge-socket.ts';
 import { gateVerdict } from '../../hosted/functions/navego-bridge/plan-gate.ts';
 
-// WHY THE PROCESS GETS A Deno AND THESE TWO.
+// THE PROCESS GETS A Deno AND THESE TWO.
 // required-env is the real module the edge bundle uses, not a stand-in; it reads Deno from its own closure, which is this process.
 // The bundle demands the same two vars the deploy demands; everything else unset, so the CORS default path runs.
 

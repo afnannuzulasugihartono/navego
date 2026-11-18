@@ -5,10 +5,10 @@
  * @dependencies: none.
  */
 
-// WHY A SEPARATE CONTENT SCRIPT FOR THE PAGE-SIDE WORK: most of the pipeline belongs to the page's main realm (the encoder), what remains here is what needs a DOM copy to parse and the scroll that plays a sequence; the worker drives both through this one scope.
-// WHY THE LIVE DOM IS NEVER MUTATED FOR THE SCAN: a scan is a reading, not a visit - the rewrite happens on a parsed copy, so the open page keeps its state, its handlers and its scroll.
+// A SEPARATE CONTENT SCRIPT FOR THE PAGE-SIDE WORK: most of the pipeline belongs to the page's main realm (the encoder), what remains here is what needs a DOM copy to parse and the scroll that plays a sequence; the worker drives both through this one scope.
+// THE LIVE DOM IS NEVER MUTATED FOR THE SCAN: a scan is a reading, not a visit - the rewrite happens on a parsed copy, so the open page keeps its state, its handlers and its scroll.
 
-// WHY A LOCAL GUARD: this file ships as a classic content script the manifest loads directly; a static import would be a SyntaxError at load time.
+// A LOCAL GUARD: this file ships as a classic content script the manifest loads directly; a static import would be a SyntaxError at load time.
 // Mirrors extension/lib/guards.ts.
 
 declare global {

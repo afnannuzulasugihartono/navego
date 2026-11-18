@@ -3,7 +3,7 @@
 // @state: ambient declarations, each with the road that provides it; nothing else from a host leaks in.
 // @dependencies: none.
 
-// WHY THIS FILE EXISTS.
+// THIS FILE EXISTS.
 // `shared/` is compiled with `lib: ["es2022"]` and nothing else, so a module that reaches for `document`, `chrome` or `process` fails to compile — the pure-core rule, enforced by the compiler rather than by prose.
 // The names below are the whole host surface the core actually uses; all three roads (Node, Deno, the browser) provide every one of them.
 // The two Node-isms this core used to carry (`Buffer.byteLength`) were replaced with `TextEncoder`, which is the same UTF-8 length in all three.

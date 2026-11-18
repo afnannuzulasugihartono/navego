@@ -5,10 +5,10 @@
 
 // Ring buffer of the last 200 log entries, published on globalThis as NavegoLog for the popup's log view.
 
-// WHY a classic script and not a module: the manifest loads this file into both the module service worker and a classic content script, and a classic script cannot import.
+// a classic script and not a module: the manifest loads this file into both the module service worker and a classic content script, and a classic script cannot import.
 // Hence the IIFE and the globalThis publish, and hence the guard below.
 
-// WHY the browser is named here and not imported: this file cannot import, so the page's copy of the detection lives inline.
+// the browser is named here and not imported: this file cannot import, so the page's copy of the detection lives inline.
 // The worker's copy lives in lib/browser-id.js, and tests/extension/browser-identity.test.ts runs both over the same browsers and fails when they answer differently.
 // The order is the one that does not lie: what the browser publishes about itself, then the brand list, then the string.
 

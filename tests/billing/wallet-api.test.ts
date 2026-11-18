@@ -3,7 +3,7 @@
 // @state: the refusal that must arrive before any money is promised, the price that must come from the price list, and the two idempotent answers.
 // @dependencies: node:test, node:assert/strict, ../hosted/functions/_shared/wallet-api.ts.
 
-// WHY THE ORDER IS THE SUBJECT.
+// THE ORDER IS THE SUBJECT.
 // A wallet that refuses after it reserved is a wallet that holds money for work nobody started, and no later check can undo the promise.
 // Each case below fails if a check moves behind the call it protects.
 

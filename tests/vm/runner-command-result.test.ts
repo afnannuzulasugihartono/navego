@@ -3,7 +3,7 @@
 // @state: unit pins for commandFailure plus the runner wiring pin.
 // @dependencies: node:test, strict, ../hosted/functions/_shared/command-result.ts.
 
-// WHY the runner unwraps one level.
+// the runner unwraps one level.
 // A burst that fails in-page (a find with no match, a stale ref) comes back transport-ok carrying { ok: false } as its payload, and the runner used to record it and continue: every workflow walked blind past the miss until an end-check, if one existed.
 // Failing on the payload is what makes a mid-walk miss loud at the step that missed.
 

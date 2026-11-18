@@ -63,7 +63,7 @@ export async function discoverWebSocket(port: number, { fetch = globalThis.fetch
   return String(url);
 }
 
-// WHY THE TARGET MUST BE NAMED
+// THE TARGET MUST BE NAMED
 
 // discoverPageWebSocket returns whichever page happens to be first, and a drive that targets "the first page" writes into whatever the person happens to have open.
 // That is how a latency test once left a run of x characters in the title of an unrelated document.

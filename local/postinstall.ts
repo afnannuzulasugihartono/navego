@@ -5,13 +5,13 @@
 // @state: global install only, never in CI, one line of output, every error swallowed to exit 0.
 // @dependencies: ./install.js.
 
-// WHY IT NEVER FAILS THE INSTALL.
+// IT NEVER FAILS THE INSTALL.
 // A browser absent, a locked registry, no network: none of these are a reason to turn a package install red.
 // The person who typed npm install asked for the extension's tooling; printing the outcome is the polite maximum.
 
 const isGlobal = process.env.npm_config_global === 'true' || process.env.npm_config_global_old === 'true';
 
-// WHY BOTH OPT-OUT NAMES: the opt-out was named NAVEGO_NO_INSTALL when the package was named that; machines and scripts that set it keep silencing the install, while the new name is NAVEGO_NO_INSTALL.
+// BOTH OPT-OUT NAMES: the opt-out was named NAVEGO_NO_INSTALL when the package was named that; machines and scripts that set it keep silencing the install, while the new name is NAVEGO_NO_INSTALL.
 
 const disabled = process.env.CI === 'true' || process.env.NAVEGO_NO_INSTALL === '1' || process.env.NAVEGO_NO_INSTALL === '1';
 

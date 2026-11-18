@@ -34,12 +34,12 @@ test('a click on canvas says canvas, because elementFromPoint cannot see through
   assert.equal(out.hit.tag, 'CANVAS');
 });
 
-// WHY THE CHORD IS ORDERED, NOT MERGED.
+// THE CHORD IS ORDERED, NOT MERGED.
 // Two sends racing in a Promise.all do not keep their order on the wire, because every send proves the link alive first and that proof is its own await.
 // Chrome was handed a keyUp before its keyDown, so Ctrl+1 typed a literal "1" into a live Google Doc instead of making a heading.
 // The order is the shortcut.
 
-// WHY AN APPEND ANSWERS WHERE IT PUT THE TEXT.
+// AN APPEND ANSWERS WHERE IT PUT THE TEXT.
 // Measured live while building a thesis: the road to the end of a document was click, Ctrl+End, and trust - and once the caret did not go where it was told, a whole batch landed inside a table cell and four extra calls plus an undo were spent recovering.
 // So the append carries the positioning, and its answer measures "at the end" instead of assuming it.
 
@@ -126,7 +126,7 @@ test('a click fires move, press and release together', async () => {
   assert.equal(cdp.stats().max, 4, 'spotlight and three mouse events overlap');
 });
 
-// WHY A SNAPSHOT MUST NOT SEND A STALE SHAPE BACK.
+// A SNAPSHOT MUST NOT SEND A STALE SHAPE BACK.
 // The page expression returns the list itself, so anything that is not a list means the page answered with something else — an exception object, a string from a transpiler shim.
 // An empty list is the honest answer: an agent that gets [] will look again, and an agent that gets null will read it as a page with nothing on it.
 
@@ -158,7 +158,7 @@ test('a hover moves the pointer and stops, because a submenu opens on hover and 
 });
 
 
-// WHY THE MARK IS CHECKED BY ITS AXES AND NOT BY TWO NUMBERS ON A LINE.
+// THE MARK IS CHECKED BY ITS AXES AND NOT BY TWO NUMBERS ON A LINE.
 // The claim is that the ring is centred on the point: 13px is half the 26px ring, so left and top are the point minus 13.
 // This used to be asserted as /87px.*87px/, which required both coordinates on one source line - a fact about how the expression was formatted rather than about where the mark landed.
 // Reading each axis by name states the claim, and it survives the expression being written across lines for a person to read.
@@ -207,7 +207,7 @@ test('a refused spotlight never breaks the click it decorates', async () => {
   assert.equal(cdp.calls.filter((c) => c.method === 'Input.dispatchMouseEvent').length, 3);
 });
 
-// WHY A POINTER EVENT ASKS FOR FOCUS EMULATION.
+// A POINTER EVENT ASKS FOR FOCUS EMULATION.
 // Measured live on this machine: a synthetic click in a tab Chrome had not drawn went nowhere.
 // The page never saw the click, the file never landed, and the answer still said the link was hit.
 // Chrome hands pointer input to a widget it believes is focused, and a background tab is not.
@@ -246,7 +246,7 @@ test('a hover asks for focus emulation too', async () => {
   assert.equal(hoverAskBack.params.enabled, false);
 });
 
-// WHY THIS USED TO BE THE OTHER WAY ROUND.
+// THIS USED TO BE THE OTHER WAY ROUND.
 // This test once asserted that a hover must NOT wait for the page's reply, and it proved that with a promise that never settles.
 // That was measured as a hover that returned in one millisecond while its move sat in the worker's queue for five, and the next command's liveness proof then queued behind it and failed — so one lie became two failures.
 // A page that never answers is now visible from this call.
@@ -284,7 +284,7 @@ test('createPointerMethods exposes the clicks, the hovers and the handles', () =
     ['clickAt', 'clickFraction', 'clickHandle', 'handleBox', 'hover', 'hoverRow', 'resolveHandle']);
 });
 
-// WHY ALL FOUR ARROWS ARE PINNED.
+// ALL FOUR ARROWS ARE PINNED.
 // The table grid in Google Docs expands right and down; with only Up and Down known, a drive that needed Right died on an "Unknown key" in the middle of a live thesis.
 // Directions come in fours.
 
@@ -349,7 +349,7 @@ test('a missing row names what is visible instead of guessing', async () => {
   });
 });
 
-// WHY THE BOX IS RE-MEASURED.
+// THE BOX IS RE-MEASURED.
 // The snapshot said where the row stood a moment ago; this is what the browser says about that node now.
 // Clicking the older point is the bug that made a menu click land on the button underneath it.
 
@@ -390,7 +390,7 @@ test('a handle that is not a handle is refused by name', async () => {
   await assert.rejects(() => p.clickHandle('not-a-handle'), /is not an element handle/);
 });
 
-// WHY THESE TWO WAITS ARE PINNED ON WHAT THEY OBSERVE.
+// THESE TWO WAITS ARE PINNED ON WHAT THEY OBSERVE.
 // The row wait ends on the first read that matches, names what it saw, and gives up with found:false rather than hanging.
 // The stillness wait ends on two identical reads in a row, which is the only signal that a page which was never named in advance has actually stopped moving — and it must be able to say it never went still.
 

@@ -28,7 +28,7 @@ import { fileURLToPath } from 'node:url';
 const root = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
 const bin = path.join(root, 'local', 'bin', 'navego.js');
 
-// WHY THE FAKE SPEAKS MCP OVER HTTP.
+// THE FAKE SPEAKS MCP OVER HTTP.
 // The proxy has no opinions about methods, so a fake that answers initialize, tools/list and tools/call proves the pipe forwards a call intact, which is the only claim worth making about a proxy.
 
 interface HostedMessage {

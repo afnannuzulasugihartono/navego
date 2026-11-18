@@ -11,7 +11,7 @@ const ACCESS_KEY = 'navego-access-token';
 const REFRESH_KEY = 'navego-refresh-token';
 const RETURNABLE = /^\.\/[A-Za-z0-9._~/?=&%-]*$/;
 
-// WHY: ?next is attacker-controllable; only same-site relative paths pass.
+// ?next is attacker-controllable, so only same-site relative paths pass.
 
 export function getReturnTo(): string {
   const asked = new URLSearchParams(window.location.search).get('next') || '';
@@ -67,7 +67,7 @@ export async function proveSession(accessToken: string): Promise<{ email?: strin
   return { email: user.email as string };
 }
 
-// WHY offline and refusal differ: a network failure says nothing about the account and must not clear a stored session; only a refused refresh token is death.
+// offline and refusal differ here: a network failure says nothing about the account and must not clear a stored session; only a refused refresh token is death.
 
 export async function renewAccessToken(): Promise<string | null> {
   const refreshToken = getRefreshToken();

@@ -3,7 +3,7 @@
 // @state: the migration text read as the shape a deploy creates: a unique index over provider transaction ids, and one secret-writing function closed to browsers.
 // @dependencies: node:test, node:assert/strict, node:fs.
 
-// WHY THIS GATE READS THE MIGRATION.
+// THIS GATE READS THE MIGRATION.
 // CI has no Postgres, so what can still be proved here is the text: a second invoice may never carry the same transaction id, and the function that writes secrets may not be callable from a browser.
 
 import test from 'node:test';

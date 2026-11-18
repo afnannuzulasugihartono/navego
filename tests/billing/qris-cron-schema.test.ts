@@ -3,7 +3,7 @@
 // @state: the migration text read as the shape a deploy creates: a vault-read cron function closed to browsers, and one five-minute schedule.
 // @dependencies: node:test, node:assert/strict, node:fs.
 
-// WHY THIS GATE READS THE MIGRATION.
+// THIS GATE READS THE MIGRATION.
 // CI has no Postgres, so what can still be proved here is the text: a token written into a migration would be in git forever, and a schedule without a bound would hammer the feed.
 
 import test from 'node:test';

@@ -12,10 +12,10 @@ const productRoots = ['shared', 'local', 'hosted', 'extension'];
 const siteRoots = ['site/app'];
 const SOURCE_EXTENSIONS = ['.ts', '.tsx', '.mts', '.cts'];
 
-// WHY site is a separate list.
+// site is a separate list.
 // The site is a standalone React app under site/ with its own TypeScript project, Vite pipeline and tsconfig.json; its files still carry product value (dasbor, akun, unduhan) and must be held to the same anti-cheat rules as the browser-half code.
 
-// WHY PER-OCCURRENCE AND NOT PER-FILE.
+// PER-OCCURRENCE AND NOT PER-FILE.
 // A file in this list is not a blanket pass: the gate fails when a file carries MORE matches than its declared count, so one added cast stops the build.
 // A cast removed from a file leaves its sanction stale, and the gate says so; deleting the cast means lowering the count in the same commit.
 // Adding a count means naming why, in this file, with the same care the original asked for.

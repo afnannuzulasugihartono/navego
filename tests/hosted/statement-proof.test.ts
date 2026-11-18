@@ -15,7 +15,7 @@ const contract = JSON.parse(
   fs.readFileSync(new URL('../fixtures/statement-proof-v1.json', import.meta.url), 'utf8')
 );
 
-// WHY THE PROOF IS FROZEN.
+// THE PROOF IS FROZEN.
 // Another agent hands this object to its own user and is believed because of it, so a field that changes shape is a change to what a promise means.
 // The contract says which fields exist and what each one holds; this test says the delivery really answers with that, and the two agree.
 

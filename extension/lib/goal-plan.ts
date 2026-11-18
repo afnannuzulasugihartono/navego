@@ -3,7 +3,7 @@
 // @state: The caller owns identity, target and budgets; the model owns the shape, and the prompt names the same allowlist.
 // @dependencies: extension/lib/protocol.
 
-// WHY this exists: a plan is handed over once and executed locally, so the model is not in the step loop.
+// A plan is handed over once and executed locally, so the model is not in the step loop.
 // That removes the per-step round trip, and it also means model text becomes an action machine directly.
 // This module is the narrow door between the two, and it is deliberately pure: no network, no DOM, no chrome, so it can be tested exhaustively and run anywhere.
 

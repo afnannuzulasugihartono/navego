@@ -12,7 +12,7 @@ const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const source = path.join(repo, 'extension');
 const destination = path.join(repo, 'extension-stage');
 
-// WHY THE DESTINATION IS A CONSTANT.
+// THE DESTINATION IS A CONSTANT.
 // The script deletes its destination before it writes to it, so any argument routed to this path would let a typo (or an LLM) delete arbitrary directories on the machine that runs it.
 // The staging folder is always the same directory inside the repository; there is no input to abuse.
 
@@ -21,7 +21,7 @@ fs.mkdirSync(destination, { recursive: true });
 
 const copied = [];
 
-// WHY THERE IS NO ASSERT ON skipped.
+// THERE IS NO ASSERT ON skipped.
 // Since the migration the tree carries a TypeScript source beside every emitted .js, so walking extension/ always meets sources; refusing them is the job, not a failure.
 // The destination never receives a .ts (this branch only), which is the invariant the CRX ships on; the manifest check below proves the emitted set is complete.
 

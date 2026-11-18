@@ -3,16 +3,16 @@
 // @state: the loopback bridge the extension is linked to, a fixture page, and the p50/p95 of every tool.
 // @dependencies: node:fs, local/driver.js, local/sessions.js, local/mcp-server.js.
 
-// WHY THIS IS COMMITTED AND NOT AD-HOC.
+// THIS IS COMMITTED AND NOT AD-HOC.
 // The latency report quotes numbers, and a number nobody can re-measure is a number nobody can check.
 // So the script is the reproduction: it asks the extension's own loopback bridge for the everyday browser, opens a fixture page there, drives the real MCP surface, and prints p50/p95 next to the numbers the report claims.
 // The browser, the profile and the credentials are the person's; the fixture is ours and the tab it opens is closed when the run ends.
 
-// WHY THE BRIDGE HAS TO BE RUNNING.
+// THE BRIDGE HAS TO BE RUNNING.
 // The extension links to a local bridge if it finds one, and the bridge is what the local road is: the same commands, the same results, without the relay.
 // The bridge is started by the caller (`node start-bridge.ts` in this repository, or the local MCP server), and this script fails with the one fix when it is not there.
 
-// WHY THE FIXTURE IS SERVED OVER HTTP.
+// THE FIXTURE IS SERVED OVER HTTP.
 // A page the extension can drive has to be a real page, and a local file URL asks the browser for permissions the extension does not have.
 
 import { createServer } from 'node:http';
@@ -26,7 +26,7 @@ const RUNS = Number(process.argv.find((value) => value.startsWith('--runs='))?.s
 const PORT = Number(process.env.NAVEGO_BENCHMARK_PORT || 9477);
 const URL_FIXTURE = `http://127.0.0.1:${PORT}/latency-fixture.html`;
 
-// WHY THE FIXTURE IS SERVED BY THIS SCRIPT.
+// THE FIXTURE IS SERVED BY THIS SCRIPT.
 // A page the extension can drive has to be a real page, and whoever serves it must not be a second thing to remember.
 // So the fixture is served here, on a port of its own, and the run leaves nothing behind but the tab it opened.
 
@@ -93,7 +93,7 @@ const server = createMcpServer({
   open: async () => mcpDriver
 });
 
-// WHY THE ANSWER IS NOT PARSED.
+// THE ANSWER IS NOT PARSED.
 // A tool may answer with a picture or with nothing at all, and the time it took is the measurement; the shape of the answer is not.
 
 const call = async (name: string, args: Record<string, unknown> = {}) => {

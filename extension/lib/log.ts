@@ -5,7 +5,7 @@
 
 import './agent-log.js';
 
-// WHY THE GLOBAL IS READ THROUGH A CAST.
+// THE GLOBAL IS READ THROUGH A CAST.
 // agent-log.js publishes the shared writer onto globalThis before the worker imports another module; the protocol surface is the documented NAVEGO_LOG contract, which this file does not re-declare.
 // The cast names what the runtime actually carries and the agent-log contract owns the field list; nothing here is inferred.
 

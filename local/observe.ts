@@ -3,7 +3,7 @@
 // @state: snapshot, resolveRow, menuTree, openMenu, computed, scroll, viewport, capture and the two page-state reads.
 // @dependencies: ./menu-tree.js, ./page-expressions.js.
 
-// WHY THIS MODULE EXISTS
+// THIS MODULE EXISTS
 
 // A canvas page exposes no DOM worth querying, so every fact about it is an expression run inside the page and an answer read back.
 // Keeping those reads together means the round trips they cost are counted in one place, and a read that grows a second job is visible as a file growing a second job.
@@ -16,13 +16,13 @@
 // Taken at device pixels on a HiDPI screen a picture comes back larger than the clickable viewport, so a coordinate read off it and sent as CSS pixels lands a quarter of the way off: that is what put a click meant for A1 into A3 on a 1.25 screen.
 // Every capture is therefore clipped to the viewport at scale 1, which is the same space clickAt speaks, so looking at a picture and clicking what is in it is true.
 
-// WHY AN ACTION'S PAGE STATE IS MEASURED AND NOT COPIED.
+// AN ACTION'S PAGE STATE IS MEASURED AND NOT COPIED.
 // Measured on a real job: eight calls spent 34,974 characters, most of it the same sixty rows and the same page text riding along after every click.
 // An agent does not read that; it pays for it in tokens and in attention.
 // So an action reports where the page is and what moved - url, title, how much text it holds, which element has focus - and the rows that changed.
 // The rest stays one deliberate scan away.
 
-// WHY THE TEXT IS COUNTED AND NOT RETURNED.
+// THE TEXT IS COUNTED AND NOT RETURNED.
 // The count answers "did this action change what the page says", which is the question an action's answer owes.
 // The words themselves belong to read, where the caller asked for them.
 
@@ -40,7 +40,7 @@ import {
   snapshotExpression
 } from './page-expressions.js';
 
-// WHY THE VIEWPORT IS READ FROM THE PAGE AND NOT FROM THE PROTOCOL.
+// THE VIEWPORT IS READ FROM THE PAGE AND NOT FROM THE PROTOCOL.
 // The click space is CSS pixels, and the page is the only place that number is true: a protocol read of the same window answers device pixels on a HiDPI screen.
 // Measured live by resizing this machine's window: the viewport moved 1144x714 -> 1186x670 while the capture moved with it, so the two have to be read together or a click aimed at a picture lands a quarter of the way off.
 
@@ -50,7 +50,7 @@ const VIEWPORT_EXPRESSION = `({
   dpr: window.devicePixelRatio
 })`;
 
-// WHY THE FOCUS IS NAMED AND NOT COUNTED.
+// THE FOCUS IS NAMED AND NOT COUNTED.
 // An action's answer has to say whether the page is listening, and "the page holds 4,200 characters" says nothing about that.
 // What an agent needs is which element has focus and whether it takes text, because a keystroke sent to a button goes nowhere and answers ok.
 // The name is trimmed to sixty characters: the point is to recognise the field, not to read its whole label into an answer that already costs tokens.
@@ -75,7 +75,7 @@ const PAGE_STATE_EXPRESSION = `(() => {
   return { url: location.href, title: document.title, textChars: body.length, focus };
 })()`;
 
-// WHY THE LOOK IS ONE EXPRESSION AND NOT TWO CALLS.
+// THE LOOK IS ONE EXPRESSION AND NOT TWO CALLS.
 // The rows and the state are read from the same page at the same moment, and an action's answer compares them with what it saw last time.
 // Two evaluations would let the page move between them, so the comparison would be between two different pages.
 
@@ -85,7 +85,7 @@ const PAGE_LOOK_EXPRESSION = (limit: number) => `(() => {
   return { rows, state };
 })()`;
 
-// WHY THE SCROLL'S VERDICT IS A FUNCTION AND NOT A TERNARY.
+// THE SCROLL'S VERDICT IS A FUNCTION AND NOT A TERNARY.
 // Four questions decide what a scroll has to say for itself, and they are not equally likely: a target that was never found, a page that cannot prove it reached the end, a page that plainly did not move, and the ordinary case where it did.
 // Written as one nested ternary inside the answer object, the ordinary case was the last line of a four-deep expression, so the reader reached it only after parsing the three failures first.
 // Named cases read in the order they are checked, and each one says what the caller should do next.
@@ -172,7 +172,7 @@ export function createObserveMethods({ cdp, primitives, capped, sleep = () => Pr
     return { ...state, url: maskCredentialUrl(state.url) };
   };
 
-  // WHY THE ROWS AND THE STATE COME BACK IN ONE EVALUATION.
+  // THE ROWS AND THE STATE COME BACK IN ONE EVALUATION.
   // An action's answer needs both, and each one used to be its own round trip: two waits for one look.
   // The page can answer both in a single expression, so the look costs one round trip instead of two.
 
@@ -204,7 +204,7 @@ export function createObserveMethods({ cdp, primitives, capped, sleep = () => Pr
     };
   }
 
-  // WHY A CAPTURE ANSWERS WITH THE SPACE IT WAS TAKEN IN.
+  // A CAPTURE ANSWERS WITH THE SPACE IT WAS TAKEN IN.
   // Measured live by resizing this machine's browser window: the viewport went 1144x714 -> 1186x670 and the capture went 1430x963 -> 1483x838, with the scale factor constant at 1.25.
   // So the picture is the CSS viewport times the device's scale, and both move under the agent's feet: a window resized, a window dragged to a monitor with another scale.
   // An agent given a picture and nothing else has to guess that number, and it guesses wrong - which is how a click lands on the wrong thing while every answer says the click was delivered.
@@ -283,7 +283,7 @@ export function createObserveMethods({ cdp, primitives, capped, sleep = () => Pr
     return rows.map((row) => ({ ...row, state: stateOf(row), revealedBy: revealOf(row), handle: null }));
   }
 
-  // WHY THE MENU WALK WAITS A BEAT.
+  // THE MENU WALK WAITS A BEAT.
   // The settle used to cost 41 ms, so the walk asked the page for a tree at that pace.
   // A quiet page costs the settle nothing, so the walk would ask as fast as the page can answer.
   async function openMenu({ path = [], clickLeaf = false, limit, timeoutMs = 8000 }: { path?: unknown[]; clickLeaf?: boolean; limit?: number | undefined; timeoutMs?: number } = {}) {
@@ -321,7 +321,7 @@ export function createObserveMethods({ cdp, primitives, capped, sleep = () => Pr
       const alreadyOpen = Boolean(node.expanded) && here.some((r) => r.depth === index + 1);
       acted = false;
       if (!alreadyOpen) {
-        // WHY A TOP-LEVEL MENU IS CLICKED AND EVERYTHING BELOW IT IS HOVERED.
+        // A TOP-LEVEL MENU IS CLICKED AND EVERYTHING BELOW IT IS HOVERED.
         // Measured live on Google Docs: a menu on the bar is a toggle - hover does nothing and it only opens on a click - while a submenu opens on hover.
         // And a leaf that turns out to be a command is never clicked on the way to anywhere else: "Upload from computer" opens the operating system's own file dialog, which nothing here can close again.
         // So a click goes out for the bar item that opens the menu, and for a leaf only when the caller said this item is the command to run.
@@ -353,11 +353,11 @@ export function createObserveMethods({ cdp, primitives, capped, sleep = () => Pr
     return { opened: true, at, acted, tree: rows };
   }
 
-  // WHY ONE CALL, AND WHY IT ANSWERS WHAT IT DID.
+  // ONE CALL, AND WHY IT ANSWERS WHAT IT DID.
   // A scroll that moved the page and a scroll that moved the right thing look identical from outside, so the answer carries the scroller that moved and by how much, and - for a target - whether that target is on screen now.
   // Nothing here is aimed for: every fact is read after the fact.
 
-  // WHY "AT THE END" CAN BE FALSE AND MEANS NOTHING MOVED.
+  // "AT THE END" CAN BE FALSE AND MEANS NOTHING MOVED.
   // Measured live on a Google Doc: an end scroll moved the document element 56 pixels and answered atEnd true, because the document is not what scrolls on a canvas editor.
   // So atEnd is true only when the page reports its last text on screen, and the scroller that answers is named - a refusal to claim an end it did not reach is the whole value here.
   async function scroll({ y, end = false, text, selector }: { y?: unknown; end?: boolean; text?: unknown; selector?: unknown } = {}) {

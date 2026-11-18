@@ -3,13 +3,13 @@
 // @state: 8 locks; handshake, runnable commands, completion frames, and what must be refused.
 // @dependencies: node:test, strict, ../extension/lib/socket-protocol.js.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // This is the whole reason the protocol is a separate file.
 // A WebSocket cannot be constructed in a unit test, so any rule written inside a socket callback is a rule nothing can check.
 // Every decision here is a function over a string, which is what lets the refusal cases be stated at all.
 
-// WHY the handshake is the load-bearing lock.
+// the handshake is the load-bearing lock.
 // The device will execute whatever arrives on this socket, so anything that runs before the bridge has confirmed the device is a way to run work for an unproven identity.
 
 import test from 'node:test';
@@ -101,7 +101,7 @@ test('a frame near the product bound parses on the device side too', () => {
   assert.equal(parseFrame(frame).ok, true);
 });
 
-// WHY completions compress.
+// completions compress.
 // A page.read result runs to hundreds of kilobytes, and on a slow link the transfer dwarfs everything else — measured: an 88 KiB read completed in 1914 ms against ~600 ms of fixed costs.
 // gzip shrinks page JSON five to fifty times, so a big completion travels as one small binary frame instead.
 // Small completions stay text: readable in logs, and the few hundred bytes saved are not worth a second code path per message.

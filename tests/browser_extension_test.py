@@ -64,7 +64,7 @@ class CommandQueue:
             return len(self._items)
 
 
-# WHY THE COMMAND BUDGET IS THE PRODUCT'S OWN CEILING.
+# THE COMMAND BUDGET IS THE PRODUCT'S OWN CEILING.
 # The relay clamps a command to thirty seconds, so a harness that asks for less is not stricter than the product - it is different from it, and it fails a slow command the product would have carried.
 # Measured on a loaded CI runner: a trusted click that opens a tab took longer than twelve seconds and the build went red for it, while the same run passed minutes earlier.
 # The budget is the ceiling the product uses, and the wait below is longer than it, so the harness fails only when the product would have failed too.
@@ -302,7 +302,7 @@ SCAN_PIXEL = base64.b64decode(
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
 )
 
-# WHY THE PORTAL IS A FIXTURE AND THE STATEMENT IS REAL BYTES.
+# THE PORTAL IS A FIXTURE AND THE STATEMENT IS REAL BYTES.
 # The device path is the one that turns a service into a product, and it had only ever been proved against a fake browser.
 # This portal is the smallest thing that behaves like one: an account, a month, a closing balance, and a file whose name the portal chooses.
 # The file is a real two-page PDF, because the device's whole claim is that it reads the file rather than the label.
@@ -328,7 +328,7 @@ STATEMENT_PDF = (
 STATEMENT_PORTAL_FILENAME = "statement-2026-09.pdf"
 STATEMENT_CARD_FILENAME = "toko-sinar-jaya-bca-2026-09.pdf"
 
-# WHY THE PORTAL SERVES A NAME THE CARD DOES NOT WANT.
+# THE PORTAL SERVES A NAME THE CARD DOES NOT WANT.
 # A portal names its own file, and the delivery has to land under the name the card chose, so a portal that answers with a different name is what proves the rename.
 
 
@@ -839,7 +839,7 @@ def assert_completed_ok(body):
     return body["result"]
 
 
-# WHY THE SPA BUTTON IS FOUND AGAIN.
+# THE SPA BUTTON IS FOUND AGAIN.
 # A ref dies with its document, its route, or the extension epoch, and the extension says exactly that when it refuses one: re-find it on the current page.
 # The ref from the earlier snapshot is long dead, so the click re-finds the button and claims the route change the click causes.
 
@@ -852,7 +852,7 @@ async def find_spa_route_button(tab_id):
     return assert_completed_ok(await asyncio.to_thread(STATE.wait, cid))["item"]
 
 
-# WHY THE TAB IS ACTIVATED TWICE.
+# THE TAB IS ACTIVATED TWICE.
 # The first activation may have to switch, and which tab was active before depends on what the run did earlier.
 # The second one is the reuse the claim is about, and it holds whatever the run did before it.
 
@@ -865,7 +865,7 @@ async def activate_and_report_reuse(tab_id):
     return result
 
 
-# WHY A MINIMIZED WINDOW IS PUT ON THE TASKBAR FIRST.
+# A MINIMIZED WINDOW IS PUT ON THE TASKBAR FIRST.
 # The claim is about the one case that ever dropped text: the window is minimized, the page reports focus is gone, and nothing in the tree could bring it back.
 # chrome.windows.update with focused alone was measured live on this machine to leave the window minimized, so the activation has to carry state:'normal' and the proof is the window leaving the taskbar.
 # A headless runner cannot put a window on the taskbar at all, so the helper answers None there and the claim stays what it is: proved where the machine can minimize.
@@ -1062,7 +1062,7 @@ async def wait_stored(page, key, expected, timeout_ms=5000):
     )
 
 
-# WHY THE DELIVERY IS DRIVEN AND NOT MOCKED.
+# THE DELIVERY IS DRIVEN AND NOT MOCKED.
 # The device path is the one that runs without a person watching, so it is the one the product is sold on, and it had only ever been proved against a fake browser.
 # This drives it through the same bridge a server would use: the agent reads the portal, the card names the file, the device downloads it, and the row is read back from the device's own storage.
 
@@ -1149,7 +1149,7 @@ async def run_statement_drill(port, download_dir):
     }
 
 
-# WHY THE DOWNLOAD BEHAVIOUR IS SET OVER CDP.
+# THE DOWNLOAD BEHAVIOUR IS SET OVER CDP.
 # Playwright answers downloads with a generated name so its own API can hand them back, and a file called a GUID cannot prove the name the card chose.
 # Setting the browser's behaviour to allow, with the download folder named, keeps the name the download asked for.
 
@@ -1164,7 +1164,7 @@ async def allow_named_downloads(context, download_dir):
     await cdp.detach()
 
 
-# WHY THE PROFILE CARRIES THE DOWNLOAD FOLDER.
+# THE PROFILE CARRIES THE DOWNLOAD FOLDER.
 # A download the extension starts is saved to the profile's own download directory, and the behaviour that decides the file's name does not move it.
 # Writing the preference before the first launch is what keeps the drill's file inside the temporary profile instead of the person's Downloads folder.
 

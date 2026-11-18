@@ -1,44 +1,36 @@
-// Navego - the monogram, in chrome.
-// One mark for the site, the badge and the extension.
-// N = the navigator stroke: two stems and a diagonal; the amber cursor tips the far stem.
-// Geometric, readable at 16 px.
+// decisions.json -> D28, D29, D30, D31, D33 (hand-drawn stroke, symmetric underline, handwritten wordmark, mark palette) Navego — written, not set.
+// One pen stroke: left stem, the diagonal, right stem; one amber underline beneath.
+// The wordmark is the same hand, one motion per letter.
+// Legible at 16 px; the underline is the warm point at every size.
+
+const DISC = '#233259';
+const CREAM = '#f4f1e9';
+const AMBER = '#d8923f';
 
 interface NavegoMarkProps { size?: number; title?: string; }
 
 export function NavegoMark({ size = 22, title = 'Navego' }: NavegoMarkProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 240 240" role="img" aria-label={title}>
-      <defs>
-        <linearGradient id="navego-chrome" x1="0" y1="0" x2="0.4" y2="1">
-          <stop offset="0" stopColor="#ffffff" />
-          <stop offset="0.45" stopColor="#b9c9df" />
-          <stop offset="0.6" stopColor="#6d7f9b" />
-          <stop offset="1" stopColor="#e8f0fa" />
-        </linearGradient>
-      </defs>
-      <circle cx="120" cy="120" r="116" fill="#233259" />
-      <path d="M74 178 V62 L166 178 V62" fill="none" stroke="url(#navego-chrome)" strokeWidth="26" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M140 78 L208 36 L162 106 Z" fill="#d8923f" />
+      <circle cx="120" cy="120" r="116" fill={DISC} />
+      <path d="M78 176 C74 134 74 94 80 54 C107 79 131 122 156 176 C161 132 160 90 152 52" fill="none" stroke={CREAM} strokeWidth="15" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M56 197 C94 205 146 205 184 197" fill="none" stroke={AMBER} strokeWidth="9" strokeLinecap="round" />
     </svg>
   );
 }
 
-// The wordmark is drawn from the mark: same round stroke, the amber cursor dot over the g.
+// The wordmark is the same hand: one stroke per letter, round caps, no tittle.
+// viewBox is 384 × 124; the aspect is carried by NavegoWordmark.
 
 export function NavegoWordmark({ size = 16 }: { size?: number }) {
   return (
-    <svg width={size * 3.75} height={size} viewBox="0 0 450 120" role="img" aria-label="navego">
-      <path d="M40 96 V40" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M40 62 Q64 28 90 58 V96" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M150 72 a22 22 0 1 0 -44 0 a22 22 0 1 0 44 0" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M150 46 V96" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M184 46 L202 96 L220 46" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M238 78 a18 18 0 1 1 28 -8" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M238 86 H268" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M310 66 a20 20 0 1 0 -40 0 a20 20 0 1 0 40 0" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M310 44 V104 Q310 118 288 118 Q268 118 268 102" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M386 72 a22 22 0 1 0 -44 0 a22 22 0 1 0 44 0" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
-      <circle cx="310" cy="30" r="7" fill="#d8923f" />
+    <svg width={Math.round(size * (384 / 124))} height={size} viewBox="0 0 384 124" role="img" aria-label="navego" fill="none">
+      <path d="M37 94 C34 72 34 61 39 51 M38 64 C46 47 69 46 74 60 C78 71 77 82 75 94" stroke="currentColor" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M127 54 V96 M127 72 C119 50 89 53 89 75 C89 95 119 97 127 79" stroke="currentColor" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M148 51 C156 67 162 82 167 97 C173 79 180 63 189 47" stroke="currentColor" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M205 70 H238 M238 70 C241 49 204 48 203 67 C202 84 229 92 238 80" stroke="currentColor" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M288 55 V100 C287 112 268 117 251 109 M288 70 C279 49 249 52 249 74 C249 93 278 95 288 75" stroke="currentColor" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M330 51 C352 49 357 97 327 97 C300 98 300 54 330 51 Z" stroke="currentColor" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

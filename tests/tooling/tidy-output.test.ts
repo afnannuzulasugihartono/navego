@@ -3,7 +3,7 @@
 // @state: the bounded reporter stays in the test script, and the hub names the rules and this gate inside Always.
 // @dependencies: node:test, strict, node:fs.
 
-// WHY THIS FILE IS A GATE AND NOT A THOUGHT.
+// THIS FILE IS A GATE AND NOT A THOUGHT.
 // A green suite used to print a wall of TAP, unscrollable in a terminal.
 // The dot reporter shrinks that to a dot per test and prints failures in full, but no reporter is self-enforcing - one edit switches it back and nobody notices.
 // This file pins the contract the hub announces inside Always: the test script keeps the bounded reporter, the hub carries the rules, and the hub points at this gate.

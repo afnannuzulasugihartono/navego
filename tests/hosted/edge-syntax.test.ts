@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { readdir, readFile } from 'node:fs/promises';
 import { stripTypeScriptTypes } from 'node:module';
 
-// WHY THE ENTRYPOINTS ARE PARSED HERE.
+// THE ENTRYPOINTS ARE PARSED HERE.
 // A duplicate declaration is a SyntaxError, and a SyntaxError in an edge function is a BOOT_ERROR in production: the function answers nobody, and nothing in the suite says so.
 // This gate caught exactly that: a constant declared twice in index.ts passed every other test and took the function down.
 

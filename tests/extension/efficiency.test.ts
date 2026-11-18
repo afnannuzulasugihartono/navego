@@ -32,7 +32,7 @@ test('a missing page helper costs one feature, never the whole content script', 
     'the missing helper is not reported anywhere');
 });
 
-// WHY this lock exists.
+// this lock exists.
 // Two popup buttons used to send a message to the worker inside try/finally with no catch, so clicking either one while the worker was restarting produced "Unchecked runtime.lastError: Could not establish connection" on the extension errors page.
 // Observed live.
 // Every message a piece of UI sends has to land somewhere the user can read it.

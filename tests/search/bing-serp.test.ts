@@ -12,7 +12,7 @@ const fixture = JSON.parse(
   await readFile(new URL('../fixtures/bing-serp-page1.json', import.meta.url), 'utf8')
 );
 
-// WHY THE EXPECTED TITLE CARRIES THE OLD BRAND: the fixture is a captured Bing SERP (2026-11-14) and the ranked card was titled 'Navego: ...' when the search engine served it; the fixture is evidence of what the parser read, not a claim about what the site calls itself today.
+// THE EXPECTED TITLE CARRIES THE OLD BRAND: the fixture is a captured Bing SERP (2026-11-14) and the ranked card was titled 'Navego: ...' when the search engine served it; the fixture is evidence of what the parser read, not a claim about what the site calls itself today.
 
 test('the parser reads the real page-1 SERP into the external results, in order, with snippets', () => {
   const { results, nextFirst } = parseBingSerp(fixture, { currentFirst: 1 });

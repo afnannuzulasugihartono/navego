@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 
-// WHY THIS GATE EXISTS.
+// THIS GATE EXISTS.
 // The repo is a "type": "module" package and tsc compiles every source as a module, so the emitted classic scripts can carry a top-level `export {};` if the build did not strip it.
 // A classic content script with any module syntax fails in every page the extension needs to read, and the failure carries no useful error in the console — the script simply never runs.
 

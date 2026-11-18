@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36 (no eyebrows, h1 first)
+
 import { useEffect, useRef, useState } from 'react';
 import { readConsent, readRegionCookie, storeRegionCookie } from '../lib/consent.js';
 import { seoMeta } from '../lib/seo.js';
@@ -116,7 +118,7 @@ export default function Harga() {
       if (detail === 'granted' && countryRef.current) storeRegionCookie(countryRef.current);
     };
     window.addEventListener('navego:consent', onConsent);
-    // WHY THE PAGE ASKS FOR LOCATION IMMEDIATELY: the owner requires the region to come from the device's geolocation whenever the browser can answer it, so a visitor behind a VPN is priced by where they actually are, not by where the VPN exits.
+    // THE PAGE ASKS FOR LOCATION IMMEDIATELY because the owner requires the region to come from the device geolocation whenever the browser can answer it - a visitor behind a VPN is priced by where they actually are, not by where the VPN exits.
     // The browser owns the final say: a denial, a timeout or a missing API falls back to the IP the edge reports, and nothing here blocks the page from rendering either way.
     detectFromDevice();
     return () => {
@@ -202,7 +204,6 @@ export default function Harga() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Harga</p>
             <h1>Satu bayar, hingga satu tahun.</h1>
             <p className="lede">Plan USD dibayar PayPal. Kuota per hari yang jelas. Tidak ada yang dipotong sebelum pekerjaan selesai.</p>
           </div>
@@ -232,7 +233,6 @@ export default function Harga() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Asia · Arab · Afrika</p>
                 <h2 id="asiaTitle" className="section-title">Daya beli kawasan ini: plan lebih terjangkau.</h2>
               </div>
               <p className="section-note">Sekali beli, langsung aktif. Tidak diperpanjang otomatis.</p>
@@ -249,7 +249,6 @@ export default function Harga() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Europa & AS</p>
                 <h2 id="europeTitle" className="section-title">Daya beli kawasan ini: nada akselerasi.</h2>
               </div>
               <p className="section-note">Sekali beli, langsung aktif. Tidak diperpanjang otomatis.</p>

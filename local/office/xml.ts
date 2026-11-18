@@ -3,13 +3,13 @@
 // @state: one escape for text, one name for a column, both pure.
 // @dependencies: none.
 
-// WHY THE ESCAPE COVERS EVERY MARK.
+// THE ESCAPE COVERS EVERY MARK.
 // A cell holding "P&L and <2026>" is normal in a business sheet, and an unescaped ampersand makes the workbook refuse to open.
 
-// WHY A COLUMN NAME IS BUILT BY ARITHMETIC.
+// A COLUMN NAME IS BUILT BY ARITHMETIC.
 // A sheet with more than twenty-six columns is ordinary, so the name has to continue into AA, AB and past.
 
-// WHY THE ENTITIES ARE BUILT FROM CHARACTER CODES.
+// THE ENTITIES ARE BUILT FROM CHARACTER CODES.
 // The five marks are written as code points so the file holds no literal entity that a reader or a formatter could mistake for markup.
 
 const AMP = String.fromCharCode(38);

@@ -3,7 +3,7 @@
 // @state: the function reads the rail from env, derives the payload at render time, and the qris-self branch writes a local order id instead of a provider link.
 // @dependencies: node:test, node:assert/strict, node:fs.
 
-// WHY THE WIRING IS PINNED AS TEXT.
+// THE WIRING IS PINNED AS TEXT.
 // The rail choice is a deploy decision, and a refactor that hardcodes midtrans would silently send every rupiah invoice back to Snap - the exact regression the owner reported.
 // The payload secret must not appear in the tree, so the grep below is the guard, not a review habit.
 

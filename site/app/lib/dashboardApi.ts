@@ -60,7 +60,7 @@ export function say(raw: unknown): string {
   return SERVER_ERRORS[s] || s || 'Terjadi kesalahan.';
 }
 
-// WHY the second pass: an access token ages out in about an hour and a caller's page can be open across that hour.
+// the second pass exists because an access token ages out in about an hour and a caller page can stay open across that hour.
 
 async function rpc<T = Record<string, unknown>>(name: string, body: Record<string, unknown> = {}): Promise<(T & { ok?: boolean; error?: unknown }) | null> {
   const token = await ensureSession();

@@ -3,7 +3,7 @@
 // @state: step bounds, ref integrity, stop-on-failure, and a whole-burst deadline.
 // @dependencies: node:test, strict, ../local/burst.js.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // A browser job is a sequence of dependent moves: resolve the menu, hover it, wait for the submenu, click the row.
 // Driving every move as its own MCP call pays a tool turn, a settle and a page snapshot between each one, and the snapshot is the half that was already known.
@@ -106,7 +106,7 @@ test('a ref carries the handle from resolve into the click, never a guessed poin
   assert.deepEqual(driver.calls, [['resolve', 'menuitem', 'Insert'], ['click', null, null, 'opera-7']]);
 });
 
-// WHY A STEP'S ANSWER IS NOT BOXED IN ANOTHER BOX.
+// A STEP'S ANSWER IS NOT BOXED IN ANOTHER BOX.
 // The step already says what it did - the row it found, the key it sent - and a `result` wrapper only makes the reader open one more door to find it.
 
 test('a step carries its own answer, with no second box around it', async () => {
@@ -122,7 +122,7 @@ test('a step carries its own answer, with no second box around it', async () => 
   assert.equal(first.result, undefined, 'and there is no wrapper to open');
 });
 
-// WHY A BURST REPORTS THE SETTLE IT ALREADY PAID.
+// A BURST REPORTS THE SETTLE IT ALREADY PAID.
 // A wait step looks at the page until it stops moving, so a burst that holds one ends on a settled page.
 // Without the verdict the caller settles again before looking, which is one round trip billed twice; a burst of reads has no reason to say it.
 

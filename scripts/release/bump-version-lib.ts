@@ -3,7 +3,7 @@
 // @state: every decision the engine makes that can be computed in isolation lives here so the gate can pin it.
 // @dependencies: none.
 
-// WHY THIS FILE EXISTS.
+// THIS FILE EXISTS.
 // The first draft of the engine kept its rewrite table inside the orchestrator, and a file with two entries in the table (the handoff carries three) had every entry reading the original file from disk and overwriting the previous entry's result.
 // Two clock anchors vanished silently, the gates stayed green, and only the diff showed the loss.
 // Splitting the table application into a pure function is what makes that failure impossible to write by accident: one text in, one text out, entries applied in order.

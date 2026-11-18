@@ -5,7 +5,7 @@
  * @dependencies: chrome.downloads.
  */
 
-// WHY THE PAGE STARTS THE DOWNLOAD AND THE WORKER WAITS, NOT THE OTHER WAY ROUND: a data: URL download is renamed after its MIME type by the browser (measured: demo-page.webm landed as download.webm), and a service worker has no URL.createObjectURL at all; an anchor click from the page keeps the caller's filename, which is the one promise the user cares about.
+// THE PAGE STARTS THE DOWNLOAD AND THE WORKER WAITS, NOT THE OTHER WAY ROUND: a data: URL download is renamed after its MIME type by the browser (measured: demo-page.webm landed as download.webm), and a service worker has no URL.createObjectURL at all; an anchor click from the page keeps the caller's filename, which is the one promise the user cares about.
 
 import { sleep } from './utils.js';
 import { codedError } from './capture.js';

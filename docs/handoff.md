@@ -76,6 +76,15 @@ What is true now, and what to do next. Cap 150 lines. Spent detail: git history.
 - The 2026-11-16 merge (owner call) keeps the Corbin site and the 40-tool `browser_*` MCP surface; the Kemudi rebrand stays in the extension surfaces, the npm package name (`kemudi`, alias `navego-mcp`), the store listing and the update manifest until its own dispatch.
 - The Corbin site has no `/pilot` route: the static pilot door from the Kemudi rebrand is not part of the rebuilt React site; if the pilot offer still needs that page, port it or leave it out deliberately.
 
+## 2026-11-18 - the site identity is the hand-drawn N; the names Corbin and Kemudi are history
+
+- One mark everywhere now, drawn by hand (PR #393): one natural human-stroke N (Latin orientation, bowed stems, an arcing diagonal) on a navy disc with one symmetric amber underline; the wordmark is handwritten single-stroke glyphs with no tittle over the g. `components/NavegoMark.tsx`, `public/icon.svg`, `public/navego-mark.svg`, `public/assets/badge-88x31.svg` (mark + wordmark, no tagline), `public/og-cover.png` (regenerated from `site/scripts/og-cover.svg`).
+- The 2026-11-16 entry above names `site/app/components/CorbinMark.tsx`; no such file exists in this tree and never did at any point of it - the intermediate brand name is history, kept in docs/releases and this log. The current identity point is `components/NavegoMark.tsx` and the cream ground / navy / one amber palette in `tokens.css` and `brand.css`.
+- `site/app/components/Raven.tsx` (dead, unreferenced) and `site/public/assets/raven-1874.jpg` (unreferenced) are deleted; the historical docs that describe them stay as the record of the old pass, marked Historical/superseded.
+- Huginn & Muninn is gone from code and copy: the login panel opens on the logo lockup, the footer tagline reads "Navego — Browser Anda, atas perintah Anda."
+- Every decision now cites its source in `docs/decisions.json` (user request or verified internet link) and code points back (`decisions.json -> D<n>`); the gate is `tests/tooling/decisions.test.ts`; the WHY-prefix is banned repo-wide with the acceptance surface named as the exception.
+- No eyebrows anywhere; every page leads with h1 → h2 → body; type sizes are even pixels; line heights 1.1 / 1.25 / 1.5 / 1.4 (display / heading / body / small); paragraph spacing 1 em; heading 32 px above, 12 px below; flush-left alignment; text fills its container; the nav notch is always visible.
+
 ## Blocked, needs the owner at the machine
 
 - Use `py`, not `python`, which hits the Microsoft Store shim; `py` is 3.13 with playwright.

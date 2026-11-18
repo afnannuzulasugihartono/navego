@@ -3,7 +3,7 @@
 // @state: the file chooser, the dropped file, and the download that proves itself on disk.
 // @dependencies: node:buffer, ./page-expressions.js.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // A file is the one thing a browser drive produces that somebody else will open, so the rules around it are stricter than the rules around a click.
 // A file that is still being written is not a file.
@@ -13,7 +13,7 @@
 // These four verbs share that weight and nothing else: they speak to the file system, to the file chooser and to the download folder, and they share no state with the page verbs except the driver itself.
 // Keeping them here means the page verbs stay about the page, and a reader who wants to know what happens to a file finds it in one place.
 
-// WHY THE VERBS TAKE THE DRIVER AS AN ARGUMENT.
+// THE VERBS TAKE THE DRIVER AS AN ARGUMENT.
 // A file verb needs the rest of the driver - to resolve a row, to click a handle, to read the page - and the page verbs need the file verbs' expressions.
 // Passing the driver in keeps one object per driver and no import cycle, and the names inside stay exactly the names they had.
 
@@ -45,7 +45,7 @@ export interface FilePrimitivesOptions {
 export function filePrimitives(primitives: import('./types.js').JsonRecord, { cdp, sleep, fs, os, path, readState, bridge = false }: FilePrimitivesOptions) {
   if (!fs || !os || !path) throw new Error('filePrimitives needs fs, os and path');
 
-  // WHY THE FILE IS PREPARED IN ONE PLACE.
+  // THE FILE IS PREPARED IN ONE PLACE.
   // Upload and drop take the same two inputs - a base64 payload or a path - and must answer the same three questions: where the bytes are, how many there are, and how to remove the temporary copy.
   // Two copies of that answer drift the moment one gains a guard the other lacks, so it lives here.
 
@@ -83,7 +83,7 @@ export function filePrimitives(primitives: import('./types.js').JsonRecord, { cd
         data, filePath, filename, verb: 'upload', prefix: 'opera-upload-'
       });
 
-      // WHY THE FINDER ASKS CDP BEFORE ASKING THE PAGE, AND SWEEPS THE FRAMES.
+      // THE FINDER ASKS CDP BEFORE ASKING THE PAGE, AND SWEEPS THE FRAMES.
       // A page script can only walk shadow roots it is allowed to see, and Google Docs keeps its image input in a closed one inside its picker frame: the script reported no input while the input was demonstrably there.
       // `DOM.querySelectorAll` with `pierce` answers for a whole document, closed roots included, and returns only the matches — the entire pierced tree fetched at once timed out live on a heavy page.
       // `pierce` does not cross into a child frame, though, so each frame is asked for its owner, its owner's content document, and then the same pierced query.
@@ -170,7 +170,7 @@ export function filePrimitives(primitives: import('./types.js').JsonRecord, { cd
         dragOperationsMask: 1
       };
 
-      // WHY DRAGS ARE INTERCEPTED FIRST AND RELEASED ON EVERY WAY OUT.
+      // DRAGS ARE INTERCEPTED FIRST AND RELEASED ON EVERY WAY OUT.
       // Chrome only accepts a dispatched drag while interception is on, and a page left in that state stops believing real ones — the pointer would do nothing on this tab until it was released, which is worse than the problem being solved.
       // So the release is in the finally, where a failure still reaches.
       try {
@@ -194,21 +194,21 @@ export function filePrimitives(primitives: import('./types.js').JsonRecord, { cd
       return { intercepting: enabled === true };
     },
 
-    // WHY THE FILE ON DISK IS THE PROOF, NOT THE PROTOCOL EVENT.
+    // THE FILE ON DISK IS THE PROOF, NOT THE PROTOCOL EVENT.
     // The bridge road forwards commands and not events, so a listener here would fire on a debugging port and stay silent on the signed-in profile - the one road that matters.
     // The directory is therefore read until a new file stops growing, which is true on every road and survives a browser that lies about finishing.
 
-    // WHY THE DOWNLOAD BEHAVIOR IS ARMED BEFORE THE CLICK AND RESET AFTER IT.
+    // THE DOWNLOAD BEHAVIOR IS ARMED BEFORE THE CLICK AND RESET AFTER IT.
     // A click that starts a download has already chosen where the file goes; arming afterwards would only redirect the next one.
     // The reset is best effort, and it matters: the behavior is browser-wide, so leaving it armed would silently swallow every later download the person makes into this folder.
 
-    // WHY A PARTIAL FILE IS NOT A RESULT.
+    // A PARTIAL FILE IS NOT A RESULT.
     // Chrome writes `name.pdf.crdownload` while it works and renames on completion, so a directory scan that accepted either would report a truncated statement as delivered - the exact failure the proof layer exists to prevent.
 
-    // WHY THE NEW NAME IS A NAME AND NOT A PATH.
+    // THE NEW NAME IS A NAME AND NOT A PATH.
     // A caller that can name the folder already has dir; letting saveAs carry a path would be a second, quieter way to write outside it, and a file name with a slash in it fails at the operating system with a message that says nothing about the rule that was broken.
 
-    // WHY THE FILE IS RENAMED ONLY AFTER IT STOPS GROWING.
+    // THE FILE IS RENAMED ONLY AFTER IT STOPS GROWING.
     // Renaming a download mid-write would leave Chrome writing to a path that no longer exists, so the new name is given at the only moment the file is whole.
     // The old file goes first because Windows refuses a rename onto an existing file, and pulling the same client-month twice is the normal case - a re-download is a deliberate replace.
     async download({
@@ -231,7 +231,7 @@ export function filePrimitives(primitives: import('./types.js').JsonRecord, { cd
       const target = dir ? path.resolve(String(dir)) : path.join(os.homedir(), 'Downloads', 'navego');
       fs.mkdirSync(target, { recursive: true });
 
-      // WHY THE EXTENSION ROAD WATCHES THE FOLDERS CHROME MAY USE.
+      // THE EXTENSION ROAD WATCHES THE FOLDERS CHROME MAY USE.
       // chrome.debugger refuses browser-level commands, so a drive over the extension cannot arm a download folder: "Browser.setDownloadBehavior" is not found on a page target and "Page.setDownloadBehavior" is refused as browser-level.
       // The file lands where Chrome puts it, and the driver moves it to the folder the caller named - or says it did not land.
       // OneDrive can move the Downloads known folder and Chrome honours that move, so the watch covers the home folder and the redirected one next to it; a miss names both so a reader can see the whole list that was checked.
@@ -241,7 +241,7 @@ export function filePrimitives(primitives: import('./types.js').JsonRecord, { cd
         ? [path.join(os.homedir(), 'Downloads'), path.join(os.homedir(), 'OneDrive', 'Downloads')]
         : [target];
 
-      // WHY THE CANDIDATES ARE DEDUPED BY REAL PATH.
+      // THE CANDIDATES ARE DEDUPED BY REAL PATH.
       // A moved Downloads folder and the one it points at can both answer to the same directory, and reading one download twice is exactly the ambiguity the refuse rule exists to catch.
       // The real path is asked only when the drive can ask it; a file system without it keeps the literal name.
 
@@ -267,7 +267,7 @@ export function filePrimitives(primitives: import('./types.js').JsonRecord, { cd
         }
       };
 
-      // WHY THE BEFORE-SET HOLDS WHOLE PATHS.
+      // THE BEFORE-SET HOLDS WHOLE PATHS.
       // Two watched folders can hold the same file name, so a name is not an identity: keeping paths means a download that lands beside a same-named file in the other folder is still new.
 
       const before = new Set(watched.flatMap((dir) => listDir(dir).map((file) => path.join(dir, file))));
@@ -350,7 +350,7 @@ export function filePrimitives(primitives: import('./types.js').JsonRecord, { cd
             .filter((file) => !before.has(path.join(dir, file)) && !file.endsWith('.crdownload') && !file.endsWith('.tmp'))
             .map((file) => ({ file, full: path.join(dir, file), dir })));
 
-          // WHY MORE THAN ONE FINISHED CANDIDATE IS A REFUSAL.
+          // MORE THAN ONE FINISHED CANDIDATE IS A REFUSAL.
           // The watched folders hold every download the person makes, so a second file appearing mid-click is somebody else's download and the newest of an ambiguous pair is a coin toss.
           // The answer names both with the folder each came from and moves neither, because a bookkeeper handed the wrong statement is worse than a driver that says it cannot tell.
 

@@ -19,7 +19,7 @@ type UpdateDoorMode = 'allow' | 'apply' | 'idle';
 let updateDoorMode: UpdateDoorMode = 'idle';
 let pairedState = false;
 
-// WHY THE ISLAND SPEAKS ONCE.
+// THE ISLAND SPEAKS ONCE.
 // The reader opens the popup to answer one question: is it connected?
 // One line, one icon - no colour shouting, no second line, no dot to hunt.
 // The tone moves the icon; the words carry the meaning.
@@ -37,7 +37,7 @@ const setStatus = (state: StatusState) => {
 
 setStatus({ main: t('status.starting'), sub: t('status.subStarting'), tone: 'pending' });
 
-// WHY THE PAIR BUTTON IS A STATE, NOT AN ACTION, ONCE PAIRED.
+// THE PAIR BUTTON IS A STATE, NOT AN ACTION, ONCE PAIRED.
 // The button's promise is pairing; after the pair, the honest thing is to say so and point at where the pairing lives, not to stand there inviting the reader to pair again.
 // Green is the licence of the paired state: this is done, not decorative.
 
@@ -64,11 +64,11 @@ const setPairCta = (paired: boolean) => {
 
 setPairCta(false);
 
-// WHY THE POPUP ASKS THE SERVER WHICH VERSION IS SERVED.
+// THE POPUP ASKS THE SERVER WHICH VERSION IS SERVED.
 // Chrome updates an installed extension on its own, but only when it was installed as a signed package; an extension loaded unpacked never asks the update service, and the person sees a version that simply stands still.
 // The popup therefore asks what the server serves and says so out loud, because a version that does not move is otherwise a mystery with no handle on it.
 
-// WHY ONE DOOR FOR THE UPDATE.
+// ONE DOOR FOR THE UPDATE.
 // Three doors for one job said three different things; the button now either asks to allow the folder once, or writes the new build over the granted folder in one press.
 // The folder picker cannot live in the popup - it takes the focus and the popup closes with it - so the allow path opens the update page, which finishes the job itself once the folder is picked.
 // After the one allow, updates run on the worker's own timer; the button stays for the impatient.
@@ -104,7 +104,7 @@ async function call(action: string, extra: Record<string, unknown> = {}) {
   return chrome.runtime.sendMessage({ scope: 'navego-popup', action, ...extra });
 }
 
-// WHY THE POPUP SPEAKS TWICE.
+// THE POPUP SPEAKS TWICE.
 // A verdict without a reason is a mystery; a reason without a verdict is noise.
 // One line for each, no third line.
 
@@ -143,7 +143,7 @@ async function refresh() {
   }
 }
 
-// WHY THE TOGGLE LIVES IN THE POPUP.
+// THE TOGGLE LIVES IN THE POPUP.
 // The chip is the page half; this is the one place the reader can turn it off.
 
 const chipToggleText = $('chipToggleText');
@@ -168,7 +168,7 @@ chipToggleButton?.addEventListener('click', async () => {
 
 
 
-// WHY THE DOORS OPEN A TAB AND NOT A WINDOW.
+// THE DOORS OPEN A TAB AND NOT A WINDOW.
 // The person is already in a browser with the tabs they work in; a door that opens a separate window is a second place to look for the same thing.
 
 const openTab = async (url: string) => {
@@ -184,7 +184,7 @@ $('docsButton')?.addEventListener('click', async () => { void openTab(`${SITE_OR
 $('pairQuickButton')?.addEventListener('click', async () => { void openTab(pairedState ? `${SITE_ORIGIN}/dashboard.html` : `${SITE_ORIGIN}/dashboard.html?pair=1#pairing`); });
 $('optionsButton')?.addEventListener('click', async () => { void chrome.tabs.create({ url: chrome.runtime.getURL('options.html') }); });
 
-// WHY THE SMART DOOR BRANCHES.
+// THE SMART DOOR BRANCHES.
 // Not granted yet: the press opens the update page, which holds the folder picker the popup cannot hold, and finishes the job itself once the pick happens.
 // Granted and a newer build: the press writes it over the folder and restarts the worker, no file explorer involved.
 

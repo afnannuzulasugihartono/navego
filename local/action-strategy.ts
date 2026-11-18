@@ -3,7 +3,7 @@
 // @state: the two grounding strategies and one pure function that orders them for a surface.
 // @dependencies: none.
 
-// WHY A CANVAS SURFACE LEADS WITH COORDINATES.
+// A CANVAS SURFACE LEADS WITH COORDINATES.
 // A canvas page exposes no DOM worth querying, but Blink computes an accessibility tree for every rendered page and every node in it resolves to a box.
 // So a coordinate on a canvas page is grounded on a measured box rather than guessed, which is the opposite of a coordinate on a page that does have elements.
 

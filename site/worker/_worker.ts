@@ -3,16 +3,16 @@
 // @state: proxies /invoice to the billing function with its query and body, relabels the page, and rewrites the refresh redirect back to /invoice; every other path is the asset server's.
 // @dependencies: the deployed navego-billing function, env.ASSETS.
 
-// WHY THIS FILE EXISTS.
+// THIS FILE EXISTS because Supabase's shared function domain answered the function's HTML with text/plain and a locked-down CSP - the browser showed the page as source and a customer holding a real invoice had no way to pay it.
 // Measured live on 2026-10-26: Supabase's shared function domain answered the function's HTML with Content-Type text/plain and content-security-policy default-src 'none'; sandbox.
 // The browser showed the page as source and the refresh form could not be submitted, so a customer holding a real invoice had no way to pay it.
 // The gateway does that on purpose on a domain shared by every project, so the page is served from the product's own domain and the function stays the only thing that knows the invoice.
 
-// WHY THE WORKER IS THE WHOLE SITE ONCE IT EXISTS.
+// THE WORKER IS THE WHOLE SITE ONCE IT EXISTS.
 // A Pages project has one _worker.js, and every request passes through it.
 // So this worker owns /invoice and hands every other request to the asset server unchanged: the site is one directory, and the page is one path in it.
 
-// WHY THE PAGE'S HEADERS ARE SET HERE AND NOT READ FROM THE FUNCTION.
+// THE PAGE'S HEADERS ARE SET HERE AND NOT READ FROM THE FUNCTION because the gateway keeps the policy but replaces the content type - a page carrying a token must not be cached, must not leak the link as referrer, and must not be framed or indexed.
 // The function sets them, and the gateway keeps the policy but replaces the content type with text/plain.
 // A page that carries a token must not be cached, must not leak the link as a referrer, and must not be framed or indexed, so the worker states all of it on the answer the browser actually receives.
 
@@ -36,7 +36,7 @@ interface PagesEnv {
   };
 }
 
-// WHY ONLY TWO HEADERS CROSS TO THE FUNCTION.
+// ONLY TWO HEADERS CROSS TO THE FUNCTION because the page link is a capability in the query string, and the function needs the method, the query, the body and its type to answer - cookies and origin belong to the site.
 // The page link is a capability in the query string, and the function needs the method, the query, the body and its type to answer.
 // A browser's cookies and origin headers belong to the site, not to this invoice, and forwarding them would hand the function a session it has no use for.
 
@@ -53,12 +53,12 @@ async function askFunction(request: Request): Promise<Response> {
   return fetch(target.toString(), init);
 }
 
-// WHY A REDIRECT IS REWRITTEN INSTEAD OF FOLLOWED.
+// A REDIRECT IS REWRITTEN INSTEAD OF FOLLOWED because the refresh form posts here and the function answers 303 to its own path - following it would leave the browser at the old address, and a reload would repost the form.
 // The refresh form posts here, and the function answers 303 to the address it knows: its own path.
 // Following that answer would leave the browser at the old address with a 200, so a reload would post the form again.
 // Rewriting the Location keeps the address and the method honest, and only the function's own answer is rewritten, so another host cannot be turned into a link on the product's domain.
 
-// WHY THE PATH THE FUNCTION SEES IS NOT THE PATH IN THIS FILE.
+// THE PATH THE FUNCTION SEES IS NOT THE PATH IN THIS FILE because the gateway strips the prefix - the rule is the shape of the answer, not a guessed path.
 // Measured live on 2026-10-26: the same function answered a redirect to /navego-billing, not to /functions/v1/navego-billing, because the gateway strips the prefix before the function reads its own URL.
 // So the rule is the shape of the answer, not a path this file guessed: a root-relative Location belongs to the function, and an absolute one is rewritten only when its host is the function's.
 
@@ -76,13 +76,13 @@ function pageLocation(location: string | null): string {
   return `${PAGE_PATH}${at.search}`;
 }
 
-// WHY THE BODY DECIDES WHAT THE PAGE IS, NOT THE CONTENT TYPE.
+// THE BODY DECIDES WHAT THE PAGE IS, NOT THE CONTENT TYPE because the gateway labels every function answer text/plain - the first characters are the only honest way to tell a page from an error.
 // The gateway labels every function answer text/plain, so the content type the function sent no longer says what the body is.
 // The page starts with a doctype and an error is JSON, so the first characters are the only honest way to tell them apart.
 
 const looksLikePage = (body: string): boolean => /^\s*(<!doctype html|<html[\s>])/i.test(body);
 
-// WHY A FAILURE IS A PAGE AND NOT A STACK TRACE.
+// A FAILURE IS A PAGE AND NOT A STACK TRACE because the customer cannot do anything with the worker's error, and the worker cannot say whether the invoice changed.
 // The customer cannot do anything with the worker's error, and the worker cannot say whether the invoice changed.
 // So a failure says only that the page could not be loaded and that nothing has changed, and the reason goes to the Pages log.
 
@@ -123,7 +123,7 @@ async function serveInvoice(request: Request): Promise<Response> {
   });
 }
 
-// WHY A /api/region DOOR EXISTS.
+// A /api/region DOOR EXISTS because the pricing page prices by the visitor's region, and the country comes from the IP Cloudflare terminates - it cannot come from the browser.
 // The pricing page shows the group of plans priced for the visitor's region, and the region comes from the IP Cloudflare terminates — it cannot come from the browser.
 // This door answers exactly that: the country code Cloudflare attributes to the request, or null when the platform said nothing, and nothing else.
 // It is deliberately tiny: no account, no cookie, no log of who asked.
@@ -137,9 +137,9 @@ function regionFrom(request: Request): string | null {
   return /^[A-Z]{2}$/.test(country) ? country : null;
 }
 
-// WHY the .html aliases 301: every page is prerendered under its pretty route id, and the flat .html file exists only because Pages serves build/client flat files.
+// the .html aliases answer 301 because every page is prerendered under its pretty route id - serving .html inline would hydrate against the pretty id and error on every visit.
 // Serving .html inline would hydrate against the pretty route id baked into the file and React error #418 on every page; a 301 keeps the legacy URLs honest without baking a second manifest.
-// WHY the fallback answers 404 with the real page: Pages' asset server answers missing paths with an empty 404, and unknown paths deserve the same designed page as every other route.
+// the fallback answers 404 with the real page because the Pages asset server answers missing paths with an empty 404 - unknown paths deserve the designed page like every other route.
 
 export default {
   async fetch(request: Request, env: PagesEnv): Promise<Response> {

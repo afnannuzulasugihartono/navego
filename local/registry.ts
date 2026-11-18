@@ -3,17 +3,17 @@
 // @state: HKCU only, per-user, no elevation; a failure is reported, never thrown.
 // @dependencies: node:child_process.
 
-// WHY THE EXECFILE IS A PARAMETER.
+// THE EXECFILE IS A PARAMETER.
 // The command runs in CI where there is no registry and on developer machines where there is.
 // The test injects a fake; production passes nothing and gets execFileSync.
 
-// WHY A FORCELIST, NOT THE CLASSIC EXTENSION KEY.
+// A FORCELIST, NOT THE CLASSIC EXTENSION KEY.
 // The classic key asks the browser to install a build it cannot enforce; the person can turn it off.
 // The forcelist asks the policy system to install and keep it: same signed CRX, same update URL, one numbered entry per browser, the browser's own machinery does the rest.
 // 2026-11-15 owner decision: one route, this one.
 // The classic route is deleted, not hidden behind a flag.
 
-// WHY A NUMBERED VALUE.
+// A NUMBERED VALUE.
 // ExtensionInstallForcelist is a numbered list.
 // Our entry names the extension id and the update manifest, so the installer finds its own entry at any number and never touches an entry somebody else created.
 // Uninstall removes exactly the entries whose data starts with the id, at whatever number they landed.

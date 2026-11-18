@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots)
+
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
@@ -28,7 +30,6 @@ export default function Artikel() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Artikel</p>
             <h1>Artikel.</h1>
             <p className="lede">Tulisan pendek tentang browser yang digerakkan satu perintah teks — cara kerjanya, alasan di balik keputusannya, dan batasannya.</p>
           </div>
@@ -40,7 +41,6 @@ export default function Artikel() {
               <Link key={item.slug} to={item.href} className="card artikel-card">
                 <div className="cover" aria-hidden="true" />
                 <div className="card-body">
-                  <p className="kicker">{item.date} · {item.readingTime} baca</p>
                   <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-2xl)', letterSpacing: '-0.02em', color: 'var(--navy-deep)', lineHeight: 1.1 }}>{item.title}</h2>
                   <p style={{ color: 'var(--muted-2)' }}>{item.dek}</p>
                 </div>

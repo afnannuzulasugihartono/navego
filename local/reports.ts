@@ -3,15 +3,15 @@
 // @state: CSV/TSV text in, a docplan and a figure ledger out, plus the recheck that catches an edited number.
 // @dependencies: node:fs, node:path.
 
-// WHY THE FIGURE KEEPS ITS SOURCE ROWS.
+// THE FIGURE KEEPS ITS SOURCE ROWS.
 // A report that says "Rp 4.000.000" without saying which lines produced it cannot be checked by the person paying for it.
 // So every figure carries the column and the exact row numbers it was computed from, and the recheck recomputes it from those rows.
 
-// WHY MONEY IS INTEGER CENTS.
+// MONEY IS INTEGER CENTS.
 // A report is a bill's neighbour: 0.1 + 0.2 must not become 0.30000000000000004 in front of a client.
 // The parser understands the Indonesian shape (dot groups thousands, comma groups sen) and answers null rather than guessing.
 
-// WHY THE PERIOD IS CHECKED ROW BY ROW.
+// THE PERIOD IS CHECKED ROW BY ROW.
 // A workbook that still holds last month's rows produces a report that looks right and is wrong by a month.
 // The row that disagrees is named, because "the period is wrong" without a line number is a bug report nobody can act on.
 
@@ -126,7 +126,7 @@ export function parseDelimited(text: unknown): ParsedTable {
   return { headers, rows };
 }
 
-// WHY A DOT IS ALWAYS A THOUSANDS GROUP.
+// A DOT IS ALWAYS A THOUSANDS GROUP.
 // In Indonesian money the dot groups thousands and the comma groups sen, so "1.250" is one thousand two hundred fifty, not one and a quarter.
 // A fraction longer than two digits is not money this ledger can hold, and null says so instead of rounding somebody's cent away.
 
@@ -268,7 +268,7 @@ export function buildReport({ table, spec }: { table?: ParsedTable; spec?: Repor
   };
 }
 
-// WHY THE RECHECK IS SEPARATE FROM THE BUILD.
+// THE RECHECK IS SEPARATE FROM THE BUILD.
 // Building trusts the table once; the recheck trusts nothing and recomputes every figure from the rows the figure names.
 // That is the difference between a plan that was right when it was made and a plan that is still right now.
 
@@ -312,7 +312,7 @@ export function verifyReport({ report, table }: { report?: Report; table?: Parse
   return { ok: mismatches.length === 0, checked: report.figures.length, mismatches };
 }
 
-// WHY THE JOB READS THE FILE ITSELF.
+// THE JOB READS THE FILE ITSELF.
 // The table is the argument, so a caller that passes a path cannot also pass a different table behind it.
 // Reading, building and rechecking in one place is what makes the written artifact trustworthy: it was verified before it existed as a file.
 

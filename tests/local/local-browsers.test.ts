@@ -3,7 +3,7 @@
 // @state: 11 locks; one protocol across the family, environment expansion, separator-insensitive matching, and a launch that cannot be silently swallowed.
 // @dependencies: node:test, strict, ../local/browsers.js.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // This driver is meant to be installed by people who have never seen this repository, on machines that were not part of any measurement.
 // Two properties have to hold for that, and both failed the first time they were written.

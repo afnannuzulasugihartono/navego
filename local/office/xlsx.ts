@@ -3,17 +3,17 @@
 // @state: sheets in, one workbook out, and nothing on a sheet that was not put there.
 // @dependencies: ./zip.js, ./xml.js, ./palette.js.
 
-// WHY THE CELLS HOLD NUMBERS AND NOT TEXT.
+// THE CELLS HOLD NUMBERS AND NOT TEXT.
 // A bookkeeper opens the total, adds it to another sheet, and expects it to be a number.
 // Money written as "Rp 1.250.000" is a sentence in a spreadsheet, and every formula that touches it fails.
 
-// WHY THE FILL AND THE FONT ARE DECLARED.
+// THE FILL AND THE FONT ARE DECLARED.
 // Excel refuses a workbook whose styles part is missing, and it fills the missing fonts with its own idea of a typeface.
 
-// WHY THE SHEET NAME IS CHECKED.
+// THE SHEET NAME IS CHECKED.
 // Excel forbids a name longer than thirty-one characters or one holding a bracket, a colon or a slash, and it refuses the whole file when it finds one.
 
-// WHY THE SHEET CARRIES A TITLE, A HEADER, A FROZEN ROW AND A WIDTH.
+// THE SHEET CARRIES A TITLE, A HEADER, A FROZEN ROW AND A WIDTH.
 // A sheet of bare cells is a dump; a sheet that names its report, marks its header, keeps that header in view while the rows scroll and gives every column the width of its content is a page a bookkeeper can read.
 // The money column needs its own width, because a column too narrow for the number shows hashes instead of the number.
 
@@ -107,7 +107,7 @@ function cellXml(column: number, row: number, cell: SheetCell, style: number): s
   return `<c r="${address}"${styleAttribute} t="inlineStr"><is><t xml:space="preserve">${escapeXml(value)}</t></is></c>`;
 }
 
-// WHY THE WIDTH FOLLOWS THE CONTENT.
+// THE WIDTH FOLLOWS THE CONTENT.
 // A column wider than its content wastes the page, and a column narrower than its content hides the number behind hashes, so the width is the longest line in the column plus a little air.
 
 function columnWidths(rows: unknown[]): number[] {

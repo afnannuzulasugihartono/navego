@@ -5,8 +5,8 @@
  * @dependencies: tab-content, private-tabs, capture.js helpers, protocol constants.
  */
 
-// WHY THE FETCH LIVES IN THE WORKER: a content script shares the page's CORS restrictions, so the one place that may read any host the user asked about is the worker - the page only parses, it never sends.
-// WHY THE LIVE DOM IS NEVER MUTATED: the rewrite happens on a DOMParser copy; the open page keeps its state and its scroll, and the mirror never re-executes itself on import.
+// THE FETCH LIVES IN THE WORKER: a content script shares the page's CORS restrictions, so the one place that may read any host the user asked about is the worker - the page only parses, it never sends.
+// THE LIVE DOM IS NEVER MUTATED: the rewrite happens on a DOMParser copy; the open page keeps its state and its scroll, and the mirror never re-executes itself on import.
 
 import { nowIso } from './utils.js';
 import { HTTP_URL_RE, contentCall, recordScanCall, resolveTabId } from './tab-content.js';
@@ -107,7 +107,7 @@ function utf8(bytes: Uint8Array): string {
   return new TextDecoder().decode(bytes);
 }
 
-// WHY NO REGEX.
+// NO REGEX.
 // Super-linear CSS-URL backtracking is gone when the walk is a character scanner: find "url(", skip whitespace, honor an optional quote, then take everything up to the closing paren.
 
 function cssUrlTargets(css: string): Array<{ raw: string; start: number; end: number }> {
@@ -300,7 +300,7 @@ export async function scanPage(tabId: unknown, params: Record<string, unknown> |
     });
   }
 
-  // WHY THE DOWNLOAD IS WRITTEN FROM THE WORKER: a page-initiated download goes through the browser's user-driven "ask where to save each file" flow, so the caller was stopped by a Save dialog that no amount of silent timing would have avoided.
+  // THE DOWNLOAD IS WRITTEN FROM THE WORKER: a page-initiated download goes through the browser's user-driven "ask where to save each file" flow, so the caller was stopped by a Save dialog that no amount of silent timing would have avoided.
   // The service worker may call chrome.downloads.download with saveAs:false, which bypasses that dialog and writes to the default downloads folder straight away; the filename is ours to choose here.
   // The data URL is assembled in-memory; the browser may not amend the filename or fail through an assister's heuristic.
   await new Promise<void>((resolve, reject) => {

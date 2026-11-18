@@ -122,7 +122,7 @@ PROOFS = {
 }
 
 
-# WHY open_doc RETRIES.
+# open_doc RETRIES.
 # One command can be claimed and lost in transit, and one tabs.open can time out while the tab it opened stays open.
 # Both leave the run recoverable, so opening a doc tries three times before it ends the run.
 

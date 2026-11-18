@@ -3,17 +3,17 @@
 // @state: rules keyed by what went wrong, each with a move that is known to work.
 // @dependencies: none.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // A failure that names the problem sends an agent looking for the problem again.
 // Measured on this product's own author: "no menuitem matching \"Image\"" said exactly what was missing and nothing about what to do, and the next move was always the same two or three — open the menu that holds it, read the menu tree, wait for it to appear.
 // Those moves are written down here once, so the failure carries them and the agent does not have to rediscover them while a menu is closing underneath it.
 
-// WHY ADVICE IS DATA AND NOT SENTENCES APPENDED TO ERRORS.
+// ADVICE IS DATA AND NOT SENTENCES APPENDED TO ERRORS.
 // An error that grows a paragraph of advice becomes unreadable, and the advice drifts from what the product can actually do.
 // Here a rule matches what went wrong and names the call to make; a rule that names a call nobody has is caught by a test, the same way the guide's recipes are.
 
-// WHY EVERY MOVE IS ONE CALL.
+// EVERY MOVE IS ONE CALL.
 // An advice line that needed three calls is a plan, and a plan inside an error message is read once and forgotten.
 // Each move below is a single tool call that answers the question the failure raised.
 
@@ -42,7 +42,7 @@ const trim = (text: unknown, at = 60) => {
   return one.length > at ? `${one.slice(0, at)}...` : one;
 };
 
-// WHY THE NEAREST NAME IS OFFERED WHEN NOTHING MATCHED.
+// THE NEAREST NAME IS OFFERED WHEN NOTHING MATCHED.
 // The caller asked for one thing and the page offers another that starts the same way — "Upload" against "Upload from computer".
 // An agent that sees the difference spelled out does not have to guess whether its own spelling was wrong or the page's.
 
@@ -89,7 +89,7 @@ const NO_TARGET = [
   'browser_open_url() if the page is not open yet'
 ];
 
-// WHY A CLICK OFF THE PAGE GETS ITS OWN MOVES.
+// A CLICK OFF THE PAGE GETS ITS OWN MOVES.
 // Measured live: a click on a row below the fold answered with a click at y -139 - success, on a coordinate no pixel holds.
 // The only roads that change the outcome are scrolling the thing into view and clicking it again, and each is one call.
 
@@ -103,7 +103,7 @@ const EMPTY_FILE_INPUT = [
   'browser_screenshot() after the drop to see whether the page took it'
 ];
 
-// WHY TEXT THAT WENT NOWHERE GETS ITS OWN MOVES.
+// TEXT THAT WENT NOWHERE GETS ITS OWN MOVES.
 // Measured live: five characters were typed into a document that had lost its caret, and the call answered with the number of characters it had inserted.
 // The next move is always the same two - put a caret in the page, then type again - and both are one call each.
 
@@ -114,7 +114,7 @@ const EDIT_GONE = [
   'browser_read_page() before typing again on a canvas page - the text may have landed after the check, and retyping duplicates it'
 ];
 
-// WHY AN EXTENSION PAGE GETS ITS OWN MOVES.
+// AN EXTENSION PAGE GETS ITS OWN MOVES.
 // Measured live: a drive named the Extensions tab and the bridge refused it with "Cannot access a chrome:// URL".
 // That is a wall, not a failure - no move on that tab can ever succeed - so the moves point at the tabs that can be driven instead of at the one that cannot.
 
@@ -123,7 +123,7 @@ const EXTENSION_PAGE = [
   'browser_open_url() if the page belongs in a new tab instead'
 ];
 
-// WHY THE FIRST RULE THAT FITS WINS.
+// THE FIRST RULE THAT FITS WINS.
 // A refusal and a missing row can both be true at once — a page that refuses the method it was asked for is also "no such thing" — and a caller is better served by the most specific thing that is wrong, which is the first rule in this order.
 
 export const RULES: ReadonlyArray<AdviceRule> = Object.freeze([
@@ -178,7 +178,7 @@ export const RULES: ReadonlyArray<AdviceRule> = Object.freeze([
   }
 ]);
 
-// WHY THE FIRST WORD IS KEPT.
+// THE FIRST WORD IS KEPT.
 // "no menuitem matching" says what was looked for and what class of thing it was, and an agent that reads only the first line still knows whether to look for a menu, a button or a text field.
 
 export function withAdvice(error: unknown, context: AdviceContext = {}): string {

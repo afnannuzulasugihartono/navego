@@ -3,7 +3,7 @@
 // @state: navego_consent stores the banner choice (granted|denied); navego_region stores the pricing-band country (two letters) and is written only after consent.
 // @dependencies: none.
 
-// WHY TWO COOKIES AND NO MORE.
+// THE TWO COOKIES AND NO MORE.
 // navego_region is a display preference: without it, every visit re-detects the region and /harga asks the browser for the geolocation permission again.
 // navego_consent is what lets the site remember the choice about the region cookie, so the banner shows exactly once.
 // Neither carries identity, neither is shared with anyone, and both are named here so the privacy page cannot drift from what the code does.

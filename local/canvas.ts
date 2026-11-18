@@ -3,39 +3,39 @@
 // @state: the ladder walk for read, the caret line read, and the generic selection copy they share.
 // @dependencies: ./page-expressions.js, ./surface-profile.js, ./caret-guard.js, ./read-strategy.js.
 
-// WHY THIS MODULE EXISTS
+// THIS MODULE EXISTS
 
 // A canvas surface is not a page full of text, so reading it is a different question from reading a DOM page.
 // This module asks that question: it measures what the surface is, walks the ladder of reads in the order the measurement justifies, and puts a gate in front of the one read that costs the user something.
 // What used to live here was one site's answer to that question, written as that site's selectors; what lives here now is the question.
 
-// WHY THE READ WALKS A LADDER INSTEAD OF ASKING THE URL.
+// THE READ WALKS A LADDER INSTEAD OF ASKING THE URL.
 // The read this replaces recognised one site by its address and then ran that site's clipboard trick on it, which is why every other canvas page came back empty.
 // A profile measured from the page itself says which reads are available and what each costs, and the ladder is walked in that order.
 // The step that moves a caret is gated, because the measurement behind it showed a canvas caret cannot be put back.
 
-// WHY ONLY AN EDITABLE CANVAS VETOES THE DOM STEP.
+// ONLY AN EDITABLE CANVAS VETOES THE DOM STEP.
 // A canvas editor keeps its chrome in the DOM and its document in pixels, so reading the DOM would answer with the chrome and stop.
 // A canvas without an editable host is a picture beside text - a chart, a map, a viewer - and the text around it is the page's own text, so vetoing that read throws away the only text there is.
 
-// WHY THE DOM READ TAKES TWO SAMPLES.
+// THE DOM READ TAKES TWO SAMPLES.
 // readyState lies: measured live, a page reported complete with a tenth of its text and reached the rest 600ms later.
 // So the read settles and looks again, and answers with whether the text stood still and by how much it grew.
 
-// WHY THE CONSENT IS ASKED BEFORE THE SELECTION IS BORROWED.
+// THE CONSENT IS ASKED BEFORE THE SELECTION IS BORROWED.
 // The borrow is the destructive half of this read, and a caller who did not ask for it must not pay for it.
 // The caret verdict rides along whatever the copy returned, so a caller learns what the read cost even when it succeeded.
 
-// WHY THE ACCESSIBILITY TREE IS MEASURED ONLY WHEN IT CAN REORDER THE LADDER.
+// THE ACCESSIBILITY TREE IS MEASURED ONLY WHEN IT CAN REORDER THE LADDER.
 // Measured on the owner's profile: a full accessibility tree answers a canvas document in 19-30ms, and one innerText answers an ordinary page in a single call.
 // On a page with no canvas the DOM leads whatever the tree holds, so the tree is paid for there only when the DOM answers nothing.
 // A profile call still measures both halves: it is the answer to "what is this", and that answer is worth the round trip.
 
-// WHY AN EMPTY COPY IS NOT AN EMPTY DOCUMENT.
+// AN EMPTY COPY IS NOT AN EMPTY DOCUMENT.
 // A canvas editor that selects and copies nothing either has an empty document or a mirror that did not fill, and the two are not the same thing.
 // Reporting the empty string as the read would call both of them an empty page, so the ladder continues to the picture and the caret cost stays in the answer.
 
-// WHY A SURFACE NOTHING CAN ANSWER NAMES THE PICTURE.
+// A SURFACE NOTHING CAN ANSWER NAMES THE PICTURE.
 // The driver does not read pixels and does not pretend to: naming the one tool that returns a picture lets the caller decide, rather than handing back an empty string that looks like an empty page.
 
 import { SELECTION_STATE_EXPRESSION } from './page-expressions.js';
@@ -51,34 +51,34 @@ import {
   readLadder
 } from './read-strategy.js';
 
-// WHY THE VIEW IS REPORTED AS LEFT WHERE IT IS.
+// THE VIEW IS REPORTED AS LEFT WHERE IT IS.
 // The borrow selects the whole document and the caret then moves to its end, so the view scrolls with it - and no key in this driver puts the view back, only the caret.
 // A caller that reads viewRestored:false knows the picture it takes next is of the end of the document rather than of where the person was reading.
 
 const VIEW_WHY = 'the borrow selected the whole document, so the view is left where the selection ended;'
   + ' the caret verdict says whether the caret itself came back';
 
-// WHY THE SETTLE VERDICTS ARE NAMED ONCE.
+// THE SETTLE VERDICTS ARE NAMED ONCE.
 // settled means one thing on the DOM path - the text stood still across two samples - and cannot mean it anywhere else: the tree was sampled once and the copy cannot be repeated without moving the caret twice.
 // So the other two paths answer settled:null and name what would prove it, and the sentence a caller reads is the same sentence every time rather than one written inline at each return.
 
 const SETTLED_WHY_AX = 'this read sampled the accessibility tree once, so it can say what the text is and not that it stopped moving; wait() is the proof of that';
 const SETTLED_WHY_COPY = 'the text came from a selection copy; a second copy would move the caret twice, so read again after wait() or take shot() as the proof';
 
-// WHY A BORROW THAT RETURNED NOTHING IS NOT AN EMPTY DOCUMENT.
+// A BORROW THAT RETURNED NOTHING IS NOT AN EMPTY DOCUMENT.
 // A canvas editor that selects and copies nothing either has an empty document or a mirror that did not fill, and the two are not the same thing.
 // Reporting the empty string as the read would call both of them an empty page, so the ladder moves on to the picture and the reason travels with the caret cost.
 
 const EMPTY_COPY_WHY = 'the selection answered no text, which is not the same as an empty document; the ladder continues to the picture';
 const NO_MARK_WHY = 'the caret could not be remembered, so the borrow was refused';
 
-// WHY the guard is built but never read: SELECTION_STATE_EXPRESSION is the read itself; the guard import lives here because the callers below call it in the catch path.
-// WHY THE PAGE ANSWERS ARE JsonRecord.
+// the guard is built but never read: SELECTION_STATE_EXPRESSION is the read itself; the guard import lives here because the callers below call it in the catch path.
+// THE PAGE ANSWERS ARE JsonRecord.
 // Every expression here is computed by the page and read back whole, and each answer shape is owned by the interface that made it.
 // Typing them one field at a time would put the page's shape in three places, so canvas reads them as the documented open record.
 
 export function createCanvasMethods({ primitives, readState }: { primitives: JsonRecord; readState: () => Promise<{ title?: unknown; url?: unknown; text?: unknown; ready?: unknown }> }) {
-  // WHY THE COPY READS THE SELECTION AND NOT A SITE'S CLIPBOARD TRICK.
+  // THE COPY READS THE SELECTION AND NOT A SITE'S CLIPBOARD TRICK.
   // The expression this replaces found one site's hidden editable frame by name, asked it to fill itself on a copy event, and stripped the invisible characters that site inserts - which is per-site code, and it is gone.
   // What is left is the technique without the site: borrow the selection, then read it back from whichever frame holds it.
   // A surface that mirrors its text through the selection answers; a surface that holds its text as pixels does not, and that is reported rather than papered over.
@@ -98,7 +98,7 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
     return measured;
   };
 
-  // WHY THE REGION TEXT IS RETURNED EVEN WHEN THE TREE IS THIN.
+  // THE REGION TEXT IS RETURNED EVEN WHEN THE TREE IS THIN.
   // The rich bar decides which read leads, not whether a text is worth returning.
   // On a page with no canvas the DOM has already answered nothing, so the tree is the only text there is; on a canvas page a thin region is the chrome around the picture, and returning it would name the menu as the document.
   const textOf = (value: unknown): string => (typeof value === 'string' ? value : String(value ?? ''));
@@ -256,7 +256,7 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
     };
   }
 
-  // WHY THE LINE IS READ FROM THE SELECTION FIRST.
+  // THE LINE IS READ FROM THE SELECTION FIRST.
   // This read used to ask the url whether the page was a document editor and then chose the clipboard for it, which is the site recognition this change removes.
   // The selection is the cheaper answer and works wherever the page holds its text; the selection copy is the fallback for a surface whose mirror only holds what a selection put there, and which one is needed is a question the page answers.
   // The verdict rides along, so a caret this read could not put back is reported rather than assumed.

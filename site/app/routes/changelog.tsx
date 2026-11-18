@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36 (no eyebrows, h1 first)
+
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
@@ -10,7 +12,7 @@ export function meta() {
   });
 }
 
-// WHY THIS FILE CARRIES THE DATA INLINE.
+// THIS FILE CARRIES THE DATA INLINE because the list is the product's own history - a runtime fetch or a build step nobody asked for buys nothing.
 // The list is the product's own history; reading it from the repo at runtime would need a fetch or a build step nobody asked for.
 // Every row below is generated from docs/releases/<version>.md (the @title line plus the first bullets), so the page cannot drift from what shipped — regenerate with the script and review the diff.
 
@@ -68,7 +70,6 @@ export default function Changelog() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Changelog</p>
             <h1>Setiap rilis, tercatat.</h1>
             <p className="lede">Bukan marketing. Satu baris per versi: tanggal, isi patch, dan tautan ke catatan lengkap di repositori.</p>
           </div>
@@ -78,7 +79,6 @@ export default function Changelog() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Riwayat rilis</p>
                 <h2 id="releaseTitle" className="section-title">Dari 1.6.22 sampai hari ini.</h2>
               </div>
               <p className="section-note">Catatan lengkap per versi ada di <a href="https://github.com/afnannuzulasugihartono/navego/tree/main/docs/releases" rel="noreferrer">docs/releases/</a>.</p>

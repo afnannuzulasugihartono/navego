@@ -15,7 +15,7 @@ export const LISTEN_BASE_URL = `${SUPABASE_URL}/functions/v1/navego-listen`;
 export const UPDATE_BASE_URL = `${SUPABASE_URL}/functions/v1/navego-update`;
 export const CONSENT_CONFIG_URL = `${SUPABASE_URL}/functions/v1/navego-auth/config`;
 
-// WHY every cloud call is pinned to Singapore.
+// every cloud call is pinned to Singapore.
 // Edge functions run closest to the requester, and from this machine that is Tokyo while the database sits in Singapore — measured live as DENO_REGION ap-northeast-1 against a db host in ap-southeast-1.
 // Every database crossing then pays Tokyo-Singapore instead of rack-local, several times per command.
 // The pin rides a header on HTTPS and a query parameter on sockets, where no header can be set; any gateway that does not understand it ignores it.

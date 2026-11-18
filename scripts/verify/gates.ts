@@ -3,7 +3,7 @@
 // @state: reads gates.lock, compares git-blob SHA-256s, reports drift; refresh never runs from the gate.
 // @dependencies: node:fs, node:path, node:crypto, node:url.
 
-// WHY this is its own program and not a block inside scripts/verify/check.ts: the thing that verifies the gates must not be editable by editing the gate it verifies.
+// this is its own program and not a block inside scripts/verify/check.ts: the thing that verifies the gates must not be editable by editing the gate it verifies.
 // scripts/verify/check.ts is itself pinned in gates.lock, so if an agent weakened the rules there, this file would still notice — as long as this file is not touched in the same commit, which is Layer 2's job (.github/CODEOWNERS).
 
 import fs from 'node:fs';

@@ -207,9 +207,9 @@ export async function uninstall({
   } else {
     steps.push({ step: 'device pairing', result: 'not found' });
   }
-  // WHY THREE NAMES: the package was published as navego-mcp, then as kemudi, and now ships as navego; a machine that installed before today carries either legacy name.
+  // THREE NAMES: the package was published as navego-mcp, then as kemudi, and now ships as navego; a machine that installed before today carries either legacy name.
   // `npm uninstall -g navego` alone would leave the legacy installs behind.
-  // WHY the three are uninstalled together: one command feels cleaner than three separate lines.
+  // the three are uninstalled together: one command feels cleaner than three separate lines.
   // One spawn, both specs.
   try {
     spawnImpl('npm', ['uninstall', '-g', 'navego', 'kemudi', 'navego-mcp'], { detached: true, stdio: 'ignore' });
@@ -227,7 +227,7 @@ export async function uninstall({
   return { ok: true, steps, message };
 }
 
-// WHY A MISSING BROWSER OR A FOREIGN OS IS NOT A FAILURE.
+// A MISSING BROWSER OR A FOREIGN OS IS NOT A FAILURE.
 // `install` reports information the user may act on, and exits 0; anything exit 1 names a thing that was attempted and failed.
 
 export async function installFromCli() {

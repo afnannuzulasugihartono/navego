@@ -5,7 +5,6 @@
 
 // Loaded by the manifest BEFORE content.js and published on globalThis, the same pattern as role-reconcile.js: content scripts are classic scripts and cannot import, and this keeps one copy for both contexts.
 
-// Why this exists.
 // Multi-level menus were the most fragile interaction in the live Google Docs test: the caller had to hand-build a burst of hover -> wait -> hover -> wait, because hovering and settling were separate unbounded steps.
 // This module owns the decision of when a hover has "landed", so one hover per level can be a single step.
 

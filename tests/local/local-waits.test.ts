@@ -1,4 +1,4 @@
-﻿// @last-edited: 2026-11-05 UTC+7.
+// @last-edited: 2026-11-05 UTC+7.
 // @title: local-waits — a wait ends on evidence, not on a clock that guessed how long a page takes.
 // @state: the page settle, the mutation wait, and the text, row and stillness waits built on it.
 // @dependencies: node:test, strict, ../local/primitives.js.
@@ -36,7 +36,7 @@ test('settle watches the page from Node, so a hidden tab cannot clamp its timer'
   assert.deepEqual(slept, [], 'a page that is already quiet is not waited on');
 });
 
-// WHY THE WATCHER STAYS.
+// THE WATCHER STAYS.
 // Measured on 2026-11-05: every settle re-armed its observer, and a fresh observer starts its quiet clock at zero, so a page that had been still for ten seconds still paid 32 ms of quiet and four round trips before a single word was read.
 // The observer is cheap, the clock it keeps is the truth, and the page is still watched when the root element is replaced, so it stays installed and the settle reads how long the page has been still.
 
@@ -176,7 +176,7 @@ test('a read on a settled page takes two samples and says the text stood still',
   assert.deepEqual(slept, [], 'a page that is already quiet is not waited on');
 });
 
-// WHY A READ THAT RETURNS A TENTH OF THE PAGE IS THE BUG THIS PINS.
+// A READ THAT RETURNS A TENTH OF THE PAGE IS THE BUG THIS PINS.
 // Measured live on YouTube: at 1.9 seconds readyState said complete with 871 characters; by 2.4 seconds the page held 8,478.
 // One read there is not wrong about what it saw - it is wrong about what it implies, because nothing in the answer says the page was still filling in.
 // The second sample turns that into a fact the caller can act on.
@@ -217,12 +217,12 @@ test('a read on a page still filling in says so, and answers with the later samp
 });
 
 
-// WHY THIS TEST NAMES A CANVAS SURFACE AND NOT A SITE.
+// THIS TEST NAMES A CANVAS SURFACE AND NOT A SITE.
 // It used to ask for a Google Doc by name and assert the document came from that site's clipboard.
 // The behaviour worth pinning is the same for any canvas editor: the DOM around the canvas holds chrome, and the wait must not end on that chrome.
 // So the fake models a canvas surface and the assertion is that the wait reaches past the chrome.
 
-// WHY THE CHROME IS LONGER THAN THE DOM BAR.
+// THE CHROME IS LONGER THAN THE DOM BAR.
 // Measured on a real Google Doc: the chrome around the canvas holds 1,312 characters, so a wait that measures length alone is satisfied by the toolbar and reports found:false for text that is sitting in the document.
 // The fake therefore answers the DOM with a toolbar's worth of words, and only a wait that asks the page what it is can see past them.
 
@@ -389,7 +389,7 @@ test('stillness ends on two identical reads and names how long it took', async (
   assert.ok(slept.length > 0, 'and it did wait for the page to be quiet');
 });
 
-// WHY THE CLOCK MOVES INSTEAD OF THE SLEEP.
+// THE CLOCK MOVES INSTEAD OF THE SLEEP.
 // The wait measures quiet time against the wall clock, so a one-millisecond budget is over before a second read can be reached and the wait would answer "still" having read once — the opposite of what a page that never stops moving deserves.
 
 
@@ -436,7 +436,7 @@ test('stillness watches the rows an agent acts on, not the whole document', asyn
   assert.match(asked.params.expression, /__LIMIT__|getBoundingClientRect/, 'the read is the snapshot the agent already uses');
 });
 
-// WHY A DOWNLOAD IS TESTED AGAINST A DISK AND NOT AN EVENT.
+// A DOWNLOAD IS TESTED AGAINST A DISK AND NOT AN EVENT.
 // The bridge road carries commands and not CDP events, so an implementation that waited for downloadProgress would pass on a debugging port and hang on the signed-in profile.
 // These tests therefore give the primitive a fake filesystem and check what an observer would check: a file appeared, it stopped growing, the folder was armed before the click, and the browser-wide behavior was handed back.
 

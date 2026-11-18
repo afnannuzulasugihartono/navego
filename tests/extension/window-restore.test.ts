@@ -3,7 +3,7 @@
 // @state: one rule per case: minimize is restored with focus, an unfocused window is focused, a focused window is left alone, and the caller can refuse the whole ask.
 // @dependencies: node:test, node:assert/strict, ../extension/lib/window-restore.js.
 
-// WHY THIS RULE IS PURE.
+// THIS RULE IS PURE.
 // The live proof is a browser window on the taskbar, and a test that needs one cannot run on a CI runner.
 // So the decision is a function of what chrome.windows.get answers, and the live suite drives the same decision against a real minimized window.
 

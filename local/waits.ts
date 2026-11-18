@@ -3,7 +3,7 @@
 // @state: settle and waitForIdle, then one mutation wait with text, row and stillness on top.
 // @dependencies: ./page-expressions.js.
 
-// WHY THE SETTLE LIVES HERE AND NOT WITH THE VERBS.
+// THE SETTLE LIVES HERE AND NOT WITH THE VERBS.
 // Every wait in this file polls the same thing: has the page stopped changing.
 // The settle is that question asked once, so the waits and the thing they wait on are answered by one module.
 
@@ -29,11 +29,11 @@ export interface WaitsDeps {
 }
 
 export function createWaits({ cdp, sleep, readState, readRows, read, primitives, now = Date.now }: WaitsDeps) {
-  // WHY THE SETTLE IS A PRIMITIVE AND NOT A TOOL.
+  // THE SETTLE IS A PRIMITIVE AND NOT A TOOL.
   // Every action needs the same short look before the page is read, so the wait belongs beside the actions, not in the surface where a caller has to remember it.
   // The page expression resolves with what it saw, which makes the cost inspectable instead of a blind sleep: quiet means the last change was at least 32ms ago, deadline means the page was still moving when the 120ms cap arrived.
 
-  // WHY THE WATCHER IS INSTALLED ONCE AND KEPT.
+  // THE WATCHER IS INSTALLED ONCE AND KEPT.
   // Measured on 2026-11-05: every settle re-armed its observer, and a fresh observer starts its quiet clock at zero, so a page that had been still for ten seconds still paid 32ms of quiet and four round trips before a word was read.
   // So the watcher stays on the page, the settle reads how long the page has been still, and a page that is still answers in one round trip.
   // A page that navigates loses the watcher with its document, so the settle asks for it again when the page says it is missing.
@@ -102,7 +102,7 @@ export function createWaits({ cdp, sleep, readState, readRows, read, primitives,
     }
   }
 
-  // WHY A QUIET PAGE STILL PACES THE WAIT.
+  // A QUIET PAGE STILL PACES THE WAIT.
   // The settle used to cost 41 ms on every check, so the wait never asked twice in a breath.
   // A page that is already quiet costs the settle nothing, so the wait would ask again as fast as the page can answer.
   // So a check that found nothing waits one settle beat before the next one: the page is watched, not hammered.
@@ -117,7 +117,7 @@ export function createWaits({ cdp, sleep, readState, readRows, read, primitives,
     }
   }
 
-  // WHY THE WAIT ASKS THE PAGE WHAT IT IS BEFORE IT TRUSTS ITS TEXT.
+  // THE WAIT ASKS THE PAGE WHAT IT IS BEFORE IT TRUSTS ITS TEXT.
   // This used to ask the url whether the page was a document editor and then read the document for it, which is the site recognition the drive no longer carries.
   // A length bar is not the decision either: measured on a real Google Doc, the chrome around the canvas holds 1,312 characters of its own, so a wait that only measures length polls the toolbar forever and reports found:false for text that is right there in the document.
   // So the probe decides once: a page with no canvas takes the cheap DOM answer, and a canvas page is read through the ladder, which reaches past the chrome.
@@ -160,7 +160,7 @@ export function createWaits({ cdp, sleep, readState, readRows, read, primitives,
     };
   }
 
-  // WHY ONLY A STILL PAGE IS REPORTED AS SETTLED.
+  // ONLY A STILL PAGE IS REPORTED AS SETTLED.
   // A wait that ran out of budget on a page that never stopped moving has not watched anything settle, and the look after it has to settle for itself.
   async function waitForStill({ timeoutMs = 8000, quietMs = 120, intervalMs: _intervalMs = 60, limit = 120, now: clock = now }: { timeoutMs?: number; quietMs?: number; intervalMs?: number; limit?: number; now?: () => number } = {}) {
     const started = clock();
@@ -185,7 +185,7 @@ export function createWaits({ cdp, sleep, readState, readRows, read, primitives,
     return { still: out.still, ms: out.ms, checks: out.checks, settled: out.still === true && out.checks > 1 };
   }
 
-  // WHY A URL WAIT IS A PRIMITIVE AND NOT A POLL AT THE CALL SITE.
+  // A URL WAIT IS A PRIMITIVE AND NOT A POLL AT THE CALL SITE.
   // A post-login redirect or a SPA route change is readable only when the page's own url is read again - a text wait cannot see it, a still wait answers on the wrong page.
   // The poll lives here beside the other waits so one answer envelope covers every way a page can be given time to move.
   async function waitForUrl({ contains, matches, timeoutMs = 10000, now: clock = now }: { contains?: string | null; matches?: string | null; timeoutMs?: number; now?: () => number } = {}) {

@@ -40,7 +40,7 @@ test('a scroll by pixels answers how far the view actually moved', async () => {
   assert.equal(out.root, 'document');
 });
 
-// WHY THE SCROLLER IS NAMED AND NOT ASSUMED.
+// THE SCROLLER IS NAMED AND NOT ASSUMED.
 // Measured live on a Google Doc with 21 pages: an end scroll moved the document element by 56 pixels and answered atEnd true.
 // A canvas editor scrolls a container of its own, so a tool that reports the window's offset is describing a page that did not move - and claiming its end.
 
@@ -86,7 +86,7 @@ test('an exhausted scroller is not a page that is finished', async () => {
   assert.match(out.why, /cannot show that its last words are on screen/, 'and it says exactly which claim it cannot make');
 });
 
-// WHY THE WINDOW DOES NOT WIN BY BEING FIRST.
+// THE WINDOW DOES NOT WIN BY BEING FIRST.
 // Measured live on a Google Doc: the window carries 56 pixels of travel and the document below it carries 21,874, so a tool that prefers the window scrolls 56 pixels and reports a page that barely moved.
 // The expression is what decides this, so the expression is what is read here.
 
@@ -152,7 +152,7 @@ test('a scroll that finds nothing says so, rather than reporting a scroll that w
   assert.match(out.why, /found nothing/);
 });
 
-// WHY A COMPUTED-STYLE READ AND NOT A FORMAT READER.
+// A COMPUTED-STYLE READ AND NOT A FORMAT READER.
 // The first draft of the missing piece was a format reader - font, size, spacing - and it was wrong twice over: it knew what a document is, and it could not tell an agent that a button turned blue.
 // What an agent actually needs is the element it read, the handful of values that decide what a page is showing, and whether that element is even on screen.
 
@@ -230,7 +230,7 @@ test('a computed read without a target is refused before it costs a round trip',
   assert.equal(cdp.calls.length, 0, 'and nothing went to the page');
 });
 
-// WHY A CLICK OFF THE PAGE IS REFUSED.
+// A CLICK OFF THE PAGE IS REFUSED.
 // Measured live: a tap on an outline row below the fold answered with a click at x 150, y -139.
 // A success, on a coordinate no pixel holds - the click landed in nothing and the answer said it landed.
 // That is the one class of silence this product cannot be allowed to have, so the click is refused and the refusal names the road that reaches the row.
@@ -245,7 +245,7 @@ test('a snapshot costs one round trip, whatever the page holds', async () => {
         return {
           result: {
             value: [
-              { role: 'menuitem', name: 'Table t ►', x: 200, y: 220 },
+              { role: 'menuitem', name: 'Table t â–º', x: 200, y: 220 },
               { role: 'textbox', name: 'Formula', x: 200, y: 220, value: '=SUM(A1)' }
             ]
           }
@@ -261,7 +261,7 @@ test('a snapshot costs one round trip, whatever the page holds', async () => {
     'one call decides the whole snapshot');
   assert.equal(calls[0].params.returnByValue, true, 'the list comes back as a value, not a handle');
   assert.deepEqual(snap, [
-    { role: 'menuitem', name: 'Table t ►', x: 200, y: 220 },
+    { role: 'menuitem', name: 'Table t â–º', x: 200, y: 220 },
     { role: 'textbox', name: 'Formula', x: 200, y: 220, value: '=SUM(A1)' }
   ]);
 });
@@ -310,14 +310,14 @@ test('a snapshot clamps its limit, so a wild request cannot walk the whole docum
   assert.match(limits.at(-1), /LIMIT = 1;/);
 });
 
-// WHY A GAPLESS RUN IS NO LONGER ASSERTED AS "FIRED TOGETHER".
+// A GAPLESS RUN IS NO LONGER ASSERTED AS "FIRED TOGETHER".
 // It used to be, and the overlap was real — but it bought almost nothing here and cost the one thing that mattered.
 // A round trip over loopback is about three milliseconds, so ten keys cost thirty; over the relay they cost twenty seconds, which is why the overlap existed at all.
 // What it actually cost was order: every send proves the link alive before it goes out, so two sends racing reach the wire in the order they finish proving.
 // Measured on a live Google Doc, Ctrl+1 typed a literal "1" instead of making a heading.
 // A run is now a list of things to do, in order, and only becomes work when it is reached.
 
-// WHY THESE CLAIMS EXIST.
+// THESE CLAIMS EXIST.
 // Measured live on this machine, against a Google Docs document whose window had been minimized: five characters were typed, the call answered with the number of characters it had inserted, and the document held none of them.
 // The page had no caret to receive them, and nothing in the answer said so - so the runtime asks the page what it holds before and after, and fails the edit when nothing moved.
 
@@ -411,7 +411,7 @@ test('the text caret rides the snapshot so the next keystroke lands knowingly', 
   assert.ok(!expression.includes('docs-texteventtarget-iframe'), 'the line lives behind caret, which selects first; the map carries coordinates only');
 });
 
-// WHY THE BEAT IS PINNED, NOT THE TIMING.
+// THE BEAT IS PINNED, NOT THE TIMING.
 // Docs drops a keyDown and keyUp that land in the same tick — three Enter presses vanished live while typed characters beside them survived — so a key holds its down edge one frame before the up, and a stream does not pay that beat twice.
 // Fake sleep makes the beats observable without waiting for them.
 
@@ -427,7 +427,7 @@ test('createObserveMethods exposes the reads of the page', () => {
     ['capture', 'captureSized', 'computed', 'menuTree', 'openMenu', 'pageLook', 'pageState', 'readRows', 'readState', 'resolveRow', 'scroll', 'snapshot', 'viewport']);
 });
 
-// WHY THE LOOK ASKS ONCE AND ANSWERS BOTH.
+// THE LOOK ASKS ONCE AND ANSWERS BOTH.
 // An action's answer needs the rows and the page state, and each one used to be its own evaluation - two waits for one look.
 // The look asks once and returns both, so the page cannot move between the two halves.
 
@@ -463,7 +463,7 @@ test('the page look answers the rows and the state in one evaluation', async () 
   assert.equal(lookState.textChars, 4);
 });
 
-// WHY THE PAGE READ MASKS A CREDENTIAL IN THE ADDRESS.
+// THE PAGE READ MASKS A CREDENTIAL IN THE ADDRESS.
 // Measured live on 2026-11-05: a sign-in form that submits by GET put the password in the address of the page, and every read of that page carried the secret back to the model.
 // The address is read on the way into the answer, so the mask belongs where the address is read, not in each tool that answers with it.
 

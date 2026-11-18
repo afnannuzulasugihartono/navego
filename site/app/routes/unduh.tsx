@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots)
+
 import { useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
@@ -61,7 +63,6 @@ export default function Unduh() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Unduh</p>
             <h1>Pasang dalam satu klik.</h1>
             <p className="lede">Satu build untuk lima browser. Setelah folder diizinkan, cek pembaruan berjalan tiap 30 menit dan build terbaru masuk sendiri.</p>
             <div className="hero-cta">
@@ -76,7 +77,6 @@ export default function Unduh() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Build</p>
                 <h2 id="browserTitle" className="section-title">Pilih browser Anda.</h2>
               </div>
               <p className="section-note">.zip untuk Load unpacked, .crx untuk mesin yang dikelola. Isinya build yang sama.</p>
@@ -98,7 +98,6 @@ export default function Unduh() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Langkah</p>
                 <h2 id="stepsTitle" className="section-title">Tiga langkah.</h2>
               </div>
             </div>
@@ -114,7 +113,6 @@ export default function Unduh() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker" style={{ color: 'var(--amber-hi)' }}>Izin</p>
                 <h2 id="permTitle" className="section-title">Enam izin, satu per satu.</h2>
               </div>
               <p className="section-note">Izin per situs: Anda yang memutuskan halaman mana boleh dibuka. Password, OTP, PIN, kartu, dan CVV selalu diblokir.</p>
@@ -134,7 +132,6 @@ export default function Unduh() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Verifikasi</p>
                 <h2 id="verifyTitle" className="section-title">Bandingkan sidik jarinya.</h2>
               </div>
               <p className="section-note">Setiap rilis punya sidik jari SHA-256 sendiri. Dua perintah ini harus mencetak nilai yang sama.</p>
@@ -160,7 +157,6 @@ export default function Unduh() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Dukungan</p>
                 <h2 id="supportTitle" className="section-title">Browser yang didukung.</h2>
               </div>
             </div>

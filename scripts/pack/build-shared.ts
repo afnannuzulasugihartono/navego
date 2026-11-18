@@ -16,7 +16,7 @@ if (!fs.existsSync(path.join(repo, 'node_modules', 'typescript'))) {
   process.exit(1);
 }
 
-// WHY THE CLEAN RUNS FIRST, AND WHY IT REFUSES.
+// THE CLEAN RUNS FIRST, AND WHY IT REFUSES.
 // tsc writes beside the sources, so a file deleted from the source tree would keep its old emitted twin forever, and a stale twin is a module the tests can still import and pass with.
 // The clean therefore removes every emitted twin - .js and .d.ts together - and refuses to remove a .js or .d.ts that has no .ts source beside it.
 // The declarations are written beside the .js so Deno can read them for typechecking hosted functions; they are generated artifacts, never hand-written.
@@ -31,7 +31,7 @@ function nodeGitList(): string[] {
   return execFileSync('git', ['ls-files', 'shared'], { cwd: repo, encoding: 'utf8' }).split('\n').filter(Boolean);
 }
 
-// WHY THE TRACKED DECLARATION SURVIVES THE CLEAN.
+// THE TRACKED DECLARATION SURVIVES THE CLEAN.
 // git ls-files knows which .d.ts is hand-written; those (host.d.ts) are never removed by the clean, whatever source beside them says.
 
 for (const entry of fs.readdirSync(target)) {
@@ -50,7 +50,7 @@ if (refused.length) {
 
 execFileSync(process.execPath, [path.join(repo, 'node_modules', 'typescript', 'bin', 'tsc'), '-p', path.join(repo, 'tsconfig.shared.json')], { cwd: repo, stdio: 'inherit' });
 
-// WHY THE DECLARATIONS ARE REWRITTEN FROM .js TO .d.ts BEFORE ANY CONSUMER SEES THEM.
+// THE DECLARATIONS ARE REWRITTEN FROM .js TO .d.ts BEFORE ANY CONSUMER SEES THEM.
 // Deno resolves flat-ESM imports against the actual .js file; the .d.ts file only matters for tsc, and for type-only consumers (hosted functions) the .d.ts path is the one loaded.
 // Keeping .js inside the declarations would force hosted functions to typecheck the .js implementation and fail on missing type-only exports, so the spec path inside the declarations is rewritten to the .d.ts file itself.
 

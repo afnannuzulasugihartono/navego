@@ -1,3 +1,4 @@
+/* decisions.json -> D01, D02, D03, D04, D05, D06, D07, D08, D09, D10, D11, D12, D13, D14, D15, D16, D25 (body, scale, rhythm, alignment, fonts, focus, text-wrap) */
 /*
  * Navego — design tokens.
  * The single source of truth for color, space, type and layout.
@@ -9,7 +10,6 @@
 
 :root {
   --ground: #f6f1e7;
-  --ground-2: #efe8d8;
   --paper: #ffffff;
   --panel: #fbfaf5;
   --panel-2: #f2ede0;
@@ -28,30 +28,51 @@
   --amber: #d8923f;
   --amber-hi: #e9ab58;
   --amber-deep: #b8742a;
-  --lime: #8ee06f;
   --good: #1f7a2e;
   --good-bg: #e7f6e3;
-  --warn: #b45309;
   --warn-bg: #fdf0b8;
   --danger: #c0123f;
-  --danger-bg: #fbe4e4;
 }
 
-/* type */
+/*
+ * type — every step is an even pixel size; the body is 14 px.
+ * scale in px: 12 xs, 14 sm (body), 16 base, 18 lg, 20 xl, 24 2xl, 28 3xl (h2), 40 title (h1), 64 hero (beranda h1) decisions.json -> D01, D02, D03
+ */
 
 :root {
   --font-sans: Tahoma, Verdana, system-ui, sans-serif;
   --font-display: 'Arial Black', 'Arial Rounded MT Bold', Verdana, sans-serif;
   --font-mono: 'Lucida Console', ui-monospace, Consolas, monospace;
-  --text-2xs: 0.72rem;
-  --text-xs: 0.78rem;
-  --text-sm: 0.86rem;
-  --text-base: 0.96rem;
-  --text-lg: 1.12rem;
-  --text-xl: 1.38rem;
-  --text-2xl: clamp(1.55rem, 2.4vw, 2.15rem);
-  --text-title: clamp(2rem, 4vw, 3rem);
-  --text-hero: clamp(2.6rem, 7.4vw, 4.5rem);
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.75rem;
+  --text-title: 2.5rem;
+  --text-hero: 4rem;
+}
+
+/*
+ * the one spacing contract — Butterick (Practical Typography): paragraph spacing 50-100 % of text size (1 em); a heading stands 32 px above its text (larger than paragraph spacing, so it stands out) and 12 px below (closer to its text) decisions.json -> D08, D09
+ */
+
+:root {
+  --rhythm-paragraph: 1em;
+  --rhythm-heading-before: 2rem;
+  --rhythm-heading-after: 0.75rem;
+}
+
+/*
+ * line heights — unitless, per MDN and Butterick (120-145 %); USWDS heading token 1.25, body 1.5, small 1.4 decisions.json -> D04, D05
+ */
+
+:root {
+  --leading-display: 1.1;
+  --leading-heading: 1.25;
+  --leading-body: 1.5;
+  --leading-small: 1.4;
 }
 
 /* space */
@@ -72,10 +93,14 @@
 
 :root {
   --maxw: 1120px;
-  --gutter: clamp(1.25rem, 4vw, 2.5rem);
+  --gutter: 20px;
   --radius: 14px;
   --radius-sm: 10px;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 940px) {
+  :root { --gutter: 32px; }
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -85,15 +110,30 @@ html { scroll-behavior: smooth; font-family: var(--font-sans); container-type: s
 :target { scroll-margin-top: 4.75rem; }
 
 h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
+h1, h2, h3, h4, h5, h6 { margin: 0; font-family: var(--font-display); font-weight: 900; letter-spacing: -0.02em; color: var(--navy-deep); text-align: left; }
+h1 { font-size: var(--text-title); line-height: var(--leading-display); }
+h2 { font-size: var(--text-3xl); line-height: var(--leading-heading); }
+h3 { font-size: var(--text-xl); line-height: var(--leading-heading); }
+h4 { font-size: var(--text-lg); line-height: var(--leading-heading); }
+h5 { font-size: var(--text-base); line-height: var(--leading-small); }
+h6 { font-size: var(--text-sm); line-height: var(--leading-small); }
+
+/* the one spacing contract — text to heading 32 px, heading to body 12 px, paragraphs 1 em */
+
+p + p { margin-top: var(--rhythm-paragraph); }
+p + :is(h2, h3, h4, h5, h6),
+ul + :is(h2, h3, h4, h5, h6),
+ol + :is(h2, h3, h4, h5, h6) { margin-top: var(--rhythm-heading-before); }
+:is(h1, h2, h3, h4, h5, h6) + :is(p, ul, ol, .section-note) { margin-top: var(--rhythm-heading-after); }
+:is(h1, h2, h3, h4, h5, h6) + :is(h1, h2, h3, h4, h5, h6) { margin-top: var(--rhythm-heading-before); }
 
 p, li, blockquote, dd { text-wrap: pretty; }
 
 body {
   background: var(--ground);
   color: var(--ink);
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  line-height: 1.6;
+  font-size: var(--text-sm);
+  line-height: var(--leading-body);
   -webkit-font-smoothing: antialiased;
 }
 

@@ -3,7 +3,7 @@
 // @state: owns the in-memory activity table mirrored to chrome.storage.local; the chip in the held tab renders from it and the popup reads it.
 // @dependencies: guards
 
-// WHY IN MEMORY FIRST AND STORAGE MIRROR SECOND.
+// IN MEMORY FIRST AND STORAGE MIRROR SECOND.
 // The dispatch path may fire many times per page; a storage read per call would add a round trip to every agent command.
 // Memory is the truth, storage is what the popup and the first chip see.
 
@@ -19,7 +19,7 @@ let activity: AgentActivity | null = null;
 
 const ACTIVITY_STORAGE_KEY = 'oa_agent_activity';
 
-// WHY THE HELPER: an agent holds the tab only the moment a command carries an explicit tabId; a bare ping has no target and gets no marker.
+// THE HELPER: an agent holds the tab only the moment a command carries an explicit tabId; a bare ping has no target and gets no marker.
 
 export function agentTabFor(params: unknown): number | null {
   if (!isRecord(params)) return null;

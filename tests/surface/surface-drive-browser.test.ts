@@ -3,7 +3,7 @@
 // @state: one drill that profiles a real surface, reads it through the gated ladder, and proves the caret was not moved.
 // @dependencies: node:test, node:assert/strict, ../local/driver.js.
 
-// WHY THIS DRILL IS SKIPPED RATHER THAN FAKED.
+// THIS DRILL IS SKIPPED RATHER THAN FAKED.
 // A unit test proves the decision; only a real browser proves the drive.
 // This drill needs a browser listening on a debugging port with a page to read, which a CI machine does not have, so it says so and stays out of the way instead of pretending.
 
@@ -89,7 +89,7 @@ test('a read without consent moves no caret and names what it skipped', { skip }
   }
 });
 
-// WHY THIS DRILL DOES NOT FORCE THE GATED STEP.
+// THIS DRILL DOES NOT FORCE THE GATED STEP.
 // On a surface whose accessibility tree answers, the ladder never reaches the borrow, and that is the right order rather than a gap in the test.
 // The gate itself is pinned by tests/surface/surface-drive.test.ts against a fake, where the accessibility tree can be made poor on purpose; what this drill proves is that the ladder really does answer a real canvas page before the borrow is ever considered.
 

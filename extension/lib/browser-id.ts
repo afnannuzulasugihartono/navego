@@ -3,12 +3,12 @@
 // @state: the browser family from the strongest signal the browser publishes, and the device name that family implies.
 // @dependencies: none.
 
-// WHY THE USER AGENT STRING ALONE IS NOT ENOUGH.
+// THE USER AGENT STRING ALONE IS NOT ENOUGH.
 // Brave, Edge, Opera and Vivaldi all send a Chrome user agent, so a browser that reads only the string calls every one of them Chrome, and the dashboard then shows five devices under the same name for browsers that are not the same.
 // The signals that do not lie are the ones the browser publishes itself: navigator.brave, the brand list in userAgentData, and the vendor.
 // The string is the last resort, not the first.
 
-// WHY THE NAME FOLLOWS THE BROWSER.
+// THE NAME FOLLOWS THE BROWSER.
 // A device name is how a person tells two browsers apart in a list, and "opera-4" says nothing about which browser it is.
 // So a new device takes the family name in lower case, and the server adds the number when a second device of the same family appears.
 

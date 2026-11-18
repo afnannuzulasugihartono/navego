@@ -23,7 +23,7 @@ if (!files.length) {
   process.exit(2);
 }
 
-// WHY THE TRIM IS A LOOP AND NOT TWO PATTERNS.
+// THE TRIM IS A LOOP AND NOT TWO PATTERNS.
 // SonarCloud flagged the trim as a pattern that can walk back into a run it has already matched (S8786), which is a fair thing to be suspicious of in a script that names migrations.
 // Walking the string says exactly what it does, and the output is the same string: the folded name with no leading or trailing underscore, cut to sixty characters.
 

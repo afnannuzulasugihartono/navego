@@ -13,11 +13,11 @@ const repo = fileURLToPath(new URL('../..', import.meta.url));
 import path from 'node:path';
 import fs from 'node:fs';
 
-// WHY THE SPAWN RETRIES ONCE AND THEN DUMPS EVIDENCE.
+// THE SPAWN RETRIES ONCE AND THEN DUMPS EVIDENCE.
 // A handful of fresh GitHub runner VMs has thrown a census whose spawn lost whole top-level directories between the build step and the test, with no code change anywhere; the gate is right to assert the sources, it just must not say nothing about what it saw.
 // One retry separates a fluke from a real tree, and if both attempts lose the directory the test prints the directory itself so the next failure arrives with the runner's own eyes.
 
-// WHY THE MESSAGE IS COMPACT.
+// THE MESSAGE IS COMPACT.
 // The census list is ~300 files and ~12 KB; joining the whole list into the assertion message made the runner's own error print eat the end of it, so failures arrived without the tail that says WHICH files were lost.
 // The assertion's power does not change — the same three includes() checks run on the same list — only the evidence does.
 // The spawn also carries an explicit 64 MiB maxBuffer: a truncated stdout is the one thing that would make the includes() checks fail without any file missing, and it must not be able to happen silently.

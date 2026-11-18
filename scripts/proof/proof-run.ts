@@ -3,7 +3,7 @@
 // @state: the fixture portal, a throwaway Chrome, the MCP client over stdio, the five steps, and the record the suite rechecks.
 // @dependencies: node:child_process, node:crypto, node:fs, node:http, node:os, node:path, node:url, ../local/browsers.js, ../local/transport.js, ../../tests/helpers/fake-cloud.ts.
 
-// WHY THIS FILE EXISTS.
+// THIS FILE EXISTS.
 // The product claims it drives a browser and hands back designed office files, and until this run the claim rested on separate tests: one drove a fake page, another wrote a workbook.
 // A run that does both in one breath is the only thing that answers "can it actually do the job", and the hashes are what make the answer checkable instead of a story.
 
@@ -24,14 +24,14 @@ const NO_STORE_GET = { method: 'GET', cache: 'no-store' as const };
 const bodyRecord = (body: unknown): Record<string, unknown> | null =>
   typeof body === 'object' && body !== null ? body as Record<string, unknown> : null;
 
-// WHY THE CLOUD METER IS ANSWERED BY A LOCAL STUB IN THIS RUN.
+// THE CLOUD METER IS ANSWERED BY A LOCAL STUB IN THIS RUN.
 // The bridge opens every session against the cloud meter, which knows an account and its plan; a throwaway Chrome with a throwaway profile has neither, so the meter refuses it with "Unauthorized device" and the extension is dropped before the first command.
 // Measured on 2026-11-15: the proof's first open_url came back empty, then the bridge's own health answered linked:false with meterRefusal "Unauthorized device." - the drive was refused, not slow.
 // So the proof points NAVEGO_CLOUD_URL at a loopback stub that grants a pilot session, exactly the way the local suite proves the bridge's own side of that conversation.
 // Everything else in the run is the product: the shipped extension, the shipped bridge, the shipped MCP server, and the shipped bytes.
 // The record says this out loud, because a receipt that hid the stub would be a receipt of something nobody runs.
 
-// WHY THE SERVER ANSWERS FROM A WHITELIST.
+// THE SERVER ANSWERS FROM A WHITELIST.
 // The portal is two files, and a server that joined the request into a folder would be a door nothing needs.
 
 const SERVED = new Map([
@@ -63,13 +63,13 @@ export async function serveCompany(company: string = path.resolve('tests', 'fixt
   };
 }
 
-// WHY THE PORT IS NOT THE EVERYDAY ONE.
+// THE PORT IS NOT THE EVERYDAY ONE.
 // A browser started on the shared port is the browser the person is using, and a proof that drives that one can destroy their session.
 // The shared port is refused by name rather than left to a comment.
 
 const SHARED_PORT = 9222;
 
-// WHY THE PROOF HAS A PORT OF ITS OWN.
+// THE PROOF HAS A PORT OF ITS OWN.
 // The extension cannot be configured after install, so the copy the proof loads is the copy the proof patches, and the bridge that copy dials belongs to the proof alone.
 // That means the everyday browser keeps its own bridge and the proof keeps a separate one: two extensions, two browsers, two loopback ports, and nobody drives the signed-in window by accident.
 
@@ -107,7 +107,7 @@ function browserBinary(candidates: string[]) {
   return null;
 }
 
-// WHY THE EXTENSION IS PATCHED IN A COPY.
+// THE EXTENSION IS PATCHED IN A COPY.
 // The proof proves the extension that would ship, so the only edit it makes is the address it dials; every line that decides what this product is remains the shipped line.
 
 function extensionForProof(root: string, bridgePort: number) {
@@ -126,15 +126,15 @@ function findExtensionBrowser() {
   return browserBinary(EXTENSION_CANDIDATES());
 }
 
-// WHY THE PROFILE IS TEMPORARY AND ITS REMOVAL IS FORGIVING.
+// THE PROFILE IS TEMPORARY AND ITS REMOVAL IS FORGIVING.
 // The cookies and history the run makes must die with it, and a profile folder Chrome still holds for a moment is cleared by the operating system later.
 // A cleanup that could throw would mask the step that actually failed.
 
-// WHY THE PROOF WAITS FOR THE BRIDGE TO NAME THE DEVICE.
+// THE PROOF WAITS FOR THE BRIDGE TO NAME THE DEVICE.
 // The browser answers its debugging port long before its extension is awake: the worker starts, probes the bridge, and dials in, and a command that lands in that gap is answered by nobody.
 // Measured on 2026-11-15: the first open_url of a fresh throwaway Chrome came back empty, because the call raced the worker's wake-up; the run before it, minutes earlier, had passed.
 // So the proof waits for the fact it needs - the bridge naming a device - instead of racing the extension to the first command.
-// WHY THE WAIT CANNOT LIVE INSIDE launchProofBrowser: the bridge socket belongs to the local server, and that server is spawned by speakMcp, after the browser is up.
+// THE WAIT CANNOT LIVE INSIDE launchProofBrowser: the bridge socket belongs to the local server, and that server is spawned by speakMcp, after the browser is up.
 // A wait placed before the server exists waits for a port nobody will ever open.
 
 async function waitForBridgeDevice(bridgePort: number, timeoutMs = 30000) {
@@ -156,7 +156,7 @@ async function waitForBridgeDevice(bridgePort: number, timeoutMs = 30000) {
   throw new Error(`the proof extension never linked the loopback bridge on ${bridgePort}; the bridge said: ${last}`);
 }
 
-// WHY THE BRIDGE IS WAITED FOR BEFORE THE BROWSER IS LAUNCHED.
+// THE BRIDGE IS WAITED FOR BEFORE THE BROWSER IS LAUNCHED.
 // The extension probes the bridge once when its worker wakes, and a bridge that is not there yet is a probe that fails: the worker then waits for its next wake - the alarm, half a minute away - before it looks again.
 // Measured on 2026-11-15: with the browser launched first, the proof waited thirty seconds for a link that came only when the alarm woke the worker; with the bridge up first, the extension linked in its first second.
 // So the local server starts first, the bridge answers, and the browser joins a bridge that is already there.
@@ -210,7 +210,7 @@ export async function launchProofBrowser({ port = Number(process.env.NAVEGO_PROO
   };
 }
 
-// WHY THE CLIENT IS THIS SMALL.
+// THE CLIENT IS THIS SMALL.
 // MCP over stdio is one JSON object per line, and the server answers every request with the id it was given.
 // A client that framed anything else would be testing its own idea of the protocol instead of the one the product ships.
 
@@ -278,7 +278,7 @@ export function speakMcp({ port, cwd = process.cwd(), env = process.env, bridgeP
     child.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', id, method, params })}\n`);
   });
 
-  // WHY THE ANSWER IS ONE DOCUMENT: the server puts the cost inside the answer, under elapsedMs, and never in a block of its own.
+  // THE ANSWER IS ONE DOCUMENT: the server puts the cost inside the answer, under elapsedMs, and never in a block of its own.
   // Measured on 2026-11-15: this reader still expected a second text block reading "123ms", so every body it parsed was empty and open_url looked like it had returned nothing at all.
   const tool = async (name: string, args: Record<string, unknown> = {}) => {
     const result = await call('tools/call', { name, arguments: args }) as { content?: Array<Record<string, unknown>> } | undefined;
@@ -324,7 +324,7 @@ export const sha256 = (file: string) => crypto.createHash('sha256').update(fs.re
 
 const relative = (root: string, file: string) => path.relative(root, file).split(path.sep).join('/');
 
-// WHY THE SLIDE COUNT IS READ FROM THE FILE.
+// THE SLIDE COUNT IS READ FROM THE FILE.
 // The builder says how many slides it was given, and the cover is added without a word in that answer.
 // The count that matters is what PowerPoint will show, so it is read from the archive's own directory.
 
@@ -352,13 +352,13 @@ function slideCount(bytes: Uint8Array | Buffer) {
   return slides;
 }
 
-// WHY EVERY STEP THROWS INSTEAD OF COLLECTING.
+// EVERY STEP THROWS INSTEAD OF COLLECTING.
 // A proof that carries on after a failed download writes a record of something that did not happen.
 // The first wrong answer ends the run, and the message names the call and what it left behind.
 
 const MARKS = ['Portal Mitra', 'Unduh CSV'];
 
-// WHY THE PAPERS ARE READ FROM A COPY.
+// THE PAPERS ARE READ FROM A COPY.
 // The deck builder writes its provenance beside its source, so pointing it at the fixture would rewrite a tracked file on every run.
 // The copy costs three kilobytes and keeps the run from touching the tree it is proving.
 
@@ -405,7 +405,7 @@ export async function runProof({
   };
 
   try {
-    // WHY THE BRIDGE IS THE READINESS GATE: the local server owns the bridge socket, so the device appears there only when the extension's worker is awake and linked; nothing else in the run can answer a page action.
+    // THE BRIDGE IS THE READINESS GATE: the local server owns the bridge socket, so the device appears there only when the extension's worker is awake and linked; nothing else in the run can answer a page action.
     try {
       await waitForBridgeDevice(browser.bridgePort);
     } catch (error) {
@@ -534,7 +534,7 @@ export async function runProof({
   }
 }
 
-// WHY THE RECORD IS MARKDOWN AND JSONL BOTH.
+// THE RECORD IS MARKDOWN AND JSONL BOTH.
 // The JSONL is what the suite reads, one call per line, and the Markdown is what a person reads, one table.
 // Neither is generated from the other, so a change to one cannot quietly erase the other.
 

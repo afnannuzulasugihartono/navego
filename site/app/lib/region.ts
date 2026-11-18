@@ -3,7 +3,7 @@
 // @state: Europe (the EU/EEA, the United Kingdom, Switzerland and the microstates), the United States, Canada, Australia and New Zealand see the premium band; every other country, and an unknown country, sees the affordable band.
 // @dependencies: none.
 
-// WHY TWO BANDS AND NOT ONE PRICE.
+// TWO BANDS, NOT ONE PRICE - purchasing power decides which group leads.
 // Every plan is sold at the same dollar prices everywhere; what changes is which group of plans leads the page.
 // The visitor's country decides which presentation leads, because the purchasing power of a buyer in Jakarta and a buyer in Berlin is not the same, and the plans are built for both.
 // The cohort is the owner's decision, stated plainly: Europe, North America and Australia/New Zealand see the premium group; everything else, including high-income Asia and the Gulf, sees the affordable group.

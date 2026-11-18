@@ -3,7 +3,7 @@
 // @state: env-driven environment (sandbox default, live via PAYPAL_ENV=live), three operations exposed for the billing function, and one verifier PayPal itself signs.
 // @dependencies: edge runtime fetch.
 
-// WHY THIS IS A MODULE AND NOT A STRING INSIDE navego-billing.
+// THIS IS A MODULE AND NOT A STRING INSIDE navego-billing.
 // The HTTP surface here is small but the signature care is not: a wrong header, a stale transmission, a mismatched webhook id, or a timing-broken comparison are all ways to make a forged USD claim look like a real one.
 // One module houses one authority about how PayPal's endpoints answer so test harnesses can drive them and the rest does not re-implement token acquisition or the header names.
 
@@ -15,7 +15,7 @@ export interface PaypalEnvironment {
   webhookId: string;
 }
 
-// WHY globalThis AND NOT `Deno` OR `process` BY NAME.
+// globalThis AND NOT `Deno` OR `process` BY NAME.
 // This module runs in Deno (the edge function) and in Node (the test suite), and referencing either runtime's global directly makes the other's type-check fail.
 // Reading both through globalThis keeps one file that compiles in both and costs one cast.
 

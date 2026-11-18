@@ -3,24 +3,24 @@
 // @state: one probe expression, one classifier, one wait, and a sign-in that reads its secret from a file the person owns.
 // @dependencies: node:fs, node:path.
 
-// WHY THIS FILE EXISTS.
+// THIS FILE EXISTS.
 // A portal that signs in is the first step of every real business job, and the old answer - stop, ask the person - left the drive with nothing to do on the page it was already on.
 // So the gate is detected from the page itself, named honestly, and only ever answered the way the person allowed: a password from a file they wrote, a one-time code never answered by the agent.
 
-// WHY THE DEFAULT IS STILL "NEVER TYPE A PASSWORD".
+// THE DEFAULT IS STILL "NEVER TYPE A PASSWORD".
 // Passwordless default is what keeps an agent from leaking a credential it read.
 // So nothing here types a password unless the caller names a credentials file, the file holds an account for exactly this domain, and the caller asked for the sign-in by name.
 // The probe reads boxes, never values: a value never enters the model's context.
 
-// WHY THE ONE-TIME CODE IS NEVER ANSWERED.
+// THE ONE-TIME CODE IS NEVER ANSWERED.
 // A code that arrives on the person's phone is proof that the person is present; an agent that could answer it would be pretending to be them.
 // So an OTP field outranks every other gate: the sign-in refuses by name, types nothing, and the person finishes it in their own browser.
 
-// WHY THE CAPTCHA IS NAMED AND LEFT ALONE HERE.
+// THE CAPTCHA IS NAMED AND LEFT ALONE HERE.
 // The solver is opt-in and lives in its own module; this file's job is to say a captcha is there, which kind it is, and where the image and the field sit.
 // A default that silently solved captchas would break the promise the blocking gate was built on, so the classifier never solves anything.
 
-// WHY THE FIELDS ARE READ AS BOXES AND NOT AS SELECTORS.
+// THE FIELDS ARE READ AS BOXES AND NOT AS SELECTORS.
 // The drive clicks by coordinate and every click is measured against the live page, so a box read now and clicked a moment later still lands on the field.
 // A selector would have to be re-run against a page that may have moved, and a stale selector is how a password ends up in a search box.
 
@@ -83,7 +83,7 @@ const defaultSleep = (ms: number) => new Promise<void>((resolve) => {
   setTimeout(() => resolve(), ms);
 });
 
-// WHY A CREDENTIAL IN AN ADDRESS IS MASKED.
+// A CREDENTIAL IN AN ADDRESS IS MASKED.
 // Measured live on 2026-11-05: a sign-in form that submits by GET put the password in the address of the page, so every read of that page carried the secret back into the model's context, into the history, and into the server log.
 // The mask sits where the address is read, so every answer that carries an address carries a safe one.
 
@@ -162,7 +162,7 @@ export function maskCredentialUrl(url: unknown): string {
   return touched ? parsed.toString() : raw;
 }
 
-// WHY THE CLASSIFIER ANSWERS ONE PRIMARY GATE AND THE WHOLE LIST.
+// THE CLASSIFIER ANSWERS ONE PRIMARY GATE AND THE WHOLE LIST.
 // A page can hold a password box and a captcha at once, and the next move depends on which one is asked for by name.
 // So gate is the one thing to handle now, in the order the person's presence is required: an OTP first, then a captcha, then a password.
 
@@ -202,7 +202,7 @@ export function classifyGate(facts: GateFacts = {}): { gate: DetectedGate['gate'
   return { gate, gates, why, evidence };
 }
 
-// WHY THE DETECT CARRIES THE BOXES AND NOT ONLY THE VERDICT.
+// THE DETECT CARRIES THE BOXES AND NOT ONLY THE VERDICT.
 // The sign-in that follows needs the field it is about to click, and reading the page a second time would pay the same probe twice.
 // The boxes never carry a value, so the extra data is geometry, not a secret.
 
@@ -233,7 +233,7 @@ export async function detectGate(driver: GateDriver): Promise<DetectedGate> {
   };
 }
 
-// WHY THE WAIT ENDS ON THE PAGE AND NOT ON A CLOCK.
+// THE WAIT ENDS ON THE PAGE AND NOT ON A CLOCK.
 // The person signing in takes as long as they take, so the loop watches the gate and stops the moment it is gone; the budget is a ceiling, not a guess.
 // Checks are also counted, so a sleep that returns at once cannot spin forever inside the budget.
 
@@ -261,7 +261,7 @@ export async function waitForGateClear(driver: GateDriver, { timeoutMs = 30000, 
   };
 }
 
-// WHY THE CREDENTIALS ARE READ FROM A FILE THE PERSON WROTE.
+// THE CREDENTIALS ARE READ FROM A FILE THE PERSON WROTE.
 // The secret has to come from somewhere the model never sees, or the sign-in is the leak.
 // So the account is matched by domain to the page it is on, the password is typed from disk and never returned, and a domain with no account refuses before a key is pressed.
 
@@ -299,7 +299,7 @@ function domainOf(url: unknown): string {
   }
 }
 
-// WHY THE ACCOUNT IS AN EXACT HOST BY DEFAULT.
+// THE ACCOUNT IS AN EXACT HOST BY DEFAULT.
 // A match that swallowed subdomains let a page on upload.filebackupload.someonedomain.com receive credentials for that domain.
 // An account may opt in to its subdomains by setting subdomains: true; nobody inherits them by accident.
 
@@ -313,7 +313,7 @@ function accountFor(accounts: Array<{ domain: string; username: string; password
   }) ?? null;
 }
 
-// WHY THE USERNAME IS MASKED IN THE ANSWER.
+// THE USERNAME IS MASKED IN THE ANSWER.
 // The answer travels back into the model's context, and the whole point is that the credential does not.
 // So the account is named by its domain and the person by one letter and an ellipsis: enough to see that the right account was used, not enough to reuse.
 
@@ -348,7 +348,7 @@ export async function loginWithCredentials(driver: GateDriver, { credentialsPath
   const passwordField = firstPassword;
   const submit = before.fields.submit[0] ?? null;
 
-  // WHY A GET FORM IS REFUSED.
+  // A GET FORM IS REFUSED.
   // Measured live on 2026-11-05: the form submitted by GET, so the password came back in the address of the page - in the answer, in the history, in the server log, and in the referrer of every later request.
   // A secret that travels in a URL leaks, so the agent refuses to type into a form that puts it there and leaves the sign-in to the person.
   const method = String(passwordField.method ?? '').toLowerCase();

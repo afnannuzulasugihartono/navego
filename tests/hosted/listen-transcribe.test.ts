@@ -15,7 +15,7 @@ import vm from 'node:vm';
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from '../../hosted/functions/_shared/cors.ts';
 import { requiredEnv } from '../../hosted/functions/_shared/required-env.ts';
 
-// WHY THE PROCESS GETS THE TWO THE BUNDLE DEMANDS.
+// THE PROCESS GETS THE TWO THE BUNDLE DEMANDS.
 // required-env is the real module the edge bundle uses, not a stand-in; it reads Deno from its own closure, which is this process.
 
 process.env.SUPABASE_URL ??= 'test';

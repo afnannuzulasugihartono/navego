@@ -3,7 +3,7 @@
 // @state: on the paired site, read the one cookie that identifies this browser profile and store it for pair time.
 // @dependencies: none.
 
-// WHY THIS FILE EXISTS The pairing identity lived in chrome.storage.local and nowhere else, and Chrome deletes that storage when the extension is removed.
+// THIS FILE EXISTS The pairing identity lived in chrome.storage.local and nowhere else, and Chrome deletes that storage when the extension is removed.
 // Every reinstall minted a fresh identity, and every re-pair minted a new device row, while the dashboard drowned in ghost browsers.
 // The browser profile outlives the extension, and its cookie jar is the only part of it a content script can read: so the site writes oa_device_id, this file mirrors it into storage, and pair time prefers what the jar holds.
 // One browser keeps one device across reinstalls; the mirror never fires on any other host and never writes when the jar holds nothing.

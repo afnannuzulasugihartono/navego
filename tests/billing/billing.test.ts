@@ -3,7 +3,7 @@
 // @state: the amount of an invoice, the two signatures, the attempt id a retry gets, the one rule that says whether a payment link is payable, and the rule that an undelivered month is not charged.
 // @dependencies: node:test, strict, node:crypto, ../hosted/functions/_shared/billing.ts.
 
-// WHY THESE RULES ARE TESTED AND NOT ASSUMED.
+// THESE RULES ARE TESTED AND NOT ASSUMED.
 // Money is the one place where being wrong is not a bug report but a customer's trust.
 // Every rule here is a promise to the person paying: they are charged for what was delivered, they can open their own invoice and nobody else's, and nobody can mark an invoice paid without the provider's signature.
 
@@ -104,7 +104,7 @@ test('the invoice link carries authority in itself, so it needs no lookup to be 
   assert.equal(verifyInvoiceToken('inv-1', token, ''), false, 'without a secret nothing is verified');
 });
 
-// WHY THE PROVIDER'S OWN FORMULA IS PINNED AND NOT RE-DERIVED HERE.
+// THE PROVIDER'S OWN FORMULA IS PINNED AND NOT RE-DERIVED HERE.
 // Midtrans documents signature_key as SHA512(order_id + status_code + gross_amount + ServerKey): the key is appended, not used as an HMAC secret.
 // The first version used HMAC and this test made the same call, so the test agreed with the bug while four live payments were refused.
 // The vector below was computed by .NET's SHA512 over "oa-1" + "200" + "99000.00" + "SB-Mid-server-test", so agreement is two implementations agreeing.
@@ -127,7 +127,7 @@ test('a payment notification is believed only when the provider signed it, by th
   assert.equal(notificationSignatureValid({ ...notification, signature_key: retired }, key), false, 'an HMAC with the key is not what Midtrans sends');
 });
 
-// WHY A DIGEST THAT ARRIVES AS A NUMBER IS REFUSED, AND NOT RESTORED.
+// A DIGEST THAT ARRIVES AS A NUMBER IS REFUSED, AND NOT RESTORED.
 // The provider sends every field as a string except a digest of only digits, which JSON.parse reads as a double: 15 or 16 digits out of 128, and the tail is gone.
 // Measured live on 2026-11-03: a "still pending" for a QRIS charge carried its signature as a number, was refused, and the invoice stayed open.
 // No reading of that double is provably the provider's digest, so one is never invented to make it pass: restoring it would let a forged body through on a guess.
@@ -145,7 +145,7 @@ test('a signature that arrives as a number is refused, because a double cannot c
   assert.equal(notificationSignatureValid({ ...notification, signature_key: 0 }, key), false);
 });
 
-// WHY THE PROVIDER'S FIELD NAME HAS A TEST OF ITS OWN.
+// THE PROVIDER'S FIELD NAME HAS A TEST OF ITS OWN.
 // The first rule read notification.signature while Midtrans sends signature_key, and the test above used the same invented name, so the test agreed with the bug instead of catching it.
 // Measured live: a sandbox payment settled, Midtrans answered PAID, and the invoice stayed open, because the signature arrived in a field this code did not read and the comparison was made against nothing.
 // A notification is the only way an invoice becomes paid, so the field name is pinned here rather than left to agree with whatever the code happens to say.
@@ -162,7 +162,7 @@ test('the signature is read from the field the provider sends, and the field is 
   assert.match(fn, /Boolean\(body\.order_id\) && Boolean\(body\.status_code\)/, 'a notification is recognised by what it says happened, not by carrying a signature');
 });
 
-// WHY "UNDERSTOOD" AND "PAID" ARE TWO DIFFERENT ANSWERS.
+// "UNDERSTOOD" AND "PAID" ARE TWO DIFFERENT ANSWERS.
 // The provider reads a non-2xx answer as "not delivered" and sends the same body again.
 // Measured live: a correctly signed "still pending" answered 400, and the provider's history showed it as undelivered beside a real rejection, so the rejection had no shape of its own.
 // The status code answers whether the body was received and understood; the body answers whether money moved.
@@ -186,7 +186,7 @@ test('a notification is acknowledged when it is understood, and refused when a h
   assert.equal(notificationAcknowledged(null), false);
 });
 
-// WHY A CLOSED INVOICE IS NOT CLOSED AGAIN.
+// A CLOSED INVOICE IS NOT CLOSED AGAIN.
 // Measured live on 2026-10-26: a settlement closed an invoice at 08:55:13, a pending notification arrived eleven seconds later, and paid_at moved to 08:55:24.
 // The moment money landed is evidence the provider cannot restore, so a second notification may confirm it and must never rewrite it.
 
@@ -197,11 +197,11 @@ test('an invoice that is already paid is not paid again', () => {
   assert.equal(needsClosing(null), false);
 });
 
-// WHY THE LOG HAS TO BE WRITTEN FROM BOTH SIDES OF THE VERDICT.
+// THE LOG HAS TO BE WRITTEN FROM BOTH SIDES OF THE VERDICT.
 // A refusal used to leave no trace, so "the provider never reached us" and "it reached us and we said no" looked identical, and four payment attempts were spent telling them apart.
 // The row is written on the refused branch and on the accepted branch, before the answer is returned.
 
-// WHY THE PROVIDER IS ASKED WHEN THE SIGNATURE DOES NOT MATCH.
+// THE PROVIDER IS ASKED WHEN THE SIGNATURE DOES NOT MATCH.
 // Real notifications arrived from the provider's own user agent and were refused, and the body could not say whether it was forged or signed with a different secret.
 // The provider records the transaction, so its answer is stronger than the body: it is about its own transaction, never about the claim in the request.
 
@@ -217,7 +217,7 @@ test('the status of an order is asked on the host the stated environment names',
   assert.equal(snapStatusRequest({ orderId: '', serverKey: 'k' }), null, 'without an order there is nothing to ask about');
 });
 
-// WHY A MISSING TRANSACTION IS READ FROM THE BODY AND NOT THE HTTP STATUS.
+// A MISSING TRANSACTION IS READ FROM THE BODY AND NOT THE HTTP STATUS.
 // Midtrans documents a 200 whose body carries status_code 404 and "Transaction doesn't exist.", and the live attempt on 2026-10-26 answered exactly that while its payment page still showed a pending QRIS.
 // A retry that read only the HTTP status refused to close an attempt that was not there, so the customer could never get a second link.
 // The rule is a helper because the call site that uses it runs where no Node test can follow.
@@ -235,7 +235,7 @@ test('a transaction the provider says does not exist is read from the body, wher
   assert.match(fn, /status_code \$\{code\}/, 'a refused status names the provider code an operator needs');
 });
 
-// WHY A RETRY ASKS THE PROVIDER TO EXPIRE THE OLD ATTEMPT.
+// A RETRY ASKS THE PROVIDER TO EXPIRE THE OLD ATTEMPT.
 // A customer who asks for a second link has said the first one is not the one they will pay, and two payable transactions for one invoice is how somebody pays twice.
 // The expire call sits beside the status question on the same host, names the order in the path, and carries the key in the header so it never appears in a URL.
 
@@ -263,7 +263,7 @@ test('only the provider\'s own words for a settlement count as paid', () => {
   assert.equal(providerSettlement(null).settled, false);
 });
 
-// WHY A SETTLEMENT CARRIES HOW THE MONEY CAME.
+// A SETTLEMENT CARRIES HOW THE MONEY CAME.
 // "Paid" is the least an operator can be told: a QRIS settlement, a card capture and a transfer are different evidence.
 // The provider names the method and its own transaction in every answer, so both are carried back and stored when the invoice closes, and an absent field is an empty string rather than undefined.
 
@@ -286,7 +286,7 @@ test('a refused signature asks the provider, and the provider formula is the onl
   assert.doesNotMatch(fn, /whichReadingSigned/, 're-reading the key cannot substitute for the formula the provider uses');
 });
 
-// WHY THE SHAPE IS MEASURED AND THE VALUE IS NOT.
+// THE SHAPE IS MEASURED AND THE VALUE IS NOT.
 // A masked dashboard field cannot show a key that arrived one character too long, and the value must never reach a log.
 // A count and a boolean answer the same question without carrying any part of the secret.
 // The sandbox prefix SB-Mid-server- was missing from the first version of this rule, so a correct sandbox key was reported as "not a provider key".
@@ -388,7 +388,7 @@ test('the provider order id is legal, stable, and changes when the amount change
   assert.match(long, /^[A-Za-z0-9._~-]+$/);
 });
 
-// WHY A RETRY MUST NOT REUSE AN ORDER ID.
+// A RETRY MUST NOT REUSE AN ORDER ID.
 // Midtrans refuses a second charge under an order id it already knows, and a notification names the attempt it belongs to.
 // So the attempt number is part of the hash input from the second attempt on, while the first keeps the id it has always had: an invoice that never retried must not change the id under a link already in a customer's hands.
 
@@ -419,7 +419,7 @@ test('the ledger is cents and the provider is rupiah, so the boundary converts b
   assert.equal(snapPaymentMethods(50, 'IDR').chargeable, false, 'nothing to charge below one rupiah');
 });
 
-// WHY THE SNAP REQUEST IS DRIVEN AGAINST A PROVIDER THAT IS STOOD UP IN THE TEST.
+// THE SNAP REQUEST IS DRIVEN AGAINST A PROVIDER THAT IS STOOD UP IN THE TEST.
 // The one step that was never proved was the request itself, because it lived inside a Deno handler and no test could reach it.
 // A real HTTP server in this test now carries the exact bytes the function would send, so the order id, the amount, the method list and the Basic header are checked by something that parses them the way Midtrans does.
 
@@ -448,7 +448,7 @@ test('an invoice the provider cannot charge produces no request at all', () => {
   assert.equal(snapChargeRequest({ ...SNAP_INVOICE, currency: 'USD', enabled: ['other_qris'] }), null);
 });
 
-// WHY THE DEADLINE IS THE PROVIDER'S AND THE PAGE'S AT ONCE.
+// THE DEADLINE IS THE PROVIDER'S AND THE PAGE'S AT ONCE.
 // The provider is asked for a 24-hour link and the page prints the moment it stops working; two numbers would drift and the page would lie about a link that had already died.
 // The deadline is computed from the same constant the request carries, so the customer reads the provider's own clock rather than a second opinion.
 
@@ -468,7 +468,7 @@ test('the charge carries the expiry only when asked, and the deadline is the sam
   assert.equal(JSON.parse(timed.body).transaction_details.gross_amount, 99000, 'the expiry does not change the amount');
 });
 
-// WHY THE LINK'S STATE IS ONE RULE.
+// THE LINK'S STATE IS ONE RULE.
 // The page, the create path and the refresh action all have to answer "can this link be paid?", and three answers would disagree the day one of them moved.
 // An unparseable deadline is "unknown" and not "expired": a link that may work is shown with an honest sentence, never hidden behind a guess.
 
@@ -524,12 +524,12 @@ test('the request is answered by a provider that parses it the way Midtrans does
   }
 });
 
-// WHY THE CALL SITE IS TESTED AND NOT ONLY THE HELPER.
+// THE CALL SITE IS TESTED AND NOT ONLY THE HELPER.
 // The Snap request was extracted into a helper and the helper was proved against a provider stood up here, while the call inside the Deno function passed a name that did not exist in its scope.
 // The function answered 500 to a real invoice and the helper's tests stayed green, because a test of a function says nothing about the call that feeds it.
 // So the call is read here and the names it passes are checked against the names its own signature destructures.
 
-// WHY THE ENVIRONMENT IS STATED AND NOT READ FROM THE KEY.
+// THE ENVIRONMENT IS STATED AND NOT READ FROM THE KEY.
 // The prefix does name the environment today - sandbox keys start SB-Mid-server-, production keys Mid-server- - but the host is a setting the operator controls, not a fact parsed out of a secret.
 // A key sent to the wrong host is refused with 401 and no charge, which looks exactly like a bad key, so the rule states the environment and the refusal log names the host that was used.
 
@@ -562,7 +562,7 @@ test('the snap charge call passes the customer the function actually has', () =>
   }
 });
 
-// WHY THE LIFECYCLE IS PINNED IN THE SOURCE AND NOT ONLY IN THE HELPERS.
+// THE LIFECYCLE IS PINNED IN THE SOURCE AND NOT ONLY IN THE HELPERS.
 // The helpers decide what a link is and what an attempt id is; the function decides when a link is replaced, which attempt a notification closes, and which row a write may touch.
 // A helper test says nothing about a call that reads the wrong row, so the three rules that keep one payable transaction per invoice are named here.
 
@@ -576,7 +576,7 @@ test('one invoice keeps one payable transaction, and an older attempt cannot kil
   assert.match(fn, /is\("paid_at", null\)/, 'a write never reopens a paid row');
 });
 
-// WHY THE OPERATOR'S LINK IS PINNED TO THE SITE.
+// THE OPERATOR'S LINK IS PINNED TO THE SITE.
 // Measured live on 2026-10-26: the shared function domain answers the page as text/plain under a sandbox policy, so the function's own URL shows a customer source instead of a bill.
 // The site serves the same page through the Pages Function compiled from site/worker/_worker.ts to build/client/_worker.js, so the link an operator hands out is built from BILLING_PAGE_URL, and the function's URL remains only the fallback for a deployment that never set it.
 
@@ -609,7 +609,7 @@ test('the money rules run where Buffer does not exist, which is where they faile
   }
 });
 
-// WHY A MANUAL SETTLEMENT IS A FIRST-CLASS ROAD AND NOT A BACKDOOR.
+// A MANUAL SETTLEMENT IS A FIRST-CLASS ROAD AND NOT A BACKDOOR.
 // The first customers pay by transfer, because a provider account is not open yet, and an invoice that cannot record that money is a page that lies.
 // The rules are the same as the provider's: only an open invoice, only the amount it says, and a note naming who confirmed it - so the ledger can still be checked a year later.
 

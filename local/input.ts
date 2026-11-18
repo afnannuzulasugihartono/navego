@@ -3,7 +3,7 @@
 // @state: type, append, key, keys, selectAll and clear, over the edit signature that says the page moved.
 // @dependencies: ./page-expressions.js.
 
-// WHY THIS MODULE EXISTS
+// THIS MODULE EXISTS
 
 // Text is where a drive spends most of its round trips, and it is the one thing the protocol cannot confirm: Input.insertText answers ok on a page with no caret and nothing lands.
 // So the verbs that send text and keys live here beside the reads that prove the page took them, and nothing else.
@@ -145,11 +145,11 @@ export function createInputMethods({ cdp, primitives, sleep, chunkSize = 2000 }:
     return { ...out, landed: true, placed: await locateInsertion(text, before, seen.after) };
   }
 
-  // WHY AN APPEND AND NOT A TYPE.
+  // AN APPEND AND NOT A TYPE.
   // Measured live while building a thesis: the road to the end of a document was click somewhere, press Ctrl+End, and trust the caret - and once it did not go where it was told, a whole batch landed inside a table cell and recovering cost four extra calls and an undo.
   // An append is that promise with the positioning inside it.
 
-  // WHY "AT THE END" IS READ AND NOT AIMED FOR.
+  // "AT THE END" IS READ AND NOT AIMED FOR.
   // Moving a caret to the end of a long canvas document and reading the caret back is several round trips against a surface that mirrors into the DOM on the editor's own schedule.
   // What one evaluation can answer is whether anything follows the text that was just inserted: at the end, nothing does.
   // So atEnd is measured, and when the mirror is too stale to tell, the answer says found:false instead of claiming it.
@@ -200,7 +200,7 @@ export function createInputMethods({ cdp, primitives, sleep, chunkSize = 2000 }:
     return { key: name, modifiers: mask };
   }
 
-  // WHY A STREAM REPORTS THE COMPARISON INSTEAD OF A VERDICT.
+  // A STREAM REPORTS THE COMPARISON INSTEAD OF A VERDICT.
   // A shortcut in the middle of a stream can change the page without the text ever landing, so "the page changed" is the strongest thing a stream can honestly say - and it is the thing an agent needs to decide whether to look again.
 
   async function keys(events: unknown) {
@@ -225,7 +225,7 @@ export function createInputMethods({ cdp, primitives, sleep, chunkSize = 2000 }:
       go: () => Promise<{ chars?: number } | unknown>;
     }
     let run: InputJob[] = [];
-    // WHY A CHORD-ONLY STREAM DOES NOT POLL FOR TEXT.
+    // A CHORD-ONLY STREAM DOES NOT POLL FOR TEXT.
     // A menu or style chord moves no text signature, so the twelve-poll edit wait could only ever report moved:false — after 1.8 s of waiting for a mirror that was never coming.
     // Text still gets the slow-mirror budget, because that lag is real; a chord gets one settle and one honest signature instead.
     // A text stream with nothing focused gets neither: text sent to a button cannot land, so one focus read is cheaper than a poll budget that can only report moved:false.

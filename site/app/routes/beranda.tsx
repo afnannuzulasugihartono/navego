@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots)
+
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
 import { CommandPreview } from '../components/CommandPreview';
@@ -49,9 +51,6 @@ const JSON_LD = {
 
 const Ikon = ({ name }: { name: string }) => {
   const paths: Record<string, string> = {
-    tab: 'M4 4h16v16H4z M4 9h16',
-    tulis: 'M4 20h4l10-10-4-4L4 16z',
-    berkas: 'M6 3h8l4 4v14H6z M14 3v4h4',
     baca: 'M4 5h16v14H4z M8 9h8 M8 13h5',
     isi: 'M4 7h16 M4 12h16 M4 17h10',
     klik: 'M6 3l12 8-5 1 3 6-2 1-3-6-3 4z',
@@ -76,7 +75,6 @@ export default function Beranda() {
         <section className="hero" aria-labelledby="judul-beranda">
           <div className="wrap hero-grid">
             <div>
-              <p className="kicker">Agentic browser · lokal</p>
               <h1 id="judul-beranda">Satu perintah.<br />Browser Anda bekerja.</h1>
               <p className="lede">Navego membaca tab yang Anda tunjuk, mengisi kolom, mengklik tombol, lalu menyimpan hasilnya sebagai berkas.</p>
               <div className="hero-cta">
@@ -109,7 +107,6 @@ export default function Beranda() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Cara kerja</p>
                 <h2 id="judul-cara" className="section-title">Tiga langkah. Tanpa skrip.</h2>
               </div>
               <p className="section-note">Browser Anda tetap browser Anda. Halaman tidak pernah pergi ke server kami.</p>
@@ -135,7 +132,6 @@ export default function Beranda() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Kemampuan</p>
                 <h2 id="judul-kemampuan" className="section-title">Yang bisa dikerjakan di tab Anda.</h2>
               </div>
               <p className="section-note">Semua lewat primitive yang sama — bukan trik per situs. <Link to="/fitur">Lihat detail fitur →</Link></p>
@@ -156,7 +152,6 @@ export default function Beranda() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Coba</p>
                 <h2 id="judul-coba" className="section-title">Ketik perintahnya, lihat langkahnya.</h2>
               </div>
               <p className="section-note">Pratinjau alur, bukan eksekusi. Navego baru bergerak setelah terpasang di browser Anda.</p>
@@ -169,7 +164,6 @@ export default function Beranda() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Harga</p>
                 <h2 id="judul-harga" className="section-title">Satu dolar per bulan untuk mulai.</h2>
               </div>
               <p className="section-note">Bukan per klik, bukan langganan buta. <Link to="/harga">Bandingkan paket →</Link></p>
@@ -193,7 +187,6 @@ export default function Beranda() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">FAQ</p>
                 <h2 id="judul-tanya" className="section-title">Pertanyaan yang sering muncul.</h2>
               </div>
             </div>

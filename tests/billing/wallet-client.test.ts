@@ -3,7 +3,7 @@
 // @state: the device file, the pairing refusal, and the body each call sends.
 // @dependencies: node:test, node:assert/strict, node:fs, node:os, node:path, ../local/wallet-client.js.
 
-// WHY THE BODY IS THE SUBJECT HERE.
+// THE BODY IS THE SUBJECT HERE.
 // The server identifies the owner by the device it was given, so a client that forgets the device, or sends a session-shaped field instead, is a client the server refuses.
 // The mapping from a readable call to the server's field names is also where a settle would quietly become a second charge if the reservation id were dropped.
 

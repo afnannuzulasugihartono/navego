@@ -9,7 +9,6 @@
 // Content scripts are classic scripts and cannot use ES imports, so the same pattern is used here rather than duplicating the logic inline or adding a second, drifting copy.
 // It stays importable in Node for tests via import-for-side-effect, the same way the semantic engines are tested.
 
-// Why this exists.
 // `serialize()` read the role straight off the DOM attribute: `role: clean(el.getAttribute('role'), 80)`.
 // A plain <button>Send</button> therefore reported `role: ''`, and any control the author did not annotate was invisible to a role-filtered find.
 // That is not a Google Docs quirk, it is most of the web — and it is why the Page numbers dialog reported `Footer` and `Show on first page` as text but never as a radio or a checkbox.
@@ -36,7 +35,7 @@
   'use strict';
   if (globalThis.NavegoRoleReconcile) return;
 
-  // WHY A LOCAL GUARD: this file ships as a classic content script the manifest loads directly; a static import would be a SyntaxError at load time.
+  // A LOCAL GUARD: this file ships as a classic content script the manifest loads directly; a static import would be a SyntaxError at load time.
   // Mirrors extension/lib/guards.ts.
   function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null && !Array.isArray(value);

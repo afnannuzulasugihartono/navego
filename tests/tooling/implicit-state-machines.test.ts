@@ -3,7 +3,7 @@
 // @state: the register validates, the paths are real, the decisions are stated, and this repository cannot ship a state machine the gate cannot see.
 // @dependencies: node:test, strict, node:fs, node:url.
 
-// WHY THIS FILE EXISTS.
+// THIS FILE EXISTS.
 // Every module whose behavior depends on state nobody declared is an implicit state machine.
 // The failures this catches are the product's own confusing states: the ghost listen session, the connected-but-dead bridge, the command that completes after its timeout.
 // A gate that only checks style cannot catch those; a register that is never validated rots; this is the one that makes both impossible.

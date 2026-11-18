@@ -3,7 +3,7 @@
 // @state: paid, live, expired, unknown, no link and cancelled, each said in words, escaped, and carrying the token only where a form needs it.
 // @dependencies: node:test, strict, ../hosted/functions/_shared/invoice-page.ts.
 
-// WHY THE PAGE IS DRIVEN BY A TEST RATHER THAN LOOKED AT ONCE.
+// THE PAGE IS DRIVEN BY A TEST RATHER THAN LOOKED AT ONCE.
 // The page is the only part of the money path a customer sees, and a state that renders nothing, a dead Pay button or an unescaped name is a failure nobody notices until it is in someone's inbox.
 // So each state is rendered here and read for the things the page promises: what happened, what the customer can do, and what the page refuses to carry.
 
@@ -173,7 +173,7 @@ test('a refresh that failed is one honest line above the form, with no provider 
   assert.doesNotMatch(clean, /could not be opened just now/);
 });
 
-// WHY THE QR BLOCK IS PINNED HERE.
+// THE QR BLOCK IS PINNED HERE.
 // The dynamic QRIS is the payment surface when the rail is qris-self: the customer scans one code and the amount is already in it.
 // A page that renders the QR without saying the amount is locked would send payers to an app showing an empty amount field - the static-QR failure the conversion exists to prevent.
 

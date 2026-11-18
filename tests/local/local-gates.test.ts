@@ -19,7 +19,7 @@ import {
 } from '../../local/gates.js';
 import { solverSettings, solveImageCaptcha, captchaAllowed } from '../../local/captcha-solver.js';
 
-// WHY THE FAKE PAGE IS A LIST OF FACTS AND NOT A PAGE.
+// THE FAKE PAGE IS A LIST OF FACTS AND NOT A PAGE.
 // The gate probe reads the page once and hands back facts; a test that answered with a fake DOM would only prove the fake DOM answers.
 // So the fake is the list of facts a page can hold, and every test says which page it is.
 
@@ -184,7 +184,7 @@ test('a one-time code is refused before anything is typed', async () => {
   assert.equal(driver.calls.filter((call: any) => call[0] === 'type').length, 0, 'nothing was typed');
 });
 
-// WHY A GET FORM IS REFUSED.
+// A GET FORM IS REFUSED.
 // Measured live on 2026-11-05: the sign-in form submitted by GET, so the password came back in the address of the page the agent was on - in the answer, in the history, in the server log, and in the referrer of every later request.
 // A secret that travels in a URL is a secret that leaks, so the agent refuses to type into a form that puts it there.
 

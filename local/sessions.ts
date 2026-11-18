@@ -3,15 +3,15 @@
 // @state: keyed cache, adapter shape, front-on-switch (background for a tab the caller owns outright).
 // @dependencies: none.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // The MCP server speaks in driver verbs and the CDP session speaks in primitives; this is the only place the two are joined per tab, and it is separate from the entry point so the joining is testable without a browser behind it.
 
-// WHY each tab gets its own session and keeps it.
+// each tab gets its own session and keeps it.
 // A single shared session that re-points at whichever page the browser lists first is how a latency run once typed into an unrelated document.
 // Naming the tab removes that, and caching the session removes the websocket handshake from every later call.
 
-// WHY the touched tab comes forward.
+// the touched tab comes forward.
 // The person watching has sixty tabs and the agent works one of them; bringing it forward on the first touch of each tab is the cheapest possible "the agent is here" sign.
 // Only the switch fronts, never every call, so a long drive on one tab never yanks the screen twice.
 // A tab that refuses still gets driven: the indicator must not break the drive.
@@ -32,7 +32,7 @@ export function findOn(page: JsonRecord, query: unknown) {
   })()`);
 }
 
-// WHY EXACT MATCHES WIN OVER SUBSTRING ONES.
+// EXACT MATCHES WIN OVER SUBSTRING ONES.
 // A submenu container carries the concatenated names of everything inside it, so a substring search for an item also matches its own container — and overlay-first ordering puts that container first.
 // Clicking it hits dead menu background instead of the row, which dismisses the menu and looks exactly like a missed click.
 // The exact row is tried first; the substring stays as the fallback it always was.
@@ -43,11 +43,11 @@ import type { Driver, JsonRecord } from './types.js';
 
 const isRecord = (value: unknown): value is JsonRecord => typeof value === 'object' && value !== null && !Array.isArray(value);
 
-// WHY THE RESULT IS ASSERTED RATHER THAN WIDENED.
+// THE RESULT IS ASSERTED RATHER THAN WIDENED.
 // A per-tab session carries the page verbs; opening and listing tabs belong to the entry point, and this adapter has never carried them.
 // The full Driver type names both, so the gap is asserted here and named, not papered over by adding verbs the session does not have.
 
-// WHY THE CLICK'S OWN ANSWER IS PASSED THROUGH RATHER THAN REBUILT.
+// THE CLICK'S OWN ANSWER IS PASSED THROUGH RATHER THAN REBUILT.
 // The row is what the caller asked for; the proof of what the click hit belongs to the click.
 // Rebuilding the answer here threw that proof away - measured live, a tap reported its row and its point while a dialog owned that point and took the click, and the answer could not say so.
 // Anything the click measured now travels with the row it was aimed at.
@@ -55,7 +55,7 @@ const isRecord = (value: unknown): value is JsonRecord => typeof value === 'obje
 export type SessionDriver = Omit<Driver, 'open' | 'tabs'>;
 
 export function asDriver(session: JsonRecord): SessionDriver {
-  // WHY THE GUARD IS PER SESSION NOW.
+  // THE GUARD IS PER SESSION NOW.
   // The machine read used to be one OS shell for the whole process.
   // A CDP session can answer the same question in under a millisecond, so the guard is built over this session's window methods and the OS shell stays only as the fallback inside them.
   const focusGuard = createFocusGuard({
@@ -140,7 +140,7 @@ export function createSessionStore({ openSession, port, browserId, viaBridge = n
     }
     const driver = sessions.get(key);
     if (!driver) throw new Error(`the session for ${String(key)} was not opened`);
-    // WHY A SEARCH OPENS ITS TAB WITHOUT FRONTING IT.
+    // A SEARCH OPENS ITS TAB WITHOUT FRONTING IT.
     // The local search opens and closes its own background tab in one call, and bringing that tab forward for its brief life is the one focus jump the caller did not ask for.
     // The tab is closed before the answer returns, so no window is left in a state the person did not choose; everything else keeps the front-on-switch rule.
     if (background !== true && key !== fronted) {

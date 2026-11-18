@@ -3,7 +3,7 @@
 // @state: one entry per file, one evidence class per entry, and the counts the measurement produced; a file the map forgets fails here.
 // @dependencies: node:test, node:assert/strict, node:fs.
 
-// WHY THIS FILE IS A GATE AND NOT A DOCUMENT.
+// THIS FILE IS A GATE AND NOT A DOCUMENT.
 // The tree and the live migration ledger disagree, and the disagreement was measured on 2026-10-26 against the live ledger: 106 files, 112 applied versions, 43 versions shared by both sides.
 // The map records which version applied each file and on what evidence, so a reader can tell a proved fact from a guess.
 // A map that is not checked rots the moment a migration is added, so the tree is read here and every file must be in the map exactly once.

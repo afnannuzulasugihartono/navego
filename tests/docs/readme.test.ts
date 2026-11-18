@@ -3,7 +3,7 @@
 // @state: three gates: the primitive count, the local tool count, and the deployed edge functions.
 // @dependencies: node:test, node:assert/strict, node:fs, node:path.
 
-// WHY THE README IS CHECKED.
+// THE README IS CHECKED.
 // A README that states a number the code no longer holds is worse than no number, because a reader trusts it and sizes their work by it.
 // The three counts here had already gone stale before this file existed: 29 primitives where there are 31, 31 tools where there are 34, and 8 edge functions where there are 9.
 // So the numbers are read from the code, and a drift fails the suite rather than ageing in the file.

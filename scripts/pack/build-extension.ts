@@ -17,7 +17,7 @@ if (!fs.existsSync(path.join(repo, 'node_modules', 'typescript'))) {
   process.exit(1);
 }
 
-// WHY THE CLEAN RUNS FIRST, AND WHY IT REFUSES.
+// THE CLEAN RUNS FIRST, AND WHY IT REFUSES.
 // tsc writes beside the sources, so a file deleted from the source tree would keep its old emitted twin forever, and a stale twin is a module the browser would load instead of the source.
 // The clean therefore removes every .js file under extension/ that carries no .ts source beside it (an artefact of the build, never the source), and refuses to remove a .js that has no .ts source beside it, because that file is either a hand-written second copy (the drift this whole design removes) or a stale artefact whose source is gone, and both must stop the build rather than be deleted quietly.
 
@@ -56,7 +56,7 @@ if (refused.length) {
 
 execFileSync(process.execPath, [path.join(repo, 'node_modules', 'typescript', 'bin', 'tsc'), '-p', path.join(repo, 'tsconfig.extension.json')], { cwd: repo, stdio: 'inherit' });
 
-// WHY THE STRIP RUNS LAST, AND WHY IT READS THE MANIFEST.
+// THE STRIP RUNS LAST, AND WHY IT READS THE MANIFEST.
 // The repo is a "type": "module" package, so tsc compiles every source as an ES module and appends a bare `export {};` to a module with nothing to export.
 // The service worker loads as a module and keeps it; the content_scripts and the files the worker injects with chrome.scripting.executeScript load as CLASSIC scripts, and a classic script with a top-level `export` is a SyntaxError at parse time - the whole content half would be dead in every tab it is injected into.
 // The strip list is the manifest's own content_scripts js list plus the two files the worker injects by name; tests/extension/classic-scripts.test.ts holds the same set parseable as classic scripts.

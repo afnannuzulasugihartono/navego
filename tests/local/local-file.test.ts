@@ -50,7 +50,7 @@ function uploadCdp() {
   };
 }
 
-// WHY THE FINDER HAS TWO ROADS.
+// THE FINDER HAS TWO ROADS.
 // The pierced query is what finds a closed shadow root; the page script is what finds a frame the browser refuses to pierce.
 // Each is proven on its own: a cdp that answers the DOM road proves the pierced path, a cdp that answers only the script proves the fallback, and a cdp that answers neither proves the honest `inputFound: false`.
 
@@ -110,7 +110,7 @@ test('a path uploads in place with no staging', async () => {
   assert.deepEqual(set.params.files, ['/files/pic.png']);
 });
 
-// WHY THE CLOSED SHADOW ROOT IS PROVEN HERE.
+// THE CLOSED SHADOW ROOT IS PROVEN HERE.
 // Google Docs keeps its file input where a page script cannot see it, so the script road reported no input while the input was demonstrably there.
 // The pierced query is asked first and names the closed root by backend node id.
 
@@ -151,7 +151,7 @@ test('a frame the browser refuses to pierce is still found by the page script', 
   assert.deepEqual(set.params, { files: ['/files/pic.png'], objectId: 'o1' }, 'the second road still fills');
 });
 
-// WHY THE CHILD FRAME IS ITS OWN CASE.
+// THE CHILD FRAME IS ITS OWN CASE.
 // `pierce` answers for a document and stops at the frame boundary, and Google Docs keeps its image input in a picker frame: every road that looked at the top document reported nothing while the input was there.
 // A frame is reached by its owner, the owner names its content document, and the same pierced query runs there.
 
@@ -207,7 +207,7 @@ test('a page with no file input is reported, not filled', async () => {
   assert.ok(fs.calls.some((c: any) => c[0] === 'unlink'), 'the staging is still cleaned');
 });
 
-// WHY THE PIERCING IS PINNED AS TEXT.
+// THE PIERCING IS PINNED AS TEXT.
 // There is no DOM in a unit test, so the only thing checkable here is that the finder walks into shadow roots and same-origin frames instead of stopping at the top document.
 // Fetching a whole pierced tree to do the same timed out live on a heavy page; the walk answers with one node back.
 
@@ -231,7 +231,7 @@ test('intercepting the file chooser is one page call either way', async () => {
   );
 });
 
-// WHY THE RETRY IS PINNED BY COUNT, NOT TIME.
+// THE RETRY IS PINNED BY COUNT, NOT TIME.
 // Clicking Upload creates the input on the page's own schedule; the first look routinely finds nothing a second after the click.
 // Five looks with sleeps between them cost nothing when the input is already there.
 
@@ -260,7 +260,7 @@ test('a late input is caught by looking again', async () => {
     'a beat between looks, none after the hit, and one pass over every road each time');
 });
 
-// WHY THE DROP IS PINNED IN ORDER, WITH ITS RELEASE.
+// THE DROP IS PINNED IN ORDER, WITH ITS RELEASE.
 // The drop is the road into a page whose file chooser has no input behind it, and it only works while Chrome is intercepting drags; a tab left intercepting would stop believing a person dragging anything onto it, which is worse than the problem being solved.
 // So the phases are sent in the order a drag happens and the release is asserted on the happy road and on the road where the page refuses the file.
 
@@ -315,7 +315,7 @@ test('a drop refuses anything but one source and a place to drop it', async () =
   await assert.rejects(() => p.dropFile({ filename: 'a.png', path: '/files/pic.png' }), /x and y/);
 });
 
-// WHY THE TYPE IS PINNED BY NAME.
+// THE TYPE IS PINNED BY NAME.
 // A drop tells the page what it is being offered, and a wrong type is a file the page refuses — the difference between an image landing and nothing happening at all.
 
 
@@ -327,7 +327,7 @@ test('a drop types the file by its name, and admits what it does not know', () =
   assert.equal(dragMimeType('noextension'), 'application/octet-stream');
 });
 
-// WHY A HANDLE IS PROVEN BY WHAT IT HOLDS.
+// A HANDLE IS PROVEN BY WHAT IT HOLDS.
 // The point of a handle is that the click lands on the element, not on the point it once occupied, so these tests read the row, read the node behind it, and read the box the browser reports for that node at the moment of the click.
 
 
@@ -396,7 +396,7 @@ test('a download is proven by the file on disk, and the folder is armed before t
 });
 
 
-// WHY THE EXTENSION ROAD WATCHES THE BROWSER'S OWN FOLDER.
+// THE EXTENSION ROAD WATCHES THE BROWSER'S OWN FOLDER.
 // chrome.debugger refuses browser-level commands, so a drive over the extension cannot arm a download folder.
 // The file lands where Chrome puts it, and the driver moves it to the folder the caller named - or says it did not land.
 
@@ -420,7 +420,7 @@ test('over the extension the file lands in the browser folder and is moved to th
   assert.equal(cdp.calls.some((call: any) => call.method.includes('setDownloadBehavior')), false, 'the extension road does not pretend to arm a folder it cannot arm');
 });
 
-// WHY MORE THAN ONE CANDIDATE IS A REFUSAL.
+// MORE THAN ONE CANDIDATE IS A REFUSAL.
 // The browser folder holds everything the person downloads, so a second file appearing mid-click is another download, not this one.
 // Handing back the newest of an ambiguous pair is how a bookkeeper ends up with somebody else's statement, so the answer says which files appeared and moves neither.
 
@@ -446,7 +446,7 @@ test('two finished files in the watched folder is a refusal, not a guess', async
   assert.equal(disk.files.has(path.join(browserFolder, 'statement-2026-09.pdf')), true, 'the browser copy stays where it landed');
 });
 
-// WHY THE WATCH COVERS BOTH FOLDERS CHROME MAY USE.
+// THE WATCH COVERS BOTH FOLDERS CHROME MAY USE.
 // OneDrive can move the Downloads known folder, and Chrome honours that move, so the browser folder is not always the one under the home directory.
 // The failure names every folder the answer did not find the file in, which is the only place a reader can see the list.
 
@@ -473,7 +473,7 @@ test('a redirected Downloads folder is watched too, and the failure names both f
   assert.ok(missed.why.includes(redirected), 'and the redirected folder OneDrive can move it to');
 });
 
-// WHY THE CANDIDATE IS KEYED BY WHOLE PATH.
+// THE CANDIDATE IS KEYED BY WHOLE PATH.
 // Two watched folders can hold the same file name, so a name is not an identity: a download landing beside a same-named file in the other folder is still new.
 
 test('a file with a name the other watched folder already holds is still new', async () => {
@@ -494,7 +494,7 @@ test('a file with a name the other watched folder already holds is still new', a
   assert.equal(out.landedAt, path.join(browserFolder, 'statement-2026-09.pdf'));
 });
 
-// WHY THE REFUSAL IS ALSO TRUE ON THE DEBUGGING ROAD.
+// THE REFUSAL IS ALSO TRUE ON THE DEBUGGING ROAD.
 // A debugging port arms one folder, but that folder is still a folder the person uses, and a second file in it during the click is still a coin toss.
 // The rule is one rule over the watched folders, not one rule per road.
 
@@ -561,7 +561,7 @@ test('download refuses to guess what to click', async () => {
   await assert.rejects(() => p.download({ handle: 'opera-1', x: 1, y: 2 }), /exactly one of/);
 });
 
-// WHY THE NAME IS GIVEN AFTER THE FILE LANDS.
+// THE NAME IS GIVEN AFTER THE FILE LANDS.
 // A portal decides what it calls its own statement ("statement.pdf", "download (3).pdf"), and a bookkeeper cannot bill a folder of those.
 // Renaming mid-write would leave Chrome writing to a name that no longer exists, so the new name is applied at the only moment the file is whole.
 

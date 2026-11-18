@@ -3,7 +3,7 @@
 // @state: the gate for ARCHITECTURE.md; a new roof without an entry fails the build.
 // @dependencies: node:test, strict, node:fs, node:path, node:url.
 
-// WHY THIS GATE EXISTS.
+// THIS GATE EXISTS.
 // AGENTS.md binds the agent to ARCHITECTURE.md as the map it must follow before creating anything.
 // A map that quietly disagrees with the tree is worse than no map: it trains the reader not to trust it.
 // So the tree is read, the map is read, and they must agree — by name, by path, by import direction.
@@ -146,7 +146,7 @@ test('shared modules import only within shared/', () => {
   assert.deepEqual(offenders, [], offenders.join('\n'));
 });
 
-// WHY A COMPILED COPY IS NOT A SECOND SOURCE.
+// A COMPILED COPY IS NOT A SECOND SOURCE.
 // A folder that carries TypeScript is compiled: the .js beside each .ts is an artefact, not a file anyone edits.
 // The failure this rule refuses is the hand-written .js that sits next to a .ts source and drifts from it - the duplicate this whole effort exists to remove.
 // So every .js in such a folder must be untracked (an artefact git does not carry) and must have its .ts source beside it; anything else fails the map.

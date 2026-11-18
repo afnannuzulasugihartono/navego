@@ -1,4 +1,4 @@
-﻿// @last-edited: 2026-11-16 UTC+7.
+// @last-edited: 2026-11-16 UTC+7.
 // @title: site — the rebuilt Navego site, gated on its own build.
 // @state: builds the site, type-checks it, then parses build/client for the per-page contract.
 // @dependencies: site/ (React Router v7 + TypeScript), node:test, node:child_process.
@@ -35,7 +35,7 @@ const siteDir = path.join(root, 'site');
 
 function buildSite() {
   if (built) return built;
-  // WHY no --prefix: with --prefix npm re-registers the enclosing package (navego) as a file: dependency of the site every run.
+  // no --prefix: with --prefix npm re-registers the enclosing package (navego) as a file: dependency of the site every run.
   const quiet = (args: string[]) => {
     try {
       execFileSync(npm, args, { cwd: siteDir, stdio: ['ignore', 'pipe', 'pipe'], shell: process.platform === 'win32' });
@@ -63,7 +63,7 @@ test('the build produces every prerendered route', () => {
   }
 });
 
-// WHY the dashboard is the exception: it gates on a client-side session; the static shell says "checking" and the h1 paints after sign-in.
+// the dashboard is the exception: it gates on a client-side session; the static shell says "checking" and the h1 paints after sign-in.
 
 test('every page carries exactly one h1', () => {
   buildSite();
@@ -153,7 +153,7 @@ test('_worker.js is compiled from the checked-in TypeScript source', () => {
   assert.equal(fs.existsSync(path.join(site, 'public', '_worker.js')), false, 'the hand-written twin is gone');
 });
 
-// WHY robots.txt and sitemap.xml carry no CSP: static policy files, not HTML.
+// robots.txt and sitemap.xml carry no CSP: static policy files, not HTML.
 
 test('_headers covers every route, forbids inline scripts, denies framing everywhere', () => {
   buildSite();
@@ -176,7 +176,7 @@ test('_headers covers every route, forbids inline scripts, denies framing everyw
   }
 });
 
-// WHY the shape changed: the .html and pretty duals of one page used to be two routes with distinct ids, and serving the prerendered .html file under the pretty URL hydrated against the wrong id — React error #418 on every visit.
+// the shape changed: the .html and pretty duals of one page used to be two routes with distinct ids, and serving the prerendered .html file under the pretty URL hydrated against the wrong id — React error #418 on every visit.
 // The flat .html file still exists for Pages to serve, but the worker answers the .html URL with a 301 to the pretty path, so the client router only knows the pretty routes and the two can never split again.
 
 test('the client router answers every pretty URL, and the .html aliases are edge 301s', () => {

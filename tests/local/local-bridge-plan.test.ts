@@ -3,7 +3,7 @@
 // @state: an unaccounted session is refused, the allowance refuses the command past it, the ping proof pays nothing, and the report lands once when the session ends.
 // @dependencies: node:test, strict, ../local/bridge-ws.js, ./helpers/scripted-device.ts, ./helpers/fake-cloud.ts.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // The drive is local, but the meter is not: a session that cannot reach the cloud is a session no plan authorises.
 // The bridge asks once per session, counts locally, refuses past the allowance with the plan named, and reports the usage when the session ends.
@@ -42,7 +42,7 @@ const makeDevice = (options: { url: string; instanceId: string; deviceName?: str
 
 const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// WHY THE RACE.
+// THE RACE.
 // A bridge that never refuses a session never closes the socket, and a test that waits for the close would hang the file instead of failing it.
 // Bounded waits fail with the reason, which is the point of a red run.
 

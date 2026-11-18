@@ -238,7 +238,7 @@ input:focus {
   line-height: 1.45;
 }
 
-/* WHY THE UPDATE NOTE IS ITS OWN COLOUR: a version that does not move is the one thing in the popup the person cannot explain, and it must read as a fact to act on rather than as another grey hint. */
+/* THE UPDATE NOTE IS ITS OWN COLOUR: a version that does not move is the one thing in the popup the person cannot explain, and it must read as a fact to act on rather than as another grey hint. */
 
 .button-stack {
   display: grid;
@@ -335,7 +335,7 @@ footer {
 [hidden] { display: none !important; }
 
 /*
- * WHY THE TOOLBAR POPUP IS A MENU.
+ * THE TOOLBAR POPUP IS A MENU.
  * W2G's popup reads as a product because it repeats one shape: panel ground, mark, a status row, one loud action, quiet list rows, a quiet footer.
  * The popup is the product's smallest surface; it inherits the site's tokens, not the site's type scale or its marketing grammar.
  * One fill carries the accent; nothing glows; nothing floats; radius is small and consistent.
@@ -477,7 +477,7 @@ body.popup .doorBody { min-width: 0; display: grid; gap: 1px; }
 body.popup .doorTitle { font-size: 12.5px; font-weight: 550; line-height: 1.25; }
 body.popup .doorChevron { margin-left: auto; color: #565678; font-size: 14px; line-height: 1; }
 
-/* WHY THE SWITCH IS DRAWN: a switch that is not drawn is a row that toggles by courtesy; the one place the reader flips, they see it flip (the Tampermonkey row idiom). */
+/* THE SWITCH IS DRAWN: a switch that is not drawn is a row that toggles by courtesy; the one place the reader flips, they see it flip (the Tampermonkey row idiom). */
 
 body.popup .switchUI {
   margin-left: auto;

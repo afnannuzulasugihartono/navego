@@ -3,7 +3,7 @@
 // @state: the seed of the relay's method list, and the proof that it holds every method of the extension's contract.
 // @dependencies: node:test, node:assert/strict, node:fs.
 
-// WHY THIS GATE EXISTS.
+// THIS GATE EXISTS.
 // The relay keeps its own list of the methods it may run, and it had drifted: two methods the extension serves were missing from it, so the hosted tools that call them were refused by name, and two that were listed carried a shorter budget than the contract gives them.
 // A list kept in a table cannot be read by the tree, so the seed that writes it is pinned here against the contract it comes from.
 
@@ -14,7 +14,7 @@ import fs from 'node:fs';
 const root = new URL('../../', import.meta.url);
 const protocol = fs.readFileSync(new URL('extension/lib/protocol.js', root), 'utf8');
 
-// WHY TWO FILES: the seed was applied and may not be edited, so a second seed, kept beside it, carries the methods the contract gained after it - the gate reads both and holds both to the contract.
+// TWO FILES: the seed was applied and may not be edited, so a second seed, kept beside it, carries the methods the contract gained after it - the gate reads both and holds both to the contract.
 
 const seedFiles = ['hosted/migrations/20261110230000_opera_methods_from_contract.sql', 'hosted/migrations/20261112000000_opera_methods_record_scan.sql', 'hosted/migrations/20261113000000_opera_methods_dump.sql'];
 const migration = seedFiles.map((file) => fs.readFileSync(new URL(file, root), 'utf8')).join('\n');

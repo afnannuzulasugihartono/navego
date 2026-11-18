@@ -17,7 +17,7 @@ if (!fs.existsSync(path.join(repo, 'node_modules', 'typescript'))) {
   process.exit(1);
 }
 
-// WHY THE CLEAN RUNS FIRST, AND WHY IT REFUSES.
+// THE CLEAN RUNS FIRST, AND WHY IT REFUSES.
 // tsc writes beside the sources, so a file deleted from the source tree would keep its old emitted twin forever, and a stale twin is a module the tests can still import and pass with.
 // The clean therefore removes every emitted twin under local/ except the lockstep-copied module copies under local/lib (owned by pack-mcp), and refuses to remove a .js that has no .ts source beside it, because that file is either a hand-written second copy (the drift this whole design removes) or a stale artefact whose source is gone, and both must stop the build rather than be deleted quietly.
 

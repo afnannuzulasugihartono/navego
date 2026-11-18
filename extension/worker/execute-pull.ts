@@ -100,7 +100,7 @@ async function pair(code: unknown) {
   const token = randomToken();
   const identity = await pairIdentity();
   const family = browserFamily();
-  // WHY A NEW DEVICE TAKES THE BROWSER'S NAME: a list of devices is how a person tells two browsers apart, and "opera-4" names none of them.
+  // A NEW DEVICE TAKES THE BROWSER'S NAME: a list of devices is how a person tells two browsers apart, and "opera-4" names none of them.
   const data = await fetchJson(cfg.bridgeUrl, {
     action: 'pair',
     code: pairCode,
@@ -165,19 +165,19 @@ async function flushPendingCompletion(_cfg?: WorkerConfig | null) {
   if (sent) await chrome.storage.local.remove('pendingCompletion');
 }
 
-// WHY the poll loop is gone.
+// the poll loop is gone.
 // It asked the bridge whether work existed, then asked again to report the result, and every action paid two round trips plus a blocking wait inside each.
 // Measured here, a six step burst spent 238 ms in the browser and 496 ms in transport.
 // One socket carries work down and completions back up, so nothing on the hot path asks a question.
 
-// WHY there is no poll underneath to fall back to.
+// there is no poll underneath to fall back to.
 // A quiet fallback would restore exactly the latency this replaces while looking perfectly healthy, which is worse than an outage because it is invisible.
 
-// WHY a stored completion is only cleared once the frame is written.
+// a stored completion is only cleared once the frame is written.
 // A disconnect between finishing a command and reporting it would otherwise lose the result silently, and the caller would wait out its timeout for a device that had already finished.
 // Reconnecting is also the moment that owed completion is resent.
 
-// WHY there is one way to start, and no generation counter.
+// there is one way to start, and no generation counter.
 // The old loop was generation guarded so a restart could not fight an in-flight poll, and that guard lost a wake-up: bumping the generation made the in-flight loop exit without connecting and made its own reschedule refuse, so after a pairing nothing ever started.
 // A socket that owns its own reconnect needs no guard, only one true shape: no client, then start one.
 
@@ -226,7 +226,7 @@ function restartSocket() {
   ensureSocket().catch((error) => { log.debug('SOCKET_START_FAILED', error instanceof Error ? error.message : String(error)); });
 }
 
-// WHY the heartbeat no longer reports a connection status.
+// the heartbeat no longer reports a connection status.
 // It used to, back when it was the poll loop's status writer as well as its keepalive, and it went on doing that job after the socket took ownership of it: every thirty seconds it stamped lastConnectedAt over the socket's own state, and a heartbeat that failed set the status to reconnecting while the socket was healthy and connected.
 // Observed live against the deployed bridge.
 // The heartbeat's job is to keep the device row's last_seen_at fresh, and that is all it does now.
@@ -236,7 +236,7 @@ async function heartbeat() {
   if (!cfg.paired || !cfg.deviceToken) return;
 
   try {
-    // WHY THE HEARTBEAT NAMES THE BROWSER: the chip on the dashboard was written once, at pairing, and a browser that changed since then kept the old name.
+    // THE HEARTBEAT NAMES THE BROWSER: the chip on the dashboard was written once, at pairing, and a browser that changed since then kept the old name.
     // The heartbeat already comes every thirty seconds, so it is the honest place to say which browser this is.
     await fetchJson(cfg.bridgeUrl, {
       action: 'heartbeat',
@@ -271,7 +271,7 @@ async function localSelfTest() {
   };
 }
 
-// WHY THE DASHBOARD SENDS THE CODE AS A MESSAGE AND NEVER SHOWS IT: a code the person has to read and retype is a code the person can lose or share.
+// THE DASHBOARD SENDS THE CODE AS A MESSAGE AND NEVER SHOWS IT: a code the person has to read and retype is a code the person can lose or share.
 // The dashboard mints it (same one-time RPC), hands it straight to the extension, which redeems it, and it never lands in a clipboard.
 // The same security gates the popup: a caller from outside the site origins is refused before anything is looked at.
 
@@ -360,7 +360,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   await chrome.alarms.create(WAKE_ALARM, { periodInMinutes: 0.5 });
-  // WHY THE FIRST RUN OPENS THE DASHBOARD: an extension a person installed in silence does not know what to do next.
+  // THE FIRST RUN OPENS THE DASHBOARD: an extension a person installed in silence does not know what to do next.
   // The dashboard's pair flow answers exactly one question - how this browser ties itself to the account - in one click.
   // Only install reason fires it; an update must never hijack a tab.
   if (details.reason === 'install') {

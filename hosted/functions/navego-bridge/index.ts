@@ -68,7 +68,7 @@ async function rpc(name: string, args: Record<string, unknown>) {
   return data as Record<string, unknown> | null;
 }
 
-// WHY THE SOCKET HOLDS ITS OWN DATABASE CONNECTION.
+// THE SOCKET HOLDS ITS OWN DATABASE CONNECTION.
 // Every completion crosses into the database to record the result, and that crossing sits inside the command's own lifetime: created-at to completed-at includes the write that stamps it done.
 // Over the client library that write measured roughly 250 ms against work the browser answers in under a millisecond.
 // A socket holds its isolate open for as long as the device stays connected, so the first completion pays the handshake once and every completion after it skips the gateway.
@@ -126,7 +126,7 @@ async function heartbeat(body: Record<string, unknown>) {
   if (!validToken(body.token) || !validDeviceName(body.deviceName)) {
     return json({ ok: false, error: "Unauthorized device." }, 401);
   }
-  // WHY THE BEAT CARRIES THE BROWSER: the name on the dashboard was written once at pairing, so a browser that changed since then kept the old name and two different browsers read the same.
+  // THE BEAT CARRIES THE BROWSER: the name on the dashboard was written once at pairing, so a browser that changed since then kept the old name and two different browsers read the same.
   const result = await rpc("opera_heartbeat", {
     p_device_name: body.deviceName.trim(),
     p_token_hash: await sha256(body.token.toLowerCase()),
@@ -138,7 +138,7 @@ async function heartbeat(body: Record<string, unknown>) {
   return json(result || { ok: false }, result?.ok ? 200 : 401);
 }
 
-// WHY THE SESSION IS ONE CALL AND NOT TWO.
+// THE SESSION IS ONE CALL AND NOT TWO.
 // The local drive pays for exactly one round trip per session in exchange for a bounded, metered allowance; asking for the plan and the allowance separately would double that cost for no new information.
 
 async function sessionOpen(body: Record<string, unknown>) {
@@ -169,7 +169,7 @@ async function sessionReport(body: Record<string, unknown>) {
   return json(result || { ok: false }, result?.ok ? 200 : 403);
 }
 
-// WHY completion is a socket call, not an HTTP action.
+// completion is a socket call, not an HTTP action.
 // The pull client is gone — the device learns work over its socket and answers over the same one — so the HTTP pull and complete actions were deleted with it.
 // This function stays because the socket still needs exactly what it does.
 
@@ -309,23 +309,23 @@ async function handle(req: Request) {
   }
 }
 
-// WHY the socket is checked before handle().
+// the socket is checked before handle().
 // A device that opens a socket must never reach the HTTP body parser, and the upgrade handshake has to be answered by the runtime itself, which handle() cannot do.
 
-// WHY this is the part that removes polling.
+// this is the part that removes polling.
 // The device used to ask whether work existed, which cost a round trip and a blocking wait on every action.
 // A change channel inverts it: the database says a row appeared, and the socket already open carries it.
 // Nothing asks, so nothing waits.
 
-// WHY the claim still runs.
+// the claim still runs.
 // Delivery is not ownership.
 // Two sockets, or a restart after delivery but before completion, would otherwise run the same command twice, so the claim RPC is still the thing that decides who executes.
 
-// WHY the channel is drained the moment it opens, and then drained again for as long as it stays open.
+// the channel is drained the moment it opens, and then drained again for as long as it stays open.
 // A change channel only reports rows inserted while it is listening, so anything that queued while the device was disconnected would otherwise sit unclaimed until the next command happened to arrive, which makes the first command after an outage depend on luck.
 // The loop keeps draining because one insert can leave more than one command queued behind a claim.
 
-// WHY there is one function that claims.
+// there is one function that claims.
 // The HTTP pull and the socket drain used to build the same RPC call separately, which meant two places to get the hash, the clamps, and the capability cap right.
 // A claim is a claim no matter who asked, so both paths go through here now.
 
@@ -346,23 +346,23 @@ async function claimForDevice(
   return { command: claimed.command ?? null, raw: claimed };
 }
 
-// WHY the bridge claims on an interval instead of listening.
+// the bridge claims on an interval instead of listening.
 // Two event feeds were tried and measured: postgres_changes delivered in 650-1000 ms, and a broadcast fired 46 ms after insert still claimed anywhere between 200 and 1300 ms, because the Realtime subscriber websocket held by the edge isolate proved flaky — sometimes fast, sometimes silent.
 // A short poll is deterministic where both feeds were not, costs ten trivial indexed RPCs per second per connected device — each measured at 0.3 ms server-side — and has no connection to go stale.
 // The interval lives here rather than on the device because this side has wall power and no radio.
 
-// WHY one hundred milliseconds.
+// one hundred milliseconds.
 // The poll phase averages half the interval, so 100 ms lands commands in ~50 ms average, ~100 ms worst case.
 // Faster would burn queries to shave tens of milliseconds nobody can feel; slower would be felt directly, since this wait sits on every single command.
 
-// WHY THE DRAIN WAITS INSTEAD OF TICKING.
+// THE DRAIN WAITS INSTEAD OF TICKING.
 // This used to wake every 100 ms and ask whether anything was queued, which is a poll wearing a socket's clothes: the socket was connected, but command delivery still began with a delay of up to a full tick, and every idle device spent a tenth of a second checking for work it knew was not there.
 // opera_claim_next_wait already parks server-side and returns the moment a command exists, which is what it exists for, so the drain now asks it to wait.
 // Delivery becomes "as soon as it is written" instead of "within a hundred milliseconds", and an idle device costs nothing at all.
 
 // The claim stays bounded by the same clamp as before, and a device that disconnects mid-wait leaves at most one parked call, which the next drain replaces.
 
-// WHY THE FIRST CLAIM STILL DOES NOT WAIT.
+// THE FIRST CLAIM STILL DOES NOT WAIT.
 // A device that was away has a backlog, and the first claim is what finds it.
 // Parking that one call would hold queued work for the whole wait, so the first claim of each drain is immediate and every claim after it parks.
 // Backlog is caught on arrival, and everything after that arrives as it is written rather than within a tick.
@@ -420,13 +420,13 @@ function subscribe(identity: { deviceName: string; token: string }, onCommand: (
   };
 }
 
-// WHY the handshake authenticates instead of claiming.
+// the handshake authenticates instead of claiming.
 // The claim RPC is the only existing check that a token belongs to a device name, which makes reusing it look free.
 // It is not: claiming is what takes ownership of a queued command, and a handshake that claims discards the result.
 // The device then sits connected and silent while the one command waiting for it has been marked as somebody else's.
 // opera_auth_device answers exactly the question a handshake asks, and nothing more.
 
-// WHY the direct connection warms in the background instead of blocking the handshake.
+// the direct connection warms in the background instead of blocking the handshake.
 // Loading the driver plus a TCP connect and a round trip costs hundreds of milliseconds on a cold isolate, and the handshake does not need any of it: the verify already answered over HTTPS, and a completion that arrives before the warm finishes simply takes the same HTTPS road.
 // Warming only starts after the token verified, so a guess never buys a connection.
 

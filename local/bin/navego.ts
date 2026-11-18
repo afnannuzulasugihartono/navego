@@ -5,7 +5,7 @@
 // @state: the mode comes from the first argument; each mode starts the server it names.
 // @dependencies: ./opera-local.js for the local mode.
 
-// WHY THE MODE IS AN ARGUMENT AND NOT A FLAG.
+// THE MODE IS AN ARGUMENT AND NOT A FLAG.
 // A caller that has to remember a flag has two ways to get it wrong; a caller that names the mode cannot.
 // The modes share every tool name and every answer shape, so the choice is only about who drives the browser.
 

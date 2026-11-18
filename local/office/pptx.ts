@@ -3,18 +3,18 @@
 // @state: slides in, one presentation out.
 // @dependencies: ./zip.js, ./xml.js, ./palette.js.
 
-// WHY THE DECK CARRIES ITS OWN MASTER, LAYOUT AND THEME.
+// THE DECK CARRIES ITS OWN MASTER, LAYOUT AND THEME.
 // PowerPoint reads those three parts before it draws anything, and a presentation without them opens as a repair request.
 // The master here is the smallest one that satisfies the format: one blank layout, one colour scheme, no placeholders to fill in.
 
-// WHY THE SLIDE TEXT IS WRITTEN AS TEXT BOXES.
+// THE SLIDE TEXT IS WRITTEN AS TEXT BOXES.
 // A slide with a title placeholder and a body placeholder waits for the customer to fill them in.
 // A slide with two boxes is finished when the file is written, which is what a deck handed to a client has to be.
 
-// WHY EVERY SLIDE LOOKS THE SAME.
+// EVERY SLIDE LOOKS THE SAME.
 // One shape layout for every slide keeps the writer small and keeps the deck readable: a reader who opens slide nine sees the same frame as slide two.
 
-// WHY THE DECK OPENS ON A COVER.
+// THE DECK OPENS ON A COVER.
 // A deck that starts on a bullet list is a document someone printed onto slides, and the first page is where a client decides whether the rest is worth reading.
 
 import { zipBytes } from './zip.js';

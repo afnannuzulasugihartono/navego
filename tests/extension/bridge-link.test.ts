@@ -3,7 +3,7 @@
 // @state: the real socket server pushes; this worker answers CDP over it.
 // @dependencies: node:test, strict, ../extension/worker/bridge-link.js, ../local/bridge-ws.js.
 
-// WHY A REAL SERVER HERE.
+// A REAL SERVER HERE.
 // The whole point of the socket road is that the device receives a command it never asked for, so a stubbed transport would prove nothing that matters.
 // This drives the same bridge-ws.js that runs on the machine, over a real socket, and asserts the push arrives, the CDP routing works, and a CDP failure comes back as a named completion instead of silence.
 
@@ -92,7 +92,7 @@ test.after(async () => {
   await bridge.close();
 });
 
-// WHY THE PORT IS DISCOVERED RATHER THAN TRUSTED.
+// THE PORT IS DISCOVERED RATHER THAN TRUSTED.
 // Measured live: a stale extension dialled ws://127.0.0.1:19451 while the local server listened on 9451, the connection was refused, and every command silently took the cloud relay - 268 to 797 ms a call where loopback answers in 8 to 13 ms. The configured address is the one thing a stale build gets wrong, and getting it wrong costs twenty to fifty times the latency with nothing in the answer that says so.
 // So a dead configured port must not be the end of the road: the candidates are probed and the one that answers is used.
 
@@ -115,7 +115,7 @@ test('a port with nothing on it answers no, and one with the bridge answers yes'
   assert.equal(await probePort(PORT), true, 'and the port this suite is driving is found');
 });
 
-// WHY A RESPONDER THAT IS NOT A BRIDGE IS REFUSED.
+// A RESPONDER THAT IS NOT A BRIDGE IS REFUSED.
 // Measured on this machine: a Chrome started with a remote debugging port answers on 9222, and the probe that only asked "did anything answer" took that port for a bridge.
 // The extension then dialled a debugging endpoint forever, reported "port 9222 discovered", and never linked - the local road was dead while it believed it was connected.
 
@@ -136,7 +136,7 @@ test('a port that answers but is not a bridge is refused', async () => {
   }
 });
 
-// WHY THE WALK IS DRIVEN BY A PROBE THE TEST CONTROLS.
+// THE WALK IS DRIVEN BY A PROBE THE TEST CONTROLS.
 // The first version walked the real candidate list and asserted a live port was found, which is only true on a machine running a bridge - on CI it found nothing and failed, and a test that passes on one machine and fails on another is testing the machine.
 // The claim worth pinning is the order: a dead configured address is stepped over and the first live port wins.
 
@@ -216,7 +216,7 @@ test('the frame writer the server uses is the one the client decodes', () => {
   assert.equal(encodeText('{"type":"ping"}').toString('latin1').includes('{"type":"ping"}'), true);
 });
 
-// WHY THIS IS LOCKED IN A TEST AND NOT LEFT TO THE READER.
+// THIS IS LOCKED IN A TEST AND NOT LEFT TO THE READER.
 // One hung browser call used to hold this worker for a minute while the caller gave up after ten seconds — so the failure was not one failed command but a queue of them, which is what "stuck" felt like.
 // The bound has to stay under the caller's timeout, and those two numbers live in different files.
 

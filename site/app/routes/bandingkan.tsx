@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36 (no eyebrows, h1 first)
+
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
@@ -30,7 +32,6 @@ export default function Bandingkan() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Bandingkan</p>
             <h1>Di mana Navego berdiri.</h1>
             <p className="lede">Bukan tabel yang menulis menakut-nakuti. Dua pendekatan lain punya tempatnya — ini perbandingannya apa adanya.</p>
           </div>
@@ -40,7 +41,6 @@ export default function Bandingkan() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Perbandingan jujur</p>
                 <h2 id="tabelTitle" className="section-title">Navego vs WebDriver vs ekstensi AI generik.</h2>
               </div>
             </div>

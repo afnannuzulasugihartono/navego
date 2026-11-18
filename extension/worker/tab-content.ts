@@ -9,7 +9,7 @@ import { clamp } from '../lib/protocol.js';
 
 export const HTTP_URL_RE = /^https?:\/\//i;
 
-// WHY the signal is a parameter.
+// the signal is a parameter.
 // A caller that must be able to walk away from a request it no longer wants has no way to do it otherwise: a held poll kept answering a loop that had already been superseded, and every such request was one more consumer of the single command queue.
 
 export async function fetchJson(url: string | URL, body: Record<string, unknown>, timeoutMs: number = 30000, signal?: AbortSignal | undefined): Promise<Record<string, unknown> | null> {
@@ -42,7 +42,7 @@ export async function fetchJson(url: string | URL, body: Record<string, unknown>
   }
 }
 
-// WHY the assertion: chrome.tabs.update() answers Tab | undefined (a discarded tab), and a caller passes that through.
+// the assertion: chrome.tabs.update() answers Tab | undefined (a discarded tab), and a caller passes that through.
 // The JS this replaces crashed the same way on an undefined tab; the assertion keeps that runtime behavior instead of fabricating an empty tab object.
 
 export function publicTab(tab: chrome.tabs.Tab | undefined) {

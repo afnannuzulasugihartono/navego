@@ -3,7 +3,7 @@
 // @state: the recorded call sequence, the transport it used, the press and the download hash, the picture, and the markdown that must match the jsonl.
 // @dependencies: node:test, strict, node:crypto, node:fs, node:path, node:url, scripts/dev/extension-run.ts.
 
-// WHY THIS FILE EXISTS.
+// THIS FILE EXISTS.
 // The product ships a browser extension and claims it drives the everyday browser without a debugging port.
 // The claim was true in code and unproven in fact, and a proof run over a debugging port cannot speak for the extension.
 // So this file reads the recorded drive and asks the only two questions that matter: which road carried the calls, and did the bytes land.
@@ -55,7 +55,7 @@ test('the record shows the press, not only the file it fetched', () => {
   assert.match(markdown, /pressed the download control "Unduh CSV"/, 'the readable record says the press in words');
 });
 
-// WHY THE MARKDOWN IS REGENERATED FROM THE JSONL AND LOCKED EQUAL.
+// THE MARKDOWN IS REGENERATED FROM THE JSONL AND LOCKED EQUAL.
 // The two files were written by one run, so a sentence that survives an edit to the generator is a sentence nobody can trust.
 // Regenerating the markdown from the recorded rows proves the readable record is what the recorded run says.
 
@@ -75,7 +75,7 @@ test('the readable record is the recorded rows, regenerated', () => {
   assert.doesNotMatch(markdown, /cannot drift/, 'the record does not claim the test re-proves it');
 });
 
-// WHY THE VERSION IS READ BEFORE THE LINK IS WAITED FOR, AND WHY IT CANNOT REFUSE THE RUN.
+// THE VERSION IS READ BEFORE THE LINK IS WAITED FOR, AND WHY IT CANNOT REFUSE THE RUN.
 // /json/version answers "Chrome/<major>" for branded Chrome and for Chrome for Testing alike, and the two differ exactly here.
 // So the payload is a suspect for the failure, never the verdict: a link that arrives ends the matter, and only a link that does not arrive hears about the flag.
 
@@ -88,7 +88,7 @@ test('the version number is a suspect for the failure, not the verdict', () => {
   assert.equal(majorOf('nothing'), null);
 });
 
-// WHY THE ROAD SENTENCE IS A FUNCTION OF THE MODE.
+// THE ROAD SENTENCE IS A FUNCTION OF THE MODE.
 // A run that launches its own Chrome has a debugging port open on that browser; saying "no debugging port" next to it is the one claim the run cannot make.
 // Rows with no header are a record of no road at all, and guessing one is exactly the drift the sentence exists to prevent.
 
