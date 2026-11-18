@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { readConsent, readRegionCookie, storeRegionCookie } from '../lib/consent.js';
 import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
@@ -29,7 +30,7 @@ const EUROPE_PLANS = [
 ] as const;
 
 const QA = [
-  ['rencana', 'Plan, bukan langganan tersembunyi', 'USD, sekali beli, langsung aktif. Kawasan Anda terdeteksi otomatis dari IP — plan yang tampil sesuai daya beli negara Anda, Asia/Arab/Afrika atau Eropa & AS. Jika kawasan tidak bisa terdeteksi, kedua grup ditampilkan.'],
+  ['rencana', 'Plan, bukan langganan tersembunyi', 'USD, sekali beli, langsung aktif. Kawasan terdeteksi dari lokasi perangkat bila diizinkan (akurat walau di balik VPN), atau dari IP - yang tampil sesuai daya beli negara Anda, Asia/Arab/Afrika atau Eropa & AS. Jika keduanya gagal, kedua grup ditampilkan.'],
   ['kuota', 'Kuota perintah per hari', 'Setiap plan punya kuota harian. Kuota terpakai tidak bertambah di hari berikutnya; kuota hari ini hanya bisa dipakai hari ini.'],
   ['fitur', 'Semua fitur, bukan tier yang dikebiri', 'Asia/Arab/Afrika: Starter, Basic, Plus, Pro, Advanced — semuanya plan dasar. Eropa/AS: Starter, Pro, Business (6 bulan), Enterprise (1 tahun); Business dan Enterprise membawa statement, VM, dan remote drive, plus prioritas dukungan.'],
   ['paypal', 'Bayar dengan PayPal', 'Plan USD dibayar dengan PayPal. Setelah pembayaran dikonfirmasi PayPal Anda, plan aktif otomatis.'],
@@ -44,27 +45,102 @@ export default function Harga() {
   const [country, setCountry] = useState<string | null>(null);
   const [detected, setDetected] = useState(false);
   const [band, setBand] = useState<PricingBand | 'both'>('both');
+  const [source, setSource] = useState<'ip' | 'device' | 'cache' | null>(null);
+  const [geoBusy, setGeoBusy] = useState(false);
+  const [geoError, setGeoError] = useState('');
 
-  useEffect(() => {
-    setSignedOut(!getStoredToken());
-    let alive = true;
+  const countryRef = useRef<string | null>(null);
+
+  async function applyRegion(code: string | null, via: 'ip' | 'device' | 'cache') {
+    countryRef.current = code;
+    if (code && readConsent() === 'granted') storeRegionCookie(code);
+    setCountry(code);
+    setBand(bandForCountry(code) ?? 'both');
+    setSource(code ? via : null);
+    setDetected(true);
+  }
+
+  // Reverse-geocode the device's coords to a country: the one honest way to know where a visitor behind a VPN actually is.
+  // Only the country code is read; the coordinates go to bigdatacloud.net (no key, no account) and are never stored or logged.
+  async function applyDeviceLocation(latitude: number, longitude: number): Promise<boolean> {
+    try {
+      const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=id`, { cache: 'no-store' });
+      const data = await response.json();
+      const code = typeof data?.countryCode === 'string' && /^[A-Za-z]{2}$/.test(data.countryCode) ? data.countryCode.toUpperCase() : null;
+      if (!code) return false;
+      await applyRegion(code, 'device');
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function detectFromIp() {
     fetch('/api/region', { cache: 'no-store' })
       .then((response) => (response.ok ? response.json() : null))
       .then((data) => {
-        if (!alive) return;
         const code = typeof data?.country === 'string' ? data.country.toUpperCase() : null;
-        setCountry(code);
-        setBand(bandForCountry(code) ?? 'both');
-        setDetected(true);
+        void applyRegion(code, 'ip');
       })
       .catch(() => {
-        if (!alive) return;
-        setDetected(true);
+        void applyRegion(null, 'ip');
       });
+  }
+
+  function detectFromDevice() {
+    if (typeof navigator === 'undefined' || !('geolocation' in navigator)) {
+      detectFromIp();
+      return;
+    }
+    setGeoBusy(true);
+    navigator.geolocation.getCurrentPosition((position) => {
+      void applyDeviceLocation(position.coords.latitude, position.coords.longitude).then((ok) => {
+        setGeoBusy(false);
+        if (!ok) detectFromIp();
+      });
+    }, () => {
+      setGeoBusy(false);
+      detectFromIp();
+    }, { timeout: 8000, maximumAge: 3600000 });
+  }
+
+  useEffect(() => {
+    setSignedOut(!getStoredToken());
+    // The cookie a consented visitor carries pre-fills the correct group instantly; the mandatory detection still runs and corrects it if the device moved.
+    if (readConsent() === 'granted') {
+      const cached = readRegionCookie();
+      if (cached) void applyRegion(cached, 'cache');
+    }
+    const onConsent = (event: Event) => {
+      const detail = (event as CustomEvent).detail;
+      if (detail === 'granted' && countryRef.current) storeRegionCookie(countryRef.current);
+    };
+    window.addEventListener('navego:consent', onConsent);
+    // WHY THE PAGE ASKS FOR LOCATION IMMEDIATELY: the owner requires the region to come from the device's geolocation whenever the browser can answer it, so a visitor behind a VPN is priced by where they actually are, not by where the VPN exits.
+    // The browser owns the final say: a denial, a timeout or a missing API falls back to the IP the edge reports, and nothing here blocks the page from rendering either way.
+    detectFromDevice();
     return () => {
-      alive = false;
+      window.removeEventListener('navego:consent', onConsent);
     };
   }, []);
+
+  async function retryWithDevice() {
+    setGeoBusy(true);
+    setGeoError('');
+    if (typeof navigator === 'undefined' || !('geolocation' in navigator)) {
+      setGeoError('Browser Anda tidak menyediakan lokasi perangkat.');
+      setGeoBusy(false);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const ok = await applyDeviceLocation(position.coords.latitude, position.coords.longitude);
+      setGeoBusy(false);
+      if (!ok) setGeoError('Lokasi didapat, tapi negaranya tidak bisa dibaca atau koneksinya gagal.');
+    }, () => {
+      setGeoBusy(false);
+      setGeoError('Izin lokasi ditolak — kawasan dari IP tetap dipakai. Anda bisa mengizinkannya lagi dari pengaturan situs di browser.');
+    }, { timeout: 8000, maximumAge: 3600000 });
+  }
 
   const regionName = (code: string): string => {
     try {
@@ -137,11 +213,16 @@ export default function Harga() {
             <div className="wrap">
               {country && bandForCountry(country) ? (
                 <p className="section-note" style={{ margin: 0 }}>
-                  Kawasan terdeteksi dari IP Anda: <strong>{regionName(country)}</strong> — plan yang tampil sesuai daya beli kawasan Anda.
+                  Kawasan terdeteksi dari {source === 'device' ? 'lokasi perangkat Anda' : source === 'cache' ? 'preferensi tersimpan di perangkat Anda' : 'IP Anda'}: <strong>{regionName(country)}</strong> — plan yang tampil sesuai daya beli kawasan Anda.
                 </p>
               ) : (
-                <p className="section-note" style={{ margin: 0 }}>Kami tidak bisa mendeteksi kawasan Anda dari IP; kedua grup ditampilkan.</p>
+                <p className="section-note" style={{ margin: 0 }}>Kawasan tidak bisa dideteksi dari IP maupun lokasi perangkat; kedua grup ditampilkan.</p>
               )}
+              <button className="btn btn-ghost btn-sm" type="button" style={{ marginTop: 'var(--s-2)' }} onClick={retryWithDevice} disabled={geoBusy}>
+                {geoBusy ? 'Mendeteksi lokasi…' : 'Perbarui dengan lokasi saya'}
+              </button>
+              {geoError ? <p className="status warn" role="status" style={{ marginTop: 'var(--s-2)' }}>{geoError}</p> : null}
+              <p className="note" style={{ marginTop: 'var(--s-2)' }}>Lokasi perangkat dipakai lebih dulu — tetap akurat di balik VPN. Koordinat hanya dikirim ke bigdatacloud.net untuk diterjemahkan menjadi nama negara dan tidak disimpan. Kawasan yang terdeteksi disimpan di perangkat Anda (cookie navego_region) hanya jika Anda menerima cookie di banner bawah; tolak untuk menonaktifkan penyimpanan.</p>
             </div>
           </section>
         ) : null}
