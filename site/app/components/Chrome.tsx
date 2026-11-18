@@ -1,46 +1,141 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { NavegoMark, NavegoWordmark } from './NavegoMark';
 
 const NAV = [
-  { href: '/fitur', label: 'Fitur' },
-  { href: '/harga', label: 'Harga' },
-  { href: '/unduh', label: 'Unduh' },
-  { href: '/docs', label: 'Docs' },
-  { href: '/artikel', label: 'Artikel' },
-  { href: '/mcp', label: 'MCP' },
-  { href: '/dukungan', label: 'Dukungan' }
-];
+  { key: 'fitur', href: '/fitur', label: 'Fitur' },
+  { key: 'harga', href: '/harga', label: 'Harga' },
+  { key: 'unduh', href: '/unduh', label: 'Unduh' },
+  { key: 'docs', href: '/docs', label: 'Docs' },
+  { key: 'artikel', href: '/artikel', label: 'Artikel' },
+  { key: 'mcp', href: '/mcp', label: 'MCP' },
+  { key: 'dukungan', href: '/dukungan', label: 'Dukungan' }
+] as const;
 
 const VERSION = '1.7.6';
 
-const MEGA_PRODUK = [
-  { href: '/fitur', label: 'Fitur' },
-  { href: '/harga', label: 'Harga' },
-  { href: '/unduh', label: 'Unduh' },
-  { href: '/docs', label: 'Docs' },
-  { href: '/artikel', label: 'Artikel' }
-];
+interface MegaLink {
+  href: string;
+  label: string;
+}
+interface MegaColumn {
+  heading: string;
+  links: MegaLink[];
+}
+interface MegaPanel {
+  leadHeading: string;
+  lead: MegaLink[];
+  cols: MegaColumn[];
+}
 
-const MEGA_ALAT = [
-  { href: '/mcp', label: 'Pasang MCP' },
-  { href: '/docs#berkas', label: 'Contoh berkas' },
-  { href: '/docs#tools', label: '45 tool MCP' },
-  { href: '/dukungan', label: 'Dukungan' }
-];
+// WHY THE PANEL IS DATA AND NOT SEVEN PANELS.
+// Apple's header swaps one full-width panel between items; the content is the only thing that changes per item.
+// One panel, one map keyed by the item under the pointer or focus, is the same shape with one place to edit.
 
-const MEGA_AKUN = [
-  { href: '/', label: 'Masuk' },
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/privasi', label: 'Privasi' },
-  { href: '/syarat', label: 'Syarat' }
-];
+// WHY A LINK REGISTRY: the seven panels share most of their links, and repeating them token by token is what a duplication gate exists to catch.
+// Every link lives here exactly once; the panels only say which links they show.
+
+const L = {
+  fiturKemampuan: { href: '/fitur#kemampuanTitle', label: 'Enam kemampuan inti' },
+  fiturEmpat: { href: '/fitur#taskTitle', label: 'Empat langkah, dari tulis sampai simpan' },
+  fiturPeran: { href: '/fitur#roleTitle', label: 'Operator, analis, pengembang' },
+  perms: { href: '/fitur#permTitle', label: 'Enam izin, tidak lebih' },
+  docsBatas: { href: '/docs#batas', label: 'Batas yang dijaga' },
+  docsTools: { href: '/docs#tools', label: '45 tool MCP' },
+  docsBerkas: { href: '/docs#berkas', label: 'Contoh berkas' },
+  docsPasang: { href: '/docs#pasang', label: 'Pasang extension' },
+  docsPair: { href: '/docs#pairing', label: 'Masuk dan pair device' },
+  docsTugas: { href: '/docs#tugas', label: 'Tugas pertama' },
+  docsPaket: { href: '/docs#paket', label: 'Paket dan pembayaran' },
+  docsMcp: { href: '/docs#mcp', label: 'Hubungkan AI harness' },
+  asia: { href: '/harga#asiaTitle', label: 'Asia · Arab · Afrika' },
+  eropa: { href: '/harga#europeTitle', label: 'Eropa & AS' },
+  p1: { href: '/harga#usd-plan.usd-1', label: 'Starter — $1' },
+  p5: { href: '/harga#usd-plan.usd-5', label: 'Plus — $5' },
+  p17: { href: '/harga#usd-plan.usd-17', label: 'Business — $17 / 6 bulan' },
+  p33: { href: '/harga#usd-plan.usd-33', label: 'Enterprise — $33 / tahun' },
+  download: { href: '/unduh', label: 'Build untuk Chrome, Edge, Brave, Opera, Vivaldi' },
+  crx: { href: '/unduh', label: 'CRX ditandatangani & .reg Windows' },
+  article: { href: '/artikel/ai-browser-indonesia', label: 'AI yang mengenal browser Anda' },
+  articles: { href: '/artikel', label: 'Semua artikel' },
+  mcp: { href: '/mcp', label: 'npm i -g navego' },
+  openCode: { href: '/mcp', label: 'Config OpenCode' },
+  dukungan: { href: '/dukungan', label: 'Perbaikan cepat & tiga pintu' },
+  faq: { href: '/faq', label: 'Dua belas jawaban' },
+  keamanan: { href: '/keamanan', label: 'Keamanan' },
+  metodologi: { href: '/metodologi', label: 'Metodologi' },
+  changelog: { href: '/changelog', label: 'Changelog' },
+  bandingkan: { href: '/bandingkan', label: 'Bandingkan pendekatan' },
+  privasi: { href: '/privasi', label: 'Privasi' },
+  syarat: { href: '/syarat', label: 'Syarat' }
+} as const;
+
+const MEGA: Record<string, MegaPanel> = {
+  fitur: {
+    leadHeading: 'Explore fitur',
+    lead: [L.fiturKemampuan, L.fiturEmpat, L.fiturPeran],
+    cols: [
+      { heading: 'Yang dijaga', links: [L.keamanan, L.perms, L.docsBatas] },
+      { heading: 'Alat', links: [L.docsTools, L.docsBerkas, L.bandingkan] }
+    ]
+  },
+  harga: {
+    leadHeading: 'Pilih kawasan',
+    lead: [L.asia, L.eropa],
+    cols: [
+      { heading: 'Plan', links: [L.p1, L.p5, L.p17, L.p33] },
+      { heading: 'Tanya jawab', links: [L.faq, L.docsPaket, L.metodologi] }
+    ]
+  },
+  unduh: {
+    leadHeading: 'Unduh',
+    lead: [L.download, L.crx],
+    cols: [
+      { heading: 'Terminal', links: [L.mcp, L.docsTugas, { href: '/docs', label: 'Dokumentasi lengkap' }] },
+      { heading: 'Setelah unduh', links: [L.changelog, L.metodologi, L.dukungan] }
+    ]
+  },
+  docs: {
+    leadHeading: 'Mulai dari sini',
+    lead: [L.docsPasang, L.docsPair],
+    cols: [
+      { heading: 'Alat', links: [L.docsTools, L.docsMcp, L.docsBatas] },
+      { heading: 'Lainnya', links: [L.faq, L.metodologi, L.changelog] }
+    ]
+  },
+  artikel: {
+    leadHeading: 'Dari lab Navego',
+    lead: [L.article, L.articles],
+    cols: [
+      { heading: 'Angka dan metode', links: [L.metodologi, L.changelog] },
+      { heading: 'Lainnya', links: [L.bandingkan, L.keamanan] }
+    ]
+  },
+  mcp: {
+    leadHeading: 'Pasang sebagai MCP',
+    lead: [L.mcp, L.openCode],
+    cols: [
+      { heading: 'Verifikasi', links: [L.metodologi, L.changelog] },
+      { heading: 'Lainnya', links: [L.docsMcp, L.faq] }
+    ]
+  },
+  dukungan: {
+    leadHeading: 'Butuh bantuan',
+    lead: [L.dukungan, L.faq],
+    cols: [
+      { heading: 'Bantuan', links: [{ href: '/docs', label: 'Dokumentasi' }, L.changelog] },
+      { heading: 'Legal', links: [L.privasi, L.syarat, L.keamanan] }
+    ]
+  }
+};
 
 // One navigation tree at every size: a slim dark bar with a hover panel on wide screens, the native popover list when the row does not fit.
 // The header measures its own row and toggles `is-wide`; the panel opens on hover and on keyboard focus, so nothing depends on a pointer.
 
 function SiteNav({ current }: { current?: string }) {
   const headerRef = useRef<HTMLElement>(null);
+  const [mega, setMega] = useState<string>('fitur');
+  const panel: MegaPanel = MEGA[mega] ?? (MEGA.fitur as MegaPanel);
 
   useEffect(() => {
     const header = headerRef.current;
@@ -99,9 +194,21 @@ function SiteNav({ current }: { current?: string }) {
             <li><Link to="/beranda" aria-current={current === '/beranda' ? 'page' : undefined}>Beranda</Link></li>
             {NAV.map((item) => (
               <li key={item.href}>
-                <Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link>
+                <Link
+                  to={item.href}
+                  aria-current={current === item.href ? 'page' : undefined}
+                  onMouseEnter={() => setMega(item.key)}
+                  onFocus={() => setMega(item.key)}
+                >
+                  {item.label}
+                </Link>
               </li>
             ))}
+            <li><Link to="/keamanan">Keamanan</Link></li>
+            <li><Link to="/changelog">Changelog</Link></li>
+            <li><Link to="/faq">FAQ</Link></li>
+            <li><Link to="/metodologi">Metodologi</Link></li>
+            <li><Link to="/bandingkan">Bandingkan</Link></li>
             <li><Link to="/privasi">Privasi</Link></li>
             <li><Link to="/syarat">Syarat</Link></li>
           </ul>
@@ -109,23 +216,19 @@ function SiteNav({ current }: { current?: string }) {
           <div className="mega" aria-label="Jelajahi Navego">
             <div className="wrap mega-cols">
               <div>
-                <p className="mega-title">Produk</p>
+                <p className="mega-title">{panel.leadHeading}</p>
                 <ul className="mega-main">
-                  {MEGA_PRODUK.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}
+                  {panel.lead.map((l) => <li key={l.href + l.label}><Link to={l.href}>{l.label}</Link></li>)}
                 </ul>
               </div>
-              <div>
-                <p className="mega-title">Alat</p>
-                <ul>
-                  {MEGA_ALAT.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}
-                </ul>
-              </div>
-              <div>
-                <p className="mega-title">Akun</p>
-                <ul>
-                  {MEGA_AKUN.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}
-                </ul>
-              </div>
+              {panel.cols.map((col) => (
+                <div key={col.heading}>
+                  <p className="mega-title">{col.heading}</p>
+                  <ul>
+                    {col.links.map((l) => <li key={l.href + l.label}><Link to={l.href}>{l.label}</Link></li>)}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
         </nav>
@@ -145,7 +248,15 @@ const PRODUK = [
   { href: '/artikel', label: 'Artikel' }
 ];
 
-const LEGAL = [
+const SUMBER = [
+  { href: '/changelog', label: 'Changelog' },
+  { href: '/faq', label: 'FAQ' },
+  { href: '/keamanan', label: 'Keamanan' },
+  { href: '/metodologi', label: 'Metodologi' },
+  { href: '/bandingkan', label: 'Bandingkan' }
+];
+
+const BANTUAN = [
   { href: '/dukungan', label: 'Dukungan' },
   { href: '/privasi', label: 'Privasi' },
   { href: '/syarat', label: 'Syarat' }
@@ -171,17 +282,21 @@ export function SiteFooter() {
             <h3>Produk</h3>
             <ul>{PRODUK.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}</ul>
           </nav>
-          <nav aria-label="Bantuan">
-            <h3>Bantuan</h3>
-            <ul>{LEGAL.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}</ul>
+          <nav aria-label="Sumber">
+            <h3>Sumber</h3>
+            <ul>{SUMBER.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}</ul>
           </nav>
-          <nav aria-label="Buka sumber">
+          <nav aria-label="Open source">
             <h3>Open source</h3>
             <ul>
               <li><a href="https://github.com/afnannuzulasugihartono/navego" rel="noreferrer">GitHub</a></li>
               <li><a href="https://www.npmjs.com/package/navego" rel="noreferrer">npm</a></li>
               <li><Link to="/mcp">Pasang sebagai MCP</Link></li>
             </ul>
+          </nav>
+          <nav aria-label="Bantuan">
+            <h3>Bantuan</h3>
+            <ul>{BANTUAN.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}</ul>
           </nav>
         </div>
         <div className="footer-bar">

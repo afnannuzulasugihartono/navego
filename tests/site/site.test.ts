@@ -20,7 +20,8 @@ const ROUTES = [
   '/', '/beranda.html', '/fitur.html', '/harga.html', '/unduh.html', '/docs.html',
   '/mcp.html', '/dukungan.html', '/privasi.html',
   '/syarat.html', '/akun.html', '/404.html', '/oauth/consent.html', '/dashboard.html',
-  '/artikel.html', '/artikel/ai-browser-indonesia.html'
+  '/artikel.html', '/artikel/ai-browser-indonesia.html',
+  '/bandingkan.html', '/changelog.html', '/faq.html', '/keamanan.html', '/metodologi.html'
 ];
 
 const toFile = (route: string) => {
@@ -123,6 +124,11 @@ const CLAIMS = {
   '/404.html': ['Halaman ini tidak ada'],
   '/artikel.html': ['Artikel', 'AI yang mengenal browser'],
   '/artikel/ai-browser-indonesia.html': ['Navego', 'browser Anda'],
+  '/bandingkan.html': ['WebDriver', 'canvas', 'Navego'],
+  '/changelog.html': ['1.6.22', 'docs/releases'],
+  '/faq.html': ['Apa itu Navego', 'Berapa harganya', 'PayPal'],
+  '/keamanan.html': ['Tanpa eval', 'Kata sandi', 'SECURITY.md'],
+  '/metodologi.html': ['Diukur, bukan diklaim', 'Google Docs', 'p50'],
   '/': ['Masuk atau daftar', 'magic link']
 };
 
@@ -179,7 +185,7 @@ test('the client router answers every pretty URL, and the .html aliases are edge
   const manifest = assets.find((f) => f.startsWith('manifest-') && f.endsWith('.js'));
   assert.ok(manifest, 'the build ships a router manifest');
   const source = fs.readFileSync(path.join(client, 'assets', manifest), 'utf8');
-  const slugs = ['beranda', 'fitur', 'harga', 'unduh', 'docs', 'mcp', 'dukungan', 'privasi', 'syarat', 'akun', 'dashboard', 'artikel', 'artikel/ai-browser-indonesia', 'oauth/consent'];
+  const slugs = ['beranda', 'fitur', 'harga', 'unduh', 'docs', 'mcp', 'dukungan', 'bandingkan', 'changelog', 'faq', 'keamanan', 'metodologi', 'privasi', 'syarat', 'akun', 'dashboard', 'artikel', 'artikel/ai-browser-indonesia', 'oauth/consent'];
   for (const slug of slugs) {
     assert.ok(source.includes(`"path":"${slug}"`), `the router knows /${slug}`);
     assert.equal(source.includes(`"path":"${slug}.html"`), false, `/${slug}.html is an edge 301, not a client route`);
@@ -192,7 +198,7 @@ test('the sitemap names exactly the routes the build carries (404 and unknowns a
   buildSite();
   const sitemap = fs.readFileSync(path.join(client, 'sitemap.xml'), 'utf8');
   const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => String(m[1]).replace('https://navego.pages.dev', ''));
-  const expected = ['/beranda', '/fitur', '/harga', '/unduh', '/docs', '/mcp', '/dukungan', '/privasi', '/syarat', '/akun', '/dashboard', '/artikel', '/artikel/ai-browser-indonesia', '/oauth/consent', '/'];
+  const expected = ['/beranda', '/fitur', '/harga', '/unduh', '/docs', '/mcp', '/dukungan', '/bandingkan', '/changelog', '/faq', '/keamanan', '/metodologi', '/privasi', '/syarat', '/akun', '/dashboard', '/artikel', '/artikel/ai-browser-indonesia', '/oauth/consent', '/'];
   assert.deepEqual([...locs].sort(), [...expected].sort());
 });
 
