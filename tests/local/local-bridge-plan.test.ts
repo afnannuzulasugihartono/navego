@@ -76,7 +76,7 @@ test('a session the cloud cannot reach is refused, and the refusal names the met
 });
 
 test('a session the cloud refuses because the day is spent never becomes ready', async () => {
-  const spentDay = { ok: false, message: "today's quota of 200 commands for plan.pilot is used; resets tomorrow" };
+  const spentDay = { ok: false, message: "today's quota of 200 commands for plan.usd-1 is used; resets tomorrow" };
   const cloud = fakeCloud({ open: spentDay });
   const { bridge, port } = await startBridge({ cloud });
   const device = makeDevice({ url: `ws://127.0.0.1:${port}`, instanceId: 'spent-day' });
@@ -85,7 +85,7 @@ test('a session the cloud refuses because the day is spent never becomes ready',
   const close = await waitFor(device.closed, 1500, 'the refused device to close');
   assert.equal(close.code, 4001);
   const error = device.events.find((frame: any) => frame.type === 'error');
-  assert.match(String(error?.error ?? ''), /plan.pilot/);
+  assert.match(String(error?.error ?? ''), /plan.usd-1/);
   assert.match(String(error?.error ?? ''), /200/);
 
   await bridge.close();
@@ -110,7 +110,7 @@ test('the allowance refuses the command past it, and names the plan', async () =
   assert.equal(second.ok, true);
   assert.equal(third.ok, false, 'the command past the allowance is refused');
   assert.equal(third.error?.code, 'PLAN_LIMIT_REACHED');
-  assert.match(String(third.error?.message ?? ''), /plan.pilot/);
+  assert.match(String(third.error?.message ?? ''), /plan.usd-1/);
   assert.match(String(third.error?.message ?? ''), /2/);
   assert.equal(device.seen.filter((command: any) => command.method === 'page.read').length, 2, 'the device never saw the refused command');
 
@@ -198,7 +198,7 @@ test('the cloud meter speaks exactly the two calls the cloud answers', async () 
   });
   const opened = await meter.sessionOpen({ deviceName: 'meter-test', token: 't'.repeat(64) });
   assert.ok(opened, 'the cloud answered the session open');
-  assert.equal(opened.plan, 'plan.pilot');
+  assert.equal(opened.plan, 'plan.usd-1');
   assert.equal(seen[0].body.action, 'session_open');
   assert.equal(seen[0].body.deviceName, 'meter-test');
   assert.equal(seen[0].body.token, 't'.repeat(64));

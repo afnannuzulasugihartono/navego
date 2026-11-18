@@ -182,8 +182,19 @@ export function payLinkState(invoice: unknown, now: number = Date.now()): 'none'
 
 export const SNAP_QRIS_ONLY_BELOW_CENTS = 10_000_000;
 
-export function snapPaymentMethods(amountCents: unknown, currency = 'IDR'): { chargeable: boolean; enabled: string[] | null; why: string } {
+// WHY THE RAIL IS A PARAMETER AND NOT A SECOND FUNCTION.
+// The default stays the fee-based choice for callers that do not ask; a caller that asks chooses what the buyer picked, and the rest of the flow cannot tell the two apart.
+
+export function snapPaymentMethods(amountCents: unknown, currency = 'IDR', rail?: string): { chargeable: boolean; enabled: string[] | null; why: string } {
   const amount = Number(amountCents);
+  const wanted = String(rail || '').trim().toLowerCase();
+  // An explicit rail is the buyer's choice, so it overrides the fee-based default: a card is allowed below the QRIS-only threshold, and QRIS is allowed above it.
+  if (wanted === 'card') {
+    return { chargeable: true, enabled: ['credit_card'], why: 'the buyer chose a card; the fee rides along' };
+  }
+  if (wanted === 'qris') {
+    return { chargeable: true, enabled: ['other_qris'], why: 'the buyer chose QRIS; no fixed fee' };
+  }
   if (String(currency || '').toUpperCase() !== 'IDR') {
     return {
       chargeable: false,
@@ -403,32 +414,6 @@ export function manualSettlement(invoice: Record<string, unknown> | null | undef
   return { ok: true };
 }
 
-// WHY A PLAN IS A PRICE AND NOT A DISCOUNT APPLIED AFTERWARDS.
-// The offer is one number a firm compares with the hours it saves, so the plan is its own kind of line.
-// The clients the plan includes are not lines at all, and only the clients above the cap are: a discount line would make the invoice say two numbers for one agreement, and the customer would have to trust the arithmetic.
-
-const PLAN_INCLUDED: Record<string, number> = { 'plan.pilot': 15, 'plan.firm': 50 };
-
-export function planInvoiceLines(deliveries: unknown, plan: unknown, period: unknown): { lines: Array<Record<string, unknown>>; refused: Array<Record<string, unknown>>; included?: number } {
-  const planName = String(plan ?? '');
-  const periodLabel = String(period ?? '');
-  const included = PLAN_INCLUDED[planName];
-  if (!included) {
-    return { lines: [], refused: [{ reason: `no plan named ${planName || 'nothing'} in the price list` }] };
-  }
-  const derived = linesFromDeliveries(deliveries);
-  if (derived.refused.length) return { lines: [], refused: derived.refused };
-  const label = planName === 'plan.pilot' ? 'Pilot' : 'Firm';
-  const lines: Array<Record<string, unknown>> = [{
-    kind: planName,
-    quantity: 1,
-    description: `${label} - up to ${included} client-months, ${periodLabel}`
-  }];
-  for (const row of derived.lines.slice(included)) {
-    lines.push({ ...row, kind: 'statement.client_month', description: `${row.description} (above plan)` });
-  }
-  return { lines, refused: [], included: Math.min(derived.lines.length, included) };
-}
 
 // WHY THE FIELD IS signature_key AND NOT signature.
 // Midtrans names the field signature_key, and the first version of this rule read notification.signature instead.

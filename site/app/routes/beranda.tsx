@@ -176,12 +176,12 @@ export default function Beranda() {
             </div>
             <div className="plans">
               <div className="card plan">
-                <p className="plan-name">plan.pilot</p>
+                <p className="plan-name">plan.usd-1</p>
                 <p className="plan-price">Gratis</p>
                 <ul><li>200 perintah / hari</li><li>50 per sesi</li><li>36 primitive browser</li></ul>
               </div>
               <div className="card plan is-primary">
-                <p className="plan-name">plan.firm · paling dipilih</p>
+                <p className="plan-name">plan.usd-17 · paling dipilih</p>
                 <p className="plan-price">Rp 249.000 <small>/ 30 hari</small></p>
                 <ul><li>5.000 perintah / hari</li><li>500 per sesi</li><li>top-up saldo Rp 10.000</li></ul>
               </div>

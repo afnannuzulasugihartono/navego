@@ -682,9 +682,9 @@
       ],
       "writers": "migrations only",
       "readers": "every invoice line; harga.html (static copy drifts)",
-      "wrongIfConfused": "toggling plan.firm off makes the firm plan unbillable mid-cycle with a 409 only in function logs; the static price page keeps selling it",
+      "wrongIfConfused": "toggling a plan.usd-* row off makes that plan unbillable mid-cycle with a 409 only in function logs; the static price page keeps selling it",
       "decision": "tolerate",
-      "why": "the gap is page copy vs table rows, which belongs to a test, not a state model — tolerate with a drift test to be added",
+      "why": "the gap is page copy vs table rows, which belongs to a test, not a state model; plans.test.ts pins the migration's price rows and tests/site/site.test.ts pins the page copy, so the drift fails before it ships, not after",
       "rank": 4
     },
     {

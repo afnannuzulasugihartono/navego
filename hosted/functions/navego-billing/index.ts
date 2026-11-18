@@ -48,7 +48,6 @@ import {
   notificationAcknowledged,
   notificationSignatureValid,
   paidAmountCents,
-  planInvoiceLines,
   providerAmount,
   providerOrderId,
   providerSaysMissing,
@@ -68,6 +67,7 @@ import { DEPOSIT_KIND } from "../_shared/wallet.ts";
 import { handleWalletAction, isWalletAction, type ReserveOutcome, type SettleOutcome } from "../_shared/wallet-api.ts";
 import { toDynamicQris } from "../_shared/qris.ts";
 import { FEED_URL, TOKEN_URL, detectorPlan, feedHeaders, feedQuery, matchOpenInvoices, parseFeed, refreshBody, sessionHeaders } from "../_shared/qris-detector.ts";
+import { paypalEnvironment, createPaypalOrder, verifyPaypalWebhook } from "../_shared/paypal.ts";
 
 type PriceRow = { kind: string; unit: string; amount_cents: number; currency: string; active: boolean };
 type Line = { kind: string; unit?: string; description?: string | null; quantity: number; amountCents?: number; reason?: string };
@@ -305,7 +305,7 @@ function nextAttempt(invoice: InvoiceRow): number {
 // A charge built from the row would ask the customer for yesterday's price and then write the new amount beside it, and the settlement would be refused by the amount check.
 // The refresh path passes nothing and gets the row's own amount, which is what it means.
 
-async function openNewAttempt(invoice: InvoiceRow, { customerId, amountCents = Number(invoice.amount_cents), currency = invoice.currency }: { customerId: string; amountCents?: number; currency?: string }): Promise<Link | null> {
+async function openNewAttempt(invoice: InvoiceRow, { customerId, amountCents = Number(invoice.amount_cents), currency = invoice.currency, rail }: { customerId: string; amountCents?: number; currency?: string; rail?: string }): Promise<Link | null> {
   const previous = invoice.provider_order_id || null;
   if (previous) {
     const closed = await closeAttempt(previous);
@@ -325,7 +325,7 @@ async function openNewAttempt(invoice: InvoiceRow, { customerId, amountCents = N
   }
   const attempt = nextAttempt(invoice);
   const orderId = providerOrderId(invoice.id, amountCents, currency, attempt);
-  const payment = snapPaymentMethods(amountCents, currency);
+  const payment = snapPaymentMethods(amountCents, currency, rail);
   const charge = snapChargeRequest({
     orderId,
     amountCents,
@@ -487,7 +487,7 @@ async function createInvoice({ customer_id, period, lines, rail = "midtrans" }: 
       amount_cents: out.amountCents,
       currency: out.currency,
       lines: { priced: out.priced, unpriced: out.unpriced }
-    }, { customerId: customer_id, amountCents: out.amountCents, currency: out.currency });
+    }, { customerId: customer_id, amountCents: out.amountCents, currency: out.currency, rail });
     if (opened) link = opened;
   }
 
@@ -1055,6 +1055,38 @@ const cors = {
       // WHY A NOTIFICATION IS RECOGNISED BY THE ORDER AND THE STATUS CODE.
       // Recognition used to demand a signature field, so a provider payload whose signature arrived under a different name fell through to "unknown action" and left no trace anywhere.
       // What makes a body a notification is what the provider says happened; whether it is believed is a separate question, answered by the signature.
+      const USD_PLANS = ["plan.usd-1", "plan.usd-3", "plan.usd-5", "plan.usd-7", "plan.usd-9", "plan.usd-17", "plan.usd-33"];
+
+const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type === "string" && Boolean(req.headers.get("paypal-transmission-id"));
+      if (looksLikePaypalWebhook) {
+        const headers = {
+          'paypal-transmission-id': req.headers.get("paypal-transmission-id") || undefined,
+          'paypal-transmission-sig': req.headers.get("paypal-transmission-sig") || undefined,
+          'paypal-transmission-time': req.headers.get("paypal-transmission-time") || undefined,
+          'paypal-cert-url': req.headers.get("paypal-cert-url") || undefined,
+          'paypal-auth-algo': req.headers.get("paypal-auth-algo") || undefined
+        };
+        const eventBody = body as Record<string, unknown>;
+        const env = paypalEnvironment();
+        const ok = await verifyPaypalWebhook(env, headers, eventBody).catch(() => false);
+        if (!ok) return json({ ok: false, error: "the paypal webhook signature was not recognised" }, 400, cors);
+        const type = String(eventBody.event_type ?? "");
+        if (type === "PAYMENT.CAPTURE.COMPLETED" || type === "PAYMENT.SALE.COMPLETED") {
+          const event = eventBody as { resource?: { supplementary_data?: { related_ids?: { order_id?: string } }; id?: string } };
+          const related = event.resource?.supplementary_data?.related_ids?.order_id || event.resource?.id;
+          const { capturePaypalOrder } = await import("../_shared/paypal.ts");
+          const order = related ? await capturePaypalOrder(env, String(related)) : null;
+          const units = (order as { purchase_units?: Array<{ custom_id?: string }> } | null)?.purchase_units ?? [];
+          const customId = String(units[0]?.custom_id ?? "");
+          const [plan, owner] = customId.split(":") as [string, string];
+          if (plan && owner && USD_PLANS.includes(plan)) {
+            const supabase = await db();
+            await supabase.rpc("opera_plan_activate_purchase", { p_owner: owner, p_kind: plan });
+          }
+        }
+        return json({ ok: true }, 200, cors);
+      }
+
       const looksLikeNotification = body.action === "notify"
         || (!body.action && Boolean(body.order_id) && Boolean(body.status_code));
       if (looksLikeNotification) {
@@ -1090,6 +1122,32 @@ const cors = {
       // A wallet action is recognised by its own name, and the refresh form is recognised by its token, so the two cannot be confused.
       // Putting the wallet first keeps every money answer in one shape: a status that says whether the caller may try again, and a body that says why not.
 
+      if (body.action === "paypal-buy") {
+        const owner = await sessionOrNull(req);
+        if (!owner) return json({ error: "masuk dulu sebelum membeli plan USD" }, 401, cors);
+        const plan = String(body.plan || "");
+        if (!USD_PLANS.includes(plan)) return json({ error: "plan USD tidak dikenal" }, 400, cors);
+        const supabase = await db();
+        const { data: row, error: priceError } = await supabase.from("opera_price_list")
+          .select("amount_cents, currency, unit")
+          .eq("kind", plan)
+          .eq("active", true)
+          .maybeSingle();
+        if (priceError || !row) return json({ error: "harga plan USD belum ada di daftar" }, 500, cors);
+        const env = paypalEnvironment();
+        try {
+          const order = await createPaypalOrder(env, {
+            amountCents: Number(row.amount_cents),
+            currency: String(row.currency),
+            description: `Navego ${plan}`,
+            customId: `${plan}:${owner}`
+          });
+          return json({ ok: true, plan, orderId: order.id, approvalUrl: order.approvalUrl }, 200, cors);
+        } catch (err) {
+          return json({ error: err instanceof Error ? err.message : String(err) }, 502, cors);
+        }
+      }
+
       if (isWalletAction(String(body.action || ""))) {
         const out = await handleWalletAction(String(body.action), body, walletDeps(req));
         return json(out.body, out.status, cors);
@@ -1100,8 +1158,9 @@ const cors = {
       if (body.action === "plan-subscribe") {
         const owner = await sessionOrNull(req);
         if (!owner) return json({ error: "masuk dulu untuk berlangganan" }, 401, cors);
-        const plan = String(body.plan || "plan.firm");
-        if (plan !== "plan.firm") return json({ error: "yang dijual di sini saat ini hanya plan.firm" }, 400, cors);
+        const plan = String(body.plan || "plan.usd-17");
+        const allowed = ["plan.usd-17", "plan.usd-1", "plan.usd-3", "plan.usd-5", "plan.usd-7", "plan.usd-9", "plan.usd-17", "plan.usd-33"];
+        if (!allowed.includes(plan)) return json({ error: "plan tidak dikenal" }, 400, cors);
         const supabase = await db();
         const { data: openRows } = await supabase.from("opera_invoices")
           .select("id, lines, status")
@@ -1111,7 +1170,7 @@ const cors = {
           .limit(5);
         const reusable = (openRows || []).find((row) => {
           const lines = Array.isArray(row?.lines?.priced) ? row.lines.priced : [];
-          return lines.some((line: Record<string, unknown> | null | undefined) => line?.kind === "plan.firm");
+          return lines.some((line: Record<string, unknown> | null | undefined) => line?.kind === "plan.usd-17");
         });
         if (reusable) {
           const token = invoiceToken(String(reusable.id), BILLING_SECRET);
@@ -1123,7 +1182,7 @@ const cors = {
         const out = await createInvoice({
           customer_id: owner,
           period: `plan-${date}-${Date.now().toString(36)}`,
-          lines: [{ kind: "plan.firm", quantity: 1, description: "Plan Firm - 30 hari, kuota 5000 perintah per hari" }]
+          lines: [{ kind: "plan.usd-17", quantity: 1, description: "Plan Firm - 30 hari, kuota 5000 perintah per hari" }]
         });
         const base = BILLING_PAGE_URL || `${SUPABASE_URL}/functions/v1/navego-billing`;
         const link = `${base}?invoice_id=${encodeURIComponent(out.invoice.id)}&token=${out.token}`;
@@ -1211,24 +1270,11 @@ const cors = {
         }
         const typed = Array.isArray(body.lines) ? body.lines as Line[] : [];
         const deliveries = Array.isArray(body.deliveries) ? body.deliveries as Record<string, unknown>[] : [];
-        const plan = String(body.plan || "");
         if (typed.length && deliveries.length) {
           return json({ error: "send either the manifest rows or the lines, not both: the amount has one source" }, 400, cors);
         }
-        if (plan && typed.length) {
-          return json({ error: "send either a plan and its deliveries, or typed lines, not both" }, 400, cors);
-        }
-        if (plan && !deliveries.length) {
-          return json({ error: "a plan invoice needs at least one delivered client-month; a month nobody delivered is not charged" }, 400, cors);
-        }
         let lines = typed;
-        if (plan) {
-          const derived = planInvoiceLines(deliveries, plan, period);
-          if (derived.refused.length) {
-            return json({ error: "the plan cannot be billed", refused: derived.refused.map((row) => row.reason) }, 400, cors);
-          }
-          lines = derived.lines as Line[];
-        } else if (deliveries.length) {
+        if (deliveries.length) {
           const derived = linesFromDeliveries(deliveries);
           if (derived.refused.length) {
             return json({ error: "some deliveries cannot be billed", refused: derived.refused.map((row) => row.reason) }, 400, cors);

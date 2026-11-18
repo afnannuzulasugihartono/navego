@@ -227,8 +227,8 @@ test('status carries the meter of every linked device', async () => {
   const health = {
     ok: true, linked: true, queued: 0, waiting: 0, meterRefusal: null,
     devices: [
-      { slot: 1, id: 'dev-a', instanceId: 'inst-a', deviceName: 'navego-a', extensionVersion: '1.6.35', connectedAt: 1, meter: { plan: 'plan.firm', allowance: 500, dailyQuota: 5000, sent: 2, usedToday: 300, remaining: 4700 } },
-      { slot: 2, id: 'dev-b', instanceId: 'inst-b', deviceName: 'navego-b', extensionVersion: '1.6.35', connectedAt: 2, meter: { plan: 'plan.firm', allowance: 500, dailyQuota: 5000, sent: 0, usedToday: 5000, remaining: 0 } }
+      { slot: 1, id: 'dev-a', instanceId: 'inst-a', deviceName: 'navego-a', extensionVersion: '1.6.35', connectedAt: 1, meter: { plan: 'plan.usd-17', allowance: 500, dailyQuota: 5000, sent: 2, usedToday: 300, remaining: 4700 } },
+      { slot: 2, id: 'dev-b', instanceId: 'inst-b', deviceName: 'navego-b', extensionVersion: '1.6.35', connectedAt: 2, meter: { plan: 'plan.usd-17', allowance: 500, dailyQuota: 5000, sent: 0, usedToday: 5000, remaining: 0 } }
     ]
   };
   await withHealthBridge(health, async (ephemeral) => {
@@ -238,7 +238,7 @@ test('status carries the meter of every linked device', async () => {
     const now = new Date();
     const expectedReset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)).toISOString();
     const byName = Object.fromEntries(payload.devices.map((d: { name: string }) => [d.name, d]));
-    assert.equal(byName['navego-a'].plan.plan, 'plan.firm');
+    assert.equal(byName['navego-a'].plan.plan, 'plan.usd-17');
     assert.equal(byName['navego-a'].plan.remaining, 4700);
     assert.equal(byName['navego-a'].plan.dailyQuota, 5000);
     assert.equal(byName['navego-a'].plan.resetsAt, expectedReset);
@@ -254,7 +254,7 @@ test('status stays quiet when every linked device has headroom', async () => {
   const health = {
     ok: true, linked: true, queued: 0, waiting: 0, meterRefusal: null,
     devices: [
-      { slot: 1, id: 'dev-a', instanceId: 'inst-a', deviceName: 'navego-a', extensionVersion: '1.6.35', connectedAt: 1, meter: { plan: 'plan.firm', allowance: 500, dailyQuota: 5000, sent: 0, usedToday, remaining: 4794 } }
+      { slot: 1, id: 'dev-a', instanceId: 'inst-a', deviceName: 'navego-a', extensionVersion: '1.6.35', connectedAt: 1, meter: { plan: 'plan.usd-17', allowance: 500, dailyQuota: 5000, sent: 0, usedToday, remaining: 4794 } }
     ]
   };
   await withHealthBridge(health, async (ephemeral) => {

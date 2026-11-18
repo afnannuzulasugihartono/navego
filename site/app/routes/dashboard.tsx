@@ -373,11 +373,11 @@ export default function Dashboard() {
                       <h2 style={{ fontSize: 'var(--text-base)' }}>Plan</h2>
                       <span className={`chip ${plan?.status === 'active' ? 'good' : 'warn'}`}>{plan?.status === 'active' ? 'aktif' : plan?.status || 'memuat…'}</span>
                     </div>
-                    <p style={{ fontFamily: 'ui-monospace, Consolas, monospace', fontWeight: 800 }}>{plan?.plan || 'plan.pilot'}</p>
+                    <p style={{ fontFamily: 'ui-monospace, Consolas, monospace', fontWeight: 800 }}>{plan?.plan || 'plan.usd-1'}</p>
                     <div className="plan-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={planPercent} aria-label="Pemakaian kuota hari ini">
                       <div className="plan-fill" style={{ width: `${planPercent}%` }} />
                     </div>
-                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)' }}><strong>{(plan?.used ?? 0).toLocaleString('id-ID')}</strong> dari <strong>{(plan?.quota ?? 0).toLocaleString('id-ID')}</strong> perintah dipakai hari ini · {(plan?.sessionAllowance ?? (plan?.plan === 'plan.firm' ? 500 : 50)).toLocaleString('id-ID')} / sesi · reset besok 00.00 UTC</p>
+                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)' }}><strong>{(plan?.used ?? 0).toLocaleString('id-ID')}</strong> dari <strong>{(plan?.quota ?? 0).toLocaleString('id-ID')}</strong> perintah dipakai hari ini · {(plan?.sessionAllowance ?? (plan?.plan === 'plan.usd-17' ? 500 : 50)).toLocaleString('id-ID')} / sesi · reset besok 00.00 UTC</p>
                     {planRemaining <= 0 ? <p style={{ marginTop: 'var(--s-2)', fontSize: 'var(--text-xs)', color: 'var(--danger)' }}>Plan habis — reset besok 00.00 UTC. <Link to="/harga">Lihat paket</Link></p> : null}
                   </div>
 

@@ -123,7 +123,7 @@ const FIRM_HEALTH = {
     instanceId: '11111111-2222-3333-4444-555555555555',
     extensionVersion: '1.6.32',
     connectedAt: 1,
-    meter: { plan: 'plan.firm', allowance: 500, dailyQuota: 5000, sent: 7, usedToday: 314, remaining: 4679 }
+    meter: { plan: 'plan.usd-17', allowance: 500, dailyQuota: 5000, sent: 7, usedToday: 314, remaining: 4679 }
   }],
   meterRefusal: null
 };
@@ -139,7 +139,7 @@ test('the doctor prints what is connected, the plan, and what the plan allows', 
     });
     assert.equal(code, 0, 'a ready machine exits zero');
     assert.match(out, /everyday-test/);
-    assert.match(out, /plan\.firm/);
+    assert.match(out, /plan\.usd-17/);
     assert.match(out, /500/, 'the session allowance is printed');
     assert.match(out, /5000/, 'the daily quota is printed');
     assert.match(out, /4679/, 'the remaining quota is printed');

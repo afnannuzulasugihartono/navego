@@ -30,6 +30,15 @@ test('the merchant payload is read from env, never written in the tree', () => {
   }
 });
 
+test('the operator invoice action takes deliveries or typed lines, never a plan', () => {
+  const start = fn.indexOf('body.action === "invoice"');
+  const end = fn.indexOf('return json({ error: "unknown action" }', start);
+  const invoice = fn.slice(start, end);
+  assert.match(invoice, /send either the manifest rows or the lines, not both/, 'the one-shot rule is stated in the words the operator reads');
+  assert.doesNotMatch(invoice, /body\.plan\b/, 'the plan parameter is gone with the retired IDR plans');
+  assert.match(invoice, /linesFromDeliveries/, 'deliveries still price the invoice');
+});
+
 test('the qris-self rail writes a local order id and no pay url', () => {
   assert.match(fn, /rail === "qris-self"/, 'createInvoice must branch on the rail');
   assert.match(fn, /provider: "qris-self"/, 'the invoice names its rail');

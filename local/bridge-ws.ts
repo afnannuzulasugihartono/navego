@@ -252,7 +252,7 @@ export function createBridgeServer({ port = 9451, host = '127.0.0.1', heartbeatM
     ok: false,
     error: {
       code: 'PLAN_LIMIT_REACHED',
-      message: `the session allowance of ${device.meter?.allowance ?? 0} commands for ${device.meter?.plan ?? 'plan.pilot'} is spent; reconnect to start a new session`
+      message: `the session allowance of ${device.meter?.allowance ?? 0} commands for ${device.meter?.plan ?? 'plan.usd-1'} is spent; reconnect to start a new session`
     }
   });
 
@@ -322,7 +322,7 @@ export function createBridgeServer({ port = 9451, host = '127.0.0.1', heartbeatM
     device.meter = {
       deviceName: identity.deviceName,
       token: identity.token,
-      plan: String(authorized.plan ?? 'plan.pilot'),
+      plan: String(authorized.plan ?? 'plan.usd-1'),
       allowance: Math.max(0, Number(authorized.sessionAllowance) || 0),
       dailyQuota: Math.max(0, Number(authorized.dailyQuota) || 0),
       sent: 0,

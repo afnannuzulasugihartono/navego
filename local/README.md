@@ -63,8 +63,10 @@ bridge asks the cloud once (`session_open`, with the device credentials the
 hello carries), then enforces the returned allowance locally: one command past
 it answers `PLAN_LIMIT_REACHED` with the plan named. When the session ends, the
 usage is reported once and folded into the same daily count the hosted surface
-reads, so `plan.pilot` carries 200 commands per day and 50 per session, and
-`plan.firm` carries 5000 and 500. Cloud unreachable means the local drive
+reads, so `plan.usd-1` carries 1.000 commands per day and 50 per session, and
+`plan.usd-17` carries 17.000 per day and 500 per session, while `plan.usd-33`
+carries no daily limit at all. Every USD plan carries no per-minute cap.
+Cloud unreachable means the local drive
 stops, with the reason named — an unmetered drive is not offered. The gate
 lives in the bridge and in the hosted MCP, never in readable client code.
 

@@ -1,6 +1,6 @@
 // @last-edited: 2026-11-09 UTC+7.
 // @title: fake-cloud — the cloud the loopback bridge asks about the plan, answered in-process.
-// @state: a granted pilot session, a spent day, and a dead socket, each named by the question the bridge asks.
+// @state: a granted USD-1 session, a spent day, and a dead socket, each named by the question the bridge asks.
 // @dependencies: none.
 
 // WHY THIS FILE EXISTS
@@ -14,9 +14,9 @@ import http from 'node:http';
 export function pilotSession(overrides: Record<string, unknown> = {}) {
   return {
     ok: true,
-    plan: 'plan.pilot',
+    plan: 'plan.usd-1',
     status: 'active',
-    dailyQuota: 200,
+    dailyQuota: 1000,
     usedToday: 0,
     sessionAllowance: 50,
     ...overrides

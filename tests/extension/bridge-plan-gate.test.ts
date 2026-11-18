@@ -15,8 +15,8 @@ import {
   quotaAllowance
 } from '../../hosted/functions/navego-bridge/plan-gate.ts';
 
-const pilot = { plan: 'plan.pilot', status: 'active', dailyQuota: 200, usedToday: 0 };
-const firm = { plan: 'plan.firm', status: 'active', dailyQuota: 5000, usedToday: 0 };
+const pilot = { plan: 'plan.usd-1', status: 'active', dailyQuota: 1000, usedToday: 0 };
+const firm = { plan: 'plan.usd-17', status: 'active', dailyQuota: 17000, usedToday: 0 };
 
 test('an account with no active plan cannot connect, and the refusal names the plan', () => {
   assert.equal(planIsActive('paused'), false);
@@ -24,41 +24,41 @@ test('an account with no active plan cannot connect, and the refusal names the p
   const verdict = handshakeVerdict(paused);
   assert.equal(verdict.ok, false);
   assert.equal(verdict.code, 'PLAN_LIMIT_REACHED');
-  assert.match(verdict.message, /plan.pilot/);
+  assert.match(verdict.message, /plan.usd-1/);
   assert.equal(handshakeVerdict(pilot).ok, true);
 });
 
 test('the daily quota refuses at the command that breaks it, and names the plan', () => {
-  const pilotPlan = PLANS['plan.pilot'];
+  const pilotPlan = PLANS['plan.usd-1'];
   assert.ok(pilotPlan);
   const atLimit = { ...pilot, usedToday: pilotPlan.dailyQuota };
   const verdict = gateVerdict(atLimit, { method: 'page.read', params: {} });
   assert.equal(verdict.ok, false);
   assert.equal(verdict.code, 'PLAN_LIMIT_REACHED');
-  assert.match(verdict.message, /200/);
-  const oneBefore = quotaAllowance('plan.pilot', pilotPlan.dailyQuota - 1);
+  assert.match(verdict.message, /1000/);
+  const oneBefore = quotaAllowance('plan.usd-1', Number(pilotPlan.dailyQuota) - 1);
   assert.equal(oneBefore.ok, true);
 });
 
 test('the whole-page map is the firm only, and says so', () => {
-  const refusal = capabilityAllowed('plan.pilot', 'page.read', { view: 'map', all: true });
+  const refusal = capabilityAllowed('plan.usd-1', 'page.read', { view: 'map', all: true });
   assert.equal(refusal.ok, false);
   assert.equal(refusal.feature, 'all');
-  assert.equal(capabilityAllowed('plan.firm', 'page.read', { view: 'map', all: true }).ok, true);
-  assert.equal(capabilityAllowed('plan.pilot', 'page.read', { view: 'map' }).ok, true, 'and the default page read stays free');
+  assert.equal(capabilityAllowed('plan.usd-17', 'page.read', { view: 'map', all: true }).ok, true);
+  assert.equal(capabilityAllowed('plan.usd-1', 'page.read', { view: 'map' }).ok, true, 'and the default page read stays free');
 });
 
 test('statement delivery is the firm only', () => {
-  assert.equal(capabilityAllowed('plan.pilot', 'statement.download', {}).ok, false);
-  assert.equal(capabilityAllowed('plan.firm', 'statement.download', {}).ok, true);
-  assert.equal(capabilityAllowed('plan.pilot', 'statement.manifest', {}).ok, false);
-  assert.equal(capabilityAllowed('plan.pilot', 'page.read', {}).ok, true, 'and a plain command passes on both plans');
+  assert.equal(capabilityAllowed('plan.usd-1', 'statement.download', {}).ok, false);
+  assert.equal(capabilityAllowed('plan.usd-17', 'statement.download', {}).ok, true);
+  assert.equal(capabilityAllowed('plan.usd-1', 'statement.manifest', {}).ok, false);
+  assert.equal(capabilityAllowed('plan.usd-1', 'page.read', {}).ok, true, 'and a plain command passes on both plans');
 });
 
 test('the gate verdict on a bad day is a refusal, on a good day a pass', () => {
-  const bad = gateVerdict({ ...firm, usedToday: 5000, status: 'active' }, { method: 'page.read', params: { view: 'map', all: true } });
+  const bad = gateVerdict({ ...firm, usedToday: 17000, status: 'active' }, { method: 'page.read', params: { view: 'map', all: true } });
   assert.equal(bad.ok, false);
   const good = gateVerdict(firm, { method: 'page.read', params: { view: 'map', all: true } });
   assert.equal(good.ok, true);
-  assert.equal(good.quota, 5000);
+  assert.equal(good.quota, 17000);
 });

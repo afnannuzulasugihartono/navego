@@ -1,7 +1,9 @@
+> **Historical (superseded 2026-11-17/18 by the Apple-style redesign, PRs #380-#383).** This file described the Y2K site. The current design lives in site/app/tokens.css and site/app/brand.css (cream ground, navy, amber; Tahoma/Verdana body, Arial Black display). Keep this only as the record of the old pass.
+
 # Navego — the design language, every decision with its meaning
 
-@last-edited: 2026-11-16 UTC+7.
-@state: the Y2K pass is complete for the mark, the chrome, the hero and the player; the audit's sibling is [`design-elements.md`](design-elements.md), which justifies each element, not each value.
+@last-edited: 2026-11-18 UTC+7.
+@state: superseded 2026-11-18 by the Apple-style redesign (PRs #380-#383); kept as the record of the Y2K pass. The current design lives in site/app/tokens.css and site/app/brand.css.
 @related: [`AGENTS.md`](../AGENTS.md) · [`ARCHITECTURE.md`](../ARCHITECTURE.md) · [`docs/design-elements.md`](design-elements.md)
 
 Every word, element, color, style, image and proportion below says why it exists. A decision without a sentence in this file does not ship. Nothing ships for decoration; nothing hides for convenience.
