@@ -51,9 +51,6 @@ const JSON_LD = {
 
 const Ikon = ({ name }: { name: string }) => {
   const paths: Record<string, string> = {
-    tab: 'M4 4h16v16H4z M4 9h16',
-    tulis: 'M4 20h4l10-10-4-4L4 16z',
-    berkas: 'M6 3h8l4 4v14H6z M14 3v4h4',
     baca: 'M4 5h16v14H4z M8 9h8 M8 13h5',
     isi: 'M4 7h16 M4 12h16 M4 17h10',
     klik: 'M6 3l12 8-5 1 3 6-2 1-3-6-3 4z',

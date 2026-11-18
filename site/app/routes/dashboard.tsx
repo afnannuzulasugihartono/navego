@@ -394,7 +394,7 @@ export default function Dashboard() {
                   ) : null}
                   <div style={{ display: 'grid', gap: 'var(--s-3)' }}>
                     {(devices ?? []).map((device) => (
-                      <div key={device.id} className="panel" style={{ background: 'var(--card)' }}>
+                      <div key={device.id} className="panel">
                         <div className="panel-head">
                           <h2 style={{ fontSize: 'var(--text-base)', display: 'flex', alignItems: 'center', gap: 'var(--s-2)' }}>
                             <span aria-hidden="true" style={{ width: 10, height: 10, borderRadius: '50%', background: isDeviceLive(device) ? 'var(--good)' : 'var(--danger)', display: 'inline-block' }} />
@@ -678,7 +678,7 @@ function KonsolView({ deviceCount }: { deviceCount: number }) {
       <div className="konsol-split">
         <nav className="panel" style={{ minWidth: 190, display: 'grid', gap: 'var(--s-1)', alignContent: 'start' }} aria-label="Daftar tabel">
           {!state.ready ? <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Memuat…</span> : state.tables.length === 0 ? <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Konsol data belum bisa dimuat.</span> : state.tables.map((table) => (
-            <button key={table.name} className="rail-item" style={{ color: 'var(--ink)', background: state.selected === table.name ? 'var(--card-2)' : 'transparent', borderRadius: 'var(--radius-sm)', border: 0, padding: 'var(--s-2) var(--s-3)', textAlign: 'left', cursor: 'pointer', fontSize: 'var(--text-sm)' }} onClick={() => openTable(table.name)}>
+            <button key={table.name} className="rail-item" style={{ color: 'var(--ink)', background: state.selected === table.name ? 'var(--panel-2)' : 'transparent', borderRadius: 'var(--radius-sm)', border: 0, padding: 'var(--s-2) var(--s-3)', textAlign: 'left', cursor: 'pointer', fontSize: 'var(--text-sm)' }} onClick={() => openTable(table.name)}>
               {table.label || table.name}{typeof table.count === 'number' ? <span style={{ color: 'var(--muted)' }}> · {table.count}</span> : null}
             </button>
           ))}

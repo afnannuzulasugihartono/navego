@@ -31,12 +31,8 @@ interface MegaPanel {
   cols: MegaColumn[];
 }
 
-// ONE PANEL, ONE MAP - Apple's header swaps one full-width panel between items; the content is the only thing that changes per item.
-// Apple's header swaps one full-width panel between items; the content is the only thing that changes per item.
-// One panel, one map keyed by the item under the pointer or focus, is the same shape with one place to edit.
-
-// THE LINK REGISTRY keeps the shared links in one place - every link lives here exactly once, and the panels only say which links they show.
-// Every link lives here exactly once; the panels only say which links they show.
+// ONE PANEL, ONE MAP, AND A LINK REGISTRY - Apple's header swaps one full-width panel between items; the content is the only thing that changes per item, so one panel and one map keyed by the active item is the same shape with one place to edit.
+// The seven panels share most of their links, so every link lives here exactly once; the panels only say which links they show.
 
 const L = {
   fiturKemampuan: { href: '/fitur#kemampuanTitle', label: 'Enam kemampuan inti' },
@@ -132,7 +128,7 @@ const MEGA: Record<string, MegaPanel> = {
   }
 };
 
-// One navigation tree at every size: a slim dark bar carrying a flat horizontal row, an Apple-style panel under it on hover or focus, and a notch that drops the same row on compact screens.
+// One navigation tree at every size: a slim dark bar carrying a flat horizontal row at every width, an Apple-style panel under it on hover or focus, and a notch that drops the same row - always visible, at every width.
 
 const ALL_LINKS = [
   { href: '/beranda', label: 'Beranda' },

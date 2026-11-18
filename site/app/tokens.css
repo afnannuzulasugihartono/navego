@@ -10,7 +10,6 @@
 
 :root {
   --ground: #f6f1e7;
-  --ground-2: #efe8d8;
   --paper: #ffffff;
   --panel: #fbfaf5;
   --panel-2: #f2ede0;
@@ -29,18 +28,15 @@
   --amber: #d8923f;
   --amber-hi: #e9ab58;
   --amber-deep: #b8742a;
-  --lime: #8ee06f;
   --good: #1f7a2e;
   --good-bg: #e7f6e3;
-  --warn: #b45309;
   --warn-bg: #fdf0b8;
   --danger: #c0123f;
-  --danger-bg: #fbe4e4;
 }
 
 /*
  * type — every step is an even pixel size; the body is 14 px.
- * scale in px: 12 xs, 14 sm (body), 16 base, 18 lg, 20 xl, 24 2xl, 28 3xl (h2), 32 4xl, 40 title (h1), 64 hero (beranda h1) decisions.json -> D01, D02, D03
+ * scale in px: 12 xs, 14 sm (body), 16 base, 18 lg, 20 xl, 24 2xl, 28 3xl (h2), 40 title (h1), 64 hero (beranda h1) decisions.json -> D01, D02, D03
  */
 
 :root {
@@ -124,7 +120,6 @@ h6 { font-size: var(--text-sm); line-height: var(--leading-small); }
 
 /* the one spacing contract — text to heading 32 px, heading to body 12 px, paragraphs 1 em */
 
-p { margin: 0; }
 p + p { margin-top: var(--rhythm-paragraph); }
 p + :is(h2, h3, h4, h5, h6),
 ul + :is(h2, h3, h4, h5, h6),
@@ -137,7 +132,6 @@ p, li, blockquote, dd { text-wrap: pretty; }
 body {
   background: var(--ground);
   color: var(--ink);
-  font-family: var(--font-sans);
   font-size: var(--text-sm);
   line-height: var(--leading-body);
   -webkit-font-smoothing: antialiased;
