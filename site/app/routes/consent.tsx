@@ -211,7 +211,7 @@ export default function Consent() {
               {consents.map((consent) => (
                 <li key={consent.clientId} style={{ display: 'flex', alignItems: 'center', gap: 'var(--s-3)', background: 'var(--panel)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)', padding: 'var(--s-3) var(--s-4)', fontSize: 'var(--text-sm)' }}>
                   <span style={{ fontWeight: 700 }}>{consent.clientName || 'Aplikasi tidak dikenal'}</span>
-                  <span style={{ color: 'var(--muted)', fontSize: 'var(--text-xs)' }}>{consent.scopes || ''} · sejak {String(consent.grantedAt || '').slice(0, 10)}</span>
+                  <span style={{ color: 'var(--muted)', fontSize: 'var(--text-xs)' }}>{consent.scopes || ''}, sejak {String(consent.grantedAt || '').slice(0, 10)}</span>
                   <button className="btn btn-ghost btn-sm" type="button" onClick={() => revoke(consent)} style={{ marginLeft: 'auto', color: 'var(--danger)' }}>Cabut</button>
                 </li>
               ))}

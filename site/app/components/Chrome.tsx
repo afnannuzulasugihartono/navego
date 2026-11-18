@@ -47,7 +47,7 @@ const L = {
   docsTugas: { href: '/docs#tugas', label: 'Tugas pertama' },
   docsPaket: { href: '/docs#paket', label: 'Paket dan pembayaran' },
   docsMcp: { href: '/docs#mcp', label: 'Hubungkan AI harness' },
-  asia: { href: '/harga#asiaTitle', label: 'Asia · Arab · Afrika' },
+  asia: { href: '/harga#asiaTitle', label: 'Asia, Arab, Afrika' },
   eropa: { href: '/harga#europeTitle', label: 'Eropa & AS' },
   p1: { href: '/harga#usd-plan.usd-1', label: 'Starter — $1' },
   p5: { href: '/harga#usd-plan.usd-5', label: 'Plus — $5' },
@@ -310,7 +310,7 @@ export function SiteFooter() {
         </div>
         <div className="footer-bar">
           <span>© 2026 Navego — private, local, signed.</span>
-          <span><Link to="/privasi">Privasi</Link> · <Link to="/syarat">Syarat</Link> · <Link to="/dukungan">Dukungan</Link></span>
+          <span><Link to="/privasi">Privasi</Link>, <Link to="/syarat">Syarat</Link>, <Link to="/dukungan">Dukungan</Link></span>
         </div>
       </div>
     </footer>

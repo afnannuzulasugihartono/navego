@@ -364,7 +364,7 @@ export default function Dashboard() {
                     <div className="plan-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={planPercent} aria-label="Pemakaian kuota hari ini">
                       <div className="plan-fill" style={{ width: `${planPercent}%` }} />
                     </div>
-                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)' }}><strong>{(plan?.used ?? 0).toLocaleString('id-ID')}</strong> dari <strong>{(plan?.quota ?? 0).toLocaleString('id-ID')}</strong> perintah dipakai hari ini · {(plan?.sessionAllowance ?? (plan?.plan === 'plan.usd-17' ? 500 : 50)).toLocaleString('id-ID')} / sesi · reset besok 00.00 UTC</p>
+                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)' }}><strong>{(plan?.used ?? 0).toLocaleString('id-ID')}</strong> dari <strong>{(plan?.quota ?? 0).toLocaleString('id-ID')}</strong> perintah dipakai hari ini, {(plan?.sessionAllowance ?? (plan?.plan === 'plan.usd-17' ? 500 : 50)).toLocaleString('id-ID')} / sesi, reset besok 00.00 UTC</p>
                     {planRemaining <= 0 ? <p style={{ marginTop: 'var(--s-2)', fontSize: 'var(--text-xs)', color: 'var(--danger)' }}>Plan habis — reset besok 00.00 UTC. <Link to="/harga">Lihat paket</Link></p> : null}
                   </div>
 
@@ -471,7 +471,7 @@ export default function Dashboard() {
                       {listens.map((session) => (
                         <div key={session.id} className="panel">
                           <div className="panel-head"><strong style={{ fontSize: 'var(--text-sm)' }}>{session.deviceName || session.id}</strong><span className="chip">{session.status}</span></div>
-                          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)' }}>Mulai {relativeTime(session.startedAt)} · {session.segments ?? 0} segmen tertranskrip</p>
+                          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)' }}>Mulai {relativeTime(session.startedAt)}, {session.segments ?? 0} segmen tertranskrip</p>
                         </div>
                       ))}
                     </div>
@@ -679,7 +679,7 @@ function KonsolView({ deviceCount }: { deviceCount: number }) {
         <nav className="panel" style={{ minWidth: 190, display: 'grid', gap: 'var(--s-1)', alignContent: 'start' }} aria-label="Daftar tabel">
           {!state.ready ? <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Memuat…</span> : state.tables.length === 0 ? <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Konsol data belum bisa dimuat.</span> : state.tables.map((table) => (
             <button key={table.name} className="rail-item" style={{ color: 'var(--ink)', background: state.selected === table.name ? 'var(--panel-2)' : 'transparent', borderRadius: 'var(--radius-sm)', border: 0, padding: 'var(--s-2) var(--s-3)', textAlign: 'left', cursor: 'pointer', fontSize: 'var(--text-sm)' }} onClick={() => openTable(table.name)}>
-              {table.label || table.name}{typeof table.count === 'number' ? <span style={{ color: 'var(--muted)' }}> · {table.count}</span> : null}
+              {table.label || table.name}{typeof table.count === 'number' ? <span style={{ color: 'var(--muted)' }}> ({table.count})</span> : null}
             </button>
           ))}
         </nav>

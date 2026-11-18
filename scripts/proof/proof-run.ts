@@ -424,7 +424,7 @@ export async function runProof({
     const opened = await mcp.tool('browser_open_url', { url: portal.url });
     const tabId = opened.answer?.action?.id;
     if (!tabId) throw new Error(`browser_open_url returned no tab id; the answer was ${JSON.stringify(opened.answer)}`);
-    note({ tool: 'browser_open_url', ms: opened.ms, ok: true, note: `tab ${tabId} · ${portal.url}` });
+    note({ tool: 'browser_open_url', ms: opened.ms, ok: true, note: `tab ${tabId} — ${portal.url}` });
 
     const read = await mcp.tool('browser_read_page', { tabId });
     const pageText = String(read.answer?.text ?? '');
