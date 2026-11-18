@@ -43,6 +43,7 @@
   --font-sans: Tahoma, Verdana, system-ui, sans-serif;
   --font-display: 'Arial Black', 'Arial Rounded MT Bold', Verdana, sans-serif;
   --font-mono: 'Lucida Console', ui-monospace, Consolas, monospace;
+  --text-2xs: 0.72rem;
   --text-xs: 0.78rem;
   --text-sm: 0.86rem;
   --text-base: 0.96rem;
@@ -79,7 +80,7 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; font-family: var(--font-sans); }
 
 body {
   background: var(--ground);
@@ -91,6 +92,8 @@ body {
 }
 
 ::selection { background: var(--amber-hi); color: #231200; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
 
 .wrap { width: min(var(--maxw), 100% - 2 * var(--gutter)); margin-inline: auto; }
 

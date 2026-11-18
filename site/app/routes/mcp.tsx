@@ -42,7 +42,7 @@ export default function Mcp() {
 
   return (
     <>
-      <SiteHeader current="/mcp.html" />
+      <SiteHeader current="/mcp" />
       <main>
         <section className="page-hero">
           <div className="wrap">
@@ -56,7 +56,7 @@ export default function Mcp() {
           {BLOCKS.map(({ id, title, body, note }) => (
             <section key={id} style={{ marginBottom: 'var(--s-6)' }}>
               <p className="kicker">{id === 'install' ? 'Langkah 1' : 'Langkah 2'}</p>
-              <h2 className="section-title" style={{ fontSize: 'var(--text-xl)', marginTop: 'var(--s-2)' }}>{title}</h2>
+              <h2 className="section-title" style={{ marginTop: 'var(--s-2)' }}>{title}</h2>
               <div style={{ position: 'relative', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)', maxWidth: '40rem', marginTop: 'var(--s-3)' }}>
                 <code style={{ background: 'transparent', border: 0, padding: 0, color: '#cfe0ff' }}>{body}</code>
                 {copyBlock(body, id)}
@@ -67,7 +67,7 @@ export default function Mcp() {
 
           <section style={{ marginBottom: 'var(--s-6)' }}>
             <p className="kicker">Langkah 3</p>
-            <h2 className="section-title" style={{ fontSize: 'var(--text-xl)', marginTop: 'var(--s-2)' }}>Daftarkan ke harness Anda.</h2>
+            <h2 className="section-title" style={{ marginTop: 'var(--s-2)' }}>Daftarkan ke harness Anda.</h2>
             {HARNESS.map(({ id, title, body }) => (
               <div key={id} style={{ margin: 'var(--s-5) 0' }}>
                 <h3 style={{ fontSize: 'var(--text-base)', color: 'var(--navy-deep)', marginBottom: 'var(--s-2)' }}>{title}</h3>
@@ -82,13 +82,13 @@ export default function Mcp() {
 
           <section style={{ marginBottom: 'var(--s-6)' }}>
             <p className="kicker">Langkah 4</p>
-            <h2 className="section-title" style={{ fontSize: 'var(--text-xl)', marginTop: 'var(--s-2)' }}>Satu kali per peramban.</h2>
-            <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-base)', maxWidth: '64ch', marginTop: 'var(--s-3)' }}>Peramban baru harus memasang ekstensi Navego dulu (lihat <Link to="/unduh.html">Unduh</Link>), lalu buka <Link to="/dashboard.html">Dasbor</Link> dan klik <strong>Pasangkan browser ini</strong> — kode dibuat di server dan dikirim langsung ke ekstensi. Setelah itu, driver lokal otomatis mengambil alih — tidak perlu langkah lain setiap sesi.</p>
+            <h2 className="section-title" style={{ marginTop: 'var(--s-2)' }}>Satu kali per peramban.</h2>
+            <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-base)', maxWidth: '64ch', marginTop: 'var(--s-3)' }}>Peramban baru harus memasang ekstensi Navego dulu (lihat <Link to="/unduh">Unduh</Link>), lalu buka <Link to="/dashboard">Dasbor</Link> dan klik <strong>Pasangkan browser ini</strong> — kode dibuat di server dan dikirim langsung ke ekstensi. Setelah itu, driver lokal otomatis mengambil alih — tidak perlu langkah lain setiap sesi.</p>
           </section>
 
           <section>
             <p className="kicker">Batas</p>
-            <h2 className="section-title" style={{ fontSize: 'var(--text-xl)', marginTop: 'var(--s-2)' }}>Batas yang dijaga.</h2>
+            <h2 className="section-title" style={{ marginTop: 'var(--s-2)' }}>Batas yang dijaga.</h2>
             <ul style={{ paddingLeft: '1.4rem', color: 'var(--muted-2)', fontSize: 'var(--text-base)', display: 'grid', gap: 'var(--s-2)', marginTop: 'var(--s-3)' }}>
               <li>Password, kode sekali pakai, PIN, kartu, dan CVV selalu ditolak. Pekerjaan yang berhenti di situ gagal — bukan diam-diam diteruskan.</li>
               <li>Tab pribadi, tab non-http(s), dan jendela tanpa akses debugger: primitive menolak, dan penolakan disebut namanya.</li>

@@ -13,7 +13,7 @@ export function meta() {
 export default function AiBrowserIndonesia() {
   return (
     <>
-      <SiteHeader current="/artikel.html" />
+      <SiteHeader current="/artikel" />
       <article>
         <section className="page-hero">
           <div className="wrap">
@@ -44,10 +44,10 @@ export default function AiBrowserIndonesia() {
           <p>Produk ini berbahasa Indonesia karena pengguna pertamanya adalah orang Indonesia yang bekerja di kantor Indonesia: portal, dasbor, spreadsheet, dan dokumen yang memang ditulis dalam bahasa Indonesia. Memerintah asisten dalam bahasa kedua menambah gesekan yang tidak perlu.</p>
 
           <h2>Yang belum bisa, jujur.</h2>
-          <p>Navego belum bisa berjalan di Firefox dan Safari (fitur yang dibutuhkan ekstensi ini tidak tersedia di sana). Extension-nya belum ada di Chrome Web Store — pemasangan sementara lewat Load unpacked atau satu klik di Windows lewat berkas kebijakan yang dijelaskan di <Link to="/unduh.html">halaman Unduh</Link>. Ini alat yang sedang tumbuh, dan batasannya disebutkan apa adanya.</p>
+          <p>Navego belum bisa berjalan di Firefox dan Safari (fitur yang dibutuhkan ekstensi ini tidak tersedia di sana). Extension-nya belum ada di Chrome Web Store — pemasangan sementara lewat Load unpacked atau satu klik di Windows lewat berkas kebijakan yang dijelaskan di <Link to="/unduh">halaman Unduh</Link>. Ini alat yang sedang tumbuh, dan batasannya disebutkan apa adanya.</p>
 
           <h2>Ke mana selanjutnya.</h2>
-          <p>Jika Anda ingin melihat hasil nyatanya — berkas laporan keuangan, rencana strategis, riset promo yang dibuat oleh Navego sendiri — unduh contohnya dari <Link to="/docs.html">Docs</Link>. Jika Anda ingin mencoba, pasang dari <Link to="/unduh.html">halaman Unduh</Link>; lima belas menit dari sekarang, satu pekerjaan bisa selesai tanpa Anda menyentuh satu kolom pun.</p>
+          <p>Jika Anda ingin melihat hasil nyatanya — berkas laporan keuangan, rencana strategis, riset promo yang dibuat oleh Navego sendiri — unduh contohnya dari <Link to="/docs">Docs</Link>. Jika Anda ingin mencoba, pasang dari <Link to="/unduh">halaman Unduh</Link>; lima belas menit dari sekarang, satu pekerjaan bisa selesai tanpa Anda menyentuh satu kolom pun.</p>
         </div>
       </article>
       <SiteFooter />

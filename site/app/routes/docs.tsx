@@ -51,7 +51,7 @@ export default function Docs() {
 
   return (
     <>
-      <SiteHeader current="/docs.html" />
+      <SiteHeader current="/docs" />
       <main>
         <section className="page-hero">
           <div className="wrap">
@@ -72,9 +72,9 @@ export default function Docs() {
           <div className="docs-article">
             <section aria-labelledby="quickTitle" style={{ marginBottom: 'var(--s-7)' }}>
               <p className="kicker">Mulai</p>
-              <h2 id="quickTitle" className="section-title" style={{ fontSize: 'var(--text-xl)' }}>Tiga langkah sampai kerja.</h2>
+              <h2 id="quickTitle" className="section-title">Tiga langkah sampai kerja.</h2>
               <ol className="steps" style={{ marginTop: 'var(--s-5)' }}>
-                <li><span><strong>Pasang.</strong> Arsip <code>.zip</code> dari halaman <Link to="/unduh.html">Unduh</Link>, muat di <code>chrome://extensions</code>.</span></li>
+                <li><span><strong>Pasang.</strong> Arsip <code>.zip</code> dari halaman <Link to="/unduh">Unduh</Link>, muat di <code>chrome://extensions</code>.</span></li>
                 <li><span><strong>Pair.</strong> Klik <strong>Pasangkan browser ini</strong> — satu klik, tidak ada kode.</span></li>
                 <li><span><strong>Perintah.</strong> Satu kalimat, satu hasil — berupa berkas yang bisa Anda buka sendiri.</span></li>
               </ol>
@@ -83,7 +83,7 @@ export default function Docs() {
             <section className="docs-article">
               <h2 id="pasang">Pasang extension</h2>
               <ol className="steps">
-                <li><span><strong>Unduh.</strong> Ambil arsip <code>.zip</code> dari halaman <Link to="/unduh.html">Unduh</Link>.</span></li>
+                <li><span><strong>Unduh.</strong> Ambil arsip <code>.zip</code> dari halaman <Link to="/unduh">Unduh</Link>.</span></li>
                 <li><span><strong>Ekstrak.</strong> Ke folder yang tidak akan dirapikan lagi, misalnya <code>C:\Navego\</code>.</span></li>
                 <li><span><strong>Muat.</strong> Buka <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>, Brave: <code>brave://extensions</code>, Opera: <code>opera://extensions</code>), nyalakan Mode Pengembang, lalu muat folder tadi.</span></li>
                 <li><span><strong>Periksa.</strong> Navego muncul di daftar extension.</span></li>
@@ -92,9 +92,9 @@ export default function Docs() {
               <p>Pemasangan tidak dipungut biaya. Yang dibayar nanti adalah setiap pekerjaan yang selesai.</p>
 
               <h2 id="pairing">Masuk dan pair device</h2>
-              <p>Masuk dengan magic link email, Google, atau GitHub dari <Link to="/index.html">halaman Masuk</Link>.</p>
+              <p>Masuk dengan magic link email, Google, atau GitHub dari <Link to="/">halaman Masuk</Link>.</p>
               <ol className="steps">
-                <li><span><strong>Klik.</strong> Di <Link to="/dashboard.html">Dashboard</Link>, buka Device — atau klik <strong>Pasangkan browser ini</strong> di popup.</span></li>
+                <li><span><strong>Klik.</strong> Di <Link to="/dashboard">Dashboard</Link>, buka Device — atau klik <strong>Pasangkan browser ini</strong> di popup.</span></li>
                 <li><span><strong>Izin.</strong> Browser meminta izin pairing sekali; tidak ada kode yang harus diketik.</span></li>
                 <li><span><strong>Periksa.</strong> Device muncul di daftar dengan status daring.</span></li>
               </ol>
@@ -104,7 +104,7 @@ export default function Docs() {
               <p>Anda menulis satu perintah, browser bekerja, dan hasilnya menjadi berkas. Contoh: <em>Buka Google Maps, cari kopi dekat Monas, dan tulis hasilnya ke sheet.</em></p>
               <ul>
                 <li>Satu pekerjaan berarti satu hasil: satu halaman, satu laporan, atau satu daftar.</li>
-                <li>Jumlah aksinya dibatasi. Perkiraan yang lebih besar ditolak di depan dengan tawaran dipecah, bukan gagal di tengah. Batas dan harganya ada di halaman <Link to="/harga.html">Harga</Link>.</li>
+                <li>Jumlah aksinya dibatasi. Perkiraan yang lebih besar ditolak di depan dengan tawaran dipecah, bukan gagal di tengah. Batas dan harganya ada di halaman <Link to="/harga">Harga</Link>.</li>
                 <li>Konten halaman hanya pergi ke endpoint model yang Anda pilih (opsional — lihat dokumentasi untuk penyiapan BYOK).</li>
               </ul>
 
@@ -120,7 +120,7 @@ export default function Docs() {
               <p>Berkas dibuat dari satu file kas yang Anda lihat sendiri — tidak ada langkah yang disembunyikan.</p>
 
               <h2 id="saldo">Saldo dan tagihan</h2>
-              <p>Isi saldo lewat QRIS dari Dashboard, tanpa langganan. Saldo yang kurang membuat pekerjaan ditolak sebelum mulai, dengan tautan isi ulang. Harga tetap, pengembalian, dan masa berlaku saldo ada di halaman <Link to="/harga.html">Harga</Link>.</p>
+              <p>Isi saldo lewat QRIS dari Dashboard, tanpa langganan. Saldo yang kurang membuat pekerjaan ditolak sebelum mulai, dengan tautan isi ulang. Harga tetap, pengembalian, dan masa berlaku saldo ada di halaman <Link to="/harga">Harga</Link>.</p>
 
               <h2 id="tools">Tools MCP</h2>
               <p>45 tool dalam empat keluarga — <code>browser_</code>, <code>artifact_</code>, <code>delivery_</code>, dan <code>wallet_</code> — di atas 36 primitive browser. Tugas masing-masing:</p>
@@ -144,7 +144,7 @@ export default function Docs() {
               ))}
 
               <h2 id="mcp">Hubungkan AI harness</h2>
-              <p>Satu MCP (Model Context Protocol) per mesin: driver lokal, jalan di mesin Anda sendiri, tanpa biaya per panggilan dan tanpa melewati server orang lain. <Link to="/mcp.html">Pasang driver lokal</Link>.</p>
+              <p>Satu MCP (Model Context Protocol) per mesin: driver lokal, jalan di mesin Anda sendiri, tanpa biaya per panggilan dan tanpa melewati server orang lain. <Link to="/mcp">Pasang driver lokal</Link>.</p>
               <p>Koneksi driver lokal:</p>
               <div style={{ position: 'relative', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)', maxWidth: '40rem', marginBottom: 'var(--s-4)' }}>
                 <code style={{ background: 'transparent', border: 0, padding: 0, color: '#cfe0ff' }}>npx -y navego local</code>
@@ -168,18 +168,18 @@ export default function Docs() {
               <ul>
                 <li>Password, kode sekali pakai, PIN, kartu, dan CVV selalu ditolak. Pekerjaan yang berhenti di situ gagal.</li>
                 <li>Tab pribadi: tangkapan layar ditolak. Tab non-http(s): primitive menolak.</li>
-                <li>Enam izin: <code>tabs</code>, <code>scripting</code>, <code>storage</code>, <code>alarms</code>, <code>debugger</code>, <code>downloads</code>. Satu alasan untuk tiap izin ada di halaman <Link to="/unduh.html">Unduh</Link>.</li>
+                <li>Enam izin: <code>tabs</code>, <code>scripting</code>, <code>storage</code>, <code>alarms</code>, <code>debugger</code>, <code>downloads</code>. Satu alasan untuk tiap izin ada di halaman <Link to="/unduh">Unduh</Link>.</li>
                 <li>Yang masuk ke server untuk penagihan hanya: id reservasi, jenis tugas, status, dan hash artefak. Isi halaman tidak pernah ikut.</li>
               </ul>
-              <p>Macet? Halaman <Link to="/dukungan.html">Dukungan</Link> punya langkah yang bisa diikuti.</p>
+              <p>Macet? Halaman <Link to="/dukungan">Dukungan</Link> punya langkah yang bisa diikuti.</p>
             </section>
 
             <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 'var(--s-5)', flexWrap: 'wrap', marginTop: 'var(--s-6)' }}>
               <div>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-xl)', color: 'var(--navy-deep)', letterSpacing: '-0.02em' }}>Macet di tengah dokumen?</h2>
+                <h2>Macet di tengah dokumen?</h2>
                 <p style={{ color: 'var(--muted-2)' }}>Langkah yang bisa diikuti ada di halaman Dukungan.</p>
               </div>
-              <Link className="btn btn-solid" to="/dukungan.html">Dukungan</Link>
+              <Link className="btn btn-solid" to="/dukungan">Dukungan</Link>
             </div>
           </div>
         </div>

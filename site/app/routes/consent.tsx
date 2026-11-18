@@ -106,7 +106,7 @@ export default function Consent() {
     if (!authId) return;
     const token = await ensureSession();
     if (!token) {
-      window.location.assign(`/index.html?next=${encodeURIComponent(`./oauth/consent.html?authorization_id=${authId}`)}`);
+      window.location.assign(`/?next=${encodeURIComponent(`/oauth/consent?authorization_id=${authId}`)}`);
       return;
     }
     setBusy(true);
@@ -150,7 +150,7 @@ export default function Consent() {
 
   return (
     <>
-      <SiteHeader current="/oauth/consent.html" />
+      <SiteHeader current="/oauth/consent" />
       <main>
         <section className="page-hero">
           <div className="wrap">
@@ -223,7 +223,7 @@ export default function Consent() {
             <h2 className="card-title">Masuk dulu</h2>
             <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)', margin: 'var(--s-2) 0 var(--s-4)' }}>Layar izin hanya bekerja untuk akun yang sudah masuk, karena persetujuan ini terikat pada akun Anda.</p>
             <div className="hero-cta" style={{ marginTop: 0 }}>
-              <Link className="btn btn-solid" to={`/index.html${authId ? `?next=${encodeURIComponent(`./oauth/consent.html?authorization_id=${authId}`)}` : ''}`}>Masuk</Link>
+              <Link className="btn btn-solid" to={`/${authId ? `?next=${encodeURIComponent(`/oauth/consent?authorization_id=${authId}`)}` : ''}`}>Masuk</Link>
             </div>
           </div>
         ) : null}

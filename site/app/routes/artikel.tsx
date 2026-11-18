@@ -12,7 +12,7 @@ export function meta() {
 
 const ARTIKEL = [
   {
-    href: 'artikel/ai-browser-indonesia.html',
+    href: '/artikel/ai-browser-indonesia',
     slug: 'ai-browser-indonesia',
     title: 'AI yang mengenal browser Anda, dalam bahasa Indonesia',
     dek: 'Kenapa asisten AI yang dijalankan di browser Anda — bukan di server orang lain — adalah bentuk asisten yang benar untuk pekerjaan browser sehari-hari.',
@@ -24,7 +24,7 @@ const ARTIKEL = [
 export default function Artikel() {
   return (
     <>
-      <SiteHeader current="/artikel.html" />
+      <SiteHeader current="/artikel" />
       <main>
         <section className="page-hero">
           <div className="wrap">

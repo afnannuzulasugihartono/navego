@@ -62,10 +62,10 @@ export function CommandPreview() {
       )}
       <p className="command-note">
         Pratinjau alur, bukan eksekusi. Navego baru bergerak setelah Anda memasangnya di browser sendiri.{' '}
-        <Link to="/docs.html">Baca dokumentasi</Link>
+        <Link to="/docs">Baca dokumentasi</Link>
       </p>
       <noscript>
-        <p>Tanpa JavaScript, baca daftar kemampuan di <a href="/docs.html">dokumentasi</a>.</p>
+        <p>Tanpa JavaScript, baca daftar kemampuan di <a href="/docs">dokumentasi</a>.</p>
       </noscript>
     </div>
   );
