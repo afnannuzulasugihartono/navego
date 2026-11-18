@@ -3,7 +3,7 @@
 // @state: one test over the real tree; the enumeration is pinned here so a version added anywhere else fails CI.
 // @dependencies: node:test, node:assert/strict, node:fs, node:child_process.
 
-// WHY THIS GATE EXISTS.
+// THIS GATE EXISTS.
 // A version bump writes the clock into more files than any reviewer can hold in their head, and a forgotten one reads as a broken release until CI catches it.
 // Every file that carries the clock is either named in the bump enumeration (they must all read the current version) or under an allowlist whose content is historical by construction.
 // A reference to the current version anywhere else is a new clock nobody taught the bump to move - so this test is the enumeration's contract, and both move in the same PR.

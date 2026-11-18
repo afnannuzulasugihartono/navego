@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: statement-proof — the proof a delivered client-month carries, frozen.
+// @title: statement-proof â€” the proof a delivered client-month carries, frozen.
 // @state: the record and the manifest answer match the declared contract, field by field and type by type.
 // @dependencies: node:test, strict, node:fs, node:os, node:path, ../local/statements.js.
 
@@ -15,7 +15,7 @@ const contract = JSON.parse(
   fs.readFileSync(new URL('../fixtures/statement-proof-v1.json', import.meta.url), 'utf8')
 );
 
-// WHY THE PROOF IS FROZEN.
+// THE PROOF IS FROZEN.
 // Another agent hands this object to its own user and is believed because of it, so a field that changes shape is a change to what a promise means.
 // The contract says which fields exist and what each one holds; this test says the delivery really answers with that, and the two agree.
 

@@ -1,11 +1,11 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: attach-heal-on-send.test — a cached attach that another road released heals itself.
+// @title: attach-heal-on-send.test â€” a cached attach that another road released heals itself.
 // @state: unit pins the heal helper plus the source pin proving withDebugger uses it.
 // @dependencies: node:test, strict, node:fs/promises, ../extension/worker/capture.js.
 
-// WHY THE SEND SIDE HEALS.
+// THE SEND SIDE HEALS.
 // Shared sessions cache attached:true so repeat calls skip the attach.
-// Anything else that detaches the debugger — the relay road in this same extension, a DevTools window, a browser restart — leaves the cache lying, and every later send then fails "not attached" for good: observed live as one tab permanently dead on the bridge while the relay drove the very same tab happily.
+// Anything else that detaches the debugger â€” the relay road in this same extension, a DevTools window, a browser restart â€” leaves the cache lying, and every later send then fails "not attached" for good: observed live as one tab permanently dead on the bridge while the relay drove the very same tab happily.
 // Healing on attach cannot catch it, because the attach was skipped.
 
 import test from 'node:test';

@@ -1,12 +1,12 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: scripted-device — the socket a test drives, speaking the frames the real extension speaks.
+// @title: scripted-device â€” the socket a test drives, speaking the frames the real extension speaks.
 // @state: hello, the heartbeat, the ping proof, the command, and the completion, driven over one socket against a real bridge.
 // @dependencies: ../../extension/lib/socket-protocol.js.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // The bridge answers a real socket, and two suites in this repo prove it.
-// Each suite used to carry its own copy of the scripted device, and the two copies drifted apart in what they were willing to answer — which is not a fact about the bridge, just about the copy.
+// Each suite used to carry its own copy of the scripted device, and the two copies drifted apart in what they were willing to answer â€” which is not a fact about the bridge, just about the copy.
 // One helper answers a ping, answers a command with the caller's handler, and records everything it was asked, so a test asserts what the bridge actually sent.
 
 import { completionFrame, handshakeFrame, normalizeCommand, pongFrame } from '../../extension/lib/socket-protocol.js';
@@ -72,7 +72,7 @@ export function createScriptedDevice({ url, handle = () => [], answerProof = tru
     closed,
     connected,
     pings: () => seen.filter((command: { method: string }) => command.method === 'ping').length,
-    // WHY THIS CLOSE COMES WITH A SETTLE.
+    // THIS CLOSE COMES WITH A SETTLE.
     // The close event races the end of the test; giving it a beat to land keeps the next test from being answered by a socket that was still dying.
     async stop() {
       if (open && socket) socket.close();

@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: local-canvas — a surface that is not a page full of text, read through the ladder with the caret-moving step gated.
+// @title: local-canvas â€” a surface that is not a page full of text, read through the ladder with the caret-moving step gated.
 // @state: the ladder walk on a canvas surface, the gate in front of the borrow, and the caret line read.
 // @dependencies: node:test, strict, ../local/primitives.js.
 
@@ -36,7 +36,7 @@ const axTree = (texts: any) => {
 };
 
 
-// WHY THE FAKE ANSWERS ONE SELECTION SHAPE.
+// THE FAKE ANSWERS ONE SELECTION SHAPE.
 // The copy, the caret mark and the caret verdict all read the same page expression now, so a fake that answers them with different shapes would be testing a page that no longer exists.
 // One answer per fake therefore carries both the text and the caret position, which is what the real page returns.
 
@@ -119,7 +119,7 @@ test('a canvas surface no read can answer names the picture instead of returning
   assert.equal(out.text, '');
 });
 
-// WHY A CANVAS WITHOUT AN EDITOR STILL READS THE DOM.
+// A CANVAS WITHOUT AN EDITOR STILL READS THE DOM.
 // The veto used to cover every canvas page, so a chart, a map or a viewer beside a canvas came back with no text at all - the one text the page has is the text around the picture.
 // Measured on a real page while writing this: the same fake, with the editable host removed, returned an empty string before and the page's own words after.
 
@@ -138,7 +138,7 @@ test('a canvas page with no editor reads the text around the picture', async () 
   assert.equal(out.skipped.length, 0, 'nothing is vetoed on a page whose text is its own');
 });
 
-// WHY AN ORDINARY PAGE NEVER PAYS FOR THE TREE.
+// AN ORDINARY PAGE NEVER PAYS FOR THE TREE.
 // Measured on the owner's profile: one innerText answers a DOM page in a single call, and a full accessibility tree costs 19-30ms on top of it.
 // The tree can reorder the ladder only where a canvas leads with it, so on any other page it is measured only if the DOM answered nothing.
 
@@ -182,7 +182,7 @@ test('the accessibility answer carries the page it stands on', async () => {
   assert.match(out.settledWhy, /wait/, 'and the answer names what can');
 });
 
-// WHY AN EMPTY COPY IS NOT AN EMPTY DOCUMENT.
+// AN EMPTY COPY IS NOT AN EMPTY DOCUMENT.
 // A canvas editor that selects and copies nothing either has an empty document or a mirror that did not fill, and the two are not the same thing.
 // Reporting the empty string as the read would call both of them an empty page.
 

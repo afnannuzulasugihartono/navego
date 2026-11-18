@@ -3,7 +3,7 @@
 // @state: the version comparison, the refusal of a build that is not ours, and the write that puts the files in place.
 // @dependencies: node:test, node:assert/strict, node:fs, node:zlib, ../extension/lib/self-update.js, ../extension/lib/zip-read.js.
 
-// WHY THIS GATE RUNS THE WRITE.
+// THIS GATE RUNS THE WRITE.
 // The promise is that a newer build lands in the reader's folder and nothing else does.
 // That promise is about bytes and paths, so it is proved with bytes and paths: a zip is built here, read here, and written here into a folder that records what it was given.
 
@@ -36,7 +36,7 @@ const crc32 = (bytes: Uint8Array) => {
   return (crc ^ 0xffffffff) >>> 0;
 };
 
-// WHY THE FIXTURE IS BUILT HERE AND NOT READ FROM A FILE.
+// THE FIXTURE IS BUILT HERE AND NOT READ FROM A FILE.
 // The build the update service serves is packed by Chrome and deflated, so the reader has to read that shape; a fixture made by the same writer as the office files would be stored and would prove nothing about it.
 
 const buildZip = (entries: Array<{ name: string; text: string }>) => {

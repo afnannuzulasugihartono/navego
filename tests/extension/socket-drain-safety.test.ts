@@ -1,9 +1,9 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: socket-drain-safety.test — nothing in the drain may throw out of it.
+// @title: socket-drain-safety.test â€” nothing in the drain may throw out of it.
 // @state: pins that a foreign frame and a failing completion frame both stay inside the drain.
 // @dependencies: node:test, strict, node:fs/promises, ../extension/lib/socket-client.js.
 
-// WHY THIS GATE EXISTS.
+// THIS GATE EXISTS.
 // An uncaught throw inside an MV3 service worker kills the worker, and a dead worker looks exactly like a device that is online but silently doing nothing: commands queue, no completion ever goes out, and the failure surfaces minutes later as an unexplained timeout.
 // Observed live as "Uncaught TypeError: Cannot read properties of undefined (reading 'id')" in the extension error log, which killed the link for every command after it.
 // So the drain owes its callers two guarantees: an entry it cannot use is skipped and named, and a completion that cannot be sent fails that command alone.

@@ -3,15 +3,15 @@
 // @state: the version the server serves, the entries of the build, and the write that puts them in place.
 // @dependencies: zip-read, endpoints.
 
-// WHY THE LOGIC LIVES IN LIB AND NOT IN THE WORKER.
+// THE LOGIC LIVES IN LIB AND NOT IN THE WORKER.
 // The part that decides what is written and what is refused is the part that must be provable, and lib/ is the part Node can read without a browser.
 // The chrome.* parts - the alarm, the folder permission, the restart - live in the worker beside them.
 
-// WHY THE BUILD IS CHECKED BEFORE IT IS WRITTEN.
+// THE BUILD IS CHECKED BEFORE IT IS WRITTEN.
 // The folder is the reader's own installation, so a wrong file there breaks their browser until they notice.
 // The build is therefore read first, and it is only written when it carries this extension's name and a version higher than the running one.
 
-// WHY THE PATHS ARE CHECKED.
+// THE PATHS ARE CHECKED.
 // The folder handle is the reader's, but the bytes that name the paths are the server's, and a path that walks out of the folder would write where nobody asked it to.
 
 import { readZip } from './zip-read.js';
@@ -40,7 +40,7 @@ export const newerThan = (installed: string | undefined, served: string | undefi
   return false;
 };
 
-// WHY THE VERSION COMES FROM THE BUILD, NOT FROM THE HEALTH PAGE.
+// THE VERSION COMES FROM THE BUILD, NOT FROM THE HEALTH PAGE.
 // The update service's /health answers for the legacy extension id by design, and a caller that reads its version as "what this extension should run" asks the wrong endpoint and is told 1.0.1 forever - which is why an update that looked wired up never happened.
 // The served version of this extension rides on the build itself: a HEAD on the archive carries it in a header, and the archive is one call away when the header cannot be read.
 // A caller that cannot learn the version therefore does the read that decides anyway, and the write stays refused unless the manifest inside the build says it is this product and it is newer.
@@ -88,7 +88,7 @@ async function writeBuild(folder: BuildFolderHandle, entries: ReadonlyArray<{ na
     }
     const handle = await place.getFileHandle(fileName, { create: true });
     const writable = await handle.createWritable();
-    // WHY THE COPY: entry.bytes may wrap a SharedArrayBuffer, and only a plain ArrayBuffer satisfies FileSystemWriteChunkType.
+    // THE COPY: entry.bytes may wrap a SharedArrayBuffer, and only a plain ArrayBuffer satisfies FileSystemWriteChunkType.
     const payload = new Uint8Array(entry.bytes.length);
     payload.set(entry.bytes);
     await writable.write(payload);
@@ -107,7 +107,7 @@ export async function applyBuild({ folder, installedVersion, fetchImpl = fetch }
   const response = await fetchImpl(`${UPDATE_BASE_URL}/download/navego.zip`, NO_STORE);
   if (!response.ok) return { ok: false, reason: 'download-failed' };
   const entries = await readZip(new Uint8Array(await response.arrayBuffer()));
-  // WHY TWO NAMES: installs that shipped before the rebrand verify the zip the extension downloads against the name they shipped as ('Opera Agent'); if this build accepted only the current brand, those machines would refuse every folder-apply and be forced through the browser updater forever.
+  // TWO NAMES: installs that shipped before the rebrand verify the zip the extension downloads against the name they shipped as ('Opera Agent'); if this build accepted only the current brand, those machines would refuse every folder-apply and be forced through the browser updater forever.
   // The check accepts the name this zip carries now and the name the install was shipped under.
   // The bytes it writes over the folder are still required to carry a version, and the browser CRX road never consulted this name at all.
   const manifest = manifestOf(entries);

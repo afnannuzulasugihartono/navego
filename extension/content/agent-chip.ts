@@ -3,7 +3,7 @@
 // @state: renders only while the worker says it should; refuses on sensitive surfaces; removes itself on command; this file is injected into the held tab on demand and is idempotent.
 // @dependencies: none.
 
-// WHY THIS MAY NOT IMPORT.
+// THIS MAY NOT IMPORT.
 // The manifest pipeline loads content modules as classic scripts; an import statement is a SyntaxError.
 // Everything here is inline.
 
@@ -12,7 +12,7 @@
   var CHIP_ID = 'oa-agent-chip';
   if (document.getElementById(CHIP_ID)) return;
 
-  // WHY THE REFUSAL IS FIRST AND INLINE.
+  // THE REFUSAL IS FIRST AND INLINE.
   // No badge on a password page, no chip on an OTP, no chip on a payment surface: the marker never lies about a page that carries a credential.
   function isSensitiveSurface() {
     try {

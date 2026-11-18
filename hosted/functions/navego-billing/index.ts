@@ -1,35 +1,35 @@
 // @last-edited: 2026-10-26 UTC+7.
-// @title: navego-billing — the invoice a customer opens, and the callback that closes it.
+// @title: navego-billing â€” the invoice a customer opens, and the callback that closes it.
 // @state: quotes a delivery into an amount, opens one payable transaction per invoice, serves the page in the state the row is in, closes it from a signed notification or the provider's own answer, records a transfer by hand, opens a new link when the customer asks, and answers a wallet's balance, quote, reserve, settle, refund and top-up.
 // @dependencies: edge-runtime, supabase-js, ../_shared/billing.ts, ../_shared/wallet.ts, ../_shared/wallet-api.ts, ../_shared/invoice-page.ts, ../_shared/cors.ts, ../_shared/edge-log.ts.
 
-// WHY THIS FUNCTION EXISTS.
+// THIS FUNCTION EXISTS.
 // The product sells a delivered client-month, and a sale that nobody can pay for is a demo.
 // So the deliveries the manifest recorded are priced, the priced deliveries are written on an invoice, and the invoice is reachable by the person who owes it through a link that carries its own authority.
 
-// WHY THE INVOICE IS SERVED HERE AND NOT FROM THE SITE.
+// THE INVOICE IS SERVED HERE AND NOT FROM THE SITE.
 // The link a customer gets has to keep working after the site is redeployed, and it has to work for a customer who has never seen the site.
 // So the function serves the page, and the page is the invoice: the deliveries it charges for, the amount, and the way to pay.
 
-// WHY THE NOTIFICATION IS THE ONLY WAY AN INVOICE BECOMES PAID.
+// THE NOTIFICATION IS THE ONLY WAY AN INVOICE BECOMES PAID.
 // A browser could post "this invoice is paid" to this function, and so could a stranger.
 // The provider's signature is computed with a key only the server holds, so only a real settlement can move the invoice.
 // Without the key the callback refuses rather than trusting the caller.
 
-// WHY THE CALLBACK DOES NOT ASK FOR AN "action" FIELD.
+// THE CALLBACK DOES NOT ASK FOR AN "action" FIELD.
 // A provider posts its own body to the URL it was given, so a notification is recognised by the order id and the signature it carries, not by a field the provider never sends.
 // The operator's own calls still name their action, and the two shapes cannot be confused: one carries a signature, the other carries a bearer token.
 
-// WHY THE WALLET LIVES IN THE SAME FUNCTION AS THE INVOICE.
+// THE WALLET LIVES IN THE SAME FUNCTION AS THE INVOICE.
 // A top-up is an invoice with one line, so the path that prices it, opens the charge, checks the signed notification and compares the amount is already here and already proved by a real settlement.
 // A separate function would be a second place where money can arrive, and the second place is always the one that forgets to reconcile.
 // What the wallet adds is one direction the invoice never had: money that stays after it is paid, and leaves only when a task is finished or has failed.
 
-// WHY THE CALLBACK ALSO CHECKS THE AMOUNT.
+// THE CALLBACK ALSO CHECKS THE AMOUNT.
 // A signature proves the provider sent the notification; it does not prove the invoice was for this much.
 // So the gross amount in the notification has to equal the invoice once both are in cents, or the invoice stays open and the difference is somebody's problem to look at.
 
-// WHY A PAID INVOICE IS NEVER REOPENED.
+// A PAID INVOICE IS NEVER REOPENED.
 // Creating an invoice is idempotent so an operator can correct a month before it is paid, but the same write run after the money landed would turn a paid invoice back to open and ask the customer twice.
 // So the paid state is terminal here, and a later call is refused with the invoice's name.
 
@@ -109,7 +109,7 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 const BILLING_SECRET = Deno.env.get("BILLING_SECRET") || "";
 const BILLING_TOKEN = Deno.env.get("NAVEGO_BILLING_TOKEN") || "";
 
-// WHY THE OPERATOR'S LINK NAMES THE SITE AND NOT THIS FUNCTION.
+// THE OPERATOR'S LINK NAMES THE SITE AND NOT THIS FUNCTION.
 // Measured live on 2026-10-26: the gateway that fronts every project's functions answers this function's HTML as text/plain under a sandbox policy, so a customer sees the page's source.
 // The site serves the same page through a thin worker that keeps the page's headers and rewrites the refresh redirect, so the link an operator hands out names the site.
 // With no site configured the function's own URL stays as the fallback: the page is readable there even when a browser will not render it as a page.
@@ -120,7 +120,7 @@ const BILLING_PAGE_URL = (() => {
   return value;
 })();
 
-// WHY THE KEY IS KEPT EXACTLY AS IT WAS STORED.
+// THE KEY IS KEPT EXACTLY AS IT WAS STORED.
 // The signature is computed over this value, so the value is not adjusted here: which reading of it signs is measured against each notification and named in the log.
 // A sanitised copy would make the check pass and destroy the evidence that the stored secret needs fixing.
 
@@ -128,19 +128,19 @@ const MIDTRANS_SERVER_KEY = Deno.env.get("MIDTRANS_SERVER_KEY") || "";
 const KEY_SHAPE = secretShape(MIDTRANS_SERVER_KEY);
 const MIDTRANS_ENVIRONMENT = Deno.env.get("MIDTRANS_ENVIRONMENT") || "production";
 
-// WHY THE RAIL IS AN ENV AND NOT A FIELD.
+// THE RAIL IS AN ENV AND NOT A FIELD.
 // Which rail a rupiah invoice uses is a deployment decision, and flipping it must not need a code release.
 // The default stays midtrans, so a deploy without the new env answers exactly as before; qris-self is opt-in until the detector is proven live.
 
 const BILLING_RAIL = (Deno.env.get("BILLING_RAIL") || "midtrans").trim().toLowerCase();
 
-// WHY THE STATIC PAYLOAD IS AN ENV AND NEVER IN THE TREE.
+// THE STATIC PAYLOAD IS AN ENV AND NEVER IN THE TREE.
 // The merchant QRIS string is a credential-shaped secret: it names where the money goes.
 // It lives in the function's env like every other secret, and the tests use a synthetic payload.
 
 const QRIS_STATIC_PAYLOAD = Deno.env.get("QRIS_STATIC_PAYLOAD") || "";
 
-// WHY THE DETECTOR'S CREDENTIALS ARE ENVS LIKE EVERY OTHER SECRET.
+// THE DETECTOR'S CREDENTIALS ARE ENVS LIKE EVERY OTHER SECRET.
 // The GoBiz session is the merchant's own login, held by the function so a cron can poll without a phone.
 // The mode env is the gate: dry is the default because the feed's amount unit was never measured, and live without that measurement closes the wrong invoice.
 
@@ -165,7 +165,7 @@ function db() {
   return clientPromise;
 }
 
-// WHY THE OPERATOR TOKEN IS COPIED INTO VAULT.
+// THE OPERATOR TOKEN IS COPIED INTO VAULT.
 // The scheduled detector runs inside Postgres, and Postgres can only prove it is the cron with a secret it can read.
 // The function already holds that secret in its environment, so it publishes a copy into vault on its first request instead of asking a human to paste it there.
 
@@ -184,7 +184,7 @@ function publishOperatorToken(): void {
   });
 }
 
-// WHY THE BODY IS READ BY ITS CONTENT TYPE.
+// THE BODY IS READ BY ITS CONTENT TYPE.
 // The operator and the provider post JSON, and the customer's refresh form is a browser form, which posts urlencoded fields.
 // A body that cannot be parsed is an empty object, so a malformed request falls through to "unknown action" instead of a 500 that says nothing about the request.
 
@@ -202,7 +202,7 @@ async function readBody(req: Request): Promise<Record<string, unknown>> {
   return await req.json().catch(() => ({})) as Record<string, unknown>;
 }
 
-// WHY THE PAGE'S HEADERS SAY WHAT THE PAGE MAY DO.
+// THE PAGE'S HEADERS SAY WHAT THE PAGE MAY DO.
 // The page carries a token in its body, so it must not be cached, must not leak the link that opened it as a referrer, and must not be framed by another site.
 // The policy allows the inline styles the page needs and nothing else: no script, no font, no image, and a form that can only post back to this function.
 // The CORS map already carries cache-control, so the merge keeps one value for it rather than two spellings of the same rule.
@@ -234,7 +234,7 @@ async function readInvoice(invoiceId: string, token: string): Promise<InvoiceRow
   return data;
 }
 
-// WHY A RETRY ASKS THE PROVIDER WHAT THE OLD ATTEMPT IS BEFORE OPENING A NEW ONE.
+// A RETRY ASKS THE PROVIDER WHAT THE OLD ATTEMPT IS BEFORE OPENING A NEW ONE.
 // A timer is not the provider: the stored deadline says when the link should die, and only the provider knows whether a customer already paid through it.
 // So the old attempt is looked up, a settlement closes the invoice through the same amount check as a notification, and a pending attempt is expired at the provider before another charge is opened.
 // A refusal - no key, a network answer, a status this function does not understand - leaves the invoice as it was: opening a second payable transaction on a guess is the one mistake that costs a customer money.
@@ -283,7 +283,7 @@ async function closeAttempt(orderId: string | null | undefined): Promise<Attempt
   }
 }
 
-// WHY THE ATTEMPT NUMBER IS COUNTED FROM THE ARRAY.
+// THE ATTEMPT NUMBER IS COUNTED FROM THE ARRAY.
 // The array holds every attempt this invoice opened, so its length is the number of the next one, and the scalar counts as one even when a row predates the array.
 // Counting past a legacy scalar matters: reusing the id of an attempt that was just closed asks the provider for a transaction it already knows.
 
@@ -294,13 +294,13 @@ function nextAttempt(invoice: InvoiceRow): number {
   return Math.max(opened.length, invoice.provider_order_id ? 1 : 0) + 1;
 }
 
-// WHY A REFUSED CHARGE IS WRITTEN DOWN.
+// A REFUSED CHARGE IS WRITTEN DOWN.
 // A charge the provider turns away leaves the invoice with no pay button and a transfer instruction instead, and nothing in the answer says why.
 // Measured live: a key that did not belong to the host it was sent to produced exactly that silence, and the only way to tell "no key" from "key refused" was a log.
 // The status and the provider's own words are logged; the key never is.
 // The whole answer is written, not one field of it: Midtrans answered {"error":"Unauthorized"} once, and the log that read only error_messages named nothing.
 
-// WHY THE AMOUNT IS PASSED AND NOT TAKEN FROM THE ROW.
+// THE AMOUNT IS PASSED AND NOT TAKEN FROM THE ROW.
 // The create path can re-price an invoice, so the row still carries the old amount while the caller has already computed the new one.
 // A charge built from the row would ask the customer for yesterday's price and then write the new amount beside it, and the settlement would be refused by the amount check.
 // The refresh path passes nothing and gets the row's own amount, which is what it means.
@@ -361,7 +361,7 @@ async function openNewAttempt(invoice: InvoiceRow, { customerId, amountCents = N
   };
 }
 
-// WHY A PAID ROW IS NOT WRITTEN BY A CREATE THAT RACED THE PAYMENT.
+// A PAID ROW IS NOT WRITTEN BY A CREATE THAT RACED THE PAYMENT.
 // The paid check happens before the provider call because opening a link is the moment money can move, and that call takes time.
 // So a write over an existing row is guarded by paid_at is null: a payment that landed in between leaves the row paid and this call answers 409 instead of turning it back to open.
 // The write is also guarded by the attempt it read: two operators opening a link for one invoice must not overwrite each other's attempt, because the loser's transaction would stay payable with nothing in the row naming it.
@@ -373,7 +373,7 @@ async function invoiceRow(id: string): Promise<InvoiceRow | null> {
   return data || null;
 }
 
-// WHY A LOSING ATTEMPT IS CLOSED INSTEAD OF FORGOTTEN.
+// A LOSING ATTEMPT IS CLOSED INSTEAD OF FORGOTTEN.
 // The charge was already opened at the provider before the row could be written, and a payable transaction nobody recorded is a link that can still take money.
 // If the row already names it, another writer opened the same attempt and there is nothing to close.
 // A settlement on an attempt that lost the write cannot be attached to the invoice, so it is named in the log for a human: money that moved must never disappear quietly.
@@ -432,7 +432,7 @@ async function createInvoice({ customer_id, period, lines, rail = "midtrans" }: 
   const id = `${customer_id}:${period}`;
   const token = invoiceToken(id, BILLING_SECRET);
 
-  // WHY THE PAID CHECK COMES BEFORE THE PROVIDER CALL.
+  // THE PAID CHECK COMES BEFORE THE PROVIDER CALL.
   // Creating a payment link is the moment money can move.
   // If a paid invoice were priced and sent to the provider first, a later call would open a second payable transaction and then refuse to write it: the customer could pay twice and the database would never know.
   // So the row is read first, a paid invoice is refused before any provider call, and an unchanged open invoice keeps the link its customer already has.
@@ -441,7 +441,7 @@ async function createInvoice({ customer_id, period, lines, rail = "midtrans" }: 
     throw new HttpError(409, `${id} is paid; a later call does not reopen an invoice that has been paid.`);
   }
 
-  // WHY A LINK IS REUSED ONLY WHILE IT IS ALIVE.
+  // A LINK IS REUSED ONLY WHILE IT IS ALIVE.
   // An idempotent invoice_create must not kill a customer's live QR, so an unchanged amount and currency keep the link and the deadline the row already carries.
   // An expired link is not reused, because the page would have to render a Pay button the provider will refuse.
   // A legacy row with no stored deadline is "unknown" and is kept: it has a link, it may still work, and replacing it would be the create path deciding something nobody measured.
@@ -452,7 +452,7 @@ async function createInvoice({ customer_id, period, lines, rail = "midtrans" }: 
     && existing.currency === out.currency;
   const state = existing ? payLinkState(existing) : "none";
 
-  // WHY THE LAST ATTEMPT SURVIVES A WRITE THAT OPENS NO NEW LINK.
+  // THE LAST ATTEMPT SURVIVES A WRITE THAT OPENS NO NEW LINK.
   // A row written between the migration and the deploy carries its attempt in the scalar and an empty array; counting only the array would lose the order id a later close has to ask about.
   // And when a re-price cannot open a charge, the old attempt is still the thing the provider may be holding, so its pointer stays: the next opener closes it before it charges.
   const history = Array.isArray(existing?.provider_order_ids) && existing.provider_order_ids.length
@@ -473,7 +473,7 @@ async function createInvoice({ customer_id, period, lines, rail = "midtrans" }: 
       pay_url_expires_at: existing?.pay_url_expires_at || null
     };
   } else if (rail === "qris-self") {
-    // WHY THE QRIS RAIL WRITES A LOCAL ORDER ID AND NO PAY URL.
+    // THE QRIS RAIL WRITES A LOCAL ORDER ID AND NO PAY URL.
     // The payment is a QR code rendered on the invoice page from the merchant's own payload, not a link a provider hosts, so there is no URL to store.
     // The order id is derived from the invoice, which keeps a repeated create idempotent: the same invoice names the same order.
     const orderId = `qris-${id}-1`;
@@ -504,7 +504,7 @@ async function createInvoice({ customer_id, period, lines, rail = "midtrans" }: 
   return { invoice: data, token };
 }
 
-// WHY A TRANSFER IS RECORDED WITH THE SAME CARE AS A CALLBACK.
+// A TRANSFER IS RECORDED WITH THE SAME CARE AS A CALLBACK.
 // The money can arrive before a provider account exists, and the ledger still has to show who confirmed it and when.
 // The note is stored on the invoice itself, so the page the customer already holds shows the same record the operator sees.
 
@@ -535,7 +535,7 @@ async function settleManual({ invoice_id, amount_cents, note }: { invoice_id: st
   return data;
 }
 
-// WHY EVERY NOTIFICATION IS WRITTEN DOWN BEFORE IT IS JUDGED.
+// EVERY NOTIFICATION IS WRITTEN DOWN BEFORE IT IS JUDGED.
 // A notification is the only thing that closes an invoice, so "the invoice is still open" had two completely different causes and no way to tell them apart: the provider never reached the endpoint, or it reached the endpoint and the endpoint refused what it sent.
 // Measured on 2026-10-26: the provider's history showed eleven notifications, every one marked undelivered, and nothing in the function said which of the two it was.
 // The row is written before the answer is returned; the signature value is never stored, because which field carried it is what separates a contract mismatch from a bad secret.
@@ -566,7 +566,7 @@ async function noteNotification(
   }
 }
 
-// WHY A REFUSED SIGNATURE BECOMES A QUESTION TO THE PROVIDER.
+// A REFUSED SIGNATURE BECOMES A QUESTION TO THE PROVIDER.
 // A signature that does not match has causes that look identical from the body: it was not signed by the provider, or it was signed with a secret other than the one stored here.
 // Measured live on 2026-10-26: real notifications arrived from the provider's own user agent with the right order id and amount, and every one was refused; the body could not say why, and the cause turned out to be this module's own formula.
 // The provider records the transaction, so asking it what happened is a stronger proof than the body: the answer is about its own transaction, never about the claim in the request.
@@ -590,16 +590,16 @@ async function providerSaysSettled(orderId: string): Promise<{ settled: boolean;
   }
 }
 
-// WHY THE CALLBACK RE-CHECKS THE AMOUNT.
+// THE CALLBACK RE-CHECKS THE AMOUNT.
 // A signature proves the provider sent the notification; it does not prove the invoice was for this much.
 // So the gross amount in the notification has to equal the invoice once both are in cents, or the invoice stays open and the difference is somebody's problem to look at.
 
-// WHY A PAID INVOICE IS NOT PAID AGAIN.
+// A PAID INVOICE IS NOT PAID AGAIN.
 // The provider sends the same outcome more than once, and a late notification can arrive after the one that closed the invoice.
 // Measured live on 2026-10-26: a settlement closed the invoice at 08:55:13 and a pending notification arrived eleven seconds later, moving paid_at to 08:55:24.
 // The moment money landed is evidence, and a second notification must not rewrite it.
 
-// WHY THE NOTIFICATION FINDS THE INVOICE BY ANY ATTEMPT IT OPENED.
+// THE NOTIFICATION FINDS THE INVOICE BY ANY ATTEMPT IT OPENED.
 // A retry opens a new order id, so a settlement for the first attempt carries an id that is no longer the current one.
 // The array holds every attempt, and containment finds the invoice whichever attempt the provider is talking about; the scalar would only find the last one.
 // The invoice id is still accepted after that, for a notification signed by hand and for an invoice written before a derived id existed.
@@ -612,12 +612,12 @@ async function invoiceForOrder(orderId: string): Promise<InvoiceRow | null> {
   return byId.data || null;
 }
 
-// WHY A TERMINAL NOTIFICATION CLEARS ONLY THE CURRENT LINK.
+// A TERMINAL NOTIFICATION CLEARS ONLY THE CURRENT LINK.
 // The provider says expire, deny, cancel or failure about the transaction it is naming, and an invoice may have opened several.
 // Clearing the link a customer is holding because an older attempt died would take away the one way to pay that still works.
 // So the row is left open and only the current attempt's link is removed; a pending or settled notification never clears a link, because one means money may still arrive and the other means it did.
 
-// WHY A PAID TOP-UP IS CREDITED ON THE SAME PATH THAT CLOSES THE INVOICE.
+// A PAID TOP-UP IS CREDITED ON THE SAME PATH THAT CLOSES THE INVOICE.
 // The notification is the only event that proves the money arrived, so the wallet must be credited before the event is acknowledged and forgotten.
 // The credit is keyed by the invoice, not by the notification: the provider repeats notifications, and a repeated credit would turn one payment into a larger balance.
 
@@ -699,7 +699,7 @@ const json = (data: unknown, status = 200, headers: Record<string, string> = {})
   headers: { "content-type": "application/json; charset=utf-8", ...headers }
 });
 
-// WHY THE WALLET TRUSTS A PAIRED DEVICE AND NOT ONLY A SESSION.
+// THE WALLET TRUSTS A PAIRED DEVICE AND NOT ONLY A SESSION.
 // The work runs in a browser extension on the customer's own machine, where the thing it holds is a device token, not a password.
 // A device is paired by a signed-in person, so the person it belongs to is the wallet's owner, and the token proves the device rather than the person.
 // A session is the other way in, for the dashboard, and both arrive at the same owner column.
@@ -727,7 +727,7 @@ async function walletOwner(req: Request, body: Record<string, unknown>): Promise
   return owner && UUID_SHAPE.test(owner) ? owner : null;
 }
 
-// WHY A PLACE THAT SELLS A PLAN TRUSTS ONLY A PERSON.
+// A PLACE THAT SELLS A PLAN TRUSTS ONLY A PERSON.
 // A paired device proves the machine, not the wallet of the person at it; a subscription is renewed by a person in their own browser.
 // Device credentials therefore never open plan-subscribe: a visitor with a paired machine but no session is asked to sign in, like anyone else.
 
@@ -741,7 +741,7 @@ async function sessionOrNull(req: Request): Promise<string | null> {
   return id && UUID_SHAPE.test(id) ? id : null;
 }
 
-// WHY A PLACE THAT SELLS A PLAN ALSO ACTIVATES IT AT THE MOMENT OF PAYMENT.
+// A PLACE THAT SELLS A PLAN ALSO ACTIVATES IT AT THE MOMENT OF PAYMENT.
 // A paid plan invoice that did not flip the account would leave the buyer with a receipt and the old quota, and the fix would live in a support thread.
 // The activation is client-observable only through the ordinary plan readers, and those were taught to degrade on expiry in the same release that sells it.
 
@@ -756,7 +756,7 @@ async function activatePlanFromInvoice(invoice: InvoiceRow): Promise<void> {
   }
 }
 
-// WHY A WALLET FUNCTION'S ERROR IS RAISED AND NOT RETURNED AS A REFUSAL.
+// A WALLET FUNCTION'S ERROR IS RAISED AND NOT RETURNED AS A REFUSAL.
 // A refusal is the database saying "no" about money, and it arrives as a body with a reason.
 // A transport error is this function having no idea what happened, and answering "insufficient" for it would teach a customer to top up for a fault on our side.
 
@@ -774,7 +774,7 @@ async function walletNumber(name: string, args: Record<string, unknown>): Promis
   return Number(data || 0);
 }
 
-// WHY THE TOP-UP IS AN ORDINARY INVOICE.
+// THE TOP-UP IS AN ORDINARY INVOICE.
 // The page that takes the money, the notification that closes it and the amount check already exist and are already proved by a real settlement.
 // A second payment path would be a second place for money to arrive and a second place to forget to reconcile it.
 
@@ -814,7 +814,7 @@ function walletDeps(req: Request) {
       ]);
       if (ledger.error) throw new Error(`the ledger could not be read: ${ledger.error.message}`);
       if (reservations.error) throw new Error(`the reservations could not be read: ${reservations.error.message}`);
-      // WHY TWO ROWS OF MONEY BECOME ONE LIST.
+      // TWO ROWS OF MONEY BECOME ONE LIST.
       // A deposit and the task it paid for are the same event seen from two tables, and the person reading the dashboard reads one timeline, not two.
       // The two lists are merged by the moment they happened and capped together, so the answer stays one page long.
       const entries = [
@@ -860,7 +860,7 @@ function walletDeps(req: Request) {
 }
 
 
-// WHY THE QR IS RENDERED SERVER-SIDE AS SVG.
+// THE QR IS RENDERED SERVER-SIDE AS SVG.
 // The invoice page's CSP allows no script, so the QR cannot be drawn in the browser; rendering it here keeps the page script-free and the code scannable from the same HTML the link opened.
 
 async function qrisSvgFor(payload: string): Promise<string | null> {
@@ -873,7 +873,7 @@ async function qrisSvgFor(payload: string): Promise<string | null> {
   }
 }
 
-// WHY THE DYNAMIC PAYLOAD IS DERIVED AT RENDER TIME AND NOT STORED.
+// THE DYNAMIC PAYLOAD IS DERIVED AT RENDER TIME AND NOT STORED.
 // The payload is a pure function of the merchant's static payload and the invoice amount, so storing it would be a second copy that can disagree with the row.
 // Deriving it also means a price correction on an open invoice changes the QR to match the new total.
 
@@ -889,7 +889,7 @@ async function qrisSvgForInvoice(invoice: InvoiceRow): Promise<string | null> {
   return qrisSvgFor(dynamic);
 }
 
-// WHY THE DETECTOR READS A WINDOW AND NOT "days".
+// THE DETECTOR READS A WINDOW AND NOT "days".
 // The feed refused day-only and epoch windows on 2026-11-02; start_time and end_time in RFC3339 are the accepted form, so the window is computed here, from the oldest open invoice to now, capped to the page the API allows.
 
 async function fetchFeedOnce(accessToken: string, startTime: string): Promise<{ status: number; body: unknown }> {
@@ -928,7 +928,7 @@ async function refreshGoBizToken(): Promise<string | null> {
   }
 }
 
-// WHY LIVE MODE CLOSES THROUGH THE SAME GUARD AS A NOTIFICATION.
+// LIVE MODE CLOSES THROUGH THE SAME GUARD AS A NOTIFICATION.
 // paid_at is null in the update's WHERE, so two detectors racing on one transaction close it once and the loser's credit is the no-op the ledger's unique ref already enforces.
 
 async function closeFromFeed(match: { invoiceId: string; transactionId: string; method: string }): Promise<boolean> {
@@ -956,20 +956,20 @@ async function runQrisDetect(): Promise<Record<string, unknown>> {
   if (!GOBIZ_ACCESS_TOKEN || !GOBIZ_MERCHANT_ID || !GOBIZ_DEVICE_ID) {
     return { ok: false, why: "the GoBiz session is not configured on this function" };
   }
-  // WHY ONLY qris-self INVOICES ARE MATCHED.
+  // ONLY qris-self INVOICES ARE MATCHED.
   // An invoice on the Midtrans rail is closed by the provider's signed notification, and matching it to a feed transaction too would let one payment close two invoices.
-  // The detector's money is QRIS scanned from our own page, so only invoices opened on that rail are candidates — for any customer, AtmoRouter included.
+  // The detector's money is QRIS scanned from our own page, so only invoices opened on that rail are candidates â€” for any customer, AtmoRouter included.
   const supabase = await db();
   const { data: openInvoices, error } = await supabase.from("opera_invoices")
     .select("*").eq("status", "open").eq("provider", "qris-self").order("created_at", { ascending: true });
   if (error) throw new Error(`open invoices unreadable: ${error.message}`);
 
-  // WHY THE WINDOW STARTS AT THE OLDEST OPEN INVOICE.
+  // THE WINDOW STARTS AT THE OLDEST OPEN INVOICE.
   // A payment for an invoice opened three days ago still has to be inside the window, and the feed refuses a day-only window, so the start is that invoice's own creation time, never older than the seven days the feed accepts.
   const oldest = (openInvoices || []).map((invoice) => Date.parse(String(invoice.created_at || ""))).filter((ms) => Number.isFinite(ms)).sort((a, b) => a - b)[0];
   const startTime = new Date(Math.max(oldest || Date.now() - 24 * 3600 * 1000, Date.now() - 7 * 86400000)).toISOString();
 
-  // WHY SPENT TRANSACTIONS ARE EXCLUDED.
+  // SPENT TRANSACTIONS ARE EXCLUDED.
   // A transaction that already closed an invoice is that money, spent once.
   // Without this, an invoice settled by hand and its transaction would close a second invoice and credit the same money twice.
   const { data: usedRows, error: usedError } = await supabase.from("opera_invoices")
@@ -1002,14 +1002,14 @@ async function runQrisDetect(): Promise<Record<string, unknown>> {
   return { ok: true, mode: "dry", wouldClose: plan.wouldClose, transactions: transactions.length, seen: seen.length, spent: spent.size };
 }
 
-// WHY THE TOKEN IS PUBLISHED ON EVERY COLD START.
+// THE TOKEN IS PUBLISHED ON EVERY COLD START.
 // The cron reads the operator token from vault, and the function is the only party that holds it, so one request from anywhere is enough to arm the schedule.
 
 Deno.serve(async (req: Request) => {
 
 publishOperatorToken();
 
-// WHY apikey IS ALLOWED: the dashboard calls this function with the publishable key in the apikey header beside the bearer session, and a preflight that does not name apikey makes the browser drop the request before it is sent.
+// apikey IS ALLOWED: the dashboard calls this function with the publishable key in the apikey header beside the bearer session, and a preflight that does not name apikey makes the browser drop the request before it is sent.
 // The bridge does not need it because the device sends only its own token in the body, and it keeps its own narrower list.
 
 const cors = {
@@ -1022,7 +1022,7 @@ const cors = {
   const url = new URL(req.url);
   try {
     if (req.method === "GET") {
-      // WHY THE PRICE LIST IS PUBLIC AND NEEDS NO TOKEN.
+      // THE PRICE LIST IS PUBLIC AND NEEDS NO TOKEN.
       // A price the customer cannot see before agreeing is not a price, it is a surprise, and the harga page and the dashboard both read it.
       // Only active rows are returned, so a retired price disappears from every reader at once.
       if (url.searchParams.get("prices") === "1") {
@@ -1052,7 +1052,7 @@ const cors = {
     }
     if (req.method === "POST") {
       const body = await readBody(req);
-      // WHY A NOTIFICATION IS RECOGNISED BY THE ORDER AND THE STATUS CODE.
+      // A NOTIFICATION IS RECOGNISED BY THE ORDER AND THE STATUS CODE.
       // Recognition used to demand a signature field, so a provider payload whose signature arrived under a different name fell through to "unknown action" and left no trace anywhere.
       // What makes a body a notification is what the provider says happened; whether it is believed is a separate question, answered by the signature.
       const USD_PLANS = ["plan.usd-1", "plan.usd-3", "plan.usd-5", "plan.usd-7", "plan.usd-9", "plan.usd-17", "plan.usd-33"];
@@ -1118,7 +1118,7 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
         return json(out, notificationAcknowledged(out) ? 200 : 400, cors);
       }
 
-      // WHY THE WALLET ANSWERS BEFORE THE REFRESH FORM.
+      // THE WALLET ANSWERS BEFORE THE REFRESH FORM.
       // A wallet action is recognised by its own name, and the refresh form is recognised by its token, so the two cannot be confused.
       // Putting the wallet first keeps every money answer in one shape: a status that says whether the caller may try again, and a body that says why not.
 
@@ -1153,7 +1153,7 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
         return json(out.body, out.status, cors);
       }
 
-      // WHY A PLAN SUBSCRIPTION IS THE PERSON, NOT THE DEVICE.
+      // A PLAN SUBSCRIPTION IS THE PERSON, NOT THE DEVICE.
       // A paired device proves the machine, not the account; a subscription is renewed by a person in their own browser, so a visitor with a paired machine but no session is asked to sign in like anyone else.
       if (body.action === "plan-subscribe") {
         const owner = await sessionOrNull(req);
@@ -1189,7 +1189,7 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
         return json({ ok: true, url: link, invoice: out.invoice }, 200, cors);
       }
 
-      // WHY THE SWEEP IS AN OPERATOR CALL AND NOT A PUBLIC ONE.
+      // THE SWEEP IS AN OPERATOR CALL AND NOT A PUBLIC ONE.
       // Expiring a hold refunds money, so the caller must be the operator and not any browser that guessed the action name.
       // It is safe to run at any time: the query only touches holds whose window has already passed, and it leaves the ones a task may still settle.
 
@@ -1202,7 +1202,7 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
         return json({ ok: true, ...out }, 200, cors);
       }
 
-      // WHY THE DETECTOR IS AN OPERATOR CALL LIKE THE SWEEP.
+      // THE DETECTOR IS AN OPERATOR CALL LIKE THE SWEEP.
       // In live mode it closes invoices, which moves money into wallets, so the caller must be the operator; in dry mode it only logs, but the same gate keeps one code path for both.
 
       if (body.action === "qris-detect") {
@@ -1213,7 +1213,7 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
         return json(await runQrisDetect(), 200, cors);
       }
 
-      // WHY THE REFRESH FORM IS A POST AND NOT A LINK.
+      // THE REFRESH FORM IS A POST AND NOT A LINK.
       // A link that opens a payable transaction can be fired by a prefetcher, a mail scanner or a stray click, and every one of those would open a new charge.
       // A POST carries the token from the form body, verifies it exactly as the page did, and answers with a redirect so a reload cannot post again.
       // The customer never sees the provider's words: a refusal is one line on the page, and the reason is written to the log.

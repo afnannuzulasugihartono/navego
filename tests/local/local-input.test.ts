@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: local-input — typing, chords and streams must behave the way a page that ignores synthetic events actually behaves.
+// @title: local-input â€” typing, chords and streams must behave the way a page that ignores synthetic events actually behaves.
 // @state: the typing and key verbs, and the edit signature that proves the text landed on the page.
 // @dependencies: node:test, strict, ../local/primitives.js.
 
@@ -44,7 +44,7 @@ test('a long document is sent as several inserts so one failure cannot lose all 
   assert.deepEqual(inserts.map((i: any) => i.params.text.length), [10, 10, 10, 5]);
 });
 
-// WHY PLACEMENT IS PROVED AND NOT TRUSTED.
+// PLACEMENT IS PROVED AND NOT TRUSTED.
 // Measured live on a Google Doc: a batch reported landed:true from inside a table cell, and nothing in the answer said where.
 // So type answers with the index and neighbours of what it inserted, and a click answers with the element under the point - and both say so when they cannot.
 
@@ -86,7 +86,7 @@ test('text typed into a field is found in the field, because a field never touch
   assert.equal(out.placed.delta, 5);
 });
 
-// WHY A SLOW MIRROR IS WAITED OUT.
+// A SLOW MIRROR IS WAITED OUT.
 // Measured live on a Google Doc: the second of two consecutive batches reported "nothing on the page changed" while its text sat in the document, and the retry duplicated it.
 // The canvas mirrors into the DOM on Docs time with the outline lagging saves by seconds, so the check outlasts the lag instead of racing it.
 
@@ -201,7 +201,7 @@ test('append admits it cannot see where the text went rather than claiming the e
   assert.match(out.atEndWhy, /read\(\) is the proof/);
 });
 
-// WHY A SCROLL TOOL AND NOT A KEY.
+// A SCROLL TOOL AND NOT A KEY.
 // Measured live on a Google Doc with 21 pages: the only way to move the view was a key chord aimed at a guess, and an outline row the agent wanted to click answered with coordinates above the viewport - a click that reported success and hit nothing.
 // Scroll is also the only road to an infinite feed and to anything that lazy-loads, so without it most of a web page does not exist.
 // The answer carries the scroll it actually performed and where the view came to rest, because a scroll that moved the page and a scroll that moved the right thing look identical from the outside otherwise.
@@ -227,7 +227,7 @@ test('a chord is two masked events with codes and no text, because separate modi
   assert.deepEqual(out, { key: 'a', modifiers: 2 });
 });
 
-// WHY A MISSPELLED MODIFIER MAY NOT BECOME A PLAIN KEY.
+// A MISSPELLED MODIFIER MAY NOT BECOME A PLAIN KEY.
 // 'control' in lower case used to sum to zero, which turned Ctrl+1 into the keystroke "1" and looked like the page ignoring a shortcut.
 // The name is either right or it is an error; there is no third answer that quietly presses something else.
 
@@ -334,7 +334,7 @@ test('a stream preserves order, counts its work, and refuses what it cannot carr
   await assert.rejects(() => p.keys([{}]), /needs text or a key/);
 });
 
-// WHY THIS CLAIM EXISTS.
+// THIS CLAIM EXISTS.
 // The snapshot used to read the accessibility tree and then ask for one box per element it liked, up to a hundred and twenty of them.
 // The extension runs one command at a time on purpose, so those were sequential however the caller wrote them, and a snapshot on a Google Doc cost about two seconds before anything had decided anything.
 // Chrome has no batch API for element boxes, so the work moved into the page.
@@ -365,7 +365,7 @@ test('a page with no caret fails the edit instead of counting the characters it 
   await assert.rejects(() => createPrimitives(cdp).type('GUARD'), /typed 5 characters and nothing on the page changed: nothing on the page held focus - browser_click\(\{role, name\}\) the field that should receive it/);
 });
 
-// WHY A TYPE THAT LANDS NOWHERE MUST NAME WHAT HAD FOCUS.
+// A TYPE THAT LANDS NOWHERE MUST NAME WHAT HAD FOCUS.
 // Measured live on YouTube: a cookie wall sat over the page, the type inserted nothing, and the answer offered two guesses - no caret, or a minimized window.
 // The page was already saying the third thing: focus sat on the wall's button.
 // A name costs one evaluation and ends the guessing, so the failure carries it.
@@ -391,7 +391,7 @@ test('a type that lands nowhere names the element that had focus', async () => {
   );
 });
 
-// WHY A CLICK ASKS WHO OWNS THE POINT.
+// A CLICK ASKS WHO OWNS THE POINT.
 // A cookie wall over a page turns a tap into a success report for a click that reached nothing: measured live, the row answered with its own name and point while focus never left the wall's button.
 // The point has one owner, and saying which is cheaper than the guess that follows.
 
@@ -540,7 +540,7 @@ test('clear selects all and then deletes, because typing does not replace a sele
   assert.ok(cdp.calls.findIndex((c: any) => c.params?.key === 'a') < cdp.calls.findIndex((c: any) => c.params?.key === 'Delete'));
 });
 
-// WHY THESE CLAIMS EXIST.
+// THESE CLAIMS EXIST.
 // Google Docs draws the document on a canvas, so the page text a read used to return held the toolbar chrome and none of the content.
 // The document is read through its own copy path instead: select all, dispatch a copy event at the hidden text iframe, and take what Docs itself populated.
 // Proven on a live document at thirteen milliseconds for a full read; these hold the wiring so the proof stays true.
@@ -551,7 +551,7 @@ test('a key holds its down edge a beat before the up', async () => {
     const cdp = recordingCdp();
     await createPrimitives(cdp, { sleep: async (ms) => { slept.push(ms); } }).key('a', modifiers);
 
-    assert.deepEqual(slept, [KEY_BEAT_MS], 'down, beat, up — chord and bare key alike');
+    assert.deepEqual(slept, [KEY_BEAT_MS], 'down, beat, up â€” chord and bare key alike');
   }
 });
 
@@ -574,7 +574,7 @@ test('a chord-only stream settles once instead of polling for an edit that never
 
   assert.equal(out.moved, false, 'a menu chord does not move the text signature');
   assert.equal(out.settled, true, 'and it says it already settled, so the page look does not pay twice');
-  assert.deepEqual(slept, [KEY_BEAT_MS, KEY_BEAT_MS], 'two key beats; the settle asked the page and found it quiet — not twelve 150 ms polls');
+  assert.deepEqual(slept, [KEY_BEAT_MS, KEY_BEAT_MS], 'two key beats; the settle asked the page and found it quiet â€” not twelve 150 ms polls');
 });
 
 test('a text stream with nothing focused fails fast instead of polling for text that cannot land', async () => {
@@ -623,7 +623,7 @@ test('all four arrows dispatch with their virtual key codes', async () => {
   }
 });
 
-// WHY READING A LINE SELECTS IT FIRST.
+// READING A LINE SELECTS IT FIRST.
 // The mirror a copy reads from only holds what a selection put there: measured live as an empty line beside a perfectly visible caret.
 // So the read selects its own line, copies, and collapses back to the line end.
 // Steps breathe because injected keys land late; without the beats the copy runs before the selection exists.

@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-11 UTC+7.
-// @title: navego-update — the update service: the manifest, the signed CRX and the newest build.
+// @title: navego-update â€” the update service: the manifest, the signed CRX and the newest build.
 // @state: the two extension ids it answers, the update.xml it writes, and the CRX it serves.
 // @dependencies: edge-runtime, supabase-js, cors.
 
@@ -68,7 +68,7 @@ function requestedExtensionId(url: URL) {
   return EXTENSION_ID_PATTERN.test(candidate) ? candidate : null;
 }
 
-// WHY THE SHIPPED MANIFEST'S UPDATE_URL HAS NO ID.
+// THE SHIPPED MANIFEST'S UPDATE_URL HAS NO ID.
 // The Update button and the first external-install check ask from that bare URL, and the browser's own request carries its appid inside x.
 // Reading both means a caller that names itself gets its own answer, and a caller that names nobody hears about every app we serve instead of only the legacy one.
 
@@ -154,13 +154,13 @@ Deno.serve(async (req: Request) => {
         ? zipPayloadOf(bytesFromBase64(current.crx_base64))
         : bytesFromBase64(current.crx_base64);
       if (!bytes) return response(req, "Release payload is not a zip", 500, { "Content-Type": "text/plain; charset=utf-8" });
-      // WHY THE READER'S BROWSER IS IN THE FILE NAME.
+      // THE READER'S BROWSER IS IN THE FILE NAME.
       // A person who drives two browsers downloads the build twice, and two files with the same name in the downloads folder are two files they cannot tell apart.
       // The name carries the browser and the version, so the folder each one lands in says which browser it belongs to.
       const wanted = String(url.searchParams.get("for") ?? "").trim().toLowerCase();
       const browser = /^[a-z][a-z0-9]{1,11}$/.test(wanted) ? wanted : "";
       const filename = `navego${browser ? `-${browser}` : ""}-${current.version}${wantsZip ? ".zip" : ".crx"}`;
-      // WHY THE VERSION IS READABLE FROM ANOTHER ORIGIN: the extension's self-update decides from this one header, and a browser hides headers the server did not name as visible - so the version it carries may not land in the caller's hands without saying so here.
+      // THE VERSION IS READABLE FROM ANOTHER ORIGIN: the extension's self-update decides from this one header, and a browser hides headers the server did not name as visible - so the version it carries may not land in the caller's hands without saying so here.
       return response(req, req.method === "HEAD" ? null : new Uint8Array(bytes).buffer, 200, {
         "Content-Type": wantsZip ? "application/zip" : "application/x-chrome-extension",
         "Content-Length": String(bytes.byteLength),

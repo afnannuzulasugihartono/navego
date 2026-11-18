@@ -3,17 +3,17 @@
 // @state: a checked document plan in, one Word file out.
 // @dependencies: ./zip.js, ./xml.js, ./palette.js.
 
-// WHY THE WRITER READS A PLAN AND NOT A PAPER.
+// THE WRITER READS A PLAN AND NOT A PAPER.
 // The plan is what was already checked against the source rows, so the file cannot carry a number the check would have refused.
 
-// WHY A GRAPH BECOMES A TABLE.
+// A GRAPH BECOMES A TABLE.
 // A picture of a chart cannot be read by a spreadsheet or a screen reader, and the numbers behind it are what the reader checks.
 // The table holds the same numbers under the graph's own title.
 
-// WHY AN IMAGE IS EMBEDDED AND NOT NAMED.
+// AN IMAGE IS EMBEDDED AND NOT NAMED.
 // A paper that points at a file on the author's disk is broken the moment the paper leaves the disk.
 
-// WHY THE TABLE FILLS THE PAGE AND ITS CELLS CARRY PADDING.
+// THE TABLE FILLS THE PAGE AND ITS CELLS CARRY PADDING.
 // A table squeezed into half the page, with the words touching the cell edge, reads as a dump even when the numbers are right.
 
 import { zipBytes } from './zip.js';
@@ -29,7 +29,7 @@ const PICTURE = 'http://schemas.openxmlformats.org/drawingml/2006/picture';
 
 const CONTENT_TYPES = 'application/vnd.openxmlformats-officedocument.wordprocessingml';
 
-// WHY A NUMBER READS THE INDONESIAN WAY.
+// A NUMBER READS THE INDONESIAN WAY.
 // A table of plain digits is a machine's table; a reader of a report expects "12.500.000" and "1,98", and a file that prints "12500000" reads as unfinished.
 
 // One planned block: the writer reads a handful of fields and leaves the rest to the plan that made it.

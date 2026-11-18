@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: local-cloud.test — the same tools, the hosted server, and a bearer token.
+// @title: local-cloud.test â€” the same tools, the hosted server, and a bearer token.
 // @state: a tool call round-tripped against a fake hosted endpoint, and the door it closes when there is no token.
 // @dependencies: node:test, strict, node:http, node:os, node:fs, node:child_process, ../local/bin/navego.js.
 
@@ -28,7 +28,7 @@ import { fileURLToPath } from 'node:url';
 const root = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
 const bin = path.join(root, 'local', 'bin', 'navego.js');
 
-// WHY THE FAKE SPEAKS MCP OVER HTTP.
+// THE FAKE SPEAKS MCP OVER HTTP.
 // The proxy has no opinions about methods, so a fake that answers initialize, tools/list and tools/call proves the pipe forwards a call intact, which is the only claim worth making about a proxy.
 
 interface HostedMessage {

@@ -1,18 +1,18 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: local-bridge — the local bridge end, proven against a scripted device over a real socket.
+// @title: local-bridge â€” the local bridge end, proven against a scripted device over a real socket.
 // @state: tab ops, CDP transport, error surfacing, the origin boundary, proof, trust, teardown.
 // @dependencies: node:test, strict, ../local/bridge.js, ../local/cdp.js, ../extension/lib/socket-protocol.js.
 
-// WHY A SCRIPTED DEVICE AND NOT THE REAL WORKER.
-// The worker dials one fixed port, so two test files that both import it fight over the same connection — observed, and a green run would have meant nothing.
+// A SCRIPTED DEVICE AND NOT THE REAL WORKER.
+// The worker dials one fixed port, so two test files that both import it fight over the same connection â€” observed, and a green run would have meant nothing.
 // The worker's own half is proven in tests/extension/bridge-link.test.ts against the real module over a real socket; this file proves the local API against a device that behaves the way the real one does: hello, answer, report.
 
-// WHY ONE CLAIM CHANGED RATHER THAN DISAPPEARED.
+// ONE CLAIM CHANGED RATHER THAN DISAPPEARED.
 // A held poll waited twelve seconds for a worker to turn up mid-command, so a command raised while nobody was listening still got answered.
 // The socket refuses it instead, and says so in one sentence naming the one fix.
 // That is the trade this file now locks: waiting at session-open (still proven below) buys the slow start, and a dead link mid-call is named immediately instead of hanging.
 
-// WHY THE ORIGIN IS TESTED AT ALL.
+// THE ORIGIN IS TESTED AT ALL.
 // A Node WebSocket client sends no Origin header, so every other test here and in bridge-link.test.ts passes against a server that would refuse the browser outright.
 // Chrome does send one, so the header it sends is asserted here against the header the server expects.
 
@@ -41,7 +41,7 @@ import { fakeCloud, startFakeCloud } from '../helpers/fake-cloud.ts';
 
 process.env.NAVEGO_BRIDGE_PORT = '0';
 
-// WHY A FAKE CLOUD ON THE DRIVER PATH.
+// A FAKE CLOUD ON THE DRIVER PATH.
 // The driver builds its own bridge, and the meter asks the cloud once per session, so the driver path needs an answerable cloud or every scripted device here would be refused by the real one.
 // A loopback HTTP server answers with a granted pilot session, which is the exact call production makes.
 
@@ -57,13 +57,13 @@ test.after(async () => {
 
 const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// WHY the device speaks the protocol rather than echoing bytes.
+// the device speaks the protocol rather than echoing bytes.
 // The server settles a command on its completion frame and refuses anything else, so a device that made its own replies would prove nothing about the one the real extension sends.
 
 import { scriptedDevice } from '../helpers/scripted-device.ts';
 
-// WHY a registry.
-// A test that fails mid-body leaves its device attached, and the next test is then answered by a stranger — which reads as a flaky bridge rather than as a failed assertion.
+// a registry.
+// A test that fails mid-body leaves its device attached, and the next test is then answered by a stranger â€” which reads as a flaky bridge rather than as a failed assertion.
 // Observed: one red test turned two.
 
 const live: any = [];
@@ -130,8 +130,8 @@ test('tab operations round-trip through the device', async () => {
     'every command carries an id the completion can settle against');
 });
 
-// WHY CLOSING IS ASSERTED AT ALL.
-// The transport is a hand-off to cdp.js, so closing has to close it, and while the bridge handed back a bare function instead, `cdp.close()` threw a TypeError — which no call test would ever see, because nothing closes a client until somebody tears a session down.
+// CLOSING IS ASSERTED AT ALL.
+// The transport is a hand-off to cdp.js, so closing has to close it, and while the bridge handed back a bare function instead, `cdp.close()` threw a TypeError â€” which no call test would ever see, because nothing closes a client until somebody tears a session down.
 
 test('a CDP client drives through the bridge transport and closes cleanly', async () => {
   const device = await startDevice(() => ({ value: 42 }));
@@ -215,14 +215,14 @@ test('a CDP call is proved before it is sent, like every other command', async (
   cdp.close();
 });
 
-// WHY the origin boundary is asserted by hand.
+// the origin boundary is asserted by hand.
 // Node sends no Origin header, so the scripted device above proves nothing about the header Chrome sends, and a server that refuses that header leaves every other test in this file green.
 // The raw upgrade below is the only place the real header meets the real check.
 
-// WHY THE REQUEST IS BOUNDED.
-// A request that is neither answered nor refused leaves the promise pending forever, and node:test then cancels every test after it — which reads as four broken tests instead of one broken handshake.
+// THE REQUEST IS BOUNDED.
+// A request that is neither answered nor refused leaves the promise pending forever, and node:test then cancels every test after it â€” which reads as four broken tests instead of one broken handshake.
 
-// WHY THE HANDSHAKE KEY IS NOT THE SPEC'S OWN SAMPLE.
+// THE HANDSHAKE KEY IS NOT THE SPEC'S OWN SAMPLE.
 // RFC 6455 opens with the nonce 'the sample nonce', and the secret scanner reads any base64 sitting next to the word key as a credential - correctly, and wrongly here.
 // The server accepts any sixteen-byte key, so these use sixteen zero bytes.
 
@@ -262,8 +262,8 @@ test('the origin Chrome sends is the origin the bridge accepts', async () => {
   assert.equal(await upgradeStatus(port, 'http://localhost'), 101, 'and so is localhost by name');
 });
 
-// WHY THE LOOKALIKE IS NAMED IN THE TEST.
-// The old rule accepted any origin ending in an allowed one, so a domain anybody can register — https://notlocalhost — drove the browser sitting on this machine.
+// THE LOOKALIKE IS NAMED IN THE TEST.
+// The old rule accepted any origin ending in an allowed one, so a domain anybody can register â€” https://notlocalhost â€” drove the browser sitting on this machine.
 // A suffix is not a host.
 
 test('a lookalike host and an ordinary site are both refused', async () => {
@@ -275,8 +275,8 @@ test('a lookalike host and an ordinary site are both refused', async () => {
     'another extension is not this one');
 });
 
-// WHY a taken port is named and never poisons.
-// Two sessions on one machine fight over the same loopback port, and the loser used to fail with a bare system error while keeping the dead server — so freeing the port healed nothing.
+// a taken port is named and never poisons.
+// Two sessions on one machine fight over the same loopback port, and the loser used to fail with a bare system error while keeping the dead server â€” so freeing the port healed nothing.
 // The name tells the loser what happened; forgetting the dead server lets the next try listen.
 // The name now says the holder is not a bridge, which is the only case that still refuses: a real bridge next door is adopted, not fought over.
 
@@ -297,7 +297,7 @@ test('a port held by something that is not a bridge is named, and freeing it hea
   assert.ok(port > 0, 'the next try listened instead of reusing the dead server');
 });
 
-// WHY the trust is observed through pings, not time.
+// the trust is observed through pings, not time.
 // A clock assertion would be flaky under load; the ping count is exact: one proof costs exactly one ping against a healthy device, and a trusted call costs none.
 
 test('a trusted window skips the proof ping, and zero trust proves every call', async () => {
@@ -321,9 +321,9 @@ test('a trusted window skips the proof ping, and zero trust proves every call', 
   }
 });
 
-// WHY THE PORT CONFLICT HAS TO BE LOUD.
+// THE PORT CONFLICT HAS TO BE LOUD.
 // A live extension was once sent silently back to the debugging port, because the real cause was not a missing extension but another process holding the loopback port.
-// The drive carried on against a profile with nothing signed in, with no sign of why — which is the exact stuck-with-no-explanation this file exists to prevent.
+// The drive carried on against a profile with nothing signed in, with no sign of why â€” which is the exact stuck-with-no-explanation this file exists to prevent.
 // Adopting a real bridge does not weaken it: adoption is proven only against a server that answers as a bridge, so a stranger on the port is still refused.
 
 test('a port held by a stranger is named, not swallowed into a wrong pipe', async () => {
@@ -342,14 +342,14 @@ test('a port held by a stranger is named, not swallowed into a wrong pipe', asyn
   }
 });
 
-// WHY THE GUEST IS ASKED RATHER THAN REMEMBERED, PROVEN IN THE SAME TEST.
+// THE GUEST IS ASKED RATHER THAN REMEMBERED, PROVEN IN THE SAME TEST.
 // Its link flag remembers the last word it heard, so a guest that trusted it would push a command into a bridge with no device behind it and hang until the command budget ran out.
 // Asking turns that into the one sentence that names the real problem, now.
 
-// WHY THE GUEST COMES BACK WITH THE DEVICE.
-// The device reconnects and the guest's own answer was asked fresh, so the driver that adopted during the gap believes the bridge is gone for the rest of its life — and drives a debugging port nobody is signed into instead.
+// THE GUEST COMES BACK WITH THE DEVICE.
+// The device reconnects and the guest's own answer was asked fresh, so the driver that adopted during the gap believes the bridge is gone for the rest of its life â€” and drives a debugging port nobody is signed into instead.
 
-// WHY A SECOND DRIVER DRIVES THE SAME BROWSER.
+// A SECOND DRIVER DRIVES THE SAME BROWSER.
 // Two sessions on one machine each spawn their own driver, and only one of them can own the loopback port.
 // The loser used to exit at startup with "another dev shim owns this machine", which took a whole session's tools down while a healthy bridge held the browser a second away.
 // This drives the real thing: a bridge server with a scripted device behind it, reached only through the door.
@@ -400,7 +400,7 @@ test('a driver that loses the port adopts the bridge that won it', async () => {
   }
 });
 
-// WHY THE CLAIM IS PROVEN OVER THE REAL DOOR.
+// THE CLAIM IS PROVEN OVER THE REAL DOOR.
 // The table's rules are proven in tests/local/local-leases.test.ts and the enforcement in tests/local/local-mcp-server.test.ts; what is left is the one thing both of those fake, which is that two driver processes read one table.
 // So the door is driven over HTTP here, the same way a second driver reaches it, and the two exported calls are the ones a driver actually makes.
 

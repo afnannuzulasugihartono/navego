@@ -1,19 +1,19 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: bridge-ws — the loopback command server, speaking the frames the cloud bridge speaks.
+// @title: bridge-ws â€” the loopback command server, speaking the frames the cloud bridge speaks.
 // @state: every browser that connects is carried, each target names its browser, each command reaches the one that owns it, and each session pays the cloud its allowance.
 // Tab-less commands follow the pinned browser when the person set one.
 // @dependencies: node:crypto, node:http, node:events, ./ws-server.js, ./leases.js, ./lib/*.
 
-// WHY THE HEARTBEAT IS THE WHOLE POINT.
+// THE HEARTBEAT IS THE WHOLE POINT.
 // Chrome ends an idle service worker after about thirty seconds and an inbound frame does not wake it, which is why the first loopback socket read as OPEN and heard nothing.
 // A ping that asks nothing resets that timer, so the socket stays live without asking for work.
 // The loopback port binds to 127.0.0.1 only: this server hands commands to the browser sitting on this machine and must never be reachable from the network.
 
-// WHY EVERY BROWSER ON THE MACHINE IS CARRIED.
+// EVERY BROWSER ON THE MACHINE IS CARRIED.
 // Two browsers used to fight over one device slot, so the second one to connect was closed out and the first was told nothing about it.
 // A browser is now a device the server keeps, and a device leaves only when it leaves.
 
-// WHY A TARGET ID IS NAMESPACED BY SLOT.
+// A TARGET ID IS NAMESPACED BY SLOT.
 // Every browser numbers its tabs from one, so two browsers hand out the same target for different pages.
 // The driver parses target ids as numbers, so the name must be a number too: the slot walks in the upper digits and the browser's own id in the lower ones.
 // SLOT_STRIDE is ten billion, comfortably past any tab id a Chromium build numbers in on 32-bit ints (max 2,147,483,647), so the digits never overlap.
@@ -119,7 +119,7 @@ export interface BridgeServer {
   state(): Record<string, unknown>;
 }
 
-// WHY THE METER IS A CLOUD CALL AND NOT A LOCAL GUESS.
+// THE METER IS A CLOUD CALL AND NOT A LOCAL GUESS.
 // The local drive is on the same machine as the caller, so it cannot tell a paid account from a stranger by looking inward.
 // It asks the cloud once per session and enforces what it is told; a local limit would be a number anyone with the source could edit, which is a gate that holds nothing.
 // The transport and the allowance are exactly what the extension already speaks to the cloud bridge, so nobody learns a second protocol.
@@ -179,7 +179,7 @@ export function createBridgeServer({ port = 9451, host = '127.0.0.1', heartbeatM
   let lastRefusal: { message: string; at: number } | null = null;
   const pendingReports = new Set<Promise<void>>();
 
-  // WHY ONE ROW PER BROWSER.
+  // ONE ROW PER BROWSER.
   // A browser that reconnected while its old socket still burned an open file-handles entry gets listed twice, and every caller that counts rows then counts a phantom browser: the merged list returns the same tabs twice and the meter charges both sockets for one list.
   // The freshest socket per instanceId is the one the person's browser is actually on; the stale ones are closed, so the close path reaps them instead of leaking until the idle reaper fires.
   const readyDevices = () => {
@@ -206,7 +206,7 @@ export function createBridgeServer({ port = 9451, host = '127.0.0.1', heartbeatM
     return [...newest.values()].sort((a, b) => Number(a.slot) - Number(b.slot));
   };
 
-  // WHY A PREFERENCE IS A NAMED REFUSAL, NOT A SILENT FALLBACK.
+  // A PREFERENCE IS A NAMED REFUSAL, NOT A SILENT FALLBACK.
   // A person who pinned the drive to one browser wants it there and nowhere else; falling back to the first ready browser would type into the wrong signed-in profile with no word about it.
   // The awake list and the way out are named in the answer, the same shape the cloud meter uses for a pinned device that is asleep.
   const preferredDevice = (): BridgeDevice | null => (preferredSlot === null ? null : readyDevices().find((device) => device.slot === preferredSlot) ?? null);
@@ -243,7 +243,7 @@ export function createBridgeServer({ port = 9451, host = '127.0.0.1', heartbeatM
 
   const namespacedId = (device: BridgeDevice, localId: unknown): number => Number(device.slot ?? 0) * SLOT_STRIDE + Number(localId);
 
-  // WHY A TOKEN IS TAKEN AT THE SOCKET, NOT AT THE DOOR.
+  // A TOKEN IS TAKEN AT THE SOCKET, NOT AT THE DOOR.
   // Every path that hands a command to a device passes through this point: the routed call, the merged list, the queued backlog.
   // A token spent here means a queued command cannot be delivered without paying for it, so nobody rides the queue for free.
   // The ping proof pays nothing: it is the bridge's own liveness question, not the caller's work.
@@ -263,7 +263,7 @@ export function createBridgeServer({ port = 9451, host = '127.0.0.1', heartbeatM
     return null;
   };
 
-  // WHY ONE REPORT, AT THE END.
+  // ONE REPORT, AT THE END.
   // The drive counts locally because the local road cannot pay for a round trip per command.
   // The one report at the end is what folds the local spend back into the account's daily count, so the local road is not a bypass of the shared quota.
   function reportSession(device: BridgeDevice): void {
@@ -289,7 +289,7 @@ export function createBridgeServer({ port = 9451, host = '127.0.0.1', heartbeatM
     state.emit('state', { status: 'refused', message });
   }
 
-  // WHY THE SESSION IS METERED AT HELLO, NOT AT THE FIRST COMMAND.
+  // THE SESSION IS METERED AT HELLO, NOT AT THE FIRST COMMAND.
   // The cloud is the only party that knows this account's plan and today's spend, and the local drive cannot learn it by looking inward.
   // Asking once per session and enforcing the answer locally keeps the drive at millisecond cost while the allowance bounds what an unmetered session may do.
   async function meterSession(device: BridgeDevice, message: Record<string, unknown>): Promise<void> {
@@ -435,7 +435,7 @@ export function createBridgeServer({ port = 9451, host = '127.0.0.1', heartbeatM
     });
   }
 
-  // WHY THE LIST IS MERGED HERE AND NOT IN THE CALLER.
+  // THE LIST IS MERGED HERE AND NOT IN THE CALLER.
   // Two browsers have different tab counts and different numbering; the caller sees one list, with each row naming the browser it belongs to, and a browser that fails to answer is a failure and not an empty success.
   async function mergedTargets(timeoutMs: number): Promise<Record<string, unknown>> {
     const asRecord = (value: unknown): Record<string, unknown> | null =>
@@ -476,7 +476,7 @@ export function createBridgeServer({ port = 9451, host = '127.0.0.1', heartbeatM
     return { ok: true, result: { ...openedResult, id: namespacedId(target, openedResult.id) }, ms: opened.ms };
   }
 
-  // WHY THE LIST IS MERGED HERE AND NOT IN THE CALLER.
+  // THE LIST IS MERGED HERE AND NOT IN THE CALLER.
   // Two browsers have different tab counts and different numbering; the caller sees one list, with each row naming the browser it belongs to.
   // Opening a tab likewise answers with that browser's namespace, so the very same id drives the next command.
   async function command(method: string, params: Record<string, unknown> = {}, { timeoutMs = 60000 }: { timeoutMs?: number } = {}): Promise<unknown> {
@@ -685,7 +685,7 @@ export function createBridgeServer({ port = 9451, host = '127.0.0.1', heartbeatM
   });
 
   function slotForInstance(instanceId: string | undefined): number {
-    // WHY THE SLOT IS KEYED BY THE BROWSER'S OWN ID.
+    // THE SLOT IS KEYED BY THE BROWSER'S OWN ID.
     // A browser that reconnects with the same profile keeps the same slot, so every tab id the caller is holding is still valid for it.
     // The in-memory map lives and dies with this process, which is enough: namespaced ids are valid only inside a bridge session.
     const key = String(instanceId || '').trim();

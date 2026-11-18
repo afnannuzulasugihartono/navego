@@ -1,9 +1,9 @@
 // @last-edited: 2026-10-27 UTC+7.
-// @title: local-page — the fake pages the local driver's tests drive.
+// @title: local-page â€” the fake pages the local driver's tests drive.
 // @state: one recording CDP, one pipelined CDP, and one document url the canvas surfaces answer with.
 // @dependencies: none.
 
-// WHY THE FAKES LIVE APART FROM THE TESTS.
+// THE FAKES LIVE APART FROM THE TESTS.
 // Each module of the driver has its own test file now, and every one of them drives the same fake page: a page that remembers what was typed, so a correctly typed character is not called a failure.
 // One fake in one place means the page behaves the same way in every file that drives it.
 

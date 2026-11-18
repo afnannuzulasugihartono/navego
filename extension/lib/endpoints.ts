@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-13 UTC+7.
-// @title: endpoints — the single source of deployment endpoint truth for the deploy unit.
+// @title: endpoints â€” the single source of deployment endpoint truth for the deploy unit.
 // @state: the Supabase project ref, the function URLs derived from it, and the Cloudflare Pages site origin; tests/extension/endpoint-source.test.ts asserts the derivation.
 // @dependencies: none.
 
@@ -15,8 +15,8 @@ export const LISTEN_BASE_URL = `${SUPABASE_URL}/functions/v1/navego-listen`;
 export const UPDATE_BASE_URL = `${SUPABASE_URL}/functions/v1/navego-update`;
 export const CONSENT_CONFIG_URL = `${SUPABASE_URL}/functions/v1/navego-auth/config`;
 
-// WHY every cloud call is pinned to Singapore.
-// Edge functions run closest to the requester, and from this machine that is Tokyo while the database sits in Singapore — measured live as DENO_REGION ap-northeast-1 against a db host in ap-southeast-1.
+// every cloud call is pinned to Singapore.
+// Edge functions run closest to the requester, and from this machine that is Tokyo while the database sits in Singapore â€” measured live as DENO_REGION ap-northeast-1 against a db host in ap-southeast-1.
 // Every database crossing then pays Tokyo-Singapore instead of rack-local, several times per command.
 // The pin rides a header on HTTPS and a query parameter on sockets, where no header can be set; any gateway that does not understand it ignores it.
 

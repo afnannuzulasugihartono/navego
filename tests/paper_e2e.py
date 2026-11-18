@@ -1,5 +1,5 @@
 # @last-edited: 2026-10-21 UTC+7.
-# @title: paper_e2e — builds a mini-thesis in a real Google Doc through run_workflow.
+# @title: paper_e2e â€” builds a mini-thesis in a real Google Doc through run_workflow.
 # @state: the blocks it types, the proofs it checks, and the loud SKIP it prints without a Google session.
 # @dependencies: none.
 # Manual gate (needs a Google session): prints SKIP loudly without one, never green.
@@ -122,7 +122,7 @@ PROOFS = {
 }
 
 
-# WHY open_doc RETRIES.
+# open_doc RETRIES.
 # One command can be claimed and lost in transit, and one tabs.open can time out while the tab it opened stays open.
 # Both leave the run recoverable, so opening a doc tries three times before it ends the run.
 

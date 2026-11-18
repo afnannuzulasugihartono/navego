@@ -1,9 +1,9 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: local-surfaces — the parts of the local surface the other suites do not reach.
+// @title: local-surfaces â€” the parts of the local surface the other suites do not reach.
 // @state: the page expressions, the file verbs, the transport, the bridge and the stdio server, each proved against a fake.
 // @dependencies: node:test, strict, node:events, ../local/*.
 
-// WHY THIS FILE EXISTS.
+// THIS FILE EXISTS.
 // The local surface grew a file at a time, and each file came with the tests that file needed.
 // What was left over were the exports no test ever named: the page expressions that build the strings the driver sends, the transport that finds a browser, the bridge port, the stdio server that speaks the protocol.
 // A symbol nobody calls is a symbol nobody knows works, and the standard in tests/tooling/code-standard.test.ts says an exported function in local/ must be exercised by the suite.

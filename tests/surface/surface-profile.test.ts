@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-27 UTC+7.
-// @title: surface-profile — what a surface is, measured, with the evidence that says so.
+// @title: surface-profile â€” what a surface is, measured, with the evidence that says so.
 // @state: the probe against a fake page, the accessibility measurement against a fake tree, and the profile they build together.
 // @dependencies: node:test, node:assert/strict, ../local/surface-profile.js.
 
@@ -21,7 +21,7 @@ test('the probe expression is one expression that names no site', () => {
   }
 });
 
-// WHY THE EXPRESSION IS EVALUATED AGAINST A STUB PAGE.
+// THE EXPRESSION IS EVALUATED AGAINST A STUB PAGE.
 // A page expression is a string, so a name the module exports and the page has never heard of is a ReferenceError that reads exactly like a page with no canvas, no text and no editor.
 // Measured on a real Google Doc: the first version of this probe referenced the module's own constant inside the string, and the whole profile came back false.
 // Running the string against a stub is the only cheap way to catch that before a browser does.
@@ -167,7 +167,7 @@ test('a tree whose nodes carry no ids answers empty rather than looping', async 
   assert.equal(ax.documentText, '');
 });
 
-// WHY A CYCLE IS THE ONE TEST WHOSE FAILURE IS A HANG AND NOT AN ASSERTION.
+// A CYCLE IS THE ONE TEST WHOSE FAILURE IS A HANG AND NOT AN ASSERTION.
 // A tree whose nodes name each other as parents puts a cycle in the child map, and the descent has no visited set, so it oscillates between two nodes forever.
 // That hang is synchronous, so no timer inside this process can interrupt it - the only evidence of the defect is that the run never returns, which is what a caller would get: read, probe and wait all stop.
 // The cycle has to hang off a real root to be reached at all: two nodes that name each other as parents are both non-roots, so the descent never enters them and a fixture built that way passes whether or not the defect is there.

@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-25 UTC+7.
-// @title: agent-guide — the roads are honest, and honesty is a build failure when they are not.
+// @title: agent-guide â€” the roads are honest, and honesty is a build failure when they are not.
 // @state: recipe-to-tool locks, side-effect coverage, topic filtering.
 // @dependencies: node:test, strict, ../local/agent-guide.js, ../local/mcp-server.js.
 
@@ -12,7 +12,7 @@ import { TOOLS } from '../../local/mcp-server.js';
 const names = new Set(TOOLS.map((tool) => tool.name));
 const guideAll = guide as (topic?: string) => ReturnType<typeof guide>;
 
-// WHY THE GUIDE IS PINNED AGAINST THE TOOL LIST AND NOT AGAINST ITSELF.
+// THE GUIDE IS PINNED AGAINST THE TOOL LIST AND NOT AGAINST ITSELF.
 // A guide that names a tool which no longer exists is worse than no guide: the agent follows the road, the call fails, and the guide is the thing it stops trusting.
 // So the lock is between the guide and the real list, and a rename breaks the build instead of surprising an agent in production.
 
@@ -40,7 +40,7 @@ test('a side effect says something or is honestly empty', () => {
   }
 });
 
-// WHY THE MOVING READS ARE DECLARED, PINNED HERE.
+// THE MOVING READS ARE DECLARED, PINNED HERE.
 // Half of what an agent loses is not a missing tool but an unannounced one: reading a Doc moves the caret, so the next click lands where the agent has already been.
 // The declaration is the fix, and a declaration nobody reads is decoration - so this test fails if the moving read ever loses it.
 
@@ -69,7 +69,7 @@ test('an unknown topic is an empty answer, not a wrong one', () => {
   assert.ok(nothing.sideEffects.length > 0, 'the side effects are still the whole surface');
 });
 
-// WHY THE REFUSALS TRAVEL WITH THE GUIDE.
+// THE REFUSALS TRAVEL WITH THE GUIDE.
 // An agent that has not yet hit a boundary should not have to hit it first.
 // The three lines are the ones that cost real time today: a native dialog that cannot be touched, a read-only question that looks like a free script, a tool reporting success when the page says otherwise, and a drive that cannot tell a page which ignored it from a window that was behind something the whole time.
 

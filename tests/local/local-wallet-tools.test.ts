@@ -1,9 +1,9 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: local-wallet-tools — a declared wallet tool is a branch the local server actually answers.
+// @title: local-wallet-tools â€” a declared wallet tool is a branch the local server actually answers.
 // @state: the seven tools, their required arguments, and the order that keeps them reachable with the browser closed.
 // @dependencies: node:test, node:assert/strict, node:fs, ../local/tools.js.
 
-// WHY THE DECLARATION AND THE BRANCH ARE CHECKED TOGETHER.
+// THE DECLARATION AND THE BRANCH ARE CHECKED TOGETHER.
 // A tool listed but not handled answers nothing, and the agent reads that as a refusal with no reason.
 // The wallet tools are also the only ones that must work with no tab open, so their branch has to come before the tab is resolved.
 

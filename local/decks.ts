@@ -3,11 +3,11 @@
 // @state: JSON in, a presentation and its provenance out, both written beside the source.
 // @dependencies: node:fs, node:path, ./office/pptx.js.
 
-// WHY A SLIDE MAY NAME A FIGURE BUT NOT A NUMBER.
+// A SLIDE MAY NAME A FIGURE BUT NOT A NUMBER.
 // A number typed into a slide is a number nobody checked, and a slide is what the customer remembers.
 // A slide names a figure, the figure comes from a report that was rechecked against its rows, and a name that is not in the report stops the deck.
 
-// WHY THE PROVENANCE IS WRITTEN BESIDE THE DECK AND NOT ON THE SLIDE.
+// THE PROVENANCE IS WRITTEN BESIDE THE DECK AND NOT ON THE SLIDE.
 // A slide carrying "baris 3, 7, 9 kolom Jumlah" reads as clutter to a client, and a client who cannot check the number is a client who asks the author instead.
 
 import fs from 'node:fs';

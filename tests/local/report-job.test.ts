@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-22 UTC+7.
-// @title: report-job — a table becomes figures that name their source, and a figure that cannot be checked is refused.
+// @title: report-job â€” a table becomes figures that name their source, and a figure that cannot be checked is refused.
 // @state: the parser, the money rule, the period guard, the docplan and the recheck, each pinned by one behaviour.
 // @dependencies: node:test, strict, ../local/reports.js.
 
@@ -11,7 +11,7 @@ import path from 'node:path';
 
 import { parseDelimited, parseMoney, buildReport, verifyReport, reportFromFile } from '../../local/reports.js';
 
-// WHY THE FIXTURE IS A CSV AND NOT A WORKBOOK.
+// THE FIXTURE IS A CSV AND NOT A WORKBOOK.
 // A workbook is a zip of XML and a second parser; a CSV is what Excel and Sheets both export in one click, and the money rules are the same either way.
 // The parser is pinned first so that a later workbook reader has an answer to match.
 

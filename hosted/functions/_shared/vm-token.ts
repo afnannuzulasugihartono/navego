@@ -31,7 +31,7 @@ function toBase64Url(bytes: Uint8Array<ArrayBuffer>): string {
   for (let offset = 0; offset < bytes.length; offset += 0x8000) {
     binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
   }
-  // WHY A LOOP AND NOT /=+$/ FOR THE PADDING STRIP.
+  // A LOOP AND NOT /=+$/ FOR THE PADDING STRIP.
   // /=+$/g is the shape flagged for variable-length backtracking on hostile strings; a one-pass scan removes the padding without that shape.
   let padded = btoa(binary).replace(/\+/g, '-').replace(/\//g, '_');
   while (padded.endsWith('=')) padded = padded.slice(0, -1);

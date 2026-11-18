@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-13 UTC+7.
-// @title: action-focus — the foreground focus gate, the action pipeline and trusted input.
+// @title: action-focus â€” the foreground focus gate, the action pipeline and trusted input.
 // @state: owns the popup focus log and its floor.
 // @dependencies: utils, tab-content, capture, log, protocol, action-pipeline, focus-gate, keyboard, popup-events.
 
@@ -317,7 +317,7 @@ export async function trustedPointer(tabId: number, params: Record<string, unkno
       if (!scroll) throw new Error('No response from page.scroll_settle.');
       scroll.inputMethod = 'debugger';
 
-      // WHY THE BOUNDARY IS READ PER AXIS AND PER DIRECTION.
+      // THE BOUNDARY IS READ PER AXIS AND PER DIRECTION.
       // A wheel that moved down asks whether the bottom was reached, and a wheel that moved up asks about the top; asking the wrong one reports a scroll that stopped when it had room.
       // Written as one expression over four directions it is unreadable, and the answer it gives is what the caller uses to decide whether to scroll again.
       // It is read after the fallback rather than before it, so the boundary describes the scroll the caller ended up with rather than the one the debugger attempted.
@@ -349,7 +349,7 @@ export async function trustedPointer(tabId: number, params: Record<string, unkno
   })));
 }
 
-// WHY TEXT SOMETIMES TRAVELS ONE CHARACTER AT A TIME.
+// TEXT SOMETIMES TRAVELS ONE CHARACTER AT A TIME.
 // An IME insert carries no key events, and canvas editors commit off key-event sequences, so the insert reports success and paints nothing.
 // One keyDown carrying text plus keyUp per character is the shape such editors accept; the caller opts in per call because native inputs are faster and correct on plain inserts.
 

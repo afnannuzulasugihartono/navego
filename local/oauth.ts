@@ -1,18 +1,18 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: oauth — a browser login for the hosted server, with the token kept beside it.
+// @title: oauth â€” a browser login for the hosted server, with the token kept beside it.
 // @state: the authorise URL, the loopback callback, the code exchange, the refresh, and where the token file lives.
 // @dependencies: node:crypto, node:fs, node:http, node:os, node:path, node:child_process, node:url.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // The hosted MCP asks for an OAuth token before it answers anything.
 // A machine that has a browser signs in through it once and is remembered; a machine without one sets NAVEGO_MCP_TOKEN instead.
 // One flow, one file; both doors open the same URL, and neither one needs a secret.
 
-// WHY A LOOPBACK CALLBACK.
+// A LOOPBACK CALLBACK.
 // The OAuth client this package uses is public and its only accepted redirect is OpenCode's own loopback address, so the callback is served on the same loopback port, for as long as the login takes, and then the port is free again.
 
-// WHY PKCE.
+// PKCE.
 // The flow crosses a browser and a code on a redirect; nothing that leaves the machine is usable anywhere else, because the verifier never left the CLI.
 
 import crypto from 'node:crypto';

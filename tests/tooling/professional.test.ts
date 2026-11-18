@@ -1,9 +1,9 @@
 // @last-edited: 2026-10-25 UTC+7.
-// @title: professional — the files a repository is expected to carry, and the lines they must hold.
+// @title: professional â€” the files a repository is expected to carry, and the lines they must hold.
 // @state: six gates: the standard files exist, the README's numbers are measured, CI runs on every pull request, the tree is LF, a live document names no file that is not there, and the handoff keeps its stated line cap.
 // @dependencies: node:test, node:assert/strict, node:fs, node:path, node:child_process.
 
-// WHY THIS FILE EXISTS.
+// THIS FILE EXISTS.
 // A repository is read by people who were not there when it was built: one opening it for the first time, one reporting a defect, one checking whether a release is safe to run, and one reviewing a pull request.
 // Each of them needs a file that answers their question, and each answer has to be true today.
 // The standard files are therefore checked for presence, and what they say is checked against the tree rather than trusted.
@@ -98,7 +98,7 @@ test('a live document names no file that is not in the tree', () => {
     if (!file.startsWith('docs/')) return false;
     return !file.startsWith('docs/releases/') && !file.startsWith('docs/superpowers/') && !file.startsWith('docs/proof/') && !file.startsWith('docs/product/');
   });
-  // WHY A PICTURE IS NOT A DOCUMENT: this gate reads a file as text and looks for a link in it, and a JPEG's bytes can hold a bracket and a parenthesis by chance - the proof's own screenshot tripped it that way on 2026-11-15.
+  // A PICTURE IS NOT A DOCUMENT: this gate reads a file as text and looks for a link in it, and a JPEG's bytes can hold a bracket and a parenthesis by chance - the proof's own screenshot tripped it that way on 2026-11-15.
   // The claim is about documents: the paths a reader is told to follow.
   // A picture names nothing.
   const BINARY = /\.(?:jpg|jpeg|png|gif|pdf|zip|crx|pptx|docx|xlsx|mp4|webp|ico|woff2?)$/i;
@@ -129,7 +129,7 @@ test('a live document names no file that is not in the tree', () => {
     `a document that points at a file that is not there cannot be trusted:\n${dead.join('\n')}`);
 });
 
-// WHY THE HANDOFF'S OWN CAP IS A GATE.
+// THE HANDOFF'S OWN CAP IS A GATE.
 // The file states a cap, and it had drifted past it because nothing measured the number: a reader trusts a document that names its own limit, and a limit it breaks costs the rest of it credibility.
 // So the number the file states is the number this test holds, and raising the cap means editing both in one change.
 

@@ -1,14 +1,14 @@
 // @last-edited: 2026-10-13 UTC+7.
-// @title: device-socket-client — one socket, driven by a fake, with no bridge and no browser present.
+// @title: device-socket-client â€” one socket, driven by a fake, with no bridge and no browser present.
 // @state: 8 locks; handshake gate, command dispatch, completion, backoff, and the fatal close.
 // @dependencies: node:test, strict, ../extension/lib/socket-client.js.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // The client's whole job is behaviour that only shows up over time: it must not run work before the bridge says ready, it must reconnect on its own, and it must stop permanently when the bridge refuses it.
 // None of that can be checked by reading the file, and none of it can be checked against a real bridge without a network.
 
-// WHY the socket is a fake rather than a mock.
+// the socket is a fake rather than a mock.
 // A mock records calls and returns canned answers, which cannot model an open transitioning to a close.
 // A fake holds the state a socket holds, so a test can open it, drop it, and watch what the client does next.
 
@@ -207,7 +207,7 @@ test('a dropped connection reconnects on a backoff that grows and is capped', ()
   assert.ok(timers[timers.length - 1].ms <= 30000, 'backoff must be capped');
 });
 
-// WHY A CONNECTING SOCKET IS DETACHED AND NOT CLOSED.
+// A CONNECTING SOCKET IS DETACHED AND NOT CLOSED.
 // Measured in the console: closing a socket whose readyState is still 0 aborts the TCP handshake Chrome has already begun, before the WebSocket handshake completes, and Chrome reports "WebSocket is closed before the connection is established".
 // Detaching the handlers is safe only because the bridge pushes nothing before it has read a hello the detached socket will never send, so a socket that never opened is inert rather than dangerous.
 
@@ -236,7 +236,7 @@ test('a socket that has opened is closed, because that is the only way to end it
   assert.equal(live.closes, 1, 'an open socket is closed - detaching it would leave the connection running with nobody listening');
 });
 
-// WHY AN OPEN SOCKET RESETS THE BACKOFF AND A CLOSED ONE DOES NOT.
+// AN OPEN SOCKET RESETS THE BACKOFF AND A CLOSED ONE DOES NOT.
 // Measured on a flaky connection: the wait doubled 500ms, 1s, 2s, 4s... to the 30s cap and only reset on a full handshake, so a network that came back cost up to thirty seconds to notice.
 // An open socket proves the network is reachable, which is the only thing the backoff is guessing at, so the wait starts over from there.
 // A socket that never opened proves nothing, so the wait keeps growing - which is what stops a downed bridge being hammered.
@@ -285,7 +285,7 @@ test('a rejected handshake stops the device for good instead of retrying forever
   assert.ok(states.some((s: any) => s.status === 'rejected'));
 });
 
-// WHY a timeout reconnects.
+// a timeout reconnects.
 // One slow handshake closed with 4002 used to stop the device permanently while its heartbeat stayed green, so every command queued and none ever ran.
 // A timeout answers to a retry; only a refusal stops the device, because only a refusal says the credentials are wrong.
 
@@ -553,7 +553,7 @@ test('a fresh attempt never erases why the previous one ended', () => {
     'connecting clears the error, so a reconnect cycle reports nothing');
 });
 
-// WHY a close is never sent twice.
+// a close is never sent twice.
 // Observed live on the extension errors page: "Close received after close", raised from the send path when the client closed a socket the bridge was already closing.
 // Chromium logs that to the errors page even though it is caught, so every user sees it.
 // Closing a socket that is already closing answers nothing and reports an error for free.
@@ -584,8 +584,8 @@ test('stop does not close a socket that is already closed', () => {
   assert.equal(sockets[0].closes, 0, 'stop closed an already closed socket');
 });
 
-// WHY the socket recycles itself on a timer.
-// Edge isolates have a hard wall clock limit — about 150 seconds here — and waitUntil only prevents early retirement, never extends it.
+// the socket recycles itself on a timer.
+// Edge isolates have a hard wall clock limit â€” about 150 seconds here â€” and waitUntil only prevents early retirement, never extends it.
 // Observed live as code 1006 at a metronomic 151 seconds after waitUntil fixed the 76-second EarlyDrop deaths.
 // Recycling on our own schedule, and only when idle, turns a surprise kill mid-anything into a routine reconnect nothing ever notices.
 

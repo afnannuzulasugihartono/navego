@@ -3,12 +3,12 @@
 // @state: the ten-action bound, the thirty-minute hold, the classification of a plan into one task or a batch, and the quote that turns the price list into one number.
 // @dependencies: none.
 
-// WHY THE PRICE IS DECIDED FROM THE PLAN'S SHAPE AND NOT FROM A LIST OF TASK TYPES.
+// THE PRICE IS DECIDED FROM THE PLAN'S SHAPE AND NOT FROM A LIST OF TASK TYPES.
 // A list of types is a list somebody has to maintain, and the moment it lags the product the price is wrong for the newest thing the product can do.
 // The plan already says what it produces and roughly how many actions it takes, so those two facts are what the price reads: one artifact, a document, or a list of independent items.
 // The numbers themselves stay in the price table; this module only decides which row a plan belongs to and how many of it a plan needs.
 
-// WHY THE CLIENT'S OWN PLAN IS TRUSTED AS THE INPUT.
+// THE CLIENT'S OWN PLAN IS TRUSTED AS THE INPUT.
 // The work runs on the customer's device with the customer's own model, so an understated plan buys a cheaper price for work they still have to do themselves.
 // The bound that matters is not the estimate but the ten actions one job may take, and that bound is enforced where the money is: in the database, on the reservation.
 
@@ -81,7 +81,7 @@ function unitPrice(prices: unknown, kind: string | undefined): { amountCents: nu
   return { amountCents: amount, currency: row.currency || 'IDR' };
 }
 
-// WHY A LIST IS SPLIT BEFORE ANY MONEY IS HELD.
+// A LIST IS SPLIT BEFORE ANY MONEY IS HELD.
 // One reservation covers one bounded job, and a list of thirty items is three jobs of ten, each of which can fail and be refunded on its own.
 // Splitting after the hold would mean one failed item drags the whole price into a refund or holds money for work that never started.
 
@@ -123,7 +123,7 @@ export function quotePlan(plan: Plan | null | undefined, prices: unknown) {
   };
 }
 
-// WHY THE BATCH IS SPLIT BY ITEMS AND NOT BY STEPS.
+// THE BATCH IS SPLIT BY ITEMS AND NOT BY STEPS.
 // The person asked for thirty rows, so the unit they can judge is ten rows, not ten clicks.
 // A chunk that is worth nothing to the person is a chunk they cannot refuse on its own.
 

@@ -1,9 +1,9 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: instance-id — the name one browser keeps, so two browsers are two devices.
+// @title: instance-id â€” the name one browser keeps, so two browsers are two devices.
 // @state: one generated id per browser profile, kept in that profile's own storage.
 // @dependencies: none.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // Two browsers on one machine presented the same device name, so the second one to pair replaced the first one's token and the first was refused on its next connection.
 // A pairing code proves an account; it says nothing about which browser is holding it.
@@ -28,7 +28,7 @@ export async function instanceId() {
   return created;
 }
 
-// WHY pairIdentity IS ITS OWN CALL.
+// pairIdentity IS ITS OWN CALL.
 // Everything else that sends the identity (the socket hello, the heartbeat, the discovery file) must keep the value the pairing row was minted with, or a mid-flight rename would split one browser into two devices.
 // The cookie identity is only ever preferred at pair time, where the server knows how to adopt the row the legacy id named.
 // A browser that never saw the cookie and holds no storage id sends nothing, exactly like the old build.

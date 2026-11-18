@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: open-menu — walk a menu to a row, and click only what the caller named.
+// @title: open-menu â€” walk a menu to a row, and click only what the caller named.
 // @state: a fake page that answers the menu tree, the box of every row and the clicks.
 // @dependencies: node:test, assert, ../local/primitives.js.
 
@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 
 import { createPrimitives } from '../../local/primitives.js';
 
-// WHY THESE CLAIMS EXIST.
+// THESE CLAIMS EXIST.
 // Measured live on Google Docs: a walk for ["Insert", "Image", "Upload from computer"] opened the two menus and then clicked the leaf on the way, which opened the operating system's own file dialog - a window nothing inside the browser can close again - and the answer still said acted: false.
 // So the leaf is clicked only when the caller says this item is the command, the answer says what was actually done, and a bar item is clicked because a top-level menu is a toggle that hover does not open.
 
@@ -31,13 +31,13 @@ if (!INSERT_BAR) throw new Error('the INSERT row fixture must exist');
 const INSERT = [row('Image', 1, { branch: true }), row('Chart', 1)];
 const IMAGE = [row('Upload from computer', 2), row('By URL', 2)];
 
-// WHY THE BOX IS FIXED AND NOT DERIVED FROM THE ROW.
+// THE BOX IS FIXED AND NOT DERIVED FROM THE ROW.
 // A hover measures the row again at the moment it moves there, so the fake answers a box centred on the submenu parent - the one the walk hovers - and the walk's own coordinates for everything else.
 // A fake that computed the box from the row it was asked about could not tell a stale row from a measured one, which is the thing being pinned.
 
 const BOX_QUAD = [450, 110, 470, 110, 450, 130, 470, 130];
 
-// WHY THE FAKE PAGE OPENS ITS MENUS WHEN THE POINTER SAYS SO.
+// THE FAKE PAGE OPENS ITS MENUS WHEN THE POINTER SAYS SO.
 // A tree that answered the same rows however the walk behaved could not tell a walk that opened the Insert menu from one that never did, which is the whole claim here: the bar item is clicked, the submenu parent is hovered, and the next level appears only then.
 
 const OPENED = {

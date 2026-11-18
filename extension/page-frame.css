@@ -3,13 +3,13 @@
 /* @state: static; the canvas, the column, the brand row, the card, the title/sub, the status panel, the one accent action, and the foot row are declared once and nowhere else. */
 /* @dependencies: none. */
 /*
- * WHY THE TWO FULL-HEIGHT PAGES SHARE ONE FILE.
+ * THE TWO FULL-HEIGHT PAGES SHARE ONE FILE.
  * A page rendered twice from two copies of the same rules drifts twice as fast as anyone notices; the frame is declared once, here, and both pages link it.
  * The words differ; the frame does not.
  * One card, one accent button, one status line, one foot row.
  */
 
-/* WHY THE RESET CARRIES !important: the shared stylesheet clamps html and body to the popup's 400px for the popup's sake, and a full-height page cannot out-specify the root element, so the one explicit override is the point of the file. */
+/* THE RESET CARRIES !important: the shared stylesheet clamps html and body to the popup's 400px for the popup's sake, and a full-height page cannot out-specify the root element, so the one explicit override is the point of the file. */
 
 html {
   width: 100vw !important;
@@ -213,7 +213,7 @@ body.popup.firstPage {
   line-height: 1.45;
 }
 
-/* WHY THE RIGHT COLUMN IS THE PRODUCT ITSELF: the honest picture of the product is the product, embedded once - a first-run page that shows it loses to one that describes it. */
+/* THE RIGHT COLUMN IS THE PRODUCT ITSELF: the honest picture of the product is the product, embedded once - a first-run page that shows it loses to one that describes it. */
 
 .mockFrame {
   grid-area: mock;

@@ -3,7 +3,7 @@
 // @state: the cookie is preferred at pair time, the legacy still works when the cookie is missing, and the SQL adopts the old row in place or refuses to.
 // @dependencies: node:test, strict, node:fs, ../extension/worker/instance-id.js.
 
-// WHY THIS FILE IS A GATE AND NOT A THOUGHT.
+// THIS FILE IS A GATE AND NOT A THOUGHT.
 // chrome.storage.local is deleted when the extension is removed, so the per-profile random identity minted a new device row on every reinstall, and the dashboard drowned in ghost browsers.
 // The cookie jar of the browser profile is what survives, and this file pins every link of that chain: the cookie is mirrored into storage, pair time prefers it, the bridge forwards it, and the SQL adopts the legacy row in place with the owner guaranteed before it does.
 

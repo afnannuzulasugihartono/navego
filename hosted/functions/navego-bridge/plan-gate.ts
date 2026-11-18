@@ -1,14 +1,14 @@
 // @last-edited: 2026-11-18 UTC+7.
-// @title: plan-gate — the questions the bridge asks before it moves a command.
+// @title: plan-gate â€” the questions the bridge asks before it moves a command.
 // @state: the plan check, the daily quota (null = unlimited), the firm-only methods, and the refusal that names the plan.
 // @dependencies: ./index.ts through the claim path.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // The gate lives in the service, and the service is the bridge: a device whose account has no active plan should never see a command, and one whose quota is spent should never see another one today.
 // The checks are plain functions here so a unit test can refuse every bad door without a socket, a database, or a browser.
 
-// WHY THE REFUSAL IS INTENTIONAL.
+// THE REFUSAL IS INTENTIONAL.
 // A silent refusal is a bug report nobody writes; a named one is a support question that names the fix.
 // Every refusal below carries the plan that ran out.
 

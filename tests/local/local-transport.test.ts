@@ -1,9 +1,9 @@
 // @last-edited: 2026-10-11 UTC+7.
-// @title: local-transport — the real socket, browser discovery, and waiting for a launch that is not up yet.
+// @title: local-transport â€” the real socket, browser discovery, and waiting for a launch that is not up yet.
 // @state: 7 locks; URL discovery, connection failure, open-ordering, and a bounded wait that reports rather than hangs.
 // @dependencies: node:test, strict, ../local/transport.js.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // cdp.js is tested with a fake transport, which is the point of injecting one, but it means nothing here has yet been run against an actual browser.
 // This file is the seam where that claim becomes checkable, and it carries two behaviours the fake could never have needed.

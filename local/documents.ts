@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: documents — a paper is planned on disk with tables, images and graphs, and a plan that cannot be checked is refused.
+// @title: documents â€” a paper is planned on disk with tables, images and graphs, and a plan that cannot be checked is refused.
 // @state: JSON in, a docplan with blocks and a figure ledger out, the recheck that catches an edited number, and the Word file the plan becomes.
 // @dependencies: node:fs, node:path, ./office/docx.js.
 
@@ -338,7 +338,7 @@ export function verifyDocument({ document, doc }: { document?: JsonRecord; doc?:
   return { ok: mismatches.length === 0, checked: document.figures.length, mismatches };
 }
 
-// WHY THE SOURCE IS READ ONCE AND BY ONE HELPER.
+// THE SOURCE IS READ ONCE AND BY ONE HELPER.
 // A plan on disk and a Word file from the same plan must refuse the same broken paper the same way, and one helper is where that promise is kept.
 
 function readPaperSource(source: unknown, toolName: string) {
@@ -387,11 +387,11 @@ export function documentFromFile({ source, out = null }: { source?: unknown; out
   return { source: from, out: outPath, verified, document: built };
 }
 
-// WHY THE WORD FILE IS WRITTEN FROM THE PLAN AND NOT FROM THE PAPER.
+// THE WORD FILE IS WRITTEN FROM THE PLAN AND NOT FROM THE PAPER.
 // The plan is what the recheck just read, so a number that the check would refuse cannot reach the file.
 // The paper is read again only to find the bytes of an image.
 
-// WHY AN IMAGE THAT IS NOT ON THIS DISK IS NAMED INSTEAD OF EMBEDDED.
+// AN IMAGE THAT IS NOT ON THIS DISK IS NAMED INSTEAD OF EMBEDDED.
 // A paper that points at a file the reader cannot open reads as a broken paper, so the file carries the picture's own words where the picture was.
 
 const IMAGE_EXTENSIONS = new Set(['png', 'jpg', 'jpeg']);

@@ -3,7 +3,7 @@
 // @state: the one encoder; the VM digests itself with this, nothing else does.
 // @dependencies: none.
 
-// WHY THIS FILE EXISTS.
+// THIS FILE EXISTS.
 // The VM digests a program with the same function on both roads, and the digests are pinned by gates.
 // A second implementation would drift; one file keeps them byte-identical by construction.
 

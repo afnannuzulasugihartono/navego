@@ -1,18 +1,18 @@
 // @last-edited: 2026-10-28 UTC+7.
-// @title: agent-worktree — one worktree per agent, so any coding agent can share this repo.
+// @title: agent-worktree â€” one worktree per agent, so any coding agent can share this repo.
 // @state: create, list, remove; the delete path archives a merged branch before it drops it.
 // @dependencies: node:child_process.
 
-// WHY THIS EXISTS AND WHY IT IS NOT A TOOL PLUGIN.
+// THIS EXISTS AND WHY IT IS NOT A TOOL PLUGIN.
 // The agents that work on this repo are not all the same: Kilo, Cline, OpenCode, and whatever comes next.
 // A worktree is the one isolation mechanism every one of them already understands, because it is git itself, so the workflow is a script and a rule in AGENTS.md rather than a setting inside any one tool.
 // An agent that edits the shared checkout collides with every other agent on the same file; an agent in its own worktree cannot.
 
-// WHY EVERY BRANCH IS TAGGED, MERGED OR NOT.
+// EVERY BRANCH IS TAGGED, MERGED OR NOT.
 // A merged branch is reachable from main, so its tag is a convenience; an unmerged one is reachable from nothing, so its tag is the only thing standing between the delete and a session's reasoning being lost.
 // Tagging both costs one command and makes the delete safe either way.
 
-// WHY THE BRANCH IS ARCHIVED BEFORE IT IS DELETED.
+// THE BRANCH IS ARCHIVED BEFORE IT IS DELETED.
 // A branch that is merged and then deleted takes its reflog with it, and the commit that carried a session's reasoning becomes reachable from nothing.
 // The tag keeps it addressable forever, so a delete is a housekeeping act and never a loss.
 
@@ -23,7 +23,7 @@ import { dirname, join, resolve, sep } from 'node:path';
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
-// WHY THE SINK ALSO VALIDATES, AND WHY HERE.
+// THE SINK ALSO VALIDATES, AND WHY HERE.
 // Every argument passes through one mouth before it reaches git; the argv arriving from an LLM is data, and data at a shell-less exec boundary is still only as safe as what crosses.
 // Subcommands and values must match the path-ish allowlist; dashed args must be in the named flag set; nothing else ever reaches git.
 
@@ -72,13 +72,13 @@ const commands: Record<string, (arg?: string, base?: string, topic?: string) => 
     git('worktree', 'add', path, '-b', branch, baseRef);
     console.log(`worktree ${path} on ${branch}`);
 
-    // WHY THE ENV FILES TRAVEL WITH THE WORKTREE.
+    // THE ENV FILES TRAVEL WITH THE WORKTREE.
     // A fresh worktree has no node_modules and no env, and the first thing an agent does in it is run the gates, which need both.
     // The env files are the machine's own, so they are copied rather than generated, and they stay out of git.
     for (const file of readdirSync(repo)) {
       if (/^\.env(\..+)?$/.test(file)) copyFileSync(join(repo, file), join(path, file));
     }
-    // WHY THE INSTALL IS npm install AND NOT npm ci.
+    // THE INSTALL IS npm install AND NOT npm ci.
     // This repo ships no package lock: it has no runtime dependencies to pin, and the lock the tree does carry is gates.lock, which pins hashes and says nothing about packages.
     // npm ci refuses a project with no lock, so a fresh worktree would fail on the one command that makes it usable.
     // npm runs through a shell on Windows because an agent types npm and that is npm.cmd, which Node refuses to spawn bare since the 2024 security fix.

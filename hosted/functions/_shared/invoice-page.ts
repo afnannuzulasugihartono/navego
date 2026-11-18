@@ -1,23 +1,23 @@
 // @last-edited: 2026-10-26 UTC+7.
-// @title: invoice-page — the page a customer opens, rendered from one invoice row and nothing else.
+// @title: invoice-page â€” the page a customer opens, rendered from one invoice row and nothing else.
 // @state: every state an invoice or a payment link can be in, said in words, with no script and no asset to load.
 // @dependencies: ./billing.ts.
 
-// WHY THE PAGE IS A MODULE AND NOT A STRING INSIDE THE FUNCTION.
+// THE PAGE IS A MODULE AND NOT A STRING INSIDE THE FUNCTION.
 // The page is what a customer sees when they owe money, and the function that serves it runs where no test can call it.
 // So the page is a plain function of the row, readable and drivable from Node, and the function only chooses the headers around it.
 // It uses no Deno API, no template file the deploy has to carry, and no clock of its own.
 
-// WHY EVERY STATE IS SAID IN WORDS.
+// EVERY STATE IS SAID IN WORDS.
 // A colour, a disabled control or a missing button is not an answer to "can I pay this?".
 // So the page names the state - paid, cancelled, open - and then says what the customer can do about it, including that a link has expired or that nobody knows when it stops working.
 // A dead Pay button is never rendered, because it invites a tap that cannot work.
 
-// WHY THE TOKEN APPEARS IN ONE HIDDEN FIELD AND NOWHERE ELSE.
+// THE TOKEN APPEARS IN ONE HIDDEN FIELD AND NOWHERE ELSE.
 // The token is the authority to open this invoice, so a copy in a heading or a second link is the capability written where a shoulder or a screenshot can read it.
 // The only thing that needs it again is the refresh form, so that hidden field is the only place the page carries it.
 
-// WHY THE TIMES ARE PRINTED IN THE MERCHANT'S ZONE.
+// THE TIMES ARE PRINTED IN THE MERCHANT'S ZONE.
 // The money is rupiah and the customers read Jakarta time, so a deadline printed in UTC would expire seven hours before the hour a customer reads on the page.
 // The zone is stated rather than implied, and the format is spelled out instead of taken from a locale, so the same row renders the same text wherever the function runs.
 
@@ -47,7 +47,7 @@ const moment = (value: unknown): string => {
   return `${at.getUTCDate()} ${MONTHS[at.getUTCMonth()]} ${at.getUTCFullYear()}, ${pad(at.getUTCHours())}:${pad(at.getUTCMinutes())} UTC+7`;
 };
 
-// WHY THE METHOD IS TRANSLATED AND NOT PRINTED RAW.
+// THE METHOD IS TRANSLATED AND NOT PRINTED RAW.
 // "qris" is a token from the provider's payload; "QRIS" is a word a person recognises, and an operator reading the invoice should not have to know the provider's vocabulary.
 // A method this page does not know is still shown, with its underscores opened into spaces, because hiding it would make the page quieter than the ledger.
 
@@ -95,10 +95,10 @@ function paidBlock(invoice: Record<string, unknown>): string {
   const how = at
     ? `<p>Paid on ${escapeHtml(at)}${method ? ` with ${escapeHtml(method)}` : ''}.</p>`
     : '<p>The payment has been recorded.</p>';
-  return `<p class="paid">Paid — thank you.</p>${how}${transaction ? `<p><small>Provider transaction ${escapeHtml(transaction)}</small></p>` : ''}${manual ? `<p><small>Recorded by hand: ${escapeHtml(manual.note)} (${escapeHtml(moment(manual.at) || manual.at)})</small></p>` : ''}`;
+  return `<p class="paid">Paid â€” thank you.</p>${how}${transaction ? `<p><small>Provider transaction ${escapeHtml(transaction)}</small></p>` : ''}${manual ? `<p><small>Recorded by hand: ${escapeHtml(manual.note)} (${escapeHtml(moment(manual.at) || manual.at)})</small></p>` : ''}`;
 }
 
-// WHY THE PAYMENT BLOCK IS ONE FUNCTION OF THE STATE.
+// THE PAYMENT BLOCK IS ONE FUNCTION OF THE STATE.
 // Every state shows a different sentence and a different set of controls, and a page that chose them in two places would sooner or later show a Pay button under "cancelled".
 // The state comes from payLinkState, the one rule the create path also uses, so the page and the writer cannot disagree about a link that has died.
 
@@ -128,11 +128,11 @@ function paymentBlock(invoice: Record<string, unknown>, { token, bank, canRefres
   return `<p>Transfer ${total} and quote invoice ${escapeHtml(invoice.id)}.</p>${bankLine}${form}`;
 }
 
-// WHY THE QR BLOCK SAYS THE AMOUNT IS LOCKED.
+// THE QR BLOCK SAYS THE AMOUNT IS LOCKED.
 // A static merchant QR lets the payer type any amount; the whole point of the dynamic conversion is that the scanned code already carries the invoice total.
 // Saying it in words is the check the payer can do with their eyes before scanning: the app should show the same number, not an empty field.
 
-// WHY THE PAGE ITSELF REFUSES A QR ON A NON-OPEN INVOICE.
+// THE PAGE ITSELF REFUSES A QR ON A NON-OPEN INVOICE.
 // The function only derives a payload for an open invoice, but the page is the thing a customer reads: a paid invoice carrying a scannable code invites a second payment.
 
 function qrisBlockFor(invoice: Record<string, unknown>, qrisSvg: string | null | undefined): string {
@@ -143,7 +143,7 @@ function qrisBlockFor(invoice: Record<string, unknown>, qrisSvg: string | null |
 
 function qrisBlock(invoice: Record<string, unknown>, qrisSvg: string): string {
   const total = escapeHtml(money(invoice.amount_cents, invoice.currency));
-  return `<div class="qris"><p class="state">Scan this QRIS with any payment app to pay <strong>${total}</strong> — the amount is already locked in the code.</p>${qrisSvg}</div>`;
+  return `<div class="qris"><p class="state">Scan this QRIS with any payment app to pay <strong>${total}</strong> â€” the amount is already locked in the code.</p>${qrisSvg}</div>`;
 }
 
 function lineRows(invoice: Record<string, unknown>): string {

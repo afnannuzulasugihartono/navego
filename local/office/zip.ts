@@ -3,12 +3,12 @@
 // @state: entries are stored, not compressed, and the same entries always give the same bytes.
 // @dependencies: none.
 
-// WHY THE ARCHIVE IS STORED AND NOT COMPRESSED.
+// THE ARCHIVE IS STORED AND NOT COMPRESSED.
 // An Office file is a zip, and a zip may hold its entries uncompressed.
 // Compression would save a few kilobytes on a file the customer opens in Excel, and cost a dependency and a source of drift.
 // The bytes stay the same for the same entries, so a hash of the artifact means the same thing every time it is taken.
 
-// WHY THE DATE INSIDE THE FILE IS FIXED.
+// THE DATE INSIDE THE FILE IS FIXED.
 // A file that carries the clock inside it hashes differently on every run, and a delivery is settled by the hash of its bytes.
 // A fixed date keeps one report one hash.
 

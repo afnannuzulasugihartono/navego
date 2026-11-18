@@ -3,7 +3,7 @@
 // @state: the popup carries the one-click door; the words are Indonesian first, English everywhere too.
 // @dependencies: test, assert, fs.
 
-// WHY THIS FILE STAYS NAMED THE SAME: the test that locked the old paste-the-code flow locked the wrong thing - it taught the reader where to get a code instead of pairing in one click.
+// THIS FILE STAYS NAMED THE SAME: the test that locked the old paste-the-code flow locked the wrong thing - it taught the reader where to get a code instead of pairing in one click.
 // The popup is where the promise is kept or broken, and the promise now is one click: the dashboard mints and delivers; the popup does not ask for a code at all.
 
 import test from 'node:test';

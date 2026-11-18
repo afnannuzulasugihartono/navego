@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-15 UTC+7.
-// @title: advice — a failure that names the problem and what to do about it.
+// @title: advice â€” a failure that names the problem and what to do about it.
 // @state: rules keyed by failure, moves that name real calls, honesty locks.
 // @dependencies: node:test, strict, ../local/advice.js, ../local/mcp-server.js.
 
@@ -11,7 +11,7 @@ import { TOOLS } from '../../local/mcp-server.js';
 
 const names = new Set(TOOLS.map((tool) => tool.name));
 
-// WHY THE MOVES ARE PINNED AGAINST THE TOOL LIST.
+// THE MOVES ARE PINNED AGAINST THE TOOL LIST.
 // Advice is the one place a product can send an agent after a tool it does not have, and that is worse than saying nothing: the agent follows it, the call fails, and the advice is the thing it learns to distrust.
 // So a move naming a tool that does not exist is a build failure.
 
@@ -48,7 +48,7 @@ test('every move names a call the server actually has', () => {
   assert.ok(rows.length > 5, 'the rules do name real calls');
 });
 
-// WHY THE ORIGINAL MESSAGE IS KEPT VERBATIM.
+// THE ORIGINAL MESSAGE IS KEPT VERBATIM.
 // Advice that replaces the error is advice about something the agent cannot verify: the first line is what actually happened, and everything after it is a suggestion about it.
 
 test('advice adds to the failure and never replaces it', () => {
@@ -69,7 +69,7 @@ test('an empty failure stays empty rather than gaining advice', () => {
   assert.equal(withAdvice(undefined), '');
 });
 
-// WHY A NEARBY NAME IS SPELLED OUT.
+// A NEARBY NAME IS SPELLED OUT.
 // The caller asked for one thing and the page holds another that starts the same way; seeing the difference written down is the difference between "I spelled it wrong" and "the page does not have it".
 
 test('a row the page nearly has is offered by its real name', () => {
@@ -95,7 +95,7 @@ test('a missing button is not sent to the menu tools', () => {
   assert.match(out, /browser_find_element\(/);
 });
 
-// WHY THE FILE-CHOOSER RULE EXISTED.
+// THE FILE-CHOOSER RULE EXISTED.
 // Google Docs opens the operating system dialog through the File System Access API: upload reports that it found no input while the page is perfectly reachable, and the only road in is a drop.
 
 test('an input that could not be filled is sent to the drop', () => {
@@ -105,7 +105,7 @@ test('an input that could not be filled is sent to the drop', () => {
   assert.match(out, /no file input/i);
 });
 
-// WHY AN EXTENSION PAGE IS SENT TO THE TAB LIST.
+// AN EXTENSION PAGE IS SENT TO THE TAB LIST.
 // Measured live: a drive named the Extensions tab and the bridge refused it with "Cannot access a chrome:// URL", which is a wall, not a failure - no move on that tab can ever succeed.
 // The only useful next step is the list of tabs that can be driven.
 
@@ -116,7 +116,7 @@ test('a click off the page is sent to the scroll that reaches it', () => {
   assert.match(out, /browser_click\(\{role, name\}\)/);
 });
 
-// WHY AN OFF-PAGE CLICK IS PINNED HERE.
+// AN OFF-PAGE CLICK IS PINNED HERE.
 // It is the one failure measured as a success: a click at y -139 was reported as delivered.
 // A failure like that teaches an agent to trust an answer that is not true, which is worse than any failure it can name.
 
@@ -134,7 +134,7 @@ test('an extension page refusal is sent to the tab list, which is all an agent c
   assert.match(out, /chrome:\/\//);
 });
 
-// WHY TEXT THAT WENT NOWHERE LEADS WITH THE ELEMENT THAT HAD FOCUS.
+// TEXT THAT WENT NOWHERE LEADS WITH THE ELEMENT THAT HAD FOCUS.
 // Measured live on YouTube: a type inserted nothing and the answer offered two guesses - no caret, or a minimized window.
 // The truth was a third thing the page was already telling: focus sat on a cookie wall's button.
 // The failure now names that element, so the first move is the field itself, and an overlay gets its own move.
@@ -155,7 +155,7 @@ test('a page with nothing to type into gets the same moves', () => {
   assert.match(out, /browser_find_element\(\{role: "menuitem"/);
 });
 
-// WHY THE LINK RULES ARE SEPARATE.
+// THE LINK RULES ARE SEPARATE.
 // "The extension is not connected" and "the port is not reachable" look alike and need the same first move, but a drive that has silently slid onto a debug port needs a different warning: that road opens a profile nobody is signed into.
 
 test('a dead link says how to bring it back', () => {

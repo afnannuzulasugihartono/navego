@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-13 UTC+7.
-// @title: local-sessions — one cached driver per tab, fronted on switch, tested without a browser.
+// @title: local-sessions â€” one cached driver per tab, fronted on switch, tested without a browser.
 // @state: 9 locks; adapter shape, cache keys, front-once, close-drop.
 // @dependencies: node:test, strict, ../local/sessions.js.
 
@@ -40,7 +40,7 @@ function fakeSession() {
   };
 }
 
-// WHY THE DIALOG VERBS ARE SPOKEN HERE.
+// THE DIALOG VERBS ARE SPOKEN HERE.
 // The MCP server calls driver.dialogState(), and the driver is this adapter: a primitive that exists but is not spoken here answers a tool call with "not a function" on a real browser, which is exactly what shipped.
 // Measured: dialog, dialog and dialog failed against a live browser while every unit test passed, because no test drove the adapter with a dialog call.
 // So the dialog verbs are driven through the adapter like every other verb, and the fake session has to carry the primitives for the calls to reach them.
@@ -62,7 +62,7 @@ test('the adapter speaks the dialog verbs too', async () => {
   assert.deepEqual(verbs, ['dialogState', 'dialogType', 'dialogPress']);
 });
 
-// WHY surfaceProfile IS DRIVEN HERE.
+// surfaceProfile IS DRIVEN HERE.
 // The MCP server calls driver.surfaceProfile(), and the driver is this adapter: a primitive that exists but is not spoken here answers a tool call with "not a function" on a real browser, which is exactly what shipped.
 // Measured: probe failed against a live Google Doc while every unit test passed, because no test drove the adapter with a profile call.
 // So the profile is driven through the adapter like every other verb, and the fake session has to carry the primitive for the call to reach it.
@@ -87,10 +87,10 @@ test('the adapter speaks driver verbs over primitive nouns', async () => {
   assert.deepEqual(verbs, ['read', 'surfaceProfile', 'clickAt', 'hover', 'key', 'type', 'keys', 'settle', 'waitForText', 'capture', 'front']);
 });
 
-// WHY THE ADAPTER RESOLVES THEN CLICKS A HANDLE.
-// The row is found and held before anything is pressed, and the click is aimed at that node rather than at the point the snapshot reported — which is the whole difference between clicking the row that was asked for and clicking whatever slid under it.
+// THE ADAPTER RESOLVES THEN CLICKS A HANDLE.
+// The row is found and held before anything is pressed, and the click is aimed at that node rather than at the point the snapshot reported â€” which is the whole difference between clicking the row that was asked for and clicking whatever slid under it.
 
-// WHY THE CLICK'S PROOF IS PINNED HERE.
+// THE CLICK'S PROOF IS PINNED HERE.
 // The row is what was asked for; what the click hit belongs to the click.
 // Measured live: a tap answered with its row and its point while a dialog owned the point and took the click, and the adapter's rebuilt answer had thrown that fact away before anyone could read it.
 

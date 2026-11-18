@@ -3,12 +3,12 @@
 // @state: the family each signal answers, the device name a new device takes, and the classic script's answer for the same browsers.
 // @dependencies: node:test, node:assert/strict, ../extension/lib/browser-id.js, ../extension/lib/agent-log.js.
 
-// WHY THIS GATE EXISTS.
+// THIS GATE EXISTS.
 // Brave, Edge, Opera and Vivaldi all send a Chrome user agent, so a browser that reads only the string calls all of them Chrome.
 // The dashboard then showed the same word for every device, and a person with two browsers could not tell which card was which.
 // The detection therefore prefers what the browser publishes about itself, and this file pins the order and the answers.
 
-// WHY THE PAGE COPY IS PINNED TOO.
+// THE PAGE COPY IS PINNED TOO.
 // The page's copy lives inside a classic script that cannot import, so it is a second copy of the rules.
 // Two copies are a drift waiting to happen, so this file runs both over the same browsers and fails when they answer differently.
 

@@ -3,10 +3,10 @@
 // @state: the seven USD tiers, five in the affordable band (1, 3, 5, 7, 9 dollars/month) and two in the enterprise band (17 dollars / 6 months and 33 dollars / year): their daily quota, their sessions, the minute cap, and the firm features the enterprise tiers get.
 // @dependencies: none.
 
-// WHY THIS FILE EXISTS The gate lives in the service, never in the binary, so the service needs one place that says what a plan allows.
+// THIS FILE EXISTS The gate lives in the service, never in the binary, so the service needs one place that says what a plan allows.
 // Two surfaces read it: the hosted MCP for the account's plan, and the loopback bridge for the session allowance a paired device gets for that account.
 
-// WHY NULL MEANS UNLIMITED.
+// NULL MEANS UNLIMITED.
 // A number says how much; null says there is no cap at all.
 // The annual tier promises no minute limit and no daily limit, and the promise reads faster than a billion.
 

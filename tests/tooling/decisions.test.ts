@@ -1,15 +1,16 @@
 // @last-edited: 2026-11-18 UTC+7.
 // @title: decisions - the register is the rule; a value in code nobody can source is a bug nobody can fix.
-// @state: the register validates, the references in the site resolve to real decisions, and no decision carries a WHY-prefix comment - the reason stands on its own.
+// @state: the register validates, the references in the repo resolve to real decisions, and no comment opens with a WHY prefix - the reason stands on its own.
 // @dependencies: node:test, strict, node:fs.
 
 // This gate is the enforcement half of docs/decisions.json.
-// Every value in the site either cites a decision (decisions.json -> D<n>) or is an ordinary expression of one; nothing gets to be a number or a string that answers to nobody.
+// Every value in the repo either cites a decision (decisions.json -> D<n>) or is an ordinary expression of one; nothing gets to be a number or a string that answers to nobody.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 interface Source {
   kind: string;
@@ -36,21 +37,49 @@ const read = (name: string): Register => JSON.parse(fs.readFileSync(new URL(name
 const KINDS = new Set(['user', 'internet', 'repo']);
 const REF = /decisions\.json\s*->\s*(D[0-9]{2,})/g;
 
-const SKIP = new Set(['node_modules', 'build', '.react-router', '.wrangler', 'coverage']);
+// The acceptance surface is not swept and not judged here: the pins define the judge.
+// Every exclusion below is named on purpose - a silent exclusion is how the rule dies.
+// gates.lock and .gitleaks.toml and .github are Layer 1/2 owner territory (the pins judge; they are not judged).
+// The frozen public contract is byte-pinned by tests/helpers/boundary-locks.ts - comment churn there re-pins the public contract.
+// hosted/migrations is history that has been applied; the applied past is not rewritten.
 
-const walk = (dir: string): string[] => {
-  const out: string[] = [];
-  for (const entry of fs.readdirSync(new URL(dir, root), { withFileTypes: true })) {
-    if (SKIP.has(entry.name)) continue;
-    const rel = `${dir}/${entry.name}`;
-    if (entry.isDirectory()) out.push(...walk(rel));
-    else out.push(rel);
-  }
-  return out;
-};
+const EXCLUDED = new Set([
+  'gates.lock',
+  '.gitleaks.toml',
+  '.github/CODEOWNERS',
+  '.github/workflows/ci.yml',
+  'scripts/verify/check.ts',
+  'scripts/verify/scope.ts',
+  'scripts/verify/scope-check.ts',
+  'tests/helpers/boundary-locks.ts',
+  'tests/helpers/canonical-source-hash.ts',
+  'tests/helpers/comment-format.ts',
+  'tests/docs/comment-format.test.ts',
+  'tests/docs/comment-claims.test.ts',
+  'tests/tooling/hygiene.test.ts',
+  'tests/tooling/structure-gates.test.ts',
+  'tests/tooling/boundary-locks.test.ts',
+  'extension/lib/protocol.ts',
+  'shared/secret-pattern.ts',
+  'hosted/functions/_shared/cors.ts',
+  'extension/manifest.json',
+  'extension/content.ts',
+  'extension/background.ts',
+  'shared/reactive-vm.ts',
+  'shared/reactive-vm-control-flow.ts',
+  'shared/reactive-vm-collect.ts',
+  'shared/multi-signal-relevance.ts',
+  'shared/delta-first-observation.ts'
+]);
 
-const CODE_EXTENSIONS = new Set(['.css', '.ts', '.tsx', '.js', '.mjs', '.html', '.svg']);
-const codeFiles = walk('site').filter((file) => CODE_EXTENSIONS.has(path.extname(file)));
+// The file set is what git lists, exactly the set a person would ship - a gitignored build twin (extension/background.js, local/*.js) is machine-local state and not the repository.
+
+const tracked = execFileSync('git', ['ls-files', '-z'], { cwd: new URL(root) }).toString('utf8').split('\0').filter(Boolean);
+const untracked = execFileSync('git', ['ls-files', '-z', '--others', '--exclude-standard'], { cwd: new URL(root) }).toString('utf8').split('\0').filter(Boolean);
+
+const inRepoScope = (file: string) => !EXCLUDED.has(file) && !file.startsWith('hosted/migrations/') && !file.startsWith('.github/');
+const CODE_EXTENSIONS = new Set(['.css', '.ts', '.tsx', '.js', '.mjs', '.html', '.svg', '.py', '.sql', '.yml', '.toml']);
+const codeFiles = [...tracked, ...untracked].filter(inRepoScope).filter((file) => CODE_EXTENSIONS.has(path.extname(file)));
 
 test('the register parses and names where it came from', () => {
   const register = read('docs/decisions.json');
@@ -78,7 +107,7 @@ test('every decision is complete enough to act on', () => {
   }
 });
 
-test('every decisions.json reference in the site resolves to a registered decision', () => {
+test('every decisions.json reference in the repo resolves to a registered decision', () => {
   const register = read('docs/decisions.json');
   const ids = new Set(register.decisions.map((d) => d.id));
   const referenced = new Set<string>();
@@ -95,7 +124,7 @@ test('every decisions.json reference in the site resolves to a registered decisi
   }
 });
 
-test('no comment in the site opens with a WHY prefix - the reason stands on its own', () => {
+test('no comment in the repo opens with a WHY prefix - the reason stands on its own', () => {
   for (const file of codeFiles) {
     const text = fs.readFileSync(new URL(file, root), 'utf8');
     for (const [index, line] of text.split('\n').entries()) {

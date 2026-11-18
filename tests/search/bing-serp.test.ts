@@ -12,7 +12,7 @@ const fixture = JSON.parse(
   await readFile(new URL('../fixtures/bing-serp-page1.json', import.meta.url), 'utf8')
 );
 
-// WHY THE EXPECTED TITLE CARRIES THE OLD BRAND: the fixture is a captured Bing SERP (2026-11-14) and the ranked card was titled 'Navego: ...' when the search engine served it; the fixture is evidence of what the parser read, not a claim about what the site calls itself today.
+// THE EXPECTED TITLE CARRIES THE OLD BRAND: the fixture is a captured Bing SERP (2026-11-14) and the ranked card was titled 'Navego: ...' when the search engine served it; the fixture is evidence of what the parser read, not a claim about what the site calls itself today.
 
 test('the parser reads the real page-1 SERP into the external results, in order, with snippets', () => {
   const { results, nextFirst } = parseBingSerp(fixture, { currentFirst: 1 });
@@ -53,7 +53,7 @@ test('an organic link with a first= parameter in its own URL is not a pagination
     text: '',
     links: [
       { href: 'https://example.com/article?first=41', text: 'An organic result whose URL carries a first= query' },
-      { href: 'https://example.org/deep', text: 'example.org https://example.org › deep' }
+      { href: 'https://example.org/deep', text: 'example.org https://example.org â€º deep' }
     ]
   }, { currentFirst: 1 });
   assert.equal(nextFirst, null, 'pagination comes from bing.com links only');
@@ -77,7 +77,7 @@ test('the next page is the smallest first= above the current one, not an assumed
 test('a card with only a display anchor falls back to the site as its title, never to silence', () => {
   const { results } = parseBingSerp({
     text: '',
-    links: [{ href: 'https://example.com/page', text: 'example.com https://example.com › page' }]
+    links: [{ href: 'https://example.com/page', text: 'example.com https://example.com â€º page' }]
   });
   assert.equal(results.length, 1);
   const first = results[0];

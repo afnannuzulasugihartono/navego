@@ -1,9 +1,9 @@
 // @last-edited: 2026-11-14 UTC+7.
-// @title: keyboard-vocabulary-parity.test — the key names the extension accepts are the names it resolves.
+// @title: keyboard-vocabulary-parity.test â€” the key names the extension accepts are the names it resolves.
 // @state: the key list and the modifier aliases, held consistent on the one surface that exists.
 // @dependencies: node:test, strict, promises, keyboard.
 
-// WHY THIS FILE EXISTS, AND WHY IT IS NOT WHAT IT WAS.
+// THIS FILE EXISTS, AND WHY IT IS NOT WHAT IT WAS.
 // The previous version pinned the vocab of the hosted MCP surface against the extension's.
 // The hosted surface is deleted (2026-11-14); the only vocabulary left is the extension's own.
 // A consistency claim that does not need two surfaces to hold is still worth holding: the allowlist must resolve, the aliases must map, and the bounds must agree with the constants.

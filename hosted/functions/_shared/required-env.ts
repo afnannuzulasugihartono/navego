@@ -3,7 +3,7 @@
 // @state: fails loud at import time when a required variable is missing; the alternative to deploying a function that silently crashes on its first request.
 // @dependencies: none.
 
-// WHY A SHARED HELPER AND NOT SPRINKLED GUARDS.
+// A SHARED HELPER AND NOT SPRINKLED GUARDS.
 // Every edge function used to write `Deno.env.get("X")!` at module scope, the non-null assertion telling the typechecker what deploy already knows.
 // The helper names the same invariant once, with the message a deployer actually needs.
 

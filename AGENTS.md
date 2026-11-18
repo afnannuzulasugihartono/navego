@@ -1,5 +1,5 @@
-@last-edited: 2026-11-10 UTC+7.
-@related: [`README.md`](README.md) - [`docs/handoff.md`](docs/handoff.md) - [`docs/security.md`](docs/security.md)
+@last-edited: 2026-11-18 UTC+7.
+@related: [`README.md`](README.md) - [`docs/handoff.md`](docs/handoff.md) - [`docs/security.md`](docs/security.md) - [`docs/decisions.json`](docs/decisions.json)
 
 # Navego agent instructions
 
@@ -33,6 +33,8 @@ These ride with every job. Read them before acting, not once per session.
 - Read the lines you need, never the file: ranges through `Select-Object -Skip n -First m` or `Select-String -Context`, logs through their tails. Printing a file whole to find one line is a failed search done in public.
 - Filter before you display. A command that can produce hundreds of lines runs through a bounded filter or the machinery the tree already carries - `npm test` ends in the dot reporter, one dot per test, failures printed in full at the end, nothing else. The gate is `tests/tooling/tidy-output.test.ts`.
 - Find every implicit state machine you touch and decide its fate before you ship: model it, delete it, or tolerate it with a written reason - ranked user > developer > agent, always. The register is `docs/state-machines.json`; the gate is `tests/tooling/implicit-state-machines.test.ts`.
+- Every decision in code carries its source, or it does not ship: one register, `docs/decisions.json`, one decision one source - the requesting user or a verified internet link, otherwise the repo document that already carries the decision. Code cites the register as `decisions.json -> D<n>`. Internet sources must be URLs that open; a decision nobody asked for and nobody can source is a bug, not a preference. The gate is `tests/tooling/decisions.test.ts`.
+- A reason is written as a reason, never as a WHY prefix: the comment above a declaration states the reason directly - "the banner hangs off the footer because every page ends there", never "WHY the banner...". The acceptance surface (the pins in gates.lock, the frozen public contract in tests/helpers/boundary-locks.ts, the owner layer in .github, and hosted/migrations history) is not swept and not judged - an exclusion without its reason is how the rule dies.
 - Where a file lives is decided by `ARCHITECTURE.md`; create nothing at a path the map does not bless.
 
 ## Goals

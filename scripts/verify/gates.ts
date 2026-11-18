@@ -1,10 +1,10 @@
 // @last-edited: 2026-10-10 UTC+7.
-// @title: gates — verify or deliberately re-pin the acceptance surface.
+// @title: gates â€” verify or deliberately re-pin the acceptance surface.
 // @state: reads gates.lock, compares git-blob SHA-256s, reports drift; refresh never runs from the gate.
 // @dependencies: node:fs, node:path, node:crypto, node:url.
 
-// WHY this is its own program and not a block inside scripts/verify/check.ts: the thing that verifies the gates must not be editable by editing the gate it verifies.
-// scripts/verify/check.ts is itself pinned in gates.lock, so if an agent weakened the rules there, this file would still notice — as long as this file is not touched in the same commit, which is Layer 2's job (.github/CODEOWNERS).
+// this is its own program and not a block inside scripts/verify/check.ts: the thing that verifies the gates must not be editable by editing the gate it verifies.
+// scripts/verify/check.ts is itself pinned in gates.lock, so if an agent weakened the rules there, this file would still notice â€” as long as this file is not touched in the same commit, which is Layer 2's job (.github/CODEOWNERS).
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -70,7 +70,7 @@ if (refreshing) {
     ...drifted
   ];
   if (!toWrite.length) {
-    console.log(`gates:refresh — all ${entries.length} pins already current, nothing written.`);
+    console.log(`gates:refresh â€” all ${entries.length} pins already current, nothing written.`);
     process.exit(0);
   }
   const text = fs.readFileSync(lockPath, 'utf8');
@@ -85,7 +85,7 @@ if (refreshing) {
     })
     .join('\n');
   fs.writeFileSync(lockPath, updated);
-  console.log(`gates:refresh — pinned ${toWrite.length} of ${entries.length}:`);
+  console.log(`gates:refresh â€” pinned ${toWrite.length} of ${entries.length}:`);
   for (const d of toWrite) console.log(`  ${d.file}\n    ${d.was ?? '(no pin yet)'} -> ${d.now}`);
   console.log('\nSay in the commit why the criterion each pin enforces did or did not change.');
   process.exit(0);
@@ -100,8 +100,8 @@ const problems = [
 if (problems.length) {
   console.error(`gates: the acceptance surface moved without a deliberate re-pin.\n\n  ${problems.join('\n\n  ')}\n`);
   console.error('A gate changed, so the thing that judges the tree moved too. That is either\n'
-    + 'a real change to what this repository accepts as correct — in which case say\n'
-    + 'so in the commit and run `npm run gates:refresh` — or the check was weakened,\n'
+    + 'a real change to what this repository accepts as correct â€” in which case say\n'
+    + 'so in the commit and run `npm run gates:refresh` â€” or the check was weakened,\n'
     + 'in which case do not re-pin. .github/CODEOWNERS is what makes the difference\n'
     + 'reviewable: these paths are owner-approvable only.');
   process.exit(1);

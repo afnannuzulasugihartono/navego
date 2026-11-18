@@ -1,9 +1,9 @@
 // @last-edited: 2026-11-14 UTC+7.
-// @title: agent-call-docs — the guide a reader is sent to must name the surfaces that exist and the tools that are registered.
+// @title: agent-call-docs â€” the guide a reader is sent to must name the surfaces that exist and the tools that are registered.
 // @state: the call guide, the local README, the pilot runbook, and the tool list they must agree with.
 // @dependencies: node:test, strict, node:fs, node:url, local/tools.js.
 
-// WHY THE GUIDE IS PINNED TO THE CODE.
+// THE GUIDE IS PINNED TO THE CODE.
 // A reader who asks how to call Navego is sent to one file.
 // If that file names a tool the server does not register, or a command that does not exist, the reader finds out from an error.
 
@@ -40,7 +40,7 @@ test('every page a reader is sent to names the install that works today', () => 
   }
 });
 
-// WHY THE ROAD IS LOCKED.
+// THE ROAD IS LOCKED.
 // The debug port died with the loopback bridge; a reader told to pick a transport waits on a port nothing opens.
 // The docs must say the bridge is the one road.
 
@@ -54,7 +54,7 @@ test('the guide says the bridge is the one road, with no transport flag left', (
   assert.match(guide, /loopback bridge/i, 'the guide names the road');
 });
 
-// WHY THE DOCTOR IS THE GATE FOR A BROKEN INSTALL.
+// THE DOCTOR IS THE GATE FOR A BROKEN INSTALL.
 // The everyday browser was the silently failing case: a refuse with no reason read as a broken extension.
 // The one command that answers what is connected, the plan, and the quota is the doctor.
 
@@ -65,7 +65,7 @@ test('the guide names the doctor as the answer for a broken install', () => {
   assert.doesNotMatch(guide, /No browser is listening on port 9333/, 'the dead port refusal is gone');
 });
 
-// WHY THE CONFIG SHAPE IS LOCKED.
+// THE CONFIG SHAPE IS LOCKED.
 // OpenCode's schema puts servers under mcp.servers; the guide must give the shape the reader's harness actually reads.
 
 test('the guide gives the OpenCode config in the shape OpenCode reads', () => {
@@ -76,7 +76,7 @@ test('the guide gives the OpenCode config in the shape OpenCode reads', () => {
   assert.match(guide, /"args"\s*:\s*\[\s*"local"/, 'the local mode is what is passed');
 });
 
-// WHY THE PROOF CLAIM IS LOCKED.
+// THE PROOF CLAIM IS LOCKED.
 // The suite re-hashes a fixture on disk; it never drives a browser again, so the record cannot be said to be re-proven.
 
 test('the guide says what the proof test actually re-checks', () => {

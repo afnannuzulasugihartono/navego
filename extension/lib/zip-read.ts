@@ -3,11 +3,11 @@
 // @state: the entries of a zip archive, each with its bytes, read without a dependency.
 // @dependencies: none.
 
-// WHY THE EXTENSION READS THE ARCHIVE ITSELF.
+// THE EXTENSION READS THE ARCHIVE ITSELF.
 // A build that updates itself has to know what it is writing, and the browser can only be asked to write files it already holds.
 // The update service serves the extension tree as a zip, so the extension reads that zip and writes the entries over its own folder; nothing else in the tree needs a zip reader, and the office writers only ever write.
 
-// WHY THE READER IS HERE AND NOT BORROWED.
+// THE READER IS HERE AND NOT BORROWED.
 // The tree has a zip writer for the office files, and it writes entries stored and uncompressed; the build the update service serves is packed by Chrome and deflated, so it is read with the browser's own decompressor instead of a second implementation.
 
 const END_SIGNATURE = 0x06054b50;

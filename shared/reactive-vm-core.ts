@@ -6,7 +6,7 @@
 import { canonicalJson } from './digest.js';
 import { SECRET_VALUE } from './secret-pattern.js';
 
-// WHY A FACTORY AND NOT A DEFAULT CODE ARGUMENT.
+// A FACTORY AND NOT A DEFAULT CODE ARGUMENT.
 // The collect and control-flow modules fail programs with INVALID_SEMANTICS; the host fails with INVALID_SCHEMA.
 // One guard set, parameterized at construction, keeps the call sites byte-identical.
 

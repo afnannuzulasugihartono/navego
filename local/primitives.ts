@@ -1,9 +1,9 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: primitives — the local driver assembled from the modules that each answer one question.
+// @title: primitives â€” the local driver assembled from the modules that each answer one question.
 // @state: navigation, focus and the raw protocol escape hatch, with the typing, pointer, reads, waits, canvas and file verbs assigned from their own modules.
 // @dependencies: ./input.js, ./pointer.js, ./observe.js, ./waits.js, ./canvas.js, ./primitives-file.js, ./window-focus.js.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // These are the verbs that make the three targets possible: writing a document in Docs, filling a sheet in Sheets, laying out a deck in Slides.
 // Each one is a CDP command underneath, so each inherits the half-millisecond transport measured in local-transport, and each has one rule that is not obvious and not optional.
@@ -12,7 +12,7 @@
 
 // Dispatches pipeline.
 // One CDP session answers every request by id, so ten sends without an await between them cost one round trip, not ten, and Chrome still processes them in arrival order.
-// Anything that must wait — a gap for a menu animation, a tree before its boxes — awaits; everything else fires together.
+// Anything that must wait â€” a gap for a menu animation, a tree before its boxes â€” awaits; everything else fires together.
 
 import nodeFs from 'node:fs';
 import nodeOs from 'node:os';
@@ -47,11 +47,11 @@ interface PrimitivesCdp {
 export function createPrimitives(cdp: PrimitivesCdp, { chunkSize = 2000, sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms)), fs = nodeFs, os = nodeOs, path = nodePath, now = Date.now, bridge = false }: PrimitivesFactoryOptions = {}) {
   const capped = (limit: unknown) => Math.min(Math.max(1, Number(limit) || 120), 500);
 
-  // WHY THE RECORD VALUES ARE ANY AND NOT unknown.
+  // THE RECORD VALUES ARE ANY AND NOT unknown.
   // The drive is one object assembled by Object.assign across nine files; a closed record would refuse every method those files add.
   // This is the second of the two documented open records in the local road (the first is JsonRecord); nothing leaves the drive through this type either - callers go through the driver manifest in types.ts.
   // The `any` claim belongs to the drive's composition boundary, not to any consumer; the manifest in types.ts is the typed surface.
-  // biome-ignore lint/suspicious/noExplicitAny: the drive is assembled by Object.assign across nine files; a closed record would refuse every method those files add, and nothing leaves the drive untyped — callers go through the manifest in types.ts.
+  // biome-ignore lint/suspicious/noExplicitAny: the drive is assembled by Object.assign across nine files; a closed record would refuse every method those files add, and nothing leaves the drive untyped â€” callers go through the manifest in types.ts.
   const primitives: Record<string, any> = {
     async navigate(url: string) {
       const target = String(url || '').trim();
@@ -72,7 +72,7 @@ export function createPrimitives(cdp: PrimitivesCdp, { chunkSize = 2000, sleep =
       return cdp.send(method, params);
     },
 
-    // WHY A PAGE EXCEPTION IS AN ERROR AND NOT A MISSING VALUE.
+    // A PAGE EXCEPTION IS AN ERROR AND NOT A MISSING VALUE.
     // Measured on a real Google Doc: the first probe referenced a constant the page had never heard of, the page threw, and the answer came back undefined - which reads exactly like a page with no canvas, no text and no editor.
     // A thrown page expression is a fact about the page, so it is raised here rather than flattened into a value the caller cannot tell from a measurement.
     async evaluate(expression: string) {
@@ -87,7 +87,7 @@ export function createPrimitives(cdp: PrimitivesCdp, { chunkSize = 2000, sleep =
       return reply?.result?.value;
     },
 
-    // WHY THE PROFILE IS A PRIMITIVE OF ITS OWN.
+    // THE PROFILE IS A PRIMITIVE OF ITS OWN.
     // An agent meeting a site for the first time has to know what the surface is before it can know what a read will cost, and paying a full read to find out is the wrong order.
     // This asks nothing of the page and moves no caret, so it is the one call that is always safe on a surface nobody has seen.
     async surfaceProfile() {
@@ -102,7 +102,7 @@ export function createPrimitives(cdp: PrimitivesCdp, { chunkSize = 2000, sleep =
       };
     },
 
-    // WHY THE PAGE IS ASKED BEFORE THE MACHINE, AND WHY IT IS ENOUGH.
+    // THE PAGE IS ASKED BEFORE THE MACHINE, AND WHY IT IS ENOUGH.
     // Measured live on this machine, twice, with the drive typing into a Google Docs document: a browser behind another application still reported focus here and took the text, and a minimized browser reported no focus and dropped it.
     // So this one evaluation answers the only case that costs anything to be wrong about, and the machine is asked only when it says the page is deaf.
     async hasFocus() {
@@ -113,7 +113,7 @@ export function createPrimitives(cdp: PrimitivesCdp, { chunkSize = 2000, sleep =
       return result?.value === true;
     },
 
-    // WHY THE WINDOW IS ASKED THROUGH THE BROWSER FIRST.
+    // THE WINDOW IS ASKED THROUGH THE BROWSER FIRST.
     // Measured on this machine: the OS read is a PowerShell enumeration and costs p50 1.14s, while Browser.getWindowForTarget on the same session costs p50 0.35ms and already answers the only question the focus guard has - is the window minimized.
     // The OS read stays as the fallback for a browser or bridge that refuses the Browser domain, because a wrong "background" answer is how text goes nowhere.
     async windowState() {
@@ -131,7 +131,7 @@ export function createPrimitives(cdp: PrimitivesCdp, { chunkSize = 2000, sleep =
       }
     },
 
-    // WHY THE MATCH DECIDES THE ROAD: a bare call answers state without moving anything, via the CDP bounds read; a named call goes through the OS road, because a CDP window cannot be chosen by title and the agent is told which road answered.
+    // THE MATCH DECIDES THE ROAD: a bare call answers state without moving anything, via the CDP bounds read; a named call goes through the OS road, because a CDP window cannot be chosen by title and the agent is told which road answered.
     async focusWindow(match: unknown = '') {
       const want = String(match ?? '');
       if (want === '') {

@@ -3,7 +3,7 @@
 // @state: one test per global the extension publishes; the key list mirrors extension/types/global.d.ts and changes in the same commit.
 // @dependencies: node:test, node:assert/strict, the built .js publishers.
 
-// WHY THIS GATE EXISTS.
+// THIS GATE EXISTS.
 // extension/types/global.d.ts names the shape of every classic-script global; tsc checks assignment at publish time and reads in modules.
 // It cannot see a typed key the publisher never wrote, or a publisher that publishes under a different name: the classic script fails before anyone reads it, in a browser the test suite never drove.
 // So this file imports the real publishers and reads back what they left on globalThis.

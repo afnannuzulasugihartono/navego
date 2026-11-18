@@ -1,9 +1,9 @@
 // @last-edited: 2026-10-26 UTC+7.
-// @title: invoice-worker — the page reaches the browser as a page, and every other path is still the site.
+// @title: invoice-worker â€” the page reaches the browser as a page, and every other path is still the site.
 // @state: the proxy, the relabel, the redirect, the asset fallback, the failure page, and the absence of a secret.
 // @dependencies: node:test, node:assert, node:fs, ../site/worker/_worker.ts.
 
-// WHY THE PROXY IS DRIVEN RATHER THAN DEPLOYED AND LOOKED AT.
+// THE PROXY IS DRIVEN RATHER THAN DEPLOYED AND LOOKED AT.
 // The page only became unreadable because a gateway relabelled it, and the fix is a relabel on the other side of a network hop this test can stand in for.
 // So the function is replaced by a stub that returns exactly what the gateway returns, and the worker is read for what a browser would receive: the type, the policy, the redirect, and the fallback.
 

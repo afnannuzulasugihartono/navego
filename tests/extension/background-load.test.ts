@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-09 UTC+7.
-// @title: background-load — the service worker graph actually loads.
+// @title: background-load â€” the service worker graph actually loads.
 // @state: imports the real extension/background.js under a chrome mock; the only test that can catch a broken export, a severed import, or an import cycle that will not evaluate.
 // @dependencies: node:test, strict, extension/background.js.
 
@@ -49,7 +49,7 @@ Reflect.set(globalThis, 'chrome', {
   },
 });
 
-// WHY the loop is stopped before the file ends.
+// the loop is stopped before the file ends.
 // Importing the worker graph is what starts the bridge poll, and a poll that keeps asking a port nobody is listening on keeps this process alive forever.
 // The production loop is the point; in a test it is only something to switch off again.
 

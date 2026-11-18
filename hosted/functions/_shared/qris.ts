@@ -1,13 +1,13 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: qris — the merchant's static QRIS payload turned into a dynamic one with the amount locked.
+// @title: qris â€” the merchant's static QRIS payload turned into a dynamic one with the amount locked.
 // @state: TLV parse and serialize, CRC16-CCITT-FALSE, and the one conversion that was proven accepted by a payer app on 2026-11-02.
 // @dependencies: none.
 
-// WHY THE PAYLOAD IS EDITED AS TAGS AND NOT AS A STRING.
+// THE PAYLOAD IS EDITED AS TAGS AND NOT AS A STRING.
 // The probe on 2026-11-02 proved the payer side rejects a payload whose tag 01 says dynamic but whose category tag still says static: "QR code tidak sah".
 // Editing substrings would reproduce exactly that half-edited payload, so every change goes through the tag list and the CRC is recomputed over the whole result.
 
-// WHY THE AMOUNT IS A WHOLE RUPIAH STRING.
+// THE AMOUNT IS A WHOLE RUPIAH STRING.
 // Tag 54 carries "1000" for Rp 1.000, and "1000.00" was not the accepted form; the rupiah has no subunit in a QRIS payload, so the amount is integer rupiah and nothing else.
 
 export interface QrisField {
@@ -29,7 +29,7 @@ export function crc16CcittFalse(text: string): string {
   return crc.toString(16).toUpperCase().padStart(4, '0');
 }
 
-// WHY THE CRC IS COMPUTED OVER THE PAYLOAD WITH A BARE TAG 63.
+// THE CRC IS COMPUTED OVER THE PAYLOAD WITH A BARE TAG 63.
 // The checksum covers everything before it, so the running payload ends with "6304" and the four hex digits are appended after.
 
 export function parseQris(payload: string | undefined): ParsedQris {
@@ -58,10 +58,10 @@ function setField(fields: ParsedQris, tag: string, value: string): void {
   else fields.push({ tag, value });
 }
 
-// WHY TAG 54 IS PLACED BEFORE TAG 58 AND NOT APPENDED BLINDLY.
+// TAG 54 IS PLACED BEFORE TAG 58 AND NOT APPENDED BLINDLY.
 // The accepted dynamic form measured on 2026-11-02 had tag 54 before tag 58; a payload with the amount after the country tag was not the one that was scanned and accepted.
 
-// WHY THE AMOUNT IS A BARE WHOLE RUPIAH.
+// THE AMOUNT IS A BARE WHOLE RUPIAH.
 // The 2026-11-04 scan matrix in BRImo: tag 54 "1000.00" was refused (kode th 03) and "1000" was accepted, so the bare form is the one emitted.
 
 function insertAmount(fields: ParsedQris, amount: number): ParsedQris {
@@ -83,7 +83,7 @@ export function toDynamicQris(staticPayload: string | undefined, amountRupiah: n
   setField(fields, '01', '12');
   fields = insertAmount(fields, amountRupiah);
 
-  // WHY THE CATEGORY TAG IS LEFT EXACTLY AS THE MERCHANT PRINTED IT.
+  // THE CATEGORY TAG IS LEFT EXACTLY AS THE MERCHANT PRINTED IT.
   // The two payer apps measured so far disagree: ShopeePay refused tag 01=12 with 62/07 still A01 (2026-11-02 probe), while BRImo refused A02 and accepted the payload with 62/07 untouched (2026-11-04 scan matrix, variant D).
   // So the category is not rewritten here: the merchant's own value is the one the acquirer issued the QR with, and rewriting it is what one app or the other rejects.
 

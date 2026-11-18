@@ -1,9 +1,9 @@
 // @last-edited: 2026-11-17 UTC+7.
-// @title: bridge-token — the per-machine secret the local driver presents to the loopback bridge.
+// @title: bridge-token â€” the per-machine secret the local driver presents to the loopback bridge.
 // @state: exports resolveBridgeToken and header constants; bridge-ws reads it once per server to gate POST endpoints.
 // @dependencies: node:crypto, node:fs, node:os, node:path.
 
-// WHY IT EXISTS.
+// IT EXISTS.
 // The loopback bridge owns the browser, and any local web page could reach its /command endpoint with a plain POST before it was gated.
 // A random secret per machine answers "indistinguishable to a page on this machine, trivially readable by the processes that legitimately drive the browser".
 // The token is never sent in a browser request: pages cannot read the file it lives in.

@@ -358,6 +358,33 @@
         "kind": "user",
         "ref": "user 2026-11-18 (the navego.pages.dev screenshot)"
       }
+    },
+    {
+      "id": "D39",
+      "scope": "repo",
+      "decision": "Every decision in code cites docs/decisions.json as `decisions.json -> D<n>`, or it does not ship; the gate is tests/tooling/decisions.test.ts.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: every decision in code carries a source; the register is one file the code refers back to - \"wajib ada link untuk referensi\"; enforced repo-wide after the website"
+      }
+    },
+    {
+      "id": "D40",
+      "scope": "repo",
+      "decision": "A reason is written as a reason: no comment opens with a WHY prefix; the reason is written directly.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: \"langsung kasih reason tanpa why\""
+      }
+    },
+    {
+      "id": "D41",
+      "scope": "repo",
+      "decision": "The acceptance surface is not swept and not judged: gates.lock, .gitleaks.toml, .github, the frozen public contract in tests/helpers/boundary-locks.ts, and hosted/migrations; the exclusions are named in tests/tooling/decisions.test.ts and in AGENTS.md, each with its reason.",
+      "source": {
+        "kind": "repo",
+        "ref": "AGENTS.md scope rules 2-4 (a gate that must move is re-pinned in the same commit, with the reason); user 2026-11-18: enforce the rule across the repo without touching the acceptance surface"
+      }
     }
   ]
 }

@@ -3,14 +3,14 @@
 // @state: CSV in, a checked workbook and a checked plan out, both written beside the source.
 // @dependencies: node:fs, node:path, ./reports.js, ./office/xlsx.js.
 
-// WHY THE WORKBOOK HOLDS THREE SHEETS.
+// THE WORKBOOK HOLDS THREE SHEETS.
 // The report lines are what the customer reads, the source rows are what the customer checks, and the figure ledger is what says which rows produced which line.
 // A workbook with only the first sheet is a claim, and a claim a bookkeeper cannot check is a claim they will not pay for.
 
-// WHY THE TOTALS ARE NUMBERS AND NOT TEXT.
+// THE TOTALS ARE NUMBERS AND NOT TEXT.
 // A total that is a sentence cannot be added to another sheet, so the cell holds the rupiah value as a number and the format shows it as rupiah.
 
-// WHY THE PLAN IS WRITTEN BESIDE THE WORKBOOK.
+// THE PLAN IS WRITTEN BESIDE THE WORKBOOK.
 // A deck, a paper or a later month may need the same figures, and recomputing them from the CSV each time is how two documents end up disagreeing.
 
 import fs from 'node:fs';
@@ -87,12 +87,12 @@ export function spreadsheetFromFile({
 
   const clientName = String(client ?? '').trim();
   const periodName = String(period ?? '').trim();
-  const subtitle = [clientName, periodName].filter((part) => part !== '').join(' · ');
+  const subtitle = [clientName, periodName].filter((part) => part !== '').join(' Â· ');
 
   const workbook = buildWorkbook({
     sheets: [
       { name: 'Laporan', title: String(title ?? '').trim(), subtitle, rows: reportRows },
-      { name: 'Sumber', title: 'Baris sumber', subtitle: `${subtitle} · ${table.rows.length} baris`, rows: sourceRows },
+      { name: 'Sumber', title: 'Baris sumber', subtitle: `${subtitle} Â· ${table.rows.length} baris`, rows: sourceRows },
       { name: 'Angka', title: 'Asal setiap angka', subtitle, rows: ledgerRows }
     ]
   });

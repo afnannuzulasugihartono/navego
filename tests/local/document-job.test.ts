@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-25 UTC+7.
-// @title: document-job — a paper is planned on disk with tables, images and graphs, and a plan that cannot be checked is refused.
+// @title: document-job â€” a paper is planned on disk with tables, images and graphs, and a plan that cannot be checked is refused.
 // @state: the parser, the validators, the docplan and the recheck, each pinned by one behaviour.
 // @dependencies: node:test, strict, ../local/documents.js.
 
@@ -69,7 +69,7 @@ test('a table with the wrong number of cells is refused', () => {
   assert.throws(() => buildDocument({ doc: bad }), /cells/);
 });
 
-// WHY THE GRAPH DATA HERE IS OUT OF TABLE ORDER.
+// THE GRAPH DATA HERE IS OUT OF TABLE ORDER.
 // The artifact must carry the rows it recomputed, not the caller's array; keeping the fixture reversed makes the difference visible to the test below.
 
 type SumDoc = {

@@ -1,9 +1,9 @@
 // @last-edited: 2026-11-06 UTC+7.
-// @title: proof-run — a real browser drive that has to leave the same four files the site ships.
+// @title: proof-run â€” a real browser drive that has to leave the same four files the site ships.
 // @state: the fixture portal over loopback, a throwaway browser, the MCP client, the four artifacts, and the record the suite rechecks.
 // @dependencies: node:test, strict, node:fs, node:os, node:path, ../local/driver.js, ../scripts/proof/proof-run.ts.
 
-// WHY THIS FILE EXISTS.
+// THIS FILE EXISTS.
 // The product claims it drives a browser and hands back designed office files, and until this run the claim rested on separate tests: one drove a fake page, another wrote a workbook.
 // A run that does both in one breath is the only thing that answers "can it actually do the job", and the hashes are what make the answer checkable instead of a story.
 

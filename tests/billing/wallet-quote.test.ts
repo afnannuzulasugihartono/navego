@@ -1,9 +1,9 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: wallet-quote — a plan becomes one price, and a list becomes chunks before any money is held.
+// @title: wallet-quote â€” a plan becomes one price, and a list becomes chunks before any money is held.
 // @state: the shape rules, the quote against a price list, and the split that keeps every reservation one bounded job.
 // @dependencies: node:test, node:assert/strict, ../hosted/functions/_shared/wallet.ts.
 
-// WHY THESE CASES AND NOT MORE.
+// THESE CASES AND NOT MORE.
 // Each one is a way the price could be wrong for a real customer: a list that is one job per ten items, a document priced as a report, a plan too long for one job, and a price list that does not name the kind the plan needs.
 // The arithmetic is the whole product here, so the arithmetic is what is pinned.
 

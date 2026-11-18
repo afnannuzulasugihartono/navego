@@ -3,19 +3,19 @@
 // @state: id and en; the next language is a table of the same keys, nothing else.
 // @dependencies: none.
 
-// WHY THE WORDS LIVE IN A TABLE AND NOT IN THE MARKUP.
+// THE WORDS LIVE IN A TABLE AND NOT IN THE MARKUP.
 // One reader opens the popup in Indonesian and another in English, and the layout does not change with the language - the words must not change it either.
 // A table per language keeps the swap total, and a new language is a new table of the same keys and nothing else.
 // The reader's language is the browser's language; anything that is not Indonesian falls back to English, which is the table every key is checked against.
 
 const ID = {
-  'status.starting': 'Memulai…',
+  'status.starting': 'Memulaiâ€¦',
   'status.connected': 'Terhubung',
   'status.subConnected': 'Bridge di mesin ini, menunggu perintah',
-  'status.connecting': 'Menghubungkan…',
+  'status.connecting': 'Menghubungkanâ€¦',
   'status.subConnecting': 'Menghubungi bridge',
   'status.subStarting': 'Menyalakan bridge',
-  'status.reconnecting': 'Menyambung ulang…',
+  'status.reconnecting': 'Menyambung ulangâ€¦',
   'status.subReconnecting': 'Menyambung ulang ke bridge',
   'status.disconnected': 'Terputus',
   'status.subDisconnected': 'Bridge tidak terjangkau',
@@ -32,7 +32,7 @@ const ID = {
   'doors.updateNow': 'Perbarui sekarang',
   'doors.forgetFolder': 'Lupakan folder',
   'update.closeable': 'Halaman ini boleh ditutup.',
-  'update.title': 'Update otomatis — Navego',
+  'update.title': 'Update otomatis â€” Navego',
   'update.state.granted': 'Folder: {name}',
   'update.state.prompt': 'Izin folder perlu diulang',
   'update.state.none': 'Belum diizinkan',
@@ -54,13 +54,13 @@ const ID = {
 };
 
 const EN = {
-  'status.starting': 'Starting…',
+  'status.starting': 'Startingâ€¦',
   'status.connected': 'Connected',
   'status.subConnected': 'Bridge is on this machine, waiting for a command',
-  'status.connecting': 'Connecting…',
+  'status.connecting': 'Connectingâ€¦',
   'status.subConnecting': 'Reaching the bridge',
   'status.subStarting': 'Starting the bridge',
-  'status.reconnecting': 'Reconnecting…',
+  'status.reconnecting': 'Reconnectingâ€¦',
   'status.subReconnecting': 'Reconnecting to the bridge',
   'status.disconnected': 'Disconnected',
   'status.subDisconnected': 'The bridge cannot be reached',
@@ -77,7 +77,7 @@ const EN = {
   'doors.updateNow': 'Update now',
   'doors.forgetFolder': 'Forget the folder',
   'update.closeable': 'You can close this page.',
-  'update.title': 'Automatic updates — Navego',
+  'update.title': 'Automatic updates â€” Navego',
   'update.state.granted': 'Folder: {name}',
   'update.state.prompt': 'The folder permission needs to be granted again',
   'update.state.none': 'Not allowed yet',
@@ -129,7 +129,7 @@ export function t(key: string, vars: Record<string, unknown> = {}) {
   return String(template).replace(/\{(\w+)\}/g, (_, name) => String(vars[name] ?? ''));
 }
 
-// WHY THE APPLIER IS ONE PASS OVER THE MARKUP.
+// THE APPLIER IS ONE PASS OVER THE MARKUP.
 // The words are declared where they are shown, so the layout can never drift from the table; one pass fills them on load.
 
 export function applyI18n(root: I18nRoot | undefined = globalI18nDocument()) {

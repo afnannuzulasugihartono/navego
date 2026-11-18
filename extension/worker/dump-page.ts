@@ -5,15 +5,15 @@
  * @dependencies: tab-content.js, capture.js.
  */
 
-// WHY THIS EXISTS.
+// THIS EXISTS.
 // The agent today can see the page in viewports (`read`) or as an offline copy on disk (save_page).
-// Neither is the tool for “answer a question about the whole page”: the dump is the page reduced to the facts an agent needs to reason - title, text, headings, links, scripts, styles - with no images, fonts or assets.
+// Neither is the tool for â€œanswer a question about the whole pageâ€: the dump is the page reduced to the facts an agent needs to reason - title, text, headings, links, scripts, styles - with no images, fonts or assets.
 
 import { codedError, assertCaptureFramesSafe } from './capture.js';
 import { recordScanCall, resolveTabId, HTTP_URL_RE } from './tab-content.js';
 
 function toCodedError(error: unknown) {
-  // WHY THE CAST: chrome.* throws untyped faults; the negotiated field list is the browser's contract with us.
+  // THE CAST: chrome.* throws untyped faults; the negotiated field list is the browser's contract with us.
   const record = error as Record<string, unknown> | null;
   const message = record && 'message' in record ? String(record.message) : String(error);
   return codedError('DUMP_FAILED', message.slice(0, 300), {});

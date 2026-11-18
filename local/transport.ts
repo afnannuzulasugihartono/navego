@@ -1,7 +1,7 @@
 // @last-edited: 2026-10-11 UTC+7.
-// @title: transport — the WebSocket the CDP client rides on, and the browser endpoints that hand it out.
+// @title: transport â€” the WebSocket the CDP client rides on, and the browser endpoints that hand it out.
 // @state: discovery, a named page, a connect with a timeout, and a wait that refuses to report a browser it did not reach.
-// @dependencies: node:none — fetch and WebSocket arrive from the platform.
+// @dependencies: node:none â€” fetch and WebSocket arrive from the platform.
 
 // A CDP client is a request/response multiplexer over one socket.
 // This file owns the socket half: one URL in, one transport out, with the timeout the driver relies on.
@@ -63,7 +63,7 @@ export async function discoverWebSocket(port: number, { fetch = globalThis.fetch
   return String(url);
 }
 
-// WHY THE TARGET MUST BE NAMED
+// THE TARGET MUST BE NAMED
 
 // discoverPageWebSocket returns whichever page happens to be first, and a drive that targets "the first page" writes into whatever the person happens to have open.
 // That is how a latency test once left a run of x characters in the title of an unrelated document.

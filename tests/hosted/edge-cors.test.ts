@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: edge-cors.test — every edge function answers the same origin rule, and nothing else.
+// @title: edge-cors.test â€” every edge function answers the same origin rule, and nothing else.
 // @state: the allowlist, the fail-closed answer for an unknown origin, and the function that must use it.
 // @dependencies: node:test, strict, fs, module, vm, cors.
 
@@ -14,7 +14,7 @@ import { sha256 } from '../../hosted/functions/_shared/sha256.ts';
 import { isUpgradeRequest, serveDeviceSocket } from '../../hosted/functions/navego-bridge/bridge-socket.ts';
 import { gateVerdict } from '../../hosted/functions/navego-bridge/plan-gate.ts';
 
-// WHY THE PROCESS GETS A Deno AND THESE TWO.
+// THE PROCESS GETS A Deno AND THESE TWO.
 // required-env is the real module the edge bundle uses, not a stand-in; it reads Deno from its own closure, which is this process.
 // The bundle demands the same two vars the deploy demands; everything else unset, so the CORS default path runs.
 

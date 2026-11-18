@@ -1,15 +1,15 @@
 // @last-edited: 2026-10-22 UTC+7.
-// @title: burst — dependent steps on one tab, with one page look at the end.
+// @title: burst â€” dependent steps on one tab, with one page look at the end.
 // @state: the action vocabulary, a checked step list, and a stop-on-failure runner.
 // @dependencies: none.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // The local surface sends one action per call, and every call pays the same fixed cost: the protocol turn, the settle, and the page read that rides back with the answer.
 // A menu walk is three or four dependent moves, so the cost is paid three or four times for a page that has not been looked at since the first move.
 // The cloud burst already proved the shape on the other side of the wire; this is the same shape without the wire.
 
-// WHY IT IS NOT THE CLOUD BURST.
+// IT IS NOT THE CLOUD BURST.
 // The cloud burst can switch tabs and carry a reference to a row created by an earlier action.
 // This one stays on the tab the tool was given, because a local drive that silently moves to another tab is how a batch lands in the wrong document.
 // It still carries a handle from an earlier find step, which is the part that removes the stale-coordinate problem.
@@ -135,7 +135,7 @@ function streamEvents(events: unknown, where: string): Array<Record<string, unkn
 
 function waitStep(step: Record<string, unknown>, where: string): BurstStep {
   const until = typeof step.until === 'string' ? step.until : (step.text !== undefined ? 'text' : undefined);
-  if (!until) throw new Error(`${where} needs until — text, row, url or stable`);
+  if (!until) throw new Error(`${where} needs until â€” text, row, url or stable`);
   const out: BurstStep = { action: 'browser_wait_until', until };
 
   if (until === 'text') {
@@ -165,7 +165,7 @@ function waitStep(step: Record<string, unknown>, where: string): BurstStep {
       out.quiet = value;
     }
   } else {
-    throw new Error(`${where} until must be text, row, url or stable — got: ${until}`);
+    throw new Error(`${where} until must be text, row, url or stable â€” got: ${until}`);
   }
   for (const name of ['timeoutMs', 'intervalMs', 'quietMs'] as const) {
     if (step[name] === undefined) continue;
@@ -328,7 +328,7 @@ async function runStep(driver: JsonRecord, step: BurstStep, results: BurstResult
       if (!still) throw new Error('wait for the page to stop changing timed out');
       return out;
     }
-    throw new Error(`browser_wait_until until must be text, row, url or stable — got: ${String(step.until)}`);
+    throw new Error(`browser_wait_until until must be text, row, url or stable â€” got: ${String(step.until)}`);
   }
 
   throw new Error(`${step.action} is not a step this burst can run`);
@@ -368,7 +368,7 @@ export async function runLocalBurst({ driver, steps, timeoutMs = BURST_MAX_TIMEO
   });
 
   for (let index = 0; index < steps.length; index += 1) {
-    // WHY THE CAST IS SAFE HERE.
+    // THE CAST IS SAFE HERE.
     // the array is a local snapshot; nothing in this loop resizes it.
     const step = steps[index] as BurstStep;
     const remaining = deadline - clock();
@@ -376,7 +376,7 @@ export async function runLocalBurst({ driver, steps, timeoutMs = BURST_MAX_TIMEO
       return failure(index, step, new Error(`run ran out of its ${timeoutMs} ms budget before step ${index}`), true);
     }
     const stepStarted = clock();
-    // WHY THE STEP'S OWN ANSWER IS NOT BOXED IN ANOTHER BOX.
+    // THE STEP'S OWN ANSWER IS NOT BOXED IN ANOTHER BOX.
     // The step already says what it did - the row it found, the key it sent - and a `result` wrapper only makes the reader open one more door to find it.
     try {
       const result = await runStep(driver, step, results, remaining);
@@ -386,7 +386,7 @@ export async function runLocalBurst({ driver, steps, timeoutMs = BURST_MAX_TIMEO
     }
   }
 
-  // WHY A BURST THAT SETTLED TELLS THE LOOK.
+  // A BURST THAT SETTLED TELLS THE LOOK.
   // A wait step ends on a settled page, and a chord-only stream returns a verdict that it watched the page go quiet.
   // The look after the burst would settle the same page again, which is one round trip billed twice, so the burst passes the verdict it already has.
   const settledStep = results.some((entry) => entry.action === 'browser_wait_until' || (entry.action === 'stream' && entry.settled === true));

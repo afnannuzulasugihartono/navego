@@ -4,7 +4,7 @@
 // The --json flag emits the same answers as a single object for MCP clients and scripts.
 // @dependencies: ./wallet-client.js, ./oauth.js, ./lib/endpoints.js.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // An install that cannot say what it is doing misleads the operator into debugging the wrong thing: a missing pairing looks like a broken install, and a refused meter looks like a broken extension.
 // The doctor reads the only state that is real - the loopback bridge's own health answer, the paired device file, and the cloud login - and prints one line per answer plus the one fix that applies, or emits the same thing as JSON for scripts.

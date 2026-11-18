@@ -1,9 +1,9 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: qris — the conversion the payer app accepted on 2026-11-02, pinned tag by tag.
+// @title: qris â€” the conversion the payer app accepted on 2026-11-02, pinned tag by tag.
 // @state: the CRC anchor, the parse round-trip, and the dynamic form: tag 01 12, tag 54 whole rupiah before tag 58, tag 62/07 A02, CRC recomputed.
 // @dependencies: node:test, node:assert/strict, ../hosted/functions/_shared/qris.ts.
 
-// WHY THE CANONICAL VECTOR ANCHORS THE CRC.
+// THE CANONICAL VECTOR ANCHORS THE CRC.
 // The probe on 2026-11-02 measured F47E as the CRC of the real merchant payload, but the full payload lives only on the owner's phone screenshot.
 // CRC16-CCITT-FALSE of "123456789" is 29B1 in every published table, so that vector proves the algorithm, and the structural tests prove the conversion.
 

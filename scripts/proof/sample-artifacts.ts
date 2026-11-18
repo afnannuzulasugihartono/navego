@@ -1,13 +1,13 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: sample-artifacts — the four business artifacts the site hands a visitor, built from the mock company.
+// @title: sample-artifacts â€” the four business artifacts the site hands a visitor, built from the mock company.
 // @state: writes site/public/contoh/ so the download is a real file and a test can prove the bytes on disk are a fresh build.
 // @dependencies: node:fs, node:path, local/spreadsheets.js, local/decks.js, local/documents.js.
 
-// WHY THE SITE SHIPS REAL FILES AND NOT A SCREENSHOT.
+// THE SITE SHIPS REAL FILES AND NOT A SCREENSHOT.
 // A buyer who can open a workbook, a deck and a paper from one conversation is looking at the product working, not at a claim about it.
 // The bytes are deterministic, so the committed file and a fresh build are the same file, and a drift test can say so.
 
-// WHY THIS READS THE SAME FIXTURES THE TESTS DO.
+// THIS READS THE SAME FIXTURES THE TESTS DO.
 // The demo and the suite share one mock company, so a number on the site that drifts from the code that makes it is a failing test rather than a quiet lie.
 
 import fs from 'node:fs';

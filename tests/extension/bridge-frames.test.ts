@@ -1,9 +1,9 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: bridge-frames.test — one protocol serves the loopback socket and the cloud socket.
+// @title: bridge-frames.test â€” one protocol serves the loopback socket and the cloud socket.
 // @state: unit pins the frame shapes and the heartbeat the loopback server sends.
 // @dependencies: node:test, strict, ../extension/lib/socket-protocol.js.
 
-// WHY ONE PROTOCOL FOR BOTH ROADS.
+// ONE PROTOCOL FOR BOTH ROADS.
 // The device already speaks frames: hello, ready, command, complete, ping, pong.
 // The loopback server emits the same frames the cloud bridge emits, so the device runs one client and one drain instead of a socket road and a separate long-poll road with its own wedge, its own timeout, and its own failures.
 // The heartbeat is what keeps an MV3 worker alive: a frame that asks nothing resets the idle timer, which is why the push road works where a silent socket did not.

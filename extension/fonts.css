@@ -3,7 +3,7 @@
 /* @state: static; Instrument Sans (SIL OFL, see fonts/OFL.txt) is the site's display face, shipped beside the pages that wear it. */
 /* @dependencies: fonts/OFL.txt, fonts/InstrumentSans-Variable.ttf. */
 
-/* WHY THE EXTENSION BUNDLES ITS TYPEFACE: the site walks in wearing Instrument Sans; any screen that wears system-ui instead walks in wearing nothing. */
+/* THE EXTENSION BUNDLES ITS TYPEFACE: the site walks in wearing Instrument Sans; any screen that wears system-ui instead walks in wearing nothing. */
 
 @font-face {
   font-family: 'Instrument Sans';

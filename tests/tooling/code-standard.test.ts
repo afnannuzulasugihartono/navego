@@ -3,7 +3,7 @@
 // @state: the local stdio surface tidied its output through tidyForAi, every advertised tool carries description and argument docs, and the tab argument accepts anything tabs answers with.
 // @dependencies: node:test, strict, ../local/tools.js.
 
-// WHY THIS FILE IS A GATE.
+// THIS FILE IS A GATE.
 // An agent reading the tool table sees two loose ends: a tool without a description of what it does, and a schema property the model has to guess at, and guesses cost turns and tokens.
 // A stdio server that prints raw envelopes instead of the one flat shape every surface prints has been shipped once already; the tests passed and the model saw nested junk.
 // So all three are pinned, one test each.

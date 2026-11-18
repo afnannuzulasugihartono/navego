@@ -1,9 +1,9 @@
 // @last-edited: 2026-11-06 UTC+7.
-// @title: extension-run — drive a real browser through the shipped extension, and write down what happened.
+// @title: extension-run â€” drive a real browser through the shipped extension, and write down what happened.
 // @state: the fixture portal, the loopback bridge, a Chrome with the extension loaded, seven calls, and the record.
 // @dependencies: node:crypto, node:fs, node:os, node:path, node:url, ../proof/proof-run.ts.
 
-// WHY THIS FILE EXISTS.
+// THIS FILE EXISTS.
 // The product ships a browser extension and promises it drives the everyday browser without a debugging port.
 // Every proof so far drove a debugging port, which is the other road, so the promise rested on code alone.
 // This run drives the road the extension owns: the shipped extension folder is loaded into a real Chrome, the extension opens the loopback socket itself, and every call the MCP client makes travels through it.
@@ -16,33 +16,33 @@ import { fileURLToPath } from 'node:url';
 
 import { launchProofBrowser, serveCompany, sha256, speakMcp } from '../proof/proof-run.ts';
 
-// WHY THE BRIDGE PORT IS THE ONE THE EXTENSION PROBES FIRST.
+// THE BRIDGE PORT IS THE ONE THE EXTENSION PROBES FIRST.
 // extension/worker/bridge-link.js dials ws://127.0.0.1:9451 before it guesses at any other port, so a run on a port of its own would have the extension talking to somebody else's bridge.
 
 const BRIDGE_PORT = 9451;
 
-// WHY THE DEBUGGING PORT IS A PORT NOTHING LISTENS ON.
+// THE DEBUGGING PORT IS A PORT NOTHING LISTENS ON.
 // A drive that fell back to a debugging port would drive a different browser on a different profile, and the record would claim an extension run that never happened.
 
 const DEBUG_PORT = 9455;
 
-// WHY THE MARKS ARE THE PAGE'S OWN WORDS.
+// THE MARKS ARE THE PAGE'S OWN WORDS.
 // The fixture portal names itself and its download control, so a read that does not show them means the drive read something else, and the record must not say it read the portal.
 
 const MARKS = ['Portal Mitra', 'Unduh CSV'];
 
-// WHY THE CONTROL IS ONE CONSTANT.
+// THE CONTROL IS ONE CONSTANT.
 // The record names the control the drive pressed, and the call must press that same control, so one constant carries both.
 
 const CONTROL = { role: 'link', name: 'Unduh CSV' };
 
-// WHY THE OWN LINK WAIT IS SHORT.
+// THE OWN LINK WAIT IS SHORT.
 // A browser that loaded the extension reaches the bridge on its own schedule, which is seconds, so the default sixty seconds is a minute of waiting to learn what five seconds learns.
 // The joined road keeps the long wait, because that extension may be asleep rather than absent.
 
 const OWN_LINK_WAIT_MS = 5000;
 
-// WHY THE VERSION IS READ BEFORE THE LINK IS WAITED FOR.
+// THE VERSION IS READ BEFORE THE LINK IS WAITED FOR.
 // Chrome 137 removed --load-extension from the branded build, so an own-mode run on a current Chrome loads no extension at all and can only fail after the full link timeout.
 // A build that answers "Chrome/<major>" is a suspect when the link does not come: branded Chrome from 137 on is known to ignore the flag, while Chrome for Testing and Chromium still honour it, and only one of those differences is invisible in this payload.
 
@@ -56,7 +56,7 @@ export function majorOf(product: string): number | null {
   return match ? Number(match[1]) : null;
 }
 
-// WHY THE ROAD SENTENCE DEPENDS ON THE MODE, AND WHY AN ABSENT HEADER IS NOT A ROAD.
+// THE ROAD SENTENCE DEPENDS ON THE MODE, AND WHY AN ABSENT HEADER IS NOT A ROAD.
 // Own mode opens a debugging port to launch its Chrome and loads the extension into it; joined mode touches no port at all.
 // A row set with no header is not a record of either road, and guessing one is the drift the sentence is supposed to prevent, so it says so instead of defaulting.
 
@@ -72,7 +72,7 @@ export function roadFor({ mode }: { mode?: string | undefined } = {}): string {
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-// WHY THE EXTENSION ID IS READ FROM THE MANIFEST KEY.
+// THE EXTENSION ID IS READ FROM THE MANIFEST KEY.
 // The loopback bridge admits only two extension origins, and the id is what carries the origin.
 // Deriving it from the key the manifest ships proves the loaded extension is one of them, and it cannot drift from the manifest.
 
@@ -94,7 +94,7 @@ const health = (port: number) => fetch(`http://127.0.0.1:${port}/health`, { sign
   .then(bodyRecord)
   .catch(() => null);
 
-// WHY THE RUN WAITS FOR THE LINK AND SAYS WHY IT DID NOT COME.
+// THE RUN WAITS FOR THE LINK AND SAYS WHY IT DID NOT COME.
 // The extension connects on its own schedule, and a run that started driving before the socket landed would fall back to a debugging port and call it a success.
 
 async function waitForLink(port: number, { timeoutMs = 60000 }: { timeoutMs?: number } = {}) {
@@ -108,7 +108,7 @@ async function waitForLink(port: number, { timeoutMs = 60000 }: { timeoutMs?: nu
   throw new Error(`the extension did not reach the bridge on 127.0.0.1:${port} within ${timeoutMs} ms; health said ${JSON.stringify(last)}`);
 }
 
-// WHY THE RUN JOINS A BRIDGE THAT IS ALREADY THERE.
+// THE RUN JOINS A BRIDGE THAT IS ALREADY THERE.
 // The loopback bridge holds one device socket, so a second extension connecting would evict the first.
 // On a machine where the everyday browser already has the extension linked, this run therefore joins that bridge and drives the browser the extension already controls; on a quiet machine it starts the bridge itself and loads the extension from the tree.
 // Both roads are the extension's road, and the record says which one ran.
@@ -128,7 +128,7 @@ async function runExtensionProof({
 
   const holder = await health(bridgePort);
 
-  // WHY THE JOIN IS GATED ON A LINKED BRIDGE.
+  // THE JOIN IS GATED ON A LINKED BRIDGE.
   // A bridge server that is up with no extension behind it is a bridge this run cannot drive, and joining it meant waiting sixty seconds for a link that never arrives.
   // Only a linked holder is joined; anything else is the server's own browser.
 
@@ -160,7 +160,7 @@ async function runExtensionProof({
         ]
       });
 
-      // WHY THE VERSION IS READ, AND WHY IT CANNOT REFUSE THE RUN ON ITS OWN.
+      // THE VERSION IS READ, AND WHY IT CANNOT REFUSE THE RUN ON ITS OWN.
       // Branded Chrome 137 and newer ignore --load-extension, so own mode would sit through the whole link timeout on a browser that loaded no extension and then blame the extension for it.
       // But /json/version answers "Chrome/<major>" for branded Chrome and for Chrome for Testing alike, and the two differ exactly here: one ignores the flag and the other honours it.
       // So the version goes into the link-wait timeout instead: the link still has to arrive, and the wait is short so a dead extension is caught in seconds, while the failure names the flag limit as a suspect rather than as the verdict.
@@ -237,7 +237,7 @@ async function runExtensionProof({
     const fixtureHash = sha256(path.join(company, 'transaksi-2026-09.csv'));
     if (hash !== fixtureHash) throw new Error(`the downloaded CSV is not the fixture: ${hash} versus ${fixtureHash}`);
 
-    // WHY THE PRESS IS RECORDED WITH THE FILE.
+    // THE PRESS IS RECORDED WITH THE FILE.
     // A file that landed says the drive fetched something, not that it pushed a button to get it.
     // The press is the product's claim, so the record carries the point it pushed and what was under that point.
 
@@ -281,11 +281,11 @@ async function runExtensionProof({
   }
 }
 
-// WHY THE RECORD IS MARKDOWN AND JSONL BOTH.
+// THE RECORD IS MARKDOWN AND JSONL BOTH.
 // The JSONL is what the suite reads, one line per call, and the Markdown is what a person reads.
 // Neither is generated from the other, so one cannot quietly erase the other.
 
-// WHY THE ROAD AND THE CLOSING SENTENCE ARE REGENERATED FROM THE ROWS.
+// THE ROAD AND THE CLOSING SENTENCE ARE REGENERATED FROM THE ROWS.
 // The markdown is what a person reads and the jsonl is what the suite reads, and neither is written from the other, so a sentence that lives in only one of them is a sentence nobody rechecked.
 // The closing line names the one thing the suite actually does: it re-hashes the fixture and compares, which is a check of the bytes, not a replay of the drive.
 

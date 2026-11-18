@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: local-transport-target.test — a drive names its tab, because the first page is not a target.
+// @title: local-transport-target.test â€” a drive names its tab, because the first page is not a target.
 // @state: the tab a target names, and the socket it is looked up in.
 // @dependencies: none.
 
@@ -87,7 +87,7 @@ function stubBrowser(sockets: any, { reachable = true, urls = [] as string[] } =
   };
 }
 
-// WHY THE PORT ROAD IS GONE AND THE LINK IS THE ONLY WAY.
+// THE PORT ROAD IS GONE AND THE LINK IS THE ONLY WAY.
 // Chrome refuses a debugging port on the profile the person is signed into, so that road could only ever open a fresh profile with nothing in it.
 // The bridge reaches the everyday profile at the same speed, over the same commands, and it is the road the plan is metered on.
 

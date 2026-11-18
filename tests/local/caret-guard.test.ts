@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-27 UTC+7.
-// @title: caret-guard — the gate that keeps a read from moving a user's caret, and the verdict that says so when it did.
+// @title: caret-guard â€” the gate that keeps a read from moving a user's caret, and the verdict that says so when it did.
 // @state: the gate as a table, and the restore verdict on the case the measurement proved impossible.
 // @dependencies: node:test, node:assert/strict, ../local/caret-guard.js, ../local/read-strategy.js.
 
@@ -40,7 +40,7 @@ test('a canvas caret that is not in the DOM cannot be promised back', () => {
   assert.ok(String(verdict.why).length > 0);
 });
 
-// WHY THE OFFSET ALONE IS NOT ENOUGH TO SAY A CARET IS BACK.
+// THE OFFSET ALONE IS NOT ENOUGH TO SAY A CARET IS BACK.
 // Every node of the same length answers with the same offset, so a caret that moved to a different node of the same length would be reported as restored.
 // Measured on a real page while writing the verdict: two adjacent paragraphs of equal length hold the same anchorOffset, and only the path to the host tells them apart.
 

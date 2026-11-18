@@ -5,13 +5,13 @@
  * @dependencies: none.
  */
 
-// WHY THE ENCODER IS MAIN-WORLD AND NOT AN ISOLATED WORLD: measured, the same captureStream bytes come out empty in an isolated realm on this browser - the page's own realm paints, the isolated world is visible but the stream renders nothing.
-// WHY THE LIVE DOM IS UNTOUCHED: everything happens on a detached canvas; nothing the page owns is read, written or restyled.
+// THE ENCODER IS MAIN-WORLD AND NOT AN ISOLATED WORLD: measured, the same captureStream bytes come out empty in an isolated realm on this browser - the page's own realm paints, the isolated world is visible but the stream renders nothing.
+// THE LIVE DOM IS UNTOUCHED: everything happens on a detached canvas; nothing the page owns is read, written or restyled.
 
 (function () {
   'use strict';
 
-  // WHY A LOCAL GUARD: this file ships as a classic script the worker injects with world: 'MAIN'; a static import would be a SyntaxError at injection time.
+  // A LOCAL GUARD: this file ships as a classic script the worker injects with world: 'MAIN'; a static import would be a SyntaxError at injection time.
   // Mirrors extension/lib/guards.ts.
   function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null && !Array.isArray(value);

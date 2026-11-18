@@ -1,9 +1,9 @@
 // @last-edited: 2026-10-11 UTC+7.
-// @title: driver — launches a browser on its own profile, connects, and hands back primitives; or reuses one that is already listening.
+// @title: driver Ã¢â‚¬â€ launches a browser on its own profile, connects, and hands back primitives; or reuses one that is already listening.
 // @state: 5 locks; reuse before launch, profile isolation, and a browser that is actually reachable before it is driven.
 // @dependencies: ./browsers.js, ./cdp.js, ./transport.js, ./primitives.js.
 
-// Why this file exists: the parts below are individually tested and individually correct, and the failure that matters happens between them.
+// this file exists: the parts below are individually tested and individually correct, and the failure that matters happens between them.
 // A browser launched with a profile that is already in use opens a second window, ignores the debugging port, and reports a connection refused with nothing to suggest why.
 // So the profile is always isolated, and the driver never returns until it has spoken to the browser it claims to have started.
 
@@ -73,8 +73,8 @@ async function openBridgeSession({ tabUrl, targetId, timeoutMs, primitivesOption
   };
 }
 
-// WHY THERE IS ONE ROAD.
-// The extension reaches the profile the person is actually logged into, and a debugging port cannot — it opens a fresh profile with nothing signed in.
+// THERE IS ONE ROAD.
+// The extension reaches the profile the person is actually logged into, and a debugging port cannot Ã¢â‚¬â€ it opens a fresh profile with nothing signed in.
 // The port road therefore bought a different browser, not a faster one, and a second browser is a second queue and a second place a plan could be missed.
 // So the link is asked for on every session, and there is nothing else to configure anywhere.
 

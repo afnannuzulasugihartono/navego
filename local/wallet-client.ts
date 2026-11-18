@@ -1,13 +1,13 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: wallet-client — the device's wallet, spoken from the machine that does the work.
+// @title: wallet-client â€” the device's wallet, spoken from the machine that does the work.
 // @state: the device file, the pairing that fills it, and the six calls whose answers are money.
 // @dependencies: node:fs, node:path, node:os, node:crypto, ../extension/lib/endpoints.js.
 
-// WHY THE LOCAL MACHINE PAIRS INSTEAD OF PASTING A SESSION.
+// THE LOCAL MACHINE PAIRS INSTEAD OF PASTING A SESSION.
 // The extension is paired once and then signs every command with a device token; a terminal that pasted a session token would be a second, weaker identity with an hour of life and a copy in shell history.
 // Pairing reuses the same table the extension uses, so the wallet sees one owner whichever surface the work came from.
 
-// WHY NO BALANCE IS KEPT HERE.
+// NO BALANCE IS KEPT HERE.
 // A cached balance is a number that was true once, and the machine that spends it is the machine most likely to be offline when it changes.
 // Every call asks the server; the last answer is printed and thrown away.
 
@@ -42,7 +42,7 @@ export function readDevice({ home = null }: { home?: string | null } = {}): { de
   }
 }
 
-// WHY THE FILE IS WRITTEN WITH ITS OWN MODE.
+// THE FILE IS WRITTEN WITH ITS OWN MODE.
 // The token is the device's whole authority: it spends the wallet.
 // A file another user on the same machine can read is a wallet another user can spend.
 
@@ -53,7 +53,7 @@ export function saveDevice({ deviceName, token }: { deviceName: string; token: s
   return file;
 }
 
-// WHY THE TOKEN IS GENERATED HERE AND NEVER SENT ANYWHERE BUT ITS HASH.
+// THE TOKEN IS GENERATED HERE AND NEVER SENT ANYWHERE BUT ITS HASH.
 // The server stores a hash, so a database that leaks still cannot spend a wallet.
 // The plaintext lives in one file on the machine that earned it.
 

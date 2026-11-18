@@ -1,18 +1,18 @@
 // @last-edited: 2026-11-15 UTC+7.
-// @title: navego-feedback — the pilot page's answers, written down so the first customers are not a memory.
+// @title: navego-feedback â€” the pilot page's answers, written down so the first customers are not a memory.
 // @state: takes one answer from the pilot page, keeps the newest answer per contact, and answers with what it did.
 // @dependencies: edge-runtime, supabase-js, cors, required-env.
 
-// WHY THIS FUNCTION EXISTS.
+// THIS FUNCTION EXISTS.
 // The pilot page asks three questions - which portal, how many clients, what wears them out - and the answers decide which bank gets built first.
 // An answer that lives in a form service's dashboard is an answer that disappears with that service, so the answers belong to the product's own database, next to the price list and the invoices they turn into.
 
-// WHY THE PAGE MAY POST WITHOUT A TOKEN.
+// THE PAGE MAY POST WITHOUT A TOKEN.
 // The visitor is not signed in and never will be: they are a bookkeeper who saw a post and wanted to say something.
 // So this door is open, and what it accepts is one short answer with a contact in it - the same thing a person would type into a WhatsApp message.
 // The origin allowlist is the only gate: a page served from our own site may post, and a script from anywhere else may not read the answer back.
 
-// WHY THE NEWEST ANSWER WINS.
+// THE NEWEST ANSWER WINS.
 // A bookkeeper who answers twice - once from a phone, once from the desk - is one person with one need, not two leads.
 // So the contact is the identity, and the second answer replaces the first, keeping the first time we heard from them.
 
@@ -32,7 +32,7 @@ const LIMITS = Object.freeze({ name: 120, contact: 160, firm: 120, portal: 160, 
 
 function response(req: Request, body: unknown, status: number, headers: Record<string, string> = {}) {
   const origin = resolveAllowedOrigin(req, CORS_DEFAULT_ORIGINS);
-  // WHY A 204 CARRIES NO BODY: the browser's preflight is answered with 204, and a 204 with a body is not a 204 - the edge runtime refuses to build it and the preflight answers 500, so the browser never sends the POST at all.
+  // A 204 CARRIES NO BODY: the browser's preflight is answered with 204, and a 204 with a body is not a 204 - the edge runtime refuses to build it and the preflight answers 500, so the browser never sends the POST at all.
   // Measured on 2026-11-15: the pilot page's form failed in a real browser with "Gagal terkirim" while the same POST from a command line answered 201 - the preflight was the only thing between the visitor and the row.
   const empty = status === 204 || body === null;
   return new Response(empty ? null : JSON.stringify(body), {
@@ -46,7 +46,7 @@ function response(req: Request, body: unknown, status: number, headers: Record<s
   });
 }
 
-// WHY THE FIELDS ARE CUT TO A LENGTH: an answer is a sentence, not a document, and a field with no ceiling is a field that can hold anything.
+// THE FIELDS ARE CUT TO A LENGTH: an answer is a sentence, not a document, and a field with no ceiling is a field that can hold anything.
 
 function text(value: unknown, limit: number): string {
   return String(value ?? "").trim().slice(0, limit);

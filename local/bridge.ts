@@ -1,24 +1,24 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: bridge — the local driver's side of the loopback conversation.
+// @title: bridge â€” the local driver's side of the loopback conversation.
 // @state: the transport it hands the driver, so the drive runs the same over CDP and over the extension.
 // @dependencies: none.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // Chrome refuses a debugging port on the Default profile, and the relay road to this extension costs about two seconds a call through Singapore.
 // The extension can reach this machine over loopback, and a CDP frame fits in one JSON body: method in, result out, debugger calls between them.
 // The worker speaks identical CDP over that conversation, so the whole MCP surface runs on the everyday profile at localhost milliseconds with no flags and no queue.
 
-// WHY THE TRANSPORT ARRIVES INJECTED.
+// THE TRANSPORT ARRIVES INJECTED.
 // The same drive runs over local CDP at a millisecond per primitive and over the remote relay at roughly a second per call.
 // The driver does not know which it holds; it counts milliseconds either way and the caller picks the fastest transport that can reach the tab.
 
-// WHY THE SERVER IS A SOCKET, NOT A HELD REQUEST.
+// THE SERVER IS A SOCKET, NOT A HELD REQUEST.
 // A twenty-second held fetch made every command pay a fresh request, let one hung command wedge the queue for a hundred and forty seconds, and lost commands without a word.
 // The socket pushes the moment a command exists, settles on its completion frame, and the heartbeat on both sides keeps the worker's service worker alive, which is the one thing Chrome actually requires.
 
-// WHY THIS FILE ENDS IN A TRANSPORT AND NOT A CLIENT.
-// cdp.js already owns the half that is hard — matching a reply to the id that asked for it — and the whole drive runs on whatever client it is handed.
+// THIS FILE ENDS IN A TRANSPORT AND NOT A CLIENT.
+// cdp.js already owns the half that is hard â€” matching a reply to the id that asked for it â€” and the whole drive runs on whatever client it is handed.
 // So the bridge hands over a transport, the same contract the real debugging port satisfies, and nothing above this line learns that the bytes went through an extension.
 
 import { createBridgeServer } from './bridge-ws.js';
@@ -29,7 +29,7 @@ const DEFAULT_BRIDGE_PORT = 9451;
 const PROOF_TIMEOUT_MS = 2000;
 const REPLY_TIMEOUT_MS = 10000;
 
-// WHY one sentence names the one fix that exists.
+// one sentence names the one fix that exists.
 // Every other bridge failure names itself at the point it happens; this one is the only case where nothing has gone wrong yet and everything is still unavailable.
 
 export const LINK_ERROR = 'bridge: extension is not connected (start the local driver, then reload the extension)';
@@ -41,7 +41,7 @@ export function bridgePort() {
 let server: BridgeTransport | null = null;
 let lastProofAt = 0;
 
-// WHY the proof is trusted on request and never by default.
+// the proof is trusted on request and never by default.
 // A ping round trip costs about half of a fast call, so bursts pay it over and over for an answer that does not change between one command and the next.
 // Trusting it for a few seconds removes that half, and delays a dead worker's diagnosis by exactly the trust window plus one command timeout.
 // Default zero keeps the safe behavior; whoever sets the window opts into the trade with open eyes.
@@ -51,9 +51,9 @@ function trustedRecently(): boolean {
   return trustMs > 0 && Date.now() - lastProofAt < trustMs;
 }
 
-// WHY A LOST PORT IS A DOOR, NOT A DEAD END.
+// A LOST PORT IS A DOOR, NOT A DEAD END.
 // The bridge is the one thing on this machine that may only exist once: one device socket, one command queue, one browser.
-// A second driver used to read that as a fatal conflict, threw on every call, and took a whole session's tools down with it — measured as `another dev shim owns this machine` followed by an MCP that never connects, while a perfectly good bridge sat one port away holding the browser.
+// A second driver used to read that as a fatal conflict, threw on every call, and took a whole session's tools down with it â€” measured as `another dev shim owns this machine` followed by an MCP that never connects, while a perfectly good bridge sat one port away holding the browser.
 // So the loser of the bind becomes a client of the winner: same commands, same results, same signed-in profile, and the lock that used to enforce one driver per machine has nothing left to enforce.
 
 function adoptedBridge(port: number): BridgeTransport & { adopted: true; probe: () => Promise<boolean>; linked: () => boolean } {
@@ -134,14 +134,14 @@ async function prove(srv: BridgeTransport): Promise<boolean> {
   return false;
 }
 
-// WHY A TAKEOVER IS ONE RETRY.
+// A TAKEOVER IS ONE RETRY.
 // An adopted bridge is a guest of a process that can die, and a guest whose host left keeps reporting a dead port forever.
 // The failure names the host, so the retry is the obvious move: drop the guest, let `ensureServer` bind a port nobody holds, and answer from the bridge this process now owns.
-// One retry, so a command that merely failed is never run twice — command failures come back as answers, not as transport errors.
+// One retry, so a command that merely failed is never run twice â€” command failures come back as answers, not as transport errors.
 
-// WHY AN ADOPTED BRIDGE IS ASKED, NOT REMEMBERED.
+// AN ADOPTED BRIDGE IS ASKED, NOT REMEMBERED.
 // The link flag on a guest is a memory of the last word it heard, and a session that pauses long enough for the owner's extension to drop comes back to a flag that still says "linked" long after the socket went.
-// A guest asks the owner instead — one round trip on a path that already pays one — and a live owner says yes.
+// A guest asks the owner instead â€” one round trip on a path that already pays one â€” and a live owner says yes.
 // The owner's own server keeps its in-process truth.
 
 function meterRefusalOf(srv: BridgeTransport | null): string | null {
@@ -153,7 +153,7 @@ function meterRefusalOf(srv: BridgeTransport | null): string | null {
   }
 }
 
-// WHY THE REFUSAL IS CARRIED, NOT THE LINK ERROR.
+// THE REFUSAL IS CARRIED, NOT THE LINK ERROR.
 // A device sitting right there, refused by the meter, is not a device that is not connected.
 // The person reading the answer needs the one sentence that says why the browser would not load, so when the meter is the reason, the meter's refusal is the error.
 
@@ -204,16 +204,16 @@ export async function waitForBridgeLink({ timeoutMs = 15000 }: { timeoutMs?: num
   return srv.linked();
 }
 
-// WHY THIS IS ASKED EVERY TIME AND NOT DECIDED ONCE.
-// A driver that chose its pipe at startup kept that pipe: the extension was asleep, the probe said no, and the driver stayed on a debugging port that opens a profile nobody is logged into — for the rest of the process's life, with no way out but a restart.
+// THIS IS ASKED EVERY TIME AND NOT DECIDED ONCE.
+// A driver that chose its pipe at startup kept that pipe: the extension was asleep, the probe said no, and the driver stayed on a debugging port that opens a profile nobody is logged into â€” for the rest of the process's life, with no way out but a restart.
 // The link is a live socket, so asking is one field read, and a worker that wakes up thirty seconds later is simply picked up.
 
-// WHY A CONFLICT IS NOT SWALLOWED.
-// Swallowing every error here once sent a live extension silently back to the debugging port, because the real cause was not a missing extension but another process holding the port — so the drive carried on against a profile with nothing signed in and no sign of why.
+// A CONFLICT IS NOT SWALLOWED.
+// Swallowing every error here once sent a live extension silently back to the debugging port, because the real cause was not a missing extension but another process holding the port â€” so the drive carried on against a profile with nothing signed in and no sign of why.
 // There is no version of a silent wrong answer to "can you reach the browser I am signed into".
 
-// WHY THE GUEST IS ASKED WHENEVER IT IS ASKED.
-// `linked` on an adopted bridge remembers the last word it heard, and the very first question a new driver asks is whether the bridge is reachable — a guest that adopted while the extension was between sockets answered "no" forever after, because only a command could set the flag true and every command asks this first.
+// THE GUEST IS ASKED WHENEVER IT IS ASKED.
+// `linked` on an adopted bridge remembers the last word it heard, and the very first question a new driver asks is whether the bridge is reachable â€” a guest that adopted while the extension was between sockets answered "no" forever after, because only a command could set the flag true and every command asks this first.
 // Measured live: the second driver fell back to a debugging port nobody is signed into while a healthy bridge held the browser.
 // So a guest asks the owner, every time, and an owner that is there answers in about a millisecond.
 
@@ -241,10 +241,10 @@ export async function openBridgeTarget(url: string): Promise<{ id: unknown; url:
   return { id: tab.id, url: String(tab.url ?? ''), title: String(tab.title ?? '') } as { id: unknown; url: string; title: string };
 }
 
-// WHY THE PREFERENCE RIDES THE HTTP DOOR AND NOT THE COMMAND QUEUE.
+// THE PREFERENCE RIDES THE HTTP DOOR AND NOT THE COMMAND QUEUE.
 // Tab-less commands must know the pin before they are routed, and both of this machine's drivers meet at the HTTP door - the owner through its own socket, the guest through the loopback port - so the pin is read and written there, not on the wire the extension owns.
 
-// WHY A DEAD OWNER IS ASKED, NOT REMEMBERED, ON THE HTTP DOORS.
+// A DEAD OWNER IS ASKED, NOT REMEMBERED, ON THE HTTP DOORS.
 // The tools below fetch the health and preference doors straight through the loopback port instead of the command queue; a guest pinned to a host that has since died would keep getting "fetch failed" forever instead of taking the port itself.
 // The command path recovers that way (drop the guest, bind again); these two do the same before they ask, so a reload can never wedge the drive.
 
@@ -287,7 +287,7 @@ export async function closeBridgeTarget(targetId: unknown): Promise<unknown> {
   return request('tabs.close', { tabId: Number(targetId) });
 }
 
-// WHY THE CLAIM IS READ FROM THE BRIDGE.
+// THE CLAIM IS READ FROM THE BRIDGE.
 // Each agent spawns its own driver, and two drivers have two memories: a claim kept inside one lets the other drive straight through it.
 // The bridge is where every driver on this machine already meets, so the table lives there and every agent reads the same one.
 
@@ -317,7 +317,7 @@ async function leaseAsk(action: string, tabId: unknown, owner: string, ttlMs?: n
   return body;
 }
 
-// WHY the answer is routed by closure.
+// the answer is routed by closure.
 // It used to sit in a Map keyed by tab id, which meant two sessions on one tab overwrote each other's router and the loser watched its own replies go to a stranger.
 // One transport, one router: the closure cannot be reached by anything but its own client.
 

@@ -3,10 +3,10 @@
 // @state: the gate for ARCHITECTURE.md; a new roof without an entry fails the build.
 // @dependencies: node:test, strict, node:fs, node:path, node:url.
 
-// WHY THIS GATE EXISTS.
+// THIS GATE EXISTS.
 // AGENTS.md binds the agent to ARCHITECTURE.md as the map it must follow before creating anything.
 // A map that quietly disagrees with the tree is worse than no map: it trains the reader not to trust it.
-// So the tree is read, the map is read, and they must agree — by name, by path, by import direction.
+// So the tree is read, the map is read, and they must agree â€” by name, by path, by import direction.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -19,7 +19,7 @@ const repo = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.ur
 const arch = fs.readFileSync(path.join(repo, 'ARCHITECTURE.md'), 'utf8');
 
 // FORMAT OF THE MAP UNDER TEST.
-// - Backtick paths in tables and fences: `dir/foo.js` or `dir/` — the gate checks each exists.
+// - Backtick paths in tables and fences: `dir/foo.js` or `dir/` â€” the gate checks each exists.
 // - The root table: every line starting with `| \`name/\`` or `| \`name\`` names a top-level entry that must exist.
 // - Root enumeration: every top-level file/dir (minus a written exemption list) must appear in the map.
 
@@ -66,7 +66,7 @@ test('every top-level entry is named by ARCHITECTURE.md', () => {
   assert.deepEqual(unnamed, [], `these top-level entries are not named in ARCHITECTURE.md: ${unnamed.join(', ')}`);
 });
 
-// IMPORT MATRIX — specified in the root table of the map, enforced here.
+// IMPORT MATRIX â€” specified in the root table of the map, enforced here.
 
 const IMPORT_RULES = [
   { root: 'extension', allowedPrefixes: ['extension/'], reason: 'extension may only import extension' },
@@ -146,7 +146,7 @@ test('shared modules import only within shared/', () => {
   assert.deepEqual(offenders, [], offenders.join('\n'));
 });
 
-// WHY A COMPILED COPY IS NOT A SECOND SOURCE.
+// A COMPILED COPY IS NOT A SECOND SOURCE.
 // A folder that carries TypeScript is compiled: the .js beside each .ts is an artefact, not a file anyone edits.
 // The failure this rule refuses is the hand-written .js that sits next to a .ts source and drifts from it - the duplicate this whole effort exists to remove.
 // So every .js in such a folder must be untracked (an artefact git does not carry) and must have its .ts source beside it; anything else fails the map.

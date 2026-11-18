@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: ws-server — the smallest RFC 6455 text server this product needs.
+// @title: ws-server â€” the smallest RFC 6455 text server this product needs.
 // @state: the upgrade handshake, masked text frames, ping and pong, close, and the frame cap.
 // @dependencies: none.
 
@@ -14,15 +14,15 @@ import type { Socket } from 'node:net';
 
 const GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 
-// WHY SIXTEEN MEGABYTES, AND WHY OVERFLOW SKIPS INSTEAD OF CLOSING.
-// The only peer is the extension on this machine over loopback, past the origin check, so the cap guards against accidents, not attackers — and a whole pierced document is legitimately megabytes.
+// SIXTEEN MEGABYTES, AND WHY OVERFLOW SKIPS INSTEAD OF CLOSING.
+// The only peer is the extension on this machine over loopback, past the origin check, so the cap guards against accidents, not attackers â€” and a whole pierced document is legitimately megabytes.
 // Measured live: fetching one to find a hidden file input tripped the old one-megabyte cap, which answered by closing the socket and failing every call in flight.
-// An oversized message is now skipped by its own declared length while the link — and every other call on it — carries on.
+// An oversized message is now skipped by its own declared length while the link â€” and every other call on it â€” carries on.
 // Set NAVEGO_BRIDGE_DEBUG_FRAMES to watch sizes.
 
 const MAX_FRAME_BYTES = 16 * 1024 * 1024;
 
-// WHY SHA-1 HERE, AND WHY IT IS NOT A CHOICE.
+// SHA-1 HERE, AND WHY IT IS NOT A CHOICE.
 // RFC 6455 section 4.2.2 defines the handshake response as the base64 of SHA-1 over the client's key and a fixed GUID: the browser checks that exact value, so a different hash computes a different answer and the upgrade fails.
 // It authenticates nothing on this road - the socket is loopback and the origin is checked separately - so the weak-hash rule does not apply to it.
 
@@ -52,7 +52,7 @@ export function encodeText(text: unknown): Buffer {
   return Buffer.concat([header, payload]);
 }
 
-// WHY THE REASON RIDES ALONG.
+// THE REASON RIDES ALONG.
 // A bare 1001 says the browser asked to leave; it says nothing about why.
 // The socket close during the handshake carries the meter's reason so the extension can show it instead of a bare code.
 
@@ -69,8 +69,8 @@ function encodePong(): Buffer {
 
 // A client frame is masked and may be split across TCP reads, so decoding keeps a remainder: the next chunk continues the same frame rather than becoming a second, malformed one.
 
-// WHY FRAGMENTS ARE REASSEMBLED.
-// A large message may also arrive split across WebSocket frames — FIN off, continuations after — and the reader used to drop every continuation on the floor.
+// FRAGMENTS ARE REASSEMBLED.
+// A large message may also arrive split across WebSocket frames â€” FIN off, continuations after â€” and the reader used to drop every continuation on the floor.
 // Small messages always arrive whole, so everything worked until a screenshot-sized completion fragmented: the server waited on half a message until the caller gave up, while snapshots on the same link answered in milliseconds.
 // Measured live as captures failing on whichever tab happened to fragment while reads flew everywhere.
 // Reassembly is per RFC 6455: buffer data frames until FIN, let control frames interleave, refuse what overflows or violates.
@@ -238,11 +238,11 @@ export function isWebSocketUpgrade(request: IncomingMessage): boolean {
   return upgrade === 'websocket' && connection.includes('upgrade');
 }
 
-// WHY THE HOST IS COMPARED, NOT THE STRING.
-// This used to accept any origin ending in an allowed one, which meant `https://notlocalhost` — a domain anybody can register — was allowed to drive the browser sitting on this machine.
+// THE HOST IS COMPARED, NOT THE STRING.
+// This used to accept any origin ending in an allowed one, which meant `https://notlocalhost` â€” a domain anybody can register â€” was allowed to drive the browser sitting on this machine.
 // An origin is a scheme, a host and a port, so the only part worth matching is the host, and the whole string is matched exactly so that a scheme cannot smuggle a host in.
 
-// WHY A MISSING ORIGIN IS ALLOWED.
+// A MISSING ORIGIN IS ALLOWED.
 // Node's own WebSocket client sends none, and so does any other non-browser process on this machine.
 // The server is bound to 127.0.0.1, so an absent Origin means "something local", which is the population this server exists for.
 

@@ -3,12 +3,12 @@
 // @state: the folder the reader allowed, the update that writes the build over it, and the timer that asks for it.
 // @dependencies: ../lib/self-update.js.
 
-// WHY THE EXTENSION HOLDS A FOLDER PERMISSION.
+// THE EXTENSION HOLDS A FOLDER PERMISSION.
 // A browser never updates an extension that was loaded from a folder: it has no updater for one, so the version stands still and the reader is left with the same ritual every time.
 // The one thing a reader can give that turns the ritual into nothing at all is a permission: pick the extension's own folder once, and the extension writes the next build over it and restarts itself.
 // The permission is the reader's, it is remembered for that folder only, and the extension refuses to write anything outside it.
 
-// WHY THE CHECK RUNS ON A TIMER AND NOT ONLY ON A CLICK.
+// THE CHECK RUNS ON A TIMER AND NOT ONLY ON A CLICK.
 // The reader asked for updates that happen; a button that has to be pressed is the ritual this replaces.
 // The worker wakes on an alarm, asks the update service what it serves, and writes the build when it is newer and the permission is still there.
 
@@ -160,7 +160,7 @@ export async function applyNewBuild({ installedVersion }: { installedVersion?: s
   return applyBuild({ folder: handle, installedVersion });
 }
 
-// WHY THE AGENT CAN PULL AN UPDATE WITHOUT THE READER'S HANDS.
+// THE AGENT CAN PULL AN UPDATE WITHOUT THE READER'S HANDS.
 // The reader may close the update page and never open it again, and the agent still has to be able to bring the newest build down.
 // So the device can be asked to apply it: the write is the same write the page does, and the restart follows it.
 
@@ -198,11 +198,11 @@ export function scheduleSelfUpdate() {
 
 export { newerThan, servedVersion };
 
-// WHY THE PAGE WIRING LIVES HERE AND NOT IN A FILE OF ITS OWN.
+// THE PAGE WIRING LIVES HERE AND NOT IN A FILE OF ITS OWN.
 // The page that asks for the permission is this module loaded as a page script, and the worker imports the same module for the alarm.
 // A page script of its own would be reachable by nothing but itself, because the product reaches a page by its address and not by an import.
 
-// WHY ONE BUTTON THAT BRANCHES.
+// ONE BUTTON THAT BRANCHES.
 // Not granted yet the press picks the folder and finishes the job itself; granted the press writes the build over the folder and restarts the worker.
 // The picker cannot live in the popup; this page is the one place the folder is picked, and after that the button is the update.
 // The words, the frame and the accent are the same ones the first-run page wears; a stranger reading both should not notice two screens.
@@ -295,7 +295,7 @@ function wireUpdatePage() {
   void showPageState();
 }
 
-// WHY THE PAGE WIRING ONLY RUNS WHERE THERE IS A PAGE.
+// THE PAGE WIRING ONLY RUNS WHERE THERE IS A PAGE.
 // The worker has no document, and a module that reaches for one there would take the whole service worker down over a page that is not open.
 
 if (typeof document !== 'undefined') wireUpdatePage();

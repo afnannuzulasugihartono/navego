@@ -5,9 +5,9 @@
  * @dependencies: tab-content, private-tabs, capture.js helpers, utils.
  */
 
-// WHY AN ARM/STOP PAIR INSTEAD OF ONE FIXED SCROLL: a recording that only walks top to bottom cannot show what a form accepts, what a menu opens or what a job finishes - the agent must be able to drive anything between arm and stop and still get one continuous artefact.
-// WHY THE DEBUGGER STAYS ATTACHED BETWEEN COMMANDS: the screencast frame events stop the moment the debugger detaches, so arming hands the session its own attachment and stopping reclaims it; between the two, the reader sees the bar Chrome pins on the tab, which is the honest sign the page is being watched.
-// WHY THE ENCODER LIVES IN THE PAGE: only the page's realm can paint a canvas and encode it to a webm; the worker owns the CDP screencast and stays out of the encode.
+// AN ARM/STOP PAIR INSTEAD OF ONE FIXED SCROLL: a recording that only walks top to bottom cannot show what a form accepts, what a menu opens or what a job finishes - the agent must be able to drive anything between arm and stop and still get one continuous artefact.
+// THE DEBUGGER STAYS ATTACHED BETWEEN COMMANDS: the screencast frame events stop the moment the debugger detaches, so arming hands the session its own attachment and stopping reclaims it; between the two, the reader sees the bar Chrome pins on the tab, which is the honest sign the page is being watched.
+// THE ENCODER LIVES IN THE PAGE: only the page's realm can paint a canvas and encode it to a webm; the worker owns the CDP screencast and stays out of the encode.
 
 import { nowIso, sleep } from './utils.js';
 import { HTTP_URL_RE, contentCall, recordScanCall, resolveTabId } from './tab-content.js';
@@ -16,7 +16,7 @@ import { codedError, assertCaptureFramesSafe } from './capture.js';
 import { waitForDownloadByFilename } from './download-wait.js';
 import { isRecord } from '../lib/guards.js';
 
-// WHY THE ENCODER IS DRIVEN BY executeScript, NOT BY MESSAGE PASSING: measured, the isolated world's canvas captureStream delivers nothing to MediaRecorder in this browser; the page's own realm does, so the encoder lives there and the worker calls it the only way a worker can reach it.
+// THE ENCODER IS DRIVEN BY executeScript, NOT BY MESSAGE PASSING: measured, the isolated world's canvas captureStream delivers nothing to MediaRecorder in this browser; the page's own realm does, so the encoder lives there and the worker calls it the only way a worker can reach it.
 
 async function ensureRecordMain(tabId: number) {
   try {

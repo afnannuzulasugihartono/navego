@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-13 UTC+7.
-// @title: docs-structure.test — structure workflow migrations embed valid, proven JSON.
+// @title: docs-structure.test â€” structure workflow migrations embed valid, proven JSON.
 // @state: locks heading, list, table, and image workflow shapes and proofs.
 // @dependencies: node:test, strict, node:fs.
 
@@ -42,7 +42,7 @@ test('insert_image uploads and leaves the caption paragraph ready', () => {
   assert.ok(def.output.placed, 'output proves placement');
 });
 
-// WHY v2 proofs poll instead of reading once.
+// v2 proofs poll instead of reading once.
 // Canvas content reaches the DOM mirrors on Docs time, not ours: the outline lags saves by seconds, so a single read races the mirror and flakes.
 // A bounded repeat exits early on success and fails loudly on exhaustion, which is a wait with proof.
 

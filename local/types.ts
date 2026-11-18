@@ -3,7 +3,7 @@
 // @state: a JSON-shaped record for MCP and page payloads, and the driver surface whose methods are called by name.
 // @dependencies: none.
 
-// WHY JsonRecord CARRIES `any` IN ITS INDEX AND NOT `unknown`.
+// JsonRecord CARRIES `any` IN ITS INDEX AND NOT `unknown`.
 // The MCP argument bag is composed by a model and read by fifty tool branches, and the tool schema has already promised the key and its type before the branch runs.
 // Typed `unknown`, every one of those reads needs a narrowing the schema already proved, and the noise would bury the few reads that genuinely need a check.
 // This is the one place in `local/` where the type is deliberately open; everything that is not the argument bag is narrowed.
@@ -11,7 +11,7 @@
 // biome-ignore lint/suspicious/noExplicitAny: WHY THE RECORD IS OPEN. The MCP argument bag is composed by a model and read by fifty tool branches, and the tool schema has already promised the key and its type before the branch runs; every other read narrows. This is the one place in `local/` where the type is deliberately open.
 export type JsonRecord = Record<string, any>;
 
-// WHY THE DRIVER IS A NAMED INTERFACE AND NOT AN INDEX SIGNATURE.
+// THE DRIVER IS A NAMED INTERFACE AND NOT AN INDEX SIGNATURE.
 // The drive calls its transport by verb, and the two transports answer the same verbs over different pipes.
 // Naming every verb once means a call site that types `driver.clik(...)` is a compile error, and a driver that grows a verb grows it here first.
 
@@ -66,7 +66,7 @@ waitForUrl: DriverMethod;
   windowState: DriverMethod;
 }
 
-// WHY ONE ROW TYPE FOR THE ACCESSIBILITY TREE AND THE MENU TREE.
+// ONE ROW TYPE FOR THE ACCESSIBILITY TREE AND THE MENU TREE.
 // Both are page-computed records with a stable core (role, name, a box, a depth) and whatever extra fields the expression that made them carried.
 // Naming the core means a row that loses one of those fields is a compile error; the index signature keeps the extra fields honest without pretending the module knows them.
 

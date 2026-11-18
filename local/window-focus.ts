@@ -3,16 +3,16 @@
 // @state: one read from the operating system, one write, honest answers on every platform.
 // @dependencies: node:child_process, node:util.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // Measured live on this machine, with the drive typing into a Google Docs document: a browser window that is behind another application still takes the keys, and a browser window that has been minimized does not - text typed after it came back went nowhere.
 // So the operating system is asked about the window, and the agent is told which of those two situations it is in before it wonders.
 
-// WHY FOCUSING ONE WINDOW AND NOT ALL OF THEM.
+// FOCUSING ONE WINDOW AND NOT ALL OF THEM.
 // The machine had two browser windows open, and a script that walked every one of them ended with the wrong window in front \u2014 which looks exactly like nothing working at all.
 // So the call takes the piece of the title to bring forward, and answers with the title it actually brought, so a drive can tell whether it got what it asked for.
 
-// WHY THE ANSWER CARRIES WHY.
+// THE ANSWER CARRIES WHY.
 // A call that cannot focus a window on this machine says so in words.
 // Returning a bare false would leave the agent guessing between "the window is behind something" and "this platform is not supported here".
 
@@ -35,7 +35,7 @@ const run: ExecFunction = (file, args) => new Promise((resolve, reject) => {
   });
 });
 
-// WHY THE TITLES COME BACK AS LINES.
+// THE TITLES COME BACK AS LINES.
 // Every one of these three tools answers with plain text on stdout, and a window title is one line; a title with a newline in it is not a thing a window manager shows.
 
 export interface WindowStateResult {
@@ -58,8 +58,8 @@ const lines = (text: unknown): string[] => String(text ?? '')
   .map((line: string) => line.trim())
   .filter(Boolean);
 
-// WHY A NO-OP ALT GOES OUT BEFORE THE WINDOW IS BROUGHT FORWARD.
-// Windows refuses a foreground change while another application is taking input, and a drive that only calls SetForegroundWindow loses every time the user is typing somewhere else — measured live on this machine, with a typing app in another browser in front: the window came forward and the answer said it had.
+// A NO-OP ALT GOES OUT BEFORE THE WINDOW IS BROUGHT FORWARD.
+// Windows refuses a foreground change while another application is taking input, and a drive that only calls SetForegroundWindow loses every time the user is typing somewhere else â€” measured live on this machine, with a typing app in another browser in front: the window came forward and the answer said it had.
 // The operating system's own documented way round that is a no-op ALT, which makes the calling process eligible to come forward; it presses nothing and types nothing.
 // With it, front answered focused true while the typing app was still running.
 
@@ -111,7 +111,7 @@ public class OperaWindow {
   }
 }`;
 
-// WHY THE CLASS IS ITS OWN PIECE.
+// THE CLASS IS ITS OWN PIECE.
 // The warm shell below compiles it once and keeps the shell, so the fast path and the one-shot path can never drift apart.
 
 const WINDOWS_SCRIPT = (match: string | null) => `
@@ -122,7 +122,7 @@ ${WINDOWS_CLASS}
 "@
 [OperaWindow]::${match === null ? 'Read()' : `Focus('${match.replace(/'/g, "''")}')`}`;
 
-// WHY THE SHELL IS KEPT ALIVE INSTEAD OF STARTED AGAIN.
+// THE SHELL IS KEPT ALIVE INSTEAD OF STARTED AGAIN.
 // Measured on this machine: every read compiled this C# class into a fresh PowerShell, and the compile was the whole cost - 1,096 to 1,376 ms a read, paid on every input action whose page sat behind another window.
 // So one shell starts, compiles once, and then answers a line at a time: the same read, a few milliseconds.
 // The one-shot script above stays the fallback, because a shell that dies must not take the guard with it.
@@ -154,10 +154,10 @@ interface WarmReader {
 
 let reader: WarmReader | null = null;
 
-// WHY THE READER IS ONE PROCESS AND NOT A POOL.
+// THE READER IS ONE PROCESS AND NOT A POOL.
 // Two shells would each hold their own copy of the window list and could answer with different truths, and the guard's answer has to be the one the machine gives right now.
 
-// WHY EVERY SHELL IS KILLED WHEN THE DRIVER GOES.
+// EVERY SHELL IS KILLED WHEN THE DRIVER GOES.
 // The reader outlives the call that started it on purpose, so the process that owns it has to say goodbye to it.
 
 const shells = new Set<import('node:child_process').ChildProcess>();
@@ -168,7 +168,7 @@ process.once('exit', () => {
   }
 });
 
-// WHY AN ABSOLUTE PATH AND NOT A PATH LOOKUP.
+// AN ABSOLUTE PATH AND NOT A PATH LOOKUP.
 // A bare 'powershell' resolves through the PATH environment, which a directory writable by anyone but the owner can shadow with a fake; %SystemRoot% is where Windows actually keeps the real one, and the built-in default keeps the stock install working.
 
 const POWERSHELL = path.join(process.env.SystemRoot ?? process.env.windir ?? 'C:\\Windows', 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
@@ -196,7 +196,7 @@ function warmReader(): WarmReader {
     }
   });
 
-  // WHY A READER THAT STOPS ANSWERING IS DROPPED AND NOT WAITED FOR.
+  // A READER THAT STOPS ANSWERING IS DROPPED AND NOT WAITED FOR.
   // A shell that dies mid-answer leaves a waiter behind, and the next answer would land on it.
   // So a timeout takes the waiter out, kills the shell, and lets the next call start a fresh one.
 
@@ -239,7 +239,7 @@ function warmReader(): WarmReader {
   return reader;
 }
 
-// WHY THE READER STARTS WITH THE PROCESS AND NOT WITH THE FIRST READ.
+// THE READER STARTS WITH THE PROCESS AND NOT WITH THE FIRST READ.
 // The first read would otherwise pay the compile - about a second on this machine - and that read is the one an agent waits on when it sends its first keystroke.
 // So the shell starts in the background when this module loads, and the compile is done long before the first action needs an answer.
 
@@ -255,7 +255,7 @@ const APPLE_FOCUS = (match: string) => [
   'end tell'
 ].join('\n');
 
-// WHY THE REFUSAL HAS THE SAME SHAPE AS THE ANSWER.
+// THE REFUSAL HAS THE SAME SHAPE AS THE ANSWER.
 // Measured on CI: a Linux runner took the refusal path and the answer came back without a `title` at all, because the refusal never had one - so a caller that reads the title of a refusal finds nothing where a caller on Windows finds an empty string.
 // A shape that depends on the platform is a shape a caller has to guess.
 
@@ -282,7 +282,7 @@ const readWindows = (all: string[]): WindowStateResult => {
   };
 };
 
-// WHY THE WARM READER IS ASKED FIRST AND THE ONE-SHOT IS THE FALLBACK.
+// THE WARM READER IS ASKED FIRST AND THE ONE-SHOT IS THE FALLBACK.
 // The warm shell answers in milliseconds because it compiled the class once; the one-shot answers in about a second because it compiles every time.
 // A shell that cannot start must not take the guard with it, so the one-shot stays.
 
@@ -320,7 +320,7 @@ async function x11(match: string | null, run_: ExecFunction): Promise<WindowStat
   return { platform: 'linux', foreground: lines(out.stdout)[0] ?? foreground, windows: [], minimized: [] };
 }
 
-// WHY THE READ ANSWERS INSTEAD OF GUESSING.
+// THE READ ANSWERS INSTEAD OF GUESSING.
 // windowFocused is the difference between "the page ignored my click" and "the page was never in front"; an agent that is told which one it was can act, and one that is told neither spends the drive re-clicking a page that was never listening.
 
 interface WindowReadOptions {
@@ -339,7 +339,7 @@ export async function windowState({ platform = process.platform, exec = run }: W
   }
 }
 
-// WHY THE FOCUS ANSWER NAMES THE WINDOW IT BROUGHT.
+// THE FOCUS ANSWER NAMES THE WINDOW IT BROUGHT.
 // Windows can refuse to come forward \u2014 the operating system says no \u2014 and a drive that cannot tell refusal from success will go on driving a page that is still behind a spreadsheet.
 
 export async function focusWindow(match: unknown = '', { platform = process.platform, exec = run }: WindowReadOptions = {}): Promise<FocusResult> {
@@ -382,7 +382,7 @@ export async function focusWindow(match: unknown = '', { platform = process.plat
       why: focused
         ? ''
         : title
-          ? `the machine brought ${JSON.stringify(title)} forward and then left ${JSON.stringify(after.foreground)} in front of it — something is taking the focus back`
+          ? `the machine brought ${JSON.stringify(title)} forward and then left ${JSON.stringify(after.foreground)} in front of it â€” something is taking the focus back`
           : `no window on this machine has ${JSON.stringify(wanted)} in its title`
     };
   } catch (error: unknown) {

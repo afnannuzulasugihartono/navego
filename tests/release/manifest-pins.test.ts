@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: manifest-pins.test — the extension manifest keeps the shape the compiler needs.
+// @title: manifest-pins.test â€” the extension manifest keeps the shape the compiler needs.
 // @state: the content security policy, the permissions, and the version the manifest carries.
 // @dependencies: node:test, strict, node:fs.
 
@@ -11,12 +11,12 @@ const manifest = JSON.parse(fs.readFileSync(new URL('../../extension/manifest.js
 const csp = manifest.content_security_policy.extension_pages;
 
 test('the worker may reach exactly the hosted bridge and loopback, nothing wider', () => {
-  assert.doesNotMatch(csp, /(^| )https:( |$|;)/, 'a bare wildcard https: admits every https origin — the extension needs named hosts, not a catch-all');
+  assert.doesNotMatch(csp, /(^| )https:( |$|;)/, 'a bare wildcard https: admits every https origin â€” the extension needs named hosts, not a catch-all');
   assert.match(csp, /http:\/\/127\.0\.0\.1:\*/);
   assert.match(csp, /https:\/\/\*\.supabase\.co/);
 });
 
-// WHY this lock exists.
+// this lock exists.
 // connect-src governs WebSocket the same as fetch, and the two schemes never substitute for each other: `https://*.supabase.co` does not admit `wss://`, and `http://127.0.0.1:*` does not admit `ws://`.
 // The device opened no socket at all, with no error anywhere, because of exactly that.
 // A silent transport that never connects is the worst shape of failure there is, so the permission is pinned rather than left to be rediscovered.

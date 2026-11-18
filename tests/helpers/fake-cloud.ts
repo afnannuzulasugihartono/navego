@@ -1,9 +1,9 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: fake-cloud — the cloud the loopback bridge asks about the plan, answered in-process.
+// @title: fake-cloud â€” the cloud the loopback bridge asks about the plan, answered in-process.
 // @state: a granted USD-1 session, a spent day, and a dead socket, each named by the question the bridge asks.
 // @dependencies: none.
 
-// WHY THIS FILE EXISTS
+// THIS FILE EXISTS
 
 // The loopback bridge asks the cloud exactly twice a session: once when the session opens, once when it closes.
 // The local suite proves the bridge's side of that conversation with answers that arrive in the same process, so no suite ever reaches the network.
@@ -38,7 +38,7 @@ export function fakeCloud({ open = pilotSession(), reports = [] as Array<Record<
   };
 }
 
-// WHY AN HTTP FAKE AND NOT ONLY AN IN-PROCESS ONE.
+// AN HTTP FAKE AND NOT ONLY AN IN-PROCESS ONE.
 // The driver builds its bridge inside local/bridge.js, which has no argument to receive a cloud.
 // Pointing NAVEGO_CLOUD_URL at a loopback HTTP server exercises the exact call the production meter makes, so the driver path is proven without a test-only hook in production code.
 

@@ -1,17 +1,17 @@
 // @last-edited: 2026-10-28 UTC+7.
-// @title: leases — which agent drives which tab, so two agents on one browser do not fight over one caret.
+// @title: leases â€” which agent drives which tab, so two agents on one browser do not fight over one caret.
 // @state: one claim per tab, held by name, released by its owner, expired by the clock.
 // @dependencies: none.
 
-// WHY A CLAIM AND NOT A LOCK.
+// A CLAIM AND NOT A LOCK.
 // Two agents on one tab steal the caret from each other and no error names it, so the click simply lands off-target.
 // A claim turns that into a sentence: who holds the tab, and until when.
 
-// WHY THE CLOCK IS RENEWED BY EVERY CALL, NOT SET ONCE.
+// THE CLOCK IS RENEWED BY EVERY CALL, NOT SET ONCE.
 // A claim set at the open outlives a crashed agent and cuts off a long drive; renewing keeps it alive exactly as long as the work does.
 // A silent agent then loses the tab to the next one on the clock, with nobody waiting on it.
 
-// WHY A RELEASE IS THE OWNER'S OWN.
+// A RELEASE IS THE OWNER'S OWN.
 // Any agent releasing any claim lets one agent evict another by mistake, and the eviction is invisible: the tab just stops answering the agent that held it.
 // Closing the tab is the one moment an agent gives a tab up on purpose.
 
@@ -51,7 +51,7 @@ export function createLeaseTable({
 }: LeaseOptions = {}): LeaseTable {
   const table = new Map<string, LeaseEntry>();
 
-  // WHY THE READ ALSO FORGETS.
+  // THE READ ALSO FORGETS.
   // Reading an expired claim as held would strand the tab for the whole window after its agent went away, which is the case the expiry exists for.
 
   const held = (tabId: string): LeaseEntry | null => {

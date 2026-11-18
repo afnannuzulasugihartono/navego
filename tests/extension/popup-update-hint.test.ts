@@ -3,7 +3,7 @@
 // @state: the check the popup makes, the smart door it offers (allow the folder once, or write the build over it), and the doors the menu carries.
 // @dependencies: node:test, node:assert/strict, node:fs.
 
-// WHY THIS GATE READS THE SOURCE.
+// THIS GATE READS THE SOURCE.
 // The popup is an extension page: it runs in the browser with chrome APIs around it, so it cannot be imported here.
 // What can be proved is the text: that the popup asks the update service which version it serves, that it compares the two, that the button it offers does the work a browser cannot do from here, and that the doors out of the popup exist.
 

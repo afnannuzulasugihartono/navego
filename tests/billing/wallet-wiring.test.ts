@@ -1,9 +1,9 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: wallet-wiring — the function calls the wallet with the names the migration declares, and credits on the path that closes the payment.
+// @title: wallet-wiring â€” the function calls the wallet with the names the migration declares, and credits on the path that closes the payment.
 // @state: the two files read against each other: every rpc the function calls exists, every argument it sends is a parameter, and the owner never comes from the body.
 // @dependencies: node:test, node:assert/strict, node:fs.
 
-// WHY THE TWO FILES ARE READ TOGETHER.
+// THE TWO FILES ARE READ TOGETHER.
 // A renamed parameter is a deploy that fails on the first customer with money in hand, and a function name that only one side knows is the same failure one step later.
 // Neither file can be checked alone: the mistake lives in the gap.
 
@@ -24,7 +24,7 @@ test('every wallet rpc the function calls is declared by the migration', () => {
 });
 
 test('every argument the function sends is a parameter the migration declares', () => {
-  // WHY EVERY MIGRATION IS READ AND NOT ONLY THE WALLET ONE.
+  // EVERY MIGRATION IS READ AND NOT ONLY THE WALLET ONE.
   // The function also calls the guarded secret writer, and its parameters are declared in the migration that created it.
   // A parameter declared nowhere is still a deploy that fails on the first call.
   const migrations = fs.readdirSync(new URL('hosted/migrations/', root))

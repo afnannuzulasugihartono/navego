@@ -1,9 +1,9 @@
 // @last-edited: 2026-10-27 UTC+7.
-// @title: action-strategy — whether an action is grounded on an element or on a coordinate, decided from evidence.
+// @title: action-strategy â€” whether an action is grounded on an element or on a coordinate, decided from evidence.
 // @state: the two grounding strategies and one pure function that orders them for a surface.
 // @dependencies: none.
 
-// WHY A CANVAS SURFACE LEADS WITH COORDINATES.
+// A CANVAS SURFACE LEADS WITH COORDINATES.
 // A canvas page exposes no DOM worth querying, but Blink computes an accessibility tree for every rendered page and every node in it resolves to a box.
 // So a coordinate on a canvas page is grounded on a measured box rather than guessed, which is the opposite of a coordinate on a page that does have elements.
 

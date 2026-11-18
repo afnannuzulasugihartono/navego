@@ -1,9 +1,9 @@
 // @last-edited: 2026-11-18 UTC+7.
-// @title: paypal-wiring — the PayPal checkout is session-gated, reads only active USD prices, and activates only after PayPal itself answers SUCCESS.
+// @title: paypal-wiring â€” the PayPal checkout is session-gated, reads only active USD prices, and activates only after PayPal itself answers SUCCESS.
 // @state: the buy action refuses without a session and without a known plan, the webhook refuses without a verified signature, and activation names exactly the USD plans.
 // @dependencies: node:test, strict, node:fs.
 
-// WHY THE WIRING IS PINNED AS TEXT.
+// THE WIRING IS PINNED AS TEXT.
 // This is the money path the site's Beli dengan PayPal buttons reach, and a refactor that drops the session check, trusts an unverified webhook, or silently widens the plan list turns a $1 purchase into a free account.
 // The module tests drive the HTTP doors; this file pins the order of the gates inside the function itself.
 

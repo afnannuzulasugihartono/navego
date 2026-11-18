@@ -1,9 +1,9 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: key-text-events.test — editor text travels as key events, not IME inserts.
+// @title: key-text-events.test â€” editor text travels as key events, not IME inserts.
 // @state: locks the per-character mapping, the newline shape, and the burst flag.
 // @dependencies: node:test, strict, ../extension/lib/keyboard.js, ../extension/lib/protocol.js.
 
-// WHY key events for editor text.
+// key events for editor text.
 // Input.insertText emulates an IME insert with no key events, and editors that key their commit pipeline off key-event sequences (Docs canvas included) drop it silently: executed-ok, nothing painted.
 // One keyDown carrying text plus keyUp per character is what such editors commit.
 // Native inputs keep insertText; the flag opts in per call.

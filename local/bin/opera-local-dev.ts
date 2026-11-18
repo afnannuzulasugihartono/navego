@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // @last-edited: 2026-10-21 UTC+7.
-// @title: opera-local-dev — the development front door for the local MCP server.
+// @title: opera-local-dev â€” the development front door for the local MCP server.
 // @state: the watched files, the supervisor behind the pipe, and the reload it performs on a save.
 // @dependencies: none.
 
@@ -28,7 +28,7 @@ const WATCHED = [
 const log = (message: unknown) => stderr.write(`[opera-local-dev] ${String(message)}\n`);
 
 const supervisor = createSupervisor({
-  // WHY THE CAST: the spawn is declared with stdio pipes, so stdin and stdout are the streams the supervisor reads; Node types them as nullable, the supervisor asks for a non-null pair, and the cast names that contract.
+  // THE CAST: the spawn is declared with stdio pipes, so stdin and stdout are the streams the supervisor reads; Node types them as nullable, the supervisor asks for a non-null pair, and the cast names that contract.
   spawnWorker: () => spawn(execPath, [join(here, 'opera-local.js')], {
     stdio: ['pipe', 'pipe', 'inherit'],
     cwd: join(root, 'local')

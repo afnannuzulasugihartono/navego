@@ -3,7 +3,7 @@
 // @state: the port it listens on and the fact that it is listening.
 // @dependencies: local/bridge-ws.js.
 
-// WHY THIS EXISTS.
+// THIS EXISTS.
 // The local road is a loopback bridge: the extension dials it, and the same commands the relay sends travel over it without leaving the machine.
 // The extension finds the bridge by probing the candidate ports and asking the bridge's own question, so the bridge has to be running before the browser is driven locally.
 // This is that running, in one command, and it prints the address it holds.
@@ -21,7 +21,7 @@ try {
   process.exit(1);
 }
 
-// WHY THE PROCESS STAYS ALIVE.
+// THE PROCESS STAYS ALIVE.
 // The bridge is a socket the extension holds; closing it would close the road the local driver is about to use.
 
 setInterval(() => {}, 60_000);

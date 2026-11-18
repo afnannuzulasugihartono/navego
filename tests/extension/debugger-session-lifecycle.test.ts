@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: debugger-session-lifecycle.test — a trusted click releases its debugger session on every outcome.
+// @title: debugger-session-lifecycle.test â€” a trusted click releases its debugger session on every outcome.
 // @state: the session is detached whether the click succeeded, failed or timed out.
 // @dependencies: node:test, strict, extension-source, deadline-race.
 
@@ -187,7 +187,7 @@ test('withDebugger recovers from a stale attach instead of failing forever', asy
   assert.ok(nonMatching, 'a foreign error must propagate, not trigger a detach');
 });
 
-// WHY the idle release is pinned twice.
+// the idle release is pinned twice.
 // The sweep is the only thing standing between a driven tab and a permanent debugging bar, so its logic is proven by running it and its wiring by reading the call sites.
 // Either half missing reverts to a bar that never leaves.
 

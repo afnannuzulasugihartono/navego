@@ -3,7 +3,7 @@
 // @state: every tracked text file is paid attention to at the byte level: spaces only, LF endings, no line ends with a space, and no file mixing both kinds of line break.
 // @dependencies: node:test, strict, node:fs, node:child_process.
 
-// WHY THIS FILE EXISTS.
+// THIS FILE EXISTS.
 // A file that carries invisible characters is a change nobody reviewed; the diff said nothing and the runtime didn't notice until the image in the README rendered as one line of gibberish.
 // The format gate reads comments, but not the bytes around them; this one does, and it names the file when it fails.
 

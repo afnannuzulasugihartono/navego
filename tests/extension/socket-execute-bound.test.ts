@@ -1,9 +1,9 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: socket-execute-bound.test — one hung command must not wedge the device drain.
+// @title: socket-execute-bound.test â€” one hung command must not wedge the device drain.
 // @state: unit pins the bound plus the source pin proving the drain uses it.
 // @dependencies: node:test, strict, node:fs, node:fs/promises.
 
-// WHY THE BOUND EXISTS.
+// THE BOUND EXISTS.
 // The relay drain awaited execute() with no deadline, so a single CDP call that never settled held the queue for good and no completion ever went out: the runner waited its full budget and the caller saw an unexplained timeout instead of the one command that hung.
 // The bridge half already bounded this; the relay half did not.
 

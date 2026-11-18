@@ -1,9 +1,9 @@
 // @last-edited: 2026-11-16 UTC+7.
-// @title: site-serve — serve site/build/client/ on 127.0.0.1 so the rebuild can be looked at before it ships.
+// @title: site-serve â€” serve site/build/client/ on 127.0.0.1 so the rebuild can be looked at before it ships.
 // @state: one throwaway server for the review step; it reads the build output and answers, and holds no state.
 // @dependencies: node:http, node:fs, node:path.
 
-// WHY THIS EXISTS.
+// THIS EXISTS.
 // A redesign is judged by looking at it, and the shipped site is deployed by a manual dispatch.
 // This serves the exact bytes the build produced, so the screenshots are of the change and not of the last deploy.
 // Run `npm run build --prefix site` first.
@@ -18,9 +18,9 @@ const rootWithSep = root.endsWith(sep) ? root : root + sep;
 const types: Record<string, string> = { '.css': 'text/css', '.js': 'text/javascript', '.html': 'text/html; charset=utf-8', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.xml': 'application/xml', '.txt': 'text/plain; charset=utf-8' };
 const port = Number(process.argv[2] || 8777);
 
-// WHY THE PATH IS BUILT FROM A WHITELIST, NOT JOINED FROM THE REQUEST: joining user input into a filesystem path is the shape the traversal checks flag, whatever guard follows it.
+// THE PATH IS BUILT FROM A WHITELIST, NOT JOINED FROM THE REQUEST: joining user input into a filesystem path is the shape the traversal checks flag, whatever guard follows it.
 // The request names a file, the whitelist decides whether it exists, and only files inside the build output are servable.
-// WHY THE PRETTY URLS ARE SERVED HERE TOO: Cloudflare Pages answers /beranda with the beranda.html file, and the client router has to survive that path.
+// THE PRETTY URLS ARE SERVED HERE TOO: Cloudflare Pages answers /beranda with the beranda.html file, and the client router has to survive that path.
 // The review server mirrors it, so what the reviewer sees is what a reader with an old bookmark gets.
 
 const entries = new Set<string>();

@@ -3,7 +3,7 @@
 // @state: the one SERP parser behind search, on both roads; the local package reads a generated copy of this file, written by scripts/pack/pack-mcp.ts and never committed.
 // @dependencies: none.
 
-// WHY THIS FILE LIVES IN shared/.
+// THIS FILE LIVES IN shared/.
 // The hosted road (edge function, Deno) bundles this folder via static import, and the local road (stdio server, Node) carries a copy written at pack time: one file in this tree, two consumers at build time, no drift to guard.
 
 const BING_HOST = /(^|\.)bing\.com$/i;
@@ -65,7 +65,7 @@ function isExternal(href: string): boolean {
 
 /**
  * Bing wraps organic cards in a redirect: https://www.bing.com/ck/a?...&u=a1<base64url-target>.
- * WHY THE UNWRAP IS RE-VALIDATED.
+ * THE UNWRAP IS RE-VALIDATED.
  * A redirect wrapper promises nothing about its target; the target is attacker-controlled.
  * Returning it without the same checks every other href goes through would let javascript: or file: leak out as "results".
  * So the target passes through isExternal before it is ever returned, and anything that fails stays dropped, exactly like the wrapper itself.
@@ -97,8 +97,8 @@ function unwrapBingRedirect(href: string): string | null {
   return isExternal(target) ? target : null;
 }
 
-// WHY RESULTS ARE ZIPPED FROM THE ANCHORS, NOT FROM THE HEADINGS.
-// Bing emits two anchors per organic card and they share one href: first the display URL ("example.com https://example.com › a › b"), then the title, which is the same text as the h2/h3.
+// RESULTS ARE ZIPPED FROM THE ANCHORS, NOT FROM THE HEADINGS.
+// Bing emits two anchors per organic card and they share one href: first the display URL ("example.com https://example.com â€º a â€º b"), then the title, which is the same text as the h2/h3.
 // Headings also catch People-Also-Ask questions and the "Related searches" and "Pagination" blocks, which have no external href - anchors cannot produce them.
 // Rank is page-local; the caller re-numbers once the pages are concatenated.
 
@@ -128,7 +128,7 @@ export function parseBingSerp({ text = '', links = [] }: SerpPage = {}, { curren
       title = (nonDisplay[nonDisplay.length - 1] ?? '').replace(/\s+/g, ' ').trim().slice(0, 300);
     } else {
       title = (group.texts[group.texts.length - 1] ?? '');
-      const arrow = title.indexOf('›');
+      const arrow = title.indexOf('â€º');
       if (arrow >= 0) title = title.slice(0, arrow);
       title = title.replace(/https?:\/\/\S+/g, '')
         .replace(/\s+/g, ' ')
@@ -139,7 +139,7 @@ export function parseBingSerp({ text = '', links = [] }: SerpPage = {}, { curren
     results.push({ rank: 0, title, url: group.url, site: group.site, snippet: '' });
   }
 
-  // WHY NEXT FIRST IS DERIVED FROM THE PAGE, NOT ASSUMED.
+  // NEXT FIRST IS DERIVED FROM THE PAGE, NOT ASSUMED.
   // Bing's page size changed between result sets before (30, then 10): the pagination links name the first result of each numbered page, so the next page is the smallest first= above the current one, whatever the page size is today.
   let nextFirst: number | null = null;
   for (const link of links) {
@@ -154,9 +154,9 @@ export function parseBingSerp({ text = '', links = [] }: SerpPage = {}, { curren
     if (nextFirst === null || candidate < nextFirst) nextFirst = candidate;
   }
 
-  // WHY THE SNIPPET WALK SKIPS LEADING BLANK LINES.
+  // THE SNIPPET WALK SKIPS LEADING BLANK LINES.
   // Bing puts a blank line between the title and its description, and a line that is only spaces counts as blank once trimmed: a parser that stopped at the first blank would return an empty snippet for every result.
-  // WHY DUPLICATE TITLES CARRY A COUNT, NOT A DELETE.
+  // DUPLICATE TITLES CARRY A COUNT, NOT A DELETE.
   // Two cards may render the same title; a Set with one entry per title would drop the boundary for the second card after the first card's walk, and the snippet would bleed across cards.
   // A multiset keeps one boundary per remaining occurrence.
   const lines = String(text).split(/\r?\n/).map((line: string) => line.trim());
@@ -179,7 +179,7 @@ export function parseBingSerp({ text = '', links = [] }: SerpPage = {}, { curren
     while (k < lines.length) {
       const line = lines[k] as string;
       if (!line) break;
-      if (DISPLAY_URL_LINE.test(line) || line.includes('›')) break;
+      if (DISPLAY_URL_LINE.test(line) || line.includes('â€º')) break;
       if (hasPending(line)) break;
       buf.push(line);
       if (buf.join(' ').length >= 600) break;

@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: apply-migrations — apply SQL migration files through the Supabase Management API.
+// @title: apply-migrations â€” apply SQL migration files through the Supabase Management API.
 // @state: the files it reads and the token it needs; the bytes in the tree are the bytes the database receives.
 // @dependencies: none.
 // It reads files, so the exact bytes in the tree are what the database receives.
@@ -23,7 +23,7 @@ if (!files.length) {
   process.exit(2);
 }
 
-// WHY THE TRIM IS A LOOP AND NOT TWO PATTERNS.
+// THE TRIM IS A LOOP AND NOT TWO PATTERNS.
 // SonarCloud flagged the trim as a pattern that can walk back into a run it has already matched (S8786), which is a fair thing to be suspicious of in a script that names migrations.
 // Walking the string says exactly what it does, and the output is the same string: the folded name with no leading or trailing underscore, cut to sixty characters.
 
