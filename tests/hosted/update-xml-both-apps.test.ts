@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-17 UTC+7.
-// @title: update-xml-both-apps.test â€” a bare manifest update_url still reaches the current build.
+// @title: update-xml-both-apps.test — a bare manifest update_url still reaches the current build.
 // @state: the two app entries the no-id answer carries, and the appid a browser request names.
 // @dependencies: node:test, strict, promises, fs.
 

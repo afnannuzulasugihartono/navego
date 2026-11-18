@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: qris â€” the conversion the payer app accepted on 2026-11-02, pinned tag by tag.
+// @title: qris — the conversion the payer app accepted on 2026-11-02, pinned tag by tag.
 // @state: the CRC anchor, the parse round-trip, and the dynamic form: tag 01 12, tag 54 whole rupiah before tag 58, tag 62/07 A02, CRC recomputed.
 // @dependencies: node:test, node:assert/strict, ../hosted/functions/_shared/qris.ts.
 

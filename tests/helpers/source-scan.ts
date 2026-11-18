@@ -1,11 +1,11 @@
 // @last-edited: 2026-10-04 18:25 UTC+7.
-// @title: source-scan â€” the source-text helpers the drift locks read.
+// @title: source-scan — the source-text helpers the drift locks read.
 // @state: comments and documentation are neutralised before the locks read the source, so prose describing a behaviour is never mistaken for the behaviour itself.
 // @dependencies: none.
 
 // Source-text scanning helpers for drift locks.
 
-// THIS EXISTS: several locks assert something about code that comments and documentation also discuss in prose.
+// SEVERAL LOCKS ASSERT SOMETHING ABOUT CODE THAT COMMENTS AND DOCUMENTATION ALSO DISCUSS IN PROSE.
 // Without neutralising comments those locks fire on a sentence that merely *describes* the behaviour, which makes them noisy and trains reviewers to ignore them.
 
 // A STATE MACHINE INSTEAD OF REGEXES: the first version of this file removed comment text with regular expressions, which had two failure modes that both produce a FALSE PASS on a security-relevant lock -- exactly the wrong direction to fail.

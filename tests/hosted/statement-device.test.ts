@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: statement-device â€” the device side of a delivery, proved against a fake browser.
+// @title: statement-device — the device side of a delivery, proved against a fake browser.
 // @state: the download, the wait, the proof, the manifest, and the refusals.
 // @dependencies: node:test, strict, node:fs, node:os, node:path, ../extension/worker/statement.js.
 

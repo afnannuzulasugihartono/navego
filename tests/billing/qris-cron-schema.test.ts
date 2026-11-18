@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: qris-cron-schema â€” the scheduled detector keeps its token out of git and its schedule sane.
+// @title: qris-cron-schema — the scheduled detector keeps its token out of git and its schedule sane.
 // @state: the migration text read as the shape a deploy creates: a vault-read cron function closed to browsers, and one five-minute schedule.
 // @dependencies: node:test, node:assert/strict, node:fs.
 

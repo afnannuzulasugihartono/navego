@@ -34,12 +34,12 @@ if (!Number.isFinite(baseline)) {
   process.exit(2);
 }
 if (current > baseline) {
-  console.error(`type-debt: ${current} errors under tsconfig.tests.json â€” up from ${baseline}. The count may only go down.`);
+  console.error(`type-debt: ${current} errors under tsconfig.tests.json — up from ${baseline}. The count may only go down.`);
   console.error('type-debt: fix the new errors, or narrow the baseline only after removing real errors.');
   process.exit(1);
 }
 if (current < baseline) {
-  console.log(`type-debt: ${current} errors â€” down from ${baseline}. Lower scripts/verify/type-debt.lock to ${current} and commit it.`);
+  console.log(`type-debt: ${current} errors — down from ${baseline}. Lower scripts/verify/type-debt.lock to ${current} and commit it.`);
   process.exit(1);
 }
-console.log(`type-debt: ${current} errors â€” at baseline ${baseline}.`);
+console.log(`type-debt: ${current} errors — at baseline ${baseline}.`);

@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-11 UTC+7.
-// @title: popup â€” MV3 runtime.
+// @title: popup — MV3 runtime.
 // @state: Indonesian copy; one firm status line, the facts of the device, and the doors out: dashboard, docs, the signed package, and the update.
 // @dependencies: agent-log, error-messages, endpoints.
 

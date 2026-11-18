@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: qris-wiring â€” the dynamic QRIS rail is env-gated, and the static payload never sits in the tree.
+// @title: qris-wiring — the dynamic QRIS rail is env-gated, and the static payload never sits in the tree.
 // @state: the function reads the rail from env, derives the payload at render time, and the qris-self branch writes a local order id instead of a provider link.
 // @dependencies: node:test, node:assert/strict, node:fs.
 

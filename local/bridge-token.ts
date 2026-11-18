@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-17 UTC+7.
-// @title: bridge-token â€” the per-machine secret the local driver presents to the loopback bridge.
+// @title: bridge-token — the per-machine secret the local driver presents to the loopback bridge.
 // @state: exports resolveBridgeToken and header constants; bridge-ws reads it once per server to gate POST endpoints.
 // @dependencies: node:crypto, node:fs, node:os, node:path.
 

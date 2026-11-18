@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: wallet-api â€” the order of decisions, driven without a network or a key.
+// @title: wallet-api — the order of decisions, driven without a network or a key.
 // @state: the refusal that must arrive before any money is promised, the price that must come from the price list, and the two idempotent answers.
 // @dependencies: node:test, node:assert/strict, ../hosted/functions/_shared/wallet-api.ts.
 

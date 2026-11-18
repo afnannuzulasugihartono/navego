@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-28 UTC+7.
-// @title: leases â€” which agent drives which tab, so two agents on one browser do not fight over one caret.
+// @title: leases — which agent drives which tab, so two agents on one browser do not fight over one caret.
 // @state: one claim per tab, held by name, released by its owner, expired by the clock.
 // @dependencies: none.
 

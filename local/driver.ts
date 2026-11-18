@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-11 UTC+7.
-// @title: driver Ã¢â‚¬â€ launches a browser on its own profile, connects, and hands back primitives; or reuses one that is already listening.
+// @title: driver — launches a browser on its own profile, connects, and hands back primitives; or reuses one that is already listening.
 // @state: 5 locks; reuse before launch, profile isolation, and a browser that is actually reachable before it is driven.
 // @dependencies: ./browsers.js, ./cdp.js, ./transport.js, ./primitives.js.
 
@@ -74,7 +74,7 @@ async function openBridgeSession({ tabUrl, targetId, timeoutMs, primitivesOption
 }
 
 // THERE IS ONE ROAD.
-// The extension reaches the profile the person is actually logged into, and a debugging port cannot Ã¢â‚¬â€ it opens a fresh profile with nothing signed in.
+// The extension reaches the profile the person is actually logged into, and a debugging port cannot — it opens a fresh profile with nothing signed in.
 // The port road therefore bought a different browser, not a faster one, and a second browser is a second queue and a second place a plan could be missed.
 // So the link is asked for on every session, and there is nothing else to configure anywhere.
 

@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-13 UTC+7.
-// @title: bridge-socket â€” one persistent socket per device: commands are pushed, completions ride back on it.
+// @title: bridge-socket — one persistent socket per device: commands are pushed, completions ride back on it.
 // @state: 8 locks; upgrade, handshake, push-on-insert, and completions riding back the same socket.
 // @dependencies: ./index.ts helpers via injection.
 
@@ -26,7 +26,7 @@ const VERIFY_TIMEOUT_MS = 30000;
 
 // the cap is a megabyte.
 // Results up to RESULT_BUDGET_BYTES (owned by extension/lib/serialize.js) are legal product output, and a completion carries one.
-// A transport cap below that refuses legal results â€” observed live as "Frame too large" killing a page.read the product explicitly allows, which stranded the command as claimed forever with no recovery.
+// A transport cap below that refuses legal results — observed live as "Frame too large" killing a page.read the product explicitly allows, which stranded the command as claimed forever with no recovery.
 // Stated here rather than imported because the edge bundle cannot reach outside its own directory; a test asserts the relation still holds.
 
 export const MAX_FRAME_BYTES = 4 * 1024 * 1024;
@@ -40,7 +40,7 @@ export const MAX_DECOMPRESSED_BYTES = 8 * 1024 * 1024;
 const GZIP_FRAME_VERSION = 1;
 
 // the pump carries a no-op catch the moment it starts.
-// On garbage input the reader rejects, and if the writer already threw first nothing awaits the pump anymore â€” leaving that rejection unhandled, which outlives the test and fails the file.
+// On garbage input the reader rejects, and if the writer already threw first nothing awaits the pump anymore — leaving that rejection unhandled, which outlives the test and fails the file.
 // The catch marks it handled; the await below still surfaces whatever the pump decided whenever it is reached.
 
 async function gunzipCapped(bytes: Uint8Array<ArrayBuffer>, maxBytes: number): Promise<string | null> {
@@ -186,7 +186,7 @@ export function frameForCommand(command: Record<string, unknown>, serverTime: st
 }
 
 // the runtime is told to wait.
-// After the upgrade response is returned, the HTTP request is considered complete, and with no unresolved waitUntil work the isolate looks idle and is retired early â€” documented as EarlyDrop, observed here as every device socket dying with code 1006 at a consistent seventy-some seconds.
+// After the upgrade response is returned, the HTTP request is considered complete, and with no unresolved waitUntil work the isolate looks idle and is retired early — documented as EarlyDrop, observed here as every device socket dying with code 1006 at a consistent seventy-some seconds.
 // Keeping one promise pending until the socket closes is what tells the supervisor this worker is still doing its job.
 
 // the guard.
@@ -195,7 +195,7 @@ export function frameForCommand(command: Record<string, unknown>, serverTime: st
 
 // the protocol idle timeout is disabled.
 // Deno closes a socket whose peer misses a protocol-level pong, and not every client answers those: observed live, a healthy probe was closed with "No response from ping frame".
-// Liveness here is decided one layer up, where an unanswered application ping closes the socket with 4003 â€” a verdict with a reason, rather than a transport guess.
+// Liveness here is decided one layer up, where an unanswered application ping closes the socket with 4003 — a verdict with a reason, rather than a transport guess.
 
 declare const Deno: {
   upgradeWebSocket(request: Request, options?: { idleTimeout?: number }): { socket: WebSocket; response: Response };

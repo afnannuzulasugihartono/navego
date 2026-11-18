@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: primitives â€” the local driver assembled from the modules that each answer one question.
+// @title: primitives — the local driver assembled from the modules that each answer one question.
 // @state: navigation, focus and the raw protocol escape hatch, with the typing, pointer, reads, waits, canvas and file verbs assigned from their own modules.
 // @dependencies: ./input.js, ./pointer.js, ./observe.js, ./waits.js, ./canvas.js, ./primitives-file.js, ./window-focus.js.
 
@@ -12,7 +12,7 @@
 
 // Dispatches pipeline.
 // One CDP session answers every request by id, so ten sends without an await between them cost one round trip, not ten, and Chrome still processes them in arrival order.
-// Anything that must wait â€” a gap for a menu animation, a tree before its boxes â€” awaits; everything else fires together.
+// Anything that must wait — a gap for a menu animation, a tree before its boxes — awaits; everything else fires together.
 
 import nodeFs from 'node:fs';
 import nodeOs from 'node:os';
@@ -51,7 +51,7 @@ export function createPrimitives(cdp: PrimitivesCdp, { chunkSize = 2000, sleep =
   // The drive is one object assembled by Object.assign across nine files; a closed record would refuse every method those files add.
   // This is the second of the two documented open records in the local road (the first is JsonRecord); nothing leaves the drive through this type either - callers go through the driver manifest in types.ts.
   // The `any` claim belongs to the drive's composition boundary, not to any consumer; the manifest in types.ts is the typed surface.
-  // biome-ignore lint/suspicious/noExplicitAny: the drive is assembled by Object.assign across nine files; a closed record would refuse every method those files add, and nothing leaves the drive untyped â€” callers go through the manifest in types.ts.
+  // biome-ignore lint/suspicious/noExplicitAny: the drive is assembled by Object.assign across nine files; a closed record would refuse every method those files add, and nothing leaves the drive untyped — callers go through the manifest in types.ts.
   const primitives: Record<string, any> = {
     async navigate(url: string) {
       const target = String(url || '').trim();

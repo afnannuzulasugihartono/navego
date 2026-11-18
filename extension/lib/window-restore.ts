@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-25 UTC+7.
-// @title: window-restore â€” the one window update that takes a window off the taskbar.
+// @title: window-restore — the one window update that takes a window off the taskbar.
 // @state: a pure decision over a chrome window: minimize is restored with focus, an unfocused window is focused, a focused window is left alone.
 // @dependencies: none.
 

@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-13 UTC+7.
-// @title: sessions â€” one cached driver per tab, and the tab the agent touches comes forward.
+// @title: sessions — one cached driver per tab, and the tab the agent touches comes forward.
 // @state: keyed cache, adapter shape, front-on-switch (background for a tab the caller owns outright).
 // @dependencies: none.
 
@@ -33,7 +33,7 @@ export function findOn(page: JsonRecord, query: unknown) {
 }
 
 // EXACT MATCHES WIN OVER SUBSTRING ONES.
-// A submenu container carries the concatenated names of everything inside it, so a substring search for an item also matches its own container â€” and overlay-first ordering puts that container first.
+// A submenu container carries the concatenated names of everything inside it, so a substring search for an item also matches its own container — and overlay-first ordering puts that container first.
 // Clicking it hits dead menu background instead of the row, which dismisses the menu and looks exactly like a missed click.
 // The exact row is tried first; the substring stays as the fallback it always was.
 

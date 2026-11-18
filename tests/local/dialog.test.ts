@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-15 UTC+7.
-// @title: dialog â€” an operating system dialog is a window the machine can answer.
+// @title: dialog — an operating system dialog is a window the machine can answer.
 // @state: three named calls, honest refusals, the proof that a page's picker is reachable.
 // @dependencies: node:test, assert, ../local/dialog.js, ../local/mcp-server.js, ../local/agent-guide.js.
 

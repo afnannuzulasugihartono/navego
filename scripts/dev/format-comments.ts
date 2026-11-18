@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-02 UTC+7.
-// @title: format-comments â€” apply the structural comment rule to the tree, and report the files that are not in it.
+// @title: format-comments — apply the structural comment rule to the tree, and report the files that are not in it.
 // @state: `--write` rewrites every source file to the canonical form, and `--check` exits non-zero when any file is not canonical; the agent-tool directories are not repo code and are not read.
 // @dependencies: node:fs/promises, node:path, node:url, tests/helpers/comment-format.ts.
 

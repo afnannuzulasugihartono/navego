@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-27 UTC+7.
-// @title: action-strategy â€” whether an action is grounded on an element or on a coordinate, decided from evidence.
+// @title: action-strategy — whether an action is grounded on an element or on a coordinate, decided from evidence.
 // @state: the two grounding strategies and one pure function that orders them for a surface.
 // @dependencies: none.
 

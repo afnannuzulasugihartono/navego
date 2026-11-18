@@ -1,10 +1,10 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: local-bridge â€” the local bridge end, proven against a scripted device over a real socket.
+// @title: local-bridge — the local bridge end, proven against a scripted device over a real socket.
 // @state: tab ops, CDP transport, error surfacing, the origin boundary, proof, trust, teardown.
 // @dependencies: node:test, strict, ../local/bridge.js, ../local/cdp.js, ../extension/lib/socket-protocol.js.
 
 // A SCRIPTED DEVICE AND NOT THE REAL WORKER.
-// The worker dials one fixed port, so two test files that both import it fight over the same connection â€” observed, and a green run would have meant nothing.
+// The worker dials one fixed port, so two test files that both import it fight over the same connection — observed, and a green run would have meant nothing.
 // The worker's own half is proven in tests/extension/bridge-link.test.ts against the real module over a real socket; this file proves the local API against a device that behaves the way the real one does: hello, answer, report.
 
 // ONE CLAIM CHANGED RATHER THAN DISAPPEARED.
@@ -63,7 +63,7 @@ const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
 import { scriptedDevice } from '../helpers/scripted-device.ts';
 
 // a registry.
-// A test that fails mid-body leaves its device attached, and the next test is then answered by a stranger â€” which reads as a flaky bridge rather than as a failed assertion.
+// A test that fails mid-body leaves its device attached, and the next test is then answered by a stranger — which reads as a flaky bridge rather than as a failed assertion.
 // Observed: one red test turned two.
 
 const live: any = [];
@@ -131,7 +131,7 @@ test('tab operations round-trip through the device', async () => {
 });
 
 // CLOSING IS ASSERTED AT ALL.
-// The transport is a hand-off to cdp.js, so closing has to close it, and while the bridge handed back a bare function instead, `cdp.close()` threw a TypeError â€” which no call test would ever see, because nothing closes a client until somebody tears a session down.
+// The transport is a hand-off to cdp.js, so closing has to close it, and while the bridge handed back a bare function instead, `cdp.close()` threw a TypeError — which no call test would ever see, because nothing closes a client until somebody tears a session down.
 
 test('a CDP client drives through the bridge transport and closes cleanly', async () => {
   const device = await startDevice(() => ({ value: 42 }));
@@ -220,7 +220,7 @@ test('a CDP call is proved before it is sent, like every other command', async (
 // The raw upgrade below is the only place the real header meets the real check.
 
 // THE REQUEST IS BOUNDED.
-// A request that is neither answered nor refused leaves the promise pending forever, and node:test then cancels every test after it â€” which reads as four broken tests instead of one broken handshake.
+// A request that is neither answered nor refused leaves the promise pending forever, and node:test then cancels every test after it — which reads as four broken tests instead of one broken handshake.
 
 // THE HANDSHAKE KEY IS NOT THE SPEC'S OWN SAMPLE.
 // RFC 6455 opens with the nonce 'the sample nonce', and the secret scanner reads any base64 sitting next to the word key as a credential - correctly, and wrongly here.
@@ -263,7 +263,7 @@ test('the origin Chrome sends is the origin the bridge accepts', async () => {
 });
 
 // THE LOOKALIKE IS NAMED IN THE TEST.
-// The old rule accepted any origin ending in an allowed one, so a domain anybody can register â€” https://notlocalhost â€” drove the browser sitting on this machine.
+// The old rule accepted any origin ending in an allowed one, so a domain anybody can register — https://notlocalhost — drove the browser sitting on this machine.
 // A suffix is not a host.
 
 test('a lookalike host and an ordinary site are both refused', async () => {
@@ -276,7 +276,7 @@ test('a lookalike host and an ordinary site are both refused', async () => {
 });
 
 // a taken port is named and never poisons.
-// Two sessions on one machine fight over the same loopback port, and the loser used to fail with a bare system error while keeping the dead server â€” so freeing the port healed nothing.
+// Two sessions on one machine fight over the same loopback port, and the loser used to fail with a bare system error while keeping the dead server — so freeing the port healed nothing.
 // The name tells the loser what happened; forgetting the dead server lets the next try listen.
 // The name now says the holder is not a bridge, which is the only case that still refuses: a real bridge next door is adopted, not fought over.
 
@@ -323,7 +323,7 @@ test('a trusted window skips the proof ping, and zero trust proves every call', 
 
 // THE PORT CONFLICT HAS TO BE LOUD.
 // A live extension was once sent silently back to the debugging port, because the real cause was not a missing extension but another process holding the loopback port.
-// The drive carried on against a profile with nothing signed in, with no sign of why â€” which is the exact stuck-with-no-explanation this file exists to prevent.
+// The drive carried on against a profile with nothing signed in, with no sign of why — which is the exact stuck-with-no-explanation this file exists to prevent.
 // Adopting a real bridge does not weaken it: adoption is proven only against a server that answers as a bridge, so a stranger on the port is still refused.
 
 test('a port held by a stranger is named, not swallowed into a wrong pipe', async () => {
@@ -347,7 +347,7 @@ test('a port held by a stranger is named, not swallowed into a wrong pipe', asyn
 // Asking turns that into the one sentence that names the real problem, now.
 
 // THE GUEST COMES BACK WITH THE DEVICE.
-// The device reconnects and the guest's own answer was asked fresh, so the driver that adopted during the gap believes the bridge is gone for the rest of its life â€” and drives a debugging port nobody is signed into instead.
+// The device reconnects and the guest's own answer was asked fresh, so the driver that adopted during the gap believes the bridge is gone for the rest of its life — and drives a debugging port nobody is signed into instead.
 
 // A SECOND DRIVER DRIVES THE SAME BROWSER.
 // Two sessions on one machine each spawn their own driver, and only one of them can own the loopback port.

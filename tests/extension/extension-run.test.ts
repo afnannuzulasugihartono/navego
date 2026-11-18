@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-06 UTC+7.
-// @title: extension-run â€” the shipped extension drove a real browser, and the record says so.
+// @title: extension-run — the shipped extension drove a real browser, and the record says so.
 // @state: the recorded call sequence, the transport it used, the press and the download hash, the picture, and the markdown that must match the jsonl.
 // @dependencies: node:test, strict, node:crypto, node:fs, node:path, node:url, scripts/dev/extension-run.ts.
 

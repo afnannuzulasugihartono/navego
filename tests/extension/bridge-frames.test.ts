@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: bridge-frames.test â€” one protocol serves the loopback socket and the cloud socket.
+// @title: bridge-frames.test — one protocol serves the loopback socket and the cloud socket.
 // @state: unit pins the frame shapes and the heartbeat the loopback server sends.
 // @dependencies: node:test, strict, ../extension/lib/socket-protocol.js.
 

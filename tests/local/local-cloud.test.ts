@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: local-cloud.test â€” the same tools, the hosted server, and a bearer token.
+// @title: local-cloud.test — the same tools, the hosted server, and a bearer token.
 // @state: a tool call round-tripped against a fake hosted endpoint, and the door it closes when there is no token.
 // @dependencies: node:test, strict, node:http, node:os, node:fs, node:child_process, ../local/bin/navego.js.
 

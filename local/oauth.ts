@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: oauth â€” a browser login for the hosted server, with the token kept beside it.
+// @title: oauth — a browser login for the hosted server, with the token kept beside it.
 // @state: the authorise URL, the loopback callback, the code exchange, the refresh, and where the token file lives.
 // @dependencies: node:crypto, node:fs, node:http, node:os, node:path, node:child_process, node:url.
 

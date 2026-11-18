@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: ws-server.test â€” the loopback socket speaks RFC 6455 well enough to be trusted.
+// @title: ws-server.test — the loopback socket speaks RFC 6455 well enough to be trusted.
 // @state: unit pins the handshake, the three length forms, split-frame decoding, and fragmented messages.
 // @dependencies: node:test, strict, ../local/ws-server.js.
 

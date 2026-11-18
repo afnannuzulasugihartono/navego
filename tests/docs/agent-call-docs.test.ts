@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-14 UTC+7.
-// @title: agent-call-docs â€” the guide a reader is sent to must name the surfaces that exist and the tools that are registered.
+// @title: agent-call-docs — the guide a reader is sent to must name the surfaces that exist and the tools that are registered.
 // @state: the call guide, the local README, the pilot runbook, and the tool list they must agree with.
 // @dependencies: node:test, strict, node:fs, node:url, local/tools.js.
 

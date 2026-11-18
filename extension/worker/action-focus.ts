@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-13 UTC+7.
-// @title: action-focus â€” the foreground focus gate, the action pipeline and trusted input.
+// @title: action-focus — the foreground focus gate, the action pipeline and trusted input.
 // @state: owns the popup focus log and its floor.
 // @dependencies: utils, tab-content, capture, log, protocol, action-pipeline, focus-gate, keyboard, popup-events.
 

@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: docs-menu-walk-v2.test â€” level one clicks, deeper levels hover, every find exact.
+// @title: docs-menu-walk-v2.test — level one clicks, deeper levels hover, every find exact.
 // @state: locks the v2 walk shape against a return to hover-everything.
 // @dependencies: node:test, strict, node:fs.
 

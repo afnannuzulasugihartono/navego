@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-08 UTC+7.
-// @title: edge-syntax.test â€” every edge-function entrypoint parses, so a broken build cannot boot.
+// @title: edge-syntax.test — every edge-function entrypoint parses, so a broken build cannot boot.
 // @state: the instructions literal, and the parse of every function entrypoint in the tree.
 // @dependencies: node:test, strict, promises, node:fs, node:module.
 

@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: socket-execute-bound.test â€” one hung command must not wedge the device drain.
+// @title: socket-execute-bound.test — one hung command must not wedge the device drain.
 // @state: unit pins the bound plus the source pin proving the drain uses it.
 // @dependencies: node:test, strict, node:fs, node:fs/promises.
 

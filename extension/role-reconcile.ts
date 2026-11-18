@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-04 18:25 UTC+7.
-// @title: role-reconcile Ã¢â‚¬â€ role reconciliation, as a classic content script.
+// @title: role-reconcile — role reconciliation, as a classic content script.
 // @state: hygiene pass over this file.
 // @dependencies: none.
 
@@ -9,10 +9,9 @@
 // Content scripts are classic scripts and cannot use ES imports, so the same pattern is used here rather than duplicating the logic inline or adding a second, drifting copy.
 // It stays importable in Node for tests via import-for-side-effect, the same way the semantic engines are tested.
 
-// this exists.
 // `serialize()` read the role straight off the DOM attribute: `role: clean(el.getAttribute('role'), 80)`.
 // A plain <button>Send</button> therefore reported `role: ''`, and any control the author did not annotate was invisible to a role-filtered find.
-// That is not a Google Docs quirk, it is most of the web Ã¢â‚¬â€ and it is why the Page numbers dialog reported `Footer` and `Show on first page` as text but never as a radio or a checkbox.
+// That is not a Google Docs quirk, it is most of the web — and it is why the Page numbers dialog reported `Footer` and `Show on first page` as text but never as a radio or a checkbox.
 
 // Two layers, deliberately separated:
 

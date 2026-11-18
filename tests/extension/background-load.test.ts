@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-09 UTC+7.
-// @title: background-load â€” the service worker graph actually loads.
+// @title: background-load — the service worker graph actually loads.
 // @state: imports the real extension/background.js under a chrome mock; the only test that can catch a broken export, a severed import, or an import cycle that will not evaluate.
 // @dependencies: node:test, strict, extension/background.js.
 

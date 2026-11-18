@@ -1,12 +1,12 @@
 // @last-edited: 2026-10-25 UTC+7.
-// @title: agent-guide â€” what an agent can do here, written as tasks instead of a tool list.
+// @title: agent-guide — what an agent can do here, written as tasks instead of a tool list.
 // @state: recipes, side effects, honesty locks between them and the tools.
 // @dependencies: none.
 
 // THIS FILE EXISTS
 
 // An agent arriving cold does not know what to call first.
-// Every tool description answers "what does this do" and never answer "I want to attach a file, what do I do" â€” so an agent reads all of them, in order, every session, and picks.
+// Every tool description answers "what does this do" and never answer "I want to attach a file, what do I do" — so an agent reads all of them, in order, every session, and picks.
 // Measured on this product's own author: an image upload took a dozen calls and a submenu twenty seconds of polling because the road was never written down anywhere the agent could read it.
 
 // THE RECIPES ARE DATA AND THE CHECKS ARE TESTS.
@@ -19,7 +19,7 @@
 // A tool that quietly moves something should say so in the tool list, where the agent reads before calling, not in a document it reads after being surprised.
 
 // A DOCUMENT OUTLINE IS NOT A MENU.
-// Google Docs renders the document's own headings as role=menuitem, so a walk that trusts roles alone descends into the document â€” measured live: a menu probe on an open Docs menu returned "BAB I PENDAHULUAN" and every paragraph as menu items.
+// Google Docs renders the document's own headings as role=menuitem, so a walk that trusts roles alone descends into the document — measured live: a menu probe on an open Docs menu returned "BAB I PENDAHULUAN" and every paragraph as menu items.
 // The walk therefore treats a menu as a menu only while it hangs off a menubar or a menu that a manu item owns, and a whole branch that grows into document text is refused by name rather than walked to the end of the document.
 
 export const RECIPES = Object.freeze([
@@ -41,7 +41,7 @@ export const RECIPES = Object.freeze([
   {
     task: 'Click a row by what it is called',
     do: ['browser_click'],
-    note: 'Pass role and name instead of x and y: the row is resolved and clicked centred in one call â€” no stale coordinates.'
+    note: 'Pass role and name instead of x and y: the row is resolved and clicked centred in one call — no stale coordinates.'
   },
   {
     task: 'Open a menu and walk into a submenu',
@@ -76,7 +76,7 @@ export const RECIPES = Object.freeze([
   {
     task: 'Put a file into a page that has a file input',
     do: ['browser_intercept_picker', 'browser_click', 'browser_upload_file', 'browser_intercept_picker'],
-    note: 'Enable interception first, click the chooser (or the input), call upload with the path or the bytes, then disable it. If upload reports inputFound:false, the site has no input â€” use the drop below.'
+    note: 'Enable interception first, click the chooser (or the input), call upload with the path or the bytes, then disable it. If upload reports inputFound:false, the site has no input — use the drop below.'
   },
   {
     task: 'Put a file into a page whose chooser has no input',
@@ -131,7 +131,7 @@ export const RECIPES = Object.freeze([
   {
     task: 'Bring a window forward',
     do: ['browser_status', 'browser_focus_window'],
-    note: 'status names the browser in front and whether it is ours; front takes a piece of the window title. With no match, front answers the state without moving anything â€” pass a piece of the title to bring one forward. Never an empty match: that used to bring an arbitrary window forward.'
+    note: 'status names the browser in front and whether it is ours; front takes a piece of the window title. With no match, front answers the state without moving anything — pass a piece of the title to bring one forward. Never an empty match: that used to bring an arbitrary window forward.'
   }
 ]);
 
@@ -150,11 +150,11 @@ export const SIDE_EFFECTS = Object.freeze({
   browser_status: [],
   browser_focus_window: ['brings a browser window to the front of the machine, which takes the keyboard away from whatever was in front'],
   browser_focus_tab: ['brings the window holding one named tab to the front, instead of guessing by window title'],
-  browser_read_dialog: ['reads the dialog\'s title, buttons and field text outside the browser â€” changes nothing'],
+  browser_read_dialog: ['reads the dialog\'s title, buttons and field text outside the browser — changes nothing'],
   browser_type_into_dialog: ['writes text into an operating system dialog outside the browser and reads the field back'],
   browser_press_dialog_button: ['presses a button on an operating system dialog outside the browser'],
   browser_get_guide: [],
-  browser_list_menu: ['reads the menu markup and answers â€” never clicks'],
+  browser_list_menu: ['reads the menu markup and answers — never clicks'],
   browser_walk_menu: ['opens menus by hovering and clicking levels on the way to the path you gave'],
   browser_select_browser: ['pins tab-less commands to the named browser until another switch says otherwise; moves no tab by itself and steers no running drive'],
   browser_list_tabs: [],
@@ -170,7 +170,7 @@ export const SIDE_EFFECTS = Object.freeze({
   browser_type_text: ['inserts text into whatever is focused', 'atEnd: moves the caret to the end before inserting, so text lands at the end instead of wherever the caret was left'],
   browser_scroll: ['moves the view, which can load more of a lazy page and move the page out from under coordinates you already hold'],
   browser_run_steps: ['runs every step in order and stops at the first failure', 'settles and reads the page once at the end, not after each step'],
-  browser_wait_until: ['waits until text appears, a row matches, a url matches, or the page stops changing â€” whatever until= says'],
+  browser_wait_until: ['waits until text appears, a row matches, a url matches, or the page stops changing — whatever until= says'],
   browser_upload_file: ['fills a file input, which fires the change the page listens for'],
   browser_drop_file: ['brings the tab to front and drops a file on it'],
   browser_intercept_picker: ['changes whether the native file picker appears on this tab'],
@@ -181,7 +181,7 @@ export const SIDE_EFFECTS = Object.freeze({
   artifact_build_document: ['writes a checked document plan and the Word file built from it beside the source; no page is touched'],
   artifact_build_workbook: ['writes an Excel workbook and a checked report plan beside the source; no page is touched'],
   artifact_build_slides: ['writes a PowerPoint presentation and the provenance of its figures beside the source; no page is touched'],
-  browser_check_gate: ['reads the gate on the page and names it â€” sign-in, one-time code, captcha, or nothing; types nothing', 'waits for the person to clear the gate in their own browser, then answers with the page as it stands'],
+  browser_check_gate: ['reads the gate on the page and names it — sign-in, one-time code, captcha, or nothing; types nothing', 'waits for the person to clear the gate in their own browser, then answers with the page as it stands'],
   browser_login: ['fills the username and password fields from the credential file and submits; the secret never returns in the answer'],
   browser_solve_captcha: ['reads a captcha image through the configured solver, which spends the person\'s money at that service, then types the answer into the captcha field'],
   browser_screenshot: []
@@ -200,11 +200,11 @@ export function guide(topic: unknown) {
     recipes,
     sideEffects: Object.entries(SIDE_EFFECTS).map(([tool, effects]) => ({ tool, effects })),
     refusals: [
-      'A native operating-system dialog cannot be opened, closed or filled from here â€” try browser_type_into_dialog or browser_press_dialog_button instead, which reach the dialog from the machine.',
-      'There is no raw CDP escape hatch â€” anything that can change the page is a named tool, by design.',
+      'A native operating-system dialog cannot be opened, closed or filled from here — try browser_type_into_dialog or browser_press_dialog_button instead, which reach the dialog from the machine.',
+      'There is no raw CDP escape hatch — anything that can change the page is a named tool, by design.',
       'A tool that reports success is not proof. The page saying so is.',
       'A page cannot see whether the window in front of it is the one the machine has in front. Clicks and keys go nowhere while status says the window is not focused.',
-      'front with no match answers the state without moving anything â€” pass a piece of the window title. An empty match used to bring an arbitrary window forward.',
+      'front with no match answers the state without moving anything — pass a piece of the window title. An empty match used to bring an arbitrary window forward.',
       'A complex document or report is built as a plan on disk (report, doc, sheet, deck) before it reaches a page, not by driving cells one by one.'
     ]
   };

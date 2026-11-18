@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-15 UTC+7.
-// @title: advice â€” a failure that names the problem and what to do about it.
+// @title: advice — a failure that names the problem and what to do about it.
 // @state: rules keyed by failure, moves that name real calls, honesty locks.
 // @dependencies: node:test, strict, ../local/advice.js, ../local/mcp-server.js.
 

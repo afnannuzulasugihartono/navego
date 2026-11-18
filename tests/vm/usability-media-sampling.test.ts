@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-13 UTC+7.
-// @title: usability-media-sampling â€” internal media sampling with local seek.
+// @title: usability-media-sampling — internal media sampling with local seek.
 // @state: media.sample_at is registered with versioned local seek semantics, off the public surface.
 // @dependencies: node:fs, node:test, strict.
 

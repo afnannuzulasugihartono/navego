@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: tab-content â€” content-script injection and the messaging bridge into a tab.
+// @title: tab-content — content-script injection and the messaging bridge into a tab.
 // @state: owns HTTP_URL_RE and the ensureContent script list; that list is pinned by manifest.content_scripts[0].js and must not be edited.
 // @dependencies: utils, log, protocol.
 

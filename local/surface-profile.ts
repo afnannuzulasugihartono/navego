@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-27 UTC+7.
-// @title: surface-profile â€” what a surface is, measured in the page and in its accessibility tree, with the evidence for every claim.
+// @title: surface-profile — what a surface is, measured in the page and in its accessibility tree, with the evidence for every claim.
 // @state: the in-page probe expression, the accessibility measurement, and the profile both halves build.
 // @dependencies: none.
 

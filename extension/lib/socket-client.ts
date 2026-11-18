@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: socket-client â€” one persistent connection to the bridge, reconnected on its own, never polled.
+// @title: socket-client — one persistent connection to the bridge, reconnected on its own, never polled.
 // @state: the handshake gate, the ordered dispatch, the backoff, the fatal close, and the stored-completion resend.
 // @dependencies: ./socket-protocol.js, ./guards.js.
 
@@ -154,7 +154,7 @@ const SILENCE_LIMIT_MS = 60000;
 const WATCHDOG_MS = 10000;
 
 // the socket is recycled before the platform kills it.
-// Edge isolates have a hard wall clock limit â€” about 150 seconds on this project â€” and waitUntil only prevents early retirement, never extends it.
+// Edge isolates have a hard wall clock limit — about 150 seconds on this project — and waitUntil only prevents early retirement, never extends it.
 // Observed live as code 1006 at a metronomic 151 seconds after waitUntil fixed the 76-second EarlyDrop deaths.
 // A recycle is the same reconnect the client already does, except it happens on our schedule: only when no command is running, so nothing is ever interrupted, and early enough that the wall clock never fires first.
 

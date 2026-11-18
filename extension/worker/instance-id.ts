@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: instance-id â€” the name one browser keeps, so two browsers are two devices.
+// @title: instance-id — the name one browser keeps, so two browsers are two devices.
 // @state: one generated id per browser profile, kept in that profile's own storage.
 // @dependencies: none.
 

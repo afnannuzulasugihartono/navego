@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: cloud â€” the same tools, the hosted server, and a bearer token.
+// @title: cloud — the same tools, the hosted server, and a bearer token.
 // @state: stdio in, HTTP out; the token from the environment or the login file; nothing renamed on the way through.
 // @dependencies: node:readline, ./oauth.js.
 

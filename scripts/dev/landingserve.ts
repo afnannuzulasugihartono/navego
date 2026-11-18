@@ -1,9 +1,8 @@
 // @last-edited: 2026-11-16 UTC+7.
-// @title: site-serve â€” serve site/build/client/ on 127.0.0.1 so the rebuild can be looked at before it ships.
+// @title: site-serve — serve site/build/client/ on 127.0.0.1 so the rebuild can be looked at before it ships.
 // @state: one throwaway server for the review step; it reads the build output and answers, and holds no state.
 // @dependencies: node:http, node:fs, node:path.
 
-// THIS EXISTS.
 // A redesign is judged by looking at it, and the shipped site is deployed by a manual dispatch.
 // This serves the exact bytes the build produced, so the screenshots are of the change and not of the last deploy.
 // Run `npm run build --prefix site` first.

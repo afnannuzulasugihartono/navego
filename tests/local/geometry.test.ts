@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-15 UTC+7.
-// @title: geometry â€” a point that means the same place after the window changes.
+// @title: geometry — a point that means the same place after the window changes.
 // @state: the capture's own size, the fraction resolved at click time, the answer that says which.
 // @dependencies: node:test, assert, ../local/primitives.js.
 

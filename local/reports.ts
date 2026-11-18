@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-22 UTC+7.
-// @title: reports â€” a table becomes figures that name their source, and a figure that cannot be checked is refused.
+// @title: reports — a table becomes figures that name their source, and a figure that cannot be checked is refused.
 // @state: CSV/TSV text in, a docplan and a figure ledger out, plus the recheck that catches an edited number.
 // @dependencies: node:fs, node:path.
 
@@ -250,7 +250,7 @@ export function buildReport({ table, spec }: { table?: ParsedTable; spec?: Repor
       period,
       blocks: [
         { kind: 'heading', level: 1, text: title },
-        { kind: 'paragraph', text: `Klien: ${client} Â· Periode: ${period}` },
+        { kind: 'paragraph', text: `Klien: ${client} · Periode: ${period}` },
         {
           kind: 'table',
           headers: [groupBy, 'Total'],

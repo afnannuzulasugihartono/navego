@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-26 UTC+7.
-// @title: invoice-worker â€” the page reaches the browser as a page, and every other path is still the site.
+// @title: invoice-worker — the page reaches the browser as a page, and every other path is still the site.
 // @state: the proxy, the relabel, the redirect, the asset fallback, the failure page, and the absence of a secret.
 // @dependencies: node:test, node:assert, node:fs, ../site/worker/_worker.ts.
 

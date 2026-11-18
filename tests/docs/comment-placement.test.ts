@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-11 UTC+7.
-// @title: comment-placement â€” a comment documents a declaration, so it stands outside it.
+// @title: comment-placement — a comment documents a declaration, so it stands outside it.
 // @state: 2 locks; no comment inside a body, and the scanner that decides it.
 // @dependencies: node:test, assert, fs, path, child_process.
 
@@ -8,12 +8,12 @@
 // Above a declaration or a top-level statement is fine: the file header, a function above its signature, a config key above its value.
 // Inside a body is not: between two statements, inside a loop, in the middle of a stylesheet or a SQL statement.
 
-// , MEASURED: 4,036 comments in this repository before the rule, a large share inside bodies.
-// The cost was never the words â€” a comment three lines from the decision it describes stops describing it when the code moves, and nothing notices, because a stale comment is still syntactically a comment.
+// MEASURED: 4,036 comments in this repository before the rule, a large share inside bodies.
+// The cost was never the words — a comment three lines from the decision it describes stops describing it when the code moves, and nothing notices, because a stale comment is still syntactically a comment.
 // A comment inside a body reads as permanent: it looks like part of the algorithm, so nobody touches the block around it.
 
 // NO CARVE-OUT: the rule first said "runtime code, but not tests".
-// That was true and still wrong â€” "which files count" is the question a gate exists to stop having.
+// That was true and still wrong — "which files count" is the question a gate exists to stop having.
 // So the scope is every tracked and untracked file, in every language.
 
 // WHAT IT COST: 705 lines of migration notes in hosted/migrations/, which recorded why each migration exists.

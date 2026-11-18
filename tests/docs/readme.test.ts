@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-22 UTC+7.
-// @title: readme â€” the README's numbers are measured, so the file cannot drift from the code.
+// @title: readme — the README's numbers are measured, so the file cannot drift from the code.
 // @state: three gates: the primitive count, the local tool count, and the deployed edge functions.
 // @dependencies: node:test, node:assert/strict, node:fs, node:path.
 

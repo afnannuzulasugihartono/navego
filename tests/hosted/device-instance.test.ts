@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: device-instance â€” a browser keeps an identity, so a second browser is a second device.
+// @title: device-instance — a browser keeps an identity, so a second browser is a second device.
 // @state: the identity on the handshake, its absence tolerated, and the bridge naming the browser it heard.
 // @dependencies: node:test, strict, ../extension/worker/instance-id.js, ../extension/lib/socket-protocol.js, ../hosted/functions/navego-bridge/bridge-socket.ts, ../local/bridge-ws.js.
 

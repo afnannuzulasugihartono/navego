@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: focus-and-keyboard.test â€” focus stays stable, and a trusted input never moves the page.
+// @title: focus-and-keyboard.test — focus stays stable, and a trusted input never moves the page.
 // @state: the focus gate as behaviour, the keyboard chords as behaviour, and the frozen invariant that a trusted click never activates a tab.
 // @dependencies: node:test, strict, promises, focus-gate, keyboard, extension-source.
 
@@ -139,7 +139,7 @@ test('modifiers OR into the CDP bitmask and accept their common aliases', () => 
 });
 
 // UPPERCASE PLUS MODIFIERS IS REFUSED.
-// An uppercase letter implies shift, so resolveChord('F', ['control', 'alt']) silently became Ctrl+Alt+Shift+F â€” a chord Docs ignores â€” while the caller meant the footnote shortcut Ctrl+Alt+F. Lowercase with explicit modifiers is the only honest shape.
+// An uppercase letter implies shift, so resolveChord('F', ['control', 'alt']) silently became Ctrl+Alt+Shift+F — a chord Docs ignores — while the caller meant the footnote shortcut Ctrl+Alt+F. Lowercase with explicit modifiers is the only honest shape.
 
 test('an uppercase letter with shiftless modifiers fails naming lowercase', () => {
   assert.throws(() => resolveChord('F', ['control', 'alt']), /lowercase f/);

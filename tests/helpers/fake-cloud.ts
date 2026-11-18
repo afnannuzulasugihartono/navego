@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: fake-cloud â€” the cloud the loopback bridge asks about the plan, answered in-process.
+// @title: fake-cloud — the cloud the loopback bridge asks about the plan, answered in-process.
 // @state: a granted USD-1 session, a spent day, and a dead socket, each named by the question the bridge asks.
 // @dependencies: none.
 

@@ -41,7 +41,7 @@ test('the register parses and names the sweep that produced it', () => {
   assert.ok(typeof register.generated === 'string' && register.generated.length > 0, 'the register says when it was built');
   assert.ok(typeof register.source === 'string' && register.source.length > 0, 'the register says where the inventory came from');
   assert.ok(Array.isArray(register.machines), 'the register lists its machines');
-  assert.ok(register.machines.length >= 30, `the sweep found at least 30 machines, found ${register.machines.length} â€” if this falls below 30, the sweep shrank, and nobody can say why`);
+  assert.ok(register.machines.length >= 30, `the sweep found at least 30 machines, found ${register.machines.length} — if this falls below 30, the sweep shrank, and nobody can say why`);
 });
 
 test('every machine in the register is complete enough to act on', () => {
@@ -53,10 +53,10 @@ test('every machine in the register is complete enough to act on', () => {
     seen.add(machine.id);
     assert.ok(['extension', 'local', 'shared', 'sql', 'edge', 'site', 'billing', 'tooling'].includes(machine.kind), `${machine.id} names a kind this repo understands, found ${machine.kind}`);
     assert.ok(typeof machine.where === 'string' && machine.where.length > 0, `${machine.id} points somewhere`);
-    assert.ok(Array.isArray(machine.states) && machine.states.length >= 2, `${machine.id} declares at least two states â€” a machine with one state is a constant, not a machine`);
-    assert.ok(typeof machine.wrongIfConfused === 'string' && machine.wrongIfConfused.length >= 40, `${machine.id} says what a user sees when confused â€” the reason the machine exists`);
+    assert.ok(Array.isArray(machine.states) && machine.states.length >= 2, `${machine.id} declares at least two states — a machine with one state is a constant, not a machine`);
+    assert.ok(typeof machine.wrongIfConfused === 'string' && machine.wrongIfConfused.length >= 40, `${machine.id} says what a user sees when confused — the reason the machine exists`);
     assert.ok(DECISIONS.has(machine.decision), `${machine.id} decides: ${[...DECISIONS].join(' or ')}`);
-    assert.ok(typeof machine.why === 'string' && machine.why.length >= 40, `${machine.id} says why that decision â€” a reason nobody else has yet`);
+    assert.ok(typeof machine.why === 'string' && machine.why.length >= 40, `${machine.id} says why that decision — a reason nobody else has yet`);
     assert.ok(Number.isInteger(machine.rank) && machine.rank >= 1 && machine.rank <= 5, `${machine.id} ranks within 1 (fix first) to 5`);
   }
 });
@@ -76,7 +76,7 @@ test('the register is sorted by rank, then id, so the urgent machine is first', 
   const register = read('docs/state-machines.json');
   const keys = register.machines.map((m): [number, string] => [m.rank, m.id]);
   const sorted = [...keys].sort((a, b) => a[0] - b[0] || (a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0));
-  assert.deepEqual(keys, sorted, 'state machines are registered by urgency: rank ascending, id as tiebreak â€” if the register is not sorted, an urgent machine can be hiding at the bottom');
+  assert.deepEqual(keys, sorted, 'state machines are registered by urgency: rank ascending, id as tiebreak — if the register is not sorted, an urgent machine can be hiding at the bottom');
 });
 
 test('this repository carries the rule it is named for', () => {

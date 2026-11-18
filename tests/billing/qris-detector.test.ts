@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: qris-detector â€” the feed query the API accepts, the parser for the feed it really returns, and amount-FIFO matching on settled dynamic QRIS money.
+// @title: qris-detector — the feed query the API accepts, the parser for the feed it really returns, and amount-FIFO matching on settled dynamic QRIS money.
 // @state: query validation with the server-side filters, header shape with one stable x-uniqueid, the token route's own headers and nested body, feed normalization on the measured field names, exact-amount FIFO matching with a clock check, and dry mode that closes nothing.
 // @dependencies: node:test, node:assert/strict, ../hosted/functions/_shared/qris-detector.ts.
 

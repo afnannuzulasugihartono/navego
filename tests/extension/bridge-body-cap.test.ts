@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: bridge-body-cap.test â€” the bridge reads a body of unknown length without trusting the header.
+// @title: bridge-body-cap.test — the bridge reads a body of unknown length without trusting the header.
 // @state: the chunked body is measured, not assumed, and the cap refuses the body that is too large.
 // @dependencies: node:test, strict, node:fs, node:module, node:vm.
 

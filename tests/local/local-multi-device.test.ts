@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: multi-device-bridge â€” two browsers on one machine, carried at once, addressed apart.
+// @title: multi-device-bridge — two browsers on one machine, carried at once, addressed apart.
 // @state: the merged list, the routed CDP call, and the health report, each proven against two scripted devices over real sockets.
 // @dependencies: node:test, strict, ../local/bridge-ws.js, ./helpers/scripted-device.ts, ../extension/lib/socket-protocol.js.
 
@@ -75,7 +75,7 @@ test('two browsers connect at once, and the merged list names both', async () =>
   assert.equal(answer.ok, true);
   assert.equal(answer.result.length, 2, 'both browsers are in one list');
   assert.equal(new Set(answer.result.map((tab) => tab.id % 10000000000)).size, 1, 'both number their own tabs from the same start');
-  assert.equal(new Set(answer.result.map((tab) => Math.floor(tab.id / 10000000000))).size, 2, 'and neither row can be mistaken for the other browserâ€™s tab');
+  assert.equal(new Set(answer.result.map((tab) => Math.floor(tab.id / 10000000000))).size, 2, 'and neither row can be mistaken for the other browser’s tab');
 
   await chrome.stop();
   await brave.stop();
@@ -98,7 +98,6 @@ test('a browser that disconnects and reconnects keeps its namespaced tab ids', a
 
   await fetch(`http://127.0.0.1:${port}/health`).then((response) => response.json());
   const id1 = await once('browser-chrome', 'https://reconnect/');
-  // After a fresh connection cycle, a fresh tab read should keep the same namespaced id because the slot map is keyed by instanceId.
   const id2 = await once('browser-chrome', 'https://reconnect/');
   assert.equal(id1, id2, 'the same browser keeps the same tab id across reconnects');
 

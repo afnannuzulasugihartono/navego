@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: socket-drain-safety.test â€” nothing in the drain may throw out of it.
+// @title: socket-drain-safety.test — nothing in the drain may throw out of it.
 // @state: pins that a foreign frame and a failing completion frame both stay inside the drain.
 // @dependencies: node:test, strict, node:fs/promises, ../extension/lib/socket-client.js.
 

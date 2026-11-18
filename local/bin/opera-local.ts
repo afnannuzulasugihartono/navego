@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // @last-edited: 2026-10-13 UTC+7.
-// @title: opera-local â€” the installed entry point: a local CDP driver behind an MCP stdio server.
+// @title: opera-local — the installed entry point: a local CDP driver behind an MCP stdio server.
 // @state: binds the protocol to a real browser and to the environment it was given.
 // @dependencies: ../mcp-server.js, ../driver.js, ../sessions.js, ../transport.js.
 
@@ -221,7 +221,7 @@ await bridgeReachable().catch(() => false);
 
 // THE PORT IS A FUNCTION AND NOT A VALUE.
 // The pipe is chosen per call, because a worker that was asleep at startup picks itself up thirty seconds later.
-// A port read once at startup reports the debugging port long after the drive has moved to the bridge â€” which is a wrong answer about a port nothing is listening on.
+// A port read once at startup reports the debugging port long after the drive has moved to the bridge — which is a wrong answer about a port nothing is listening on.
 
 // The hand-built wrapper carries the verbs this CLI road exposes; the server's Driver names the full primitive surface.
 // The gap is pre-existing and outside a type-only stage, so the object is asserted here and the debt is named rather than hidden.

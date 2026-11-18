@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: statement-proof â€” the proof a delivered client-month carries, frozen.
+// @title: statement-proof — the proof a delivered client-month carries, frozen.
 // @state: the record and the manifest answer match the declared contract, field by field and type by type.
 // @dependencies: node:test, strict, node:fs, node:os, node:path, ../local/statements.js.
 

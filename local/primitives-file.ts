@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: primitives-file â€” the verbs that move a file: upload, drop, and download.
+// @title: primitives-file — the verbs that move a file: upload, drop, and download.
 // @state: the file chooser, the dropped file, and the download that proves itself on disk.
 // @dependencies: node:buffer, ./page-expressions.js.
 
@@ -85,7 +85,7 @@ export function filePrimitives(primitives: import('./types.js').JsonRecord, { cd
 
       // THE FINDER ASKS CDP BEFORE ASKING THE PAGE, AND SWEEPS THE FRAMES.
       // A page script can only walk shadow roots it is allowed to see, and Google Docs keeps its image input in a closed one inside its picker frame: the script reported no input while the input was demonstrably there.
-      // `DOM.querySelectorAll` with `pierce` answers for a whole document, closed roots included, and returns only the matches â€” the entire pierced tree fetched at once timed out live on a heavy page.
+      // `DOM.querySelectorAll` with `pierce` answers for a whole document, closed roots included, and returns only the matches — the entire pierced tree fetched at once timed out live on a heavy page.
       // `pierce` does not cross into a child frame, though, so each frame is asked for its owner, its owner's content document, and then the same pierced query.
       // The page script stays as the last road: it is the only one that can follow a frame the browser will not describe.
 
@@ -171,7 +171,7 @@ export function filePrimitives(primitives: import('./types.js').JsonRecord, { cd
       };
 
       // DRAGS ARE INTERCEPTED FIRST AND RELEASED ON EVERY WAY OUT.
-      // Chrome only accepts a dispatched drag while interception is on, and a page left in that state stops believing real ones â€” the pointer would do nothing on this tab until it was released, which is worse than the problem being solved.
+      // Chrome only accepts a dispatched drag while interception is on, and a page left in that state stops believing real ones — the pointer would do nothing on this tab until it was released, which is worse than the problem being solved.
       // So the release is in the finally, where a failure still reaches.
       try {
         await cdp.send('Page.bringToFront');

@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-22 UTC+7.
-// @title: report-job â€” a table becomes figures that name their source, and a figure that cannot be checked is refused.
+// @title: report-job — a table becomes figures that name their source, and a figure that cannot be checked is refused.
 // @state: the parser, the money rule, the period guard, the docplan and the recheck, each pinned by one behaviour.
 // @dependencies: node:test, strict, ../local/reports.js.
 

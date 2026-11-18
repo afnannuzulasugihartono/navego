@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: bridge-link â€” the extension end of the localhost bridge: one socket, pushed.
+// @title: bridge-link — the extension end of the localhost bridge: one socket, pushed.
 // @state: one socket to the local server, CDP routed by tab, one command at a time, traceable.
 // @dependencies: socket-client, capture, debugger-session, log.
 
@@ -31,7 +31,7 @@
 // WHAT IT DELIBERATELY DOES NOT DO.
 // No CDP events ride back: nothing on the local side subscribes to any, so forwarding them would be latency for nobody.
 // The one thing it does refuse is anyone else: the local server binds to 127.0.0.1 and admits only this extension's origin, so a page on this machine cannot open a socket and drive the browser as if the person had asked it to.
-// That is a narrower boundary than the debugging port it replaces, which had none at all â€” and it is the only auth the bridge needs.
+// That is a narrower boundary than the debugging port it replaces, which had none at all — and it is the only auth the bridge needs.
 
 import { log } from '../lib/log.js';
 import { createSocketClient } from '../lib/socket-client.js';
@@ -137,7 +137,7 @@ function publicBridgeTab(tab?: chrome.tabs.Tab | undefined) {
 
 // THE BOUND SITS UNDER THE CALLER'S TIMEOUT.
 // The local side gives a command ten seconds and then stops listening.
-// This side used to hold a command for a minute before giving up on it, so one hung call did not just fail â€” it kept the worker busy long after the caller had walked away, and every command queued behind it died too.
+// This side used to hold a command for a minute before giving up on it, so one hung call did not just fail — it kept the worker busy long after the caller had walked away, and every command queued behind it died too.
 // A loopback round trip has no network in it: a browser that needs eight seconds to answer one call is not slow, it is stuck, and saying so in eight seconds is worth more than being patient for a minute.
 // Raising it back is one environment variable.
 
@@ -302,7 +302,7 @@ chrome.tabs.onActivated.addListener(() => {
 });
 
 // a closed tab still costs a line here.
-// The debugger registry is shared and `chrome.debugger.onDetach` already heals the attach flag on the object it finds â€” but that handler only reaches a session it can look up, and this map is the one place a session for a tab that is gone can still be found.
+// The debugger registry is shared and `chrome.debugger.onDetach` already heals the attach flag on the object it finds — but that handler only reaches a session it can look up, and this map is the one place a session for a tab that is gone can still be found.
 // Dropped, it is an entry per closed tab for as long as the worker lives.
 
 chrome.tabs.onRemoved.addListener((tabId) => {

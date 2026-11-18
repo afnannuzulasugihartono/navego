@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: wallet-client â€” the local machine pairs once, then spends only what the server confirms.
+// @title: wallet-client — the local machine pairs once, then spends only what the server confirms.
 // @state: the device file, the pairing refusal, and the body each call sends.
 // @dependencies: node:test, node:assert/strict, node:fs, node:os, node:path, ../local/wallet-client.js.
 

@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-11 UTC+7.
-// @title: navego-update â€” the update service: the manifest, the signed CRX and the newest build.
+// @title: navego-update — the update service: the manifest, the signed CRX and the newest build.
 // @state: the two extension ids it answers, the update.xml it writes, and the CRX it serves.
 // @dependencies: edge-runtime, supabase-js, cors.
 

@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: edge-cors.test â€” every edge function answers the same origin rule, and nothing else.
+// @title: edge-cors.test — every edge function answers the same origin rule, and nothing else.
 // @state: the allowlist, the fail-closed answer for an unknown origin, and the function that must use it.
 // @dependencies: node:test, strict, fs, module, vm, cors.
 

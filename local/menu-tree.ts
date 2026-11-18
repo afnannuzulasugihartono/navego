@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-15 UTC+7.
-// @title: menu-tree â€” what an app can do, read from the page's own menu markup.
+// @title: menu-tree — what an app can do, read from the page's own menu markup.
 // @state: four node states, branch disclosure, path walking with a failure report.
 // @dependencies: ./types.js.
 
@@ -8,11 +8,11 @@ import type { AxRow } from './types.js';
 // THIS FILE EXISTS
 
 // An agent that cannot see what an application can do, guesses.
-// Guessing at a menu is expensive in a way guessing at text is not: a menu item that is not there costs a click that dismisses whatever was open, and the next click lands somewhere else â€” measured live on this product's own author, where a menu row resolved and clicked a second later landed on the button underneath it.
+// Guessing at a menu is expensive in a way guessing at text is not: a menu item that is not there costs a click that dismisses whatever was open, and the next click lands somewhere else — measured live on this product's own author, where a menu row resolved and clicked a second later landed on the button underneath it.
 
 // FOUR STATES AND NOT TWO.
 // "Visible" and "absent" is the shape that makes a tree lie: an item one hover away is reported as not there, and the agent concludes the application cannot do it.
-// So a node is a leaf, a branch, disabled, or unrevealed â€” and unrevealed carries how it would be revealed, so an agent knows the difference between "this app has no such command" and "one hover away".
+// So a node is a leaf, a branch, disabled, or unrevealed — and unrevealed carries how it would be revealed, so an agent knows the difference between "this app has no such command" and "one hover away".
 
 // THE DOCUMENT IS NOT A MENU.
 // Google Docs renders the document's own headings as role=menuitem, so a walk that trusts roles alone descends into the document: measured live, a menu probe on an open Docs menu returned "BAB I PENDAHULUAN" and every paragraph as menu items.
@@ -34,7 +34,7 @@ const SUBMENU_REACH_PX = 360;
 // THE ARROW AND NOT A CLICK.
 // A submenu opens on hover in most applications and on click in some, and clicking to find out costs the menu: the click lands on an item and runs it.
 // Hover opens a submenu without activating anything, so it is the first thing tried, always.
-// The pointer also has to leave the parent and come back â€” measured live, a submenu that would not open did open once the pointer was sent away first, because the menu had never seen it arrive from outside.
+// The pointer also has to leave the parent and come back — measured live, a submenu that would not open did open once the pointer was sent away first, because the menu had never seen it arrive from outside.
 
 const MENU_TREE_EXPRESSION = `(() => {
   const LIMIT = __LIMIT__;
@@ -77,8 +77,8 @@ const MENU_TREE_EXPRESSION = `(() => {
   };
 
   // THE BAR IS NOT A ROW AND ITS CHILDREN ARE LEVEL ZERO. The bar is a
-  // container whose accessible name is every top-level name run together â€”
-  // "FileEditViewInsertFormatToolsExtensions" â€” so a walker that treats it as a
+  // container whose accessible name is every top-level name run together —
+  // "FileEditViewInsertFormatToolsExtensions" — so a walker that treats it as a
   // node resolves the path's first name against that string and fails one level
   // early, against a name no user would ever type. The bar contributes its items
   // at depth 0 and never appears as something to match.
@@ -115,7 +115,7 @@ const MENU_TREE_EXPRESSION = `(() => {
   // application. So a menu to the side counts too, when it overlaps the item
   // vertically and starts within a short reach of the item's own edge.
   // A SUBMENU IS REACHED FROM THE ITEM'S OWN EDGE. Measured live: the Image
-  // item is 320 wide inside a 322-wide menu, and its submenu opens at x=499 â€” a
+  // item is 320 wide inside a 322-wide menu, and its submenu opens at x=499 — a
   // 320-pixel gap from the item's own edge and no overlap with it at all. A reach
   // measured from the item alone finds nothing; the distance that matters is from
   // the menu the item lives in.
@@ -140,7 +140,7 @@ const MENU_TREE_EXPRESSION = `(() => {
   };
 
   // OWNERSHIP IS CLAIMED BEFORE THE WALK, NOT DURING IT. A menu is claimed by
-  // the item that owns it â€” first by containment, then by where it sits â€” and
+  // the item that owns it — first by containment, then by where it sits — and
   // only an unclaimed menu becomes a top-level one. Claiming as the walk went
   // along let the first item take a menu that belonged to a bar, and every level
   // after that inherited the wrong parent.
@@ -227,7 +227,7 @@ export function menuTreeExpression(limit?: unknown) {
 
 // THE STATE IS DECIDED HERE AND NOT IN THE CALLER.
 // Three facts decide a node's state and all three are in the page: whether it has a popup, whether it is disabled, and whether it has been rendered at all.
-// Deciding them in one place is what keeps an unrevealed item from being reported as absent â€” the one way a menu tree can lie to an agent that is trying to learn what an app does.
+// Deciding them in one place is what keeps an unrevealed item from being reported as absent — the one way a menu tree can lie to an agent that is trying to learn what an app does.
 
 export function stateOf(node: AxRow) {
   if (node.disabled) return 'disabled';
@@ -279,7 +279,7 @@ export function distanceBetween(wanted: unknown, offered: unknown): number {
 // A message like "the path broke at Insert, and Insert has: Image, Table, Bookmark" hands it a map and lets it choose the next move without a single further click.
 
 // A NAME THAT BEGINS WITH THE ASKED-FOR WORD WINS OVER LETTER COUNT.
-// "Upload" is six edits from "Break" and thirteen from "Upload from computer", so distance alone hands back the wrong row first â€” and the wrong row here is the one that costs a click.
+// "Upload" is six edits from "Break" and thirteen from "Upload from computer", so distance alone hands back the wrong row first — and the wrong row here is the one that costs a click.
 // A name that starts with the caller's word is that word with more detail on it, and it wins whatever the count says.
 
 export function nearestNames(wanted: unknown, offered: Iterable<unknown>, count = 3): unknown[] {

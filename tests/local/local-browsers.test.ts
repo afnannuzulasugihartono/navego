@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-11 UTC+7.
-// @title: local-browsers â€” the Chromium browsers the local driver launches, where each lives, and that a stranger's machine resolves them.
+// @title: local-browsers — the Chromium browsers the local driver launches, where each lives, and that a stranger's machine resolves them.
 // @state: 11 locks; one protocol across the family, environment expansion, separator-insensitive matching, and a launch that cannot be silently swallowed.
 // @dependencies: node:test, strict, ../local/browsers.js.
 

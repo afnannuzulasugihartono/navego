@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-22 UTC+7.
-// @title: local-burst â€” dependent steps on one tab, one page read at the end.
+// @title: local-burst — dependent steps on one tab, one page read at the end.
 // @state: step bounds, ref integrity, stop-on-failure, and a whole-burst deadline.
 // @dependencies: node:test, strict, ../local/burst.js.
 

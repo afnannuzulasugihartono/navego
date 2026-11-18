@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: runner-command-result.test â€” a device-reported failure fails the step, not just transport errors.
+// @title: runner-command-result.test — a device-reported failure fails the step, not just transport errors.
 // @state: unit pins for commandFailure plus the runner wiring pin.
 // @dependencies: node:test, strict, ../hosted/functions/_shared/command-result.ts.
 

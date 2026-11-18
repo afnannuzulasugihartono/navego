@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-15 UTC+7.
-// @title: dialog â€” read and drive the operating system's own dialogs.
+// @title: dialog — read and drive the operating system's own dialogs.
 // @state: three calls, Windows today, honest refusals everywhere else.
 // @dependencies: node:child_process, node:util.
 

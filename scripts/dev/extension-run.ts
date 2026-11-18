@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-06 UTC+7.
-// @title: extension-run â€” drive a real browser through the shipped extension, and write down what happened.
+// @title: extension-run — drive a real browser through the shipped extension, and write down what happened.
 // @state: the fixture portal, the loopback bridge, a Chrome with the extension loaded, seven calls, and the record.
 // @dependencies: node:crypto, node:fs, node:os, node:path, node:url, ../proof/proof-run.ts.
 

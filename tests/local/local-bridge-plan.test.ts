@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: local-bridge-plan.test â€” the meter in the loopback bridge: refuse when the cloud cannot answer, enforce the allowance, report at the end.
+// @title: local-bridge-plan.test — the meter in the loopback bridge: refuse when the cloud cannot answer, enforce the allowance, report at the end.
 // @state: an unaccounted session is refused, the allowance refuses the command past it, the ping proof pays nothing, and the report lands once when the session ends.
 // @dependencies: node:test, strict, ../local/bridge-ws.js, ./helpers/scripted-device.ts, ./helpers/fake-cloud.ts.
 

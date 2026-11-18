@@ -98,7 +98,7 @@ function unwrapBingRedirect(href: string): string | null {
 }
 
 // RESULTS ARE ZIPPED FROM THE ANCHORS, NOT FROM THE HEADINGS.
-// Bing emits two anchors per organic card and they share one href: first the display URL ("example.com https://example.com â€º a â€º b"), then the title, which is the same text as the h2/h3.
+// Bing emits two anchors per organic card and they share one href: first the display URL ("example.com https://example.com › a › b"), then the title, which is the same text as the h2/h3.
 // Headings also catch People-Also-Ask questions and the "Related searches" and "Pagination" blocks, which have no external href - anchors cannot produce them.
 // Rank is page-local; the caller re-numbers once the pages are concatenated.
 
@@ -128,7 +128,7 @@ export function parseBingSerp({ text = '', links = [] }: SerpPage = {}, { curren
       title = (nonDisplay[nonDisplay.length - 1] ?? '').replace(/\s+/g, ' ').trim().slice(0, 300);
     } else {
       title = (group.texts[group.texts.length - 1] ?? '');
-      const arrow = title.indexOf('â€º');
+      const arrow = title.indexOf('›');
       if (arrow >= 0) title = title.slice(0, arrow);
       title = title.replace(/https?:\/\/\S+/g, '')
         .replace(/\s+/g, ' ')
@@ -179,7 +179,7 @@ export function parseBingSerp({ text = '', links = [] }: SerpPage = {}, { curren
     while (k < lines.length) {
       const line = lines[k] as string;
       if (!line) break;
-      if (DISPLAY_URL_LINE.test(line) || line.includes('â€º')) break;
+      if (DISPLAY_URL_LINE.test(line) || line.includes('›')) break;
       if (hasPending(line)) break;
       buf.push(line);
       if (buf.join(' ').length >= 600) break;

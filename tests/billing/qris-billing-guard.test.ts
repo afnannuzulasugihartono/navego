@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: qris-billing-guard â€” one provider transaction closes one invoice, and the operator token reaches vault without a human paste.
+// @title: qris-billing-guard — one provider transaction closes one invoice, and the operator token reaches vault without a human paste.
 // @state: the migration text read as the shape a deploy creates: a unique index over provider transaction ids, and one secret-writing function closed to browsers.
 // @dependencies: node:test, node:assert/strict, node:fs.
 

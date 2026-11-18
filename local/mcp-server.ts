@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-25 UTC+7.
-// @title: mcp-server â€” the stdio MCP surface over the local driver.
+// @title: mcp-server — the stdio MCP surface over the local driver.
 // @state: 8 locks; the handshake, the advertised tools, and every way a call can fail without killing the server.
 // @dependencies: ./statements.js, ./reports.js, ./documents.js, ./burst.js, ./tools.js, ./advice.js.
 
@@ -133,7 +133,7 @@ function planFrom(args: JsonRecord): { artifact: string; estSteps: number; items
 // The rest is one deliberate scan away, which is a look the agent chose to take.
 
 // A WAIT POLLS THE FULL READ.
-// The point of waiting is to end on the same evidence an agent would read by hand â€” including the document on a Google Doc, which the bare page text does not hold.
+// The point of waiting is to end on the same evidence an agent would read by hand — including the document on a Google Doc, which the bare page text does not hold.
 // A wait that runs out of budget throws nothing: found:false comes back with the page as it stands, which is what the next decision needs.
 // Bounds are clamped, not refused, because a wait budget is a safety property and the snapshot limit already set that precedent.
 
@@ -147,18 +147,18 @@ const AUTO_ROWS = 8;
 const SETTLE_FALLBACK_MS = 120;
 
 // AN ACTION REPORTS THE PAGE IT LEFT BEHIND.
-// An agent that has to ask for the page after every action spends two round trips on one decision â€” act, then look â€” and the look is the half that costs.
+// An agent that has to ask for the page after every action spends two round trips on one decision — act, then look — and the look is the half that costs.
 // Measured on the reference implementation: roughly thirty per cent of all tool calls were snapshots, almost all of them immediately after something the agent had just done.
 // The reply therefore says where the page is, what changed, and how many rows are still one call away, so a decision costs one call without the answer carrying the whole page.
 
 // ACTIONS REPORT WHAT CHANGED.
 // The change set is computed against the last look at the same tab: rows that appeared, rows that moved, and a count of rows that left.
-// Rows match by value â€” role, name and position â€” so duplicates collapse and a reshaped page reports itself as reshaped instead of listing sixty new rows.
+// Rows match by value — role, name and position — so duplicates collapse and a reshaped page reports itself as reshaped instead of listing sixty new rows.
 // Only the first eight added or moved rows ride along: they are the ones worth acting on, and the count says what was held back.
 // Keyed by driver object in a WeakMap, so a closed tab's last look is garbage instead of a leak.
 
 // THE LOOK SETTLES FIRST.
-// The snapshot used to run the instant the action's reply landed â€” and a menu that opens a frame later was already missed: proven live, the auto-page after clicking Insert held no menu rows while a snapshot a moment later held fifteen.
+// The snapshot used to run the instant the action's reply landed — and a menu that opens a frame later was already missed: proven live, the auto-page after clicking Insert held no menu rows while a snapshot a moment later held fifteen.
 // The fix used to be 120ms of sleep because no cheaper signal existed.
 // The page now watches itself with a MutationObserver, but the clock that reads that watcher lives in Node: a hidden tab clamps a page-side timer to seconds, measured 304ms to 1,009ms on a Google Doc, while a snapshot of the same page took 4ms.
 // Node waits 8ms, asks how quiet the page has been, and stops after 32ms of quiet or 120ms total, so a background tab cannot turn the settle into a multi-second stall.
@@ -210,7 +210,7 @@ let lastSeen: AxRow[] = [];
 
 // A TAB THAT POINTS AT THE DROPPED FILE IS CLOSED.
 // Chrome answers a drop no page accepted by doing the default thing: it opens the file.
-// Measured live â€” every rejected drop left a `file://` tab behind, and every accepted drop left none â€” so a stray tab is also the honest signal that the page took the drop.
+// Measured live — every rejected drop left a `file://` tab behind, and every accepted drop left none — so a stray tab is also the honest signal that the page took the drop.
 // It is closed and named, never hidden: a drop that did not land says so instead of leaving litter on the person's screen.
 
 // THE BUDGETS ARE CLAMPED WHERE THEY ARE.
@@ -321,7 +321,7 @@ const windowTruth = (window: { platform?: string; foreground?: unknown; windows?
 
 // THE PORT IS ASKED FOR, NOT STORED.
 // The pipe is chosen per call because a worker can wake up late, so a port captured at startup is a lie the moment after it.
-// Measured on the user's own machine: the drive was already on the bridge, tabs returned the real tabs, and status still named the debugging port nothing was listening on â€” the kind of wrong answer that sends someone off to debug a port that was never in the way.
+// Measured on the user's own machine: the drive was already on the bridge, tabs returned the real tabs, and status still named the debugging port nothing was listening on — the kind of wrong answer that sends someone off to debug a port that was never in the way.
 
 // THE LIST IS HERE AND NOT ON THE MCP SURFACE.
 // The caller drives over whichever road the bridge holds; when that road is the loopback bridge, the health answer names the browsers linked to it by name and id.
@@ -575,7 +575,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
     }
 
     // THESE CALLS NEVER RESOLVE A TAB.
-    // A wallet lives on the server, so a wallet call that needed a tab would refuse to answer with the browser closed â€” which is exactly when a person checks their balance or pays for the last job.
+    // A wallet lives on the server, so a wallet call that needed a tab would refuse to answer with the browser closed — which is exactly when a person checks their balance or pays for the last job.
     // The plan is assembled from named fields rather than passed through, so a caller cannot smuggle a price or an owner into the object the server prices.
 
     if (name === 'wallet_pair_device') {
@@ -658,7 +658,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         if (!args.text) throw new Error('browser_type_into_dialog needs text');
         return asText(await driver.dialogType(String(args.text)));
       case 'browser_press_dialog_button':
-        if (!args.name) throw new Error('browser_press_dialog_button needs name â€” the button, e.g. Open or Cancel');
+        if (!args.name) throw new Error('browser_press_dialog_button needs name — the button, e.g. Open or Cancel');
         return asText(await driver.dialogPress(String(args.name)));      case 'browser_list_tabs':
         return asText(await driver.tabs());
       case 'browser_select_browser':
@@ -797,14 +797,14 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         return asText(await driver.find(String(args.text)));
       }
       case 'browser_find_element': {
-        if (!args.role) throw new Error('browser_find_element needs role â€” e.g. menuitem');
+        if (!args.role) throw new Error('browser_find_element needs role — e.g. menuitem');
         if (args.name) return asText({ row: await driver.resolve(args.role, args.name) });
         const snapshot = await driver.snapshot(args.limit) as Array<Record<string, unknown>>;
         return asText({ rows: snapshot.filter((row) => row.role === args.role) });
       }      case 'browser_click': {
         if (args.role || args.name) {
-          if (!args.role) throw new Error('click by row needs role â€” e.g. menuitem');
-          if (!args.name) throw new Error('click by row needs name â€” the row name, exact first, substring after');
+          if (!args.role) throw new Error('click by row needs role — e.g. menuitem');
+          if (!args.name) throw new Error('click by row needs name — the row name, exact first, substring after');
           return afterAction(driver, await driver.clickRow(args.role, args.name));
         }
         return afterAction(driver, args.at
@@ -834,7 +834,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
       case 'browser_wait_until': {
         const until = String(args.until ?? 'text');
         if (until === 'text') {
-          if (!args.text) throw new Error('wait until=text needs text â€” the text to watch for');
+          if (!args.text) throw new Error('wait until=text needs text — the text to watch for');
           const started = Date.now();
           const rawTimeout = Number(args.timeoutMs ?? 8000);
           const timeoutMs = Number.isFinite(rawTimeout) ? Math.min(30000, Math.max(500, rawTimeout)) : 8000;
@@ -847,8 +847,8 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           return afterAction(driver, { found: includes !== absent, ms: Date.now() - started, settled: true });
         }
         if (until === 'row') {
-          if (!args.role) throw new Error('wait until=row needs role â€” e.g. menuitem');
-          if (!args.name) throw new Error('wait until=row needs name â€” the row name, exact first, substring after');
+          if (!args.role) throw new Error('wait until=row needs role — e.g. menuitem');
+          if (!args.name) throw new Error('wait until=row needs name — the row name, exact first, substring after');
           const rowOut = await driver.waitForRow({
             role: args.role,
             name: args.name,
@@ -874,7 +874,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           });
           return afterAction(driver, { ...(isObject(stillOut) ? stillOut : {}), settled: true });
         }
-        throw new Error(`wait until must be text, row, url or stable â€” got: ${until}`);
+        throw new Error(`wait until must be text, row, url or stable — got: ${until}`);
       }
 
       case 'browser_get_guide':
@@ -951,7 +951,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           });
           return afterAction(driver, { ...out, settled: true });
         }
-        throw new Error(`check_gate action must be detect or wait â€” got: ${action}`);
+        throw new Error(`check_gate action must be detect or wait — got: ${action}`);
       }
       case 'browser_login': {
         const out = await loginWithCredentials(driver as unknown as import('./gates.js').GateDriver, {
@@ -1011,7 +1011,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
             protocolVersion: PROTOCOL_VERSION,
             capabilities: { tools: {} },
             serverInfo: { name: 'navego', version: context.version ?? '0.0.0' },
-            instructions: "Navego drives the user's real, signed-in browser: read pages, fill forms, run flows in the same tabs the user sees. Start with `read` to see the page (or `guide` if you do not know which tool to reach for), `wait` after an action that moves the page, and `run` for dependent steps. The session uses the person's accounts; passwords, one-time codes and payment data are refused â€” treat that as the answer, never retry around it. When a page asks something the person must answer, stop and ask."
+            instructions: "Navego drives the user's real, signed-in browser: read pages, fill forms, run flows in the same tabs the user sees. Start with `read` to see the page (or `guide` if you do not know which tool to reach for), `wait` after an action that moves the page, and `run` for dependent steps. The session uses the person's accounts; passwords, one-time codes and payment data are refused — treat that as the answer, never retry around it. When a page asks something the person must answer, stop and ask."
           });
         }
         if (method === 'tools/list') return reply({ tools: TOOLS });

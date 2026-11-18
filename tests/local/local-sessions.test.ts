@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-13 UTC+7.
-// @title: local-sessions â€” one cached driver per tab, fronted on switch, tested without a browser.
+// @title: local-sessions — one cached driver per tab, fronted on switch, tested without a browser.
 // @state: 9 locks; adapter shape, cache keys, front-once, close-drop.
 // @dependencies: node:test, strict, ../local/sessions.js.
 
@@ -88,7 +88,7 @@ test('the adapter speaks driver verbs over primitive nouns', async () => {
 });
 
 // THE ADAPTER RESOLVES THEN CLICKS A HANDLE.
-// The row is found and held before anything is pressed, and the click is aimed at that node rather than at the point the snapshot reported â€” which is the whole difference between clicking the row that was asked for and clicking whatever slid under it.
+// The row is found and held before anything is pressed, and the click is aimed at that node rather than at the point the snapshot reported — which is the whole difference between clicking the row that was asked for and clicking whatever slid under it.
 
 // THE CLICK'S PROOF IS PINNED HERE.
 // The row is what was asked for; what the click hit belongs to the click.

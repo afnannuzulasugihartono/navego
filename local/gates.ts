@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: gates â€” a page that asks to sign in, to prove a code, or to solve a captcha, named before anything is typed.
+// @title: gates — a page that asks to sign in, to prove a code, or to solve a captcha, named before anything is typed.
 // @state: one probe expression, one classifier, one wait, and a sign-in that reads its secret from a file the person owns.
 // @dependencies: node:fs, node:path.
 

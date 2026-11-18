@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: sample-artifacts â€” the four business artifacts the site hands a visitor, built from the mock company.
+// @title: sample-artifacts — the four business artifacts the site hands a visitor, built from the mock company.
 // @state: writes site/public/contoh/ so the download is a real file and a test can prove the bytes on disk are a fresh build.
 // @dependencies: node:fs, node:path, local/spreadsheets.js, local/decks.js, local/documents.js.
 

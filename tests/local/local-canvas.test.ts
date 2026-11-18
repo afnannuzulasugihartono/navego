@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: local-canvas â€” a surface that is not a page full of text, read through the ladder with the caret-moving step gated.
+// @title: local-canvas — a surface that is not a page full of text, read through the ladder with the caret-moving step gated.
 // @state: the ladder walk on a canvas surface, the gate in front of the borrow, and the caret line read.
 // @dependencies: node:test, strict, ../local/primitives.js.
 

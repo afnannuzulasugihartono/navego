@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-25 UTC+7.
-// @title: focus-guard â€” whether anything is going to hear this click, and the one case worth fixing.
+// @title: focus-guard — whether anything is going to hear this click, and the one case worth fixing.
 // @state: the page asked every time, the machine asked once in a while and only when the page is deaf.
 // @dependencies: ./window-focus.js.
 

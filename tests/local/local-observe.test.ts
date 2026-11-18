@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-23 UTC+7.
-// @title: local-observe â€” what the page says about itself, read in as few round trips as it can be read in.
+// @title: local-observe — what the page says about itself, read in as few round trips as it can be read in.
 // @state: snapshot, scroll, computed, capture and viewport, and the page expressions that answer them.
 // @dependencies: node:test, strict, ../local/primitives.js.
 
@@ -311,7 +311,7 @@ test('a snapshot clamps its limit, so a wild request cannot walk the whole docum
 });
 
 // A GAPLESS RUN IS NO LONGER ASSERTED AS "FIRED TOGETHER".
-// It used to be, and the overlap was real â€” but it bought almost nothing here and cost the one thing that mattered.
+// It used to be, and the overlap was real — but it bought almost nothing here and cost the one thing that mattered.
 // A round trip over loopback is about three milliseconds, so ten keys cost thirty; over the relay they cost twenty seconds, which is why the overlap existed at all.
 // What it actually cost was order: every send proves the link alive before it goes out, so two sends racing reach the wire in the order they finish proving.
 // Measured on a live Google Doc, Ctrl+1 typed a literal "1" instead of making a heading.
@@ -412,7 +412,7 @@ test('the text caret rides the snapshot so the next keystroke lands knowingly', 
 });
 
 // THE BEAT IS PINNED, NOT THE TIMING.
-// Docs drops a keyDown and keyUp that land in the same tick â€” three Enter presses vanished live while typed characters beside them survived â€” so a key holds its down edge one frame before the up, and a stream does not pay that beat twice.
+// Docs drops a keyDown and keyUp that land in the same tick — three Enter presses vanished live while typed characters beside them survived — so a key holds its down edge one frame before the up, and a stream does not pay that beat twice.
 // Fake sleep makes the beats observable without waiting for them.
 
 

@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-25 UTC+7.
-// @title: document-job â€” a paper is planned on disk with tables, images and graphs, and a plan that cannot be checked is refused.
+// @title: document-job — a paper is planned on disk with tables, images and graphs, and a plan that cannot be checked is refused.
 // @state: the parser, the validators, the docplan and the recheck, each pinned by one behaviour.
 // @dependencies: node:test, strict, ../local/documents.js.
 

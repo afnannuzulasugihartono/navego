@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: workflow-dsl.test â€” the workflow DSL parses the shapes a workflow may take.
+// @title: workflow-dsl.test — the workflow DSL parses the shapes a workflow may take.
 // @state: the steps, the conditions, the output contract, and the shapes it refuses.
 // @dependencies: node:test, strict, node:fs, extension-source.
 

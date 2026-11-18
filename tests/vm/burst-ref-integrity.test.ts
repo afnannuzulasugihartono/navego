@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: burst-ref-integrity.test â€” every workflow burst step references an earlier step.
+// @title: burst-ref-integrity.test — every workflow burst step references an earlier step.
 // @state: structural gate over every workflow migration in the tree.
 // @dependencies: node:test, strict, node:fs, node:fs/promises.
 

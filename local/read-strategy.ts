@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-27 UTC+7.
-// @title: read-strategy â€” which read to attempt first, decided from evidence rather than from a site name.
+// @title: read-strategy — which read to attempt first, decided from evidence rather than from a site name.
 // @state: the harm classes, the strategy names, and one pure function that turns a surface profile into an ordered ladder.
 // @dependencies: none.
 

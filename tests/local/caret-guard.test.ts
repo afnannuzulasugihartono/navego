@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-27 UTC+7.
-// @title: caret-guard â€” the gate that keeps a read from moving a user's caret, and the verdict that says so when it did.
+// @title: caret-guard — the gate that keeps a read from moving a user's caret, and the verdict that says so when it did.
 // @state: the gate as a table, and the restore verdict on the case the measurement proved impossible.
 // @dependencies: node:test, node:assert/strict, ../local/caret-guard.js, ../local/read-strategy.js.
 

@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: documents â€” a paper is planned on disk with tables, images and graphs, and a plan that cannot be checked is refused.
+// @title: documents — a paper is planned on disk with tables, images and graphs, and a plan that cannot be checked is refused.
 // @state: JSON in, a docplan with blocks and a figure ledger out, the recheck that catches an edited number, and the Word file the plan becomes.
 // @dependencies: node:fs, node:path, ./office/docx.js.
 

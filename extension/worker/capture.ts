@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-09 UTC+7.
-// @title: capture â€” debugger attach, frame safety probes, ax summary and the screenshot memo.
+// @title: capture — debugger attach, frame safety probes, ax summary and the screenshot memo.
 // @state: owns screenshotCache; private-tabs and execute-pull clear it through this import, which is why this module must never import either of them.
 // @dependencies: log, ax-summary, debugger-session.
 
@@ -126,7 +126,7 @@ export async function assertCaptureFramesSafe(tabId: number): Promise<void> {
 
 // A SEND-SIDE HEAL EXISTS.
 // Shared sessions cache attached:true so repeat calls skip the attach.
-// Anything else that detaches this tab â€” the relay road in this same extension, a DevTools window, a browser restart â€” leaves the cache lying, and every later send then fails "not attached" for good: observed live as one tab permanently dead on the bridge while the relay drove the same tab happily.
+// Anything else that detaches this tab — the relay road in this same extension, a DevTools window, a browser restart — leaves the cache lying, and every later send then fails "not attached" for good: observed live as one tab permanently dead on the bridge while the relay drove the same tab happily.
 // Healing on attach cannot catch it, because the attach was skipped and the failure belongs to the call itself.
 // So the call heals once: correct the flag, re-attach, and try again; a second failure is the honest answer, and a foreign error never triggers a detach at all.
 

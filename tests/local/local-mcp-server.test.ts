@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-25 UTC+7.
-// @title: local-mcp-server â€” the stdio MCP surface, driven against a fake browser rather than a process.
+// @title: local-mcp-server — the stdio MCP surface, driven against a fake browser rather than a process.
 // @state: 8 locks; the protocol handshake, the advertised tools, and the ways a call can fail.
 // @dependencies: node:test, strict, ../local/mcp-server.js.
 
@@ -124,11 +124,11 @@ function fakeSearchSession(calls: DriverCall[]) {
         return { ...serpFixture, url: 'https://www.bing.com/search?q=navego%20mcp', title: 'navego mcp - Search' };
       }
       return {
-        text: 'another result\nexample.org\nhttps://example.org â€º deep-dive\nExample Deep Dive\n\nA synthetic second page for the parser.\n',
+        text: 'another result\nexample.org\nhttps://example.org › deep-dive\nExample Deep Dive\n\nA synthetic second page for the parser.\n',
         url: 'https://www.bing.com/search?q=navego%20mcp&first=11',
         title: 'navego mcp - Search',
         links: [
-          { href: 'https://example.org/deep-dive', text: 'example.org https://example.org â€º deep-dive' },
+          { href: 'https://example.org/deep-dive', text: 'example.org https://example.org › deep-dive' },
           { href: 'https://example.org/deep-dive', text: 'Example Deep Dive' }
         ]
       };
@@ -390,7 +390,7 @@ test('type says where the proof lives when its own placement check cannot see it
 });
 
 // THE TYPE-WITH-ATEND PATH IS DESCRIBED BY WHAT IT SETTLES.
-// An agent needs to know it does not land in a table cell â€” it lands at the end of the document, and it says so.
+// An agent needs to know it does not land in a table cell — it lands at the end of the document, and it says so.
 
 test('the type description says how atEnd decides it reached the end, and when it cannot know', () => {
   const tool = toolByName('browser_type_text');
@@ -815,7 +815,7 @@ test('a missing required argument is refused before the driver is touched', asyn
 // THIS CLAIM EXISTS.
 // An agent that has to ask for the page after every action spends two calls on one decision, and the looking half is the one that costs.
 // On the reference implementation roughly thirty per cent of all tool calls were snapshots, nearly all of them right after something the agent had just done.
-// Handing the page back with the action makes one decision cost one call â€” and this fails the moment an action returns something flat, because the model would then be reasoning about a page it cannot see.
+// Handing the page back with the action makes one decision cost one call — and this fails the moment an action returns something flat, because the model would then be reasoning about a page it cannot see.
 
 test('every action hands back the page it acted on, so looking costs no extra call', async () => {
   const server = createMcpServer(ctx());
@@ -904,7 +904,7 @@ test('a notification is answered with nothing at all, because JSON-RPC says so',
 
 // THIS CLAIM EXISTS.
 // A Chrome tab id is a number, the tool schema says string, and an agent copies the id straight out of the tab list it was just handed.
-// Comparing with === refused the id the product itself printed â€” so a drive that could see six tabs decided none of them was real.
+// Comparing with === refused the id the product itself printed — so a drive that could see six tabs decided none of them was real.
 
 // THE COVER IS PROVEN WITH A LEASE THAT REFUSES.
 // A grant-only lease shows the claim is asked; only a refusal shows the server stops the call instead of driving a tab it was told it cannot have.
@@ -982,7 +982,7 @@ test('a tab id is found whether the caller sends a number or a string', async ()
 });
 
 // A WAIT IS TESTED AGAINST READS, NOT TIME.
-// The contract is evidential: the wait ends on the same text a read would show, and a wait that runs out of budget reports instead of failing â€” found:false with the page as it stands, which is what the next decision needs.
+// The contract is evidential: the wait ends on the same text a read would show, and a wait that runs out of budget reports instead of failing — found:false with the page as it stands, which is what the next decision needs.
 // The clock on a CI runner can step, so the spent budget is proven by the budget handed to the wait primitive, not by wall milliseconds.
 
 test('a wait ends on the same evidence a read would show', async () => {
@@ -1055,7 +1055,7 @@ test('key vocabularies are enumerated so a misspelling fails before the browser'
 
 // THE CHANGE SET IS TESTED AS A HINT, NOT A TRUTH.
 // The full page rides every action so the agent is never stranded; changed names what moved since the last look at the same tab.
-// Rows match by value â€” role, name, position â€” and the first look reports null, because its elements ARE the baseline.
+// Rows match by value — role, name, position — and the first look reports null, because its elements ARE the baseline.
 
 const ROW_FILE = { role: 'menuitem', name: 'File', x: 73, y: 46 };
 const ROW_INSERT = { role: 'menuitem', name: 'Insert', x: 204, y: 46 };
@@ -1325,10 +1325,10 @@ test('chooser toggles without touching the page', async () => {
 
 // THE STRAY TAB IS CLOSED AND NAMED, NOT LEFT.
 // A drop the page refused is answered by Chrome the only way it can be: the file opens in a tab.
-// Every rejected drop in the live drill left one behind and every accepted drop left none, so the tab is the failure signal as well as the litter â€” and the answer says so instead of quietly opening windows on the person screen.
+// Every rejected drop in the live drill left one behind and every accepted drop left none, so the tab is the failure signal as well as the litter — and the answer says so instead of quietly opening windows on the person screen.
 
 // THE TAB APPEARS ONLY AFTER THE DROP.
-// Chrome opens the file when the page refuses the drop, so the stray tab exists between the look before and the look after, and not one moment earlier â€” a stub that had it from the start would prove nothing about which look found it.
+// Chrome opens the file when the page refuses the drop, so the stray tab exists between the look before and the look after, and not one moment earlier — a stub that had it from the start would prove nothing about which look found it.
 
 test('a drop Chrome answered by opening the file closes that tab and says so', async () => {
   const c = ctx();

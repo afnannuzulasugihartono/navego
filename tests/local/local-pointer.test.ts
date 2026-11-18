@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-23 UTC+7.
-// @title: local-pointer â€” a click is a coordinate sent into a page that may have moved, and the answer says what was under it.
+// @title: local-pointer — a click is a coordinate sent into a page that may have moved, and the answer says what was under it.
 // @state: clicks, hovers, the mark a person watching can see, and the handles measured at the moment of the press.
 // @dependencies: node:test, strict, ../local/primitives.js.
 
@@ -127,7 +127,7 @@ test('a click fires move, press and release together', async () => {
 });
 
 // A SNAPSHOT MUST NOT SEND A STALE SHAPE BACK.
-// The page expression returns the list itself, so anything that is not a list means the page answered with something else â€” an exception object, a string from a transpiler shim.
+// The page expression returns the list itself, so anything that is not a list means the page answered with something else — an exception object, a string from a transpiler shim.
 // An empty list is the honest answer: an agent that gets [] will look again, and an agent that gets null will read it as a page with nothing on it.
 
 
@@ -248,7 +248,7 @@ test('a hover asks for focus emulation too', async () => {
 
 // THIS USED TO BE THE OTHER WAY ROUND.
 // This test once asserted that a hover must NOT wait for the page's reply, and it proved that with a promise that never settles.
-// That was measured as a hover that returned in one millisecond while its move sat in the worker's queue for five, and the next command's liveness proof then queued behind it and failed â€” so one lie became two failures.
+// That was measured as a hover that returned in one millisecond while its move sat in the worker's queue for five, and the next command's liveness proof then queued behind it and failed — so one lie became two failures.
 // A page that never answers is now visible from this call.
 
 
@@ -392,5 +392,5 @@ test('a handle that is not a handle is refused by name', async () => {
 
 // THESE TWO WAITS ARE PINNED ON WHAT THEY OBSERVE.
 // The row wait ends on the first read that matches, names what it saw, and gives up with found:false rather than hanging.
-// The stillness wait ends on two identical reads in a row, which is the only signal that a page which was never named in advance has actually stopped moving â€” and it must be able to say it never went still.
+// The stillness wait ends on two identical reads in a row, which is the only signal that a page which was never named in advance has actually stopped moving — and it must be able to say it never went still.
 

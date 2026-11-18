@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-23 UTC+7.
-// @title: input â€” the typing and key primitives, and the proof that the text landed.
+// @title: input — the typing and key primitives, and the proof that the text landed.
 // @state: type, append, key, keys, selectAll and clear, over the edit signature that says the page moved.
 // @dependencies: ./page-expressions.js.
 
@@ -23,7 +23,7 @@
 // The chord returns ok either way, so the outline is the only witness.
 
 // Text belongs to the key only when nothing is held down.
-// A chord is exactly two events â€” keyDown and keyUp with the modifiers mask, the virtual codes, and no text â€” and no separate modifier press around them.
+// A chord is exactly two events — keyDown and keyUp with the modifiers mask, the virtual codes, and no text — and no separate modifier press around them.
 // Measured 2026-10-13: the previous six-event frame, modifier downs plus a rawKeyDown, leaked its character into a Docs canvas under rapid fire ("e1Laporan", doc 11nW) while the two-event frame the extension sends styled cleanly on the same document at the same speed.
 // Two events are also three round trips fewer per chord, which is what makes a twenty-key walk feel instant instead of deliberate.
 
@@ -226,7 +226,7 @@ export function createInputMethods({ cdp, primitives, sleep, chunkSize = 2000 }:
     }
     let run: InputJob[] = [];
     // A CHORD-ONLY STREAM DOES NOT POLL FOR TEXT.
-    // A menu or style chord moves no text signature, so the twelve-poll edit wait could only ever report moved:false â€” after 1.8 s of waiting for a mirror that was never coming.
+    // A menu or style chord moves no text signature, so the twelve-poll edit wait could only ever report moved:false — after 1.8 s of waiting for a mirror that was never coming.
     // Text still gets the slow-mirror budget, because that lag is real; a chord gets one settle and one honest signature instead.
     // A text stream with nothing focused gets neither: text sent to a button cannot land, so one focus read is cheaper than a poll budget that can only report moved:false.
     const reportMoved = async () => {

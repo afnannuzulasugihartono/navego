@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: statement â€” the device side of a delivered client-month: the download, the proof, the manifest.
+// @title: statement — the device side of a delivered client-month: the download, the proof, the manifest.
 // @state: owns the per-device manifest and the two commands that fill it and read it.
 // @dependencies: utils, log, tab-content, statement-file.
 

@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: wallet-client â€” the device's wallet, spoken from the machine that does the work.
+// @title: wallet-client — the device's wallet, spoken from the machine that does the work.
 // @state: the device file, the pairing that fills it, and the six calls whose answers are money.
 // @dependencies: node:fs, node:path, node:os, node:crypto, ../extension/lib/endpoints.js.
 

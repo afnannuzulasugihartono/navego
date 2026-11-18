@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-11 UTC+7.
-// @title: command-event-stream â€” the streaming channel between a running command and the model waiting on it.
+// @title: command-event-stream — the streaming channel between a running command and the model waiting on it.
 // @state: 7 locks; table shape, device-scoped emit, kind allowlist, cursor long-poll, bounded wait, grants, and retention.
 // @dependencies: node:test, assert, fs.
 
@@ -9,7 +9,7 @@
 // The device is the only thing that knows what happened in between, and it had no way to say so.
 // A burst of eight steps, or a workflow running for twenty seconds, needed that channel to speak before finishing.
 
-// The watch-event channel already solved this exact shape â€” a cursor long-poll that returns the moment rows appear (opera_watch_events_wait, 5ms sleep).
+// The watch-event channel already solved this exact shape — a cursor long-poll that returns the moment rows appear (opera_watch_events_wait, 5ms sleep).
 // This file locks the same discipline applied to command execution, where the rows carry the consequence of typing into somebody's document.
 
 // The security locks are the ones that matter.

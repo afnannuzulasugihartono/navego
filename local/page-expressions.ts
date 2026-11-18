@@ -87,7 +87,7 @@ const SNAPSHOT_ROLES = new Set([
 
 // THE SNAPSHOT IS ONE CALL AND NOT ONE PER ELEMENT.
 // It used to read the accessibility tree and then ask for the box of every node it liked, which on a Google Doc is up to a hundred and twenty round trips.
-// The extension runs one command at a time on purpose â€” two browser actions racing leave the page in neither state anyone asked for â€” so those were sequential no matter that the caller said Promise.all, and a snapshot cost about two seconds before anything had decided anything.
+// The extension runs one command at a time on purpose — two browser actions racing leave the page in neither state anyone asked for — so those were sequential no matter that the caller said Promise.all, and a snapshot cost about two seconds before anything had decided anything.
 // Chrome has no batch API for element boxes, so the only way down to one round trip is to compute the boxes where the elements live: one evaluate inside the page walks the DOM once and returns role, name and centre for everything worth clicking.
 
 // THE ROLES ARE DERIVED IN THE PAGE.
@@ -95,12 +95,12 @@ const SNAPSHOT_ROLES = new Set([
 // A widget whose role only an assistive technology would compute would be missing, which is why the attribute is read first and the tag table is deliberately short.
 
 // SECRET VALUES NEVER LEAVE THE PAGE.
-// The snapshot carries a field's current value so the agent can see what is already typed â€” a formula bar, a name box.
+// The snapshot carries a field's current value so the agent can see what is already typed — a formula bar, a name box.
 // A password field would ride along the same way, straight into model context, which is exfiltration wearing a snapshot's clothes.
 // Password, hidden and one-time-code fields keep their role and their box and lose their value, decided where the value is read so no caller has to remember.
 
 // OVERLAY ROWS COME FIRST.
-// Menus, dialogs and popups render at the end of the document but sit on top of it â€” and they are usually what the agent just caused.
+// Menus, dialogs and popups render at the end of the document but sit on top of it — and they are usually what the agent just caused.
 // A snapshot that walks document order buries fifteen fresh menu rows past a sixty-row cap, so the menu the agent opened is missing from the page it gets back.
 // Proven live: with a stable open menu, a sixty-row snapshot held zero menu rows and the same menu sat visible past the cap.
 // The expression collects overlay descendants first and everything else after, skipping what it already took, so the cap cuts the least surprising rows instead of the most recent ones.
@@ -124,7 +124,7 @@ const SNAPSHOT_ROLES = new Set([
 
 // THE CARET IS CHOSEN BY ITS COLOUR AND NOT BY ITS PLACE.
 // Measured live on a shared Google Doc: the page holds two carets, this client's drawn in the text colour and a collaborator's painted green and labelled with their name.
-// Taking the last caret in the document measured and clicked somebody else's cursor â€” which never moves â€” so every restore reported success while the real caret went to the end of the document.
+// Taking the last caret in the document measured and clicked somebody else's cursor — which never moves — so every restore reported success while the real caret went to the end of the document.
 // The caret of this client is the one drawn in the text colour; the name and the colour of the others are how the page marks them.
 
 
@@ -240,7 +240,7 @@ const SNAPSHOT_EXPRESSION = `(() => {
 
   // THE ROWS KEEP THEIR ELEMENTS. A snapshot reports where things were; by
   // the time an agent acts on it the page has moved, a menu has closed, a list
-  // has scrolled â€” and the coordinate is a point in the past. The elements stay
+  // has scrolled — and the coordinate is a point in the past. The elements stay
   // here beside their rows so a row can be resolved to the node itself and
   // measured again at the moment of the click. The caret row has no element: it
   // is a range in a document, and its coordinates are the only honest answer.
@@ -250,7 +250,7 @@ const SNAPSHOT_EXPRESSION = `(() => {
 
 // A ROW IS RESOLVED TO A NODE AND MEASURED AGAIN.
 // A menu lives about two seconds: a snapshot taken in one tool call and a click in the next hits dead background or, measured live, the button underneath it.
-// So a row is resolved to the element it came from, and that element is measured at the moment of the click â€” the page may scroll, the row may move, and the click still lands on the thing that was asked for.
+// So a row is resolved to the element it came from, and that element is measured at the moment of the click — the page may scroll, the row may move, and the click still lands on the thing that was asked for.
 // The handle is the node's backend id, which the browser keeps for the life of that node and refuses the moment it is gone.
 
 // THE FAILURE NAMES WHAT HAD FOCUS.
@@ -281,7 +281,7 @@ export const HANDLE_PREFIX = 'opera-';
 // An agent confused about what a page is can ask the browser the question directly instead of inferring it from behaviour, and cannot turn the question into an action.
 
 // THE ROWS CARRY THEIR NODE INTERNAL.
-// The index that ties a row to its element means nothing to a caller â€” it is not a handle and it does not survive the next snapshot â€” so it never leaves the snapshot.
+// The index that ties a row to its element means nothing to a caller — it is not a handle and it does not survive the next snapshot — so it never leaves the snapshot.
 // A caller that wants to hold on to a row asks for a handle, which is the browser's own name for the element and stays good for the element's life.
 
 export const centreOf = (quad: readonly number[]) => {
@@ -307,13 +307,13 @@ export function snapshotExpression(limit: number): string {
 
 // A GOOGLE DOC IS READ THROUGH ITS OWN COPY PATH.
 // Docs draws the document on a canvas, so body.innerText holds the toolbar chrome and none of the content: read on a Doc reported an empty document that was not empty, and the only thing that could see the text was a screenshot.
-// Docs keeps a hidden iframe for text events, and dispatching a copy event there makes Docs itself populate a div with the selected text â€” Zotero's production technique, proven on this machine at thirteen milliseconds for a full document read.
+// Docs keeps a hidden iframe for text events, and dispatching a copy event there makes Docs itself populate a div with the selected text — Zotero's production technique, proven on this machine at thirteen milliseconds for a full document read.
 // One adaptation: Zotero clears with innerHTML, which this document's Trusted Types policy refuses outright, so the div is emptied with replaceChildren instead.
 // Same clearing, no string sink.
 
 // THE READ PREFERS INNERTEXT.
 // The populated div keeps the document's block structure, and innerText renders it back as lines: headings, paragraphs and list items stay separated the way the person sees them.
-// textContent would weld every paragraph into one run with no boundary at all, and joining blocks with a period instead would corrupt the text it claims to report â€” abbreviations, decimals and version numbers all contain periods that are not separators.
+// textContent would weld every paragraph into one run with no boundary at all, and joining blocks with a period instead would corrupt the text it claims to report — abbreviations, decimals and version numbers all contain periods that are not separators.
 // textContent stays as the fallback for a frame that renders nothing.
 // Trailing blank lines are trimmed on the way out: they are layout air, not content.
 
@@ -323,12 +323,12 @@ export function snapshotExpression(limit: number): string {
 
 // AN UPLOAD NEVER OPENS THE FILE DIALOG.
 // The native picker is OS chrome: CDP cannot see it, click it, or dismiss it, so a drive that opens one is stuck until a human intervenes.
-// The file input behind it takes files directly instead â€” setFileInputFiles names local paths the way a dialog would have, the page uploads on the change event it already listens for, and no dialog ever appears.
+// The file input behind it takes files directly instead — setFileInputFiles names local paths the way a dialog would have, the page uploads on the change event it already listens for, and no dialog ever appears.
 // Bytes ride in as base64 and rest briefly in a temp file only CDP can name, because the protocol takes paths, not bytes.
 
 // THE SEARCH PIERCES FROM INSIDE.
 // A file input rarely sits in the open: upload widgets hide it in an iframe or a shadow root, where a top-frame query finds nothing.
-// Fetching a whole pierced tree to look for it timed out live on a heavy page instead, so the search walks from inside the page and returns the first input it meets â€” one call, one node back, however deep it hides.
+// Fetching a whole pierced tree to look for it timed out live on a heavy page instead, so the search walks from inside the page and returns the first input it meets — one call, one node back, however deep it hides.
 // What it cannot find is an input that does not exist yet: some pages only create theirs on the way to the picker, and for those the agent walks the menu first and calls upload after.
 
 // THE INPUT IS LOOKED FOR FIVE TIMES.
@@ -341,7 +341,7 @@ export const UPLOAD_FIND_GAP_MS = 400;
 // A DROP EXISTS BESIDE AN UPLOAD.
 // The upload fills a file input, which is the whole story on a site that has one.
 // Google Docs' image picker has none: it opens the operating system's own dialog through the File System Access API, so there is no input to fill, nothing to suppress, and nothing to click once it is open.
-// A drop is the road that is left, and it is the one the web itself offers â€” Chrome's drag events carry files, so a page that accepts a dropped image accepts this one.
+// A drop is the road that is left, and it is the one the web itself offers — Chrome's drag events carry files, so a page that accepts a dropped image accepts this one.
 // Measured live: the image landed in a document, with no dialog and no input anywhere in sight.
 
 // A SUBMENU NEEDS TWO GAPS AND NOT ONE NUMBER.
@@ -349,7 +349,7 @@ export const UPLOAD_FIND_GAP_MS = 400;
 // Both waits are short, both are the point where a slow machine fails, and neither is a guess about how long an application "usually" takes.
 
 // A CARET IS REMEMBERED AS A POINT IN THE VIEWPORT AND PUT BACK WITH A CLICK.
-// Reading a Google Doc means selecting the document and copying it, because a canvas holds no text to read â€” and that leaves the caret at the end, so the next click lands where the agent has already been.
+// Reading a Google Doc means selecting the document and copying it, because a canvas holds no text to read — and that leaves the caret at the end, so the next click lands where the agent has already been.
 // Measured on this product's own author: the caret was lost on a read and the loss went unnoticed until a click landed in the wrong place.
 
 // A POINT AND NOT A SELECTION.
@@ -358,7 +358,7 @@ export const UPLOAD_FIND_GAP_MS = 400;
 // A point, put back with a click, is what the page already understands: Docs draws its own caret as an element, and clicking it is how a person moves it.
 
 // THE RESTORE IS REPORTED RATHER THAN ASSUMED, AND WHY IT IS LEFT ALONE FOR A BEAT.
-// A caret that cannot be put back is not a failure of the read â€” the text came â€” but it is the difference between an agent that knows where it is and one that clicks blind, so the answer says which happened.
+// A caret that cannot be put back is not a failure of the read — the text came — but it is the difference between an agent that knows where it is and one that clicks blind, so the answer says which happened.
 // And a canvas redraws its caret asynchronously, so a click and an immediate read can still see the old one.
 
 // A CLICK TAKES A FRACTION AS WELL AS A PIXEL.
@@ -439,7 +439,7 @@ export const UPLOAD_INPUT_EXPRESSION = `(() => {
 
 // READING A LINE SELECTS IT FIRST.
 // The mirror a copy reads from only holds what a selection put there: measured live as an empty line beside a perfectly visible caret.
-// So the read selects its own line â€” Home, Shift+End â€” copies, and collapses back to the line end, which is the documented end state: the caret moves within its line and never past it.
+// So the read selects its own line — Home, Shift+End — copies, and collapses back to the line end, which is the documented end state: the caret moves within its line and never past it.
 // The steps wait on the settle between them, because injected keys land late and the copy must not run before the selection exists.
 
 // THE SELECTION IS READ ONCE, FOR EVERY ASKER.
@@ -519,14 +519,14 @@ export function splitText(text: unknown, size: number): string[] {
 }
 
 // A HOVER WAITS FOR THE MOVE IT DISPATCHED.
-// It used to fire the move and forget it, which reported a hover that had not happened yet while a five-second command sat in the worker's queue â€” and the next command's liveness proof then queued behind that move and failed, so one lie became two failures.
+// It used to fire the move and forget it, which reported a hover that had not happened yet while a five-second command sat in the worker's queue — and the next command's liveness proof then queued behind that move and failed, so one lie became two failures.
 // Measured on the user's own browser: Input.dispatchMouseEvent costs 2 ms for a press and a release, and about five seconds for a move or a wheel, because those wait on a compositor that is not running when the window is not in front.
 // That cost is real either way, and the caller now finds out from the hover rather than from whatever it calls next.
 
 // A RUN HOLDS WORK, NOT PROMISES, AND KEYS KEEP A BEAT.
 // A promise pushed into a run is work already begun: awaiting those in order afterwards ordered nothing, measured as a chord's keyUp landing after the next event's keyDown.
 // So a run holds what to do and each event only starts when reached; the overlap given up was three milliseconds a key on loopback against twenty seconds each over the relay, which is why it existed at all.
-// Order is only half of it: Docs drops edges that land in the same tick â€” three Enter presses vanished while typed characters beside them all survived â€” and the trust window hides this by spacing early calls with proof round trips while trusted ones fire back-to-back.
+// Order is only half of it: Docs drops edges that land in the same tick — three Enter presses vanished while typed characters beside them all survived — and the trust window hides this by spacing early calls with proof round trips while trusted ones fire back-to-back.
 // So a key holds its down edge one frame before the up, and a stream does not pay that beat a second time.
 // Sixteen milliseconds is a 60 Hz frame: past Chrome's per-frame coalescing, and a fraction of the old fifty.
 // The reliability tax is real, so it stays; the doubling inside a stream was not.
@@ -534,7 +534,7 @@ export function splitText(text: unknown, size: number): string[] {
 export const KEY_BEAT_MS = 16;
 
 // THE PICKER IS INTERCEPTED, NOT CLICKED THROUGH.
-// The file input only exists once the upload flow starts it â€” measured live as inputFound:false on a page whose Upload menu item works fine â€” and starting that flow opens the native picker, which is OS chrome no CDP call can dismiss.
+// The file input only exists once the upload flow starts it — measured live as inputFound:false on a page whose Upload menu item works fine — and starting that flow opens the native picker, which is OS chrome no CDP call can dismiss.
 // Intercepting the chooser suppresses its UI while leaving the input behind for upload to fill, so the agent enables, walks the menu, uploads, and disables, and no dialog ever appears.
 // Forgetting the last step leaves later Upload clicks silent, which is why the description says the dance out loud.
 
@@ -543,7 +543,7 @@ export const KEY_BEAT_MS = 16;
 // So each step reads the level first, and only opens what is not already there: already open means the level has its children on screen, so clicking it again would close it, which is what made the second walk of one path fail.
 
 // A LEVEL IS WAITED FOR RATHER THAN ASSUMED.
-// The page has not finished when the click returns â€” the Insert dropdown was still absent five seconds later in one measurement â€” so a tree read on a fixed gap reads a menu bar with no children and calls it a broken path.
+// The page has not finished when the click returns — the Insert dropdown was still absent five seconds later in one measurement — so a tree read on a fixed gap reads a menu bar with no children and calls it a broken path.
 // Every level waits for the rows it is looking for, and only a budget running out may report a break.
 
 // A BREAK NAMES THE LEVEL AND THE CONTENTS.

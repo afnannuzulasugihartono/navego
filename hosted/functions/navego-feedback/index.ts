@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-15 UTC+7.
-// @title: navego-feedback â€” the pilot page's answers, written down so the first customers are not a memory.
+// @title: navego-feedback — the pilot page's answers, written down so the first customers are not a memory.
 // @state: takes one answer from the pilot page, keeps the newest answer per contact, and answers with what it did.
 // @dependencies: edge-runtime, supabase-js, cors, required-env.
 

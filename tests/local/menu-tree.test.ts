@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-15 UTC+7.
-// @title: menu-tree â€” an app's menus read as a tree, and a tree that cannot lie.
+// @title: menu-tree — an app's menus read as a tree, and a tree that cannot lie.
 // @state: four states, level matching, nearest names, limits.
 // @dependencies: node:test, strict, ../local/menu-tree.js.
 
@@ -55,7 +55,7 @@ test('a disabled row is disabled whatever else it is', () => {
 });
 
 // THE EXACT ROW WINS.
-// A submenu container carries the concatenated names of everything inside it, so a substring search also matches the container â€” and the container sits at the parent level, which is how a walk ends up one level off while every step looked correct.
+// A submenu container carries the concatenated names of everything inside it, so a substring search also matches the container — and the container sits at the parent level, which is how a walk ends up one level off while every step looked correct.
 
 test('an exact row beats a container carrying the same names', () => {
   const rows = [
@@ -78,7 +78,7 @@ test('a name that is only part of a row still finds it', () => {
 });
 
 // NEAREST NAMES ARE ORDERED BY DISTANCE AND NOT BY POSITION.
-// When a path breaks, the useful thing to hand over is the closest thing that exists: the caller wrote "Upload" and the page offers "Upload from computer" â€” one word away.
+// When a path breaks, the useful thing to hand over is the closest thing that exists: the caller wrote "Upload" and the page offers "Upload from computer" — one word away.
 // "Break" is many words away and must not be offered first.
 
 test('the nearest name is the caller word with more detail, not the closest by letters', () => {

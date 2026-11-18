@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-15 UTC+7.
-// @title: proof-run â€” one real drive: a browser reads a portal, the CSV lands, and four office files come out with the bytes the site ships.
+// @title: proof-run — one real drive: a browser reads a portal, the CSV lands, and four office files come out with the bytes the site ships.
 // @state: the fixture portal, a throwaway Chrome, the MCP client over stdio, the five steps, and the record the suite rechecks.
 // @dependencies: node:child_process, node:crypto, node:fs, node:http, node:os, node:path, node:url, ../local/browsers.js, ../local/transport.js, ../../tests/helpers/fake-cloud.ts.
 
@@ -424,7 +424,7 @@ export async function runProof({
     const opened = await mcp.tool('browser_open_url', { url: portal.url });
     const tabId = opened.answer?.action?.id;
     if (!tabId) throw new Error(`browser_open_url returned no tab id; the answer was ${JSON.stringify(opened.answer)}`);
-    note({ tool: 'browser_open_url', ms: opened.ms, ok: true, note: `tab ${tabId} Â· ${portal.url}` });
+    note({ tool: 'browser_open_url', ms: opened.ms, ok: true, note: `tab ${tabId} · ${portal.url}` });
 
     const read = await mcp.tool('browser_read_page', { tabId });
     const pageText = String(read.answer?.text ?? '');

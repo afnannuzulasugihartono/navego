@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-23 UTC+7.
-// @title: local-file â€” upload, drop and download are proven by the bytes on disk, not by an ok.
+// @title: local-file — upload, drop and download are proven by the bytes on disk, not by an ok.
 // @state: the file verbs, and the staging, chooser interception and delivery checks behind them.
 // @dependencies: node:test, strict, ../local/primitives.js.
 
@@ -316,7 +316,7 @@ test('a drop refuses anything but one source and a place to drop it', async () =
 });
 
 // THE TYPE IS PINNED BY NAME.
-// A drop tells the page what it is being offered, and a wrong type is a file the page refuses â€” the difference between an image landing and nothing happening at all.
+// A drop tells the page what it is being offered, and a wrong type is a file the page refuses — the difference between an image landing and nothing happening at all.
 
 
 test('a drop types the file by its name, and admits what it does not know', () => {

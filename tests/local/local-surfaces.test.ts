@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: local-surfaces â€” the parts of the local surface the other suites do not reach.
+// @title: local-surfaces — the parts of the local surface the other suites do not reach.
 // @state: the page expressions, the file verbs, the transport, the bridge and the stdio server, each proved against a fake.
 // @dependencies: node:test, strict, node:events, ../local/*.
 

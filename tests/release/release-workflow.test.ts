@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: release-workflow â€” the tag workflow publishes a release a buyer can download, and points Latest at the newest version.
+// @title: release-workflow — the tag workflow publishes a release a buyer can download, and points Latest at the newest version.
 // @state: the release step runs against a stub gh; it uploads four files, fails when one is missing, publishes a draft, and takes the Latest mark only when it is the newest version.
 // @dependencies: node:test, node:assert, node:fs, node:os, node:path, node:child_process.
 

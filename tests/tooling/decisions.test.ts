@@ -35,7 +35,6 @@ const root = new URL('../../', import.meta.url);
 const read = (name: string): Register => JSON.parse(fs.readFileSync(new URL(name, root), 'utf8')) as Register;
 
 const KINDS = new Set(['user', 'internet', 'repo']);
-const REF = /decisions\.json\s*->\s*(D[0-9]{2,})/g;
 
 // The acceptance surface is not swept and not judged here: the pins define the judge.
 // Every exclusion below is named on purpose - a silent exclusion is how the rule dies.
@@ -74,12 +73,24 @@ const EXCLUDED = new Set([
 
 // The file set is what git lists, exactly the set a person would ship - a gitignored build twin (extension/background.js, local/*.js) is machine-local state and not the repository.
 
-const tracked = execFileSync('git', ['ls-files', '-z'], { cwd: new URL(root) }).toString('utf8').split('\0').filter(Boolean);
-const untracked = execFileSync('git', ['ls-files', '-z', '--others', '--exclude-standard'], { cwd: new URL(root) }).toString('utf8').split('\0').filter(Boolean);
-
-const inRepoScope = (file: string) => !EXCLUDED.has(file) && !file.startsWith('hosted/migrations/') && !file.startsWith('.github/');
 const CODE_EXTENSIONS = new Set(['.css', '.ts', '.tsx', '.js', '.mjs', '.html', '.svg', '.py', '.sql', '.yml', '.toml']);
-const codeFiles = [...tracked, ...untracked].filter(inRepoScope).filter((file) => CODE_EXTENSIONS.has(path.extname(file)));
+
+// git is the ground the set stands on; if it is missing the gate says so instead of the whole file crashing at import.
+// Every comment in a file that carries a decisions.json citation points at one or more D-numbers; a citation line names them all.
+
+const listCodeFiles = (): string[] => {
+  let tracked: string[], untracked: string[];
+  try {
+    tracked = execFileSync('git', ['ls-files', '-z'], { cwd: new URL(root) }).toString('utf8').split('\0').filter(Boolean);
+    untracked = execFileSync('git', ['ls-files', '-z', '--others', '--exclude-standard'], { cwd: new URL(root) }).toString('utf8').split('\0').filter(Boolean);
+  } catch {
+    throw new Error('decisions gate: git is required to read the file set - run npm test from inside the repository checkout');
+  }
+  const inRepoScope = (file: string) => !EXCLUDED.has(file) && !file.startsWith('hosted/migrations/') && !file.startsWith('.github/');
+  return [...tracked, ...untracked].filter(inRepoScope).filter((file) => CODE_EXTENSIONS.has(path.extname(file)));
+};
+
+const ID = /D[0-9]{2,}/g;
 
 test('the register parses and names where it came from', () => {
   const register = read('docs/decisions.json');
@@ -111,11 +122,11 @@ test('every decisions.json reference in the repo resolves to a registered decisi
   const register = read('docs/decisions.json');
   const ids = new Set(register.decisions.map((d) => d.id));
   const referenced = new Set<string>();
-  for (const file of codeFiles) {
+  for (const file of listCodeFiles()) {
     const text = fs.readFileSync(new URL(file, root), 'utf8');
-    for (const match of text.matchAll(REF)) {
-      const id = match[1];
-      if (id) referenced.add(id);
+    for (const line of text.split('\n')) {
+      if (!line.includes('decisions.json')) continue;
+      for (const match of line.matchAll(ID)) referenced.add(match[0]);
     }
   }
   assert.ok(referenced.size >= 1, 'at least one code file cites the register - it is wired in, not decorative');
@@ -125,7 +136,7 @@ test('every decisions.json reference in the repo resolves to a registered decisi
 });
 
 test('no comment in the repo opens with a WHY prefix - the reason stands on its own', () => {
-  for (const file of codeFiles) {
+  for (const file of listCodeFiles()) {
     const text = fs.readFileSync(new URL(file, root), 'utf8');
     for (const [index, line] of text.split('\n').entries()) {
       assert.doesNotMatch(line, /^\s*(\/\/|\/\*|\*)\s*WHY\b/i, `${file}:${index + 1} opens a comment with WHY - write the reason directly, e.g. "the banner hangs off the footer because every page ends there"`);

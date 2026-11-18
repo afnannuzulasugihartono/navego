@@ -5,7 +5,7 @@
 
 // THE COPIES ARE GENERATED AND NOT HAND-WRITTEN.
 // The package has to carry every module it imports, and a hand-written second copy would drift from the first.
-// So the protocol pair stays in one file in this tree â€” extension/lib/ â€” the copy is written here, and .gitignore keeps local/lib/ out of the repository.
+// So the protocol pair stays in one file in this tree — extension/lib/ — the copy is written here, and .gitignore keeps local/lib/ out of the repository.
 // The former vendored core (bing-serp, tidy) moved into local/ as source; nothing else comes from shared/.
 
 import fs from 'node:fs';

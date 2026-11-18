@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-06 UTC+7.
-// @title: proof-run â€” a real browser drive that has to leave the same four files the site ships.
+// @title: proof-run — a real browser drive that has to leave the same four files the site ships.
 // @state: the fixture portal over loopback, a throwaway browser, the MCP client, the four artifacts, and the record the suite rechecks.
 // @dependencies: node:test, strict, node:fs, node:os, node:path, ../local/driver.js, ../scripts/proof/proof-run.ts.
 

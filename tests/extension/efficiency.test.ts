@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: efficiency.test â€” the round trips the device spends, counted in the source.
+// @title: efficiency.test — the round trips the device spends, counted in the source.
 // @state: the workflows that parallelise, the pull endpoint that is gone, and the page helper that degrades instead of throwing.
 // @dependencies: node:test, strict, node:fs, extension-source.
 
@@ -18,7 +18,7 @@ const transcriptMigration = fs.readFileSync(new URL('../../hosted/migrations/202
 const transcriptRenderMigration = fs.readFileSync(new URL('../../hosted/migrations/20260909001248_navego_youtube_transcript_render_ready.sql', import.meta.url), 'utf8');
 const textOnlyMigration = fs.readFileSync(new URL('../../hosted/migrations/20260909021225_extension_1_1_text_only_workflows.sql', import.meta.url), 'utf8');
 
-// The pull endpoint is gone: no client asked through it anymore â€” the device learns work over its socket â€” so the deployed contract it was is deleted rather than kept warm.
+// The pull endpoint is gone: no client asked through it anymore — the device learns work over its socket — so the deployed contract it was is deleted rather than kept warm.
 // What must not come back is the device asking for work, which was two round trips per action.
 
 test('a missing page helper costs one feature, never the whole content script', () => {

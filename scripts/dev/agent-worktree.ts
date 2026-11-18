@@ -1,9 +1,9 @@
 // @last-edited: 2026-10-28 UTC+7.
-// @title: agent-worktree â€” one worktree per agent, so any coding agent can share this repo.
+// @title: agent-worktree — one worktree per agent, so any coding agent can share this repo.
 // @state: create, list, remove; the delete path archives a merged branch before it drops it.
 // @dependencies: node:child_process.
 
-// THIS EXISTS AND WHY IT IS NOT A TOOL PLUGIN.
+
 // The agents that work on this repo are not all the same: Kilo, Cline, OpenCode, and whatever comes next.
 // A worktree is the one isolation mechanism every one of them already understands, because it is git itself, so the workflow is a script and a rule in AGENTS.md rather than a setting inside any one tool.
 // An agent that edits the shared checkout collides with every other agent on the same file; an agent in its own worktree cannot.

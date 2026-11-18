@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-27 UTC+7.
-// @title: caret-guard â€” the gate in front of a read that moves a caret, and the verdict that never claims a restore it did not measure.
+// @title: caret-guard — the gate in front of a read that moves a caret, and the verdict that never claims a restore it did not measure.
 // @state: the gate, the restorability rule, the verdict, and one factory that drives the DOM with injected primitives.
 // @dependencies: ./page-expressions.js, ./read-strategy.js.
 

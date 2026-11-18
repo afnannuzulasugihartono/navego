@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: listen-transcribe.test â€” one live listen session per device, transcribed as it arrives.
+// @title: listen-transcribe.test — one live listen session per device, transcribed as it arrives.
 // @state: the second start it refuses, the transcript it returns, and the transcriber it uses.
 // @dependencies: node:test, strict, node:fs, node:module, node:vm.
 

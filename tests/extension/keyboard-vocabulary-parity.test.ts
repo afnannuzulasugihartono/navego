@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-14 UTC+7.
-// @title: keyboard-vocabulary-parity.test â€” the key names the extension accepts are the names it resolves.
+// @title: keyboard-vocabulary-parity.test — the key names the extension accepts are the names it resolves.
 // @state: the key list and the modifier aliases, held consistent on the one surface that exists.
 // @dependencies: node:test, strict, promises, keyboard.
 

@@ -1,13 +1,13 @@
 // @last-edited: 2026-10-04 18:25 UTC+7.
-// @title: keyboard Ã¢â‚¬â€ chord and bounded text resolution into exact CDP key events.
+// @title: keyboard — chord and bounded text resolution into exact CDP key events.
 // @state: pure resolver with no chrome dependency; modifiers OR into a CDP bitmask, unknown keys are rejected, and text is a separate length-bounded chunked path.
 // @dependencies: none.
 
 // Keyboard chords and bounded text entry: pure resolution from a declarative { key, modifiers } or { text } request to the exact CDP event payload.
 // NO chrome dependency, so it is deterministic and testable in Node (pattern of lib/action-pipeline.js).
 
-// this exists: the trusted key path carried a 12-entry table of unmodified keys with no modifier support at all.
-// No Ctrl+A, no Ctrl+V, no Shift+Enter Ã¢â‚¬â€ which is why complex editors scored as "weak keyboard" next to Playwright.
+// The trusted key path carried a 12-entry table of unmodified keys with no modifier support at all.
+// No Ctrl+A, no Ctrl+V, no Shift+Enter — which is why complex editors scored as "weak keyboard" next to Playwright.
 // This module is purely additive: every previously valid key still resolves to byte-identical payloads, so existing callers and contracts are unchanged.
 
 // Semantics locked by tests/extension/focus-and-keyboard.test.ts:
@@ -183,7 +183,7 @@ export function resolveKeyStream(events: unknown) {
 
 // TEXT ALSO TRAVELS AS KEY EVENTS.
 // Input.insertText is an IME insert with no key events, and editors that commit off key-event sequences drop it without a trace: success reported, nothing painted.
-// One resolved spec per character Ã¢â‚¬â€ keyDown carrying text plus keyUp Ã¢â‚¬â€ is what such editors commit.
+// One resolved spec per character — keyDown carrying text plus keyUp — is what such editors commit.
 // The map is US ASCII plus newline; anything else fails naming its code point, so the caller picks insertText for it instead of guessing a layout.
 
 const TEXT_KEY_EXTRA: Readonly<Record<string, { key: string; code: string; vk: number; shift: boolean }>> = Object.freeze({

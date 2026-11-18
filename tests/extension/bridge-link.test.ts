@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: bridge-link.test â€” the extension half of the loopback conversation, without a browser.
+// @title: bridge-link.test — the extension half of the loopback conversation, without a browser.
 // @state: the real socket server pushes; this worker answers CDP over it.
 // @dependencies: node:test, strict, ../extension/worker/bridge-link.js, ../local/bridge-ws.js.
 
@@ -217,7 +217,7 @@ test('the frame writer the server uses is the one the client decodes', () => {
 });
 
 // THIS IS LOCKED IN A TEST AND NOT LEFT TO THE READER.
-// One hung browser call used to hold this worker for a minute while the caller gave up after ten seconds â€” so the failure was not one failed command but a queue of them, which is what "stuck" felt like.
+// One hung browser call used to hold this worker for a minute while the caller gave up after ten seconds — so the failure was not one failed command but a queue of them, which is what "stuck" felt like.
 // The bound has to stay under the caller's timeout, and those two numbers live in different files.
 
 test('the worker gives up before the local side stops listening', async () => {

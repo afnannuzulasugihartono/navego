@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-26 UTC+7.
-// @title: navego-billing â€” the invoice a customer opens, and the callback that closes it.
+// @title: navego-billing — the invoice a customer opens, and the callback that closes it.
 // @state: quotes a delivery into an amount, opens one payable transaction per invoice, serves the page in the state the row is in, closes it from a signed notification or the provider's own answer, records a transfer by hand, opens a new link when the customer asks, and answers a wallet's balance, quote, reserve, settle, refund and top-up.
 // @dependencies: edge-runtime, supabase-js, ../_shared/billing.ts, ../_shared/wallet.ts, ../_shared/wallet-api.ts, ../_shared/invoice-page.ts, ../_shared/cors.ts, ../_shared/edge-log.ts.
 
@@ -958,7 +958,7 @@ async function runQrisDetect(): Promise<Record<string, unknown>> {
   }
   // ONLY qris-self INVOICES ARE MATCHED.
   // An invoice on the Midtrans rail is closed by the provider's signed notification, and matching it to a feed transaction too would let one payment close two invoices.
-  // The detector's money is QRIS scanned from our own page, so only invoices opened on that rail are candidates â€” for any customer, AtmoRouter included.
+  // The detector's money is QRIS scanned from our own page, so only invoices opened on that rail are candidates — for any customer, AtmoRouter included.
   const supabase = await db();
   const { data: openInvoices, error } = await supabase.from("opera_invoices")
     .select("*").eq("status", "open").eq("provider", "qris-self").order("created_at", { ascending: true });

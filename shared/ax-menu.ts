@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-13 UTC+7.
-// @title: ax-menu â€” menu driving by accessibility tree: names and order, never coordinates or counts.
+// @title: ax-menu — menu driving by accessibility tree: names and order, never coordinates or counts.
 // @state: tree queries, accelerator fast path, polled waits, verified walks.
 // @dependencies: none.
 
@@ -81,7 +81,7 @@ function axMenuIds(nodes: AxNode[]): Set<string> {
   return new Set(nodes.filter((n) => roleOf(n) === 'menu').map((n) => n.nodeId));
 }
 
-// A vendor menu prints its own accelerator inside the row name â€” "Table t â–º", "Comment m Ctrl+Alt+M", "eSignature 1" â€” so the fastest walk is one keypress, not a count of Downs that rots when rows reorder.
+// A vendor menu prints its own accelerator inside the row name — "Table t ►", "Comment m Ctrl+Alt+M", "eSignature 1" — so the fastest walk is one keypress, not a count of Downs that rots when rows reorder.
 // The parser takes the last lone letter or digit, skipping chord hints and multi-character tokens, and answers null when the row carries nothing pressable.
 // Measured on the live Docs Insert menu 2026-10-13: pressing the parsed letter opened the Table grid.
 

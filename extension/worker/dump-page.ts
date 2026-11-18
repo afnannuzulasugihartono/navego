@@ -5,9 +5,8 @@
  * @dependencies: tab-content.js, capture.js.
  */
 
-// THIS EXISTS.
 // The agent today can see the page in viewports (`read`) or as an offline copy on disk (save_page).
-// Neither is the tool for â€œanswer a question about the whole pageâ€: the dump is the page reduced to the facts an agent needs to reason - title, text, headings, links, scripts, styles - with no images, fonts or assets.
+// Neither is the tool for "answer a question about the whole page": the dump is the page reduced to the facts an agent needs to reason - title, text, headings, links, scripts, styles - with no images, fonts or assets.
 
 import { codedError, assertCaptureFramesSafe } from './capture.js';
 import { recordScanCall, resolveTabId, HTTP_URL_RE } from './tab-content.js';

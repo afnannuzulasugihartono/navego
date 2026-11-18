@@ -1,12 +1,12 @@
 // @last-edited: 2026-10-15 UTC+7.
-// @title: advice â€” what to do next when a call could not do what it was asked.
+// @title: advice — what to do next when a call could not do what it was asked.
 // @state: rules keyed by what went wrong, each with a move that is known to work.
 // @dependencies: none.
 
 // THIS FILE EXISTS
 
 // A failure that names the problem sends an agent looking for the problem again.
-// Measured on this product's own author: "no menuitem matching \"Image\"" said exactly what was missing and nothing about what to do, and the next move was always the same two or three â€” open the menu that holds it, read the menu tree, wait for it to appear.
+// Measured on this product's own author: "no menuitem matching \"Image\"" said exactly what was missing and nothing about what to do, and the next move was always the same two or three — open the menu that holds it, read the menu tree, wait for it to appear.
 // Those moves are written down here once, so the failure carries them and the agent does not have to rediscover them while a menu is closing underneath it.
 
 // ADVICE IS DATA AND NOT SENTENCES APPENDED TO ERRORS.
@@ -43,7 +43,7 @@ const trim = (text: unknown, at = 60) => {
 };
 
 // THE NEAREST NAME IS OFFERED WHEN NOTHING MATCHED.
-// The caller asked for one thing and the page offers another that starts the same way â€” "Upload" against "Upload from computer".
+// The caller asked for one thing and the page offers another that starts the same way — "Upload" against "Upload from computer".
 // An agent that sees the difference spelled out does not have to guess whether its own spelling was wrong or the page's.
 
 const rowAdvice = (role: string, name: unknown, rows: AdviceRow[]) => {
@@ -53,7 +53,7 @@ const rowAdvice = (role: string, name: unknown, rows: AdviceRow[]) => {
   const looks = [...new Set(sameRole.map((row) => row.name))]
     .filter((text) => wanted !== '' && (String(text).toLowerCase().includes(wanted.slice(0, 6)) || wanted.includes(String(text).toLowerCase().slice(0, 6))))
     .slice(0, 3);
-  if (begins) return [`the page has "${trim(begins.name)}" â€” browser_click({role: "${role}", name: "${trim(begins.name, 40)}"})`];
+  if (begins) return [`the page has "${trim(begins.name)}" — browser_click({role: "${role}", name: "${trim(begins.name, 40)}"})`];
   if (looks.length) return [`the page has: ${looks.map((text) => `"${trim(text, 34)}"`).join(', ')}`];
   if (MENU_ROLES.includes(String(role))) {
     return [
@@ -66,7 +66,7 @@ const rowAdvice = (role: string, name: unknown, rows: AdviceRow[]) => {
 };
 
 const HANDLE_GONE = [
-  'browser_find_element({role: "element-role", name: "element-name"}) again â€” the element it named is gone, and the row may now be somewhere else',
+  'browser_find_element({role: "element-role", name: "element-name"}) again — the element it named is gone, and the row may now be somewhere else',
   'browser_find_element({role: "element-role"}) to find the row under its new name or place'
 ];
 
@@ -95,11 +95,11 @@ const NO_TARGET = [
 
 const CLICK_OFF_PAGE = [
   'browser_scroll({text}) or browser_scroll({y}) to bring it into the viewport, then click again',
-  'browser_click({role, name}) answers coordinates â€” a row above the fold is clickable as it is, one below it is not'
+  'browser_click({role, name}) answers coordinates — a row above the fold is clickable as it is, one below it is not'
 ];
 
 const EMPTY_FILE_INPUT = [
-  'the page has no file input to fill â€” browser_drop_file({x, y, filename, path}) instead, which is the road into a picker with no input behind it',
+  'the page has no file input to fill — browser_drop_file({x, y, filename, path}) instead, which is the road into a picker with no input behind it',
   'browser_screenshot() after the drop to see whether the page took it'
 ];
 
@@ -124,7 +124,7 @@ const EXTENSION_PAGE = [
 ];
 
 // THE FIRST RULE THAT FITS WINS.
-// A refusal and a missing row can both be true at once â€” a page that refuses the method it was asked for is also "no such thing" â€” and a caller is better served by the most specific thing that is wrong, which is the first rule in this order.
+// A refusal and a missing row can both be true at once — a page that refuses the method it was asked for is also "no such thing" — and a caller is better served by the most specific thing that is wrong, which is the first rule in this order.
 
 export const RULES: ReadonlyArray<AdviceRule> = Object.freeze([
   {

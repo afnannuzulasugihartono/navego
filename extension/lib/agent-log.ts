@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-08 UTC+7.
-// @title: agent-log â€” the no-export logger that classic scripts and the worker share.
+// @title: agent-log — the no-export logger that classic scripts and the worker share.
 // @state: level-aware console sink published on globalThis, with a bounded fault list beside its ring; deliberately has no export so manifest content_scripts can load it as a classic script.
 // @dependencies: none.
 

@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-11 UTC+7.
-// @title: claim-clock â€” the long-poll claim must never stamp a command with a frozen clock.
+// @title: claim-clock — the long-poll claim must never stamp a command with a frozen clock.
 // @state: 4 locks; the clock invariant, the overload count, the signature the bridge calls, and the grants.
 // @dependencies: node:test, assert, fs.
 
@@ -7,9 +7,9 @@
 
 // opera_claim_next_wait holds ONE transaction for up to 25 seconds while it waits for a command.
 // In PostgreSQL now() is transaction_timestamp(), frozen at BEGIN, so every now() inside it reads a clock that is up to 25 seconds stale.
-// clock_timestamp() reads the real clock, and the function's own elapsed-time measurements already used it â€” the claim stamp did not.
+// clock_timestamp() reads the real clock, and the function's own elapsed-time measurements already used it — the claim stamp did not.
 
-// The live consequence, measured before the fix: 306 of 9732 commands (3.1%) carried a claimed_at EARLIER than their created_at, the worst by 5029ms â€” almost exactly the 5s wait window the extension sends.
+// The live consequence, measured before the fix: 306 of 9732 commands (3.1%) carried a claimed_at EARLIER than their created_at, the worst by 5029ms — almost exactly the 5s wait window the extension sends.
 // Every latency number derived from those columns was wrong for exactly the fastest claims.
 
 // The second read was worse in kind: expires_at > now() in the candidate SELECT meant a command that expired while the caller waited was still handed out.
@@ -18,7 +18,7 @@
 
 // The behavioural proof needs a real database and was run by hand against one while writing this fix.
 // This file pins the things that can be checked from the migration and the call site, and the second of those four is the one that would have caught the mistake actually made while writing the fix: it was first written with the parameter order (text,text,integer,text,integer,jsonb).
-// PostgreSQL matches CREATE OR REPLACE on the argument type list INCLUDING ORDER, so that did not replace the function â€” it created a second overload and left the buggy body live.
+// PostgreSQL matches CREATE OR REPLACE on the argument type list INCLUDING ORDER, so that did not replace the function — it created a second overload and left the buggy body live.
 // With two overloads PostgREST cannot choose one for a named-argument call, so the extension's pull loop could not resolve the function at all.
 // The bug was found by reading pg_proc, not by a test.
 

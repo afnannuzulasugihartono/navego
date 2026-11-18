@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: bridge-ws.test â€” the loopback server pushes, settles, and keeps the worker alive.
+// @title: bridge-ws.test — the loopback server pushes, settles, and keeps the worker alive.
 // @state: integration pins over a real socket pair on an ephemeral port.
 // @dependencies: node:test, strict, node:http, ../local/bridge-ws.js, ../extension/lib/socket-protocol.js.
 
@@ -200,7 +200,7 @@ test('a device that never answers fails the caller instead of hanging forever', 
 
 // THIS ONE EXISTS.
 // The device refuses any command it has not been given a `ready` for, and it refuses it by dropping the frame without a word.
-// The server used to push the moment the socket attached, so the first command of every connection was thrown away in a window a few milliseconds wide â€” and the caller saw a call that simply never answered.
+// The server used to push the moment the socket attached, so the first command of every connection was thrown away in a window a few milliseconds wide — and the caller saw a call that simply never answered.
 // It cost one test in three full-suite runs, and in a browser it would have cost one lost command in a hundred connections, which is a bug nobody ever reports.
 
 test('a command raised before the handshake is held, not lost', async () => {
@@ -270,7 +270,7 @@ function upgradeOnce(port: number, origin?: string) {
 // THIS ONE EXISTS.
 // Node detaches an upgraded socket from the tracking `server.close()` waits on, so a device whose socket was destroyed without a close handshake left the server counting a connection that never ended.
 // Measured: `server.close()` never called back, and a driver shutdown hung on a bridge nobody was using.
-// A device that reconnects is how it happens in production â€” the worker is killed, comes back, and the socket it left behind is still counted.
+// A device that reconnects is how it happens in production — the worker is killed, comes back, and the socket it left behind is still counted.
 
 test('a reconnecting device leaves nothing behind that closing waits on', async () => {
   const bridge = createBridgeServer({ cloud: fakeCloud(), port: 0, heartbeatMs: 1000 });
@@ -295,7 +295,7 @@ test('a reconnecting device leaves nothing behind that closing waits on', async 
 
 // TIME IS FAKE HERE.
 // The reap line sits at two minutes, and a test that waits it out is a test nobody runs.
-// The server takes its clock injected, so fake time jumps past the line while real timers run the heartbeats â€” silence gets reaped, traffic never does, all in under a second.
+// The server takes its clock injected, so fake time jumps past the line while real timers run the heartbeats — silence gets reaped, traffic never does, all in under a second.
 
 test('a busy socket survives its second minute and a silent one does not', async () => {
   let at = 1000000;

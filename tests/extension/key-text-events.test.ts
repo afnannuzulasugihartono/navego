@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-14 UTC+7.
-// @title: key-text-events.test â€” editor text travels as key events, not IME inserts.
+// @title: key-text-events.test — editor text travels as key events, not IME inserts.
 // @state: locks the per-character mapping, the newline shape, and the burst flag.
 // @dependencies: node:test, strict, ../extension/lib/keyboard.js, ../extension/lib/protocol.js.
 

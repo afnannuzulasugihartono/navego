@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-26 UTC+7.
-// @title: invoice-page â€” the page a customer opens, rendered from one invoice row and nothing else.
+// @title: invoice-page — the page a customer opens, rendered from one invoice row and nothing else.
 // @state: every state an invoice or a payment link can be in, said in words, with no script and no asset to load.
 // @dependencies: ./billing.ts.
 
@@ -95,7 +95,7 @@ function paidBlock(invoice: Record<string, unknown>): string {
   const how = at
     ? `<p>Paid on ${escapeHtml(at)}${method ? ` with ${escapeHtml(method)}` : ''}.</p>`
     : '<p>The payment has been recorded.</p>';
-  return `<p class="paid">Paid â€” thank you.</p>${how}${transaction ? `<p><small>Provider transaction ${escapeHtml(transaction)}</small></p>` : ''}${manual ? `<p><small>Recorded by hand: ${escapeHtml(manual.note)} (${escapeHtml(moment(manual.at) || manual.at)})</small></p>` : ''}`;
+  return `<p class="paid">Paid — thank you.</p>${how}${transaction ? `<p><small>Provider transaction ${escapeHtml(transaction)}</small></p>` : ''}${manual ? `<p><small>Recorded by hand: ${escapeHtml(manual.note)} (${escapeHtml(moment(manual.at) || manual.at)})</small></p>` : ''}`;
 }
 
 // THE PAYMENT BLOCK IS ONE FUNCTION OF THE STATE.
@@ -143,7 +143,7 @@ function qrisBlockFor(invoice: Record<string, unknown>, qrisSvg: string | null |
 
 function qrisBlock(invoice: Record<string, unknown>, qrisSvg: string): string {
   const total = escapeHtml(money(invoice.amount_cents, invoice.currency));
-  return `<div class="qris"><p class="state">Scan this QRIS with any payment app to pay <strong>${total}</strong> â€” the amount is already locked in the code.</p>${qrisSvg}</div>`;
+  return `<div class="qris"><p class="state">Scan this QRIS with any payment app to pay <strong>${total}</strong> — the amount is already locked in the code.</p>${qrisSvg}</div>`;
 }
 
 function lineRows(invoice: Record<string, unknown>): string {

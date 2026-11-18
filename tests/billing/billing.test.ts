@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-26 UTC+7.
-// @title: billing â€” what a delivery is worth, and what makes a payment claim true.
+// @title: billing — what a delivery is worth, and what makes a payment claim true.
 // @state: the amount of an invoice, the two signatures, the attempt id a retry gets, the one rule that says whether a payment link is payable, and the rule that an undelivered month is not charged.
 // @dependencies: node:test, strict, node:crypto, ../hosted/functions/_shared/billing.ts.
 
@@ -320,7 +320,7 @@ test('the invoice is derived from the manifest: one line per delivered client-mo
   assert.ok(firstLine, 'one delivery is one line');
   assert.equal(firstLine.kind, 'statement.client_month');
   assert.equal(firstLine.quantity, 1, 'one delivery is one client-month, not a page count');
-  assert.match(String(firstLine.description), /Toko Sinar Jaya â€” 2026-08 \(2 pages\)/);
+  assert.match(String(firstLine.description), /Toko Sinar Jaya — 2026-08 \(2 pages\)/);
   const out = amountFor(lines, PRICE_LIST);
   assert.equal(out.amountCents, 1000000, 'two delivered client-months are two units');
 });

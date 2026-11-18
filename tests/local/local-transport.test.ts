@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-11 UTC+7.
-// @title: local-transport â€” the real socket, browser discovery, and waiting for a launch that is not up yet.
+// @title: local-transport — the real socket, browser discovery, and waiting for a launch that is not up yet.
 // @state: 7 locks; URL discovery, connection failure, open-ordering, and a bounded wait that reports rather than hangs.
 // @dependencies: node:test, strict, ../local/transport.js.
 

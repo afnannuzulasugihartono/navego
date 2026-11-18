@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: observe â€” what the page says about itself, read in as few round trips as it can be read in.
+// @title: observe — what the page says about itself, read in as few round trips as it can be read in.
 // @state: snapshot, resolveRow, menuTree, openMenu, computed, scroll, viewport, capture and the two page-state reads.
 // @dependencies: ./menu-tree.js, ./page-expressions.js.
 

@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: local-input â€” typing, chords and streams must behave the way a page that ignores synthetic events actually behaves.
+// @title: local-input — typing, chords and streams must behave the way a page that ignores synthetic events actually behaves.
 // @state: the typing and key verbs, and the edit signature that proves the text landed on the page.
 // @dependencies: node:test, strict, ../local/primitives.js.
 
@@ -551,7 +551,7 @@ test('a key holds its down edge a beat before the up', async () => {
     const cdp = recordingCdp();
     await createPrimitives(cdp, { sleep: async (ms) => { slept.push(ms); } }).key('a', modifiers);
 
-    assert.deepEqual(slept, [KEY_BEAT_MS], 'down, beat, up â€” chord and bare key alike');
+    assert.deepEqual(slept, [KEY_BEAT_MS], 'down, beat, up — chord and bare key alike');
   }
 });
 
@@ -574,7 +574,7 @@ test('a chord-only stream settles once instead of polling for an edit that never
 
   assert.equal(out.moved, false, 'a menu chord does not move the text signature');
   assert.equal(out.settled, true, 'and it says it already settled, so the page look does not pay twice');
-  assert.deepEqual(slept, [KEY_BEAT_MS, KEY_BEAT_MS], 'two key beats; the settle asked the page and found it quiet â€” not twelve 150 ms polls');
+  assert.deepEqual(slept, [KEY_BEAT_MS, KEY_BEAT_MS], 'two key beats; the settle asked the page and found it quiet — not twelve 150 ms polls');
 });
 
 test('a text stream with nothing focused fails fast instead of polling for text that cannot land', async () => {

@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: qris â€” the merchant's static QRIS payload turned into a dynamic one with the amount locked.
+// @title: qris — the merchant's static QRIS payload turned into a dynamic one with the amount locked.
 // @state: TLV parse and serialize, CRC16-CCITT-FALSE, and the one conversion that was proven accepted by a payer app on 2026-11-02.
 // @dependencies: none.
 

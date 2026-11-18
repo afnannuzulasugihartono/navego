@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: bridge-ws â€” the loopback command server, speaking the frames the cloud bridge speaks.
+// @title: bridge-ws — the loopback command server, speaking the frames the cloud bridge speaks.
 // @state: every browser that connects is carried, each target names its browser, each command reaches the one that owns it, and each session pays the cloud its allowance.
 // Tab-less commands follow the pinned browser when the person set one.
 // @dependencies: node:crypto, node:http, node:events, ./ws-server.js, ./leases.js, ./lib/*.

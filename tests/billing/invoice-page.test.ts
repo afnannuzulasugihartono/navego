@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-26 UTC+7.
-// @title: invoice-page â€” every state a customer can open, as one readable and honest page.
+// @title: invoice-page — every state a customer can open, as one readable and honest page.
 // @state: paid, live, expired, unknown, no link and cancelled, each said in words, escaped, and carrying the token only where a form needs it.
 // @dependencies: node:test, strict, ../hosted/functions/_shared/invoice-page.ts.
 
@@ -28,7 +28,7 @@ const INVOICE = {
       { kind: 'statement.client_month', unit: 'delivered client-month', description: 'Laporan BCA - 2026-10', quantity: 15, amountCents: 9900000 }
     ],
     unpriced: [
-      { kind: 'slides.deck', description: 'Slides â€” 2026-10', reason: 'no price for this kind' }
+      { kind: 'slides.deck', description: 'Slides — 2026-10', reason: 'no price for this kind' }
     ]
   }
 };

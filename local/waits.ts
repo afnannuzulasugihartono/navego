@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: waits â€” the page's own settle, and the event-driven waits built on it.
+// @title: waits — the page's own settle, and the event-driven waits built on it.
 // @state: settle and waitForIdle, then one mutation wait with text, row and stillness on top.
 // @dependencies: ./page-expressions.js.
 

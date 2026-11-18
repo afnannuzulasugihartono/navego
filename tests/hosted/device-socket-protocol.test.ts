@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-13 UTC+7.
-// @title: socket-protocol â€” the push protocol, checked without a socket, a bridge, or a browser.
+// @title: socket-protocol — the push protocol, checked without a socket, a bridge, or a browser.
 // @state: 8 locks; handshake, runnable commands, completion frames, and what must be refused.
 // @dependencies: node:test, strict, ../extension/lib/socket-protocol.js.
 
@@ -102,7 +102,7 @@ test('a frame near the product bound parses on the device side too', () => {
 });
 
 // completions compress.
-// A page.read result runs to hundreds of kilobytes, and on a slow link the transfer dwarfs everything else â€” measured: an 88 KiB read completed in 1914 ms against ~600 ms of fixed costs.
+// A page.read result runs to hundreds of kilobytes, and on a slow link the transfer dwarfs everything else — measured: an 88 KiB read completed in 1914 ms against ~600 ms of fixed costs.
 // gzip shrinks page JSON five to fifty times, so a big completion travels as one small binary frame instead.
 // Small completions stay text: readable in logs, and the few hundred bytes saved are not worth a second code path per message.
 

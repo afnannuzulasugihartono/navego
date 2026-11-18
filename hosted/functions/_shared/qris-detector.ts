@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: qris-detector â€” read the merchant feed and match money in to open invoices, in dry mode until the units are proven.
+// @title: qris-detector — read the merchant feed and match money in to open invoices, in dry mode until the units are proven.
 // @state: the feed query and headers that were accepted on 2026-11-02, the feed parser, exact-amount FIFO matching in both amount units, and the dry/live plan.
 // @dependencies: none.
 

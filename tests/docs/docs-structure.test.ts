@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-13 UTC+7.
-// @title: docs-structure.test â€” structure workflow migrations embed valid, proven JSON.
+// @title: docs-structure.test — structure workflow migrations embed valid, proven JSON.
 // @state: locks heading, list, table, and image workflow shapes and proofs.
 // @dependencies: node:test, strict, node:fs.
 

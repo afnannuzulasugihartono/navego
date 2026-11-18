@@ -53,7 +53,7 @@ test('an organic link with a first= parameter in its own URL is not a pagination
     text: '',
     links: [
       { href: 'https://example.com/article?first=41', text: 'An organic result whose URL carries a first= query' },
-      { href: 'https://example.org/deep', text: 'example.org https://example.org â€º deep' }
+      { href: 'https://example.org/deep', text: 'example.org https://example.org › deep' }
     ]
   }, { currentFirst: 1 });
   assert.equal(nextFirst, null, 'pagination comes from bing.com links only');
@@ -77,7 +77,7 @@ test('the next page is the smallest first= above the current one, not an assumed
 test('a card with only a display anchor falls back to the site as its title, never to silence', () => {
   const { results } = parseBingSerp({
     text: '',
-    links: [{ href: 'https://example.com/page', text: 'example.com https://example.com â€º page' }]
+    links: [{ href: 'https://example.com/page', text: 'example.com https://example.com › page' }]
   });
   assert.equal(results.length, 1);
   const first = results[0];

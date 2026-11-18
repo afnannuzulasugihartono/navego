@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: captcha-solver â€” the opt-in path that pays a service to read one captcha image, and refuses everything else.
+// @title: captcha-solver — the opt-in path that pays a service to read one captcha image, and refuses everything else.
 // @state: one settings reader, one domain allowlist, one task-then-poll client over an injected fetch.
 // @dependencies: none.
 

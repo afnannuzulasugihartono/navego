@@ -10,7 +10,7 @@ import vm from 'node:vm';
 
 // THIS GATE EXISTS.
 // The repo is a "type": "module" package and tsc compiles every source as a module, so the emitted classic scripts can carry a top-level `export {};` if the build did not strip it.
-// A classic content script with any module syntax fails in every page the extension needs to read, and the failure carries no useful error in the console â€” the script simply never runs.
+// A classic content script with any module syntax fails in every page the extension needs to read, and the failure carries no useful error in the console — the script simply never runs.
 
 const root = new URL('../../', import.meta.url);
 const manifest = JSON.parse(fs.readFileSync(new URL('extension/manifest.json', root), 'utf8'));

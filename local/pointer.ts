@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-23 UTC+7.
-// @title: pointer â€” the clicks and hovers, and the handles that say what they hit.
+// @title: pointer — the clicks and hovers, and the handles that say what they hit.
 // @state: clickAt, clickFraction, hover, hoverRow, clickHandle, handleBox and resolveHandle, with the mark a person watching can see.
 // @dependencies: ./page-expressions.js.
 
@@ -9,7 +9,7 @@
 // Keeping the dispatch, the mark and the ownership read together means a click can never claim it landed without asking who owns the point first.
 
 // Every pointer action leaves a mark the person watching can see.
-// A synthetic click moves no cursor, so without a mark the drive is invisible: a red ring for a click, blue for a hover, drawn as one fixed div by a fixed script that takes coordinates and nothing else â€” visible live and in captures, and pipelined with the action so the mark costs no round trip.
+// A synthetic click moves no cursor, so without a mark the drive is invisible: a red ring for a click, blue for a hover, drawn as one fixed div by a fixed script that takes coordinates and nothing else — visible live and in captures, and pipelined with the action so the mark costs no round trip.
 // A debugger overlay was tried first and discarded: it answers ok and renders nothing.
 // The mark is best-effort by design: a page that refuses the script still gets its click.
 
@@ -22,7 +22,7 @@
 // Measured against a real View menu: the press did nothing but close it, the hover opened it.
 
 // A hover does not wait for its own reply.
-// A lone mouse move is the one dispatch whose acknowledgement Chrome answers on page time â€” measured 700 ms to 5 s on ordinary pages, while the same move inside a click answers in milliseconds.
+// A lone mouse move is the one dispatch whose acknowledgement Chrome answers on page time — measured 700 ms to 5 s on ordinary pages, while the same move inside a click answers in milliseconds.
 // The move is sent and the mark awaited; the effect is proven by the snapshot read that follows every hover, which is also what makes a dead tab fail loudly one call later instead of silently now.
 
 // A CLICK ASKS WHO OWNS THE POINT BEFORE IT PRESSES.
@@ -185,7 +185,7 @@ export function createPointerMethods({ cdp, primitives }: { cdp: { send(method: 
   }
 
   // A SUBMENU IS HOVERED AND NOT CLICKED.
-  // Clicking a row that turns out to be a branch runs whatever it was â€” Delete, Remove, Send.
+  // Clicking a row that turns out to be a branch runs whatever it was — Delete, Remove, Send.
   // Hover opens the same submenu and activates nothing, so it is what the walker uses, and only a click is used when the caller says the item is a command.
 
   // THE POINTER LEAVES FIRST.
@@ -221,7 +221,7 @@ export function createPointerMethods({ cdp, primitives }: { cdp: { send(method: 
     const { model } = await cdp.send('DOM.getBoxModel', { backendNodeId });
     const quad = model?.content ?? model?.border;
     if (!Array.isArray(quad) || quad.length < 4) {
-      throw new Error(`handle ${handle} is no longer in the page â€” resolve the row again`);
+      throw new Error(`handle ${handle} is no longer in the page — resolve the row again`);
     }
     return centreOf(quad);
   }

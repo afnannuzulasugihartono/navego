@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-25 UTC+7.
-// @title: window-restore â€” the window update that takes a window off the taskbar, decided without a browser.
+// @title: window-restore — the window update that takes a window off the taskbar, decided without a browser.
 // @state: one rule per case: minimize is restored with focus, an unfocused window is focused, a focused window is left alone, and the caller can refuse the whole ask.
 // @dependencies: node:test, node:assert/strict, ../extension/lib/window-restore.js.
 

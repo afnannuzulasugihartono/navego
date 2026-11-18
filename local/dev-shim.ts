@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: dev-shim â€” the stdio proxy that swaps the worker behind the pipe without dropping the client.
+// @title: dev-shim — the stdio proxy that swaps the worker behind the pipe without dropping the client.
 // @state: the supervisor, the rebuild budget, and the notification that tells the client its tools moved.
 // @dependencies: none.
 
@@ -17,17 +17,17 @@
 // The replay hands the stored handshake to the new worker and swallows its answer, so the client never sees a second hello.
 
 // A CRASHED WORKER IS REBUILT WITH A BUDGET, AND WHY THE BUDGET DOES NOT KILL THE CONNECTION.
-// A worker that dies on its own comes back, because transient deaths happen; past three rebuilds in thirty seconds it is poisoned â€” a syntax error restarts forever.
+// A worker that dies on its own comes back, because transient deaths happen; past three rebuilds in thirty seconds it is poisoned — a syntax error restarts forever.
 // The old answer was to end the shim, which handed the client a dead MCP and flipped its switch off: a person editing code watched the server toggle itself off, and the only way back was a manual toggle.
 // So a poisoned worker now answers every request by name and keeps the pipe open.
-// Nothing is hidden â€” every call says the worker is broken â€” and the client stays connected, so saving a fix brings the tools back on its own.
+// Nothing is hidden — every call says the worker is broken — and the client stays connected, so saving a fix brings the tools back on its own.
 
 // A RELOAD TELLS THE CLIENT ITS TOOLS MOVED.
-// The client caches the tool list from the handshake, so a new tool stayed invisible until somebody toggled the server by hand â€” the exact round trip the shim was built to remove.
+// The client caches the tool list from the handshake, so a new tool stayed invisible until somebody toggled the server by hand — the exact round trip the shim was built to remove.
 // The protocol has a notification for exactly that, and the shim is the only party that knows a swap happened, so the shim sends it.
 
 // NO SINGLETON LOCK SURVIVES HERE.
-// One shim per machine was enforced by an atomic PID file, and the second shim was told to exit â€” which took a whole session's tools down while a healthy bridge sat one port away holding the browser.
+// One shim per machine was enforced by an atomic PID file, and the second shim was told to exit — which took a whole session's tools down while a healthy bridge sat one port away holding the browser.
 // The bridge is now shareable (a driver that loses the port adopts the one that won it), so there is nothing left to enforce and nothing left to
 
 const TOOLS_CHANGED = JSON.stringify({ jsonrpc: '2.0', method: 'notifications/tools/list_changed' });
@@ -220,7 +220,7 @@ export function createSupervisor({
     failPending('dev server worker died, retry');
     noteDeath();
     if (deaths.length > maxRespawns) {
-      poisoned = `the dev worker keeps dying (${deaths.length} times in ${respawnWindowMs} ms) â€” save a file to rebuild it`;
+      poisoned = `the dev worker keeps dying (${deaths.length} times in ${respawnWindowMs} ms) — save a file to rebuild it`;
       log(poisoned);
       return;
     }

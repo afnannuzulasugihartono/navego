@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-22 UTC+7.
-// @title: burst â€” dependent steps on one tab, with one page look at the end.
+// @title: burst — dependent steps on one tab, with one page look at the end.
 // @state: the action vocabulary, a checked step list, and a stop-on-failure runner.
 // @dependencies: none.
 
@@ -135,7 +135,7 @@ function streamEvents(events: unknown, where: string): Array<Record<string, unkn
 
 function waitStep(step: Record<string, unknown>, where: string): BurstStep {
   const until = typeof step.until === 'string' ? step.until : (step.text !== undefined ? 'text' : undefined);
-  if (!until) throw new Error(`${where} needs until â€” text, row, url or stable`);
+  if (!until) throw new Error(`${where} needs until — text, row, url or stable`);
   const out: BurstStep = { action: 'browser_wait_until', until };
 
   if (until === 'text') {
@@ -165,7 +165,7 @@ function waitStep(step: Record<string, unknown>, where: string): BurstStep {
       out.quiet = value;
     }
   } else {
-    throw new Error(`${where} until must be text, row, url or stable â€” got: ${until}`);
+    throw new Error(`${where} until must be text, row, url or stable — got: ${until}`);
   }
   for (const name of ['timeoutMs', 'intervalMs', 'quietMs'] as const) {
     if (step[name] === undefined) continue;
@@ -328,7 +328,7 @@ async function runStep(driver: JsonRecord, step: BurstStep, results: BurstResult
       if (!still) throw new Error('wait for the page to stop changing timed out');
       return out;
     }
-    throw new Error(`browser_wait_until until must be text, row, url or stable â€” got: ${String(step.until)}`);
+    throw new Error(`browser_wait_until until must be text, row, url or stable — got: ${String(step.until)}`);
   }
 
   throw new Error(`${step.action} is not a step this burst can run`);

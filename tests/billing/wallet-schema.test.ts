@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-04 UTC+7.
-// @title: wallet-schema â€” the money tables keep the invariants the wallet functions rely on.
+// @title: wallet-schema — the money tables keep the invariants the wallet functions rely on.
 // @state: the migration text read as the shape a deploy will create: one settle and one refund per task, signed movements, a ten-action cap, and a hold that expires.
 // @dependencies: node:test, node:assert/strict, node:fs.
 

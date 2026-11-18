@@ -59,7 +59,7 @@ const lines = (text: unknown): string[] => String(text ?? '')
   .filter(Boolean);
 
 // A NO-OP ALT GOES OUT BEFORE THE WINDOW IS BROUGHT FORWARD.
-// Windows refuses a foreground change while another application is taking input, and a drive that only calls SetForegroundWindow loses every time the user is typing somewhere else â€” measured live on this machine, with a typing app in another browser in front: the window came forward and the answer said it had.
+// Windows refuses a foreground change while another application is taking input, and a drive that only calls SetForegroundWindow loses every time the user is typing somewhere else — measured live on this machine, with a typing app in another browser in front: the window came forward and the answer said it had.
 // The operating system's own documented way round that is a no-op ALT, which makes the calling process eligible to come forward; it presses nothing and types nothing.
 // With it, front answered focused true while the typing app was still running.
 
@@ -382,7 +382,7 @@ export async function focusWindow(match: unknown = '', { platform = process.plat
       why: focused
         ? ''
         : title
-          ? `the machine brought ${JSON.stringify(title)} forward and then left ${JSON.stringify(after.foreground)} in front of it â€” something is taking the focus back`
+          ? `the machine brought ${JSON.stringify(title)} forward and then left ${JSON.stringify(after.foreground)} in front of it — something is taking the focus back`
           : `no window on this machine has ${JSON.stringify(wanted)} in its title`
     };
   } catch (error: unknown) {

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // @last-edited: 2026-10-21 UTC+7.
-// @title: opera-local-dev â€” the development front door for the local MCP server.
+// @title: opera-local-dev — the development front door for the local MCP server.
 // @state: the watched files, the supervisor behind the pipe, and the reload it performs on a save.
 // @dependencies: none.
 

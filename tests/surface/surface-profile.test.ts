@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-27 UTC+7.
-// @title: surface-profile â€” what a surface is, measured, with the evidence that says so.
+// @title: surface-profile — what a surface is, measured, with the evidence that says so.
 // @state: the probe against a fake page, the accessibility measurement against a fake tree, and the profile they build together.
 // @dependencies: node:test, node:assert/strict, ../local/surface-profile.js.
 

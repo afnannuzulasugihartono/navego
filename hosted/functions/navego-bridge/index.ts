@@ -170,7 +170,7 @@ async function sessionReport(body: Record<string, unknown>) {
 }
 
 // completion is a socket call, not an HTTP action.
-// The pull client is gone â€” the device learns work over its socket and answers over the same one â€” so the HTTP pull and complete actions were deleted with it.
+// The pull client is gone — the device learns work over its socket and answers over the same one — so the HTTP pull and complete actions were deleted with it.
 // This function stays because the socket still needs exactly what it does.
 
 async function complete(body: Record<string, unknown>) {
@@ -347,8 +347,8 @@ async function claimForDevice(
 }
 
 // the bridge claims on an interval instead of listening.
-// Two event feeds were tried and measured: postgres_changes delivered in 650-1000 ms, and a broadcast fired 46 ms after insert still claimed anywhere between 200 and 1300 ms, because the Realtime subscriber websocket held by the edge isolate proved flaky â€” sometimes fast, sometimes silent.
-// A short poll is deterministic where both feeds were not, costs ten trivial indexed RPCs per second per connected device â€” each measured at 0.3 ms server-side â€” and has no connection to go stale.
+// Two event feeds were tried and measured: postgres_changes delivered in 650-1000 ms, and a broadcast fired 46 ms after insert still claimed anywhere between 200 and 1300 ms, because the Realtime subscriber websocket held by the edge isolate proved flaky — sometimes fast, sometimes silent.
+// A short poll is deterministic where both feeds were not, costs ten trivial indexed RPCs per second per connected device — each measured at 0.3 ms server-side — and has no connection to go stale.
 // The interval lives here rather than on the device because this side has wall power and no radio.
 
 // one hundred milliseconds.

@@ -5,7 +5,6 @@
 // @state: the engine behind release-bump; applies the enumeration, recomputes the pins, scaffolds the release note and changelog row, stages everything, and runs the gates before it exits.
 // @dependencies: node:fs, node:path, node:child_process, node:url, ../tests/helpers/canonical-source-hash.ts, ./bump-version-lib.ts.
 
-// THIS EXISTS.
 // A release writes the version into more than fifteen files by hand, and the one forgotten clock reads as a broken release until CI catches it.
 // The engine applies exactly the entries the library names, recomputes the pins from the rewritten contents, scaffolds what a human must still read, and fails loudly naming the file that disagrees.
 // The button that calls this is .github/workflows/release-bump.yml; the guards that keep the table honest are tests/release/bump-version.test.ts and the gates themselves.

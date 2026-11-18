@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-27 UTC+7.
-// @title: surface-drive-browser â€” the shipped ladder, driven against a real browser.
+// @title: surface-drive-browser — the shipped ladder, driven against a real browser.
 // @state: one drill that profiles a real surface, reads it through the gated ladder, and proves the caret was not moved.
 // @dependencies: node:test, node:assert/strict, ../local/driver.js.
 

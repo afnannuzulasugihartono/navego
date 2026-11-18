@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-09 UTC+7.
-// @title: options-store â€” validation and persistence for the Options page.
+// @title: options-store — validation and persistence for the Options page.
 // @state: The bridge URL, log level, and the user's own model endpoint, name and key, kept in local storage.
 // @dependencies: endpoints.
 
@@ -76,7 +76,7 @@ export const MODEL_PROVIDERS: readonly ModelProvider[] = Object.freeze([
   }),
   Object.freeze({
     id: 'custom',
-    label: 'Kustomâ€¦',
+    label: 'Kustom…',
     endpoint: '',
     defaultModel: '',
     models: Object.freeze([])

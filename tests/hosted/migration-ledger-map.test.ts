@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-26 UTC+7.
-// @title: migration-ledger-map â€” the measured map from the tree's migration files to the versions the live ledger holds.
+// @title: migration-ledger-map — the measured map from the tree's migration files to the versions the live ledger holds.
 // @state: one entry per file, one evidence class per entry, and the counts the measurement produced; a file the map forgets fails here.
 // @dependencies: node:test, node:assert/strict, node:fs.
 

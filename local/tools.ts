@@ -49,17 +49,17 @@ export const TOOLS = Object.freeze([
   },
   {
     name: 'browser_focus_window',
-    description: 'Bring a browser window to the front of the machine, so the page can take clicks and keys. Give the piece of the window title to bring forward ("Google Docs", "Google Chrome"). With no match, this answers the window state without moving anything â€” pass a piece of the title to bring one forward. Answers the title it brought, and whether the operating system let it.',
+    description: 'Bring a browser window to the front of the machine, so the page can take clicks and keys. Give the piece of the window title to bring forward ("Google Docs", "Google Chrome"). With no match, this answers the window state without moving anything — pass a piece of the title to bring one forward. Answers the title it brought, and whether the operating system let it.',
     inputSchema: { type: 'object', properties: { match: stringArg('piece of the window title to bring forward') } }
   },
   {
     name: 'browser_read_dialog',
-    description: "Read the operating system's own dialog â€” title, buttons and field text â€” wherever one is open. A file picker opened by a page lives outside the browser: no capture, no snapshot, no tab sees it. This reads only and changes nothing; the answer names what was found, including when no dialog is open.",
+    description: "Read the operating system's own dialog — title, buttons and field text — wherever one is open. A file picker opened by a page lives outside the browser: no capture, no snapshot, no tab sees it. This reads only and changes nothing; the answer names what was found, including when no dialog is open.",
     inputSchema: { type: 'object', properties: {}, required: [] }
   },
   {
     name: 'browser_type_into_dialog',
-    description: "Write text into the focused field of an operating system dialog outside the browser â€” usually a full file path â€” and read the field back, so a write that took no text is reported as such. Refuses by name when no dialog is open.",
+    description: "Write text into the focused field of an operating system dialog outside the browser — usually a full file path — and read the field back, so a write that took no text is reported as such. Refuses by name when no dialog is open.",
     inputSchema: { type: 'object', properties: { text: stringArg('text for the dialog field, usually a full path') }, required: ['text'] }
   },
   {
@@ -126,22 +126,22 @@ export const TOOLS = Object.freeze([
     inputSchema: { type: 'object', properties: { tabId: tabArg, role: stringArg('row role, e.g. menuitem, button, option, link'), name: stringArg('if given, the one row; exact first, substring after'), limit: { type: 'number', description: 'rows to return when no name is given; default 120, cap 500' } }, required: ['role'] }
   },  {
     name: 'browser_click',
-    description: 'Click in one tab. One call, either a point (x and y in CSS pixels, at with fractions of the viewport when the window may be resized between looking and clicking), or a handle from browser_find_element (never stale â€” the box is measured from the node at the click), or a row by role and name (exact first, substring after; the row is resolved and clicked centred â€” no stale coordinates). The reply carries where the page now stands - url, title, text length, focus - and the rows that changed; browser_find_element lists every row when the next move needs more than the change set.',
+    description: 'Click in one tab. One call, either a point (x and y in CSS pixels, at with fractions of the viewport when the window may be resized between looking and clicking), or a handle from browser_find_element (never stale — the box is measured from the node at the click), or a row by role and name (exact first, substring after; the row is resolved and clicked centred — no stale coordinates). The reply carries where the page now stands - url, title, text length, focus - and the rows that changed; browser_find_element lists every row when the next move needs more than the change set.',
     inputSchema: {
       type: 'object',
       properties: {
         tabId: tabArg,
         x: numberArg('viewport x, or with y a point in CSS pixels; fractions of the viewport (0 to 1) for a resized window'),
         y: numberArg('viewport y, or with x a point in CSS pixels; fractions of the viewport (0 to 1) for a resized window'),
-        handle: { type: 'string', description: 'element handle from browser_find_element â€” clicks that element wherever it is now' },
+        handle: { type: 'string', description: 'element handle from browser_find_element — clicks that element wherever it is now' },
         role: stringArg('instead of x/y: row role to click, e.g. menuitem, button, option, link'),
-        name: stringArg('with role: row name â€” exact first, substring after (case-insensitive)')
+        name: stringArg('with role: row name — exact first, substring after (case-insensitive)')
       }
     }
   },
   {
     name: 'browser_hover',
-    description: 'Move the pointer over a coordinate without pressing, and mark the spot blue. Dropdown menus and submenus open on hover and close on click, so hover first â€” the page comes back with the reply, showing what appeared. Waits for the move it dispatched. A move to a window that is not in front costs about five seconds on the compositor; press and release stay at milliseconds.',
+    description: 'Move the pointer over a coordinate without pressing, and mark the spot blue. Dropdown menus and submenus open on hover and close on click, so hover first — the page comes back with the reply, showing what appeared. Waits for the move it dispatched. A move to a window that is not in front costs about five seconds on the compositor; press and release stay at milliseconds.',
     inputSchema: {
       type: 'object',
       properties: { tabId: tabArg, x: numberArg('viewport x'), y: numberArg('viewport y') },
@@ -159,7 +159,7 @@ export const TOOLS = Object.freeze([
   },
   {
     name: 'browser_type_text',
-    description: 'Insert text into the focused surface of one tab. atEnd: add at the very end of the document instead of wherever the caret is â€” the caret is asked for the end, and the answer says whether anything follows the text that went in (atEnd is measured, not assumed; found:false on canvas pages that mirror late, where read() is the proof). Use it instead of clicking and pressing End yourself: that road put a whole batch inside a table cell once, measured live. Newlines become real paragraph breaks in a rich editor. Returns where the page now stands and what changed, plus where the text landed: placed carries the index and neighbours of the inserted words on DOM pages, and found:false on canvas pages where the mirror lags â€” read() is the proof, and a failure always deserves a read before any retry, because a slow mirror looks exactly like a dead page.',
+    description: 'Insert text into the focused surface of one tab. atEnd: add at the very end of the document instead of wherever the caret is — the caret is asked for the end, and the answer says whether anything follows the text that went in (atEnd is measured, not assumed; found:false on canvas pages that mirror late, where read() is the proof). Use it instead of clicking and pressing End yourself: that road put a whole batch inside a table cell once, measured live. Newlines become real paragraph breaks in a rich editor. Returns where the page now stands and what changed, plus where the text landed: placed carries the index and neighbours of the inserted words on DOM pages, and found:false on canvas pages where the mirror lags — read() is the proof, and a failure always deserves a read before any retry, because a slow mirror looks exactly like a dead page.',
     inputSchema: { type: 'object', properties: { tabId: tabArg, text: stringArg('text to insert'), atEnd: { type: 'boolean', description: 'append at the very end of the document instead of at the caret' } }, required: ['text'] }
   },
   {
@@ -178,7 +178,7 @@ export const TOOLS = Object.freeze([
   },
   {
     name: 'browser_run_steps',
-    description: 'Run 1-8 dependent steps on one tab in a single call. click (x/y or handle or role+name), hover, press, type, scroll, stream (key sequence in one step), wait (until=text|row|url|stable). Steps run in order and the first failure stops the burst, keeping the steps that finished. The page is settled and read once at the end, not after every step, so a menu walk costs one page look instead of four. A wait step looks until the page stops moving, so click â†’ wait is one call for a job that used to be three, and the burst passes that settle on instead of paying it again. refFromStep carries a handle from an earlier find step into a later click; there is no cross-tab step, no navigation, and no script. Use the named tools for upload, download, goto, or anything that changes which page this is.',
+    description: 'Run 1-8 dependent steps on one tab in a single call. click (x/y or handle or role+name), hover, press, type, scroll, stream (key sequence in one step), wait (until=text|row|url|stable). Steps run in order and the first failure stops the burst, keeping the steps that finished. The page is settled and read once at the end, not after every step, so a menu walk costs one page look instead of four. A wait step looks until the page stops moving, so click → wait is one call for a job that used to be three, and the burst passes that settle on instead of paying it again. refFromStep carries a handle from an earlier find step into a later click; there is no cross-tab step, no navigation, and no script. Use the named tools for upload, download, goto, or anything that changes which page this is.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -201,7 +201,7 @@ export const TOOLS = Object.freeze([
               name: { type: 'string', description: 'row name for click, or for a wait until=row' },
               key: { type: 'string', description: 'key for press' },
               modifiers: { type: 'array', items: { type: 'string', enum: ['Control', 'Alt', 'Shift', 'Meta'] } },
-              text: { type: 'string', description: 'text for type, or the text a wait until=text looks for â€” set atEnd for append' },
+              text: { type: 'string', description: 'text for type, or the text a wait until=text looks for — set atEnd for append' },
               atEnd: { type: 'boolean', description: 'type only: append at the very end of the document instead of at the caret' },
               events: { type: 'array', items: { type: 'object' }, description: 'events for stream' },
               end: { type: 'boolean', description: 'scroll to the end' },
@@ -219,7 +219,7 @@ export const TOOLS = Object.freeze([
   },
   {
     name: 'browser_wait_until',
-    description: "Wait until one of four conditions holds, then return the page as it stands. until=text: a text appears (or, with absent, disappears) â€” paste-able text, polled the same way a read polls, so the wait ends on the same evidence without paying a full read each check. until=row: a row (menu row, button, link, spinner) reaches the role and name (exact first, substring after), or with absent, leaves â€” menus and dialogs are not text. until=url: the url contains a substring (contains) or matches a regex (matches) â€” after a form submit or a sign-in; a text wait cannot see a url move. until=stable: the page stops changing (two identical reads in a row) â€” after anything that moves on its own. Returns found:false with the page as it stands when the budget runs out, never an error.",
+    description: "Wait until one of four conditions holds, then return the page as it stands. until=text: a text appears (or, with absent, disappears) — paste-able text, polled the same way a read polls, so the wait ends on the same evidence without paying a full read each check. until=row: a row (menu row, button, link, spinner) reaches the role and name (exact first, substring after), or with absent, leaves — menus and dialogs are not text. until=url: the url contains a substring (contains) or matches a regex (matches) — after a form submit or a sign-in; a text wait cannot see a url move. until=stable: the page stops changing (two identical reads in a row) — after anything that moves on its own. Returns found:false with the page as it stands when the budget runs out, never an error.",
     inputSchema: {
       type: 'object',
       properties: {
@@ -254,7 +254,7 @@ export const TOOLS = Object.freeze([
   },
   {
     name: 'browser_drop_file',
-    description: 'Drop a file onto a point in the page, the way a person drags one in: bytes or a local path, a viewport point, and the page uploads it on the drop it already listens for. This is the road into a site whose file chooser has no input behind it â€” Google Docs opens the operating system dialog through the File System Access API, where upload finds nothing to fill and no CDP command can reach the dialog.',
+    description: 'Drop a file onto a point in the page, the way a person drags one in: bytes or a local path, a viewport point, and the page uploads it on the drop it already listens for. This is the road into a site whose file chooser has no input behind it — Google Docs opens the operating system dialog through the File System Access API, where upload finds nothing to fill and no CDP command can reach the dialog.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -305,11 +305,11 @@ export const TOOLS = Object.freeze([
   },
   {
     name: 'browser_walk_menu',
-    description: 'Walk a menu path and stop there, opening each level on the way: path ["Insert","Image"] brings the Image submenu open and leaves the choice to you; clickLeaf also activates the last item. Branches are hovered, never clicked into blindly. A path that breaks returns the level it broke on, what that level actually contained, and the nearest names â€” a map, not a dead end.',
+    description: 'Walk a menu path and stop there, opening each level on the way: path ["Insert","Image"] brings the Image submenu open and leaves the choice to you; clickLeaf also activates the last item. Branches are hovered, never clicked into blindly. A path that breaks returns the level it broke on, what that level actually contained, and the nearest names — a map, not a dead end.',
     inputSchema: { type: 'object', properties: { tabId: tabArg, path: { type: 'array', items: { type: 'string' }, description: 'menu names from the bar down, e.g. ["Insert","Image"]' }, clickLeaf: { type: 'boolean', description: 'also activate the last item, default false' }, limit: numberArg('most rows to read per level, default 200') }, required: ['path'] }
   },  {
     name: 'browser_get_guide',
-    description: 'Read what this server can do, written as tasks rather than a tool list: for each task, the calls that do it and the road that is known to work. Pass a topic to get only the roads for that task. Also returns what each tool does to the page before you call it â€” which reads move the caret, which bring the tab forward, which can make an operating-system dialog appear â€” and the three things this server will not pretend to do. Start here when you do not know which tool to reach for.',
+    description: 'Read what this server can do, written as tasks rather than a tool list: for each task, the calls that do it and the road that is known to work. Pass a topic to get only the roads for that task. Also returns what each tool does to the page before you call it — which reads move the caret, which bring the tab forward, which can make an operating-system dialog appear — and the three things this server will not pretend to do. Start here when you do not know which tool to reach for.',
     inputSchema: {
       type: 'object',
       properties: { topic: stringArg('a word or two: upload, menu, wait, verify') }
@@ -390,7 +390,7 @@ export const TOOLS = Object.freeze([
   },
   {
     name: 'browser_check_gate',
-    description: "Read or wait on the gate a tab is showing â€” a sign-in, a one-time code, a captcha, or nothing. action=detect reads the gate once and names it: a sign-in, a one-time code, a captcha, or nothing, with every gate the page holds, why, and what was counted â€” so an agent that was about to type into a page knows what it is before it touches a field. It never types and never solves anything: a one-time code is named as one only the person can answer, and a captcha as one to solve or to wait on. action=wait waits for the gate to clear, so the person can sign in or solve a captcha in their own browser and the agent continues on the same tab. Ends on the page, not on a clock: it reads the gate until it is gone, gives up with the page as it stands and why. Nothing is typed, so neither action touches a credential.",
+    description: "Read or wait on the gate a tab is showing — a sign-in, a one-time code, a captcha, or nothing. action=detect reads the gate once and names it: a sign-in, a one-time code, a captcha, or nothing, with every gate the page holds, why, and what was counted — so an agent that was about to type into a page knows what it is before it touches a field. It never types and never solves anything: a one-time code is named as one only the person can answer, and a captcha as one to solve or to wait on. action=wait waits for the gate to clear, so the person can sign in or solve a captcha in their own browser and the agent continues on the same tab. Ends on the page, not on a clock: it reads the gate until it is gone, gives up with the page as it stands and why. Nothing is typed, so neither action touches a credential.",
     inputSchema: {
       type: 'object',
       properties: {

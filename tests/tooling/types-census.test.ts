@@ -19,7 +19,7 @@ import fs from 'node:fs';
 
 // THE MESSAGE IS COMPACT.
 // The census list is ~300 files and ~12 KB; joining the whole list into the assertion message made the runner's own error print eat the end of it, so failures arrived without the tail that says WHICH files were lost.
-// The assertion's power does not change â€” the same three includes() checks run on the same list â€” only the evidence does.
+// The assertion's power does not change — the same three includes() checks run on the same list — only the evidence does.
 // The spawn also carries an explicit 64 MiB maxBuffer: a truncated stdout is the one thing that would make the includes() checks fail without any file missing, and it must not be able to happen silently.
 
 const MAX_BUFFER = 64 * 1024 * 1024;

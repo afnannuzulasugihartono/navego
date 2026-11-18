@@ -1,7 +1,7 @@
 html:has(> body.popup) { background: #10131c; }
 
 /* @last-edited: 2026-10-04 18:25 UTC+7. */
-/* @title: styles â€” MV3 runtime. */
+/* @title: styles — MV3 runtime. */
 /* @state: style(popup): v8 Warm Command redesign + Cursor mark + unprefixed version (1.6.10). */
 /* @dependencies: none stated. */
 

@@ -9,13 +9,13 @@
 // The reader's language is the browser's language; anything that is not Indonesian falls back to English, which is the table every key is checked against.
 
 const ID = {
-  'status.starting': 'Memulaiâ€¦',
+  'status.starting': 'Memulai…',
   'status.connected': 'Terhubung',
   'status.subConnected': 'Bridge di mesin ini, menunggu perintah',
-  'status.connecting': 'Menghubungkanâ€¦',
+  'status.connecting': 'Menghubungkan…',
   'status.subConnecting': 'Menghubungi bridge',
   'status.subStarting': 'Menyalakan bridge',
-  'status.reconnecting': 'Menyambung ulangâ€¦',
+  'status.reconnecting': 'Menyambung ulang…',
   'status.subReconnecting': 'Menyambung ulang ke bridge',
   'status.disconnected': 'Terputus',
   'status.subDisconnected': 'Bridge tidak terjangkau',
@@ -32,7 +32,7 @@ const ID = {
   'doors.updateNow': 'Perbarui sekarang',
   'doors.forgetFolder': 'Lupakan folder',
   'update.closeable': 'Halaman ini boleh ditutup.',
-  'update.title': 'Update otomatis â€” Navego',
+  'update.title': 'Update otomatis — Navego',
   'update.state.granted': 'Folder: {name}',
   'update.state.prompt': 'Izin folder perlu diulang',
   'update.state.none': 'Belum diizinkan',
@@ -54,13 +54,13 @@ const ID = {
 };
 
 const EN = {
-  'status.starting': 'Startingâ€¦',
+  'status.starting': 'Starting…',
   'status.connected': 'Connected',
   'status.subConnected': 'Bridge is on this machine, waiting for a command',
-  'status.connecting': 'Connectingâ€¦',
+  'status.connecting': 'Connecting…',
   'status.subConnecting': 'Reaching the bridge',
   'status.subStarting': 'Starting the bridge',
-  'status.reconnecting': 'Reconnectingâ€¦',
+  'status.reconnecting': 'Reconnecting…',
   'status.subReconnecting': 'Reconnecting to the bridge',
   'status.disconnected': 'Disconnected',
   'status.subDisconnected': 'The bridge cannot be reached',
@@ -77,7 +77,7 @@ const EN = {
   'doors.updateNow': 'Update now',
   'doors.forgetFolder': 'Forget the folder',
   'update.closeable': 'You can close this page.',
-  'update.title': 'Automatic updates â€” Navego',
+  'update.title': 'Automatic updates — Navego',
   'update.state.granted': 'Folder: {name}',
   'update.state.prompt': 'The folder permission needs to be granted again',
   'update.state.none': 'Not allowed yet',

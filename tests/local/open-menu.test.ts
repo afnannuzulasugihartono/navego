@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-05 UTC+7.
-// @title: open-menu â€” walk a menu to a row, and click only what the caller named.
+// @title: open-menu — walk a menu to a row, and click only what the caller named.
 // @state: a fake page that answers the menu tree, the box of every row and the clicks.
 // @dependencies: node:test, assert, ../local/primitives.js.
 

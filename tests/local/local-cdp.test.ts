@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-11 UTC+7.
-// @title: local-cdp â€” the local browser driver must correlate, reject and dispatch exactly like CDP, with no browser present.
+// @title: local-cdp — the local browser driver must correlate, reject and dispatch exactly like CDP, with no browser present.
 // @state: 8 locks; id correlation under concurrency, error rejection, event dispatch, and clean close.
 // @dependencies: node:test, strict, ../local/cdp.js.
 

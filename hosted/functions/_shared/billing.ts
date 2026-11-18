@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-26 UTC+7.
-// @title: billing â€” what a delivery is worth, and how an invoice proves it.
+// @title: billing — what a delivery is worth, and how an invoice proves it.
 // @state: the price of a unit, the amount of an invoice, the two signatures that make a payment claim true, the provider order id an attempt carries, and the one rule that says whether a payment link is still payable.
 // @dependencies: node:crypto.
 
@@ -390,7 +390,7 @@ export function linesFromDeliveries(deliveries: unknown, kind: string = 'stateme
     lines.push({
       kind,
       quantity: 1,
-      description: pages > 0 ? `${client} â€” ${period} (${pages} pages)` : `${client} â€” ${period}`
+      description: pages > 0 ? `${client} — ${period} (${pages} pages)` : `${client} — ${period}`
     });
   }
   return { lines, refused };
@@ -452,7 +452,7 @@ export function providerSignature(notification: Record<string, unknown> | null |
 // The provider JSON-encodes every field as a string except a digest of only digits, which it sends bare and JSON.parse reads as a double: 15 to 16 significant digits where the digest has 128, so the tail is lost.
 // Measured live on 2026-11-03: a "still pending" for a QRIS charge carried its signature as a number, was refused, and the invoice stayed open while the provider had nothing to correct.
 // Refusing is the right answer for a bare long number: nothing can prove it was the provider's digest, and one accepted proves nothing about the next.
-// A short run of digits is a digest the code base value already carries â€” the pinned vector begins with 4 digits â€” and that same text is still compared.
+// A short run of digits is a digest the code base value already carries — the pinned vector begins with 4 digits — and that same text is still compared.
 
 export function notificationSignatureValid(notification: Record<string, unknown> | null | undefined, serverKey: unknown): boolean {
   if (!notification || !serverKey) return false;
@@ -463,7 +463,7 @@ export function notificationSignatureValid(notification: Record<string, unknown>
 
 // THE ANSWER TO A NOTIFICATION IS NOT THE PAYMENT RESULT.
 // The provider reads a non-2xx answer as "not delivered" and sends the same body again.
-// So the status code answers one question â€” did this endpoint receive and understand it â€” while the body says whether money moved.
+// So the status code answers one question — did this endpoint receive and understand it — while the body says whether money moved.
 // Measured live: a correctly signed "still pending" answered 400, and the provider's history showed it as undelivered beside a real rejection, which buried the rejection.
 // A body the function cannot act on and a human should look at still answers no.
 

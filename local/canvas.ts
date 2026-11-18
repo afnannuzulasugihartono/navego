@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-27 UTC+7.
-// @title: canvas â€” the reads a surface that is not a page full of text can answer, and the guard in front of the one that moves a caret.
+// @title: canvas — the reads a surface that is not a page full of text can answer, and the guard in front of the one that moves a caret.
 // @state: the ladder walk for read, the caret line read, and the generic selection copy they share.
 // @dependencies: ./page-expressions.js, ./surface-profile.js, ./caret-guard.js, ./read-strategy.js.
 

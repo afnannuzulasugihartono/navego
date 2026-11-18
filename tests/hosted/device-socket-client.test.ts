@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-13 UTC+7.
-// @title: device-socket-client â€” one socket, driven by a fake, with no bridge and no browser present.
+// @title: device-socket-client — one socket, driven by a fake, with no bridge and no browser present.
 // @state: 8 locks; handshake gate, command dispatch, completion, backoff, and the fatal close.
 // @dependencies: node:test, strict, ../extension/lib/socket-client.js.
 
@@ -585,7 +585,7 @@ test('stop does not close a socket that is already closed', () => {
 });
 
 // the socket recycles itself on a timer.
-// Edge isolates have a hard wall clock limit â€” about 150 seconds here â€” and waitUntil only prevents early retirement, never extends it.
+// Edge isolates have a hard wall clock limit — about 150 seconds here — and waitUntil only prevents early retirement, never extends it.
 // Observed live as code 1006 at a metronomic 151 seconds after waitUntil fixed the 76-second EarlyDrop deaths.
 // Recycling on our own schedule, and only when idle, turns a surprise kill mid-anything into a routine reconnect nothing ever notices.
 

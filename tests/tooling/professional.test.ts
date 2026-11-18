@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-25 UTC+7.
-// @title: professional â€” the files a repository is expected to carry, and the lines they must hold.
+// @title: professional — the files a repository is expected to carry, and the lines they must hold.
 // @state: six gates: the standard files exist, the README's numbers are measured, CI runs on every pull request, the tree is LF, a live document names no file that is not there, and the handoff keeps its stated line cap.
 // @dependencies: node:test, node:assert/strict, node:fs, node:path, node:child_process.
 

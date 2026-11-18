@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-13 UTC+7.
-// @title: bridge-socket â€” the push transport is checkable without a socket, a database, or a browser.
+// @title: bridge-socket — the push transport is checkable without a socket, a database, or a browser.
 // @state: 8 locks; the handshake gate, the frame shapes, and the failure modes that must close the socket.
 // @dependencies: node:test, strict, ../hosted/functions/navego-bridge/bridge-socket.js.
 
@@ -154,7 +154,7 @@ test('a handshake needs both a token and a device name, and never accepts a part
 
 // the bridge accepts gzip frames.
 // The device sends completions over 2 KiB as versioned gzip, because page JSON shrinks five to fifty times and the transfer dominates on a slow link.
-// The bridge must read exactly what the device writes â€” same version byte, same cap relation â€” or large results die in transit with no error the device can act on.
+// The bridge must read exactly what the device writes — same version byte, same cap relation — or large results die in transit with no error the device can act on.
 
 async function gzipFrame(payload: unknown, version = 1) {
   const text = JSON.stringify(payload);

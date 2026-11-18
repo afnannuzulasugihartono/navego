@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-14 UTC+7.
-// @title: guards â€” runtime type guards for data that crosses a boundary the compiler cannot see.
+// @title: guards — runtime type guards for data that crosses a boundary the compiler cannot see.
 // @state: owns isRecord and isString; every module that reads a value from outside its process states it through this file.
 // @dependencies: none.
 

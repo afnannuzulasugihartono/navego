@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: socket-protocol â€” the frames a device and a bridge exchange over one persistent socket.
+// @title: socket-protocol — the frames a device and a bridge exchange over one persistent socket.
 // @state: the handshake, the command frame, the completion frame, and the frames that must be refused.
 // @dependencies: none.
 
@@ -15,7 +15,7 @@
 
 // the cap is a megabyte.
 // Results up to RESULT_BUDGET_BYTES (owned by lib/serialize.js, derived from FRAME_MAX_BYTES) are legal product output: boundedResult throws only above it, and page.read degrades gracefully instead.
-// A transport cap below that refuses legal results â€” observed live as "Frame too large" killing a page.read the product explicitly allows.
+// A transport cap below that refuses legal results — observed live as "Frame too large" killing a page.read the product explicitly allows.
 // The cap exists to bound a single message against a misbehaving peer, not to second-guess the product bound, so it sits at twice the largest legal completion plus envelope headroom.
 
 // the relation is locked in a test instead of importing the constant.
@@ -165,7 +165,7 @@ export function isReady(message: unknown): boolean {
 
 // only the refusal is fatal.
 // A 4001 means the credentials are wrong, so retrying is hammering with no future.
-// A 4002 means the handshake was slow â€” a cold isolate, a delayed hello â€” which a retry answers in half a second.
+// A 4002 means the handshake was slow — a cold isolate, a delayed hello — which a retry answers in half a second.
 // Treating it as fatal wedged a live device for hours on one slow handshake while its heartbeat stayed green, so every command queued and none ran.
 
 export function isFatalClose(code: unknown): boolean {

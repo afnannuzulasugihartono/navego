@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-18 UTC+7.
-// @title: plan-gate â€” the questions the bridge asks before it moves a command.
+// @title: plan-gate — the questions the bridge asks before it moves a command.
 // @state: the plan check, the daily quota (null = unlimited), the firm-only methods, and the refusal that names the plan.
 // @dependencies: ./index.ts through the claim path.
 

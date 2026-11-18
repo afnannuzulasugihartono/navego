@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: statement-file â€” the byte-level proof of a file, shared by the worker and the page.
+// @title: statement-file — the byte-level proof of a file, shared by the worker and the page.
 // @state: the kind of a file and its page count, read from the bytes themselves.
 // @dependencies: none.
 
