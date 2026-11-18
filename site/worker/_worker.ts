@@ -123,6 +123,20 @@ async function serveInvoice(request: Request): Promise<Response> {
   });
 }
 
+// WHY A /api/region DOOR EXISTS.
+// The pricing page shows the group of plans priced for the visitor's region, and the region comes from the IP Cloudflare terminates — it cannot come from the browser.
+// This door answers exactly that: the country code Cloudflare attributes to the request, or null when the platform said nothing, and nothing else.
+// It is deliberately tiny: no account, no cookie, no log of who asked.
+
+const REGION_PATH = '/api/region';
+
+function regionFrom(request: Request): string | null {
+  const cf = (request as Request & { cf?: { country?: unknown } }).cf;
+  const raw = typeof cf?.country === 'string' ? cf.country : request.headers.get('cf-ipcountry');
+  const country = String(raw ?? '').trim().toUpperCase();
+  return /^[A-Z]{2}$/.test(country) ? country : null;
+}
+
 // WHY the .html aliases 301: every page is prerendered under its pretty route id, and the flat .html file exists only because Pages serves build/client flat files.
 // Serving .html inline would hydrate against the pretty route id baked into the file and React error #418 on every page; a 301 keeps the legacy URLs honest without baking a second manifest.
 // WHY the fallback answers 404 with the real page: Pages' asset server answers missing paths with an empty 404, and unknown paths deserve the same designed page as every other route.
@@ -132,6 +146,12 @@ export default {
     const path = new URL(request.url).pathname;
     if (path === '/index' || path === '/index.html') return new Response(null, { status: 301, headers: { location: '/' } });
     if (path === '/404.html') return env.ASSETS.fetch(request);
+    if (path === REGION_PATH) {
+      return new Response(JSON.stringify({ country: regionFrom(request) }), {
+        status: 200,
+        headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }
+      });
+    }
     if (path.endsWith('.html')) {
       const pretty = path.slice(0, -'.html'.length) || '/';
       return new Response(null, { status: 301, headers: { location: pretty } });

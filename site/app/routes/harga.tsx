@@ -3,6 +3,7 @@ import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { BILLING, ensureSession, getStoredToken, headersFor } from '../lib/auth';
+import { bandForCountry, type PricingBand } from '../lib/region.js';
 
 export function meta() {
   return seoMeta({
@@ -28,7 +29,7 @@ const EUROPE_PLANS = [
 ] as const;
 
 const QA = [
-  ['rencana', 'Plan, bukan langganan tersembunyi', 'USD, sekali beli, langsung aktif. Anda pilih plan yang sesuai daya beli negara Anda — Asia/Arab/Afrika atau Eropa & AS — plannya sudah termasuk semua fitur di kelasnya.'],
+  ['rencana', 'Plan, bukan langganan tersembunyi', 'USD, sekali beli, langsung aktif. Kawasan Anda terdeteksi otomatis dari IP — plan yang tampil sesuai daya beli negara Anda, Asia/Arab/Afrika atau Eropa & AS — dan kedua grup tetap bisa diganti di tombol kawasan di atas kartu plan.'],
   ['kuota', 'Kuota perintah per hari', 'Setiap plan punya kuota harian. Kuota terpakai tidak bertambah di hari berikutnya; kuota hari ini hanya bisa dipakai hari ini.'],
   ['fitur', 'Semua fitur, bukan tier yang dikebiri', 'Asia/Arab/Afrika: Starter, Basic, Plus, Pro, Advanced — semuanya plan dasar. Eropa/AS: Starter, Pro, Business (6 bulan), Enterprise (1 tahun); Business dan Enterprise membawa statement, VM, dan remote drive, plus prioritas dukungan.'],
   ['paypal', 'Bayar dengan PayPal', 'Plan USD dibayar dengan PayPal. Setelah pembayaran dikonfirmasi PayPal Anda, plan aktif otomatis.'],
@@ -40,10 +41,38 @@ export default function Harga() {
   const [note, setNote] = useState('');
   const [warn, setWarn] = useState(false);
   const [signedOut, setSignedOut] = useState(false);
+  const [country, setCountry] = useState<string | null>(null);
+  const [detected, setDetected] = useState(false);
+  const [band, setBand] = useState<PricingBand | 'both'>('both');
 
   useEffect(() => {
     setSignedOut(!getStoredToken());
+    let alive = true;
+    fetch('/api/region', { cache: 'no-store' })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!alive) return;
+        const code = typeof data?.country === 'string' ? data.country.toUpperCase() : null;
+        setCountry(code);
+        setBand(bandForCountry(code) ?? 'both');
+        setDetected(true);
+      })
+      .catch(() => {
+        if (!alive) return;
+        setDetected(true);
+      });
+    return () => {
+      alive = false;
+    };
   }, []);
+
+  const regionName = (code: string): string => {
+    try {
+      return new Intl.DisplayNames(['id'], { type: 'region' }).of(code) ?? code;
+    } catch {
+      return code;
+    }
+  };
 
   async function buy(planKind: string) {
     const current = await ensureSession();
@@ -103,6 +132,26 @@ export default function Harga() {
           </div>
         </section>
 
+        {detected ? (
+          <section className="band" aria-label="Kawasan harga" style={{ paddingBottom: 0 }}>
+            <div className="wrap">
+              {country && bandForCountry(country) ? (
+                <p className="section-note" style={{ marginBottom: 'var(--s-2)' }}>
+                  Kawasan terdeteksi dari IP Anda: <strong>{regionName(country)}</strong> — menampilkan grup <strong>{band === 'premium' ? 'Eropa & AS' : band === 'affordable' ? 'Asia · Arab · Afrika' : 'semua plan'}</strong>.
+                </p>
+              ) : (
+                <p className="section-note" style={{ marginBottom: 'var(--s-2)' }}>Kami tidak bisa mendeteksi kawasan Anda dari IP; kedua grup ditampilkan.</p>
+              )}
+              <div className="hero-cta" role="group" aria-label="Pilih grup plan">
+                <button className={band === 'affordable' ? 'btn btn-solid btn-sm' : 'btn btn-ghost btn-sm'} type="button" aria-pressed={band === 'affordable'} onClick={() => setBand('affordable')}>Asia · Arab · Afrika</button>
+                <button className={band === 'premium' ? 'btn btn-solid btn-sm' : 'btn btn-ghost btn-sm'} type="button" aria-pressed={band === 'premium'} onClick={() => setBand('premium')}>Eropa &amp; AS</button>
+                <button className={band === 'both' ? 'btn btn-solid btn-sm' : 'btn btn-ghost btn-sm'} type="button" aria-pressed={band === 'both'} onClick={() => setBand('both')}>Keduanya</button>
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        {band !== 'premium' ? (
         <section className="band" aria-labelledby="asiaTitle">
           <div className="wrap">
             <div className="section-head">
@@ -117,7 +166,9 @@ export default function Harga() {
             </div>
           </div>
         </section>
+        ) : null}
 
+        {band !== 'affordable' ? (
         <section className="band band-soft" aria-labelledby="europeTitle">
           <div className="wrap">
             <div className="section-head">
@@ -130,7 +181,12 @@ export default function Harga() {
             <div className="plans" role="list" style={{ gridTemplateColumns: grid }}>
               {EUROPE_PLANS.map(PlanCard)}
             </div>
+          </div>
+        </section>
+        ) : null}
 
+        <section className="band" aria-label="Pembayaran" style={{ paddingTop: 0 }}>
+          <div className="wrap">
             {signedOut ? (
               <p className="status" style={{ marginTop: 'var(--s-4)', textAlign: 'center' }}>Pembayaran memakai akun Anda. <Link to="/">Masuk dulu</Link>, lalu kembali ke halaman ini.</p>
             ) : null}
