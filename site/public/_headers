@@ -1,6 +1,6 @@
 # @last-edited: 2026-11-16 UTC+7.
 # @title: _headers — the CSP and cache policy every path of the site answers with.
-# @state: one policy per path; the static pages reach nothing, the app pages reach Supabase only.
+# @state: one policy per path; the static pages reach nothing, the app pages reach Supabase. /harga also reaches its own origin (/api/region) so the visitor's IP can pick the plan group.
 # @dependencies: none.
 
 # WHY this file exists: Cloudflare Pages configures headers with this file, one block per path. One path per block: a comma-joined path line matches nothing on Cloudflare.
@@ -229,7 +229,7 @@
 
 /harga
   Cache-Control: no-store
-  Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src 'self' https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
   Referrer-Policy: no-referrer
   X-Content-Type-Options: nosniff
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
@@ -240,7 +240,7 @@
 
 /harga.html
   Cache-Control: no-store
-  Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src 'self' https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
   Referrer-Policy: no-referrer
   X-Content-Type-Options: nosniff
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
