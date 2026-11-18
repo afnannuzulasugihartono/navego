@@ -1,24 +1,31 @@
 // Flattens the prerendered directory layout to the flat .html URLs the site has always served.
 // react-router v7 writes <route>/index.html; Cloudflare Pages and our tests expect <route> as a file.
 // The rewrite is a pure rename — bytes never change.
-// WHY the map and not "whatever is in the directory": the pretty route /oauth/consent can only ship as oauth/consent.html, because Pages resolves /oauth/consent to the .html file and the 404 fallback flattens the same way.
+// WHY the walk and not a list: a hardcoded route list is the drift the build hides — the page is emitted, the flat file is not, and nothing warns until a 404.
+// Any directory under build/client that carries an index.html is a route; the root index.html stays where it is.
 
 import { existsSync, readdirSync, renameSync, rmdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 const client = new URL('../build/client/', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
-const routes = [
-  'beranda', 'fitur', 'harga', 'unduh', 'docs', 'mcp',
-  'dukungan', 'privasi', 'syarat', 'akun', 'dashboard',
-  'artikel', 'artikel/ai-browser-indonesia', 'oauth/consent',
-  '404'
-];
+
+function collectRoutes(dir: string, prefix: string, out: string[]): string[] {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      const next = prefix ? `${prefix}/${entry.name}` : entry.name;
+      collectRoutes(join(dir, entry.name), next, out);
+    } else if (entry.name === 'index.html' && prefix) {
+      out.push(prefix);
+    }
+  }
+  return out;
+}
 
 // WHY deepest first: /artikel/ai-browser-indonesia must be moved out of build/client/artikel before the parent dir is removed.
 
-const ordered = [...routes].sort((a, b) => b.split('/').length - a.split('/').length);
+const routes = collectRoutes(client, '', []).sort((a, b) => b.split('/').length - a.split('/').length);
 
-for (const route of ordered) {
+for (const route of routes) {
   const dir = join(client, route);
   const index = join(dir, 'index.html');
   if (!existsSync(index)) continue;
@@ -38,4 +45,4 @@ if (left.length) {
   console.error('flatten-prerender: directory-style routes remain:', left.join(', '));
   process.exit(1);
 }
-console.log('flatten-prerender: flat .html output ready');
+console.log(`flatten-prerender: flat .html output ready (${routes.length} routes flattened)`);
