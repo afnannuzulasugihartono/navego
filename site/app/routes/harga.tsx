@@ -29,7 +29,7 @@ const EUROPE_PLANS = [
 ] as const;
 
 const QA = [
-  ['rencana', 'Plan, bukan langganan tersembunyi', 'USD, sekali beli, langsung aktif. Kawasan Anda terdeteksi otomatis dari IP — plan yang tampil sesuai daya beli negara Anda, Asia/Arab/Afrika atau Eropa & AS — dan kedua grup tetap bisa diganti di tombol kawasan di atas kartu plan.'],
+  ['rencana', 'Plan, bukan langganan tersembunyi', 'USD, sekali beli, langsung aktif. Kawasan Anda terdeteksi otomatis dari IP — plan yang tampil sesuai daya beli negara Anda, Asia/Arab/Afrika atau Eropa & AS  Jika kawasan tidak bisa terdeteksi, kedua grup ditampilkan.'],
   ['kuota', 'Kuota perintah per hari', 'Setiap plan punya kuota harian. Kuota terpakai tidak bertambah di hari berikutnya; kuota hari ini hanya bisa dipakai hari ini.'],
   ['fitur', 'Semua fitur, bukan tier yang dikebiri', 'Asia/Arab/Afrika: Starter, Basic, Plus, Pro, Advanced — semuanya plan dasar. Eropa/AS: Starter, Pro, Business (6 bulan), Enterprise (1 tahun); Business dan Enterprise membawa statement, VM, dan remote drive, plus prioritas dukungan.'],
   ['paypal', 'Bayar dengan PayPal', 'Plan USD dibayar dengan PayPal. Setelah pembayaran dikonfirmasi PayPal Anda, plan aktif otomatis.'],
@@ -136,17 +136,12 @@ export default function Harga() {
           <section className="band" aria-label="Kawasan harga" style={{ paddingBottom: 0 }}>
             <div className="wrap">
               {country && bandForCountry(country) ? (
-                <p className="section-note" style={{ marginBottom: 'var(--s-2)' }}>
-                  Kawasan terdeteksi dari IP Anda: <strong>{regionName(country)}</strong> — menampilkan grup <strong>{band === 'premium' ? 'Eropa & AS' : band === 'affordable' ? 'Asia · Arab · Afrika' : 'semua plan'}</strong>.
+                <p className="section-note" style={{ margin: 0 }}>
+                  Kawasan terdeteksi dari IP Anda: <strong>{regionName(country)}</strong> — plan yang tampil sesuai daya beli kawasan Anda.
                 </p>
               ) : (
-                <p className="section-note" style={{ marginBottom: 'var(--s-2)' }}>Kami tidak bisa mendeteksi kawasan Anda dari IP; kedua grup ditampilkan.</p>
+                <p className="section-note" style={{ margin: 0 }}>Kami tidak bisa mendeteksi kawasan Anda dari IP; kedua grup ditampilkan.</p>
               )}
-              <div className="hero-cta" role="group" aria-label="Pilih grup plan">
-                <button className={band === 'affordable' ? 'btn btn-solid btn-sm' : 'btn btn-ghost btn-sm'} type="button" aria-pressed={band === 'affordable'} onClick={() => setBand('affordable')}>Asia · Arab · Afrika</button>
-                <button className={band === 'premium' ? 'btn btn-solid btn-sm' : 'btn btn-ghost btn-sm'} type="button" aria-pressed={band === 'premium'} onClick={() => setBand('premium')}>Eropa &amp; AS</button>
-                <button className={band === 'both' ? 'btn btn-solid btn-sm' : 'btn btn-ghost btn-sm'} type="button" aria-pressed={band === 'both'} onClick={() => setBand('both')}>Keduanya</button>
-              </div>
             </div>
           </section>
         ) : null}
