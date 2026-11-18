@@ -1,92 +1,136 @@
-import { useEffect, useRef } from 'react';
+﻿import { useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import { NavegoMark, NavegoWordmark } from './NavegoMark';
 
 const NAV = [
   { href: '/fitur', label: 'Fitur' },
   { href: '/harga', label: 'Harga' },
-  { href: '/docs', label: 'Docs' },
-  { href: '/artikel', label: 'Artikel' }
-];
-
-// WHY the menu carries every destination while the inline row carries the four a reader picks from: the narrow header must never strand a visitor on a page with no way further in, and the wide row stays short enough to read at a glance.
-
-const MENU = [
-  { href: '/beranda', label: 'Beranda' },
-  { href: '/fitur', label: 'Fitur' },
-  { href: '/harga', label: 'Harga' },
   { href: '/unduh', label: 'Unduh' },
   { href: '/docs', label: 'Docs' },
-  { href: '/mcp', label: 'Pasang MCP' },
   { href: '/artikel', label: 'Artikel' },
-  { href: '/dukungan', label: 'Dukungan' },
-  { href: '/privasi', label: 'Privasi' },
-  { href: '/syarat', label: 'Syarat' }
+  { href: '/mcp', label: 'MCP' },
+  { href: '/dukungan', label: 'Dukungan' }
 ];
 
 const VERSION = '1.7.6';
 
-// One nav tree, two presentations: inline when it fits, native popover when it does not.
-// The header measures itself on every resize and toggles `is-wide`; without script the popover still opens.
+const MEGA_PRODUK = [
+  { href: '/fitur', label: 'Fitur' },
+  { href: '/harga', label: 'Harga' },
+  { href: '/unduh', label: 'Unduh' },
+  { href: '/docs', label: 'Docs' },
+  { href: '/artikel', label: 'Artikel' }
+];
+
+const MEGA_ALAT = [
+  { href: '/mcp', label: 'Pasang MCP' },
+  { href: '/docs#berkas', label: 'Contoh berkas' },
+  { href: '/docs#tools', label: '45 tool MCP' },
+  { href: '/dukungan', label: 'Dukungan' }
+];
+
+const MEGA_AKUN = [
+  { href: '/', label: 'Masuk' },
+  { href: '/dashboard', label: 'Dashboard' },
+  { href: '/privasi', label: 'Privasi' },
+  { href: '/syarat', label: 'Syarat' }
+];
+
+// One navigation tree at every size: a slim dark bar with a hover panel on wide screens, the native popover list when the row does not fit.
+// The header measures its own row and toggles `is-wide`; the panel opens on hover and on keyboard focus, so nothing depends on a pointer.
 
 function SiteNav({ current }: { current?: string }) {
   const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const header = headerRef.current;
-    if (!header) return;
+    const inner = header?.querySelector<HTMLElement>('.site-header-row');
+    const menu = header?.querySelector<HTMLElement>('#site-menu');
+    if (!header || !inner || !menu) return;
+
+    let frame = 0;
+    let lastWidth = inner.clientWidth;
 
     const measure = () => {
-      const row = header.querySelector<HTMLElement>('.site-header-row');
-      if (!row) return;
-      const fits = row.scrollWidth <= row.clientWidth + 1;
-      header.classList.toggle('is-wide', fits);
-      const menu = header.querySelector<HTMLElement>('#site-menu');
-      if (menu) {
-        if (fits) menu.removeAttribute('popover');
-        else menu.setAttribute('popover', 'auto');
-      }
+      frame = 0;
+      const wasOpen = menu.matches(':popover-open');
+      header.classList.add('is-wide');
+      const wide = inner.scrollWidth <= inner.clientWidth;
+      header.classList.toggle('is-wide', wide);
+      if (wide) menu.removeAttribute('popover');
+      else menu.setAttribute('popover', 'auto');
+      if (!wide && wasOpen) menu.showPopover?.();
     };
 
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(header);
-    const row = header.querySelector('.site-header-row');
-    if (row) observer.observe(row);
-    return () => observer.disconnect();
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+
+    const observer = new ResizeObserver(() => {
+      const width = inner.clientWidth;
+      const grew = width > lastWidth;
+      lastWidth = width;
+      if (header.classList.contains('is-wide') || grew) schedule();
+    });
+
+    observer.observe(inner);
+    schedule();
+    return () => {
+      observer.disconnect();
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (
-    <header className="site-header" ref={headerRef}>
-      <div className="wrap site-header-row">
-        <Link className="brand" to="/beranda" aria-label="Navego — beranda">
-          <NavegoMark size={26} />
-          <NavegoWordmark size={15} />
-          <span className="brand-version">v{VERSION}</span>
+    <header className="site-header" ref={headerRef} data-version={VERSION}>
+      <div className="wrap site-header-row header-inner">
+        <Link className="brand" to="/beranda" aria-label="Navego â€” beranda">
+          <NavegoMark size={24} />
+          <NavegoWordmark size={14} />
         </Link>
 
-        <nav className="nav" aria-label="Navigasi utama">
-          {NAV.map((item) => (
-            <Link key={item.href} to={item.href} aria-current={current === item.href ? 'page' : undefined}>
-              {item.label}
-            </Link>
-          ))}
+        <nav className="site-nav" aria-label="Navigasi utama">
+          <button className="nav-toggle menu-button" type="button" popoverTarget="site-menu" popoverTargetAction="toggle" aria-controls="site-menu">
+            <span className="bars" aria-hidden="true" />
+            <span className="menu-label">Menu</span>
+          </button>
+
+          <ul id="site-menu" className="site-menu" popover="auto">
+            <li><Link to="/beranda" aria-current={current === '/beranda' ? 'page' : undefined}>Beranda</Link></li>
+            {NAV.map((item) => (
+              <li key={item.href}>
+                <Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link>
+              </li>
+            ))}
+            <li><Link to="/privasi">Privasi</Link></li>
+            <li><Link to="/syarat">Syarat</Link></li>
+          </ul>
+
+          <div className="mega" aria-label="Jelajahi Navego">
+            <div className="wrap mega-cols">
+              <div>
+                <p className="mega-title">Produk</p>
+                <ul className="mega-main">
+                  {MEGA_PRODUK.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}
+                </ul>
+              </div>
+              <div>
+                <p className="mega-title">Alat</p>
+                <ul>
+                  {MEGA_ALAT.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}
+                </ul>
+              </div>
+              <div>
+                <p className="mega-title">Akun</p>
+                <ul>
+                  {MEGA_AKUN.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}
+                </ul>
+              </div>
+            </div>
+          </div>
         </nav>
 
-        <Link className="btn btn-solid btn-sm" to="/unduh">Pasang navego</Link>
-
-        <button className="nav-toggle" type="button" popoverTarget="site-menu" aria-controls="site-menu" aria-label="Menu">
-          <span className="bars" aria-hidden="true" />
-        </button>
-
-        <ul className="nav-menu" id="site-menu" popover="auto">
-          {MENU.map((item) => (
-            <li key={item.href}>
-              <Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link>
-            </li>
-          ))}
-          <li><Link className="btn btn-solid" to="/unduh">Pasang navego</Link></li>
-        </ul>
+        <Link className="btn btn-solid btn-sm" to="/unduh">Pasang gratis</Link>
       </div>
     </header>
   );
@@ -117,11 +161,11 @@ export function SiteFooter() {
       <div className="wrap">
         <div className="footer-cols">
           <div>
-            <Link className="brand" to="/beranda" aria-label="Navego — beranda" style={{ color: '#ffffff' }}>
+            <Link className="brand" to="/beranda" aria-label="Navego â€” beranda" style={{ color: '#ffffff' }}>
               <NavegoMark size={36} />
               <NavegoWordmark size={16} />
             </Link>
-            <p className="footer-tag">Huginn &amp; Muninn — raven Odin. Browser Anda, atas perintah Anda.</p>
+            <p className="footer-tag">Huginn &amp; Muninn â€” raven Odin. Browser Anda, atas perintah Anda.</p>
           </div>
           <nav aria-label="Produk">
             <h3>Produk</h3>
@@ -141,8 +185,8 @@ export function SiteFooter() {
           </nav>
         </div>
         <div className="footer-bar">
-          <span>© 2026 Navego — private, local, signed.</span>
-          <span><Link to="/privasi">Privasi</Link> · <Link to="/syarat">Syarat</Link> · <Link to="/dukungan">Dukungan</Link></span>
+          <span>Ac 2026 Navego â€” private, local, signed.</span>
+          <span><Link to="/privasi">Privasi</Link> Â· <Link to="/syarat">Syarat</Link> Â· <Link to="/dukungan">Dukungan</Link></span>
         </div>
       </div>
     </footer>

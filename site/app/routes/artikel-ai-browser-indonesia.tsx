@@ -10,44 +10,80 @@ export function meta() {
   });
 }
 
+const TOC = [
+  ['#sandbox', 'Browser Anda bukan sandbox'],
+  ['#luar', 'Bukan otomasi dari luar'],
+  ['#beda', 'Dua hal yang berbeda'],
+  ['#bahasa', 'Bahasa Indonesia, bukan terjemahan'],
+  ['#batas', 'Yang belum bisa, jujur']
+] as const;
+
 export default function AiBrowserIndonesia() {
   return (
     <>
       <SiteHeader current="/artikel" />
       <article>
-        <section className="page-hero">
+        <header className="article-hero">
           <div className="wrap">
-            <p className="crumb">Artikel · 18 November 2026</p>
-            <h1>AI yang mengenal browser Anda,<br />dalam bahasa Indonesia.</h1>
-            <p className="lede">Asisten AI yang mengambil alih browser bukan hal baru. Yang baru — dan jarang dibicarakan — adalah di mana asisten itu seharusnya berjalan.</p>
+            <p className="crumb">Beranda / Artikel</p>
+            <h1>AI yang mengenal browser Anda, dalam bahasa Indonesia.</h1>
+            <p className="lede" style={{ marginTop: 'var(--s-4)', fontSize: 'var(--text-lg)', maxWidth: '56ch', color: 'var(--muted-2)' }}>Asisten AI yang mengambil alih browser bukan hal baru. Yang jarang dibicarakan: di mana asisten itu seharusnya berjalan.</p>
+            <p className="article-meta"><span>18 November 2026</span><span>8 menit baca</span><span>Navego</span></p>
           </div>
-        </section>
+        </header>
 
-        <div className="wrap docs-article" style={{ paddingBlock: 'var(--s-7)' }}>
-          <h2>Browser Anda bukan sandbox.</h2>
-          <p>Kalau asisten AI menjalankan Chrome di server orang lain, setiap sesi mulai dari nol: tidak ada cookies Anda, tidak ada histori, tidak ada sesi masuk ke aplikasi Anda — kecuali seseorang menyerahkan kredensialnya ke server itu, dan itu adalah bagian yang tidak akan hari ini juga Anda lakukan.</p>
-          <p>Asisten yang benar-benar berguna harus melihat halaman yang sama yang Anda lihat: portal karyawan, dasbor internal, spreadsheet abonemen, feed sosial yang hanya Anda bisa akses. Satu-satunya tempat semua itu hidup adalah browser yang sedang Anda pakai.</p>
+        <div className="wrap article-layout">
+          <nav className="article-toc" aria-label="Di artikel ini">
+            {TOC.map(([href, label]) => <a key={href} href={href}>{label}</a>)}
+          </nav>
 
-          <h2>Browser Anda bukan untuk diotomasi dari luar.</h2>
-          <p>Hampir semua solusi browser-otomatis hari ini memasang Chrome barunya sendiri, mengisinya lewat protokol DevTools, lalu menjalankan skrip yang ditulis di muka untuk tiap situs. Itu bekerja sampai situs berubah tata letaknya, dan berhenti bekerja diam-diam.</p>
-          <p>Navego berbeda dalam dua hal mendasar: ia memakai browser Anda — dengan semua sesi dan data yang sudah ada di sana — dan ia tidak menulis skrip per situs. Asisten membaca struktur halaman apa adanya, menemukan kolom yang dimaksud, lalu bertindak terhadapnya.</p>
+          <div className="article-body">
+            <h2 id="sandbox">Browser Anda bukan sandbox.</h2>
+            <p>Asisten yang menjalankan Chrome di server orang lain memulai setiap sesi dari nol: tanpa cookies Anda, tanpa histori, tanpa sesi masuk ke aplikasi kerja Anda. Menyerahkan kredensial ke server itu bukan pilihan yang masuk akal.</p>
+            <p>Asisten yang benar-benar berguna harus melihat halaman yang sama dengan yang Anda lihat: portal karyawan, dasbor internal, spreadsheet langganan, feed sosial yang hanya Anda bisa akses. Semua itu hidup di satu tempat — browser yang sedang Anda pakai.</p>
 
-          <h2>Tambahan yang tidak datang dari sekolah otomasi.</h2>
-          <ul>
-            <li><strong>Tab yang Anda tunjuk, bukan semua tab.</strong> Navego hanya bekerja pada tab yang Anda sebut, lewat <code>tabId</code>. Halaman pribadi dan <code>chrome://</code> ditolak.</li>
-            <li><strong>Kata sandi bukan bahan bakar.</strong> Kolom password, kode sekali pakai, PIN, dan kartu selalu ditolak. Jika sebuah halaman meminta itu, asisten berhenti dan menunggu Anda menyelesaikannya sendiri.</li>
-            <li><strong>Hasil berupa berkas.</strong> Pekerjaan berakhir sebagai <code>.xlsx</code>, <code>.docx</code>, <code>.pptx</code>, atau <code>.csv</code> di folder Anda — bukan sebagai jawaban di layar yang harus Anda salin manual.</li>
-            <li><strong>Tagihan setelah hasil.</strong> Harga pekerjaan ditampilkan sebelum mulai; saldo hanya terpotong saat pekerjaan selesai. Jika gagal, dana kembali penuh.</li>
-          </ul>
+            <div className="callout"><strong>Poinnya.</strong> Keunggulan bukan model yang lebih pintar; keunggulan adalah konteks yang sudah ada di browser Anda.</div>
 
-          <h2>Bahasa Indonesia, bukan terjemahan.</h2>
-          <p>Produk ini berbahasa Indonesia karena pengguna pertamanya adalah orang Indonesia yang bekerja di kantor Indonesia: portal, dasbor, spreadsheet, dan dokumen yang memang ditulis dalam bahasa Indonesia. Memerintah asisten dalam bahasa kedua menambah gesekan yang tidak perlu.</p>
+            <h2 id="luar">Bukan otomasi dari luar.</h2>
+            <p>Hampir semua solusi hari ini memasang Chrome baru, mengisinya lewat protokol DevTools, lalu menjalankan skrip yang ditulis di muka untuk tiap situs. Cara itu bekerja sampai tata letak situs berubah — dan berhenti diam-diam.</p>
+            <p>Navego memakai browser Anda, dengan semua sesi dan data yang sudah ada di sana. Ia tidak menulis skrip per situs: halaman dibaca apa adanya, kolom yang dimaksud ditemukan dari label dan struktur, lalu tindakan dilakukan terhadapnya.</p>
 
-          <h2>Yang belum bisa, jujur.</h2>
-          <p>Navego belum bisa berjalan di Firefox dan Safari (fitur yang dibutuhkan ekstensi ini tidak tersedia di sana). Extension-nya belum ada di Chrome Web Store — pemasangan sementara lewat Load unpacked atau satu klik di Windows lewat berkas kebijakan yang dijelaskan di <Link to="/unduh">halaman Unduh</Link>. Ini alat yang sedang tumbuh, dan batasannya disebutkan apa adanya.</p>
+            <div className="pull">Yang dibaca struktur halaman, bukan alamat tetap. Itu yang membuat satu perintah berlaku di situs yang belum pernah dilihat.</div>
 
-          <h2>Ke mana selanjutnya.</h2>
-          <p>Jika Anda ingin melihat hasil nyatanya — berkas laporan keuangan, rencana strategis, riset promo yang dibuat oleh Navego sendiri — unduh contohnya dari <Link to="/docs">Docs</Link>. Jika Anda ingin mencoba, pasang dari <Link to="/unduh">halaman Unduh</Link>; lima belas menit dari sekarang, satu pekerjaan bisa selesai tanpa Anda menyentuh satu kolom pun.</p>
+            <h2 id="beda">Dua hal yang berbeda.</h2>
+            <ul>
+              <li><strong>Tab yang Anda tunjuk, bukan semua tab.</strong> Kerja hanya pada <code>tabId</code> yang Anda sebut. Halaman pribadi dan <code>chrome://</code> ditolak.</li>
+              <li><strong>Kata sandi bukan bahan bakar.</strong> Kolom password, kode sekali pakai, PIN, dan kartu selalu ditolak. Asisten berhenti dan menunggu Anda.</li>
+              <li><strong>Hasil berupa berkas.</strong> Pekerjaan berakhir sebagai <code>.xlsx</code>, <code>.docx</code>, <code>.pptx</code>, atau <code>.csv</code> — bukan jawaban di layar yang harus Anda salin.</li>
+              <li><strong>Tagihan setelah hasil.</strong> Harga tampil sebelum mulai; saldo terpotong hanya saat pekerjaan selesai. Gagal berarti dana kembali penuh.</li>
+            </ul>
+
+            <figure className="figure">
+              <div className="diagram">
+                <span className="node">Perintah Anda</span>
+                <span className="arrow">→</span>
+                <span className="node">Tab yang ditunjuk</span>
+                <span className="arrow">→</span>
+                <span className="node">Berkas di folder</span>
+              </div>
+              <figcaption>Satu alur, tiga titik yang bisa Anda periksa sendiri.</figcaption>
+            </figure>
+
+            <h2 id="bahasa">Bahasa Indonesia, bukan terjemahan.</h2>
+            <p>Pengguna pertama produk ini bekerja di kantor Indonesia: portal, dasbor, spreadsheet, dan dokumen berbahasa Indonesia. Memerintah asisten dalam bahasa kedua menambah gesekan yang tidak perlu.</p>
+
+            <h2 id="batas">Yang belum bisa, jujur.</h2>
+            <p>Navego belum berjalan di Firefox dan Safari — fitur yang dibutuhkan ekstensi tidak tersedia di sana. Extension-nya juga belum ada di Chrome Web Store; pemasangan sementara lewat Load unpacked atau satu klik di Windows lewat berkas kebijakan yang dijelaskan di <Link to="/unduh">halaman Unduh</Link>.</p>
+            <p>Ini alat yang sedang tumbuh. Batasannya disebutkan apa adanya, bukan disembunyikan di halaman syarat.</p>
+
+            <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 'var(--s-5)', flexWrap: 'wrap', marginTop: 'var(--s-7)' }}>
+              <div>
+                <h2 style={{ margin: 0 }}>Coba sendiri.</h2>
+                <p style={{ color: 'var(--muted-2)' }}>Pasang, tunjuk satu tab, tulis satu perintah.</p>
+              </div>
+              <Link className="btn btn-solid" to="/unduh">Pasang gratis</Link>
+            </div>
+          </div>
         </div>
       </article>
       <SiteFooter />
