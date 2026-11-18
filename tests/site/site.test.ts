@@ -170,11 +170,10 @@ test('_headers covers every route, forbids inline scripts, denies framing everyw
   }
 });
 
+// WHY the shape changed: the .html and pretty duals of one page used to be two routes with distinct ids, and serving the prerendered .html file under the pretty URL hydrated against the wrong id — React error #418 on every visit.
+// The flat .html file still exists for Pages to serve, but the worker answers the .html URL with a 301 to the pretty path, so the client router only knows the pretty routes and the two can never split again.
+
 test('the client router answers every pretty URL, and the .html aliases are edge 301s', () => {
-  // WHY the shape changed: the .html and pretty duals of one page used to be two routes with distinct ids,
-  // and serving the prerendered .html file under the pretty URL hydrated against the wrong id — React error #418 on every visit.
-  // The flat .html file still exists for Pages to serve, but the worker answers the .html URL with a 301 to the pretty path,
-  // so the client router only knows the pretty routes and the two can never split again.
   buildSite();
   const assets = fs.readdirSync(path.join(client, 'assets'));
   const manifest = assets.find((f) => f.startsWith('manifest-') && f.endsWith('.js'));
