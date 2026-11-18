@@ -1,10 +1,10 @@
-﻿/*
-﻿ * Navego Ã¢â‚¬â€ brand.css: components and page styles, on the tokens in tokens.css.
-﻿ * Flat corporate Y2K: cream ground, deep navy, one amber accent.
-﻿ * No gradients, no shadows.
-﻿ */
+/*
+ * Navego — brand.css: components and page styles, on the tokens in tokens.css.
+ * Flat modern: cream ground, deep navy, one amber accent (design tokens in tokens.css).
+ * No gradients, no shadows.
+ */
 
-/* ========== header Ã¢â‚¬â€ one nav tree, narrow popover / wide inline (navbar guide) ========== */
+/* ========== header — one nav tree, narrow popover / wide inline (navbar guide) ========== */
 
 .site-header {
   position: sticky;
