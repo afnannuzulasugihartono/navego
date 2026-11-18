@@ -32,135 +32,99 @@ interface MegaPanel {
 // Apple's header swaps one full-width panel between items; the content is the only thing that changes per item.
 // One panel, one map keyed by the item under the pointer or focus, is the same shape with one place to edit.
 
+// WHY A LINK REGISTRY: the seven panels share most of their links, and repeating them token by token is what a duplication gate exists to catch.
+// Every link lives here exactly once; the panels only say which links they show.
+
+const L = {
+  fiturKemampuan: { href: '/fitur#kemampuanTitle', label: 'Enam kemampuan inti' },
+  fiturEmpat: { href: '/fitur#taskTitle', label: 'Empat langkah, dari tulis sampai simpan' },
+  fiturPeran: { href: '/fitur#roleTitle', label: 'Operator, analis, pengembang' },
+  perms: { href: '/fitur#permTitle', label: 'Enam izin, tidak lebih' },
+  docsBatas: { href: '/docs#batas', label: 'Batas yang dijaga' },
+  docsTools: { href: '/docs#tools', label: '45 tool MCP' },
+  docsBerkas: { href: '/docs#berkas', label: 'Contoh berkas' },
+  docsPasang: { href: '/docs#pasang', label: 'Pasang extension' },
+  docsPair: { href: '/docs#pairing', label: 'Masuk dan pair device' },
+  docsTugas: { href: '/docs#tugas', label: 'Tugas pertama' },
+  docsPaket: { href: '/docs#paket', label: 'Paket dan pembayaran' },
+  docsMcp: { href: '/docs#mcp', label: 'Hubungkan AI harness' },
+  asia: { href: '/harga#asiaTitle', label: 'Asia · Arab · Afrika' },
+  eropa: { href: '/harga#europeTitle', label: 'Eropa & AS' },
+  p1: { href: '/harga#usd-plan.usd-1', label: 'Starter — $1' },
+  p5: { href: '/harga#usd-plan.usd-5', label: 'Plus — $5' },
+  p17: { href: '/harga#usd-plan.usd-17', label: 'Business — $17 / 6 bulan' },
+  p33: { href: '/harga#usd-plan.usd-33', label: 'Enterprise — $33 / tahun' },
+  download: { href: '/unduh', label: 'Build untuk Chrome, Edge, Brave, Opera, Vivaldi' },
+  crx: { href: '/unduh', label: 'CRX ditandatangani & .reg Windows' },
+  article: { href: '/artikel/ai-browser-indonesia', label: 'AI yang mengenal browser Anda' },
+  articles: { href: '/artikel', label: 'Semua artikel' },
+  mcp: { href: '/mcp', label: 'npm i -g navego' },
+  openCode: { href: '/mcp', label: 'Config OpenCode' },
+  dukungan: { href: '/dukungan', label: 'Perbaikan cepat & tiga pintu' },
+  faq: { href: '/faq', label: 'Dua belas jawaban' },
+  keamanan: { href: '/keamanan', label: 'Keamanan' },
+  metodologi: { href: '/metodologi', label: 'Metodologi' },
+  changelog: { href: '/changelog', label: 'Changelog' },
+  bandingkan: { href: '/bandingkan', label: 'Bandingkan pendekatan' },
+  privasi: { href: '/privasi', label: 'Privasi' },
+  syarat: { href: '/syarat', label: 'Syarat' }
+} as const;
+
 const MEGA: Record<string, MegaPanel> = {
   fitur: {
     leadHeading: 'Explore fitur',
-    lead: [
-      { href: '/fitur#kemampuanTitle', label: 'Enam kemampuan inti' },
-      { href: '/fitur#taskTitle', label: 'Empat langkah, dari tulis sampai simpan' },
-      { href: '/fitur#roleTitle', label: 'Operator, analis, pengembang' }
-    ],
+    lead: [L.fiturKemampuan, L.fiturEmpat, L.fiturPeran],
     cols: [
-      { heading: 'Yang dijaga', links: [
-        { href: '/keamanan', label: 'Kata sandi & OTP ditolak' },
-        { href: '/fitur#permTitle', label: 'Enam izin, tidak lebih' },
-        { href: '/docs#batas', label: 'Batas yang dijaga' }
-      ] },
-      { heading: 'Alat', links: [
-        { href: '/docs#tools', label: '45 tool MCP' },
-        { href: '/docs#berkas', label: 'Contoh berkas' },
-        { href: '/bandingkan', label: 'Navego vs pendekatan lain' }
-      ] }
+      { heading: 'Yang dijaga', links: [L.keamanan, L.perms, L.docsBatas] },
+      { heading: 'Alat', links: [L.docsTools, L.docsBerkas, L.bandingkan] }
     ]
   },
   harga: {
     leadHeading: 'Pilih kawasan',
-    lead: [
-      { href: '/harga#asiaTitle', label: 'Asia · Arab · Afrika' },
-      { href: '/harga#europeTitle', label: 'Eropa & AS' }
-    ],
+    lead: [L.asia, L.eropa],
     cols: [
-      { heading: 'Plan', links: [
-        { href: '/harga#usd-plan.usd-1', label: 'Starter — $1' },
-        { href: '/harga#usd-plan.usd-5', label: 'Plus — $5' },
-        { href: '/harga#usd-plan.usd-17', label: 'Business — $17 / 6 bulan' },
-        { href: '/harga#usd-plan.usd-33', label: 'Enterprise — $33 / tahun' }
-      ] },
-      { heading: 'Tanya jawab', links: [
-        { href: '/faq', label: 'FAQ' },
-        { href: '/docs#paket', label: 'Paket dan pembayaran' },
-        { href: '/metodologi', label: 'Yang diukur, yang tidak' }
-      ] }
+      { heading: 'Plan', links: [L.p1, L.p5, L.p17, L.p33] },
+      { heading: 'Tanya jawab', links: [L.faq, L.docsPaket, L.metodologi] }
     ]
   },
   unduh: {
     leadHeading: 'Unduh',
-    lead: [
-      { href: '/unduh', label: 'Build untuk Chrome, Edge, Brave, Opera, Vivaldi' },
-      { href: '/unduh', label: 'CRX ditandatangani & .reg Windows' }
-    ],
+    lead: [L.download, L.crx],
     cols: [
-      { heading: 'Terminal', links: [
-        { href: '/mcp', label: 'npm i -g navego' },
-        { href: '/docs#tugas', label: 'Tugas pertama' },
-        { href: '/docs', label: 'Dokumentasi lengkap' }
-      ] },
-      { heading: 'Setelah unduh', links: [
-        { href: '/changelog', label: 'Changelog' },
-        { href: '/metodologi', label: 'Metodologi pengukuran' },
-        { href: '/dukungan', label: 'Dukungan' }
-      ] }
+      { heading: 'Terminal', links: [L.mcp, L.docsTugas, { href: '/docs', label: 'Dokumentasi lengkap' }] },
+      { heading: 'Setelah unduh', links: [L.changelog, L.metodologi, L.dukungan] }
     ]
   },
   docs: {
     leadHeading: 'Mulai dari sini',
-    lead: [
-      { href: '/docs#pasang', label: 'Pasang extension' },
-      { href: '/docs#pairing', label: 'Masuk dan pair device' }
-    ],
+    lead: [L.docsPasang, L.docsPair],
     cols: [
-      { heading: 'Alat', links: [
-        { href: '/docs#tools', label: '45 tool MCP' },
-        { href: '/docs#mcp', label: 'Hubungkan AI harness' },
-        { href: '/docs#batas', label: 'Batas yang dijaga' }
-      ] },
-      { heading: 'Lainnya', links: [
-        { href: '/faq', label: 'FAQ' },
-        { href: '/metodologi', label: 'Metodologi' },
-        { href: '/changelog', label: 'Changelog' }
-      ] }
+      { heading: 'Alat', links: [L.docsTools, L.docsMcp, L.docsBatas] },
+      { heading: 'Lainnya', links: [L.faq, L.metodologi, L.changelog] }
     ]
   },
   artikel: {
     leadHeading: 'Dari lab Navego',
-    lead: [
-      { href: '/artikel/ai-browser-indonesia', label: 'AI yang mengenal browser Anda' },
-      { href: '/artikel', label: 'Semua artikel' }
-    ],
+    lead: [L.article, L.articles],
     cols: [
-      { heading: 'Angka dan metode', links: [
-        { href: '/metodologi', label: 'Metodologi' },
-        { href: '/changelog', label: 'Changelog' }
-      ] },
-      { heading: 'Lainnya', links: [
-        { href: '/bandingkan', label: 'Bandingkan pendekatan' },
-        { href: '/keamanan', label: 'Keamanan' }
-      ] }
+      { heading: 'Angka dan metode', links: [L.metodologi, L.changelog] },
+      { heading: 'Lainnya', links: [L.bandingkan, L.keamanan] }
     ]
   },
   mcp: {
     leadHeading: 'Pasang sebagai MCP',
-    lead: [
-      { href: '/mcp', label: 'npm i -g navego' },
-      { href: '/mcp', label: 'Config OpenCode' }
-    ],
+    lead: [L.mcp, L.openCode],
     cols: [
-      { heading: 'Verifikasi', links: [
-        { href: '/metodologi', label: 'Yang diukur' },
-        { href: '/changelog', label: 'Versi dan rilis' }
-      ] },
-      { heading: 'Lainnya', links: [
-        { href: '/docs#mcp', label: 'Hubungkan AI harness' },
-        { href: '/faq', label: 'FAQ' }
-      ] }
+      { heading: 'Verifikasi', links: [L.metodologi, L.changelog] },
+      { heading: 'Lainnya', links: [L.docsMcp, L.faq] }
     ]
   },
   dukungan: {
     leadHeading: 'Butuh bantuan',
-    lead: [
-      { href: '/dukungan', label: 'Perbaikan cepat & tiga pintu' },
-      { href: '/faq', label: 'Dua belas jawaban' }
-    ],
+    lead: [L.dukungan, L.faq],
     cols: [
-      { heading: 'Bantuan', links: [
-        { href: '/docs', label: 'Dokumentasi' },
-        { href: '/changelog', label: 'Changelog' }
-      ] },
-      { heading: 'Legal', links: [
-        { href: '/privasi', label: 'Privasi' },
-        { href: '/syarat', label: 'Syarat' },
-        { href: '/keamanan', label: 'Keamanan' }
-      ] }
+      { heading: 'Bantuan', links: [{ href: '/docs', label: 'Dokumentasi' }, L.changelog] },
+      { heading: 'Legal', links: [L.privasi, L.syarat, L.keamanan] }
     ]
   }
 };
