@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "react-router build && node scripts/flatten-prerender.ts && node scripts/inline-script-hashes.ts",
+    "build": "react-router build && node scripts/flatten-prerender.ts && node scripts/inline-script-hashes.ts && npx tsc -p worker/tsconfig.json",
     "dev": "react-router dev",
     "typecheck": "react-router typegen && tsc --noEmit"
   },

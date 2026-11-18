@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { NavegoMark } from '../components/NavegoMark';
@@ -22,10 +23,11 @@ import {
 } from '../lib/dashboardApi';
 
 export function meta() {
-  return [
-    { title: 'Dashboard — Navego' },
-    { name: 'description', content: 'Device ter-pairing, perintah, plan, saldo, dan kendali atas semuanya — dalam satu konsol.' }
-  ];
+  return seoMeta({
+    title: "Dashboard - Navego",
+    description: "Device ter-pairing, perintah, plan, saldo, dan kendali atas semuanya - dalam satu konsol.",
+    path: "/dashboard",
+  });
 }
 
 type View = 'ringkasan' | 'device' | 'riwayat' | 'tabel' | 'dengar' | 'saldo' | 'pairing' | 'aksi' | 'akun';

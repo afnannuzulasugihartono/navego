@@ -1,12 +1,14 @@
 import { useState } from 'react';
+import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
-  return [
-    { title: 'Pasang MCP — Navego' },
-    { name: 'description', content: 'Driver lokal Navego berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi.' }
-  ];
+  return seoMeta({
+    title: 'Pasang MCP — Navego',
+    description: 'Driver lokal Navego berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi.',
+    path: '/mcp'
+  });
 }
 
 const BLOCKS = [
@@ -32,60 +34,68 @@ export default function Mcp() {
     }
   };
 
+  const copyBlock = (text: string, id: string) => (
+    <button onClick={() => copy(text, id)} className="btn btn-solid btn-sm" type="button" style={{ position: 'absolute', top: 'var(--s-2)', right: 'var(--s-2)' }}>
+      {copied === id ? 'Tersalin' : 'Salin'}
+    </button>
+  );
+
   return (
     <>
       <SiteHeader current="/mcp.html" />
-      <main className="wrap" style={{ maxWidth: 880 }}>
-        <header className="page-head" style={{ paddingBottom: 6 }}>
-          <h1>Pasang MCP</h1>
-          <p className="lede">Driver lokal Navego berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi; yang dibutuhkan adalah browser yang masuk akun dan ekstensi terpasang.</p>
-        </header>
-
-        {BLOCKS.map(({ id, title, body, note }) => (
-          <section key={id} style={{ marginTop: 26 }}>
-            <h2 style={{ fontSize: 18, marginBottom: 8 }}>{title}</h2>
-            <div style={{ background: 'var(--ink)', borderRadius: 8, padding: '9px 12px', display: 'flex', alignItems: 'center', gap: 12, maxWidth: 640 }}>
-              <code style={{ background: 'transparent', color: '#d8f4ff', fontSize: 12 }}>{body}</code>
-              <button onClick={() => copy(body, id)} className="cf-copy">{copied === id ? 'Tersalin' : 'Salin'}</button>
-            </div>
-            <p style={{ color: 'var(--muted-2)', fontSize: 13, marginTop: 8, maxWidth: '72ch' }}>{note}</p>
-          </section>
-        ))}
-
-        <section style={{ marginTop: 26 }}>
-          <h2 style={{ fontSize: 18, marginBottom: 8 }}>3. Daftarkan ke harness yang Anda pakai</h2>
-          {HARNESS.map(({ id, title, body }) => (
-            <div key={id} style={{ marginBottom: 14 }}>
-              <h3 style={{ fontSize: 13, color: 'var(--muted-2)', marginBottom: 6 }}>{title}</h3>
-              <div style={{ background: 'var(--ink)', borderRadius: 8, padding: '10px 12px', maxWidth: 640, position: 'relative' }}>
-                <pre style={{ color: '#d8f4ff', fontSize: 11.5, overflowX: 'auto' }}><code>{body}</code></pre>
-                <button onClick={() => copy(body, id)} className="cf-copy">{copied === id ? 'Tersalin' : 'Salin'}</button>
-              </div>
-            </div>
-          ))}
-          <p style={{ color: 'var(--muted-2)', fontSize: 13 }}>Server lokal itu menambah <strong>45 tool MCP</strong> di atas <strong>36 primitive browser</strong>. Tidak ada login, tidak ada quota yang harus dimengerti di website: quota dibaca di lingkungan bridge dan ditampilkan oleh <code>doctor</code>.</p>
-        </section>
-
-        <section style={{ marginTop: 26 }}>
-          <h2 style={{ fontSize: 18, marginBottom: 8 }}>4. Satu kali per peramban</h2>
-          <p style={{ color: 'var(--muted-2)', fontSize: 13.5, maxWidth: '76ch' }}>Peramban baru harus memasang ekstensi Navego dulu (lihat <Link to="/unduh.html">Unduh</Link>), lalu buka <Link to="/dashboard.html">Dasbor</Link> dan klik <strong>Pasangkan browser ini</strong> — kode dibuat di server dan dikirim langsung ke ekstensi. Setelah itu, driver lokal otomatis mengambil alih — tidak perlu langkah lain setiap sesi.</p>
-        </section>
-
-        <section style={{ marginTop: 26 }}>
-          <h2 style={{ fontSize: 18, marginBottom: 8 }}>Batas yang dijaga</h2>
-          <ul style={{ paddingLeft: 20, color: 'var(--muted-2)', fontSize: 13.5, display: 'grid', gap: 6 }}>
-            <li>Password, kode sekali pakai, PIN, kartu, dan CVV selalu ditolak. Pekerjaan yang berhenti di situ gagal — bukan diam-diam diteruskan.</li>
-            <li>Tab pribadi, tab non-http(s), dan jendela tanpa akses debugger: primitive menolak, dan penolakan disebut namanya.</li>
-            <li>Enam izin hanya dipakai untuk enam alasan: <code>tabs</code>, <code>scripting</code>, <code>storage</code>, <code>alarms</code>, <code>debugger</code>, <code>downloads</code>.</li>
-          </ul>
-          <p style={{ color: 'var(--muted-2)', fontSize: 13, marginTop: 10 }}>Butuh detail teknis? Panduan pemanggilan di <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-call.md">docs/agent-call.md</a> menyebut semua jalur secara persis.</p>
-        </section>
-        <div className="page-foot">
-          <div>
-            <h2>Operator menunggu.</h2>
-            <p>Satu perintah <code>navego local</code>, lalu harness Anda langsung bisa menjalankan browser.</p>
+      <main>
+        <section className="page-hero">
+          <div className="wrap">
+            <p className="crumb">Pasang MCP</p>
+            <h1>Driver lokal,<br />di mesin Anda.</h1>
+            <p className="lede">Stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi; yang dibutuhkan adalah browser yang masuk akun dan ekstensi terpasang.</p>
           </div>
-          <Link className="btn btn-solid" to="/docs.html">Baca Docs</Link>
+        </section>
+
+        <div className="wrap" style={{ paddingBlock: 'var(--s-7)' }}>
+          {BLOCKS.map(({ id, title, body, note }) => (
+            <section key={id} style={{ marginBottom: 'var(--s-6)' }}>
+              <p className="kicker">{id === 'install' ? 'Langkah 1' : 'Langkah 2'}</p>
+              <h2 className="section-title" style={{ fontSize: 'var(--text-xl)', marginTop: 'var(--s-2)' }}>{title}</h2>
+              <div style={{ position: 'relative', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)', maxWidth: '40rem', marginTop: 'var(--s-3)' }}>
+                <code style={{ background: 'transparent', border: 0, padding: 0, color: '#cfe0ff' }}>{body}</code>
+                {copyBlock(body, id)}
+              </div>
+              <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-sm)', marginTop: 'var(--s-3)', maxWidth: '62ch' }}>{note}</p>
+            </section>
+          ))}
+
+          <section style={{ marginBottom: 'var(--s-6)' }}>
+            <p className="kicker">Langkah 3</p>
+            <h2 className="section-title" style={{ fontSize: 'var(--text-xl)', marginTop: 'var(--s-2)' }}>Daftarkan ke harness Anda.</h2>
+            {HARNESS.map(({ id, title, body }) => (
+              <div key={id} style={{ margin: 'var(--s-5) 0' }}>
+                <h3 style={{ fontSize: 'var(--text-base)', color: 'var(--navy-deep)', marginBottom: 'var(--s-2)' }}>{title}</h3>
+                <div style={{ position: 'relative', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)', maxWidth: '40rem' }}>
+                  <pre style={{ color: '#cfe0ff', fontSize: 'var(--text-sm)', overflowX: 'auto', fontFamily: 'var(--font-mono)' }}><code>{body}</code></pre>
+                  {copyBlock(body, id)}
+                </div>
+              </div>
+            ))}
+            <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-sm)', maxWidth: '62ch' }}>Server lokal itu menambah <strong>45 tool MCP</strong> di atas <strong>36 primitive browser</strong>. Tidak ada login, tidak ada quota yang harus dimengerti di website: quota dibaca di lingkungan bridge dan ditampilkan oleh <code>doctor</code>.</p>
+          </section>
+
+          <section style={{ marginBottom: 'var(--s-6)' }}>
+            <p className="kicker">Langkah 4</p>
+            <h2 className="section-title" style={{ fontSize: 'var(--text-xl)', marginTop: 'var(--s-2)' }}>Satu kali per peramban.</h2>
+            <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-base)', maxWidth: '64ch', marginTop: 'var(--s-3)' }}>Peramban baru harus memasang ekstensi Navego dulu (lihat <Link to="/unduh.html">Unduh</Link>), lalu buka <Link to="/dashboard.html">Dasbor</Link> dan klik <strong>Pasangkan browser ini</strong> — kode dibuat di server dan dikirim langsung ke ekstensi. Setelah itu, driver lokal otomatis mengambil alih — tidak perlu langkah lain setiap sesi.</p>
+          </section>
+
+          <section>
+            <p className="kicker">Batas</p>
+            <h2 className="section-title" style={{ fontSize: 'var(--text-xl)', marginTop: 'var(--s-2)' }}>Batas yang dijaga.</h2>
+            <ul style={{ paddingLeft: '1.4rem', color: 'var(--muted-2)', fontSize: 'var(--text-base)', display: 'grid', gap: 'var(--s-2)', marginTop: 'var(--s-3)' }}>
+              <li>Password, kode sekali pakai, PIN, kartu, dan CVV selalu ditolak. Pekerjaan yang berhenti di situ gagal — bukan diam-diam diteruskan.</li>
+              <li>Tab pribadi, tab non-http(s), dan jendela tanpa akses debugger: primitive menolak, dan penolakan disebut namanya.</li>
+              <li>Enam izin hanya dipakai untuk enam alasan: <code>tabs</code>, <code>scripting</code>, <code>storage</code>, <code>alarms</code>, <code>debugger</code>, <code>downloads</code>.</li>
+            </ul>
+            <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-sm)', marginTop: 'var(--s-4)' }}>Butuh detail teknis? Panduan pemanggilan di <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-call.md">docs/agent-call.md</a> menyebut semua jalur secara persis.</p>
+          </section>
         </div>
       </main>
       <SiteFooter />

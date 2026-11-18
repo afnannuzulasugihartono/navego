@@ -1,7 +1,7 @@
 // @last-edited: 2026-10-26 UTC+7.
 // @title: invoice-worker — the page reaches the browser as a page, and every other path is still the site.
 // @state: the proxy, the relabel, the redirect, the asset fallback, the failure page, and the absence of a secret.
-// @dependencies: node:test, node:assert, node:fs, ../site/public/_worker.js.
+// @dependencies: node:test, node:assert, node:fs, ../site/worker/_worker.ts.
 
 // WHY THE PROXY IS DRIVEN RATHER THAN DEPLOYED AND LOOKED AT.
 // The page only became unreadable because a gateway relabelled it, and the fix is a relabel on the other side of a network hop this test can stand in for.
@@ -15,7 +15,7 @@ interface PagesWorker {
   fetch(request: Request, env: { ASSETS: { fetch(request: Request): Promise<Response> } }): Promise<Response>;
 }
 
-const worker = (await import(new URL('../../site/public/_worker.js', import.meta.url).href) as { default: PagesWorker }).default;
+const worker = (await import(new URL('../../site/worker/_worker.ts', import.meta.url).href) as { default: PagesWorker }).default;
 
 const PAGE = 'https://navego.pages.dev/invoice?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234';
 const UPSTREAM = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-billing?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234';
@@ -182,7 +182,7 @@ test('a function that cannot be reached answers with a page and no reason a cust
 });
 
 test('the worker carries no secret, because a page worker is public code', () => {
-  const source = fs.readFileSync(new URL('../../site/public/_worker.js', import.meta.url), 'utf8');
+  const source = fs.readFileSync(new URL('../../site/worker/_worker.ts', import.meta.url), 'utf8');
   for (const name of ['SERVICE_ROLE', 'MIDTRANS_SERVER_KEY', 'BILLING_TOKEN', 'BILLING_SECRET', 'Bearer ', 'eyJ']) {
     assert.ok(!source.includes(name), `the worker must not name ${name}`);
   }

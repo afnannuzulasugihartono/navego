@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "WebWorker"],
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "noEmit": false,
+    "outDir": "../build/client",
+    "rootDir": ".",
+    "strict": true,
+    "skipLibCheck": true,
+    "types": []
+  },
+  "include": ["_worker.ts"]
+}

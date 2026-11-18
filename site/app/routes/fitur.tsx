@@ -1,12 +1,14 @@
 import { useState } from 'react';
+import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
-  return [
-    { title: 'Fitur — Navego' },
-    { name: 'description', content: 'Yang dikerjakan Navego: 45 tool MCP di atas 36 primitive browser, enam izin yang dijelaskan satu per satu, model milik Anda, pairing device yang bisa dicabut, dan empat berkas contoh yang bisa diunduh.' }
-  ];
+  return seoMeta({
+    title: 'Fitur — Navego',
+    description: 'Yang dikerjakan Navego: 45 tool MCP di atas 36 primitive browser, enam izin yang dijelaskan satu per satu, model milik Anda, pairing device yang bisa dicabut, dan empat berkas contoh yang bisa diunduh.',
+    path: '/fitur'
+  });
 }
 
 const ROLES = [
@@ -20,6 +22,15 @@ const STEPS = [
   ['Baca', 'Halaman, tombol, dan baris dibaca dari tab yang terbuka.'],
   ['Isi', 'Formulir dan sel diisi sesuai instruksi, bukan diklik asal.'],
   ['Simpan', 'Berkas hasil kerja tersimpan, dengan jejaknya di dashboard.']
+] as const;
+
+const PERMISSIONS = [
+  ['tabs', 'Membuka dan menavigasi tab yang Anda tunjuk.'],
+  ['scripting', 'Menjaga skrip di halaman tetap hidup selama pekerjaan berjalan.'],
+  ['storage', 'Menyimpan token dan pengaturan lokal Anda.'],
+  ['alarms', 'Menjadwalkan pemeriksaan berkala di latar.'],
+  ['debugger', 'Klik tepercaya, tangkapan layar, dan pembacaan aksesibilitas.'],
+  ['downloads', 'Menyimpan berkas hasil kerja ke folder Anda.']
 ] as const;
 
 function RoleTabs() {
@@ -45,65 +56,84 @@ export default function Fitur() {
   return (
     <>
       <SiteHeader current="/fitur.html" />
-      <main className="wrap">
-        <header className="page-head">
-          <h1>Yang bisa dikerjakan Navego.</h1>
-          <p className="lede">Anda menulis satu perintah. Navego membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.</p>
-          <div className="page-head-actions">
-            <Link className="btn btn-solid" to="/unduh.html">Unduh navego</Link>
-            <Link className="btn btn-ghost" to="/beranda.html">Lihat contoh kerja</Link>
+      <main>
+        <section className="page-hero">
+          <div className="wrap">
+            <p className="crumb">Fitur</p>
+            <h1>Yang bisa<br />dikerjakan Navego.</h1>
+            <p className="lede">Anda menulis satu perintah. Navego membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.</p>
+            <div className="hero-cta">
+              <Link className="btn btn-solid" to="/unduh.html">Unduh navego</Link>
+              <Link className="btn btn-ghost" to="/docs.html">Baca docs</Link>
+            </div>
           </div>
-        </header>
-
-        <div className="facts" aria-label="Angka produk" style={{ fontSize: 12 }}>
-          <span><b>45</b> tool MCP</span>
-          <span><b>36</b> primitive</span>
-          <span><b>6</b> izin</span>
-        </div>
+        </section>
 
         <section className="section" aria-labelledby="taskTitle">
-          <div className="section-head">
-            <h2 id="taskTitle">Satu pekerjaan, empat langkah.</h2>
-          </div>
-          <ol style={{ listStyle: 'none', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14 }}>
-            {STEPS.map(([title, body]) => (
-              <li key={title} className="feature" style={{ display: 'grid', gap: 6 }}>
-                <h3 className="card-title">{title}</h3>
-                <p style={{ fontSize: 12.5, color: 'var(--muted-2)' }}>{body}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section className="section" aria-labelledby="roleTitle" style={{ paddingTop: 0 }}>
-          <div className="section-head">
-            <h2 id="roleTitle">Pilih jalur Anda.</h2>
-            <p>Satu produk, tiga pintu masuk. Tiap jalur memakai primitive yang sama.</p>
-          </div>
-          <RoleTabs />
-        </section>
-
-        <section className="section" aria-labelledby="permTitle" style={{ paddingTop: 0 }}>
-          <div className="panel" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
-            <div>
-              <h2 id="permTitle" style={{ fontSize: 22, letterSpacing: '-0.02em' }}>Izin yang diminta</h2>
-              <p style={{ color: 'var(--muted-2)', fontSize: 13 }}>Tidak ada izin lain di luar daftar ini.</p>
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <p className="kicker">Cara kerja</p>
+                <h2 id="taskTitle" className="section-title">Satu pekerjaan, empat langkah.</h2>
+              </div>
             </div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {['tabs', 'scripting', 'storage', 'alarms', 'debugger', 'downloads'].map((p) => (
-                <code key={p} style={{ fontSize: 12, padding: '6px 12px' }}>{p}</code>
+            <ol className="steps">
+              {STEPS.map(([title, body]) => (
+                <li key={title}>
+                  <div>
+                    <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-lg)', color: 'var(--navy-deep)', marginBottom: 'var(--s-1)' }}>{title}</h3>
+                    <p style={{ color: 'var(--muted-2)' }}>{body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        <section className="section" aria-labelledby="roleTitle">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <p className="kicker">Jalur</p>
+                <h2 id="roleTitle" className="section-title">Pilih jalur Anda.</h2>
+              </div>
+              <p className="section-note">Satu produk, tiga pintu masuk. Tiap jalur memakai primitive yang sama.</p>
+            </div>
+            <RoleTabs />
+          </div>
+        </section>
+
+        <section className="section" aria-labelledby="permTitle">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <p className="kicker">Izin</p>
+                <h2 id="permTitle" className="section-title">Enam izin, satu per satu.</h2>
+              </div>
+              <p className="section-note">Tidak ada izin lain di luar daftar ini.</p>
+            </div>
+            <div className="feature-grid">
+              {PERMISSIONS.map(([name, why]) => (
+                <div className="card" key={name}>
+                  <code style={{ fontSize: 'var(--text-sm)' }}>{name}</code>
+                  <p style={{ marginTop: 'var(--s-2)' }}>{why}</p>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        <div className="page-foot">
-          <div>
-            <h2>Mulai dari satu perintah.</h2>
-            <p>Buka akun, pair device ini, lalu jalankan satu pekerjaan — hasilnya berupa berkas nyata yang bisa Anda buka sendiri.</p>
+        <section className="section">
+          <div className="wrap">
+            <div className="card is-primary" style={{ background: 'var(--navy-deep)', color: '#eaf0ff', borderColor: 'var(--navy-deep)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 'var(--s-5)', flexWrap: 'wrap' }}>
+              <div>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-2xl)', color: '#ffffff', letterSpacing: '-0.02em' }}>Mulai dari satu perintah.</h2>
+                <p style={{ color: '#a9bce8', marginTop: 'var(--s-2)' }}>Buka akun, pair device ini, lalu jalankan satu pekerjaan — hasilnya berupa berkas nyata yang bisa Anda buka sendiri.</p>
+              </div>
+              <Link className="btn btn-solid" to="/unduh.html">Unduh navego</Link>
+            </div>
           </div>
-          <Link className="btn btn-solid" to="/unduh.html">Unduh navego</Link>
-        </div>
+        </section>
       </main>
       <SiteFooter />
     </>

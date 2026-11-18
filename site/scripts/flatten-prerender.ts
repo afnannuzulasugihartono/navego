@@ -9,7 +9,8 @@ const client = new URL('../build/client/', import.meta.url).pathname.replace(/^\
 const flat = [
   'beranda.html', 'fitur.html', 'harga.html', 'unduh.html', 'docs.html', 'mcp.html',
   'dukungan.html', 'privasi.html', 'syarat.html', 'akun.html',
-  '404.html', 'dashboard.html', 'oauth/consent.html'
+  '404.html', 'dashboard.html', 'oauth/consent.html', 'artikel.html',
+  'artikel/ai-browser-indonesia.html'
 ];
 
 for (const route of flat) {

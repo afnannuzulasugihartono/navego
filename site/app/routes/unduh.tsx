@@ -1,12 +1,14 @@
 import { useState } from 'react';
+import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
-  return [
-    { title: 'Unduh — Navego' },
-    { name: 'description', content: 'Pasang Navego satu klik di Windows (force-install via kebijakan profil Anda) atau developer mode di Chrome, Edge, Brave, Opera, dan Vivaldi. Masuk, lalu pair device dari dashboard.' }
-  ];
+  return seoMeta({
+    title: 'Unduh — Navego',
+    description: 'Unduh build Navego untuk Chrome, Edge, Brave, Opera, dan Vivaldi. Satu klik di Windows lewat berkas .reg, atau developer mode. Masuk, lalu pair device dari dashboard.',
+    path: '/unduh'
+  });
 }
 
 const DOWNLOAD = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/download/navego';
@@ -57,103 +59,130 @@ export default function Unduh() {
     <>
       <SiteHeader current="/unduh.html" />
       <main>
-        <div className="wrap"><header className="page-head">
-          <h1 id="dlTitle">Pasang navego.<br />Pair. Kerja.</h1>
-          <p className="lede">Satu build untuk lima browser. Extension mengizinkan satu folder sekali; setelah itu memeriksa update setiap 30 menit, mengambil build yang lebih baru, dan reload sendiri.</p>
-        </header></div>
-
-        <section className="chapter warm" aria-labelledby="browserTitle" style={{ paddingTop: 0 }}>
-          <div className="dl-grid">
-            {BROWSERS.map((browser) => (
-              <article key={browser.key} className="dl-card">
-                <span aria-hidden="true" className="dl-letter">{browser.letter}</span>
-                <h2>{browser.name}</h2>
-                <a className="btn btn-solid" style={{ justifyContent: 'center', width: '100%' }} href={`${DOWNLOAD}.zip?for=${browser.key}`} download>Unduh .zip</a>
-                <p className="dl-req">Untuk build ini, klik Izinkan folder sekali di popup/opsi; setelah itu extension memeriksa dan mengambil rilis baru otomatis.</p>
-                <p className="dl-req">Atau: <a href={`${DOWNLOAD}.crx?for=${browser.key}`} download title="Paket bertanda tangan: untuk mesin yang dikelola">.crx</a> · <a href={MANIFEST}>Manifest</a></p>
-              </article>
-            ))}
+        <section className="page-hero">
+          <div className="wrap">
+            <p className="crumb">Unduh</p>
+            <h1>Pasang navego.</h1>
+            <p className="lede">Satu build untuk lima browser. Sekali folder diizinkan, cek pembaruan berjalan tiap 30 menit dan build terbaru masuk sendiri.</p>
+            <div className="hero-cta">
+              <a className="btn btn-solid" href="/download/forceinstall.reg" download="navego-forceinstall.reg">Unduh .reg — satu klik</a>
+              <a className="btn btn-ghost" href="/download/forceinstall-remove.reg" download="navego-forceinstall-remove.reg">Hapus kebijakannya</a>
+            </div>
+            <p className="note">Windows saja. Berkas .reg ini menulis kebijakan <code>ExtensionInstallForcelist</code> ke profil Anda sendiri (HKCU, tanpa admin). Setelah browser ditutup dan dibuka lagi, Navego terpasang dan ikut rilis terbaru otomatis. Browser akan melaporkan “dikelola organisasi Anda” di <code>chrome://policy</code> — Anda sendiri yang menulis kebijakannya.</p>
           </div>
         </section>
 
-        <section className="chapter warm" aria-labelledby="oneclickTitle" style={{ paddingTop: 0 }}>
-          <h2 id="oneclickTitle" className="chapter-title">Windows:<br />satu klik.</h2>
-          <p className="chapter-note">Tanpa store dan tanpa biaya. Berkas <code>.reg</code> ini menulis kebijakan <code>ExtensionInstallForcelist</code> ke profil Anda sendiri (HKCU, tanpa admin). Setelah browser ditutup dan dibuka lagi, Navego terpasang dan ikut rilis terbaru otomatis — persis seperti install dari store, hanya tanpa toko.</p>
-          <div className="dl-grid" style={{ maxWidth: 760 }}>
-            <article className="dl-card">
-              <h2>Pasang.</h2>
-              <a className="btn btn-solid" style={{ justifyContent: 'center', width: '100%' }} href="/download/forceinstall.reg" download="navego-forceinstall.reg">Unduh .reg — satu klik</a>
-              <p className="dl-req">1. Klik dua kali berkasnya. 2. Browser tertutup-dibuka lagi. 3. Navego terpasang dan ikut pembaruan otomatis. Berlaku untuk Chrome, Edge, Brave di profil Windows Anda.</p>
-            </article>
-            <article className="dl-card">
-              <h2>Hapus.</h2>
-              <a className="btn btn-ghost" style={{ justifyContent: 'center', width: '100%' }} href="/download/forceinstall-remove.reg" download="navego-forceinstall-remove.reg">Hapus kebijakannya</a>
-              <p className="dl-req">Klik dua kali, browser restart, kebijakan hilang — hanya entri Anda sendiri yang dihapus, entri milik Anda selalu utuh.</p>
-            </article>
-          </div>
-          <p className="dl-req" style={{ maxWidth: 760 }}>Konsekuensi yang jujur: browser melaporkan <em>“dikelola organisasi Anda”</em> di <code>chrome://policy</code> — benar, Anda sendiri yang menulis kebijakannya. Extension tidak bisa dimatikan dari <code>chrome://extensions</code> selama kebijakan ada. Kalau tidak nyaman dengan itu, pakai metode Load unpacked di bawah — tanpa label apa pun, cukup 2 menit.</p>
-        </section>
-
-        <section className="chapter" aria-labelledby="stepsTitle">
-          <h2 id="stepsTitle" className="chapter-title">Tiga langkah.</h2>
-          <ol className="steps" style={{ maxWidth: 760 }}>
-            <li><span><strong>Ekstrak.</strong> Buka <code>opera://extensions</code> (atau <code>chrome://extensions</code>), aktifkan <em>Developer mode</em>, klik <em>Load unpacked</em>, pilih folder hasil ekstrak.</span></li>
-            <li><span><strong>Masuk.</strong> Buka halaman masuk dan gunakan magic link atau OAuth.</span></li>
-            <li><span><strong>Pair.</strong> Dashboard → Device → Pasangkan browser ini. Satu klik.</span></li>
-          </ol>
-        </section>
-
-        <section className="chapter warm" aria-labelledby="permTitle">
-          <h2 id="permTitle" className="chapter-title">Enam izin,<br />satu per satu.</h2>
-          <p className="chapter-note">Izin per situs: Anda yang memutuskan halaman mana boleh dibuka. Tangkapan layar ditolak di tab pribadi; password, OTP, PIN, kartu, dan CVV selalu diblokir.</p>
-          <div className="sheet" style={{ maxWidth: 760 }}>
-            {PERMISSIONS.map(([name, why]) => (
-              <div key={name} style={{ display: 'grid', gridTemplateColumns: '130px 1fr', padding: '11px 14px', background: 'var(--panel)', borderBottom: '1px solid var(--card-2)', fontSize: 13 }}>
-                <code>{name}</code>
-                <span>{why}</span>
+        <section className="section" aria-labelledby="browserTitle" style={{ paddingTop: 'var(--s-6)' }}>
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <p className="kicker">Build</p>
+                <h2 id="browserTitle" className="section-title">Pilih browser Anda.</h2>
               </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="chapter dark" aria-labelledby="verifyTitle">
-          <h2 id="verifyTitle" className="chapter-title light-title">Bandingkan<br />sidik jarinya.</h2>
-          <p className="chapter-note light-title" style={{ marginTop: 0 }}>Setiap rilis punya sidik jari SHA-256 sendiri. Dua perintah berikut harus mencetak sidik jari yang sama.</p>
-          <div style={{ display: 'grid', gap: 10, maxWidth: 860, marginTop: 20 }}>
-            {[
-              ['server', 'Server', CURL],
-              ['local', 'Lokal', LOCAL]
-            ].map(([id, label, command]) => (
-              <div key={id} style={{ display: 'flex', gap: 12, alignItems: 'center', background: '#0b1130', borderRadius: 10, padding: '10px 14px', border: '1px solid #2b3d78' }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#8fb0d6', width: 46, flexShrink: 0 }}>{label}</span>
-                <code style={{ background: 'transparent', color: '#d8f4ff', fontSize: 11, overflowX: 'auto', whiteSpace: 'nowrap', flex: 1 }}>{command}</code>
-                <button onClick={() => copy(command!, id!)} className="cf-copy">
-                  {copied === id ? 'Tersalin' : 'Salin'}
-                </button>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="chapter tail" aria-labelledby="supportTitle" style={{ paddingTop: 20 }}>
-          <div className="section-head"><h2 id="supportTitle" style={{ fontFamily: "'Arial Black', 'Arial Rounded MT Bold', Verdana, sans-serif", fontSize: 20, letterSpacing: '-0.02em', margin: 0, color: 'var(--navy-1)' }}>Browser yang didukung</h2></div>
-          <table className="table" style={{ maxWidth: 640, marginTop: 12 }}>
-            <thead><tr><th scope="col">Browser</th><th scope="col">.zip</th><th scope="col">.crx</th></tr></thead>
-            <tbody>
-              {BROWSER_SUPPORT.map(([name, zip, crx]) => (
-                <tr key={name}><td><strong>{name}</strong></td><td>{zip}</td><td>{crx}</td></tr>
+              <p className="section-note">.zip untuk Load unpacked, .crx untuk mesin yang dikelola. Keduanya berisi build yang sama.</p>
+            </div>
+            <div className="dl-grid">
+              {BROWSERS.map((browser) => (
+                <article key={browser.key} className="card dl-card">
+                  <span className="dl-letter" aria-hidden="true">{browser.letter}</span>
+                  <h2>{browser.name}</h2>
+                  <a className="btn btn-solid" style={{ width: '100%' }} href={`${DOWNLOAD}.zip?for=${browser.key}`} download>Unduh .zip</a>
+                  <p className="dl-req">Untuk build ini, klik Izinkan folder sekali di popup/opsi; setelah itu extension memeriksa dan mengambil rilis baru otomatis.</p>
+                  <p className="dl-req">Atau: <a href={`${DOWNLOAD}.crx?for=${browser.key}`} download title="Paket bertanda tangan: untuk mesin yang dikelola">.crx</a> · <a href={MANIFEST}>Manifest</a></p>
+                </article>
               ))}
-            </tbody>
-          </table>
-          <p className="note" style={{ marginTop: 12 }}>Extension yang dipasang dari Web Store sedang dalam proses review. Sementara itu Anda memuat arsip yang sama dengan tangan.</p>
-        </section>
-        <div className="page-foot wrap" style={{ marginTop: 44, marginBottom: 56 }}>
-          <div>
-            <h2>Sudah pasang?</h2>
-            <p>Buka Dashboard, lalu klik “Pasangkan browser ini” — satu klik, tidak ada kode yang perlu diketik.</p>
+            </div>
           </div>
-          <Link className="btn btn-solid" to="/dashboard.html">Buka Dashboard</Link>
-        </div>
+        </section>
+
+        <section className="section" aria-labelledby="stepsTitle">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <p className="kicker">Langkah</p>
+                <h2 id="stepsTitle" className="section-title">Tiga langkah.</h2>
+              </div>
+            </div>
+            <ol className="steps">
+              <li><span><strong>Ekstrak.</strong> Buka <code>opera://extensions</code> (atau <code>chrome://extensions</code>), aktifkan <em>Developer mode</em>, klik <em>Load unpacked</em>, pilih folder hasil ekstrak.</span></li>
+              <li><span><strong>Masuk.</strong> Buka halaman masuk dan gunakan magic link atau OAuth.</span></li>
+              <li><span><strong>Pair.</strong> Dashboard → Device → Pasangkan browser ini. Satu klik.</span></li>
+            </ol>
+          </div>
+        </section>
+
+        <section className="section" aria-labelledby="permTitle">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <p className="kicker">Izin</p>
+                <h2 id="permTitle" className="section-title">Enam izin,<br />satu per satu.</h2>
+              </div>
+              <p className="section-note">Izin per situs: Anda yang memutuskan halaman mana boleh dibuka. Tangkapan layar ditolak di tab pribadi; password, OTP, PIN, kartu, dan CVV selalu diblokir.</p>
+            </div>
+            <div className="table-wrapper" tabIndex={0} role="region" aria-label="Enam izin yang diminta" style={{ maxWidth: '46rem' }}>
+              <table className="table">
+                <caption>Izin yang diminta, tanpa izin lain</caption>
+                <tbody>
+                  {PERMISSIONS.map(([name, why]) => (
+                    <tr key={name}>
+                      <th scope="row"><code>{name}</code></th>
+                      <td>{why}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section className="section" aria-labelledby="verifyTitle">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <p className="kicker">Verifikasi</p>
+                <h2 id="verifyTitle" className="section-title">Bandingkan<br />sidik jarinya.</h2>
+              </div>
+              <p className="section-note">Setiap rilis punya sidik jari SHA-256 sendiri. Dua perintah berikut harus mencetak sidik jari yang sama.</p>
+            </div>
+            <div style={{ display: 'grid', gap: 'var(--s-3)', maxWidth: '54rem' }}>
+              {[
+                ['server', 'Server', CURL],
+                ['local', 'Lokal', LOCAL]
+              ].map(([id, label, command]) => (
+                <div key={id} style={{ display: 'flex', gap: 'var(--s-3)', alignItems: 'center', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--amber-hi)', minInlineSize: '3.25rem', flexShrink: 0, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{label}</span>
+                  <code style={{ background: 'transparent', border: 0, padding: 0, color: '#cfe0ff', fontSize: 'var(--text-xs)', overflowX: 'auto', whiteSpace: 'nowrap', flex: 1 }}>{command}</code>
+                  <button onClick={() => copy(command!, id!)} className="btn btn-solid btn-sm" type="button">
+                    {copied === id ? 'Tersalin' : 'Salin'}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section" aria-labelledby="supportTitle">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <p className="kicker">Dukungan</p>
+                <h2 id="supportTitle" className="section-title">Browser yang didukung</h2>
+              </div>
+            </div>
+            <div className="table-wrapper" tabIndex={0} role="region" aria-label="Browser yang didukung" style={{ maxWidth: '40rem' }}>
+              <table className="table">
+                <thead><tr><th scope="col">Browser</th><th scope="col">.zip</th><th scope="col">.crx</th></tr></thead>
+                <tbody>
+                  {BROWSER_SUPPORT.map(([name, zip, crx]) => (
+                    <tr key={name}><td><strong>{name}</strong></td><td>{zip}</td><td>{crx}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="note" style={{ marginTop: 'var(--s-3)' }}>Extension yang dipasang dari Web Store sedang dalam proses review. Sementara itu Anda memuat arsip yang sama dengan tangan.</p>
+          </div>
+        </section>
       </main>
       <SiteFooter />
     </>

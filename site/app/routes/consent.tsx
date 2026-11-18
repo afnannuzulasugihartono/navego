@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
+import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { AUTH_HOST, clearSession, ensureSession, getStoredToken, getRefreshToken, headersFor, REST } from '../lib/auth';
 
 export function meta() {
-  return [
-    { title: 'Izin aplikasi — Navego' },
-    { name: 'description', content: 'Tinjau aplikasi yang meminta akses ke akun Navego Anda sebelum memberi izin.' }
-  ];
+  return seoMeta({
+    title: "Izin aplikasi - Navego",
+    description: "Tinjau aplikasi yang meminta akses ke akun Navego Anda sebelum memberi izin.",
+    path: "/oauth/consent",
+  });
 }
 
 const SCOPE_TEXT: Record<string, string> = {
@@ -149,41 +151,51 @@ export default function Consent() {
   return (
     <>
       <SiteHeader current="/oauth/consent.html" />
-      <main className="wrap" style={{ maxWidth: 760, padding: '36px 0 40px' }}>
-        <header className="page-head" style={{ padding: '8px 0 6px' }}>
-          <h1>Izin aplikasi</h1>
-        </header>
-        <p className={warn ? 'status warn' : 'status'} role="status" aria-live="polite" style={{ marginTop: 8, fontSize: 13.5 }}>{status}</p>
+      <main>
+        <section className="page-hero">
+          <div className="wrap">
+            <p className="crumb">Izin aplikasi</p>
+            <h1>Izin aplikasi.</h1>
+          </div>
+        </section>
+        <div className="wrap" style={{ maxWidth: '46rem', paddingBlock: 'var(--s-6)' }}>
+          <p className={warn ? 'status warn' : 'status'} role="status" aria-live="polite" style={{ fontSize: 'var(--text-sm)' }}>{status}</p>
 
         {details ? (
-          <section className="card" style={{ marginTop: 16 }} aria-labelledby="clientName">
-            <h2 id="clientName" style={{ fontSize: 19 }}>{clientName}</h2>
-            <p className="note" style={{ marginTop: 4 }}>Tinjau hal-hal ini sebelum memberi izin. Nama aplikasi diberikan oleh aplikasi itu sendiri; yang bisa diverifikasi adalah alamat kode dikirim ke.</p>
-            <dl className="sheet" style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', marginTop: 12 }}>
-              {[
-                ['Aplikasi', clientName],
-                ['Kode dikirim ke', details.redirect_uri || '—'],
-                ['Akun Anda', account]
-              ].map(([k, v]) => (
-                <div key={k as string} style={{ display: 'contents' }}>
-                  <div style={{ padding: '8px 12px', color: 'var(--muted-2)', background: '#fff', borderBottom: '1px solid var(--card-2)', fontSize: 12 }}>{k}</div>
-                  <div style={{ padding: '8px 12px', background: '#fff', borderBottom: '1px solid var(--card-2)', fontSize: 12, fontFamily: k === 'Kode dikirim ke' ? "'Lucida Console', Consolas, monospace" : 'inherit' }}>{v}</div>
-                </div>
-              ))}
-              <div style={{ padding: '8px 12px', color: 'var(--muted-2)', background: '#fff', fontSize: 12, borderBottom: '1px solid var(--card-2)' }}>Yang diminta</div>
-              <div style={{ padding: '8px 12px', background: '#fff', fontSize: 12 }}>
-                <ul style={{ listStyle: 'none', display: 'grid', gap: 4 }}>
-                  {scopes.length ? scopes.map((scope) => (
-                    <li key={scope} style={scope === 'offline_access' ? { color: 'var(--danger)' } : undefined}>
-                      <strong>{scope}</strong> — {SCOPE_TEXT[scope] || 'Izin tambahan yang diminta aplikasi.'}
-                    </li>
-                  )) : <li>Tidak ada izin tambahan yang diminta.</li>}
-                </ul>
-              </div>
-            </dl>
-            {redirectHost ? <p className="note" style={{ marginTop: 8 }}>Kode hanya dikirim ke {redirectHost}.</p> : null}
-            <p className="note" style={{ marginTop: 6 }}>Navego tetap memblokir password, kode sekali pakai, data pembayaran, tab pribadi, dan unggah file. Izin ini hanya mengizinkan aplikasi itu meminta tindakan lewat Navego.</p>
-            <div className="hero-cta" style={{ marginTop: 12 }}>
+          <section className="card" style={{ marginTop: 'var(--s-4)' }} aria-labelledby="clientName">
+            <h2 id="clientName" style={{ fontSize: 'var(--text-xl)', color: 'var(--navy-deep)' }}>{clientName}</h2>
+            <p className="note" style={{ marginTop: 'var(--s-2)' }}>Tinjau hal-hal ini sebelum memberi izin. Nama aplikasi diberikan oleh aplikasi itu sendiri; yang bisa diverifikasi adalah alamat kode dikirim ke.</p>
+            <div className="table-wrapper" style={{ marginTop: 'var(--s-4)' }}>
+              <table className="table">
+                <tbody>
+                  {[
+                    ['Aplikasi', clientName],
+                    ['Kode dikirim ke', details.redirect_uri || '—'],
+                    ['Akun Anda', account]
+                  ].map(([k, v]) => (
+                    <tr key={k as string}>
+                      <th scope="row" style={{ width: '40%' }}>{k}</th>
+                      <td style={k === 'Kode dikirim ke' ? { fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)' } : undefined}>{v}</td>
+                    </tr>
+                  ))}
+                  <tr>
+                    <th scope="row">Yang diminta</th>
+                    <td>
+                      <ul style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-2)' }}>
+                        {scopes.length ? scopes.map((scope) => (
+                          <li key={scope} style={scope === 'offline_access' ? { color: 'var(--danger)' } : undefined}>
+                            <strong>{scope}</strong> — {SCOPE_TEXT[scope] || 'Izin tambahan yang diminta aplikasi.'}
+                          </li>
+                        )) : <li>Tidak ada izin tambahan yang diminta.</li>}
+                      </ul>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            {redirectHost ? <p className="note" style={{ marginTop: 'var(--s-3)' }}>Kode hanya dikirim ke {redirectHost}.</p> : null}
+            <p className="note" style={{ marginTop: 'var(--s-2)' }}>Navego tetap memblokir password, kode sekali pakai, data pembayaran, tab pribadi, dan unggah file. Izin ini hanya mengizinkan aplikasi itu meminta tindakan lewat Navego.</p>
+            <div className="hero-cta" style={{ marginTop: 'var(--s-4)' }}>
               <button className="btn btn-solid" type="button" disabled={busy} onClick={() => decide('approve')}>Izinkan</button>
               <button className="btn btn-ghost" type="button" disabled={busy} onClick={() => decide('deny')} style={{ color: 'var(--danger)' }}>Tolak</button>
             </div>
@@ -191,14 +203,14 @@ export default function Consent() {
         ) : null}
 
         {consents.length ? (
-          <section className="panel" style={{ marginTop: 16 }} aria-labelledby="consentsTitle">
-            <h2 id="consentsTitle" style={{ fontSize: 16 }}>Aplikasi yang sudah Anda izinkan</h2>
-            <p style={{ fontSize: 12, color: 'var(--muted-2)', marginTop: 4 }}>Mencabut menghentikan aplikasi itu seketika: sesinya dihapus dan tokennya dimatikan.</p>
-            <ul style={{ listStyle: 'none', display: 'grid', gap: 8, marginTop: 10 }}>
+          <section className="card" style={{ marginTop: 'var(--s-4)' }} aria-labelledby="consentsTitle">
+            <h2 id="consentsTitle" className="card-title">Aplikasi yang sudah Anda izinkan</h2>
+            <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)', margin: 'var(--s-2) 0 var(--s-3)' }}>Mencabut menghentikan aplikasi itu seketika: sesinya dihapus dan tokennya dimatikan.</p>
+            <ul style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-3)' }}>
               {consents.map((consent) => (
-                <li key={consent.clientId} style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'var(--card)', borderRadius: 8, padding: '9px 12px', fontSize: 12.5 }}>
+                <li key={consent.clientId} style={{ display: 'flex', alignItems: 'center', gap: 'var(--s-3)', background: 'var(--panel)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)', padding: 'var(--s-3) var(--s-4)', fontSize: 'var(--text-sm)' }}>
                   <span style={{ fontWeight: 700 }}>{consent.clientName || 'Aplikasi tidak dikenal'}</span>
-                  <span style={{ color: 'var(--muted)', fontSize: 11 }}>{consent.scopes || ''} · sejak {String(consent.grantedAt || '').slice(0, 10)}</span>
+                  <span style={{ color: 'var(--muted)', fontSize: 'var(--text-xs)' }}>{consent.scopes || ''} · sejak {String(consent.grantedAt || '').slice(0, 10)}</span>
                   <button className="btn btn-ghost btn-sm" type="button" onClick={() => revoke(consent)} style={{ marginLeft: 'auto', color: 'var(--danger)' }}>Cabut</button>
                 </li>
               ))}
@@ -207,14 +219,15 @@ export default function Consent() {
         ) : null}
 
         {!getStoredTokenSafe() && !details ? (
-          <div className="card" style={{ marginTop: 16 }}>
-            <h2 style={{ fontSize: 16 }}>Masuk dulu</h2>
-            <p className="note" style={{ marginTop: 4 }}>Layar izin hanya bekerja untuk akun yang sudah masuk, karena persetujuan ini terikat pada akun Anda.</p>
-            <div className="hero-cta" style={{ marginTop: 10 }}>
+          <div className="card" style={{ marginTop: 'var(--s-4)' }}>
+            <h2 className="card-title">Masuk dulu</h2>
+            <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)', margin: 'var(--s-2) 0 var(--s-4)' }}>Layar izin hanya bekerja untuk akun yang sudah masuk, karena persetujuan ini terikat pada akun Anda.</p>
+            <div className="hero-cta" style={{ marginTop: 0 }}>
               <Link className="btn btn-solid" to={`/index.html${authId ? `?next=${encodeURIComponent(`./oauth/consent.html?authorization_id=${authId}`)}` : ''}`}>Masuk</Link>
             </div>
           </div>
         ) : null}
+        </div>
       </main>
       <SiteFooter />
     </>
