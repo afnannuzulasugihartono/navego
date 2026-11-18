@@ -13,7 +13,8 @@ export function meta() {
 
 const BLOCKS = [
   { id: 'install', title: 'Pasang paketnya', body: 'npm install -g navego', note: 'Satu perintah. Paket ini memakai browser yang sudah Anda gunakan; tidak ada proses tambahan yang perlu dijaga.' },
-  { id: 'doctor', title: 'Periksa yang terhubung', body: 'navego doctor', note: 'Cetakan menyatakan nama device, paket plan, dan sisa quota hari ini. Kalau tidak ada yang terhubung, paket akan mencetak langkah perbaikan yang paling mungkin.' }
+  { id: 'doctor', title: 'Periksa yang terhubung', body: 'navego doctor', note: 'Cetakan menyatakan nama device, paket plan, dan sisa kuota hari ini. Kalau tidak ada yang terhubung, paket mencetak langkah perbaikan yang paling mungkin.' },
+  { id: 'pair', title: 'Pair sekali per peramban', body: 'navego local', note: 'Peramban baru memasang ekstensi dulu (lihat Unduh), lalu Dashboard → Pasangkan browser ini. Setelah itu driver lokal mengambil alih otomatis.' }
 ];
 
 const HARNESS: Array<{ id: string; title: string; body: string }> = [
@@ -47,56 +48,88 @@ export default function Mcp() {
         <section className="page-hero">
           <div className="wrap">
             <p className="crumb">Pasang MCP</p>
-            <h1>Driver lokal,<br />di mesin Anda.</h1>
-            <p className="lede">Stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi; yang dibutuhkan adalah browser yang masuk akun dan ekstensi terpasang.</p>
+            <h1>Driver lokal, di mesin Anda.</h1>
+            <p className="lede">Stdio, tanpa login, tanpa biaya per panggilan. Yang dibutuhkan hanya browser yang masuk akun dan ekstensi terpasang.</p>
           </div>
         </section>
 
-        <div className="wrap" style={{ paddingBlock: 'var(--s-7)' }}>
-          {BLOCKS.map(({ id, title, body, note }) => (
-            <section key={id} style={{ marginBottom: 'var(--s-6)' }}>
-              <p className="kicker">{id === 'install' ? 'Langkah 1' : 'Langkah 2'}</p>
-              <h2 className="section-title" style={{ marginTop: 'var(--s-2)' }}>{title}</h2>
-              <div style={{ position: 'relative', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)', maxWidth: '40rem', marginTop: 'var(--s-3)' }}>
-                <code style={{ background: 'transparent', border: 0, padding: 0, color: '#cfe0ff' }}>{body}</code>
-                {copyBlock(body, id)}
+        <section className="band" aria-labelledby="stepsTitle">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <p className="kicker">Langkah</p>
+                <h2 id="stepsTitle" className="section-title">Tiga perintah.</h2>
               </div>
-              <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-sm)', marginTop: 'var(--s-3)', maxWidth: '62ch' }}>{note}</p>
-            </section>
-          ))}
+              <p className="section-note">Salin, jalankan, selesai. Tidak ada server yang perlu dijaga.</p>
+            </div>
+            <div style={{ display: 'grid', gap: 'var(--s-6)' }}>
+              {BLOCKS.map(({ id, title, body, note }, index) => (
+                <section key={id} className="value-card" style={{ display: 'grid', gap: 'var(--s-3)' }}>
+                  <span className="start-num">{index + 1}</span>
+                  <b>{title}</b>
+                  <div style={{ position: 'relative', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)', maxWidth: '40rem' }}>
+                    <code style={{ background: 'transparent', border: 0, padding: 0, color: '#cfe0ff' }}>{body}</code>
+                    {copyBlock(body, id)}
+                  </div>
+                  <p>{note}</p>
+                </section>
+              ))}
+            </div>
+          </div>
+        </section>
 
-          <section style={{ marginBottom: 'var(--s-6)' }}>
-            <p className="kicker">Langkah 3</p>
-            <h2 className="section-title" style={{ marginTop: 'var(--s-2)' }}>Daftarkan ke harness Anda.</h2>
-            {HARNESS.map(({ id, title, body }) => (
-              <div key={id} style={{ margin: 'var(--s-5) 0' }}>
-                <h3 style={{ fontSize: 'var(--text-base)', color: 'var(--navy-deep)', marginBottom: 'var(--s-2)' }}>{title}</h3>
-                <div style={{ position: 'relative', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)', maxWidth: '40rem' }}>
-                  <pre style={{ color: '#cfe0ff', fontSize: 'var(--text-sm)', overflowX: 'auto', fontFamily: 'var(--font-mono)' }}><code>{body}</code></pre>
-                  {copyBlock(body, id)}
-                </div>
+        <section className="band band-soft" aria-labelledby="harnessTitle">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <p className="kicker">Harness</p>
+                <h2 id="harnessTitle" className="section-title">Daftarkan ke AI Anda.</h2>
               </div>
-            ))}
-            <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-sm)', maxWidth: '62ch' }}>Server lokal itu menambah <strong>45 tool MCP</strong> di atas <strong>36 primitive browser</strong>. Tidak ada login, tidak ada quota yang harus dimengerti di website: quota dibaca di lingkungan bridge dan ditampilkan oleh <code>doctor</code>.</p>
-          </section>
+              <p className="section-note">Server lokal menambah 45 tool MCP di atas 36 primitive browser.</p>
+            </div>
+            <div className="value-grid" style={{ gridTemplateColumns: '1fr' }}>
+              {HARNESS.map(({ id, title, body }) => (
+                <section key={id} className="value-card">
+                  <b>{title}</b>
+                  <div style={{ position: 'relative', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)', maxWidth: '40rem', marginTop: 'var(--s-2)' }}>
+                    <pre style={{ color: '#cfe0ff', fontSize: 'var(--text-sm)', overflowX: 'auto', fontFamily: 'var(--font-mono)' }}><code>{body}</code></pre>
+                    {copyBlock(body, id)}
+                  </div>
+                </section>
+              ))}
+            </div>
+          </div>
+        </section>
 
-          <section style={{ marginBottom: 'var(--s-6)' }}>
-            <p className="kicker">Langkah 4</p>
-            <h2 className="section-title" style={{ marginTop: 'var(--s-2)' }}>Satu kali per peramban.</h2>
-            <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-base)', maxWidth: '64ch', marginTop: 'var(--s-3)' }}>Peramban baru harus memasang ekstensi Navego dulu (lihat <Link to="/unduh">Unduh</Link>), lalu buka <Link to="/dashboard">Dasbor</Link> dan klik <strong>Pasangkan browser ini</strong> — kode dibuat di server dan dikirim langsung ke ekstensi. Setelah itu, driver lokal otomatis mengambil alih — tidak perlu langkah lain setiap sesi.</p>
-          </section>
-
-          <section>
-            <p className="kicker">Batas</p>
-            <h2 className="section-title" style={{ marginTop: 'var(--s-2)' }}>Batas yang dijaga.</h2>
-            <ul style={{ paddingLeft: '1.4rem', color: 'var(--muted-2)', fontSize: 'var(--text-base)', display: 'grid', gap: 'var(--s-2)', marginTop: 'var(--s-3)' }}>
+        <section className="band band-dark" aria-labelledby="limitsTitle">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <p className="kicker" style={{ color: 'var(--amber-hi)' }}>Batas</p>
+                <h2 id="limitsTitle" className="section-title">Yang dijaga, apa adanya.</h2>
+              </div>
+            </div>
+            <ul style={{ paddingLeft: '1.2rem', display: 'grid', gap: 'var(--s-2)', maxWidth: '70ch' }}>
               <li>Password, kode sekali pakai, PIN, kartu, dan CVV selalu ditolak. Pekerjaan yang berhenti di situ gagal — bukan diam-diam diteruskan.</li>
               <li>Tab pribadi, tab non-http(s), dan jendela tanpa akses debugger: primitive menolak, dan penolakan disebut namanya.</li>
               <li>Enam izin hanya dipakai untuk enam alasan: <code>tabs</code>, <code>scripting</code>, <code>storage</code>, <code>alarms</code>, <code>debugger</code>, <code>downloads</code>.</li>
             </ul>
-            <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-sm)', marginTop: 'var(--s-4)' }}>Butuh detail teknis? Panduan pemanggilan di <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-call.md">docs/agent-call.md</a> menyebut semua jalur secara persis.</p>
-          </section>
-        </div>
+            <p style={{ marginTop: 'var(--s-4)', fontSize: 'var(--text-sm)' }}>Butuh detail teknis? <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-call.md">docs/agent-call.md</a> menyebut semua jalur secara persis.</p>
+          </div>
+        </section>
+
+        <section className="band">
+          <div className="wrap">
+            <div className="cta-band">
+              <h2 className="section-title" style={{ color: '#ffffff' }}>Satu perintah untuk mulai.</h2>
+              <p>Pasang paketnya, jalankan <code>navego doctor</code>, lihat device Anda di Dashboard.</p>
+              <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
+                <Link className="btn btn-solid" to="/docs">Baca docs lengkap</Link>
+                <Link className="btn btn-ghost" to="/unduh">Pasang extension</Link>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
       <SiteFooter />
     </>

@@ -62,40 +62,39 @@ export default function Unduh() {
         <section className="page-hero">
           <div className="wrap">
             <p className="crumb">Unduh</p>
-            <h1>Pasang navego.</h1>
-            <p className="lede">Satu build untuk lima browser. Sekali folder diizinkan, cek pembaruan berjalan tiap 30 menit dan build terbaru masuk sendiri.</p>
+            <h1>Pasang dalam satu klik.</h1>
+            <p className="lede">Satu build untuk lima browser. Setelah folder diizinkan, cek pembaruan berjalan tiap 30 menit dan build terbaru masuk sendiri.</p>
             <div className="hero-cta">
               <a className="btn btn-solid" href="/download/forceinstall.reg" download="navego-forceinstall.reg">Unduh .reg — satu klik</a>
               <a className="btn btn-ghost" href="/download/forceinstall-remove.reg" download="navego-forceinstall-remove.reg">Hapus kebijakannya</a>
             </div>
-            <p className="note">Windows saja. Berkas .reg ini menulis kebijakan <code>ExtensionInstallForcelist</code> ke profil Anda sendiri (HKCU, tanpa admin). Setelah browser ditutup dan dibuka lagi, Navego terpasang dan ikut rilis terbaru otomatis. Browser akan melaporkan “dikelola organisasi Anda” di <code>chrome://policy</code> — Anda sendiri yang menulis kebijakannya.</p>
+            <p className="note">Windows saja. Berkas .reg menulis kebijakan <code>ExtensionInstallForcelist</code> ke profil Anda sendiri (HKCU, tanpa admin). Tutup dan buka lagi browsernya, Navego terpasang dan ikut rilis terbaru.</p>
           </div>
         </section>
 
-        <section className="section" aria-labelledby="browserTitle" style={{ paddingTop: 'var(--s-6)' }}>
+        <section className="band" aria-labelledby="browserTitle">
           <div className="wrap">
             <div className="section-head">
               <div>
                 <p className="kicker">Build</p>
                 <h2 id="browserTitle" className="section-title">Pilih browser Anda.</h2>
               </div>
-              <p className="section-note">.zip untuk Load unpacked, .crx untuk mesin yang dikelola. Keduanya berisi build yang sama.</p>
+              <p className="section-note">.zip untuk Load unpacked, .crx untuk mesin yang dikelola. Isinya build yang sama.</p>
             </div>
-            <div className="dl-grid">
+            <div className="card-row">
               {BROWSERS.map((browser) => (
-                <article key={browser.key} className="card dl-card">
-                  <span className="dl-letter" aria-hidden="true">{browser.letter}</span>
-                  <h2>{browser.name}</h2>
-                  <a className="btn btn-solid" style={{ width: '100%' }} href={`${DOWNLOAD}.zip?for=${browser.key}`} download>Unduh .zip</a>
-                  <p className="dl-req">Untuk build ini, klik Izinkan folder sekali di popup/opsi; setelah itu extension memeriksa dan mengambil rilis baru otomatis.</p>
-                  <p className="dl-req">Atau: <a href={`${DOWNLOAD}.crx?for=${browser.key}`} download title="Paket bertanda tangan: untuk mesin yang dikelola">.crx</a> · <a href={MANIFEST}>Manifest</a></p>
+                <article key={browser.key} className="tile-xl">
+                  <div className="tile-media"><span className="dl-letter">{browser.letter}</span></div>
+                  <h3>{browser.name}</h3>
+                  <a className="btn btn-solid btn-sm" style={{ width: '100%' }} href={`${DOWNLOAD}.zip?for=${browser.key}`} download>Unduh .zip</a>
+                  <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Atau: <a href={`${DOWNLOAD}.crx?for=${browser.key}`} download>.crx</a> · <a href={MANIFEST}>Manifest</a></p>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="section" aria-labelledby="stepsTitle">
+        <section className="band band-soft" aria-labelledby="stepsTitle">
           <div className="wrap">
             <div className="section-head">
               <div>
@@ -103,47 +102,42 @@ export default function Unduh() {
                 <h2 id="stepsTitle" className="section-title">Tiga langkah.</h2>
               </div>
             </div>
-            <ol className="steps">
-              <li><span><strong>Ekstrak.</strong> Buka <code>opera://extensions</code> (atau <code>chrome://extensions</code>), aktifkan <em>Developer mode</em>, klik <em>Load unpacked</em>, pilih folder hasil ekstrak.</span></li>
-              <li><span><strong>Masuk.</strong> Buka halaman masuk dan gunakan magic link atau OAuth.</span></li>
-              <li><span><strong>Pair.</strong> Dashboard → Device → Pasangkan browser ini. Satu klik.</span></li>
-            </ol>
+            <div className="value-grid">
+              <div className="value-card"><span className="start-num">1</span><b>Ekstrak</b><p>Buka <code>chrome://extensions</code> (atau <code>edge://</code>, <code>brave://</code>, <code>opera://</code>), aktifkan Developer mode, klik Load unpacked, pilih folder hasil ekstrak.</p></div>
+              <div className="value-card"><span className="start-num">2</span><b>Masuk</b><p>Buka halaman masuk dan gunakan magic link atau OAuth.</p></div>
+              <div className="value-card"><span className="start-num">3</span><b>Pair</b><p>Dashboard → Device → Pasangkan browser ini. Satu klik, tanpa kode.</p></div>
+            </div>
           </div>
         </section>
 
-        <section className="section" aria-labelledby="permTitle">
+        <section className="band band-dark" aria-labelledby="permTitle">
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Izin</p>
-                <h2 id="permTitle" className="section-title">Enam izin,<br />satu per satu.</h2>
+                <p className="kicker" style={{ color: 'var(--amber-hi)' }}>Izin</p>
+                <h2 id="permTitle" className="section-title">Enam izin, satu per satu.</h2>
               </div>
-              <p className="section-note">Izin per situs: Anda yang memutuskan halaman mana boleh dibuka. Tangkapan layar ditolak di tab pribadi; password, OTP, PIN, kartu, dan CVV selalu diblokir.</p>
+              <p className="section-note">Izin per situs: Anda yang memutuskan halaman mana boleh dibuka. Password, OTP, PIN, kartu, dan CVV selalu diblokir.</p>
             </div>
-            <div className="table-wrapper" tabIndex={0} role="region" aria-label="Enam izin yang diminta" style={{ maxWidth: '46rem' }}>
-              <table className="table">
-                <caption>Izin yang diminta, tanpa izin lain</caption>
-                <tbody>
-                  {PERMISSIONS.map(([name, why]) => (
-                    <tr key={name}>
-                      <th scope="row"><code>{name}</code></th>
-                      <td>{why}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="value-grid">
+              {PERMISSIONS.map(([name, why]) => (
+                <div className="value-card" key={name} style={{ background: '#16204a' }}>
+                  <code style={{ fontSize: 'var(--text-sm)', color: 'var(--amber-hi)', background: 'transparent', border: 0 }}>{name}</code>
+                  <p>{why}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        <section className="section" aria-labelledby="verifyTitle">
+        <section className="band" aria-labelledby="verifyTitle">
           <div className="wrap">
             <div className="section-head">
               <div>
                 <p className="kicker">Verifikasi</p>
-                <h2 id="verifyTitle" className="section-title">Bandingkan<br />sidik jarinya.</h2>
+                <h2 id="verifyTitle" className="section-title">Bandingkan sidik jarinya.</h2>
               </div>
-              <p className="section-note">Setiap rilis punya sidik jari SHA-256 sendiri. Dua perintah berikut harus mencetak sidik jari yang sama.</p>
+              <p className="section-note">Setiap rilis punya sidik jari SHA-256 sendiri. Dua perintah ini harus mencetak nilai yang sama.</p>
             </div>
             <div style={{ display: 'grid', gap: 'var(--s-3)', maxWidth: '54rem' }}>
               {[
@@ -162,12 +156,12 @@ export default function Unduh() {
           </div>
         </section>
 
-        <section className="section" aria-labelledby="supportTitle">
+        <section className="band band-soft" aria-labelledby="supportTitle">
           <div className="wrap">
             <div className="section-head">
               <div>
                 <p className="kicker">Dukungan</p>
-                <h2 id="supportTitle" className="section-title">Browser yang didukung</h2>
+                <h2 id="supportTitle" className="section-title">Browser yang didukung.</h2>
               </div>
             </div>
             <div className="table-wrapper" tabIndex={0} role="region" aria-label="Browser yang didukung" style={{ maxWidth: '40rem' }}>
@@ -180,7 +174,20 @@ export default function Unduh() {
                 </tbody>
               </table>
             </div>
-            <p className="note" style={{ marginTop: 'var(--s-3)' }}>Extension yang dipasang dari Web Store sedang dalam proses review. Sementara itu Anda memuat arsip yang sama dengan tangan.</p>
+            <p className="note" style={{ marginTop: 'var(--s-3)' }}>Extension dari Web Store masih dalam review. Sementara itu, muat arsip yang sama dengan tangan.</p>
+          </div>
+        </section>
+
+        <section className="band">
+          <div className="wrap">
+            <div className="cta-band">
+              <h2 className="section-title" style={{ color: '#ffffff' }}>Terpasang? Tunjuk satu tab.</h2>
+              <p>Tulis satu perintah, lihat langkahnya, lalu ambil berkasnya.</p>
+              <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
+                <Link className="btn btn-solid" to="/docs">Buka docs</Link>
+                <Link className="btn btn-ghost" to="/harga">Lihat harga</Link>
+              </div>
+            </div>
           </div>
         </section>
       </main>
