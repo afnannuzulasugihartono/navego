@@ -5,7 +5,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 export function meta() {
   return [
     { title: 'Unduh — Navego' },
-    { name: 'description', content: 'Unduh build Navego untuk Chrome, Edge, Brave, Opera, dan Vivaldi. Pasang lewat developer mode, masuk, lalu pair device dari dashboard.' }
+    { name: 'description', content: 'Pasang Navego satu klik di Windows (force-install via kebijakan profil Anda) atau developer mode di Chrome, Edge, Brave, Opera, dan Vivaldi. Masuk, lalu pair device dari dashboard.' }
   ];
 }
 
@@ -74,6 +74,24 @@ export default function Unduh() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section className="chapter warm" aria-labelledby="oneclickTitle" style={{ paddingTop: 0 }}>
+          <h2 id="oneclickTitle" className="chapter-title">Windows:<br />satu klik.</h2>
+          <p className="chapter-note">Tanpa store dan tanpa biaya. Berkas <code>.reg</code> ini menulis kebijakan <code>ExtensionInstallForcelist</code> ke profil Anda sendiri (HKCU, tanpa admin). Setelah browser ditutup dan dibuka lagi, Navego terpasang dan ikut rilis terbaru otomatis — persis seperti install dari store, hanya tanpa toko.</p>
+          <div className="dl-grid" style={{ maxWidth: 760 }}>
+            <article className="dl-card">
+              <h2>Pasang.</h2>
+              <a className="btn btn-solid" style={{ justifyContent: 'center', width: '100%' }} href="/download/forceinstall.reg" download="navego-forceinstall.reg">Unduh .reg — satu klik</a>
+              <p className="dl-req">1. Klik dua kali berkasnya. 2. Browser tertutup-dibuka lagi. 3. Navego terpasang dan ikut pembaruan otomatis. Berlaku untuk Chrome, Edge, Brave di profil Windows Anda.</p>
+            </article>
+            <article className="dl-card">
+              <h2>Hapus.</h2>
+              <a className="btn btn-ghost" style={{ justifyContent: 'center', width: '100%' }} href="/download/forceinstall-remove.reg" download="navego-forceinstall-remove.reg">Hapus kebijakannya</a>
+              <p className="dl-req">Klik dua kali, browser restart, kebijakan hilang — hanya entri Anda sendiri yang dihapus, entri milik Anda selalu utuh.</p>
+            </article>
+          </div>
+          <p className="dl-req" style={{ maxWidth: 760 }}>Konsekuensi yang jujur: browser melaporkan <em>“dikelola organisasi Anda”</em> di <code>chrome://policy</code> — benar, Anda sendiri yang menulis kebijakannya. Extension tidak bisa dimatikan dari <code>chrome://extensions</code> selama kebijakan ada. Kalau tidak nyaman dengan itu, pakai metode Load unpacked di bawah — tanpa label apa pun, cukup 2 menit.</p>
         </section>
 
         <section className="chapter" aria-labelledby="stepsTitle">
