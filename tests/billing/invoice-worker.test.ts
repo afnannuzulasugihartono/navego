@@ -181,6 +181,19 @@ test('a function that cannot be reached answers with a page and no reason a cust
   assert.doesNotMatch(html, /ECONNREFUSED/, 'the worker\'s reason stays in the log');
 });
 
+test('the /api/region door answers the country Cloudflare reports', async () => {
+  const response = await worker.fetch(new Request('https://navego.pages.dev/api/region', { headers: { 'cf-ipcountry': 'de' } }), env);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.deepEqual(await response.json(), { country: 'DE' });
+});
+
+test('the /api/region door answers null rather than guessing when the edge says nothing', async () => {
+  const response = await worker.fetch(new Request('https://navego.pages.dev/api/region'), env);
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { country: null });
+});
+
 test('the worker carries no secret, because a page worker is public code', () => {
   const source = fs.readFileSync(new URL('../../site/worker/_worker.ts', import.meta.url), 'utf8');
   for (const name of ['SERVICE_ROLE', 'MIDTRANS_SERVER_KEY', 'BILLING_TOKEN', 'BILLING_SECRET', 'Bearer ', 'eyJ']) {
