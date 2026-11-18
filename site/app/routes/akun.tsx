@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36 (no eyebrows, h1 first)
+
 import { useEffect, useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
@@ -130,7 +132,6 @@ export default function Akun() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Akun</p>
             <h1>Akun Anda.</h1>
             <p className="lede">Akun ini yang dipakai device dan perintah Anda.</p>
             <div className="hero-cta">

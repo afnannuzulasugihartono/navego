@@ -1,3 +1,5 @@
+// decisions.json -> D21, D34, D37 (notch behaviour, no Huginn & Muninn, no middle-dot separators)
+
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { NavegoMark, NavegoWordmark } from './NavegoMark';
@@ -29,11 +31,11 @@ interface MegaPanel {
   cols: MegaColumn[];
 }
 
-// WHY THE PANEL IS DATA AND NOT SEVEN PANELS.
+// ONE PANEL, ONE MAP - Apple's header swaps one full-width panel between items; the content is the only thing that changes per item.
 // Apple's header swaps one full-width panel between items; the content is the only thing that changes per item.
 // One panel, one map keyed by the item under the pointer or focus, is the same shape with one place to edit.
 
-// WHY A LINK REGISTRY: the seven panels share most of their links, and repeating them token by token is what a duplication gate exists to catch.
+// THE LINK REGISTRY keeps the shared links in one place - every link lives here exactly once, and the panels only say which links they show.
 // Every link lives here exactly once; the panels only say which links they show.
 
 const L = {
@@ -243,7 +245,7 @@ export function SiteHeader({ current }: { current?: string }) {
   return <SiteNav current={current} />;
 }
 
-// WHY the banner is a sibling of the footer and not a page-level overlay: every page already ends in the footer, so the consent bar belongs there and nowhere else.
+// the banner is a sibling of the footer because every page already ends there - a page-level overlay would double the markup on every page, and the page a search engine sees carries no consent UI.
 // It renders nothing on the server and nothing for anyone who already chose, so the page a search engine sees carries no consent UI at all.
 
 function CookieConsent() {
@@ -287,7 +289,7 @@ export function SiteFooter() {
               <NavegoMark size={36} />
               <NavegoWordmark size={16} />
             </Link>
-            <p className="footer-tag">Huginn &amp; Muninn — raven Odin. Browser Anda, atas perintah Anda.</p>
+            <p className="footer-tag">Navego — Browser Anda, atas perintah Anda.</p>
           </div>
           <nav aria-label="Produk">
             <h3>Produk</h3>

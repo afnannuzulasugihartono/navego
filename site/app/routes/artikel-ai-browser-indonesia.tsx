@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36 (no eyebrows, h1 first)
+
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
@@ -25,7 +27,6 @@ export default function AiBrowserIndonesia() {
       <article>
         <header className="article-hero">
           <div className="wrap">
-            <p className="crumb">Beranda / Artikel</p>
             <h1>AI yang mengenal browser Anda, dalam bahasa Indonesia.</h1>
             <p className="lede" style={{ marginTop: 'var(--s-4)', fontSize: 'var(--text-lg)', maxWidth: '56ch', color: 'var(--muted-2)' }}>Asisten AI yang mengambil alih browser bukan hal baru. Yang jarang dibicarakan: di mana asisten itu seharusnya berjalan.</p>
             <p className="article-meta"><span>18 November 2026</span><span>8 menit baca</span><span>Navego</span></p>

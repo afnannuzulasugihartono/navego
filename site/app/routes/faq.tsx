@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36 (no eyebrows, h1 first)
+
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
@@ -32,7 +34,6 @@ export default function Faq() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">FAQ</p>
             <h1>Pertanyaan yang wajar diajukan.</h1>
             <p className="lede">Dua belas jawaban, apa adanya — termasuk yang tidak menguntungkan kami.</p>
           </div>

@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36 (no eyebrows, h1 first)
+
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { seoMeta } from '../lib/seo.js';
 
@@ -16,7 +18,6 @@ export default function Syarat() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Syarat</p>
             <h1>Syarat Layanan</h1>
             <p className="lede">Terakhir diperbarui: 5 Oktober 2026.</p>
           </div>

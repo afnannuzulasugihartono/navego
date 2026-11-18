@@ -1,6 +1,9 @@
+// decisions.json -> D32, D34, D35, D36, D38 (one mark, no eyebrows, h1 first, the lockup panel)
+
 import { useEffect, useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
+import { NavegoMark, NavegoWordmark } from '../components/NavegoMark';
 
 import { AUTH_HOST, clearSession, getReturnTo, getRefreshToken, getStoredToken, proveSession, renewAccessToken, storeRefreshToken, storeToken, PUBLISHABLE_KEY } from '../lib/auth';
 
@@ -119,7 +122,10 @@ export default function Index() {
       <SiteHeader current="/" />
       <main className="auth-stage" aria-label="Masuk ke Navego">
         <div className="auth-art" aria-hidden="true">
-          <p className="kicker" style={{ color: 'var(--amber-hi)' }}>Huginn &amp; Muninn</p>
+          <div className="auth-lockup">
+            <NavegoMark size={34} />
+            <NavegoWordmark size={19} />
+          </div>
           <h2>Asisten AI di browser Anda.</h2>
           <p>Bukan agen di server orang lain — asisten yang menggerakkan browser Anda sendiri, di mesin Anda.</p>
         </div>
@@ -127,8 +133,8 @@ export default function Index() {
           {phase === 'form' ? (
             <div className="auth-card">
               <div className="card">
-                <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-2xl)', letterSpacing: '-0.02em', color: 'var(--navy-deep)', marginBottom: 'var(--s-2)' }}>Masuk atau daftar.</h1>
-                <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-sm)', marginBottom: 'var(--s-4)' }}>Masuk dengan Google, GitHub, atau magic link email — tanpa password.</p>
+                <h1>Masuk atau daftar.</h1>
+                <p className="auth-intro">Masuk dengan Google, GitHub, atau magic link email — tanpa password.</p>
 
                 <form onSubmit={(event) => { event.preventDefault(); void sendMagicLink(); }}>
                   <div className="field">
@@ -149,8 +155,8 @@ export default function Index() {
           ) : (
             <div className="auth-card">
               <div className="card">
-                <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-2xl)', letterSpacing: '-0.02em', color: 'var(--navy-deep)', marginBottom: 'var(--s-2)' }}>Masuk atau daftar.</h1>
-                <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-base)' }}>Masuk sebagai <strong>{who}</strong>.</p>
+                <h1>Masuk atau daftar.</h1>
+                <p className="auth-intro">Masuk sebagai <strong>{who}</strong>.</p>
                 {returning ? (
                   <div className="hero-cta" style={{ marginTop: 'var(--s-4)' }}>
                     <a className="btn btn-solid" id="continueButton" href="./beranda">Lanjut ke izin</a>

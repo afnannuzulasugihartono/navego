@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36 (no eyebrows, h1 first)
+
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
@@ -25,7 +27,6 @@ export default function NotFound() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">404</p>
             <h1>Halaman ini tidak ada.</h1>
             <p className="lede">Alamatnya mungkin salah ketik, atau halaman itu sudah dipindahkan. Lima jalan keluar:</p>
           </div>

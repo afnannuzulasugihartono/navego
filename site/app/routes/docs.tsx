@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36 (no eyebrows, h1 first)
+
 import { useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import catalog from '../data/tools.json';
@@ -62,7 +64,6 @@ export default function Docs() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Docs</p>
             <h1>Docs.</h1>
             <p className="lede">Empat langkah sampai pekerjaan pertama. Semua perintah bisa disalin.</p>
           </div>

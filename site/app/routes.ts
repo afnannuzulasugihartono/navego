@@ -1,9 +1,9 @@
 import { index, route, type RouteConfig } from '@react-router/dev/routes';
 
-// WHY one route per page: Cloudflare Pages serves the flat .html file for both the pretty URL and the file URL, so /beranda and /beranda.html are the same document.
+// one route per page because Cloudflare Pages serves the flat .html file for both the pretty URL and the file URL - /beranda and /beranda.html are the same document.
 // A duplicate route per URL bakes two route ids into two files that both answer at two URLs, and the hydration mismatch (React error #418) hides behind the pretty one.
 // The worker in site/worker/_worker.ts answers every legacy .html URL with a 301 to the pretty path instead.
-// WHY the 404 page is the catch-all: prerendering /404 bakes the catch-all id, so an unknown URL hydrates the same module it rendered with, and the worker serves the flat 404.html file with a 404 status.
+// the 404 page is the catch-all because prerendering /404 bakes the catch-all route id - an unknown URL hydrates the same module it rendered with, and the worker serves the flat 404.html file with a 404 status.
 
 const PAGES: Array<[path: string, file: string, id: string]> = [
   ['beranda', './routes/beranda.tsx', 'beranda'],

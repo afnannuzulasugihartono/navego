@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots)
+
 import { useEffect, useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
@@ -154,7 +156,6 @@ export default function Consent() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Izin aplikasi</p>
             <h1>Izin aplikasi.</h1>
           </div>
         </section>

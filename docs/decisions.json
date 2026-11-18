@@ -1,0 +1,363 @@
+{
+  "version": 1,
+  "generated": "2026-11-18",
+  "source": "The 2026-11-18 navego.pages.dev rebrand and consistency pass: logo, wordmark, eyebrows, type and spacing system, nav notch, copy pass. User direction arrived 2026-11-18; internet sources were verified 2026-11-18. Repo sources point at the docs that already carry the decision.",
+  "note": "One decision, one source. Code references this file as `decisions.json → D<n>`. A decision the user asked for carries kind=user; a decision nobody asked for carries the internet source it was taken from; a decision inherited from this repo carries the repo document that already carries it.",
+  "decisions": [
+    {
+      "id": "D01",
+      "scope": "web/tokens",
+      "decision": "The body text is 14 px on every page.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'biasanya sih 14 yang teks'",
+        "also": "https://email.digital.nsw.gov.au/styles/typography/line-height (body-sm 14 px)"
+      }
+    },
+    {
+      "id": "D02",
+      "scope": "web/tokens",
+      "decision": "The type scale uses even pixel steps only: 12, 14, 16, 18, 20, 24, 28, 32, 40, 64.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'jika misalnya heading 1 heading 2 dan seterusnya gunakan ukuran genap dan konsisten'",
+        "also": "https://material.io/design/layout/spacing-methods.html (4dp nested units)"
+      }
+    },
+    {
+      "id": "D03",
+      "scope": "web/tokens",
+      "decision": "h1 is 40 px (hero 64 px on /beranda, 28 px on ≤860 px), h2 is 28 px, h3 is 20 px, h4 is 18 px.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18 (even-size rule)",
+        "also": "https://design-system.canada.ca/en/styles/typography (heading levels, numerically ordered)"
+      }
+    },
+    {
+      "id": "D04",
+      "scope": "web/tokens",
+      "decision": "Line heights are unitless: display 1.1, heading 1.25, body 1.5, small 1.4.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://practicaltypography.com/line-spacing.html (120-145% of point size)",
+        "also": "https://designsystem.digital.gov/components/typography/ (line-height 4 token, body 1.5); https://email.digital.nsw.gov.au/styles/typography/line-height (body 1.5, small 1.33-1.43); https://developer.mozilla.org/en-US/docs/Web/CSS/line-height (prefer unitless)"
+      }
+    },
+    {
+      "id": "D05",
+      "scope": "web/tokens",
+      "decision": "Running text meets the 1.5 line-height floor so it survives visitor overrides.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html (criterion 1.4.12, AA)"
+      }
+    },
+    {
+      "id": "D06",
+      "scope": "web/tokens",
+      "decision": "Text fills the width of its container; no 18ch/44ch/46ch/66ch/68ch/72ch measure caps anywhere.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'lebarnya full bukan yang terpotong di tengah' and the follow-up option 'Konten tidak dibatasi terlalu sempit'",
+        "also": "https://practicaltypography.com/line-length.html (45-90 characters, the rule this overrides by owner decision)"
+      }
+    },
+    {
+      "id": "D07",
+      "scope": "web/tokens",
+      "decision": "Text is flush left; horizontal centering is kept only for symmetric fixed-box icons and figures.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'alignment mana yang harus alignment kiri mana yang harus tengah semua harus konsisten'",
+        "also": "https://designsystem.digital.gov/components/typography/ ('Set type flush left')"
+      }
+    },
+    {
+      "id": "D08",
+      "scope": "web/tokens",
+      "decision": "Paragraph → paragraph spacing is 1 em.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://practicaltypography.com/space-between-paragraphs.html (50-100% of the point size)"
+      }
+    },
+    {
+      "id": "D09",
+      "scope": "web/tokens",
+      "decision": "A heading gets more space above (32 px, larger than paragraph spacing, so it stands out) and less below (12 px, smaller than paragraph spacing, so it bonds to its text).",
+      "source": {
+        "kind": "internet",
+        "ref": "https://practicaltypography.com/space-above-and-below.html"
+      }
+    },
+    {
+      "id": "D10",
+      "scope": "web/tokens",
+      "decision": "The spacing scale is multiples of 4 px: 4, 8, 12, 16, 24, 32, 48, 72, 104.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://material.io/design/layout/spacing-methods.html (8dp grid, 4dp nested units, 4dp type baseline)"
+      }
+    },
+    {
+      "id": "D11",
+      "scope": "web/tokens",
+      "decision": "The gutter is 20 px, 32 px at ≥940 px — one fixed even step each, no fractional vw.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://material.io/design/layout/spacing-methods.html (4-px base unit, both values sit on the grid)"
+      }
+    },
+    {
+      "id": "D12",
+      "scope": "web/tokens",
+      "decision": "Body/UI type is Tahoma, Verdana, system-ui; mono is Lucida Console — the zero-download system stack the Y2K house face ships.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/design-elements.md (Corporate Y2K done flat: cream ground, deep navy ink, one amber accent)",
+        "also": "https://developer.mozilla.org/en-US/docs/Web/CSS/font-family (system font stacks)"
+      }
+    },
+    {
+      "id": "D13",
+      "scope": "web/tokens",
+      "decision": "Display type is Arial Black, weight 900, letter-spacing -0.02em.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/design-elements.md (the era's display face)"
+      }
+    },
+    {
+      "id": "D14",
+      "scope": "web/tokens",
+      "decision": "Ground is cream #f6f1e7, ink is navy-deep #0d1338, the one warm accent is amber #d8923f.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/design-elements.md (Corporate Y2K done flat)"
+      }
+    },
+    {
+      "id": "D15",
+      "scope": "web/tokens",
+      "decision": "Amber is the single warm accent; everything else stays in the navy/cream system.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/design-elements.md (one amber accent)"
+      }
+    },
+    {
+      "id": "D16",
+      "scope": "web/tokens",
+      "decision": ":focus-visible carries a 3 px outline, 3 px offset; on navy surfaces the ring goes amber.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://www.w3.org/WAI/WCAG21/Understanding/focus-visible.html (WCAG 2.4.7)",
+        "also": "https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible"
+      }
+    },
+    {
+      "id": "D17",
+      "scope": "web/components",
+      "decision": "Buttons hold a 44 px minimum block size.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://developer.apple.com/design/human-interface-guidelines/buttons (at least 44x44 pt hit region)"
+      }
+    },
+    {
+      "id": "D18",
+      "scope": "web/components",
+      "decision": "Button padding is 12 px × 24 px; small button 8 px × 16 px; chips 4 px × 12 px — even pixel steps on the 4-px grid.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://material.io/design/layout/spacing-methods.html (4dp nested units)",
+        "also": "user 2026-11-18 (even-pixel rule)"
+      }
+    },
+    {
+      "id": "D19",
+      "scope": "web/components",
+      "decision": "Radius steps stay even and few: 14 px panels, 10 px controls.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://material.io/design/layout/spacing-methods.html (4-px base unit, both values are multiples of 2)"
+      }
+    },
+    {
+      "id": "D20",
+      "scope": "web/components",
+      "decision": "Flat surfaces carry no shadows; the one floating element (the nav notch) carries the one shadow and the one gradient on the site.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/design-elements.md (flat modern)",
+        "also": "user 2026-11-18 (the notch redesign with its effect)"
+      }
+    },
+    {
+      "id": "D21",
+      "scope": "web/components",
+      "decision": "The nav notch is always visible at every width; compact widths collapse the flat row into it; hover or focus drops the full link strip; amber glow on hover/focus is the effect; the chevron turns amber with it.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'tampilkan notch di semua lebar layar kemudian redesign bentuk notch menjadi modern dan memiliki efek'"
+      }
+    },
+    {
+      "id": "D22",
+      "scope": "web/components",
+      "decision": "The sticky header hides while scrolling down and returns on the way up; it stays put while focused.",
+      "source": {
+        "kind": "repo",
+        "ref": "site/app/brand.css (site-header scroll-state, pre-existing behaviour)"
+      }
+    },
+    {
+      "id": "D23",
+      "scope": "web/components",
+      "decision": "Numbers in tables align right and use tabular figures; body text stays left.",
+      "source": {
+        "kind": "repo",
+        "ref": "site/app/brand.css (.num, tabular-nums)"
+      }
+    },
+    {
+      "id": "D24",
+      "scope": "web/components",
+      "decision": "prefers-reduced-motion disables smooth scrolling and transitions.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion",
+        "also": "https://www.w3.org/WAI/WCAG21/Understanding/animation-from-interactions.html (WCAG 2.3.3)"
+      }
+    },
+    {
+      "id": "D25",
+      "scope": "web/components",
+      "decision": "text-wrap: balance on headings, pretty on prose.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://developer.mozilla.org/en-US/docs/Web/CSS/text-wrap"
+      }
+    },
+    {
+      "id": "D26",
+      "scope": "web/components",
+      "decision": "The footer hands out an 88x31 badge; the size is the early-web link-back convention.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://en.wikipedia.org/wiki/Web_badge (88x31 web badges)"
+      }
+    },
+    {
+      "id": "D27",
+      "scope": "web/components",
+      "decision": "The header hides via a container scroll-state query so it does not depend on JS.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://developer.mozilla.org/en-US/docs/Web/CSS/@container/scroll-state"
+      }
+    },
+    {
+      "id": "D28",
+      "scope": "web/identity",
+      "decision": "The mark is one hand-drawn stroke: left stem, the diagonal (top-left to bottom-right), right stem, each with a slight human bow — never ruler-straight.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: pick D, fix the reversed stroke direction, then 'buat huruf N pada logo lebih natural seperti coretan manusia'"
+      }
+    },
+    {
+      "id": "D29",
+      "scope": "web/identity",
+      "decision": "The amber underline below the N is one symmetric arc, centred on 120.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'betulkan juga garis stroke di bawahnya agar simetris'"
+      }
+    },
+    {
+      "id": "D30",
+      "scope": "web/identity",
+      "decision": "The wordmark is the same hand: single-stroke round-capped letters, one motion per glyph, no tittle over the g.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'kata navego buat jadi tulisan tangan'; 'di atas huruf g tidak perlu ada titik'; 'tulisan tangan navego buat konsisten untuk stylenya'"
+      }
+    },
+    {
+      "id": "D31",
+      "scope": "web/identity",
+      "decision": "The letters a and e are drawn to read unmistakably (closed bowl plus stem for a; loop plus crossbar for e) — a wordmark nobody can read is decoration, not a wordmark.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'huruf a dan e masih belum bisa terbaca'"
+      }
+    },
+    {
+      "id": "D32",
+      "scope": "web/identity",
+      "decision": "One mark everywhere: components, favicon (icon.svg), standalone mark (navego-mark.svg), 88x31 badge, og-cover.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'satu mark di semua tempat'"
+      }
+    },
+    {
+      "id": "D33",
+      "scope": "web/identity",
+      "decision": "The mark palette is fixed: disc #233259, stroke #f4f1e9, accent #d8923f (badge uses the reversed navy-on-cream form).",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/design-elements.md (navy disc, chrome, amber accent); site/app/components/NavegoMark.tsx (current art)"
+      }
+    },
+    {
+      "id": "D34",
+      "scope": "web/identity",
+      "decision": "No Huginn & Muninn anywhere; the footer line is 'Navego — Browser Anda, atas perintah Anda.' and the auth panel carries the logo lockup, not a myth label.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'ganti huginn & muninn dengan navego dan logonya'"
+      }
+    },
+    {
+      "id": "D35",
+      "scope": "web/copy",
+      "decision": "No eyebrows, kickers or crumbs above headings, anywhere — the heading is the first thing on the page.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18 (beranda screenshot, then 'hapus semua eyebrows no eyebrows')",
+        "also": "docs/design-elements.md (decision 14: every eyebrow label deleted)"
+      }
+    },
+    {
+      "id": "D36",
+      "scope": "web/copy",
+      "decision": "The document outline runs h1 → h2 → body; nothing sits above the h1.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'agentik browser lokal ada di atas heading satu yang mana itu tidak urut'",
+        "also": "https://design-system.canada.ca/en/styles/typography (heading levels numerically ordered, no skipped levels)"
+      }
+    },
+    {
+      "id": "D37",
+      "scope": "web/copy",
+      "decision": "The middle dot is never used as a separator — commas, dashes or parentheses instead.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'pemisah tidak boleh menggunakan titik tengah'"
+      }
+    },
+    {
+      "id": "D38",
+      "scope": "web/copy",
+      "decision": "The login panel opens with the logo lockup, not a label; the h1 stays 'Masuk atau daftar.' in the same place on both phases of the form.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18 (the navego.pages.dev screenshot)"
+      }
+    }
+  ]
+}

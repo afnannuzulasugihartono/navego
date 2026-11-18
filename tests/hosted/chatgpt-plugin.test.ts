@@ -1,5 +1,6 @@
-// @last-edited: 2026-11-16 UTC+7.
+// @last-edited: 2026-11-18 UTC+7.
 // @title: chatgpt-plugin.test — the ChatGPT plugin bundle names the hosted files it serves.
+// decisions.json -> D32 (one mark everywhere: component, favicon, badge, og-cover)
 // @state: the manifest, the OpenAPI file and the OAuth authorization URL, all same-origin.
 // @dependencies: node:test, strict, promises.
 
@@ -39,7 +40,8 @@ test('the gateway accepts a user JWT and resolves the caller device', async () =
 test('the plugin logo is the shipped mark', async () => {
   const icon = await read('site/public/icon.svg');
   assert.match(icon, /<svg[^>]*viewBox="0 0 240 240"/);
-  assert.match(icon, /id="navego-chrome"/, 'the mark keeps its brushed chrome');
-  assert.match(icon, /#d8923f/, 'and the amber cursor');
+  assert.match(icon, /#233259/, 'the navy disc is the shipped mark');
+  assert.match(icon, /#d8923f/, 'and the amber accent');
+  assert.doesNotMatch(icon, /id="navego-chrome"/, 'the mark is flat ink now - no brushed chrome');
   assert.doesNotMatch(icon, /id="ring"/, 'the old iridescent ring is retired');
 });

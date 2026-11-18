@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36 (no eyebrows, h1 first)
+
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
@@ -30,7 +32,6 @@ export default function Keamanan() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <p className="crumb">Keamanan</p>
             <h1>Keamanan, disebutkan satu per satu.</h1>
             <p className="lede">Bukan janji di atas banner. Sepuluh aturan ini dipatuhi kode, diuji tes, dan bisa diverifikasi di repositori terbuka.</p>
           </div>
@@ -40,7 +41,6 @@ export default function Keamanan() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Prinsip</p>
                 <h2 id="prinsipTitle" className="section-title">Sepuluh yang dipatuhi kode.</h2>
               </div>
               <p className="section-note">Detail teknis penuh ada di <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/security.md" rel="noreferrer">docs/security.md</a>.</p>
@@ -60,7 +60,6 @@ export default function Keamanan() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <p className="kicker">Melaporkan kerentanan</p>
                 <h2 id="laporTitle" className="section-title">Jangan buka isu publik.</h2>
               </div>
             </div>

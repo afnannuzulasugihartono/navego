@@ -1,3 +1,5 @@
+// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots)
+
 import { useEffect, useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
@@ -70,7 +72,7 @@ function duration(from?: string, to?: string): string {
 const isDeviceLive = (device: Device) => /online|active|live|awake/i.test(String(device.status || ''));
 const deviceStatusText = (device: Device) => String(device.status || 'tidak diketahui');
 
-// WHY THE PAIR INTENT SURVIVES LOGIN: the popup's one-click door deep-links with ?pair=1; a freshly installed browser that is not logged in yet hits the login gate first.
+// THE PAIR INTENT SURVIVES LOGIN because the popup one-click door deep-links with ?pair=1 - a freshly installed, not-logged-in browser hits the login gate first, and dropping the intent here would strand the pairing.
 // Dropping the intent here would send pair=1 users to a logged-out dashboard and leave the pairing unfinished.
 
 const wantPairIntent = (): boolean => {
