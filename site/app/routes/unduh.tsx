@@ -64,12 +64,12 @@ export default function Unduh() {
         <section className="page-hero">
           <div className="wrap">
             <h1>Pasang dalam satu klik.</h1>
-            <p className="lede">Satu build untuk lima browser. Setelah folder diizinkan, cek pembaruan berjalan tiap 30 menit dan build terbaru masuk sendiri.</p>
+            <p className="lede">Satu build, lima browser.</p>
             <div className="hero-cta">
               <a className="btn btn-solid" href="/download/forceinstall.reg" download="navego-forceinstall.reg">Unduh .reg — satu klik</a>
               <a className="btn btn-ghost" href="/download/forceinstall-remove.reg" download="navego-forceinstall-remove.reg">Hapus kebijakannya</a>
             </div>
-            <p className="note">Windows saja. Berkas .reg menulis kebijakan <code>ExtensionInstallForcelist</code> ke profil Anda sendiri (HKCU, tanpa admin). Tutup dan buka lagi browsernya, Navego terpasang dan ikut rilis terbaru.</p>
+            <p className="note">Windows saja. HKCU, tanpa admin. <code>ExtensionInstallForcelist</code>. Browser ini ikut rilis terbaru.</p>
           </div>
         </section>
 
@@ -79,7 +79,7 @@ export default function Unduh() {
               <div>
                 <h2 id="browserTitle" className="section-title">Pilih browser Anda.</h2>
               </div>
-              <p className="section-note">.zip untuk Load unpacked, .crx untuk mesin yang dikelola. Isinya build yang sama.</p>
+              <p className="section-note">.zip untuk Load unpacked. .crx untuk mesin dikelola.</p>
             </div>
             <div className="card-row">
               {BROWSERS.map((browser) => (
@@ -102,9 +102,9 @@ export default function Unduh() {
               </div>
             </div>
             <div className="value-grid">
-              <div className="value-card"><span className="start-num">1</span><b>Ekstrak</b><p>Buka <code>chrome://extensions</code> (atau <code>edge://</code>, <code>brave://</code>, <code>opera://</code>), aktifkan Developer mode, klik Load unpacked, pilih folder hasil ekstrak.</p></div>
-              <div className="value-card"><span className="start-num">2</span><b>Masuk</b><p>Buka halaman masuk dan gunakan magic link atau OAuth.</p></div>
-              <div className="value-card"><span className="start-num">3</span><b>Pair</b><p>Dashboard → Device → Pasangkan browser ini. Satu klik, tanpa kode.</p></div>
+              <div className="value-card"><span className="start-num">1</span><b>Ekstrak</b><p>Buka <code>chrome://extensions</code>. Aktifkan Developer mode. Load unpacked.</p></div>
+              <div className="value-card"><span className="start-num">2</span><b>Masuk</b><p>Masuk dengan magic link atau OAuth.</p></div>
+              <div className="value-card"><span className="start-num">3</span><b>Pair</b><p>Dashboard → Device → Pasangkan browser ini. Satu klik.</p></div>
             </div>
           </div>
         </section>
@@ -115,7 +115,7 @@ export default function Unduh() {
               <div>
                 <h2 id="permTitle" className="section-title">Enam izin, satu per satu.</h2>
               </div>
-              <p className="section-note">Izin per situs: Anda yang memutuskan halaman mana boleh dibuka. Password, OTP, PIN, kartu, dan CVV selalu diblokir.</p>
+              <p className="section-note">Anda yang memutuskan. Password, OTP, CVV selalu diblokir.</p>
             </div>
             <div className="value-grid">
               {PERMISSIONS.map(([name, why]) => (
@@ -134,7 +134,7 @@ export default function Unduh() {
               <div>
                 <h2 id="verifyTitle" className="section-title">Bandingkan sidik jarinya.</h2>
               </div>
-              <p className="section-note">Setiap rilis punya sidik jari SHA-256 sendiri. Dua perintah ini harus mencetak nilai yang sama.</p>
+              <p className="section-note">Setiap rilis punya SHA-256 sendiri. Keduanya harus sama.</p>
             </div>
             <div style={{ display: 'grid', gap: 'var(--s-3)', maxWidth: '54rem' }}>
               {[
@@ -170,7 +170,7 @@ export default function Unduh() {
                 </tbody>
               </table>
             </div>
-            <p className="note" style={{ marginTop: 'var(--s-3)' }}>Extension dari Web Store masih dalam review. Sementara itu, muat arsip yang sama dengan tangan.</p>
+            <p className="note" style={{ marginTop: 'var(--s-3)' }}>Store masih review. Muat arsipnya dengan tangan.</p>
           </div>
         </section>
 

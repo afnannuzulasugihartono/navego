@@ -42,17 +42,17 @@
 .nav-flat a[aria-current='page'] { color: #ffffff; box-shadow: inset 0 -2px 0 var(--amber); }
 
 /*
- * the notch: always visible — a modern half-pill at the bottom center edge of the bar; hover or focus drops the full horizontal row.
- * gradient + amber glow are the one effect on the site
+ * the notch: one flat rectangle hanging from the bottom center edge of the bar; hover or focus drops the full row as a strip.
+ * Flat, square, no curves.
  */
 
 .nav-notch-wrap { display: block; position: absolute; left: 50%; bottom: -1px; transform: translate(-50%, 0); z-index: 45; }
-.nav-notch { display: flex; align-items: center; justify-content: center; width: 72px; block-size: 24px; background: linear-gradient(#1a2453, #121a3c); color: #cdd8f3; border: 1px solid #33406e; border-top: none; border-radius: 0 0 12px 12px; cursor: pointer; box-shadow: 0 8px 18px rgb(0 0 0 / 0.45), inset 0 1px 0 rgb(255 255 255 / 0.1); transition: color 160ms var(--ease-out), box-shadow 160ms var(--ease-out), border-color 160ms var(--ease-out); }
-.nav-notch:hover, .nav-notch:focus-visible { color: #ffffff; border-color: var(--amber); box-shadow: 0 8px 22px rgb(216 146 63 / 0.35), inset 0 1px 0 rgb(255 255 255 / 0.16); }
-.nav-notch svg { transition: transform 180ms var(--ease-out), color 160ms var(--ease-out); }
+.nav-notch { display: flex; align-items: center; justify-content: center; width: 72px; block-size: 20px; background: var(--navy-deep); color: #cdd8f3; border: 1px solid #26355f; border-top: none; border-radius: 0; cursor: pointer; transition: color 160ms var(--ease-out), background 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+.nav-notch:hover, .nav-notch:focus-visible { background: #101832; color: var(--amber-hi); }
+.nav-notch svg { transition: transform 160ms var(--ease-out), color 160ms var(--ease-out); }
 .nav-notch:hover svg, .nav-notch:focus-visible svg { color: var(--amber-hi); }
 .nav-notch-wrap:hover .nav-notch svg, .nav-notch-wrap:focus-within .nav-notch svg { transform: rotate(180deg); }
-.nav-strip { display: none; position: absolute; top: 100%; left: 50%; transform: translate(-50%, 0); min-width: 44rem; max-width: 96vw; background: var(--navy-deep); border: 1px solid #26355f; border-radius: 0 0 14px 14px; box-shadow: 0 18px 40px rgb(0 0 0 / 0.45); padding: var(--s-3) var(--s-5) var(--s-4); }
+.nav-strip { display: none; position: absolute; top: 100%; left: 50%; transform: translate(-50%, 0); min-width: 44rem; max-width: 96vw; background: var(--navy-deep); border: 1px solid #26355f; border-radius: 0; padding: var(--s-3) var(--s-5) var(--s-4); }
 .nav-notch-wrap:hover .nav-strip, .nav-notch-wrap:focus-within .nav-strip, .nav-strip:hover { display: block; }
 .nav-strip ul { display: flex; flex-wrap: wrap; gap: 0 var(--s-2); justify-content: center; list-style: none; margin: 0; padding: 0; }
 .nav-strip a { display: inline-block; color: #cdd8f3; text-decoration: none; font-size: var(--text-sm); font-weight: 600; padding: var(--s-2) var(--s-2); white-space: nowrap; }

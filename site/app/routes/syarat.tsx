@@ -26,7 +26,7 @@ export default function Syarat() {
           <h2 id="akses">Akses terbuka</h2>
           <p><strong>Pendaftaran terbuka</strong> untuk siapa pun; tidak ada daftar tunggu. Kami dapat menutup pendaftaran kapan pun tanpa kehilangan hak Anda atas data yang sudah ada.</p>
           <h2 id="model">Bawa model sendiri</h2>
-          <p>Anda membawa <strong>model sendiri</strong>: endpoint, nama model, dan kunci API dari penyedia pilihan Anda. Biaya pemakaian model adalah urusan Anda dengan penyedia itu, bukan dengan kami. Kami tidak pernah menerbitkan kunci bersama.</p>
+          <p>Anda membawa <strong>model sendiri</strong>: endpoint, nama model, dan kunci API penyedia pilihan Anda. Biaya model adalah urusan Anda dengan penyedia itu. Kami tidak pernah menerbitkan kunci bersama.</p>
           <h2 id="device">Satu device, pairing yang dapat dicabut</h2>
           <p>Satu akun memasangkan satu device dalam satu waktu. Pairing dapat dicabut, dan pencabutan menghentikan perintah baru seketika; riwayat antrean yang sudah tersimpan mengikuti kebijakan privasi.</p>
           <h2 id="wajar">Penggunaan yang wajar</h2>

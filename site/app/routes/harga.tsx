@@ -11,7 +11,7 @@ import { bandForCountry, type PricingBand } from '../lib/region.js';
 export function meta() {
   return seoMeta({
     title: 'Harga — Navego',
-    description: 'Bayar satu kali, hingga satu tahun. Tidak ada yang terpotong sebelum pekerjaan selesai. Plan USD ($1–$33) dibayar PayPal, dibagi menurut daya beli: Asia/Arab/Afrika atau Eropa & AS.',
+    description: 'Sekali beli, langsung aktif. PayPal. Tidak ada tagihan tersembunyi.',
     path: '/harga'
   });
 }
@@ -32,12 +32,12 @@ const EUROPE_PLANS = [
 ] as const;
 
 const QA = [
-  ['rencana', 'Plan, bukan langganan tersembunyi', 'USD, sekali beli, langsung aktif. Kawasan terdeteksi dari lokasi perangkat bila diizinkan (akurat walau di balik VPN), atau dari IP - yang tampil sesuai daya beli negara Anda, Asia/Arab/Afrika atau Eropa & AS. Jika keduanya gagal, kedua grup ditampilkan.'],
-  ['kuota', 'Kuota perintah per hari', 'Setiap plan punya kuota harian. Kuota terpakai tidak bertambah di hari berikutnya; kuota hari ini hanya bisa dipakai hari ini.'],
-  ['fitur', 'Semua fitur, bukan tier yang dikebiri', 'Asia/Arab/Afrika: Starter, Basic, Plus, Pro, Advanced — semuanya plan dasar. Eropa/AS: Starter, Pro, Business (6 bulan), Enterprise (1 tahun); Business dan Enterprise membawa statement, VM, dan remote drive, plus prioritas dukungan.'],
-  ['paypal', 'Bayar dengan PayPal', 'Plan USD dibayar dengan PayPal. Setelah pembayaran dikonfirmasi PayPal Anda, plan aktif otomatis.'],
-  ['pekerjaan', 'Kuota harian, bukan meteran per tugas', 'Paket membuka kuota harian sejak hari pertama. Pekerjaan yang gagal tidak memotong kuota secara proporsional; kuota harian adalah batas hari itu, bukan tagihan per tugas.'],
-  ['gagal', 'Pekerjaan gagal, Anda tidak dirugikan', 'Pekerjaan yang berhenti karena alasan di luar kendali Anda tidak mengurangi kuota harian secara proporsional. Kuota yang sudah terpakai tetap terpakai — itu bagian dari perhitungan harian dan tidak bisa dikembalikan.']
+  ['rencana', 'Plan, bukan langganan', 'Sekali beli, langsung aktif. Kawasan terdeteksi otomatis. Jika gagal, kedua grup ditampilkan.'],
+  ['kuota', 'Kuota harian', 'Kuota hari ini habis hari ini. Tidak diakumulasikan.'],
+  ['fitur', 'Semua fitur, bukan tier yang dikebiri', 'Asia/Arab/Afrika: lima plan dasar. Eropa/AS: Starter, Pro, Business, Enterprise — dua terakhir dengan prioritas dukungan.'],
+  ['paypal', 'Bayar dengan PayPal', 'Selesaikan di PayPal. Plan aktif setelahnya.'],
+  ['pekerjaan', 'Kuota harian, bukan meteran per tugas', 'Pekerjaan gagal tidak memotong kuota secara proporsional.'],
+  ['gagal', 'Pekerjaan gagal, Anda tidak dirugikan', 'Kuota terpakai tetap terpakai. Itu perhitungan harian.']
 ] as const;
 
 export default function Harga() {
@@ -204,8 +204,8 @@ export default function Harga() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <h1>Satu bayar, hingga satu tahun.</h1>
-            <p className="lede">Plan USD dibayar PayPal. Kuota per hari yang jelas. Tidak ada yang dipotong sebelum pekerjaan selesai.</p>
+            <h1>Sekali bayar. Setahun penuh.</h1>
+            <p className="lede">Plan USD. PayPal. Kuota harian yang jelas.</p>
           </div>
         </section>
 
@@ -214,7 +214,7 @@ export default function Harga() {
             <div className="wrap">
               {country && bandForCountry(country) ? (
                 <p className="section-note" style={{ margin: 0 }}>
-                  Kawasan terdeteksi dari {source === 'device' ? 'lokasi perangkat Anda' : source === 'cache' ? 'preferensi tersimpan di perangkat Anda' : 'IP Anda'}: <strong>{regionName(country)}</strong> — plan yang tampil sesuai daya beli kawasan Anda.
+                  Kawasan ({source === 'device' ? 'perangkat' : source === 'cache' ? 'tersimpan' : 'IP'}): <strong>{regionName(country)}</strong> — plan yang tampil sesuai daya beli kawasan Anda.
                 </p>
               ) : (
                 <p className="section-note" style={{ margin: 0 }}>Kawasan tidak bisa dideteksi dari IP maupun lokasi perangkat; kedua grup ditampilkan.</p>
@@ -223,7 +223,7 @@ export default function Harga() {
                 {geoBusy ? 'Mendeteksi lokasi…' : 'Perbarui dengan lokasi saya'}
               </button>
               {geoError ? <p className="status warn" role="status" style={{ marginTop: 'var(--s-2)' }}>{geoError}</p> : null}
-              <p className="note" style={{ marginTop: 'var(--s-2)' }}>Lokasi perangkat dipakai lebih dulu — tetap akurat di balik VPN. Koordinat hanya dikirim ke bigdatacloud.net untuk diterjemahkan menjadi nama negara dan tidak disimpan. Kawasan yang terdeteksi disimpan di perangkat Anda (cookie navego_region) hanya jika Anda menerima cookie di banner bawah; tolak untuk menonaktifkan penyimpanan.</p>
+              <p className="note" style={{ marginTop: 'var(--s-2)' }}>Perangkat dipakai lebih dulu — akurat di balik VPN. Koordinat tidak disimpan. Cookie navego_region tersimpan hanya jika Anda setuju di banner bawah.</p>
             </div>
           </section>
         ) : null}
@@ -233,7 +233,7 @@ export default function Harga() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <h2 id="asiaTitle" className="section-title">Daya beli kawasan ini: plan lebih terjangkau.</h2>
+                <h2 id="asiaTitle" className="section-title">Daya beli kawasan: plan lebih terjangkau.</h2>
               </div>
               <p className="section-note">Sekali beli, langsung aktif. Tidak diperpanjang otomatis.</p>
             </div>
@@ -249,7 +249,7 @@ export default function Harga() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <h2 id="europeTitle" className="section-title">Daya beli kawasan ini: nada akselerasi.</h2>
+                <h2 id="europeTitle" className="section-title">Daya beli kawasan: nada akselerasi.</h2>
               </div>
               <p className="section-note">Sekali beli, langsung aktif. Tidak diperpanjang otomatis.</p>
             </div>
@@ -287,8 +287,8 @@ export default function Harga() {
         <section className="band">
           <div className="wrap">
             <div className="cta-band">
-              <h2 className="section-title" style={{ color: '#ffffff' }}>Pasang gratis. Putuskan setelah Anda lihat hasilnya.</h2>
-              <p>Jalankan satu pekerjaan pertama, lihat berkasnya, baru putuskan mau upgrade.</p>
+              <h2 className="section-title" style={{ color: '#ffffff' }}>Pasang gratis. Putuskan setelah melihat hasilnya.</h2>
+              <p>Satu pekerjaan pertama. Berkasnya. Baru putuskan.</p>
               <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
                 <Link className="btn btn-solid" to="/unduh">Pasang gratis</Link>
                 <Link className="btn btn-ghost" to="/docs">Baca docs</Link>

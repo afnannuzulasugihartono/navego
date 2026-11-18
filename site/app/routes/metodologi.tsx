@@ -99,11 +99,11 @@ export default function Metodologi() {
             <div className="faq">
               <details open id="maps">
                 <summary>Google Maps belum di-benchmark</summary>
-                <p>Maps masuk prioritas di peta jalan, tetapi angka settle dan read di atas halaman Maps belum ada. Yang ada: Docs, Sheets, dan sebagian bukti dari YouTube. Kami tidak menulis angka untuk yang belum diukur.</p>
+                <p>Google Maps belum di-benchmark. Yang ada: Docs, Sheets, sebagian YouTube. Kami tidak menulis angka untuk yang belum diukur.</p>
               </details>
               <details id="youtube">
                 <summary>YouTube baru sebagian</summary>
-                <p>Terukur: 871 karakter saat readyState complete vs 8.478 dua detik kemudian — "complete" bukan tanda halaman selesai, dan itu alasan semua waits Navego berbasis settle. Alur penuh YouTube belum memiliki tabel latency tersendiri.</p>
+                <p>Terukur: 871 karakter saat readyState complete, 8.478 dua detik kemudian. "Complete" bukan tanda halaman selesai. Semua waits Navego berbasis settle. Tabel penuh YouTube belum ada.</p>
               </details>
               <details id="remote">
                 <summary>Angka "remote MCP" adalah sejarah</summary>
@@ -111,7 +111,7 @@ export default function Metodologi() {
               </details>
               <details id="paypal">
                 <summary>PayPal sandbox belum dituntaskan end-to-end</summary>
-                <p>Webhook PayPal sudah terdaftar dan kredensial sandbox sudah diset, tetapi satu pembelian sandbox penuh (order → capture → webhook → aktivasi plan) belum dirampungkan. Modul dan wiring-nya dipin tes; klaim "otomatis aktif" menunggu bukti itu.</p>
+                <p>Webhook PayPal terdaftar. Kredensial sandbox diset. Satu pembelian sandbox penuh belum rampung. Modul dan wiring-nya dipin tes. Klaim "otomatis aktif" menunggu bukti itu.</p>
               </details>
             </div>
             <p className="section-note" style={{ marginTop: 'var(--s-4)' }}>Dan semuanya bergerak: setiap angka di sini diukur pada mesin tertentu di tanggal tertentu. Rerun yang jujur berpindah ratusan milidetik — itu sebabnya halaman ini menyebut kapan diukur.</p>

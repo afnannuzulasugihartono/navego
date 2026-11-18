@@ -25,7 +25,7 @@ export default function Privasi() {
         </section>
         <div className="wrap legal" style={{ paddingBlock: 'var(--s-7)' }}>
           <section>
-            <p><strong>Hanya pergi ke endpoint model milik Anda.</strong> Konten dari halaman yang Anda setujui untuk dibaca asisten hanya dikirim ke endpoint model yang Anda konfigurasi sendiri. Kami tidak memilihkan model untuk Anda dan tidak menerima konten itu untuk dibaca manusia.</p>
+            <p><strong>Hanya pergi ke endpoint model milik Anda.</strong> Konten yang Anda setujui dibaca asisten dikirim ke endpoint model yang Anda konfigurasi sendiri. Kami tidak memilihkan model. Kami tidak membaca kontennya.</p>
           </section>
           <h2 id="relay">Relay perintah</h2>
           <p>Agar asisten bisa bertindak di device Anda, perintah browser beserta hasilnya transit melalui relay project dan <strong>disimpan sebagai riwayat antrean di database project</strong>. Tidak ada data yang dihapus otomatis; riwayat ada selama akun ada.</p>
@@ -36,7 +36,7 @@ export default function Privasi() {
           <h2 id="ditolak">Yang selalu ditolak</h2>
           <p>Screenshot dan pembacaan halaman ditolak di halaman yang menampilkan password, kode sekali pakai, atau kolom pembayaran, serta di tab pribadi dan mode penyamaran.</p>
           <h2 id="cookie">Cookie</h2>
-<p>Situs ini memakai dua cookie first-party dan tidak membawa yang lain: <code>navego_consent</code> menyimpan pilihan Anda pada banner cookie (Accept cookies atau Tolak), dan <code>navego_region</code> menyimpan kawasan harga yang Anda lihat (dua huruf negara), hanya setelah Anda menerima. Tidak ada cookie analytics, iklan, atau pelacakan, dan tidak ada cookie dari pihak ketiga mana pun. Menolak tidak memblokir apa pun: deteksi kawasan tetap berjalan setiap kunjungan, hanya tidak tersimpan. Anda bisa membersihkan keduanya kapan pun dari pengaturan browser Anda.</p>
+<p>Situs ini memakai dua cookie first-party. <code>navego_consent</code> menyimpan pilihan banner cookie. <code>navego_region</code> menyimpan kawasan harga Anda — hanya setelah Anda menerima. Tidak ada cookie analytics, iklan, atau pelacakan. Menolak tidak memblokir apa pun; deteksi kawasan tetap berjalan, hanya tidak disimpan.</p>
 
 <h2 id="kontak">Kontak</h2>
           <p>Pertanyaan tentang data Anda: semua kendali mandiri ada di halaman <Link to="/akun">Akun</Link> — lihat device yang ter-pairing, cabut yang tidak dikenal, keluar dari sesi. Temuan keamanan jangan dibuka sebagai isu publik; laporkan privat lewat tab Security di repositori.</p>

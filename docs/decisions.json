@@ -385,6 +385,69 @@
         "kind": "repo",
         "ref": "AGENTS.md scope rules 2-4 (a gate that must move is re-pinned in the same commit, with the reason); user 2026-11-18: enforce the rule across the repo without touching the acceptance surface"
       }
+    },
+    {
+      "id": "D42",
+      "scope": "web/copy",
+      "decision": "Notich and drop-down strip are flat rectangles, square corners, no curves and no gradient; hover or focus tint and one chevron are the whole effect.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: \"notchnya masih belum betul aku mau buat jadi minimalis tanpa lekukan\""
+      }
+    },
+    {
+      "id": "D43",
+      "scope": "web/copy",
+      "decision": "One idea per tile, headline of 2-6 words; the supporting line is one sentence; nothing advertises more than one benefit at a time.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://www.apple.com (product tiles: one idea per headline); https://developer.apple.com/app-store/product-page/ (concise informative paragraph); https://marketingexamined.com/blog/how-to-write-copy-like-apple (one big idea per headline; inverted pyramid)"
+      }
+    },
+    {
+      "id": "D44",
+      "scope": "web/copy",
+      "decision": "Sentences average ten to fourteen words; the longest sentence on any page stays under twenty-five; shorter lines carry the same meaning with no orphan clauses.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://yourtechnicalcopywriter.com/copywriting-tips-from-apple (average sentence length of iPhone 5 copy: 10.9, 11.9, 14.0 words); https://marketingexamined.com/blog/how-to-write-copy-like-apple (write for scanners)"
+      }
+    },
+    {
+      "id": "D45",
+      "scope": "web/copy",
+      "decision": "Address the reader in the second person, in the present tense, with verbs that are things the product literally does (read, fill, click, save); no adjectives praising the product, no exclamation marks.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://help.apple.com/pdf/applestyleguide/en_US/apple-style-guide.pdf (Apple style guide: sentence-style headings, second person, active voice); https://developer.apple.com/videos/play/wwdc2022/10037/ (write like a person, one idea at a time)"
+      }
+    },
+    {
+      "id": "D46",
+      "scope": "web/copy",
+      "decision": "Facts pinned by the site gate survive any rewrite verbatim: Navego, 45, primitive browser, plan.usd-1, PayPal, Enterprise, SHA-256, 1.6.22, docs/releases, browser_status, debugger, Tanpa eval, Kata sandi, SECURITY.md, Diukur bukan diklaim, Google Docs, p50, Apa itu Navego, Berapa harganya, Halaman ini tidak ada, browser Anda, Penyedia, Izin aplikasi, Memeriksa sesi, WebDriver, canvas, Artikel, AI yang mengenal browser, Dukungan, Kebijakan Privasi, Syarat Layanan.",
+      "source": {
+        "kind": "repo",
+        "ref": "tests/site/site.test.ts (CLAIMS); site/app/routes/*.tsx"
+      }
+    },
+    {
+      "id": "D47",
+      "scope": "web/copy",
+      "decision": "The site is written in Indonesian, like the UI it describes; technical terms the product itself uses (browser, MCP, extension, plan, PayPal) stay in English only when the interface shows them in English.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: redesign the site content with internet research for sentence style; product language stayed Indonesian (lang=\"id\" across every route, site.test.ts)"
+      }
+    },
+    {
+      "id": "D48",
+      "scope": "web/copy",
+      "decision": "Inverted pyramid in every section: the claim first, the strongest proof second, the rest last - readers who stop after one line still leave with the right idea.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://marketingexamined.com/blog/how-to-write-copy-like-apple (big headlines showcase one idea, inverted-pyramid paragraphs: biggest benefit to smallest); https://linear.app (claim, then proof, then link)"
+      }
     }
   ]
 }

@@ -1,4 +1,4 @@
-// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots)
+// decisions.json -> D43, D44, D45, D46, D48 (one idea per tile, short sentences, second person, facts pinned, inverted pyramid)
 
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
@@ -8,31 +8,31 @@ import { SiteHeader, SiteFooter } from '../components/Chrome';
 export function meta() {
   return seoMeta({
     title: 'Navego — AI untuk browser Anda',
-    description: 'Satu perintah, browser Anda bekerja. Navego membaca tab yang Anda tunjuk, mengisi kolom, lalu menyimpan hasilnya sebagai berkas nyata. 45 tool MCP, 36 primitive browser, 6 izin.',
+    description: 'Navego membaca tab yang Anda tunjuk, mengisi kolom, mengklik tombol, lalu menyimpan hasilnya sebagai berkas.',
     path: '/beranda'
   });
 }
 
 const LANGKAH = [
-  { title: 'Tunjuk tab', body: 'Satu tab, satu izin. Halaman lain tidak pernah dibaca.' },
-  { title: 'Tulis perintah', body: 'Bahasa Anda sendiri. Tanpa skrip per situs, tanpa API per halaman.' },
-  { title: 'Ambil berkas', body: 'Hasil nyata di folder Anda: .xlsx, .docx, .pptx, atau .csv.' }
+  { title: 'Tunjuk tab', body: 'Anda tunjuk. Navego yang membaca.' },
+  { title: 'Tulis perintah', body: 'Bahasa Anda. Tanpa skrip.' },
+  { title: 'Ambil berkas', body: 'Hasilnya di folder Anda. .xlsx, .docx, .pptx.' }
 ];
 
 const KEMAMPUAN = [
-  { title: 'Baca halaman', body: 'Judul, teks, dan struktur tab yang Anda sebut.' },
-  { title: 'Isi formulir', body: 'Kolom ditemukan dari label, bukan alamat tetap.' },
-  { title: 'Klik dan gulir', body: 'Tombol, menu, dan daftar yang bergulir ikut dijangkau.' },
-  { title: 'Tunggu perubahan', body: 'Halaman yang memuat lama ditunggu, bukan ditebak.' },
-  { title: 'Simpan berkas', body: 'Excel, Word, PowerPoint, dan CSV mendarat di folder Anda.' },
-  { title: 'Verifikasi hasil', body: 'Setiap berkas membawa sidik jari SHA-256 sendiri.' }
+  { title: 'Baca', body: 'Teks dan tabel tab yang Anda sebut.' },
+  { title: 'Isi', body: 'Formulir ditemukan dari label.' },
+  { title: 'Klik', body: 'Tombol dan menu dijangkau.' },
+  { title: 'Tunggu', body: 'Halaman lambat ditunggu, bukan ditebak.' },
+  { title: 'Simpan', body: 'Berkas nyata di folder Anda.' },
+  { title: 'Verifikasi', body: 'Setiap berkas membawa SHA-256.' }
 ];
 
 const FAQ = [
-  { q: 'Apakah Navego membaca semua tab saya?', a: 'Tidak. Hanya tab yang Anda tunjuk lewat tabId. Halaman pribadi dan chrome:// selalu ditolak.' },
-  { q: 'Apakah kata sandi boleh diketik agen?', a: 'Tidak. Kolom kata sandi, kode sekali pakai, dan data pembayaran ditolak. Anda yang menyelesaikan masuk, di browser Anda sendiri.' },
-  { q: 'Ke mana data halaman saya pergi?', a: 'Tidak ke server kami. Halaman dibaca di mesin Anda; kunci model tetap di browser Anda.' },
-  { q: 'Apa yang dipasang di komputer saya?', a: 'Ekstensi MV3 dan driver lokal. Dua-duanya bisa Anda periksa sendiri, dan cabut kapan saja.' }
+  { q: 'Apakah Navego membaca semua tab saya?', a: 'Tidak. Tab yang Anda tunjuk saja.' },
+  { q: 'Apakah kata sandi boleh diketik agen?', a: 'Tidak pernah. Kolom itu selalu ditolak.' },
+  { q: 'Ke mana data halaman saya pergi?', a: 'Tidak ke mana pun. Dibaca di mesin Anda.' },
+  { q: 'Apa yang dipasang di komputer saya?', a: 'Ekstensi dan driver lokal. Keduanya bisa Anda periksa dan cabut.' }
 ];
 
 const JSON_LD = {
@@ -41,12 +41,11 @@ const JSON_LD = {
   name: 'Navego',
   operatingSystem: 'Windows, macOS, Linux',
   applicationCategory: 'BrowserApplication',
-  description: 'Asisten AI yang menjalankan browser Anda dari satu perintah teks — membaca halaman, mengisi formulir, menyimpan hasilnya sebagai berkas.',
+  description: 'Asisten AI yang menjalankan browser Anda dari satu perintah teks.',
   url: 'https://navego.pages.dev/beranda',
   downloadUrl: 'https://navego.pages.dev/unduh',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'IDR' },
-  inLanguage: 'id',
-  author: { '@type': 'Person', name: 'afnannuzulasugihartono' }
+  inLanguage: 'id'
 };
 
 const Ikon = ({ name }: { name: string }) => {
@@ -75,11 +74,11 @@ export default function Beranda() {
         <section className="hero" aria-labelledby="judul-beranda">
           <div className="wrap hero-grid">
             <div>
-              <h1 id="judul-beranda">Satu perintah.<br />Browser Anda bekerja.</h1>
-              <p className="lede">Navego membaca tab yang Anda tunjuk, mengisi kolom, mengklik tombol, lalu menyimpan hasilnya sebagai berkas.</p>
+              <h1 id="judul-beranda">Navego.</h1>
+              <p className="lede">Satu perintah. Browser Anda bekerja.</p>
               <div className="hero-cta">
                 <Link className="btn btn-solid" to="/unduh">Pasang gratis</Link>
-                <span className="spec"><strong>45 tool MCP</strong>, gratis untuk mulai, tanpa kartu</span>
+                <span className="spec"><strong>45 tool MCP</strong>. Gratis untuk mulai.</span>
               </div>
             </div>
             <div className="demo-window" aria-hidden="true">
@@ -88,7 +87,7 @@ export default function Beranda() {
                 <span className="demo-url">tab — portal.internal.id/laporan-kuartal</span>
               </div>
               <div className="demo-body">
-                <p className="cmd-bubble"><small>Perintah Anda</small>Ringkas laporan ini, lalu simpan sebagai Excel.</p>
+                <p className="cmd-bubble"><small>Perintah Anda</small>Ringkas laporan ini, simpan sebagai Excel.</p>
                 <ul className="act-list">
                   <li className="act is-done"><i />Baca tab — 3 tabel ditemukan</li>
                   <li className="act is-done"><i />Isi 3 kolom, klik Ekspor</li>
@@ -109,7 +108,7 @@ export default function Beranda() {
               <div>
                 <h2 id="judul-cara" className="section-title">Tiga langkah. Tanpa skrip.</h2>
               </div>
-              <p className="section-note">Browser Anda tetap browser Anda. Halaman tidak pernah pergi ke server kami.</p>
+              <p className="section-note">Browser Anda tetap browser Anda.</p>
             </div>
             <div className="tile-grid">
               {LANGKAH.map((item, index) => (
@@ -132,9 +131,9 @@ export default function Beranda() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <h2 id="judul-kemampuan" className="section-title">Yang bisa dikerjakan di tab Anda.</h2>
+                <h2 id="judul-kemampuan" className="section-title">Yang bisa dikerjakan.</h2>
               </div>
-              <p className="section-note">Semua lewat primitive yang sama — bukan trik per situs. <Link to="/fitur">Lihat detail fitur →</Link></p>
+              <p className="section-note"><Link to="/fitur">Lihat semua kemampuan →</Link></p>
             </div>
             <div className="tile-grid">
               {KEMAMPUAN.map((item, index) => (
@@ -152,9 +151,9 @@ export default function Beranda() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <h2 id="judul-coba" className="section-title">Ketik perintahnya, lihat langkahnya.</h2>
+                <h2 id="judul-coba" className="section-title">Ketik perintahnya.</h2>
               </div>
-              <p className="section-note">Pratinjau alur, bukan eksekusi. Navego baru bergerak setelah terpasang di browser Anda.</p>
+              <p className="section-note">Pratinjau alur. Bukan eksekusi.</p>
             </div>
             <CommandPreview />
           </div>
@@ -164,9 +163,9 @@ export default function Beranda() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <h2 id="judul-harga" className="section-title">Satu dolar per bulan untuk mulai.</h2>
+                <h2 id="judul-harga" className="section-title">Satu dolar sebulan.</h2>
               </div>
-              <p className="section-note">Bukan per klik, bukan langganan buta. <Link to="/harga">Bandingkan paket →</Link></p>
+              <p className="section-note"><Link to="/harga">Lihat semua paket →</Link></p>
             </div>
             <div className="plans">
               <div className="card plan">
@@ -177,7 +176,7 @@ export default function Beranda() {
               <div className="card plan is-primary">
                 <p className="plan-name">Business</p>
                 <p className="plan-price">$17<small> / 6 bulan</small></p>
-                <ul><li>17.000 perintah / hari</li><li>500 per sesi</li><li>Semua fitur (statement, VM, remote drive) + prioritas</li></ul>
+                <ul><li>17.000 perintah / hari</li><li>500 per sesi</li><li>Semua fitur, prioritas dukungan</li></ul>
               </div>
             </div>
           </div>
@@ -205,7 +204,7 @@ export default function Beranda() {
           <div className="wrap">
             <div className="cta-band">
               <h2 className="section-title" style={{ color: '#ffffff' }}>Satu pekerjaan. Satu berkas.</h2>
-              <p>Mulai dari tab Anda sendiri. Lima belas menit lagi, pekerjaan pertama bisa selesai tanpa Anda menyentuh satu kolom pun.</p>
+              <p>Mulai dari tab Anda sendiri.</p>
               <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
                 <Link className="btn btn-solid" to="/unduh">Pasang gratis</Link>
                 <Link className="btn btn-ghost" to="/docs">Baca docs</Link>
