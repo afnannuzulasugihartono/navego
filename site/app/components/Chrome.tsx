@@ -12,8 +12,30 @@ const NAV = [
   { href: '/dukungan', label: 'Dukungan' }
 ];
 
-// One navigation tree at every size: inline links while the row fits, the native popover list when it does not.
-// The header measures its own row and toggles `is-wide`; the popover attribute follows the layout, so the menu opens without script too.
+const MEGA_PRODUK = [
+  { href: '/fitur', label: 'Fitur' },
+  { href: '/harga', label: 'Harga' },
+  { href: '/unduh', label: 'Unduh' },
+  { href: '/docs', label: 'Docs' },
+  { href: '/artikel', label: 'Artikel' }
+];
+
+const MEGA_ALAT = [
+  { href: '/mcp', label: 'Pasang MCP' },
+  { href: '/docs#berkas', label: 'Contoh berkas' },
+  { href: '/docs#tools', label: '45 tool MCP' },
+  { href: '/dukungan', label: 'Dukungan' }
+];
+
+const MEGA_AKUN = [
+  { href: '/', label: 'Masuk' },
+  { href: '/dashboard', label: 'Dashboard' },
+  { href: '/privasi', label: 'Privasi' },
+  { href: '/syarat', label: 'Syarat' }
+];
+
+// One navigation tree at every size: a slim dark bar with a hover panel on wide screens, the native popover list when the row does not fit.
+// The header measures its own row and toggles `is-wide`; the panel opens on hover and on keyboard focus, so nothing depends on a pointer.
 
 function SiteNav({ current }: { current?: string }) {
   const headerRef = useRef<HTMLElement>(null);
@@ -30,12 +52,11 @@ function SiteNav({ current }: { current?: string }) {
     const measure = () => {
       frame = 0;
       const wasOpen = menu.matches(':popover-open');
-      header.classList.add('is-measuring', 'is-wide');
+      header.classList.add('is-wide');
       const wide = inner.scrollWidth <= inner.clientWidth;
       header.classList.toggle('is-wide', wide);
       if (wide) menu.removeAttribute('popover');
       else menu.setAttribute('popover', 'auto');
-      header.classList.remove('is-measuring');
       if (!wide && wasOpen) menu.showPopover?.();
     };
 
@@ -61,6 +82,11 @@ function SiteNav({ current }: { current?: string }) {
   return (
     <header className="site-header" ref={headerRef}>
       <div className="wrap site-header-row header-inner">
+        <Link className="brand" to="/beranda" aria-label="Navego — beranda">
+          <NavegoMark size={24} />
+          <NavegoWordmark size={14} />
+        </Link>
+
         <nav className="site-nav" aria-label="Navigasi utama">
           <button className="nav-toggle menu-button" type="button" popoverTarget="site-menu" popoverTargetAction="toggle" aria-controls="site-menu">
             <span className="bars" aria-hidden="true" />
@@ -68,18 +94,39 @@ function SiteNav({ current }: { current?: string }) {
           </button>
 
           <ul id="site-menu" className="site-menu" popover="auto">
+            <li><Link to="/beranda" aria-current={current === '/beranda' ? 'page' : undefined}>Beranda</Link></li>
             {NAV.map((item) => (
               <li key={item.href}>
                 <Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link>
               </li>
             ))}
+            <li><Link to="/privasi">Privasi</Link></li>
+            <li><Link to="/syarat">Syarat</Link></li>
           </ul>
-        </nav>
 
-        <Link className="brand" to="/beranda" aria-label="Navego — beranda">
-          <NavegoMark size={26} />
-          <NavegoWordmark size={15} />
-        </Link>
+          <div className="mega" aria-label="Jelajahi Navego">
+            <div className="wrap mega-cols">
+              <div>
+                <p className="mega-title">Produk</p>
+                <ul className="mega-main">
+                  {MEGA_PRODUK.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}
+                </ul>
+              </div>
+              <div>
+                <p className="mega-title">Alat</p>
+                <ul>
+                  {MEGA_ALAT.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}
+                </ul>
+              </div>
+              <div>
+                <p className="mega-title">Akun</p>
+                <ul>
+                  {MEGA_AKUN.map((l) => <li key={l.href}><Link to={l.href}>{l.label}</Link></li>)}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </nav>
 
         <Link className="btn btn-solid btn-sm" to="/unduh">Pasang gratis</Link>
       </div>

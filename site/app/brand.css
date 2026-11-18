@@ -1,44 +1,39 @@
-/*
- * Navego â€” brand.css: components and page styles, on the tokens in tokens.css.
- * Flat corporate Y2K: cream ground, deep navy, one amber accent.
- * No gradients, no shadows.
- */
+﻿/*
+﻿ * Navego Ã¢â‚¬â€ brand.css: components and page styles, on the tokens in tokens.css.
+﻿ * Flat corporate Y2K: cream ground, deep navy, one amber accent.
+﻿ * No gradients, no shadows.
+﻿ */
 
-/* ========== header â€” one nav tree, narrow popover / wide inline (navbar guide) ========== */
+/* ========== header Ã¢â‚¬â€ one nav tree, narrow popover / wide inline (navbar guide) ========== */
 
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 30;
-  background: color-mix(in srgb, var(--ground) 92%, transparent);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--line-dark);
+  z-index: 40;
+  background: var(--navy-deep);
+  color: #cdd8f3;
+  border-bottom: 1px solid #26355f;
   container-type: scroll-state;
   container-name: site-header;
   transition: transform 180ms var(--ease-out);
 }
 
 .site-header-row {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
-  gap: var(--s-4);
-  min-block-size: 3.75rem;
+  justify-content: space-between;
+  gap: var(--s-5);
+  min-block-size: 3.25rem;
 }
-
-.site-nav { justify-self: start; }
-.site-header-row > .brand { justify-self: center; }
-.site-header-row > .btn { justify-self: end; }
 
 .header-inner > * { flex-shrink: 0; white-space: nowrap; }
 
-.brand { display: flex; align-items: center; gap: var(--s-3); text-decoration: none; color: var(--ink); }
-.brand-wordmark { color: var(--navy); }
+.brand { display: flex; align-items: center; gap: var(--s-3); text-decoration: none; color: #ffffff; }
+.brand-wordmark { color: #ffffff; }
 
-/* one nav landmark at every size: the list is the menu in both layouts */
+/* one nav landmark at every size */
 
-.site-nav { display: flex; align-items: center; }
+.site-nav { display: flex; align-items: center; gap: var(--s-1); }
 
 .menu-button {
   display: inline-flex;
@@ -47,11 +42,11 @@
   min-block-size: 2.5rem;
   padding: 0 var(--s-3);
   border-radius: var(--radius-sm);
-  border: 1px solid var(--line-dark);
-  background: var(--paper);
-  color: var(--navy);
+  border: 1px solid #2c3a68;
+  background: transparent;
+  color: #cdd8f3;
   font-family: var(--font-sans);
-  font-weight: 700;
+  font-weight: 600;
   font-size: var(--text-sm);
   cursor: pointer;
   anchor-name: --menu-button;
@@ -63,6 +58,8 @@
 .menu-button .bars { position: relative; }
 .menu-button .bars::before { position: absolute; top: -5px; }
 .menu-button .bars::after { position: absolute; top: 5px; }
+
+/* collapsed layout: the native popover list */
 
 .site-menu {
   position: fixed;
@@ -78,11 +75,12 @@
   max-block-size: calc(100dvh - 6rem);
   margin-block-start: 0.5rem;
   overflow: auto;
-  background: var(--paper);
-  border: 1px solid var(--line-dark);
+  background: var(--navy-deep);
+  color: #eaf0ff;
+  border: 1px solid #26355f;
   border-radius: var(--radius-sm);
   padding: var(--s-3);
-  box-shadow: 0 10px 24px rgb(13 19 56 / 0.18);
+  box-shadow: 0 18px 40px rgb(0 0 0 / 0.35);
 }
 .site-menu:is(:popover-open, .\:popover-open) { display: block; }
 .site-menu li { list-style: none; }
@@ -90,14 +88,14 @@
   display: block;
   padding: var(--s-3) var(--s-4);
   border-radius: var(--radius-sm);
-  color: var(--navy);
-  font-weight: 700;
+  color: #cdd8f3;
+  font-weight: 600;
   text-decoration: none;
 }
-.site-menu a:hover { background: var(--panel-2); }
-.site-menu a[aria-current='page'] { color: var(--ground); background: var(--navy); }
+.site-menu a:hover { background: #1a2550; color: #ffffff; }
+.site-menu a[aria-current='page'] { background: #22347e; color: #ffffff; }
 
-/* wide: the same list joins the row as inline navigation */
+/* wide layout: the same row becomes inline links, and hovering it drops the panel */
 
 .site-header.is-wide .menu-button { display: none; }
 .site-header.is-wide .site-menu {
@@ -120,15 +118,52 @@
 .site-header.is-wide .site-menu a {
   display: block;
   padding: var(--s-2) var(--s-3);
-  border-radius: 999px;
-  border: 1px solid transparent;
-  color: var(--navy);
-  font-size: var(--text-sm);
-  font-weight: 700;
+  border-radius: 6px;
+  color: #cdd8f3;
+  font-size: 0.8rem;
+  font-weight: 600;
   text-decoration: none;
 }
-.site-header.is-wide .site-menu a:hover { background: var(--panel-2); border-color: var(--line); }
-.site-header.is-wide .site-menu a[aria-current='page'] { color: var(--ground); background: var(--navy); border-color: var(--navy-deep); }
+.site-header.is-wide .site-menu a:hover { background: transparent; color: #ffffff; }
+.site-header.is-wide .site-menu a[aria-current='page'] { background: transparent; color: #ffffff; box-shadow: inset 0 -2px 0 var(--amber); border-radius: 0; }
+
+/* mega panel Ã¢â‚¬â€ Apple-style drop under the bar, opening on hover and on keyboard focus */
+
+.mega {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-start: 3.25rem;
+  background: var(--navy-deep);
+  color: #eaf0ff;
+  border-bottom: 1px solid #26355f;
+  padding: var(--s-6) 0 var(--s-7);
+  display: none;
+  z-index: 35;
+  opacity: 0;
+  translate: 0 -8px;
+  transition: opacity 180ms var(--ease-out), translate 220ms var(--ease-out), display 220ms;
+  transition-behavior: allow-discrete;
+}
+.site-header.is-wide .site-nav:hover .mega,
+.site-header.is-wide .site-nav:focus-within .mega { display: block; opacity: 1; translate: 0 0; }
+
+@starting-style {
+  .site-header.is-wide .site-nav:hover .mega,
+  .site-header.is-wide .site-nav:focus-within .mega { opacity: 0; translate: 0 -8px; }
+}
+
+.mega-cols { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: var(--s-7); }
+.mega-title { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: 0.12em; text-transform: uppercase; color: #8fa8d8; margin-bottom: var(--s-3); }
+.mega ul { list-style: none; display: grid; gap: var(--s-2); }
+.mega a { color: #cdd8f3; text-decoration: none; font-size: var(--text-sm); font-weight: 600; }
+.mega a:hover { color: #ffffff; text-decoration: underline; text-underline-offset: 3px; }
+.mega-main li + li { margin-top: var(--s-2); }
+.mega-main a { font-family: var(--font-display); font-size: var(--text-xl); line-height: 1.2; letter-spacing: -0.01em; font-weight: 900; color: #ffffff; }
+
+@media (max-width: 860px) {
+  .mega { display: none !important; }
+  .mega-cols { grid-template-columns: 1fr; }
+}
 
 /* hide the bar while reading down; it returns on the way up and stays put while focused */
 
@@ -140,10 +175,10 @@
 /* stuck: a quiet shadow reads as a plane above the page */
 
 @container site-header scroll-state(stuck: top) {
-  .header-inner { box-shadow: 0 4px 12px rgb(13 19 56 / 0.07); }
+  .header-inner { box-shadow: 0 4px 12px rgb(0 0 0 / 0.25); }
 }
 
-/* ========== buttons â€” one voice ========== */
+/* ========== buttons Ã¢â‚¬â€ one voice ========== */
 
 .btn {
   display: inline-flex;
@@ -172,7 +207,7 @@
 .btn-navy:hover { background: var(--navy-soft); }
 .btn-sm { padding: 0.48rem 1rem; font-size: var(--text-xs); min-block-size: 2.25rem; }
 
-/* ========== hero â€” one voice everywhere ========== */
+/* ========== hero Ã¢â‚¬â€ one voice everywhere ========== */
 
 .hero {
   border-bottom: 1px solid var(--line-dark);
@@ -286,7 +321,7 @@ h3 {
 .page-hero .crumb { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; margin-bottom: var(--s-4); }
 .page-hero .lede { font-size: var(--text-lg); color: var(--muted-2); max-width: 56ch; margin-top: var(--s-4); }
 
-/* ========== cards â€” one surface system ========== */
+/* ========== cards Ã¢â‚¬â€ one surface system ========== */
 
 .card {
   background: var(--paper);
@@ -439,7 +474,7 @@ h3 {
   gap: var(--s-5);
 }
 .faq summary::after { content: '+'; font-family: var(--font-display); color: var(--amber-deep); }
-.faq details[open] summary::after { content: 'â€“'; }
+.faq details[open] summary::after { content: 'Ã¢â‚¬â€œ'; }
 .faq p { margin-top: var(--s-3); color: var(--muted-2); font-size: var(--text-sm); }
 
 /* ========== download cards (/unduh) ========== */
