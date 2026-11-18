@@ -6,22 +6,23 @@ import type { Config } from '@react-router/dev/config';
 
 export default {
   ssr: false,
+  // One flat file per route, prerendered at build time: Cloudflare Pages serves the extensionless file for the pretty URL and the .html file directly.
   prerender: [
     '/',
-    '/beranda.html',
-    '/fitur.html',
-    '/harga.html',
-    '/unduh.html',
-    '/docs.html',
-    '/mcp.html',
-    '/dukungan.html',
-    '/privasi.html',
-    '/syarat.html',
-    '/akun.html',
+    '/beranda',
+    '/fitur',
+    '/harga',
+    '/unduh',
+    '/docs',
+    '/mcp',
+    '/dukungan',
+    '/privasi',
+    '/syarat',
+    '/akun',
     '/404.html',
-    '/oauth/consent.html',
-    '/dashboard.html',
-    '/artikel.html',
-    '/artikel/ai-browser-indonesia.html'
+    '/oauth/consent',
+    '/dashboard',
+    '/artikel',
+    '/artikel/ai-browser-indonesia'
   ]
 } satisfies Config;

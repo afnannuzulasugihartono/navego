@@ -123,10 +123,23 @@ async function serveInvoice(request: Request): Promise<Response> {
   });
 }
 
+// WHY the .html aliases 301: every page is prerendered under its pretty route id, and the flat .html file exists only because Pages serves build/client flat files.
+// Serving .html inline would hydrate against the pretty route id baked into the file and React error #418 on every page; a 301 keeps the legacy URLs honest without baking a second manifest.
+// WHY the fallback answers 404 with the real page: Pages' asset server answers missing paths with an empty 404, and unknown paths deserve the same designed page as every other route.
+
 export default {
   async fetch(request: Request, env: PagesEnv): Promise<Response> {
     const path = new URL(request.url).pathname;
+    if (path === '/index' || path === '/index.html') return new Response(null, { status: 301, headers: { location: '/' } });
+    if (path === '/404.html') return env.ASSETS.fetch(request);
+    if (path.endsWith('.html')) {
+      const pretty = path.slice(0, -'.html'.length) || '/';
+      return new Response(null, { status: 301, headers: { location: pretty } });
+    }
     if (path === PAGE_PATH || path === `${PAGE_PATH}/`) return serveInvoice(request);
-    return env.ASSETS.fetch(request);
+    const asset = await env.ASSETS.fetch(request);
+    if (asset.status !== 404) return asset;
+    const notFound = await env.ASSETS.fetch(new Request(new URL('/404.html', request.url)));
+    return new Response(notFound.body, { status: 404, headers: notFound.headers });
   }
 };

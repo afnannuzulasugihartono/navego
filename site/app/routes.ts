@@ -1,34 +1,31 @@
 import { index, route, type RouteConfig } from '@react-router/dev/routes';
 
-// WHY the file names live in one map: every flat page answers under two URLs — /beranda.html (the file Cloudflare Pages serves) and /beranda (the pretty URL the sitemap and the old backlinks use).
-// The client router must know both: a reader who arrives on the legacy URL is flipped to the 404 page the moment the app hydrates, and the static HTML they got is replaced without a word of warning.
-// WHY index.html is a route of its own: the sign-in page is prerendered to /index.html, so the router has to match that path too — otherwise /index.html hydrates into the 404.
-// WHY every route carries an explicit id: two paths may share one file, and the id a route gets from its file name would collide the moment the second path is added.
+// WHY one route per page: Cloudflare Pages serves the flat .html file for both the pretty URL and the file URL,
+// so /beranda and /beranda.html are the same document. A duplicate route per URL bakes two route ids into two files
+// that both answer at two URLs, and the hydration mismatch (React error #418) hides behind the pretty one.
+// The worker in site/worker/_worker.ts answers every legacy .html URL with a 301 to the pretty path instead.
+// WHY 404.html is a route of its own: it is the Pages fallback for unknown paths, prerendered as one flat file.
 
-const PAGES: Array<[string, string]> = [
-  ['beranda', './routes/beranda.tsx'],
-  ['fitur', './routes/fitur.tsx'],
-  ['harga', './routes/harga.tsx'],
-  ['unduh', './routes/unduh.tsx'],
-  ['docs', './routes/docs.tsx'],
-  ['mcp', './routes/mcp.tsx'],
-  ['dukungan', './routes/dukungan.tsx'],
-  ['privasi', './routes/privasi.tsx'],
-  ['syarat', './routes/syarat.tsx'],
-  ['akun', './routes/akun.tsx'],
-  ['dashboard', './routes/dashboard.tsx'],
-  ['artikel', './routes/artikel.tsx'],
-  ['artikel/ai-browser-indonesia', './routes/artikel-ai-browser-indonesia.tsx'],
-  ['oauth/consent', './routes/consent.tsx']
+const PAGES: Array<[path: string, file: string, id: string]> = [
+  ['beranda', './routes/beranda.tsx', 'beranda'],
+  ['fitur', './routes/fitur.tsx', 'fitur'],
+  ['harga', './routes/harga.tsx', 'harga'],
+  ['unduh', './routes/unduh.tsx', 'unduh'],
+  ['docs', './routes/docs.tsx', 'docs'],
+  ['mcp', './routes/mcp.tsx', 'mcp'],
+  ['dukungan', './routes/dukungan.tsx', 'dukungan'],
+  ['privasi', './routes/privasi.tsx', 'privasi'],
+  ['syarat', './routes/syarat.tsx', 'syarat'],
+  ['akun', './routes/akun.tsx', 'akun'],
+  ['dashboard', './routes/dashboard.tsx', 'dashboard'],
+  ['artikel', './routes/artikel.tsx', 'artikel'],
+  ['artikel/ai-browser-indonesia', './routes/artikel-ai-browser-indonesia.tsx', 'artikel-ai-browser-indonesia'],
+  ['oauth/consent', './routes/consent.tsx', 'oauth-consent'],
 ];
 
 export default [
   index('./routes/index.tsx'),
-  route('index.html', './routes/index.tsx', { id: 'routes/index-html' }),
-  ...PAGES.flatMap(([slug, file]) => [
-    route(`${slug}.html`, file, { id: `routes/${slug}-html` }),
-    route(slug, file, { id: `routes/${slug}-pretty` })
-  ]),
+  ...PAGES.map(([path, file, id]) => route(path, file, { id: `routes/${id}` })),
   route('404.html', './routes/notfound.tsx'),
-  route('*', './routes/notfound.tsx', { id: 'catch-all' })
+  route('*', './routes/notfound.tsx', { id: 'catch-all' }),
 ] satisfies RouteConfig;
