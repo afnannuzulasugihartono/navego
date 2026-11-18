@@ -130,6 +130,8 @@ const MEGA: Record<string, MegaPanel> = {
 
 // One navigation tree at every size: a slim dark bar carrying a flat horizontal row at every width, an Apple-style panel under it on hover or focus, and a notch that drops the same row - always visible, at every width.
 
+const PRIMARY_SLUGS = new Set(['/beranda', '/fitur', '/harga', '/unduh', '/docs', '/artikel', '/mcp', '/dukungan']);
+
 const ALL_LINKS = [
   { href: '/beranda', label: 'Beranda' },
   ...NAV.map(({ href, label }) => ({ href, label })),
@@ -182,9 +184,9 @@ function SiteNav({ current }: { current?: string }) {
           </svg>
         </button>
         <div className="nav-strip" id="nav-strip" role="region" aria-label="Menu lengkap">
-          <ul>
+          <ul className="nav-strip-list">
             {ALL_LINKS.map((item) => (
-              <li key={item.href}>
+              <li key={item.href} className={PRIMARY_SLUGS.has(item.href) ? 'nav-primary' : undefined}>
                 <Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link>
               </li>
             ))}
