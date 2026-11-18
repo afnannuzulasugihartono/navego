@@ -2,11 +2,11 @@
 /*
  * Navego — brand.css: components and page styles, on the tokens in tokens.css.
  * Flat modern: cream ground, deep navy, one amber accent.
- * Shadows exist only on the floating nav notch, the one element that hovers above the page.
+ * The header carries the brand and one amber CTA; the chevron is the only navigation surface.
  * Alignment: left everywhere; center only for symmetric fixed-box icons and figures.
  */
 
-/* ========== header — one nav tree, narrow popover / wide inline (navbar guide) ========== */
+/* ========== header — brand and CTA; the chevron is the only navigation surface ========== */
 
 .site-header {
   position: sticky;
@@ -32,14 +32,7 @@
 
 .brand { display: flex; align-items: center; gap: var(--s-3); text-decoration: none; color: #ffffff; }
 
-/* nav — one flat horizontal row at every size; below 940px it collapses into a notch that drops the same row as a strip */
-
-.site-nav { display: flex; align-items: center; gap: var(--s-2); }
-
-.nav-flat { display: flex; align-items: center; gap: 0 var(--s-3); list-style: none; margin: 0; padding: 0; }
-.nav-flat a { color: #cdd8f3; text-decoration: none; font-size: var(--text-sm); font-weight: 600; padding: var(--s-2) var(--s-1); white-space: nowrap; }
-.nav-flat a:hover { color: #ffffff; }
-.nav-flat a[aria-current='page'] { color: #ffffff; box-shadow: inset 0 -2px 0 var(--amber); }
+/* the header carries the brand and one CTA; the chevron is the only navigation surface */
 
 /*
  * the notch: one chevron hanging from the bottom center edge of the bar.
@@ -57,49 +50,6 @@
 .nav-strip a { display: block; color: #cdd8f3; text-decoration: none; font-size: var(--text-sm); font-weight: 600; padding: var(--s-1) var(--s-3); white-space: nowrap; }
 .nav-strip a:hover, .nav-strip a:focus-visible { color: #ffffff; }
 .nav-strip a[aria-current='page'] { color: #ffffff; box-shadow: inset 0 -2px 0 var(--amber); }
-
-@media (max-width: 940px) {
-  .nav-flat { display: none; }
-  .mega { display: none !important; }
-}
-
-/* ========== mega panel - Apple-style drop under the bar, opening on hover and on keyboard focus */
-
-.mega {
-  position: fixed;
-  inset-inline: 0;
-  inset-block-start: 3.25rem;
-  background: var(--navy-deep);
-  color: #eaf0ff;
-  border-bottom: 1px solid #26355f;
-  padding: var(--s-6) 0 var(--s-7);
-  display: none;
-  z-index: 35;
-  opacity: 0;
-  translate: 0 -8px;
-  transition: opacity 180ms var(--ease-out), translate 220ms var(--ease-out), display 220ms;
-  transition-behavior: allow-discrete;
-}
-.site-header .site-nav:hover .mega,
-.site-header .site-nav:focus-within .mega { display: block; opacity: 1; translate: 0 0; }
-
-@starting-style {
-  .site-header .site-nav:hover .mega,
-  .site-header .site-nav:focus-within .mega { opacity: 0; translate: 0 -8px; }
-}
-
-.mega-cols { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: var(--s-7); }
-.mega-title { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.12em; text-transform: uppercase; color: #8fa8d8; margin-bottom: var(--s-3); }
-.mega ul { list-style: none; display: grid; gap: var(--s-2); }
-.mega a { color: #cdd8f3; text-decoration: none; font-size: var(--text-sm); font-weight: 600; }
-.mega a:hover { color: #ffffff; text-decoration: underline; text-underline-offset: 3px; }
-.mega-main li + li { margin-top: var(--s-2); }
-.mega-main a { font-family: var(--font-display); font-size: var(--text-xl); line-height: 1.2; letter-spacing: -0.01em; font-weight: 900; color: #ffffff; }
-
-@media (max-width: 860px) {
-  .mega { display: none !important; }
-  .mega-cols { grid-template-columns: 1fr; }
-}
 
 /* hide the bar while reading down; it returns on the way up and stays put while focused */
 
