@@ -182,7 +182,7 @@ function SiteNav({ current }: { current?: string }) {
           </svg>
         </button>
         <div className="nav-strip" id="nav-strip" role="region" aria-label="Menu lengkap">
-          <ul>
+          <ul className="nav-strip-list">
             {ALL_LINKS.map((item) => (
               <li key={item.href}>
                 <Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link>

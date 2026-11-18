@@ -47,15 +47,15 @@
  */
 
 .nav-notch-wrap { display: block; position: absolute; left: 50%; bottom: -1px; transform: translate(-50%, 0); z-index: 45; }
-.nav-notch { display: flex; align-items: center; justify-content: center; block-size: 20px; background: transparent; border: 0; cursor: pointer; color: #cdd8f3; }
+.nav-notch { display: flex; align-items: center; justify-content: center; inline-size: 72px; block-size: 20px; background: var(--navy-deep); border: 0; cursor: pointer; color: #cdd8f3; }
 .nav-notch:hover, .nav-notch:focus-visible { color: #ffffff; }
 .nav-notch:hover svg, .nav-notch:focus-visible svg { color: var(--amber-hi); }
 .nav-notch-wrap:hover .nav-notch svg, .nav-notch-wrap:focus-within .nav-notch svg { transform: rotate(180deg); }
-.nav-strip { display: none; position: absolute; top: 100%; left: 50%; transform: translate(-50%, 0); min-width: 44rem; max-width: 96vw; background: var(--navy-deep); border: 1px solid #26355f; border-radius: 0; padding: var(--s-3) var(--s-5) var(--s-4); }
+.nav-strip { display: none; position: absolute; top: 100%; left: 50%; transform: translate(-50%, 0); width: max-content; max-width: 96vw; background: var(--navy-deep); border: 1px solid #26355f; border-radius: 0; padding: var(--s-3) var(--s-4); }
 .nav-notch-wrap:hover .nav-strip, .nav-notch-wrap:focus-within .nav-strip, .nav-strip:hover { display: block; }
-.nav-strip ul { display: flex; flex-wrap: wrap; gap: 0 var(--s-2); justify-content: center; list-style: none; margin: 0; padding: 0; }
-.nav-strip a { display: inline-block; color: #cdd8f3; text-decoration: none; font-size: var(--text-sm); font-weight: 600; padding: var(--s-2) var(--s-2); white-space: nowrap; }
-.nav-strip a:hover { color: #ffffff; }
+.nav-strip-list { display: grid; grid-template-columns: repeat(5, auto); grid-auto-flow: row; list-style: none; margin: 0; padding: 0; }
+.nav-strip a { display: block; color: #cdd8f3; text-decoration: none; font-size: var(--text-sm); font-weight: 600; padding: var(--s-1) var(--s-3); white-space: nowrap; }
+.nav-strip a:hover, .nav-strip a:focus-visible { color: #ffffff; }
 .nav-strip a[aria-current='page'] { color: #ffffff; box-shadow: inset 0 -2px 0 var(--amber); }
 
 @media (max-width: 940px) {

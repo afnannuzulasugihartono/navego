@@ -457,6 +457,15 @@
         "kind": "internet",
         "ref": "https://www.apple.com (product demos ship the interface as the marketing); https://linear.app (the product UI as the marketing); https://www.raycast.com/ (typewriter prompt panel as the hero)"
       }
+    },
+    {
+      "id": "D50",
+      "scope": "web/components",
+      "decision": "The chevron panel never repeats what the bar already shows: above 940px it lists only the secondary links (Keamanan, Changelog, FAQ, Metodologi, Bandingkan, Privasi, Syarat); at or below 940px, where the primary row is hidden, it lists every link, five per column in menu order.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: \"ini masih dobel kenapa yak\" - the panel repeated the eight links already visible in the bar; user wants no duplicate"
+      }
     }
   ]
 }
