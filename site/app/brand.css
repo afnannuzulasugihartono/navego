@@ -31,103 +31,36 @@
 .brand { display: flex; align-items: center; gap: var(--s-3); text-decoration: none; color: #ffffff; }
 .brand-wordmark { color: #ffffff; }
 
-/* one nav landmark at every size */
+/* nav — one flat horizontal row, Apple-style at every size; below 940px it collapses into a notch that drops the same row as a strip */
 
-.site-nav { display: flex; align-items: center; gap: var(--s-1); }
+.site-nav { display: flex; align-items: center; gap: var(--s-2); }
 
-.menu-button {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s-2);
-  min-block-size: 2.5rem;
-  padding: 0 var(--s-3);
-  border-radius: var(--radius-sm);
-  border: 1px solid #2c3a68;
-  background: transparent;
-  color: #cdd8f3;
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: var(--text-sm);
-  cursor: pointer;
-  anchor-name: --menu-button;
+.nav-flat { display: flex; align-items: center; gap: 0 var(--s-3); list-style: none; margin: 0; padding: 0; }
+.nav-flat a { color: #cdd8f3; text-decoration: none; font-size: var(--text-sm); font-weight: 600; padding: var(--s-2) var(--s-1); white-space: nowrap; }
+.nav-flat a:hover { color: #ffffff; }
+.nav-flat a[aria-current='page'] { color: #ffffff; box-shadow: inset 0 -2px 0 var(--amber); }
+
+/* the notch: one hanging half-pill at the bottom center edge of the bar; hover or focus drops the full horizontal row */
+
+.nav-notch-wrap { display: none; position: absolute; left: 50%; bottom: -1px; transform: translate(-50%, 0); z-index: 45; }
+.nav-notch { display: flex; align-items: center; justify-content: center; width: 96px; block-size: 22px; background: var(--navy-deep); color: #cdd8f3; border: 1px solid #26355f; border-top: none; border-radius: 0 0 14px 14px; cursor: pointer; }
+.nav-notch:hover, .nav-notch:focus-visible { color: #ffffff; }
+.nav-notch svg { transition: transform 180ms var(--ease-out); }
+.nav-notch-wrap:hover .nav-notch svg, .nav-notch-wrap:focus-within .nav-notch svg { transform: rotate(180deg); }
+.nav-strip { display: none; position: absolute; top: 100%; left: 50%; transform: translate(-50%, 0); min-width: 44rem; max-width: 96vw; background: var(--navy-deep); border: 1px solid #26355f; border-radius: 0 0 14px 14px; box-shadow: 0 18px 40px rgb(0 0 0 / 0.45); padding: var(--s-3) var(--s-5) var(--s-4); }
+.nav-notch-wrap:hover .nav-strip, .nav-notch-wrap:focus-within .nav-strip, .nav-strip:hover { display: block; }
+.nav-strip ul { display: flex; flex-wrap: wrap; gap: 0 var(--s-2); justify-content: center; list-style: none; margin: 0; padding: 0; }
+.nav-strip a { display: inline-block; color: #cdd8f3; text-decoration: none; font-size: var(--text-sm); font-weight: 600; padding: var(--s-2) var(--s-2); white-space: nowrap; }
+.nav-strip a:hover { color: #ffffff; }
+.nav-strip a[aria-current='page'] { color: #ffffff; box-shadow: inset 0 -2px 0 var(--amber); }
+
+@media (max-width: 940px) {
+  .nav-flat { display: none; }
+  .nav-notch-wrap { display: block; }
+  .mega { display: none !important; }
 }
 
-.menu-button .bars,
-.menu-button .bars::before,
-.menu-button .bars::after { display: block; width: 18px; height: 2px; background: currentColor; border-radius: 2px; content: '-'; }
-.menu-button .bars { position: relative; }
-.menu-button .bars::before { position: absolute; top: -5px; }
-.menu-button .bars::after { position: absolute; top: 5px; }
-
-/* collapsed layout: the native popover list */
-
-.site-menu {
-  position: fixed;
-  inset: auto;
-  inset-block-start: 4.75rem;
-  inset-block-start: anchor(--menu-button bottom);
-  inset-inline-start: 1rem;
-  inset-inline-start: anchor(--menu-button left);
-  inset-inline-end: auto;
-  inline-size: min(80dvw, 24rem);
-  max-inline-size: calc(100dvw - 2rem);
-  block-size: fit-content;
-  max-block-size: calc(100dvh - 6rem);
-  margin-block-start: 0.5rem;
-  overflow: auto;
-  background: var(--navy-deep);
-  color: #eaf0ff;
-  border: 1px solid #26355f;
-  border-radius: var(--radius-sm);
-  padding: var(--s-3);
-  box-shadow: 0 18px 40px rgb(0 0 0 / 0.35);
-}
-.site-menu:is(:popover-open, .\:popover-open) { display: block; }
-.site-menu li { list-style: none; }
-.site-menu a {
-  display: block;
-  padding: var(--s-3) var(--s-4);
-  border-radius: var(--radius-sm);
-  color: #cdd8f3;
-  font-weight: 600;
-  text-decoration: none;
-}
-.site-menu a:hover { background: #1a2550; color: #ffffff; }
-.site-menu a[aria-current='page'] { background: #22347e; color: #ffffff; }
-
-/* wide layout: the same row becomes inline links, and hovering it drops the panel */
-
-.site-header.is-wide .menu-button { display: none; }
-.site-header.is-wide .site-menu {
-  position: static;
-  display: flex;
-  align-items: center;
-  gap: var(--s-1);
-  inline-size: auto;
-  max-inline-size: none;
-  block-size: auto;
-  max-block-size: none;
-  overflow: visible;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-}
-.site-header.is-wide .site-menu::backdrop { display: none; }
-.site-header.is-wide .site-menu a {
-  display: block;
-  padding: var(--s-2) var(--s-3);
-  border-radius: 6px;
-  color: #cdd8f3;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-decoration: none;
-}
-.site-header.is-wide .site-menu a:hover { background: transparent; color: #ffffff; }
-.site-header.is-wide .site-menu a[aria-current='page'] { background: transparent; color: #ffffff; box-shadow: inset 0 -2px 0 var(--amber); border-radius: 0; }
-
-/* /* mega panel - Apple-style drop under the bar, opening on hover and on keyboard focus */
+/* ========== mega panel - Apple-style drop under the bar, opening on hover and on keyboard focus */
 
 .mega {
   position: fixed;
@@ -144,12 +77,12 @@
   transition: opacity 180ms var(--ease-out), translate 220ms var(--ease-out), display 220ms;
   transition-behavior: allow-discrete;
 }
-.site-header.is-wide .site-nav:hover .mega,
-.site-header.is-wide .site-nav:focus-within .mega { display: block; opacity: 1; translate: 0 0; }
+.site-header .site-nav:hover .mega,
+.site-header .site-nav:focus-within .mega { display: block; opacity: 1; translate: 0 0; }
 
 @starting-style {
-  .site-header.is-wide .site-nav:hover .mega,
-  .site-header.is-wide .site-nav:focus-within .mega { opacity: 0; translate: 0 -8px; }
+  .site-header .site-nav:hover .mega,
+  .site-header .site-nav:focus-within .mega { opacity: 0; translate: 0 -8px; }
 }
 
 .mega-cols { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: var(--s-7); }
