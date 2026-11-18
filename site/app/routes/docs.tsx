@@ -20,6 +20,13 @@ const CONFIGS: Array<{ id: string; title: string; body: string }> = [
   { id: 'cfg-claude', title: 'Claude Desktop', body: 'command: npx\nargs: ["-y", "navego", "local"]' }
 ];
 
+const MULAI = [
+  { title: 'Pasang', body: 'Arsip .zip dari halaman Unduh, muat di chrome://extensions.' },
+  { title: 'Pair', body: 'Satu klik "Pasangkan browser ini". Tidak ada kode yang diketik.' },
+  { title: 'Perintah', body: 'Satu kalimat dalam bahasa Anda. Satu pekerjaan, satu hasil.' },
+  { title: 'Berkas', body: 'Hasilnya .xlsx, .docx, .pptx, atau .csv di folder Anda.' }
+];
+
 const SECTIONS = [
   ['#pasang', 'Pasang extension'],
   ['#pairing', 'Masuk dan pair device'],
@@ -57,9 +64,21 @@ export default function Docs() {
           <div className="wrap">
             <p className="crumb">Docs</p>
             <h1>Docs.</h1>
-            <p className="lede">Pasang, masuk, jalankan, hubungkan — setiap langkah, dengan perintah yang bisa disalin.</p>
+            <p className="lede">Empat langkah sampai pekerjaan pertama. Semua perintah bisa disalin.</p>
           </div>
         </section>
+
+        <div className="wrap" style={{ paddingBlock: 'var(--s-6)' }}>
+          <div className="start-grid">
+            {MULAI.map((item, index) => (
+              <div className="start-card" key={item.title}>
+                <span className="start-num">{index + 1}</span>
+                <b>{item.title}</b>
+                <span>{item.body}</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
         <div className="wrap docs-layout">
           <nav className="docs-rail" aria-label="Di halaman ini">
@@ -70,63 +89,52 @@ export default function Docs() {
           </nav>
 
           <div className="docs-article">
-            <section aria-labelledby="quickTitle" style={{ marginBottom: 'var(--s-7)' }}>
-              <p className="kicker">Mulai</p>
-              <h2 id="quickTitle" className="section-title">Tiga langkah sampai kerja.</h2>
-              <ol className="steps" style={{ marginTop: 'var(--s-5)' }}>
-                <li><span><strong>Pasang.</strong> Arsip <code>.zip</code> dari halaman <Link to="/unduh">Unduh</Link>, muat di <code>chrome://extensions</code>.</span></li>
-                <li><span><strong>Pair.</strong> Klik <strong>Pasangkan browser ini</strong> — satu klik, tidak ada kode.</span></li>
-                <li><span><strong>Perintah.</strong> Satu kalimat, satu hasil — berupa berkas yang bisa Anda buka sendiri.</span></li>
-              </ol>
-            </section>
-
             <section className="docs-article">
               <h2 id="pasang">Pasang extension</h2>
               <ol className="steps">
                 <li><span><strong>Unduh.</strong> Ambil arsip <code>.zip</code> dari halaman <Link to="/unduh">Unduh</Link>.</span></li>
-                <li><span><strong>Ekstrak.</strong> Ke folder yang tidak akan dirapikan lagi, misalnya <code>C:\Navego\</code>.</span></li>
-                <li><span><strong>Muat.</strong> Buka <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>, Brave: <code>brave://extensions</code>, Opera: <code>opera://extensions</code>), nyalakan Mode Pengembang, lalu muat folder tadi.</span></li>
+                <li><span><strong>Ekstrak.</strong> Ke folder yang tidak akan dirapikan lagi — misalnya <code>C:\Navego\</code>.</span></li>
+                <li><span><strong>Muat.</strong> Buka <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>, Brave: <code>brave://extensions</code>, Opera: <code>opera://extensions</code>), nyalakan Mode Pengembang, muat folder tadi.</span></li>
                 <li><span><strong>Periksa.</strong> Navego muncul di daftar extension.</span></li>
               </ol>
-              <p>Mesin yang dikelola perusahaan memasang <code>.crx</code> bertanda tangan lewat <code>chrome://policy</code>. Firefox tidak didukung: tidak ada izin <code>debugger</code> di sana.</p>
-              <p>Pemasangan tidak dipungut biaya. Yang dibayar nanti adalah setiap pekerjaan yang selesai.</p>
+              <p>Mesin kelolaan perusahaan memasang <code>.crx</code> bertanda tangan lewat <code>chrome://policy</code>. Firefox tidak didukung: izin <code>debugger</code> tidak tersedia di sana.</p>
+              <div className="callout"><strong>Gratis untuk dipasang.</strong> Yang dibayar nanti adalah pekerjaan yang selesai.</div>
 
               <h2 id="pairing">Masuk dan pair device</h2>
               <p>Masuk dengan magic link email, Google, atau GitHub dari <Link to="/">halaman Masuk</Link>.</p>
               <ol className="steps">
                 <li><span><strong>Klik.</strong> Di <Link to="/dashboard">Dashboard</Link>, buka Device — atau klik <strong>Pasangkan browser ini</strong> di popup.</span></li>
-                <li><span><strong>Izin.</strong> Browser meminta izin pairing sekali; tidak ada kode yang harus diketik.</span></li>
+                <li><span><strong>Izin.</strong> Browser meminta izin pairing sekali; tidak ada kode yang diketik.</span></li>
                 <li><span><strong>Periksa.</strong> Device muncul di daftar dengan status daring.</span></li>
               </ol>
               <p>Device yang tidak dikenali bisa dicabut kapan saja di Dashboard.</p>
 
               <h2 id="tugas">Tugas pertama</h2>
-              <p>Anda menulis satu perintah, browser bekerja, dan hasilnya menjadi berkas. Contoh: <em>Buka Google Maps, cari kopi dekat Monas, dan tulis hasilnya ke sheet.</em></p>
+              <p>Satu perintah, browser bekerja, hasilnya jadi berkas. Contoh: <em>Buka Google Maps, cari kopi dekat Monas, tulis hasilnya ke sheet.</em></p>
               <ul>
                 <li>Satu pekerjaan berarti satu hasil: satu halaman, satu laporan, atau satu daftar.</li>
-                <li>Jumlah aksinya dibatasi. Perkiraan yang lebih besar ditolak di depan dengan tawaran dipecah, bukan gagal di tengah. Batas dan harganya ada di halaman <Link to="/harga">Harga</Link>.</li>
-                <li>Konten halaman hanya pergi ke endpoint model yang Anda pilih (opsional — lihat dokumentasi untuk penyiapan BYOK).</li>
+                <li>Jumlah aksi dibatasi. Perkiraan yang lebih besar ditolak di depan — dengan tawaran dipecah, bukan gagal di tengah. Lihat <Link to="/harga">Harga</Link>.</li>
+                <li>Konten halaman hanya pergi ke endpoint model pilihan Anda (opsional — lihat penyiapan BYOK).</li>
               </ul>
 
               <h2 id="berkas">Berkas yang jadi</h2>
-              <p>Satu pekerjaan berakhir sebagai berkas yang bisa langsung dibuka. Empat contoh nyata dari perusahaan tiruan, diunduh apa adanya:</p>
+              <p>Satu pekerjaan berakhir sebagai berkas yang bisa dibuka. Empat contoh nyata dari perusahaan tiruan, diunduh apa adanya:</p>
               <ul>
-                <li><a href="/contoh/laporan-keuangan-2026-09.xlsx" download>Laporan keuangan September 2026</a> — Excel: baris laporan, baris sumber angkanya, dan buku besar yang menyebut baris mana yang menghasilkan tiap angka.</li>
-                <li><a href="/contoh/rencana-strategis-2027.pptx" download>Rencana strategis 2027</a> — PowerPoint: satu sampul dan empat slide isi, dan tiap angka di slide berasal dari laporan yang sudah dicek.</li>
-                <li><a href="/contoh/riset-promo.docx" download>Riset promo</a> — Word: judul, bagian, tabel, dan grafik.</li>
-                <li><a href="/contoh/rencana-pemasaran-2027.docx" download>Rencana pemasaran 2027</a> — Word: positioning, segmentasi, dan rencana kanal.</li>
+                <li><a href="/contoh/laporan-keuangan-2026-09.xlsx" download>Laporan keuangan September 2026</a> — Excel: baris laporan, baris sumber angka, dan buku besar yang menyebut baris mana yang menghasilkan tiap angka.</li>
+                <li><a href="/contoh/rencana-strategis-2027.pptx" download>Rencana strategis 2027</a> — PowerPoint: satu sampul, empat slide isi; tiap angka berasal dari laporan yang sudah dicek.</li>
+                <li><a href="/contoh/riset-promo.docx" download>Riset promo</a> — Word: judul, bagian, tabel, grafik.</li>
+                <li><a href="/contoh/rencana-pemasaran-2027.docx" download>Rencana pemasaran 2027</a> — Word: positioning, segmentasi, rencana kanal.</li>
               </ul>
-              <p>Portal yang minta masuk tidak menghentikan pekerjaan: agen membaca halaman lebih dulu, tahu ada sign-in atau captcha, dan menunggu Anda menyelesaikannya di browser Anda sendiri sebelum lanjut di tab yang sama.</p>
-              <p>Berkas dibuat dari satu file kas yang Anda lihat sendiri — tidak ada langkah yang disembunyikan.</p>
+              <p>Portal yang minta masuk tidak menghentikan pekerjaan: agen membaca halaman lebih dulu, tahu ada sign-in atau captcha, lalu menunggu Anda menyelesaikannya di browser Anda sendiri sebelum lanjut di tab yang sama.</p>
 
               <h2 id="saldo">Saldo dan tagihan</h2>
-              <p>Isi saldo lewat QRIS dari Dashboard, tanpa langganan. Saldo yang kurang membuat pekerjaan ditolak sebelum mulai, dengan tautan isi ulang. Harga tetap, pengembalian, dan masa berlaku saldo ada di halaman <Link to="/harga">Harga</Link>.</p>
+              <p>Isi saldo lewat QRIS dari Dashboard, tanpa langganan. Saldo kurang membuat pekerjaan ditolak sebelum mulai, dengan tautan isi ulang. Harga tetap, pengembalian, dan masa berlaku ada di <Link to="/harga">Harga</Link>.</p>
 
               <h2 id="tools">Tools MCP</h2>
-              <p>45 tool dalam empat keluarga — <code>browser_</code>, <code>artifact_</code>, <code>delivery_</code>, dan <code>wallet_</code> — di atas 36 primitive browser. Tugas masing-masing:</p>
+              <p>45 tool dalam empat keluarga — <code>browser_</code>, <code>artifact_</code>, <code>delivery_</code>, <code>wallet_</code> — di atas 36 primitive browser.</p>
               {TOOLS.map(({ group, items }) => (
                 <div key={group}>
-                  <h3 style={{ fontSize: 'var(--text-lg)', color: 'var(--navy-deep)', margin: 'var(--s-5) 0 var(--s-3)' }}>{group}</h3>
+                  <h3 style={{ margin: 'var(--s-5) 0 var(--s-3)' }}>{group}</h3>
                   <div className="table-wrapper" style={{ maxWidth: '46rem' }}>
                     <table className="table">
                       <caption>{group}</caption>
@@ -144,39 +152,38 @@ export default function Docs() {
               ))}
 
               <h2 id="mcp">Hubungkan AI harness</h2>
-              <p>Satu MCP (Model Context Protocol) per mesin: driver lokal, jalan di mesin Anda sendiri, tanpa biaya per panggilan dan tanpa melewati server orang lain. <Link to="/mcp">Pasang driver lokal</Link>.</p>
-              <p>Koneksi driver lokal:</p>
+              <p>Satu MCP per mesin: driver lokal, jalan di mesin Anda sendiri, tanpa biaya per panggilan. <Link to="/mcp">Pasang driver lokal</Link>.</p>
               <div style={{ position: 'relative', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)', maxWidth: '40rem', marginBottom: 'var(--s-4)' }}>
                 <code style={{ background: 'transparent', border: 0, padding: 0, color: '#cfe0ff' }}>npx -y navego local</code>
                 {copyBlock('npx -y navego local', 'mcp-url')}
               </div>
               {CONFIGS.map(({ id, title, body }) => (
                 <div key={id}>
-                  <h3 style={{ fontSize: 'var(--text-base)', color: 'var(--navy-deep)', margin: 'var(--s-4) 0 var(--s-2)' }}>{title}</h3>
+                  <h3 style={{ margin: 'var(--s-4) 0 var(--s-2)' }}>{title}</h3>
                   <div style={{ position: 'relative', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)', maxWidth: '40rem', marginBottom: 'var(--s-4)' }}>
                     <pre style={{ color: '#cfe0ff', fontSize: 'var(--text-sm)', overflowX: 'auto', fontFamily: 'var(--font-mono)' }}><code>{body}</code></pre>
                     {copyBlock(body, id)}
                   </div>
                 </div>
               ))}
-              <p>Tidak perlu login atau langganan untuk memakai driver lokal. Kuota paket Anda tetap dihitung di jembatan Navego — sisa kuotanya bisa dilihat dengan <code>navego doctor</code> kapanpun. Semua jalur dijelaskan dalam satu panduan: <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-call.md">docs/agent-call.md</a>.</p>
-              <h3 style={{ fontSize: 'var(--text-base)', color: 'var(--navy-deep)', margin: 'var(--s-5) 0 var(--s-2)' }}>ChatGPT dan harness lain</h3>
-              <p>MCP harness = aplikasi AI Anda (Claude Desktop, OpenCode, dsb.). Konektor ChatGPT berbicara jarak jauh-HTTP; itu sudah berhenti eksis — kami tidak menyediakan jalur hosted lagi. Untuk ChatGPT dan harness serupa, gunakan harness lokal (atau Claude Desktop/OpenCode yang menerima MCP stdio).</p>
-              <p>Setelah terpasang, alat baru muncul sesudah restart harness — itu perilaku harness, bukan error koneksi.</p>
+              <p>Tidak perlu login atau langganan untuk driver lokal. Kuota paket tetap dihitung di jembatan Navego — sisa kuota bisa dicek dengan <code>navego doctor</code>. Semua jalur dijelaskan di <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-call.md">docs/agent-call.md</a>.</p>
+              <h3 style={{ margin: 'var(--s-5) 0 var(--s-2)' }}>ChatGPT dan harness lain</h3>
+              <p>MCP harness = aplikasi AI Anda (Claude Desktop, OpenCode, dsb.). Konektor ChatGPT memakai remote-HTTP dan tidak lagi disediakan. Untuk ChatGPT dan harness serupa, gunakan harness lokal (atau Claude Desktop/OpenCode yang menerima MCP stdio).</p>
+              <p>Setelah terpasang, alat baru muncul sesudah harness restart — itu perilaku harness, bukan error koneksi.</p>
 
               <h2 id="batas">Batas yang dijaga</h2>
               <ul>
-                <li>Password, kode sekali pakai, PIN, kartu, dan CVV selalu ditolak. Pekerjaan yang berhenti di situ gagal.</li>
+                <li>Password, kode sekali pakai, PIN, kartu, dan CVV selalu ditolak.</li>
                 <li>Tab pribadi: tangkapan layar ditolak. Tab non-http(s): primitive menolak.</li>
-                <li>Enam izin: <code>tabs</code>, <code>scripting</code>, <code>storage</code>, <code>alarms</code>, <code>debugger</code>, <code>downloads</code>. Satu alasan untuk tiap izin ada di halaman <Link to="/unduh">Unduh</Link>.</li>
+                <li>Enam izin: <code>tabs</code>, <code>scripting</code>, <code>storage</code>, <code>alarms</code>, <code>debugger</code>, <code>downloads</code>. Alasannya ada di <Link to="/unduh">Unduh</Link>.</li>
                 <li>Yang masuk ke server untuk penagihan hanya: id reservasi, jenis tugas, status, dan hash artefak. Isi halaman tidak pernah ikut.</li>
               </ul>
-              <p>Macet? Halaman <Link to="/dukungan">Dukungan</Link> punya langkah yang bisa diikuti.</p>
+              <p>Macet? <Link to="/dukungan">Dukungan</Link> punya langkah yang bisa diikuti.</p>
             </section>
 
             <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 'var(--s-5)', flexWrap: 'wrap', marginTop: 'var(--s-6)' }}>
               <div>
-                <h2>Macet di tengah dokumen?</h2>
+                <h2 style={{ margin: 0 }}>Macet di tengah dokumen?</h2>
                 <p style={{ color: 'var(--muted-2)' }}>Langkah yang bisa diikuti ada di halaman Dukungan.</p>
               </div>
               <Link className="btn btn-solid" to="/dukungan">Dukungan</Link>

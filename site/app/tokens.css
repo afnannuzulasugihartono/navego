@@ -80,7 +80,13 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; font-family: var(--font-sans); }
+html { scroll-behavior: smooth; font-family: var(--font-sans); container-type: scroll-state; }
+
+:target { scroll-margin-top: 4.75rem; }
+
+h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
+
+p, li, blockquote, dd { text-wrap: pretty; }
 
 body {
   background: var(--ground);

@@ -5,88 +5,83 @@ import { NavegoMark, NavegoWordmark } from './NavegoMark';
 const NAV = [
   { href: '/fitur', label: 'Fitur' },
   { href: '/harga', label: 'Harga' },
-  { href: '/docs', label: 'Docs' },
-  { href: '/artikel', label: 'Artikel' }
-];
-
-// WHY the menu carries every destination while the inline row carries the four a reader picks from: the narrow header must never strand a visitor on a page with no way further in, and the wide row stays short enough to read at a glance.
-
-const MENU = [
-  { href: '/beranda', label: 'Beranda' },
-  { href: '/fitur', label: 'Fitur' },
-  { href: '/harga', label: 'Harga' },
   { href: '/unduh', label: 'Unduh' },
   { href: '/docs', label: 'Docs' },
-  { href: '/mcp', label: 'Pasang MCP' },
   { href: '/artikel', label: 'Artikel' },
-  { href: '/dukungan', label: 'Dukungan' },
-  { href: '/privasi', label: 'Privasi' },
-  { href: '/syarat', label: 'Syarat' }
+  { href: '/mcp', label: 'MCP' },
+  { href: '/dukungan', label: 'Dukungan' }
 ];
 
-const VERSION = '1.7.6';
-
-// One nav tree, two presentations: inline when it fits, native popover when it does not.
-// The header measures itself on every resize and toggles `is-wide`; without script the popover still opens.
+// One navigation tree at every size: inline links while the row fits, the native popover list when it does not.
+// The header measures its own row and toggles `is-wide`; the popover attribute follows the layout, so the menu opens without script too.
 
 function SiteNav({ current }: { current?: string }) {
   const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const header = headerRef.current;
-    if (!header) return;
+    const inner = header?.querySelector<HTMLElement>('.site-header-row');
+    const menu = header?.querySelector<HTMLElement>('#site-menu');
+    if (!header || !inner || !menu) return;
+
+    let frame = 0;
+    let lastWidth = inner.clientWidth;
 
     const measure = () => {
-      const row = header.querySelector<HTMLElement>('.site-header-row');
-      if (!row) return;
-      const fits = row.scrollWidth <= row.clientWidth + 1;
-      header.classList.toggle('is-wide', fits);
-      const menu = header.querySelector<HTMLElement>('#site-menu');
-      if (menu) {
-        if (fits) menu.removeAttribute('popover');
-        else menu.setAttribute('popover', 'auto');
-      }
+      frame = 0;
+      const wasOpen = menu.matches(':popover-open');
+      header.classList.add('is-measuring', 'is-wide');
+      const wide = inner.scrollWidth <= inner.clientWidth;
+      header.classList.toggle('is-wide', wide);
+      if (wide) menu.removeAttribute('popover');
+      else menu.setAttribute('popover', 'auto');
+      header.classList.remove('is-measuring');
+      if (!wide && wasOpen) menu.showPopover?.();
     };
 
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(header);
-    const row = header.querySelector('.site-header-row');
-    if (row) observer.observe(row);
-    return () => observer.disconnect();
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+
+    const observer = new ResizeObserver(() => {
+      const width = inner.clientWidth;
+      const grew = width > lastWidth;
+      lastWidth = width;
+      if (header.classList.contains('is-wide') || grew) schedule();
+    });
+
+    observer.observe(inner);
+    schedule();
+    return () => {
+      observer.disconnect();
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (
     <header className="site-header" ref={headerRef}>
-      <div className="wrap site-header-row">
+      <div className="wrap site-header-row header-inner">
+        <nav className="site-nav" aria-label="Navigasi utama">
+          <button className="nav-toggle menu-button" type="button" popoverTarget="site-menu" popoverTargetAction="toggle" aria-controls="site-menu">
+            <span className="bars" aria-hidden="true" />
+            <span className="menu-label">Menu</span>
+          </button>
+
+          <ul id="site-menu" className="site-menu" popover="auto">
+            {NAV.map((item) => (
+              <li key={item.href}>
+                <Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
         <Link className="brand" to="/beranda" aria-label="Navego — beranda">
           <NavegoMark size={26} />
           <NavegoWordmark size={15} />
-          <span className="brand-version">v{VERSION}</span>
         </Link>
 
-        <nav className="nav" aria-label="Navigasi utama">
-          {NAV.map((item) => (
-            <Link key={item.href} to={item.href} aria-current={current === item.href ? 'page' : undefined}>
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        <Link className="btn btn-solid btn-sm" to="/unduh">Pasang navego</Link>
-
-        <button className="nav-toggle" type="button" popoverTarget="site-menu" aria-controls="site-menu" aria-label="Menu">
-          <span className="bars" aria-hidden="true" />
-        </button>
-
-        <ul className="nav-menu" id="site-menu" popover="auto">
-          {MENU.map((item) => (
-            <li key={item.href}>
-              <Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link>
-            </li>
-          ))}
-          <li><Link className="btn btn-solid" to="/unduh">Pasang navego</Link></li>
-        </ul>
+        <Link className="btn btn-solid btn-sm" to="/unduh">Pasang gratis</Link>
       </div>
     </header>
   );
@@ -141,7 +136,7 @@ export function SiteFooter() {
           </nav>
         </div>
         <div className="footer-bar">
-          <span>© 2026 Navego — private, local, signed.</span>
+          <span>Ac 2026 Navego — private, local, signed.</span>
           <span><Link to="/privasi">Privasi</Link> · <Link to="/syarat">Syarat</Link> · <Link to="/dukungan">Dukungan</Link></span>
         </div>
       </div>

@@ -358,11 +358,15 @@ export default function Dashboard() {
               {view === 'ringkasan' ? (
                 <>
                   <h1>Ringkasan</h1>
-                  <dl className="metrics">
-                    <div><dt>Device ter-pairing</dt><dd>{total}</dd></div>
-                    <div><dt>Daring sekarang</dt><dd>{online}</dd></div>
-                    <div><dt>Perintah selesai</dt><dd>{doneSum}<span style={{ color: 'var(--muted)' }}> / {totalSum}</span></dd></div>
-                  </dl>
+                  <div className="dash-tiles">
+                    <div className="tile-metric"><small>Device ter-pairing</small><b>{total}</b></div>
+                    <div className="tile-metric"><small>Daring sekarang</small><b>{online}</b></div>
+                    <div className="tile-metric"><small>Perintah selesai</small><b>{doneSum}<span style={{ color: 'var(--muted)', fontSize: 'var(--text-sm)' }}> / {totalSum}</span></b></div>
+                    <div className="tile-metric">
+                      <small>Kuota hari ini</small><b>{planPercent}%</b>
+                      <div className="usage-bar" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={planPercent} aria-label="Pemakaian kuota hari ini"><i style={{ width: `${planPercent}%` }} /></div>
+                    </div>
+                  </div>
 
                   <div className="panel" style={{ background: planRemaining <= 0 ? '#f6dcd6' : planPercent >= 80 ? '#fbeab6' : 'var(--panel-2)' }}>
                     <div className="panel-head">

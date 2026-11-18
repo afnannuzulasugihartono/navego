@@ -15,7 +15,7 @@ const ARTIKEL = [
     href: '/artikel/ai-browser-indonesia',
     slug: 'ai-browser-indonesia',
     title: 'AI yang mengenal browser Anda, dalam bahasa Indonesia',
-    dek: 'Kenapa asisten AI yang dijalankan di browser Anda — bukan di server orang lain — adalah bentuk asisten yang benar untuk pekerjaan browser sehari-hari.',
+    dek: 'Kenapa asisten AI yang dijalankan di browser Anda sendiri — bukan di server orang lain — adalah bentuk asisten yang benar untuk pekerjaan browser sehari-hari.',
     date: '2026-11-18',
     readingTime: '8 menit'
   }
@@ -35,17 +35,18 @@ export default function Artikel() {
         </section>
 
         <div className="wrap" style={{ paddingBlock: 'var(--s-7)' }}>
-          <ul style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-4)', maxWidth: '46rem' }}>
+          <div style={{ display: 'grid', gap: 'var(--s-5)', maxWidth: '52rem' }}>
             {ARTIKEL.map((item) => (
-              <li key={item.slug}>
-                <Link to={item.href} className="card" style={{ display: 'grid', gap: 'var(--s-2)', textDecoration: 'none' }}>
+              <Link key={item.slug} to={item.href} className="card artikel-card">
+                <div className="cover" aria-hidden="true" />
+                <div className="card-body">
                   <p className="kicker">{item.date} · {item.readingTime} baca</p>
-                  <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-xl)', letterSpacing: '-0.02em', color: 'var(--navy-deep)' }}>{item.title}</h2>
+                  <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-2xl)', letterSpacing: '-0.02em', color: 'var(--navy-deep)', lineHeight: 1.1 }}>{item.title}</h2>
                   <p style={{ color: 'var(--muted-2)' }}>{item.dek}</p>
-                </Link>
-              </li>
+                </div>
+              </Link>
             ))}
-          </ul>
+          </div>
         </div>
       </main>
       <SiteFooter />
