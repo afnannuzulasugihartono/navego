@@ -177,11 +177,9 @@ function SiteNav({ current }: { current?: string }) {
 
       <div className="nav-notch-wrap">
         <button className="nav-notch" type="button" aria-label="Tampilkan menu lengkap" aria-controls="nav-strip">
-          <span className="notch-line" aria-hidden="true" />
           <svg width="18" height="10" viewBox="0 0 18 10" aria-hidden="true" focusable="false">
             <path d="M1 1.5l8 7 8-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span className="notch-line" aria-hidden="true" />
         </button>
         <div className="nav-strip" id="nav-strip" role="region" aria-label="Menu lengkap">
           <ul>

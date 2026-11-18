@@ -151,9 +151,9 @@ export default function Beranda() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <h2 id="judul-coba" className="section-title">Ketik perintahnya.</h2>
+                <h2 id="judul-coba" className="section-title">Coba satu perintah.</h2>
               </div>
-              <p className="section-note">Pratinjau alur. Bukan eksekusi.</p>
+              <p className="section-note">Jejak nyata. Bukan eksekusi.</p>
             </div>
             <CommandPreview />
           </div>

@@ -448,6 +448,15 @@
         "kind": "internet",
         "ref": "https://marketingexamined.com/blog/how-to-write-copy-like-apple (big headlines showcase one idea, inverted-pyramid paragraphs: biggest benefit to smallest); https://linear.app (claim, then proof, then link)"
       }
+    },
+    {
+      "id": "D49",
+      "scope": "web/components",
+      "decision": "The coba section ships the product UI itself: a navy command panel (prompt, typed text, caret, preset chips) and a paper trace panel (numbered primitive steps, always visible) - no submit button hiding the interesting half; the interaction lives in the choice of preset, not in a form submit.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://www.apple.com (product demos ship the interface as the marketing); https://linear.app (the product UI as the marketing); https://www.raycast.com/ (typewriter prompt panel as the hero)"
+      }
     }
   ]
 }
