@@ -152,7 +152,7 @@ export default function Unduh() {
               ].map(([id, label, command]) => (
                 <div key={id} style={{ display: 'flex', gap: 'var(--s-3)', alignItems: 'center', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)' }}>
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--amber-hi)', minInlineSize: '3.25rem', flexShrink: 0, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{label}</span>
-                  <code style={{ background: 'transparent', border: 0, padding: 0, color: '#cfe0ff', fontSize: 'var(--text-xs)', overflowX: 'auto', whiteSpace: 'nowrap', flex: 1 }}>{command}</code>
+                  <code style={{ background: 'transparent', border: 0, padding: 0, color: '#cfe0ff', fontSize: 'var(--text-xs)', overflowX: 'auto', whiteSpace: 'nowrap', flex: '1 1 0%', minInlineSize: 0 }}>{command}</code>
                   <button onClick={() => copy(command!, id!)} className="btn btn-solid btn-sm" type="button">
                     {copied === id ? 'Tersalin' : 'Salin'}
                   </button>

@@ -170,7 +170,10 @@ test('_headers covers every route, forbids inline scripts, denies framing everyw
   }
 });
 
-test('the client router answers the file URL and the legacy pretty URL alike', () => {
+// WHY the shape changed: the .html and pretty duals of one page used to be two routes with distinct ids, and serving the prerendered .html file under the pretty URL hydrated against the wrong id — React error #418 on every visit.
+// The flat .html file still exists for Pages to serve, but the worker answers the .html URL with a 301 to the pretty path, so the client router only knows the pretty routes and the two can never split again.
+
+test('the client router answers every pretty URL, and the .html aliases are edge 301s', () => {
   buildSite();
   const assets = fs.readdirSync(path.join(client, 'assets'));
   const manifest = assets.find((f) => f.startsWith('manifest-') && f.endsWith('.js'));
@@ -179,9 +182,10 @@ test('the client router answers the file URL and the legacy pretty URL alike', (
   const slugs = ['beranda', 'fitur', 'harga', 'unduh', 'docs', 'mcp', 'dukungan', 'privasi', 'syarat', 'akun', 'dashboard', 'artikel', 'artikel/ai-browser-indonesia', 'oauth/consent'];
   for (const slug of slugs) {
     assert.ok(source.includes(`"path":"${slug}"`), `the router knows /${slug}`);
-    assert.ok(source.includes(`"path":"${slug}.html"`), `the router knows /${slug}.html`);
+    assert.equal(source.includes(`"path":"${slug}.html"`), false, `/${slug}.html is an edge 301, not a client route`);
   }
-  assert.ok(source.includes('"path":"index.html"'), 'the router knows /index.html');
+  const worker = fs.readFileSync(path.join(client, '_worker.js'), 'utf8');
+  assert.ok(worker.includes("endsWith('.html')") || worker.includes('endsWith(".html")'), 'the worker answers every .html path with a 301');
 });
 
 test('the sitemap names exactly the routes the build carries (404 and unknowns are not in it)', () => {
