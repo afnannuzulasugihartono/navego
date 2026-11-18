@@ -170,20 +170,20 @@ export default function Beranda() {
             <div className="section-head">
               <div>
                 <p className="kicker">Harga</p>
-                <h2 id="judul-harga" className="section-title">Mulai gratis. Bayar setelah hasilnya ada.</h2>
+                <h2 id="judul-harga" className="section-title">Satu dolar per bulan untuk mulai.</h2>
               </div>
               <p className="section-note">Bukan per klik, bukan langganan buta. <Link to="/harga">Bandingkan paket →</Link></p>
             </div>
             <div className="plans">
               <div className="card plan">
-                <p className="plan-name">plan.usd-1</p>
-                <p className="plan-price">Gratis</p>
-                <ul><li>200 perintah / hari</li><li>50 per sesi</li><li>36 primitive browser</li></ul>
+                <p className="plan-name">Starter</p>
+                <p className="plan-price">$1<small> / bulan</small></p>
+                <ul><li>1.000 perintah / hari</li><li>50 per sesi</li><li>PayPal</li></ul>
               </div>
               <div className="card plan is-primary">
-                <p className="plan-name">plan.usd-17 · paling dipilih</p>
-                <p className="plan-price">Rp 249.000 <small>/ 30 hari</small></p>
-                <ul><li>5.000 perintah / hari</li><li>500 per sesi</li><li>top-up saldo Rp 10.000</li></ul>
+                <p className="plan-name">Business</p>
+                <p className="plan-price">$17<small> / 6 bulan</small></p>
+                <ul><li>17.000 perintah / hari</li><li>500 per sesi</li><li>Semua fitur (statement, VM, remote drive) + prioritas</li></ul>
               </div>
             </div>
           </div>

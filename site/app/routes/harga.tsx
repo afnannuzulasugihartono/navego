@@ -30,9 +30,9 @@ const EUROPE_PLANS = [
 const QA = [
   ['rencana', 'Plan, bukan langganan tersembunyi', 'USD, sekali beli, langsung aktif. Anda pilih plan yang sesuai daya beli negara Anda — Asia/Arab/Afrika atau Eropa & AS — plannya sudah termasuk semua fitur di kelasnya.'],
   ['kuota', 'Kuota perintah per hari', 'Setiap plan punya kuota harian. Kuota terpakai tidak bertambah di hari berikutnya; kuota hari ini hanya bisa dipakai hari ini.'],
-  ['fitur', 'Semua fitur, bukan tier yang dikebiri', 'Asia/Arab/Afrika: Starter, Regular, Pro, Power — semuanya Plan dasar. Eropa/AS: Starter, Pro, Business (6 bulan), Enterprise (1 tahun) dengan seluruh fitur Firm (statement, VM, remote drive) di Business & Enterprise.'],
+  ['fitur', 'Semua fitur, bukan tier yang dikebiri', 'Asia/Arab/Afrika: Starter, Basic, Plus, Pro, Advanced — semuanya plan dasar. Eropa/AS: Starter, Pro, Business (6 bulan), Enterprise (1 tahun); Business dan Enterprise membawa statement, VM, dan remote drive, plus prioritas dukungan.'],
   ['paypal', 'Bayar dengan PayPal', 'Plan USD dibayar dengan PayPal. Setelah pembayaran dikonfirmasi PayPal Anda, plan aktif otomatis.'],
-  ['pekerjaan', 'Bayar per pekerjaan selesai', 'Hanya plan berbasis penggunaan (bukan ini) yang memotong saldo per pekerjaan. Plan ini membuka kuota harian sejak hari pertama; pekerjaan yang gagal tidak memakai kuota Anda secara proporsional.'],
+  ['pekerjaan', 'Kuota harian, bukan meteran per tugas', 'Paket membuka kuota harian sejak hari pertama. Pekerjaan yang gagal tidak memotong kuota secara proporsional; kuota harian adalah batas hari itu, bukan tagihan per tugas.'],
   ['gagal', 'Pekerjaan gagal, Anda tidak dirugikan', 'Pekerjaan yang berhenti karena alasan di luar kendali Anda tidak mengurangi kuota harian secara proporsional. Kuota yang sudah terpakai tetap terpakai — itu bagian dari perhitungan harian dan tidak bisa dikembalikan.']
 ] as const;
 

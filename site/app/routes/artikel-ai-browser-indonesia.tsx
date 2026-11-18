@@ -55,7 +55,7 @@ export default function AiBrowserIndonesia() {
               <li><strong>Tab yang Anda tunjuk, bukan semua tab.</strong> Kerja hanya pada <code>tabId</code> yang Anda sebut. Halaman pribadi dan <code>chrome://</code> ditolak.</li>
               <li><strong>Kata sandi bukan bahan bakar.</strong> Kolom password, kode sekali pakai, PIN, dan kartu selalu ditolak. Asisten berhenti dan menunggu Anda.</li>
               <li><strong>Hasil berupa berkas.</strong> Pekerjaan berakhir sebagai <code>.xlsx</code>, <code>.docx</code>, <code>.pptx</code>, atau <code>.csv</code> — bukan jawaban di layar yang harus Anda salin.</li>
-              <li><strong>Tagihan setelah hasil.</strong> Harga tampil sebelum mulai; saldo terpotong hanya saat pekerjaan selesai. Gagal berarti dana kembali penuh.</li>
+              <li><strong>Harga sebelum mulai.</strong> Semua harga plan tampil di halaman Harga sebelum Anda membayar; tidak ada tagihan tersembunyi per pekerjaan.</li>
             </ul>
 
             <figure className="figure">
