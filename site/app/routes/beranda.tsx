@@ -79,13 +79,13 @@ export default function Beranda() {
               <p className="lede">Navego membaca tab yang Anda tunjuk, mengisi kolom, mengklik tombol, lalu menyimpan hasilnya sebagai berkas.</p>
               <div className="hero-cta">
                 <Link className="btn btn-solid" to="/unduh">Pasang gratis</Link>
-                <span className="spec"><strong>45 tool MCP</strong> · gratis untuk mulai · tanpa kartu</span>
+                <span className="spec"><strong>45 tool MCP</strong>, gratis untuk mulai, tanpa kartu</span>
               </div>
             </div>
             <div className="demo-window" aria-hidden="true">
               <div className="demo-bar">
                 <span className="demo-dots"><i /><i /><i /></span>
-                <span className="demo-url">tab · portal.internal.id/laporan-kuartal</span>
+                <span className="demo-url">tab — portal.internal.id/laporan-kuartal</span>
               </div>
               <div className="demo-body">
                 <p className="cmd-bubble"><small>Perintah Anda</small>Ringkas laporan ini, lalu simpan sebagai Excel.</p>

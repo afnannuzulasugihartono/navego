@@ -250,7 +250,7 @@ export function buildReport({ table, spec }: { table?: ParsedTable; spec?: Repor
       period,
       blocks: [
         { kind: 'heading', level: 1, text: title },
-        { kind: 'paragraph', text: `Klien: ${client} · Periode: ${period}` },
+        { kind: 'paragraph', text: `Klien: ${client}, Periode: ${period}` },
         {
           kind: 'table',
           headers: [groupBy, 'Total'],

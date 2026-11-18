@@ -14,9 +14,9 @@ export function meta() {
 }
 
 const ROLES = [
-  ['Operator', 'Buka portal, cari data, unduh CSV', 'browser_open_url · browser_find_text · browser_download_file'],
-  ['Analis', 'Rangkai laporan, cek asal tiap angka', 'artifact_build_report · artifact_build_workbook'],
-  ['Pengembang', 'Pasang driver lokal, panggil dari harness', 'browser_status · browser_run_steps · browser_wait_until']
+  ['Operator', 'Buka portal, cari data, unduh CSV', 'browser_open_url, browser_find_text, browser_download_file'],
+  ['Analis', 'Rangkai laporan, cek asal tiap angka', 'artifact_build_report, artifact_build_workbook'],
+  ['Pengembang', 'Pasang driver lokal, panggil dari harness', 'browser_status, browser_run_steps, browser_wait_until']
 ] as const;
 
 const LANGKAH = [
@@ -74,7 +74,7 @@ function RoleTabs() {
       <div className="role-detail" role="tabpanel">
         <h3>{task}</h3>
         <code>{tools}</code>
-        <p>Contoh berkas nyata: <a href="/contoh/laporan-keuangan-2026-09.xlsx" download>Laporan (.xlsx)</a> · <a href="/contoh/rencana-strategis-2027.pptx" download>Rencana (.pptx)</a>.</p>
+        <p>Contoh berkas nyata: <a href="/contoh/laporan-keuangan-2026-09.xlsx" download>Laporan (.xlsx)</a>, <a href="/contoh/rencana-strategis-2027.pptx" download>Rencana (.pptx)</a>.</p>
       </div>
     </div>
   );

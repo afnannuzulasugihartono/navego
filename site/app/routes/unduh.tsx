@@ -87,7 +87,7 @@ export default function Unduh() {
                   <div className="tile-media"><span className="dl-letter">{browser.letter}</span></div>
                   <h3>{browser.name}</h3>
                   <a className="btn btn-solid btn-sm" style={{ width: '100%' }} href={`${DOWNLOAD}.zip?for=${browser.key}`} download>Unduh .zip</a>
-                  <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Atau: <a href={`${DOWNLOAD}.crx?for=${browser.key}`} download>.crx</a> · <a href={MANIFEST}>Manifest</a></p>
+                  <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Atau: <a href={`${DOWNLOAD}.crx?for=${browser.key}`} download>.crx</a>, <a href={MANIFEST}>Manifest</a></p>
                 </article>
               ))}
             </div>
