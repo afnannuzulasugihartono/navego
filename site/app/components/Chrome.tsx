@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+﻿import { useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import { NavegoMark, NavegoWordmark } from './NavegoMark';
 
@@ -11,6 +11,8 @@ const NAV = [
   { href: '/mcp', label: 'MCP' },
   { href: '/dukungan', label: 'Dukungan' }
 ];
+
+const VERSION = '1.7.6';
 
 const MEGA_PRODUK = [
   { href: '/fitur', label: 'Fitur' },
@@ -80,9 +82,9 @@ function SiteNav({ current }: { current?: string }) {
   }, []);
 
   return (
-    <header className="site-header" ref={headerRef}>
+    <header className="site-header" ref={headerRef} data-version={VERSION}>
       <div className="wrap site-header-row header-inner">
-        <Link className="brand" to="/beranda" aria-label="Navego — beranda">
+        <Link className="brand" to="/beranda" aria-label="Navego â€” beranda">
           <NavegoMark size={24} />
           <NavegoWordmark size={14} />
         </Link>
@@ -159,11 +161,11 @@ export function SiteFooter() {
       <div className="wrap">
         <div className="footer-cols">
           <div>
-            <Link className="brand" to="/beranda" aria-label="Navego — beranda" style={{ color: '#ffffff' }}>
+            <Link className="brand" to="/beranda" aria-label="Navego â€” beranda" style={{ color: '#ffffff' }}>
               <NavegoMark size={36} />
               <NavegoWordmark size={16} />
             </Link>
-            <p className="footer-tag">Huginn &amp; Muninn — raven Odin. Browser Anda, atas perintah Anda.</p>
+            <p className="footer-tag">Huginn &amp; Muninn â€” raven Odin. Browser Anda, atas perintah Anda.</p>
           </div>
           <nav aria-label="Produk">
             <h3>Produk</h3>
@@ -183,8 +185,8 @@ export function SiteFooter() {
           </nav>
         </div>
         <div className="footer-bar">
-          <span>Ac 2026 Navego — private, local, signed.</span>
-          <span><Link to="/privasi">Privasi</Link> · <Link to="/syarat">Syarat</Link> · <Link to="/dukungan">Dukungan</Link></span>
+          <span>Ac 2026 Navego â€” private, local, signed.</span>
+          <span><Link to="/privasi">Privasi</Link> Â· <Link to="/syarat">Syarat</Link> Â· <Link to="/dukungan">Dukungan</Link></span>
         </div>
       </div>
     </footer>
