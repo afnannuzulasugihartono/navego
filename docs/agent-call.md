@@ -46,8 +46,9 @@ extension's hello carries), counts locally, and refuses the session when the
 cloud cannot be reached. A command past the session allowance answers
 `PLAN_LIMIT_REACHED` with the plan named. The usage is reported when the
 session ends, so the local road and the pairing account share one daily count —
-`plan.pilot` carries 200 commands per day and 50 per session;
-`plan.firm` carries 5000 and 500. The gate lives in the bridge — never in
+`plan.usd-1` carries 1.000 commands per day and 50 per session;
+`plan.usd-17` carries 17.000 and 500, and `plan.usd-33` carries no daily
+limit; every USD plan carries no per-minute cap. The gate lives in the bridge — never in
 readable client code. `navego doctor` prints the bridge, the device,
 the extension version, the plan, and the quota.
 

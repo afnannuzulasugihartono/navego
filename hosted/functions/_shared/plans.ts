@@ -1,13 +1,14 @@
-// @last-edited: 2026-11-09 UTC+7.
+// @last-edited: 2026-11-18 UTC+7.
 // @title: plans - what each plan allows, in one place, for both bridges.
-// @state: the pilot and the firm, their daily quota, their session allowance, and the features only the firm gets.
+// @state: the seven USD tiers, five in the affordable band (1, 3, 5, 7, 9 dollars/month) and two in the enterprise band (17 dollars / 6 months and 33 dollars / year): their daily quota, their sessions, the minute cap, and the firm features the enterprise tiers get.
 // @dependencies: none.
 
 // WHY THIS FILE EXISTS The gate lives in the service, never in the binary, so the service needs one place that says what a plan allows.
 // Two surfaces read it: the hosted MCP for the account's plan, and the loopback bridge for the session allowance a paired device gets for that account.
 
-// WHY THE NUMBERS ARE MIRRORED IN SQL.
-// The RPC in the migration cannot import JavaScript, so the quotas are restated there; tests/billing/plans.test.ts pins the two copies to the same numbers, which is how the two readers stay one plan.
+// WHY NULL MEANS UNLIMITED.
+// A number says how much; null says there is no cap at all.
+// The annual tier promises no minute limit and no daily limit, and the promise reads faster than a billion.
 
 export interface PlanFeatures {
   all: boolean;
@@ -17,25 +18,58 @@ export interface PlanFeatures {
 }
 
 export interface PlanDefinition {
-  dailyQuota: number;
+  dailyQuota: number | null;
   sessionAllowance: number;
+  rpm: number | null;
   features: PlanFeatures;
 }
 
 export const PLANS: Readonly<Record<string, Readonly<PlanDefinition>>> = Object.freeze({
-  'plan.pilot': Object.freeze({
-    dailyQuota: 200,
+  'plan.usd-1': Object.freeze({
+    dailyQuota: 1000,
     sessionAllowance: 50,
+    rpm: null,
     features: Object.freeze({ all: false, statement: false, vm: false, remoteDrive: false })
   }),
-  'plan.firm': Object.freeze({
+  'plan.usd-3': Object.freeze({
+    dailyQuota: 3000,
+    sessionAllowance: 50,
+    rpm: null,
+    features: Object.freeze({ all: false, statement: false, vm: false, remoteDrive: false })
+  }),
+  'plan.usd-5': Object.freeze({
     dailyQuota: 5000,
+    sessionAllowance: 50,
+    rpm: null,
+    features: Object.freeze({ all: false, statement: false, vm: false, remoteDrive: false })
+  }),
+  'plan.usd-7': Object.freeze({
+    dailyQuota: 7000,
+    sessionAllowance: 50,
+    rpm: null,
+    features: Object.freeze({ all: false, statement: false, vm: false, remoteDrive: false })
+  }),
+  'plan.usd-9': Object.freeze({
+    dailyQuota: 9000,
+    sessionAllowance: 50,
+    rpm: null,
+    features: Object.freeze({ all: false, statement: false, vm: false, remoteDrive: false })
+  }),
+  'plan.usd-17': Object.freeze({
+    dailyQuota: 17000,
     sessionAllowance: 500,
+    rpm: null,
+    features: Object.freeze({ all: true, statement: true, vm: true, remoteDrive: true })
+  }),
+  'plan.usd-33': Object.freeze({
+    dailyQuota: null,
+    sessionAllowance: 500,
+    rpm: null,
     features: Object.freeze({ all: true, statement: true, vm: true, remoteDrive: true })
   })
 });
 
-export const DEFAULT_PLAN = 'plan.pilot';
+export const DEFAULT_PLAN = 'plan.usd-1';
 export type PlanName = keyof typeof PLANS | (string & {});
 
 export function planFor(name: string): PlanDefinition {
@@ -48,6 +82,10 @@ export function allowsFeature(name: string, feature: keyof PlanFeatures): boolea
   return planFor(name).features[feature] === true;
 }
 
-export function planQuota(name: string): number {
+export function planQuota(name: string): number | null {
   return planFor(name).dailyQuota;
+}
+
+export function planRPM(name: string): number | null {
+  return planFor(name).rpm;
 }

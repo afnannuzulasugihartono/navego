@@ -25,7 +25,7 @@ const INVOICE = {
   currency: 'IDR',
   lines: {
     priced: [
-      { kind: 'plan.pilot', unit: 'firm-month, up to 15 clients', description: 'Pilot — up to 15 client-months, 2026-10', quantity: 1, amountCents: 9900000 }
+      { kind: 'statement.client_month', unit: 'delivered client-month', description: 'Laporan BCA - 2026-10', quantity: 15, amountCents: 9900000 }
     ],
     unpriced: [
       { kind: 'slides.deck', description: 'Slides — 2026-10', reason: 'no price for this kind' }
@@ -63,8 +63,8 @@ test('every state is one readable page with no script and no asset to load', () 
     assert.doesNotMatch(html, /\bsrc=/i);
     assert.doesNotMatch(html, /@import/i);
     assert.match(html, /Status:/);
-    assert.match(html, /Pilot — up to 15 client-months, 2026-10/);
-    assert.match(html, /<td>1<\/td>/);
+    assert.match(html, /Laporan BCA - 2026-10/);
+    assert.match(html, /<td>15<\/td>/);
     assert.match(html, /Rp 99\.000/);
     assert.match(html, /no price for this kind/, 'an unpriced delivery is named, not hidden');
     assert.match(html, /Only what was delivered is charged\. A delivery that failed is not on this invoice\./);

@@ -1,7 +1,9 @@
+> **Historical (superseded 2026-11-17/18 by the Apple-style redesign, PRs #380-#383).** This file described the Y2K site. The current design lives in site/app/tokens.css and site/app/brand.css (cream ground, navy, amber; Tahoma/Verdana body, Arial Black display). Keep this only as the record of the old pass.
+
 # Navego — every element, with its reason
 
-@last-edited: 2026-11-16 UTC+7.
-@state: the Web 2.0 pass is complete for beranda, chrome, and the demo player; the dashboard is inventoried, its claims data-driven.
+@last-edited: 2026-11-18 UTC+7.
+@state: superseded 2026-11-18 by the Apple-style redesign (PRs #380-#383); kept as the record of the old passes. The current design lives in site/app/tokens.css and site/app/brand.css.
 @related: [`AGENTS.md`](../AGENTS.md) · [`ARCHITECTURE.md`](../ARCHITECTURE.md) · [`docs/design-references.md`](design-references.md)
 
 A page earns its pixels or loses them. This file is the inventory: every text element, button, card, tile, strip and rule on the 16 surfaces, with the reason it exists and the decision taken. Format per entry: `element — reason — decision` (K=keep, C=cut).

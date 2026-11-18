@@ -18,14 +18,13 @@ import {
   runOnDevice,
   say,
   walletBalance,
-  walletHistory,
-  walletTopUp
+  walletHistory
 } from '../lib/dashboardApi';
 
 export function meta() {
   return seoMeta({
     title: "Dashboard - Navego",
-    description: "Device ter-pairing, perintah, plan, saldo, dan kendali atas semuanya - dalam satu konsol.",
+    description: "Device ter-pairing, perintah, plan, tagihan, dan kendali atas semuanya - dalam satu konsol.",
     path: "/dashboard",
   });
 }
@@ -106,7 +105,7 @@ export default function Dashboard() {
   const [runStatus, setRunStatus] = useState('');
   const [runPending, setRunPending] = useState(false);
 
-  const [wallet, setWallet] = useState<{ balance?: number; available?: number; entries: Array<{ at?: string; kind?: string; amountCents?: number; note?: string | null }>; prices: Array<{ kind: string; amount_cents: number }> | null; topUp?: string; status: string }>({ entries: [], prices: null, status: '' });
+  const [wallet, setWallet] = useState<{ balance?: number; available?: number; entries: Array<{ at?: string; kind?: string; amountCents?: number; note?: string | null }>; prices: Array<{ kind: string; amount_cents: number }> | null; status: string }>({ entries: [], prices: null, status: '' });
 
   const EXTENSION_ID = 'ofgemipoobcnbjkfanmofjbdonjapmgl';
 
@@ -276,15 +275,12 @@ export default function Dashboard() {
       return;
     }
     const entries = Array.isArray(history.entries) ? history.entries : [];
-    const walletPrice = prices?.find((p) => p.kind === 'wallet.deposit');
-    const formatRp = (cents?: number) => `Rp${((Number(cents) || 0) / 100).toLocaleString('id-ID')}`;
     setWallet({
       balance: balance.balanceCents,
       available: balance.availableCents,
       entries,
       prices,
-      topUp: walletPrice ? `Isi ulang ${formatRp(walletPrice.amount_cents)}` : 'Isi ulang',
-      status: 'Saldo dibaca dari server.'
+      status: 'Saldo dibaca dari server. Paket utama dibeli di Harga.'
     });
   }
 
@@ -293,17 +289,6 @@ export default function Dashboard() {
       void loadWallet();
     }
   }, [ready, view]);
-
-  async function topUp() {
-    setWallet((w) => ({ ...w, status: 'Membuka halaman pembayaran…' }));
-    const opened = await walletTopUp();
-    if (opened?.ok && opened.url) {
-      window.open(opened.url, '_blank', 'noopener');
-      setWallet((w) => ({ ...w, status: 'Halaman pembayaran dibuka di tab baru. Saldo bertambah setelah pembayaran dikonfirmasi.' }));
-      return;
-    }
-    setWallet((w) => ({ ...w, status: `Isi ulang tidak bisa dimulai: ${opened?.why || opened?.error || 'server menolak'}.` }));
-  }
 
   const allCommands = (devices ?? []).flatMap((device) => (device.commands || []).map((command) => ({ device: device.name || '?', ...command })));
   allCommands.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
@@ -373,11 +358,11 @@ export default function Dashboard() {
                       <h2 style={{ fontSize: 'var(--text-base)' }}>Plan</h2>
                       <span className={`chip ${plan?.status === 'active' ? 'good' : 'warn'}`}>{plan?.status === 'active' ? 'aktif' : plan?.status || 'memuat…'}</span>
                     </div>
-                    <p style={{ fontFamily: 'ui-monospace, Consolas, monospace', fontWeight: 800 }}>{plan?.plan || 'plan.pilot'}</p>
+                    <p style={{ fontFamily: 'ui-monospace, Consolas, monospace', fontWeight: 800 }}>{plan?.plan || 'plan.usd-1'}</p>
                     <div className="plan-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={planPercent} aria-label="Pemakaian kuota hari ini">
                       <div className="plan-fill" style={{ width: `${planPercent}%` }} />
                     </div>
-                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)' }}><strong>{(plan?.used ?? 0).toLocaleString('id-ID')}</strong> dari <strong>{(plan?.quota ?? 0).toLocaleString('id-ID')}</strong> perintah dipakai hari ini · {(plan?.sessionAllowance ?? (plan?.plan === 'plan.firm' ? 500 : 50)).toLocaleString('id-ID')} / sesi · reset besok 00.00 UTC</p>
+                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)' }}><strong>{(plan?.used ?? 0).toLocaleString('id-ID')}</strong> dari <strong>{(plan?.quota ?? 0).toLocaleString('id-ID')}</strong> perintah dipakai hari ini · {(plan?.sessionAllowance ?? (plan?.plan === 'plan.usd-17' ? 500 : 50)).toLocaleString('id-ID')} / sesi · reset besok 00.00 UTC</p>
                     {planRemaining <= 0 ? <p style={{ marginTop: 'var(--s-2)', fontSize: 'var(--text-xs)', color: 'var(--danger)' }}>Plan habis — reset besok 00.00 UTC. <Link to="/harga">Lihat paket</Link></p> : null}
                   </div>
 
@@ -501,7 +486,6 @@ export default function Dashboard() {
                       <div><dt>Tersedia sekarang</dt><dd>{wallet.available !== undefined ? `Rp${(wallet.available / 100).toLocaleString('id-ID')}` : '–'}</dd></div>
                     </dl>
                     <div className="hero-cta" style={{ marginTop: 'var(--s-1)' }}>
-                      <button className="btn btn-solid" type="button" onClick={topUp}>{wallet.topUp || 'Isi ulang'}</button>
                       <button className="btn btn-ghost" type="button" onClick={loadWallet}>Muat ulang</button>
                     </div>
                     <p className="status" role="status" style={{ marginTop: 'var(--s-2)' }}>{wallet.status}</p>
@@ -536,7 +520,7 @@ export default function Dashboard() {
                           ))}
                         </tbody>
                       </table>
-                    ) : <p className="empty">Belum ada pergerakan saldo. Isi ulang dulu, lalu jalankan satu pekerjaan dari tab Aksi.</p>}
+                    ) : <p className="empty">Belum ada pergerakan saldo. Paket utama dibeli di <Link to="/harga">Harga</Link> via PayPal; saldo hanya dipakai untuk pekerjaan per tugas.</p>}
                   </div>
                 </>
               ) : null}
@@ -600,7 +584,7 @@ export default function Dashboard() {
 
 function priceLabel(kind: string): string {
   return ({
-    'wallet.deposit': 'Isi ulang saldo (QRIS)',
+    'wallet.deposit': 'Isi ulang saldo',
     'task.simple': 'Pekerjaan sederhana — saat selesai',
     'task.report': 'Laporan — saat selesai',
     'task.batch_item': 'Per item batch — saat selesai'

@@ -1,4 +1,4 @@
-// @last-edited: 2026-11-16 UTC+7.
+﻿// @last-edited: 2026-11-16 UTC+7.
 // @title: site — the rebuilt Navego site, gated on its own build.
 // @state: builds the site, type-checks it, then parses build/client for the per-page contract.
 // @dependencies: site/ (React Router v7 + TypeScript), node:test, node:child_process.
@@ -110,7 +110,7 @@ test('every inline script is covered by the CSP hashes in build/client/_headers'
 const CLAIMS = {
   '/beranda.html': ['Navego.', '45', 'primitive browser'],
   '/fitur.html': ['45', 'primitive', 'debugger'],
-  '/harga.html': ['Rp10.000', 'Rp249.000', 'QRIS'],
+  '/harga.html': ['plan.usd-1', 'PayPal', 'Enterprise'],
   '/unduh.html': ['navego-update', 'chrome', 'SHA-256'],
   '/docs.html': ['browser_status', 'navego'],
   '/mcp.html': ['navego', '45'],

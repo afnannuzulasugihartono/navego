@@ -32,7 +32,7 @@ const SECTIONS = [
   ['#pairing', 'Masuk dan pair device'],
   ['#tugas', 'Tugas pertama'],
   ['#berkas', 'Berkas yang jadi'],
-  ['#saldo', 'Saldo dan tagihan'],
+  ['#paket', 'Paket dan pembayaran'],
   ['#tools', 'Tools MCP'],
   ['#mcp', 'Hubungkan AI harness'],
   ['#batas', 'Batas yang dijaga']
@@ -127,8 +127,8 @@ export default function Docs() {
               </ul>
               <p>Portal yang minta masuk tidak menghentikan pekerjaan: agen membaca halaman lebih dulu, tahu ada sign-in atau captcha, lalu menunggu Anda menyelesaikannya di browser Anda sendiri sebelum lanjut di tab yang sama.</p>
 
-              <h2 id="saldo">Saldo dan tagihan</h2>
-              <p>Isi saldo lewat QRIS dari Dashboard, tanpa langganan. Saldo kurang membuat pekerjaan ditolak sebelum mulai, dengan tautan isi ulang. Harga tetap, pengembalian, dan masa berlaku ada di <Link to="/harga">Harga</Link>.</p>
+              <h2 id="paket">Paket dan pembayaran</h2>
+              <p>Paket dibayar dengan PayPal, sekali beli, langsung aktif: $1–$9 per bulan, $17 untuk Business (6 bulan), $33 untuk Enterprise (1 tahun). Akun diaktifkan otomatis begitu PayPal menyelesaikan pembayaran; tidak ada saldo yang perlu diisi ulang dan tidak ada langganan yang tidak Anda pilih. Kuota, fitur, dan masa berlaku ada di <Link to="/harga">Harga</Link>.</p>
 
               <h2 id="tools">Tools MCP</h2>
               <p>45 tool dalam empat keluarga — <code>browser_</code>, <code>artifact_</code>, <code>delivery_</code>, <code>wallet_</code> — di atas 36 primitive browser.</p>
