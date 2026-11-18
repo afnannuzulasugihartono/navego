@@ -58,7 +58,7 @@ export default function Beranda() {
               <h1 id="judul-beranda">Navego.<br />AI browser.</h1>
               <p className="lede">Asisten AI yang menjalankan browser Anda dari satu perintah teks.</p>
               <div className="hero-cta">
-                <Link className="btn btn-solid" to="/unduh.html">Pasang gratis</Link>
+                <Link className="btn btn-solid" to="/unduh">Pasang gratis</Link>
                 <span className="spec"><strong>45 tool MCP</strong> — gratis untuk mulai, tanpa kartu.</span>
               </div>
             </div>
@@ -116,7 +116,7 @@ export default function Beranda() {
                 <p className="kicker">Harga</p>
                 <h2 id="judul-harga" className="section-title">Mulai gratis.</h2>
               </div>
-              <p className="section-note">Bayar saat pekerjaan selesai, bukan per klik. <Link to="/harga.html">Lihat harga lengkap →</Link></p>
+              <p className="section-note">Bayar saat pekerjaan selesai, bukan per klik. <Link to="/harga">Lihat harga lengkap →</Link></p>
             </div>
             <div className="plans">
               <div className="card plan">
@@ -150,7 +150,7 @@ export default function Beranda() {
               ))}
             </div>
             <div className="hero-cta" style={{ marginTop: 'var(--s-6)' }}>
-              <Link className="btn btn-solid" to="/unduh.html">Pasang Navego</Link>
+              <Link className="btn btn-solid" to="/unduh">Pasang Navego</Link>
               <a className="btn btn-ghost" href="https://wa.me/?text=Navego%20%E2%80%94%20AI%20yang%20menjalankan%20browser%20Anda%20dari%20satu%20perintah%3A%20https%3A%2F%2Fnavego.pages.dev%2Fberanda" target="_blank" rel="noreferrer">Bagikan ke teman</a>
               <a className="btn btn-ghost" href="https://t.me/share/url?url=https%3A%2F%2Fnavego.pages.dev%2Fberanda&text=Navego%20%E2%80%94%20AI%20yang%20menjalankan%20browser%20Anda%20dari%20satu%20perintah" target="_blank" rel="noreferrer">Bagikan di Telegram</a>
             </div>

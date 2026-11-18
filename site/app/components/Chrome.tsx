@@ -3,9 +3,25 @@ import { Link } from 'react-router';
 import { NavegoMark, NavegoWordmark } from './NavegoMark';
 
 const NAV = [
-  { href: '/fitur.html', label: 'Fitur' },
-  { href: '/harga.html', label: 'Harga' },
-  { href: '/docs.html', label: 'Docs' }
+  { href: '/fitur', label: 'Fitur' },
+  { href: '/harga', label: 'Harga' },
+  { href: '/docs', label: 'Docs' },
+  { href: '/artikel', label: 'Artikel' }
+];
+
+// WHY the menu carries every destination while the inline row carries the four a reader picks from: the narrow header must never strand a visitor on a page with no way further in, and the wide row stays short enough to read at a glance.
+
+const MENU = [
+  { href: '/beranda', label: 'Beranda' },
+  { href: '/fitur', label: 'Fitur' },
+  { href: '/harga', label: 'Harga' },
+  { href: '/unduh', label: 'Unduh' },
+  { href: '/docs', label: 'Docs' },
+  { href: '/mcp', label: 'Pasang MCP' },
+  { href: '/artikel', label: 'Artikel' },
+  { href: '/dukungan', label: 'Dukungan' },
+  { href: '/privasi', label: 'Privasi' },
+  { href: '/syarat', label: 'Syarat' }
 ];
 
 const VERSION = '1.7.6';
@@ -43,7 +59,7 @@ function SiteNav({ current }: { current?: string }) {
   return (
     <header className="site-header" ref={headerRef}>
       <div className="wrap site-header-row">
-        <Link className="brand" to="/beranda.html" aria-label="Navego — beranda">
+        <Link className="brand" to="/beranda" aria-label="Navego — beranda">
           <NavegoMark size={26} />
           <NavegoWordmark size={15} />
           <span className="brand-version">v{VERSION}</span>
@@ -57,19 +73,19 @@ function SiteNav({ current }: { current?: string }) {
           ))}
         </nav>
 
-        <Link className="btn btn-solid btn-sm" to="/unduh.html">Pasang navego</Link>
+        <Link className="btn btn-solid btn-sm" to="/unduh">Pasang navego</Link>
 
         <button className="nav-toggle" type="button" popoverTarget="site-menu" aria-controls="site-menu" aria-label="Menu">
           <span className="bars" aria-hidden="true" />
         </button>
 
         <ul className="nav-menu" id="site-menu" popover="auto">
-          {NAV.map((item) => (
+          {MENU.map((item) => (
             <li key={item.href}>
               <Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link>
             </li>
           ))}
-          <li><Link className="btn btn-solid" to="/unduh.html">Pasang navego</Link></li>
+          <li><Link className="btn btn-solid" to="/unduh">Pasang navego</Link></li>
         </ul>
       </div>
     </header>
@@ -77,18 +93,18 @@ function SiteNav({ current }: { current?: string }) {
 }
 
 const PRODUK = [
-  { href: '/fitur.html', label: 'Fitur' },
-  { href: '/harga.html', label: 'Harga' },
-  { href: '/unduh.html', label: 'Unduh' },
-  { href: '/docs.html', label: 'Docs' },
-  { href: '/mcp.html', label: 'Pasang MCP' },
-  { href: '/artikel.html', label: 'Artikel' }
+  { href: '/fitur', label: 'Fitur' },
+  { href: '/harga', label: 'Harga' },
+  { href: '/unduh', label: 'Unduh' },
+  { href: '/docs', label: 'Docs' },
+  { href: '/mcp', label: 'Pasang MCP' },
+  { href: '/artikel', label: 'Artikel' }
 ];
 
 const LEGAL = [
-  { href: '/dukungan.html', label: 'Dukungan' },
-  { href: '/privasi.html', label: 'Privasi' },
-  { href: '/syarat.html', label: 'Syarat' }
+  { href: '/dukungan', label: 'Dukungan' },
+  { href: '/privasi', label: 'Privasi' },
+  { href: '/syarat', label: 'Syarat' }
 ];
 
 export function SiteHeader({ current }: { current?: string }) {
@@ -101,7 +117,7 @@ export function SiteFooter() {
       <div className="wrap">
         <div className="footer-cols">
           <div>
-            <Link className="brand" to="/beranda.html" aria-label="Navego — beranda" style={{ color: '#ffffff' }}>
+            <Link className="brand" to="/beranda" aria-label="Navego — beranda" style={{ color: '#ffffff' }}>
               <NavegoMark size={36} />
               <NavegoWordmark size={16} />
             </Link>
@@ -120,13 +136,13 @@ export function SiteFooter() {
             <ul>
               <li><a href="https://github.com/afnannuzulasugihartono/navego" rel="noreferrer">GitHub</a></li>
               <li><a href="https://www.npmjs.com/package/navego" rel="noreferrer">npm</a></li>
-              <li><Link to="/mcp.html">Pasang sebagai MCP</Link></li>
+              <li><Link to="/mcp">Pasang sebagai MCP</Link></li>
             </ul>
           </nav>
         </div>
         <div className="footer-bar">
           <span>© 2026 Navego — private, local, signed.</span>
-          <span><Link to="/privasi.html">Privasi</Link> · <Link to="/syarat.html">Syarat</Link> · <Link to="/dukungan.html">Dukungan</Link></span>
+          <span><Link to="/privasi">Privasi</Link> · <Link to="/syarat">Syarat</Link> · <Link to="/dukungan">Dukungan</Link></span>
         </div>
       </div>
     </footer>

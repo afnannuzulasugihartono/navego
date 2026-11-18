@@ -11,7 +11,7 @@ const routes = [
   'beranda', 'fitur', 'harga', 'unduh', 'docs', 'mcp',
   'dukungan', 'privasi', 'syarat', 'akun', 'dashboard',
   'artikel', 'artikel/ai-browser-indonesia', 'oauth/consent',
-  '404.html'
+  '404'
 ];
 
 // WHY deepest first: /artikel/ai-browser-indonesia must be moved out of build/client/artikel before the parent dir is removed.

@@ -19,7 +19,7 @@ export default {
     '/privasi',
     '/syarat',
     '/akun',
-    '/404.html',
+    '/404',
     '/oauth/consent',
     '/dashboard',
     '/artikel',

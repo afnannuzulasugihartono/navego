@@ -68,7 +68,7 @@ export default function Index() {
         if ('email' in proof) {
           setWho(proof.email as string);
           setPhase('signedIn');
-          if (returnTo() !== './beranda.html') setReturning(true);
+          if (returnTo() !== './beranda') setReturning(true);
         }
       }
     })();
@@ -116,7 +116,7 @@ export default function Index() {
 
   return (
     <>
-      <SiteHeader current="/index.html" />
+      <SiteHeader current="/" />
       <main className="auth-stage" aria-label="Masuk ke Navego">
         <div className="auth-art" aria-hidden="true">
           <p className="kicker" style={{ color: 'var(--amber-hi)' }}>Huginn &amp; Muninn</p>
@@ -153,12 +153,12 @@ export default function Index() {
                 <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-base)' }}>Masuk sebagai <strong>{who}</strong>.</p>
                 {returning ? (
                   <div className="hero-cta" style={{ marginTop: 'var(--s-4)' }}>
-                    <a className="btn btn-solid" id="continueButton" href="./beranda.html">Lanjut ke izin</a>
-                    <a className="btn btn-ghost" href="./beranda.html">Beranda</a>
+                    <a className="btn btn-solid" id="continueButton" href="./beranda">Lanjut ke izin</a>
+                    <a className="btn btn-ghost" href="./beranda">Beranda</a>
                   </div>
                 ) : (
                   <div className="hero-cta" style={{ marginTop: 'var(--s-4)' }}>
-                    <a className="btn btn-solid" href="./dashboard.html">Buka dashboard</a>
+                    <a className="btn btn-solid" href="/dashboard">Buka dashboard</a>
                     <button className="btn btn-ghost" type="button" onClick={signOut}>Keluar</button>
                   </div>
                 )}

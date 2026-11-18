@@ -12,7 +12,7 @@ export function meta() {
 export default function Syarat() {
   return (
     <>
-      <SiteHeader current="/syarat.html" />
+      <SiteHeader current="/syarat" />
       <main>
         <section className="page-hero">
           <div className="wrap">

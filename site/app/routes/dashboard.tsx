@@ -139,8 +139,8 @@ export default function Dashboard() {
     void (async () => {
       const token = await ensureSession();
       if (!token) {
-        const next = wantPairIntent() ? './dashboard.html?pair=1#pairing' : './dashboard.html';
-        window.location.replace('./index.html?next=' + encodeURIComponent(next));
+        const next = wantPairIntent() ? '/dashboard?pair=1#pairing' : '/dashboard';
+        window.location.replace('/?next=' + encodeURIComponent(next));
         return;
       }
       try {
@@ -329,10 +329,10 @@ export default function Dashboard() {
 
   return (
     <>
-      <SiteHeader current="/dashboard.html" />
+      <SiteHeader current="/dashboard" />
       <main className="wrap">
         {!ready ? (
-          <p className="empty" style={{ paddingTop: 60 }}>Memeriksa sesi…</p>
+          <p className="empty" style={{ paddingTop: 'var(--s-9)' }}>Memeriksa sesi…</p>
         ) : (
           <div className="app">
             <nav className="rail" aria-label="Navigasi konsol">
@@ -366,20 +366,20 @@ export default function Dashboard() {
 
                   <div className="panel" style={{ background: planRemaining <= 0 ? '#f6dcd6' : planPercent >= 80 ? '#fbeab6' : 'var(--panel-2)' }}>
                     <div className="panel-head">
-                      <h2 style={{ fontSize: 15 }}>Plan</h2>
+                      <h2 style={{ fontSize: 'var(--text-base)' }}>Plan</h2>
                       <span className={`chip ${plan?.status === 'active' ? 'good' : 'warn'}`}>{plan?.status === 'active' ? 'aktif' : plan?.status || 'memuat…'}</span>
                     </div>
                     <p style={{ fontFamily: 'ui-monospace, Consolas, monospace', fontWeight: 800 }}>{plan?.plan || 'plan.pilot'}</p>
                     <div className="plan-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={planPercent} aria-label="Pemakaian kuota hari ini">
                       <div className="plan-fill" style={{ width: `${planPercent}%` }} />
                     </div>
-                    <p style={{ fontSize: 12, color: 'var(--muted-2)' }}><strong>{(plan?.used ?? 0).toLocaleString('id-ID')}</strong> dari <strong>{(plan?.quota ?? 0).toLocaleString('id-ID')}</strong> perintah dipakai hari ini · {(plan?.sessionAllowance ?? (plan?.plan === 'plan.firm' ? 500 : 50)).toLocaleString('id-ID')} / sesi · reset besok 00.00 UTC</p>
-                    {planRemaining <= 0 ? <p style={{ marginTop: 8, fontSize: 12, color: 'var(--danger)' }}>Plan habis — reset besok 00.00 UTC. <Link to="/harga.html">Lihat paket</Link></p> : null}
+                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)' }}><strong>{(plan?.used ?? 0).toLocaleString('id-ID')}</strong> dari <strong>{(plan?.quota ?? 0).toLocaleString('id-ID')}</strong> perintah dipakai hari ini · {(plan?.sessionAllowance ?? (plan?.plan === 'plan.firm' ? 500 : 50)).toLocaleString('id-ID')} / sesi · reset besok 00.00 UTC</p>
+                    {planRemaining <= 0 ? <p style={{ marginTop: 'var(--s-2)', fontSize: 'var(--text-xs)', color: 'var(--danger)' }}>Plan habis — reset besok 00.00 UTC. <Link to="/harga">Lihat paket</Link></p> : null}
                   </div>
 
                   <div className="panel">
-                    <div className="panel-head"><h2 style={{ fontSize: 15 }}>Checklist pemasangan</h2></div>
-                    <ol style={{ listStyle: 'none', display: 'grid', gap: 8, fontSize: 13 }}>
+                    <div className="panel-head"><h2 style={{ fontSize: 'var(--text-base)' }}>Checklist pemasangan</h2></div>
+                    <ol style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-2)', fontSize: 'var(--text-sm)' }}>
                       <li>{installState === 'installed' ? 'siap' : '○'} Pasang extension di browser ini</li>
                       <li>{total > 0 ? 'siap' : '○'} Pair device</li>
                       <li>{doneSum > 0 ? 'siap' : '○'} Jalankan perintah pertama</li>
@@ -398,34 +398,34 @@ export default function Dashboard() {
                     <div className="empty">
                       <p><strong>Belum ada device.</strong></p>
                       <p>Pasang Navego di browser ini, lalu klik “Pasangkan browser ini”.</p>
-                      <button className="btn btn-solid btn-sm" type="button" onClick={() => go('pairing')} style={{ marginTop: 10 }}>Pasangkan browser ini</button>
+                      <button className="btn btn-solid btn-sm" type="button" onClick={() => go('pairing')} style={{ marginTop: 'var(--s-2)' }}>Pasangkan browser ini</button>
                     </div>
                   ) : null}
-                  <div style={{ display: 'grid', gap: 12 }}>
+                  <div style={{ display: 'grid', gap: 'var(--s-3)' }}>
                     {(devices ?? []).map((device) => (
                       <div key={device.id} className="panel" style={{ background: 'var(--card)' }}>
                         <div className="panel-head">
-                          <h2 style={{ fontSize: 15, display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <h2 style={{ fontSize: 'var(--text-base)', display: 'flex', alignItems: 'center', gap: 'var(--s-2)' }}>
                             <span aria-hidden="true" style={{ width: 10, height: 10, borderRadius: '50%', background: isDeviceLive(device) ? 'var(--good)' : 'var(--danger)', display: 'inline-block' }} />
                             {device.name || 'device'}
                             <span className="chip">{device.extensionVersion || '-'}</span>
                             {device.browserName ? <span className="chip">{device.browserName}</span> : null}
                           </h2>
                         </div>
-                        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '4px 18px', fontSize: 12.5 }}>
+                        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 'var(--s-1) var(--s-4)', fontSize: 'var(--text-sm)' }}>
                           <dt style={{ color: 'var(--muted)' }}>Status</dt><dd>{deviceStatusText(device)}</dd>
                           <dt style={{ color: 'var(--muted)' }}>Terakhir terlihat</dt><dd>{relativeTime(device.lastSeenAt)}</dd>
                           <dt style={{ color: 'var(--muted)' }}>Perintah</dt><dd>{device.completedCommands ?? 0} / {device.totalCommands ?? 0}</dd>
                           <dt style={{ color: 'var(--muted)' }}>ID device</dt><dd><code>{device.id}</code></dd>
                         </dl>
                         {device.commands?.length ? (
-                          <ul style={{ listStyle: 'none', display: 'grid', gap: 4, marginTop: 8, fontSize: 12 }}>
+                          <ul style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-1)', marginTop: 'var(--s-2)', fontSize: 'var(--text-xs)' }}>
                             {device.commands.map((command, index) => (
-                              <li key={index} style={{ display: 'flex', gap: 8 }}><code>{command.method}</code>{command.provider ? <span className="chip">{command.provider}</span> : null}<span>{command.status}</span></li>
+                              <li key={index} style={{ display: 'flex', gap: 'var(--s-2)' }}><code>{command.method}</code>{command.provider ? <span className="chip">{command.provider}</span> : null}<span>{command.status}</span></li>
                             ))}
                           </ul>
                         ) : null}
-                        <div className="hero-cta" style={{ marginTop: 10 }}>
+                        <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
                           <button className="btn btn-ghost btn-sm" type="button" onClick={() => navigator.clipboard?.writeText(device.id || '')}>Salin ID</button>
                           <button className="btn btn-ghost btn-sm" type="button" style={{ color: 'var(--danger)' }} onClick={async () => {
                             if (!window.confirm(`Cabut ${device.name}? Perintah baru berhenti seketika; pairing ulang menghidupkannya lagi.`)) return;
@@ -451,7 +451,7 @@ export default function Dashboard() {
                       <option value="failed">Gagal</option>
                       <option value="pending">Mengantre</option>
                     </select>
-                    <span style={{ fontSize: 11, color: 'var(--muted)' }}>{historyRows.length}/{allCommands.length} perintah</span>
+                    <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>{historyRows.length}/{allCommands.length} perintah</span>
                   </div>
                   <table className="table">
                     <thead><tr><th>Waktu</th><th>Device</th><th>Metode</th><th>Durasi</th><th>Status</th></tr></thead>
@@ -474,13 +474,13 @@ export default function Dashboard() {
               {view === 'dengar' ? (
                 <>
                   <h1>Sesi dengar</h1>
-                  <p style={{ fontSize: 12, color: 'var(--muted-2)', marginBottom: 10 }}>Sesi dengar di akun ini: metadata saja, tidak pernah kata-katanya. Transkrip hanya hidup di hasil tool model.</p>
+                  <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)', marginBottom: 'var(--s-2)' }}>Sesi dengar di akun ini: metadata saja, tidak pernah kata-katanya. Transkrip hanya hidup di hasil tool model.</p>
                   {listens === null ? <p className="empty">Memuat…</p> : listens.length === 0 ? <p className="empty">Belum ada sesi dengar. Mulai dari model dengan <code>media_stream_start</code>.</p> : (
-                    <div style={{ display: 'grid', gap: 10 }}>
+                    <div style={{ display: 'grid', gap: 'var(--s-2)' }}>
                       {listens.map((session) => (
                         <div key={session.id} className="panel">
-                          <div className="panel-head"><strong style={{ fontSize: 13.5 }}>{session.deviceName || session.id}</strong><span className="chip">{session.status}</span></div>
-                          <p style={{ fontSize: 12, color: 'var(--muted-2)' }}>Mulai {relativeTime(session.startedAt)} · {session.segments ?? 0} segmen tertranskrip</p>
+                          <div className="panel-head"><strong style={{ fontSize: 'var(--text-sm)' }}>{session.deviceName || session.id}</strong><span className="chip">{session.status}</span></div>
+                          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)' }}>Mulai {relativeTime(session.startedAt)} · {session.segments ?? 0} segmen tertranskrip</p>
                         </div>
                       ))}
                     </div>
@@ -496,16 +496,16 @@ export default function Dashboard() {
                       <div><dt>Saldo</dt><dd>{wallet.balance !== undefined ? `Rp${(wallet.balance / 100).toLocaleString('id-ID')}` : '–'}</dd></div>
                       <div><dt>Tersedia sekarang</dt><dd>{wallet.available !== undefined ? `Rp${(wallet.available / 100).toLocaleString('id-ID')}` : '–'}</dd></div>
                     </dl>
-                    <div className="hero-cta" style={{ marginTop: 6 }}>
+                    <div className="hero-cta" style={{ marginTop: 'var(--s-1)' }}>
                       <button className="btn btn-solid" type="button" onClick={topUp}>{wallet.topUp || 'Isi ulang'}</button>
                       <button className="btn btn-ghost" type="button" onClick={loadWallet}>Muat ulang</button>
                     </div>
-                    <p className="status" role="status" style={{ marginTop: 8 }}>{wallet.status}</p>
+                    <p className="status" role="status" style={{ marginTop: 'var(--s-2)' }}>{wallet.status}</p>
                   </div>
 
                   {wallet.prices ? (
                     <div className="panel">
-                      <h2 style={{ fontSize: 14, marginBottom: 8 }}>Harga</h2>
+                      <h2 style={{ fontSize: 'var(--text-base)', marginBottom: 'var(--s-2)' }}>Harga</h2>
                       <table className="table">
                         <tbody>
                           {wallet.prices.map((price) => (
@@ -517,7 +517,7 @@ export default function Dashboard() {
                   ) : null}
 
                   <div className="panel">
-                    <h2 style={{ fontSize: 14, marginBottom: 8 }}>Pergerakan</h2>
+                    <h2 style={{ fontSize: 'var(--text-base)', marginBottom: 'var(--s-2)' }}>Pergerakan</h2>
                     {wallet.entries.length ? (
                       <table className="table">
                         <thead><tr><th>Waktu</th><th>Jenis</th><th className="num">Jumlah</th><th>Catatan</th></tr></thead>
@@ -541,13 +541,13 @@ export default function Dashboard() {
                 <>
                   <h1>Pairing</h1>
                   <div className="panel" style={{ maxWidth: 520 }}>
-                    <p style={{ fontSize: 12.5, color: 'var(--muted-2)' }}>Satu klik saja — kode dibuat di server dan dikirim langsung ke ekstensi di browser ini. Tidak ada yang perlu diketik atau disalin.</p>
-                    <div className="field" style={{ marginTop: 12 }}>
+                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)' }}>Satu klik saja — kode dibuat di server dan dikirim langsung ke ekstensi di browser ini. Tidak ada yang perlu diketik atau disalin.</p>
+                    <div className="field" style={{ marginTop: 'var(--s-3)' }}>
                       <label htmlFor="pairName">Nama device</label>
                       <input id="pairName" type="text" autoComplete="off" spellCheck={false} maxLength={64} placeholder="opera" value={pairName} onChange={(event) => setPairName(event.target.value)} />
                     </div>
                     <button className="btn btn-solid" type="button" onClick={runPairQuick}>{pairOk ? 'siap Ter-pairing' : 'Pasangkan browser ini'}</button>
-                    <p className="status" role="status" style={{ marginTop: 8 }}>{pairStatus}</p>
+                    <p className="status" role="status" style={{ marginTop: 'var(--s-2)' }}>{pairStatus}</p>
                   </div>
                 </>
               ) : null}
@@ -556,13 +556,13 @@ export default function Dashboard() {
                 <>
                   <h1>Jalankan aksi</h1>
                   <div className="panel" style={{ maxWidth: 520 }}>
-                    <p style={{ fontSize: 12.5, color: 'var(--muted-2)' }}>Perintah dikirim ke device milik Anda sendiri. Device menolak halaman yang menampilkan password, kode sekali pakai, atau pembayaran.</p>
-                    <div className="field" style={{ marginTop: 12 }}>
+                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)' }}>Perintah dikirim ke device milik Anda sendiri. Device menolak halaman yang menampilkan password, kode sekali pakai, atau pembayaran.</p>
+                    <div className="field" style={{ marginTop: 'var(--s-3)' }}>
                       <label htmlFor="runMethod">Primitive</label>
                       <input id="runMethod" type="text" autoComplete="off" spellCheck={false} maxLength={64} value={runMethod} onChange={(event) => setRunMethod(event.target.value)} />
                     </div>
                     <button className="btn btn-solid" type="button" disabled={runPending} onClick={runAction}>Jalankan</button>
-                    <p className="status" role="status" style={{ marginTop: 8 }}>{runStatus}</p>
+                    <p className="status" role="status" style={{ marginTop: 'var(--s-2)' }}>{runStatus}</p>
                   </div>
                 </>
               ) : null}
@@ -571,14 +571,14 @@ export default function Dashboard() {
                 <>
                   <h1>Akun ini</h1>
                   <div className="panel" style={{ maxWidth: 560 }}>
-                    <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '6px 18px', fontSize: 12.5 }}>
+                    <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 'var(--s-1) var(--s-4)', fontSize: 'var(--text-sm)' }}>
                       <dt style={{ color: 'var(--muted)' }}>Alamat</dt><dd>{userEmail || '—'}</dd>
                       <dt style={{ color: 'var(--muted)' }}>Device daring</dt><dd>{online} dari {total}</dd>
                     </dl>
-                    <div className="hero-cta" style={{ marginTop: 12 }}>
-                      <Link className="btn btn-ghost" to="/akun.html">Kelola akun</Link>
-                      <Link className="btn btn-ghost" to="/unduh.html">Pasang di device lain</Link>
-                      <button className="btn btn-ghost" type="button" style={{ color: 'var(--danger)' }} onClick={async () => { const token = await ensureSession(); try { if (token) await fetch(`${AUTH_HOST}/logout`, { method: 'POST', headers: headersFor(token) }); } catch { /* best effort */ } clearSession(); window.location.replace('./index.html'); }}>Keluar</button>
+                    <div className="hero-cta" style={{ marginTop: 'var(--s-3)' }}>
+                      <Link className="btn btn-ghost" to="/akun">Kelola akun</Link>
+                      <Link className="btn btn-ghost" to="/unduh">Pasang di device lain</Link>
+                      <button className="btn btn-ghost" type="button" style={{ color: 'var(--danger)' }} onClick={async () => { const token = await ensureSession(); try { if (token) await fetch(`${AUTH_HOST}/logout`, { method: 'POST', headers: headersFor(token) }); } catch { /* best effort */ } clearSession(); window.location.replace('/'); }}>Keluar</button>
                     </div>
                   </div>
                 </>
@@ -686,9 +686,9 @@ function KonsolView({ deviceCount }: { deviceCount: number }) {
     <>
       <h1>Tabel</h1>
       <div className="konsol-split">
-        <nav className="panel" style={{ minWidth: 190, display: 'grid', gap: 6, alignContent: 'start' }} aria-label="Daftar tabel">
-          {!state.ready ? <span style={{ fontSize: 12, color: 'var(--muted)' }}>Memuat…</span> : state.tables.length === 0 ? <span style={{ fontSize: 12, color: 'var(--muted)' }}>Konsol data belum bisa dimuat.</span> : state.tables.map((table) => (
-            <button key={table.name} className="rail-item" style={{ color: 'var(--ink)', background: state.selected === table.name ? 'var(--card-2)' : 'transparent', borderRadius: 8, border: 0, padding: '8px 10px', textAlign: 'left', cursor: 'pointer', fontSize: 12.5 }} onClick={() => openTable(table.name)}>
+        <nav className="panel" style={{ minWidth: 190, display: 'grid', gap: 'var(--s-1)', alignContent: 'start' }} aria-label="Daftar tabel">
+          {!state.ready ? <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Memuat…</span> : state.tables.length === 0 ? <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Konsol data belum bisa dimuat.</span> : state.tables.map((table) => (
+            <button key={table.name} className="rail-item" style={{ color: 'var(--ink)', background: state.selected === table.name ? 'var(--card-2)' : 'transparent', borderRadius: 'var(--radius-sm)', border: 0, padding: 'var(--s-2) var(--s-3)', textAlign: 'left', cursor: 'pointer', fontSize: 'var(--text-sm)' }} onClick={() => openTable(table.name)}>
               {table.label || table.name}{typeof table.count === 'number' ? <span style={{ color: 'var(--muted)' }}> · {table.count}</span> : null}
             </button>
           ))}
@@ -699,9 +699,9 @@ function KonsolView({ deviceCount }: { deviceCount: number }) {
               <div className="toolbar">
                 <input className="input-sm" type="search" placeholder="Cari di tabel ini…" value={state.search} onChange={(event) => openTable(selectedTable, 0, event.target.value)} aria-label="Cari baris" />
                 <button className="btn btn-ghost btn-sm" type="button" onClick={exportCsv} title="Unduh hingga 5.000 baris sesuai filter saat ini">Ekspor CSV</button>
-                <span style={{ fontSize: 11, color: 'var(--muted)' }}>{state.total.toLocaleString('id-ID')} baris</span>
+                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>{state.total.toLocaleString('id-ID')} baris</span>
               </div>
-              <table className="table" style={{ fontSize: 11 }}>
+              <table className="table" style={{ fontSize: 'var(--text-xs)' }}>
                 <thead><tr>{state.columns.length === 0 ? <th scope="col">Memuat…</th> : state.columns.map((col) => <th key={col.name} scope="col">{col.name}</th>)}</tr></thead>
                 <tbody>
                   {state.rows.map((row, index) => (
@@ -714,14 +714,14 @@ function KonsolView({ deviceCount }: { deviceCount: number }) {
                 </tbody>
               </table>
               {state.rows.length === 0 ? <p className="empty">Tabel ini kosong. Tidak ada baris yang cocok dengan akun dan filter ini.</p> : null}
-              <div className="toolbar" style={{ marginTop: 10 }}>
+              <div className="toolbar" style={{ marginTop: 'var(--s-2)' }}>
                 <button className="btn btn-ghost btn-sm" type="button" disabled={currentPage <= 1} onClick={() => openTable(selectedTable, Math.max(0, state.offset - pageSize), state.search)}>‹ Sebelumnya</button>
-                <span style={{ fontSize: 11.5, color: 'var(--muted)' }}>Halaman {currentPage} dari {pages}</span>
+                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Halaman {currentPage} dari {pages}</span>
                 <button className="btn btn-ghost btn-sm" type="button" disabled={currentPage >= pages} onClick={() => openTable(selectedTable, state.offset + pageSize, state.search)}>Berikutnya ›</button>
               </div>
             </>
           ) : <p className="empty">Pilih tabel di kiri. {deviceCount === 0 ? 'Konsol hanya terisi setelah device Anda ter-pairing.' : ''}</p>}
-          {state.status ? <p className="status" role="status" style={{ marginTop: 8 }}>{state.status}</p> : null}
+          {state.status ? <p className="status" role="status" style={{ marginTop: 'var(--s-2)' }}>{state.status}</p> : null}
         </div>
       </div>
     </>

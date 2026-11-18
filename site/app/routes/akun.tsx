@@ -62,7 +62,7 @@ export default function Akun() {
     void (async () => {
       const token = await ensureSession();
       if (!token) {
-        window.location.replace('./index.html');
+        window.location.replace('/');
         return;
       }
       let user: Record<string, unknown> | null = null;
@@ -72,7 +72,7 @@ export default function Akun() {
         user = await response.json();
       } catch {
         clearSession();
-        window.location.replace('./index.html');
+        window.location.replace('/');
         return;
       }
       setState((s) => ({ ...s, loading: false, user }));
@@ -111,7 +111,7 @@ export default function Akun() {
     } catch {
     }
     clearSession();
-    window.location.replace('./index.html');
+    window.location.replace('/');
   }
 
   async function copyId() {
@@ -126,7 +126,7 @@ export default function Akun() {
 
   return (
     <>
-      <SiteHeader current="/akun.html" />
+      <SiteHeader current="/akun" />
       <main>
         <section className="page-hero">
           <div className="wrap">
@@ -134,7 +134,7 @@ export default function Akun() {
             <h1>Akun Anda.</h1>
             <p className="lede">Akun ini yang dipakai device dan perintah Anda.</p>
             <div className="hero-cta">
-              <Link className="btn btn-solid" to="/dashboard.html">Buka Dashboard</Link>
+              <Link className="btn btn-solid" to="/dashboard">Buka Dashboard</Link>
             </div>
           </div>
         </section>
@@ -189,8 +189,8 @@ export default function Akun() {
                 <h2 className="card-title">Device Anda</h2>
                 <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)', margin: 'var(--s-2) 0 var(--s-4)' }}>{state.deviceText}</p>
                 <div className="hero-cta" style={{ marginTop: 0 }}>
-                  <Link className="btn btn-solid" to="/dashboard.html">Buka dashboard</Link>
-                  <Link className="btn btn-ghost" to="/unduh.html">Pasang di device lain</Link>
+                  <Link className="btn btn-solid" to="/dashboard">Buka dashboard</Link>
+                  <Link className="btn btn-ghost" to="/unduh">Pasang di device lain</Link>
                 </div>
               </section>
 

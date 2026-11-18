@@ -9,7 +9,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#dbe7f3" />
+        <meta name="theme-color" content="#f6f1e7" />
         <link rel="icon" type="image/svg+xml" href="/icon.svg" />
         <Meta />
         <Links />
@@ -35,7 +35,7 @@ export function ErrorBoundary() {
       <p className="section-head"><h2>{is404 ? 'Halaman ini tidak ada.' : 'Terjadi kesalahan.'}</h2></p>
       <p style={{ color: 'var(--muted)' }}>
         {is404 ? 'Tautan yang Anda ikuti mungkin sudah dipindahkan.' : 'Coba muat ulang halaman ini.'}{' '}
-        <a href="/beranda.html">Kembali ke beranda</a>
+        <a href="/beranda">Kembali ke beranda</a>
       </p>
     </main>
   );

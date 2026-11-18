@@ -1,10 +1,10 @@
-/*
- * Navego — brand.css: components and page styles, on the tokens in tokens.css.
- * Flat corporate Y2K: cream ground, deep navy, one amber accent.
- * No gradients, no shadows.
- */
+﻿/*
+﻿ * Navego â€” brand.css: components and page styles, on the tokens in tokens.css.
+﻿ * Flat corporate Y2K: cream ground, deep navy, one amber accent.
+﻿ * No gradients, no shadows.
+﻿ */
 
-/* ========== header — one nav tree, narrow popover / wide inline (navbar guide) ========== */
+/* ========== header â€” one nav tree, narrow popover / wide inline (navbar guide) ========== */
 
 .site-header {
   position: sticky;
@@ -120,7 +120,7 @@
   .nav-menu { display: none !important; }
 }
 
-/* ========== buttons — one voice ========== */
+/* ========== buttons â€” one voice ========== */
 
 .btn {
   display: inline-flex;
@@ -149,7 +149,7 @@
 .btn-navy:hover { background: var(--navy-soft); }
 .btn-sm { padding: 0.48rem 1rem; font-size: var(--text-xs); min-block-size: 2.25rem; }
 
-/* ========== hero — one voice everywhere ========== */
+/* ========== hero â€” one voice everywhere ========== */
 
 .hero {
   border-bottom: 1px solid var(--line-dark);
@@ -208,7 +208,7 @@
 .hero-artefact code {
   display: block;
   margin-top: var(--s-2);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   background: transparent;
   border: 0;
   padding: 0;
@@ -224,6 +224,14 @@
 }
 
 /* ========== shared section chrome ========== */
+
+h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+}
 
 .section { padding: var(--s-8) 0; }
 .section + .section { border-top: 1px solid var(--line); }
@@ -255,7 +263,7 @@
 .page-hero .crumb { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; margin-bottom: var(--s-4); }
 .page-hero .lede { font-size: var(--text-lg); color: var(--muted-2); max-width: 56ch; margin-top: var(--s-4); }
 
-/* ========== cards — one surface system ========== */
+/* ========== cards â€” one surface system ========== */
 
 .card {
   background: var(--paper);
@@ -408,7 +416,7 @@
   gap: var(--s-5);
 }
 .faq summary::after { content: '+'; font-family: var(--font-display); color: var(--amber-deep); }
-.faq details[open] summary::after { content: '–'; }
+.faq details[open] summary::after { content: 'â€“'; }
 .faq p { margin-top: var(--s-3); color: var(--muted-2); font-size: var(--text-sm); }
 
 /* ========== download cards (/unduh) ========== */
@@ -499,7 +507,7 @@
 .docs-article { max-width: 68ch; }
 .docs-article h2 {
   font-family: var(--font-display);
-  font-size: var(--text-xl);
+  font-size: var(--text-2xl);
   letter-spacing: -0.02em;
   color: var(--navy-deep);
   margin: var(--s-6) 0 var(--s-3);
@@ -641,7 +649,7 @@
 .legal { max-width: 46rem; }
 .legal h2 {
   font-family: var(--font-display);
-  font-size: var(--text-xl);
+  font-size: var(--text-2xl);
   letter-spacing: -0.02em;
   color: var(--navy-deep);
   margin: var(--s-6) 0 var(--s-3);
@@ -676,7 +684,7 @@
 .toolbar { display: flex; gap: var(--s-3); align-items: center; margin-bottom: var(--s-3); flex-wrap: wrap; }
 .input-sm { font-family: var(--font-sans); font-size: var(--text-sm); padding: var(--s-2) var(--s-3); border-radius: var(--radius-sm); border: 1px solid var(--line-dark); background: var(--paper); color: var(--ink); }
 .input-sm:focus-visible { border-color: var(--navy); }
-.chip { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.7rem; border-radius: 999px; background: var(--panel-2); color: var(--ink-2); border: 1px solid var(--line-dark); white-space: nowrap; }
+.chip { display: inline-block; font-size: var(--text-2xs); font-weight: 700; padding: 0.2rem 0.7rem; border-radius: 999px; background: var(--panel-2); color: var(--ink-2); border: 1px solid var(--line-dark); white-space: nowrap; }
 .chip.good { background: var(--good-bg); color: #145c22; border-color: #7bbd55; }
 .chip.warn { background: var(--warn-bg); color: #6b4a12; border-color: #d9b93f; }
 .num { text-align: right; font-variant-numeric: tabular-nums; }

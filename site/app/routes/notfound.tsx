@@ -11,17 +11,17 @@ export function meta() {
 }
 
 const EXITS = [
-  ['/beranda.html', 'Beranda', 'Cara kerjanya dan semua jawaban umum.'],
-  ['/unduh.html', 'Unduh', 'Arsip extension dan sidik jarinya.'],
-  ['/index.html', 'Masuk', 'Akun Anda, lewat Google, GitHub, atau magic link.'],
-  ['/akun.html', 'Akun', 'Identitas Anda dan penyedia yang tertaut.'],
-  ['/dashboard.html', 'Dashboard', 'Device ter-pairing dan riwayatnya.']
+  ['/beranda', 'Beranda', 'Cara kerjanya dan semua jawaban umum.'],
+  ['/unduh', 'Unduh', 'Arsip extension dan sidik jarinya.'],
+  ['/', 'Masuk', 'Akun Anda, lewat Google, GitHub, atau magic link.'],
+  ['/akun', 'Akun', 'Identitas Anda dan penyedia yang tertaut.'],
+  ['/dashboard', 'Dashboard', 'Device ter-pairing dan riwayatnya.']
 ] as const;
 
 export default function NotFound() {
   return (
     <>
-      <SiteHeader current="/404.html" />
+      <SiteHeader current="/404" />
       <main>
         <section className="page-hero">
           <div className="wrap">

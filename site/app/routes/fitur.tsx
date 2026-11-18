@@ -55,7 +55,7 @@ function RoleTabs() {
 export default function Fitur() {
   return (
     <>
-      <SiteHeader current="/fitur.html" />
+      <SiteHeader current="/fitur" />
       <main>
         <section className="page-hero">
           <div className="wrap">
@@ -63,8 +63,8 @@ export default function Fitur() {
             <h1>Yang bisa<br />dikerjakan Navego.</h1>
             <p className="lede">Anda menulis satu perintah. Navego membaca halaman yang terbuka, mengisi formulir, lalu menyimpan hasilnya sebagai berkas.</p>
             <div className="hero-cta">
-              <Link className="btn btn-solid" to="/unduh.html">Unduh navego</Link>
-              <Link className="btn btn-ghost" to="/docs.html">Baca docs</Link>
+              <Link className="btn btn-solid" to="/unduh">Unduh navego</Link>
+              <Link className="btn btn-ghost" to="/docs">Baca docs</Link>
             </div>
           </div>
         </section>
@@ -130,7 +130,7 @@ export default function Fitur() {
                 <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-2xl)', color: '#ffffff', letterSpacing: '-0.02em' }}>Mulai dari satu perintah.</h2>
                 <p style={{ color: '#a9bce8', marginTop: 'var(--s-2)' }}>Buka akun, pair device ini, lalu jalankan satu pekerjaan — hasilnya berupa berkas nyata yang bisa Anda buka sendiri.</p>
               </div>
-              <Link className="btn btn-solid" to="/unduh.html">Unduh navego</Link>
+              <Link className="btn btn-solid" to="/unduh">Unduh navego</Link>
             </div>
           </div>
         </section>

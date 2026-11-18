@@ -73,7 +73,7 @@ export default function Harga() {
 
   return (
     <>
-      <SiteHeader current="/harga.html" />
+      <SiteHeader current="/harga" />
       <main>
         <section className="page-hero">
           <div className="wrap">
@@ -110,7 +110,7 @@ export default function Harga() {
           </div>
 
           {signedOut ? (
-            <p className="status" style={{ marginTop: 'var(--s-4)' }}>Pembayaran memakai akun Anda. <Link to="/index.html">Masuk dulu</Link>, lalu kembali ke halaman ini.</p>
+            <p className="status" style={{ marginTop: 'var(--s-4)' }}>Pembayaran memakai akun Anda. <Link to="/">Masuk dulu</Link>, lalu kembali ke halaman ini.</p>
           ) : null}
           {note ? <p className={warn ? 'status warn' : 'status'} role="status" aria-live="polite" style={{ marginTop: 'var(--s-4)' }}>{note}</p> : null}
           <p className="note" style={{ marginTop: 'var(--s-3)' }}>Bayar lewat <strong>QRIS</strong>. Setelah pembayaran dikonfirmasi, saldo atau Plan Firm aktif otomatis — saldo bertambah, kuota Firm berlaku langsung.</p>
@@ -146,7 +146,7 @@ export default function Harga() {
                 <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-2xl)', color: '#ffffff', letterSpacing: '-0.02em' }}>Harga yang jalan.</h2>
                 <p style={{ color: '#a9bce8', marginTop: 'var(--s-2)' }}>Pasang gratis, jalankan satu pekerjaan pertama Anda, dan bayar hanya setelah hasilnya ada.</p>
               </div>
-              <Link className="btn btn-solid" to="/unduh.html">Pasang navego</Link>
+              <Link className="btn btn-solid" to="/unduh">Pasang navego</Link>
             </div>
           </div>
         </section>

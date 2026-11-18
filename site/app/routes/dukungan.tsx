@@ -36,7 +36,7 @@ const FIXES = [
 export default function Dukungan() {
   return (
     <>
-      <SiteHeader current="/dukungan.html" />
+      <SiteHeader current="/dukungan" />
       <main>
         <section className="page-hero">
           <div className="wrap">
@@ -52,16 +52,16 @@ export default function Dukungan() {
               <details key={fix.id} id={fix.id}>
                 <summary>{fix.title}</summary>
                 <p>{fix.body}</p>
-                {fix.id === 'mcp' ? <p style={{ marginTop: 'var(--s-3)' }}><Link to="/docs.html#mcp">Ke Docs → Hubungkan AI harness</Link></p> : null}
-                {fix.id === 'device' ? <p style={{ marginTop: 'var(--s-3)' }}><Link to="/dashboard.html">Buka Dashboard</Link></p> : null}
-                {fix.id === 'ext' ? <p style={{ marginTop: 'var(--s-3)' }}><Link to="/unduh.html">Ke halaman Unduh</Link></p> : null}
+                {fix.id === 'mcp' ? <p style={{ marginTop: 'var(--s-3)' }}><Link to="/docs#mcp">Ke Docs → Hubungkan AI harness</Link></p> : null}
+                {fix.id === 'device' ? <p style={{ marginTop: 'var(--s-3)' }}><Link to="/dashboard">Buka Dashboard</Link></p> : null}
+                {fix.id === 'ext' ? <p style={{ marginTop: 'var(--s-3)' }}><Link to="/unduh">Ke halaman Unduh</Link></p> : null}
               </details>
             ))}
           </div>
 
           <section className="card" aria-labelledby="kontakTitle">
             <p className="kicker">Kontak</p>
-            <h2 id="kontakTitle" className="section-title" style={{ fontSize: 'var(--text-xl)', marginTop: 'var(--s-2)' }}>Belum ketemu?</h2>
+            <h2 id="kontakTitle" className="section-title" style={{ marginTop: 'var(--s-2)' }}>Belum ketemu?</h2>
             <p style={{ color: 'var(--muted-2)', fontSize: 'var(--text-sm)', margin: 'var(--s-3) 0 var(--s-4)' }}>Tiga pintu, dan semuanya dibaca orang.</p>
             <ul style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-3)', fontSize: 'var(--text-base)' }}>
               <li><span style={{ display: 'inline-block', minWidth: '5rem', color: 'var(--muted)', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Email</span> <a href="mailto:afnannuzulasugihartono@gmail.com">afnannuzulasugihartono@gmail.com</a></li>
