@@ -105,7 +105,8 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; font-family: var(--font-sans); container-type: scroll-state; }
+html { scroll-behavior: smooth; font-family: var(--font-sans); container-type: scroll-state; overflow-x: clip; }
+body { overflow-x: clip; }
 
 :target { scroll-margin-top: 4.75rem; }
 

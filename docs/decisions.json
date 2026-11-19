@@ -699,6 +699,15 @@
         "kind": "user",
         "ref": "user 2026-11-19: \"fix element beranda yang masih di atas nav bar\" (answer: \"Label Beranda di tengah bar\") - the centered link sits awkwardly against D51: brand left, one amber CTA right, chevron is the sole navigation surface"
       }
+    },
+    {
+      "id": "D77",
+      "scope": "web/components",
+      "decision": "html and body carry overflow-x: clip; the page never forces itself wider than the viewport, so the sticky header regains its real width and the brand and the two action pills cannot be pushed past the screen edge.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"fix log navego element masuk dan element pasang gratis yang terpotong\" - the header honours body width; a body pushed wider by an unbreakable element clips the actions on the right and crowds the brand on the left"
+      }
     }
   ]
 }
