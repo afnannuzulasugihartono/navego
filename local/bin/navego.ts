@@ -15,6 +15,8 @@ const USAGE = `navego <mode>
   cloud      drive it through the hosted Navego server
   auth       sign in with a browser and keep the token beside this install
   doctor     print what is connected, the plan, and what the plan allows (--json for scripts)
+  failures   print what broke on this machine: counts by tool and code, plus the agent's feedback notes (--tool=name, --limit=N, --json)
+  feedback   record what the agent saw while driving, e.g. navego feedback browser_read_page "canvas editors block every docs drive"
   install    detect this machine's browsers, register the extension, keep a verified CRX backup
   uninstall  remove the extension's policy entries, the Navego folder, and this package; prints what it cannot remove
 
@@ -47,6 +49,12 @@ if (mode === 'doctor') {
     process.stderr.write('Sign-in did not finish: ' + String((error as Error)?.message || error) + '\n');
     process.exitCode = 4;
   }
+} else if (mode === 'failures') {
+  const { failures: runFailures } = await import('../failures.js');
+  process.exitCode = await runFailures({ args: process.argv.slice(2).filter((a) => a.startsWith('--')) });
+} else if (mode === 'feedback') {
+  const { feedback: runFeedback } = await import('../failures.js');
+  process.exitCode = await runFeedback({ args: process.argv.slice(3) });
 } else if (mode === 'install') {
   const { installFromCli } = await import('../install.js');
   process.exitCode = await installFromCli();

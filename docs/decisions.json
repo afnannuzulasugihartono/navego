@@ -634,6 +634,42 @@
         "ref": "https://www.anthropic.com/research/writing-tools-for-agents - tools can consolidate functionality, and overlapping tools distract agents",
         "also": "docs/releases/1.6.47.md:8-19 - read_page_map was folded into read_page rather than split from it"
       }
+    },
+    {
+      "id": "D69",
+      "scope": "agent/tools",
+      "decision": "Every tool call that throws at the dispatch point is recorded append-only in $OPERA_AGENT_HOME/tool-failures.jsonl with the tool, the error code, the message and the time; the record never throws into the caller and is capped at 2 MB by keeping the newest 1000 lines.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"buat ini ya log untuk tools yang error atau buggy sama feedback juga\" - a failure that the answer cannot carry into the next session survives on the machine instead of vanishing"
+      }
+    },
+    {
+      "id": "D70",
+      "scope": "agent/tools",
+      "decision": "The log is read with navego failures (counts by tool and code, the recent failures, every note) and never leaves the machine; the owner machine is the sink, not a server; deleting the file is always safe - it is an observation channel, not a ledger.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"log untuk tools yang error atau buggy\" - the observation stays local and deletable; nothing is uploaded anywhere"
+      }
+    },
+    {
+      "id": "D71",
+      "scope": "agent/tools",
+      "decision": "The calling agent leaves the suggestion behind with navego feedback <tool> <note> - one append-only line tied to the tool, surfaced beside the failure counts; that is how an agent that uses a tool and sees it break leaves the fix idea where the maintainer will find it without a server round trip.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"supaya ai bisa kasih saran perbaikan saat menggunakan tools\" - the feedback path ships as a CLI command an agent shell can append; the catalog is not touched"
+      }
+    },
+    {
+      "id": "D72",
+      "scope": "agent/tools",
+      "decision": "No new MCP catalog tool is introduced for feedback reporting; the feedback channel is the CLI (navego feedback), not a 46th tool - the frozen tool surface stays as it is, and a catalog tool awaits the same recorded-evidence gate as any addition, the rule applied to browser_console in D63.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"buat ini\" - the mandate authorises the capability, and D63 applies to its shape: no catalog slot without a recorded need that only the catalog can serve"
+      }
     }
   ]
 }
