@@ -416,7 +416,7 @@ export async function runProof({
     note({ tool: 'initialize', ok: true, note: `server ${ready?.serverInfo?.name ?? 'unknown'}` });
 
     const names = await mcp.listTools();
-    for (const wanted of ['browser_open_url', 'browser_read_page', 'browser_download_file', 'artifact_build_workbook', 'artifact_build_slides', 'artifact_build_document', 'browser_screenshot', 'browser_close_tab']) {
+    for (const wanted of ['browser_open_url', 'browser_read_page', 'browser_download_file', 'artifact_build_report', 'artifact_build_slides', 'artifact_build_document', 'browser_screenshot', 'browser_close_tab']) {
       if (!names.includes(wanted)) throw new Error(`the server no longer offers ${wanted}`);
     }
     note({ tool: 'tools/list', ok: true, note: `${names.length} tools` });
@@ -467,7 +467,8 @@ export async function runProof({
 
     fs.mkdirSync(out, { recursive: true });
 
-    const workbook = await mcp.tool('artifact_build_workbook', {
+    const workbook = await mcp.tool('artifact_build_report', {
+      format: 'xlsx',
       source: csv,
       client: 'Sinar Jaya',
       title: 'Laporan Keuangan September 2026',
@@ -480,7 +481,7 @@ export async function runProof({
     const workbookFile = workbook.answer?.out;
     if (!workbookFile) throw new Error('sheet returned no file');
     compared('laporan-keuangan-2026-09.xlsx', workbookFile, {
-      tool: 'artifact_build_workbook',
+      tool: 'artifact_build_report',
       ms: workbook.ms,
       note: `${workbook.answer.sheets?.length ?? 0} sheets, ${workbook.answer.verified?.checked ?? 0} figures checked`
     });

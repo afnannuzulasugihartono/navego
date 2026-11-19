@@ -105,8 +105,8 @@ export const RECIPES = Object.freeze([
   },
   {
     task: 'Turn an exported sheet into an Excel workbook',
-    do: ['artifact_build_workbook'],
-    note: 'CSV in, an .xlsx out: the report lines, the source rows, and the ledger of which rows produced each figure. The totals are numbers, so the customer can use them in another sheet. The plan is rechecked against those rows before the file exists, and the plan is written beside the workbook for the next artifact that needs the same figures.'
+    do: ['artifact_build_report'],
+    note: 'CSV in, an .xlsx out via format:xlsx - the report lines, the source rows, and the ledger of which rows produced each figure. The totals are numbers, so the customer can use them in another sheet. The plan is rechecked against those rows before the file exists, and the plan is written beside the workbook for the next artifact that needs the same figures.'
   },
   {
     task: 'Turn a written plan into slides',
@@ -156,7 +156,6 @@ export const SIDE_EFFECTS = Object.freeze({
   browser_close_tab: ['closes a tab the caller may still be holding'],
   browser_search_web: ['opens one background tab on the Bing results on the bridged path (the direct CDP fallback opens it in the foreground) and closes it before the answer returns - nothing is left on the browser, and the machine\'s own window is never brought forward'],
   browser_read_page: ['with allowCaretMove, borrows the selection on a canvas editor to read the text through it, and answers caretRestored as what was measured rather than what was hoped', 'without it, that step is skipped and the reason is reported, because a canvas caret is not in the DOM and cannot be promised back'],
-  browser_find_text: [],
   browser_find_element: [],
   browser_click: ['moves the pointer and presses'],
   browser_hover: ['moves the pointer'],
@@ -171,9 +170,8 @@ export const SIDE_EFFECTS = Object.freeze({
   browser_download_file: ['brings the tab to front, clicks, and writes a file into the download folder it names'],
   delivery_plan: [],
   delivery_record: ['writes the client-month into the manifest on disk, replacing the record only when asked'],
-  artifact_build_report: ['writes a checked report file beside the source; no page is touched'],
+  artifact_build_report: ['writes a checked report or an Excel workbook beside the source; no page is touched (format: word | xlsx)'],
   artifact_build_document: ['writes a checked document plan and the Word file built from it beside the source; no page is touched'],
-  artifact_build_workbook: ['writes an Excel workbook and a checked report plan beside the source; no page is touched'],
   artifact_build_slides: ['writes a PowerPoint presentation and the provenance of its figures beside the source; no page is touched'],
   browser_check_gate: ['reads the gate on the page and names it — sign-in, one-time code, captcha, or nothing; types nothing', 'waits for the person to clear the gate in their own browser, then answers with the page as it stands'],
   browser_login: ['fills the username and password fields from the credential file and submits; the secret never returns in the answer'],

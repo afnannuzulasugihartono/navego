@@ -127,7 +127,7 @@ console.log(`\nLocal road latency - bridge 9451, tab ${tab.id}, ${RUNS} runs eac
 await add('browser_status', () => call('browser_status'));
 await add('browser_list_tabs', () => call('browser_list_tabs'));
 await add('browser_read_page', () => call('browser_read_page'));
-await add('browser_find_text', () => call('browser_find_text', { text: 'Row 42' }));
+await add('browser_find_element', () => call('browser_find_element', { mode: 'text', text: 'Row 42' }));
 await add('browser_find_element (role only)', () => call('browser_find_element', { role: 'row' }));
 await add('browser_screenshot', () => call('browser_screenshot'), 5);
 await add('browser_scroll', () => call('browser_scroll', { y: 120 }));

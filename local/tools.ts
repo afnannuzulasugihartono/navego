@@ -32,6 +32,7 @@ const sheetJobSchema = (outDescription: string) => ({
     periodColumn: stringArg('the column that holds each row\'s date, when the sheet has one'),
     groupBy: stringArg('the column whose values become the report lines'),
     valueColumn: stringArg('the money column that is summed'),
+    format: { type: 'string', enum: ['word', 'xlsx'], description: 'which file to write; word (default) is the checked report, xlsx is the workbook with report lines, source rows and the ledger' },
     out: stringArg(outDescription)
   },
   required: ['source', 'client', 'title', 'period', 'groupBy', 'valueColumn']
@@ -113,14 +114,9 @@ export const TOOLS = Object.freeze([
     }
   },
   {
-    name: 'browser_find_text',
-    description: 'Find visible text on one page and return each match with a viewport rect. Coordinates are in the same space a screenshot uses, so a rect can be clicked directly.',
-    inputSchema: { type: 'object', properties: { tabId: tabArg, text: stringArg('text to look for') }, required: ['text'] }
-  },
-  {
     name: 'browser_find_element',
-    description: 'Find one interactive row on one page by role and name, and return its handle and box. The name matches exactly first and as a substring after (case-insensitive). Pass a role without a name to list every row of that role up to limit (default 120, cap 500). A handle never goes stale: the box is measured again from the node when it is clicked.',
-    inputSchema: { type: 'object', properties: { tabId: tabArg, role: stringArg('row role, e.g. menuitem, button, option, link'), name: stringArg('if given, the one row; exact first, substring after'), limit: { type: 'number', description: 'rows to return when no name is given; default 120, cap 500' } }, required: ['role'] }
+    description: 'Find on one page: either an interactive row by role and name (element, default) - the name matches exactly first and as a substring after (case-insensitive), and a handle never goes stale - or visible text anywhere (mode text), returning each match with a viewport rect in the same space a screenshot uses. Pass a role without a name to list every row of that role up to limit (default 120, cap 500).',
+    inputSchema: { type: 'object', properties: { tabId: tabArg, role: stringArg('row role, e.g. menuitem, button, option, link; required unless mode is text'), name: stringArg('if given, the one row; exact first, substring after'), limit: { type: 'number', description: 'rows to return when no name is given; default 120, cap 500' }, mode: { type: 'string', enum: ['element', 'text'], description: 'element (default): locate rows by role and name; text: locate visible text and return rects' }, text: stringArg('with mode text: the text to look for') } }
   },  {
     name: 'browser_click',
     description: 'Click in one tab. One call, either a point (x and y in CSS pixels, at with fractions of the viewport when the window may be resized between looking and clicking), or a handle from browser_find_element (never stale — the box is measured from the node at the click), or a row by role and name (exact first, substring after; the row is resolved and clicked centred — no stale coordinates). The reply carries where the page now stands - url, title, text length, focus - and the rows that changed; browser_find_element lists every row when the next move needs more than the change set.',
@@ -352,13 +348,8 @@ export const TOOLS = Object.freeze([
   },
   {
     name: 'artifact_build_report',
-    description: 'Turn a sheet exported to CSV into a report plan whose every figure names the column and the exact rows it came from, recheck the plan against those rows, and write it beside the source. Refuses a row outside the requested period, a value that is not money, a missing column, and a figure that disagrees with its source - so a wrong number stops the report instead of reaching a client. No browser is touched: month-end reports must not depend on a tab being open.',
-    inputSchema: sheetJobSchema('where to write the report; defaults beside the source')
-  },
-  {
-    name: 'artifact_build_workbook',
-    description: 'Turn a sheet exported to CSV into an Excel workbook: the report lines on the first sheet, the source rows on the second, and the ledger that says which rows produced each figure on the third. The totals are numbers, not sentences, so the customer can add them to another sheet. Every figure names the column and the exact rows it came from, and the plan is rechecked against those rows before the file exists. Writes the workbook and the plan beside the source. No browser is touched: month-end reports must not depend on a tab being open.',
-    inputSchema: sheetJobSchema('where to write the workbook; defaults beside the source')
+    description: 'Turn a sheet exported to CSV into either a checked report (word, default) or an Excel workbook - report lines, source rows, and the ledger of which rows produced each figure (xlsx). Every figure names the column and the exact rows it came from, rechecked before the file exists.',
+    inputSchema: sheetJobSchema('where to write the report or workbook; defaults beside the source')
   },
   {
     name: 'artifact_build_slides',

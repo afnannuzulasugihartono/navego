@@ -13,7 +13,7 @@ export function meta() {
 }
 
 const ROWS: Array<[dimensi: string, navego: string, webdriver: string, generik: string]> = [
-  ['Cara kerja', '36 primitive tervalidasi di atas browser Anda; 44 tool MCP di atasnya', 'Protokol penuh (Chrome DevTools/WebDriver) — akses ke semuanya, termasuk kata sandi', 'Bervariasi per produk; biasanya kontrol jarak jauh lengkap'],
+  ['Cara kerja', '36 primitive tervalidasi di atas browser Anda; 42 tool MCP di atasnya', 'Protokol penuh (Chrome DevTools/WebDriver) — akses ke semuanya, termasuk kata sandi', 'Bervariasi per produk; biasanya kontrol jarak jauh lengkap'],
   ['Aplikasi canvas (Google Docs, Sheets)', 'Bisa — diukur di halaman asli: settle p50 ~46 ms, read ~2 ms', 'Sulit — tidak ada DOM untuk diisi atau dibaca', 'Sebagian besar tidak bisa; dokumen canvas tidak punya elemen untuk diklik'],
   ['Kata sandi & PIN', 'Selalu ditolak, di kode, bukan di kebijakan', 'Bisa membaca dan mengisi apa pun di halaman', 'Bervariasi; banyak yang mengisi semuanya demi "berhasil"'],
   ['Tab pribadi', 'Ditolak di setiap gerbang', 'Bisa disentuh kalau driver-nya dibuka di sana', 'Bervariasi'],
