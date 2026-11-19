@@ -18,7 +18,7 @@ const mcp = speakMcp({ port: Number(process.env.NAVEGO_BRIDGE_PORT || 9451), cwd
 await mcp.initialize();
 
 const needsTab = new Set([
-  'browser_read_page', 'browser_find_text', 'browser_find_element', 'browser_click',
+  'browser_read_page', 'browser_find_element', 'browser_click',
   'browser_hover', 'browser_press_key', 'browser_type_text', 'browser_scroll',
   'browser_run_steps', 'browser_wait_until', 'browser_upload_file', 'browser_drop_file',
   'browser_intercept_picker', 'browser_download_file', 'browser_list_menu', 'browser_walk_menu',

@@ -533,7 +533,11 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
       }));
     }
     if (name === 'artifact_build_report') {
-      return asText(reportFromFile({
+      const format = args.format === 'xlsx' ? 'xlsx' : 'word';
+      if (args.format !== undefined && args.format !== 'word' && args.format !== 'xlsx') {
+        throw new Error(`artifact_build_report format must be "word" or "xlsx" - got: ${String(args.format)}`);
+      }
+      const job = {
         source: args.source,
         client: args.client,
         title: args.title,
@@ -542,19 +546,8 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         groupBy: args.groupBy,
         valueColumn: args.valueColumn,
         out: args.out ?? null
-      }));
-    }
-    if (name === 'artifact_build_workbook') {
-      return asText(spreadsheetFromFile({
-        source: args.source,
-        client: args.client,
-        title: args.title,
-        period: args.period,
-        periodColumn: args.periodColumn ?? null,
-        groupBy: args.groupBy,
-        valueColumn: args.valueColumn,
-        out: args.out ?? null
-      }));
+      };
+      return asText(format === 'xlsx' ? spreadsheetFromFile(job) : reportFromFile(job));
     }
     if (name === 'artifact_build_slides') {
       return asText(deckFromFile({
@@ -791,12 +784,12 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         if (closeFailed && answer) answer.tabClosed = false;
         return asText(answer);
       }
-      case 'browser_find_text': {
-        if (!args.text) throw new Error('browser_find_text needs text');
-        return asText(await driver.find(String(args.text)));
-      }
       case 'browser_find_element': {
-        if (!args.role) throw new Error('browser_find_element needs role — e.g. menuitem');
+        if (args.mode === 'text') {
+          if (!args.text) throw new Error('browser_find_element with mode "text" needs text');
+          return asText(await driver.find(String(args.text)));
+        }
+        if (!args.role) throw new Error('browser_find_element needs role - e.g. menuitem');
         if (args.name) return asText({ row: await driver.resolve(args.role, args.name) });
         const snapshot = await driver.snapshot(args.limit) as Array<Record<string, unknown>>;
         return asText({ rows: snapshot.filter((row) => row.role === args.role) });

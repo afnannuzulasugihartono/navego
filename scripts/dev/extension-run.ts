@@ -217,10 +217,10 @@ async function runExtensionProof({
     note({ kind: 'call', tool: 'browser_read_page', ok: true, ms: read.ms, note: `${text.length} characters read from the portal` });
 
     process.stderr.write('extension run: read done\n');
-    const found = await mcp.tool('browser_find_text', { tabId, text: 'Unduh CSV' });
+    const found = await mcp.tool('browser_find_element', { tabId, mode: 'text', text: 'Unduh CSV' });
     const matches = Array.isArray(found.answer) ? found.answer : [];
     if (!matches.length) throw new Error('find did not find the download control');
-    note({ kind: 'call', tool: 'browser_find_text', ok: true, ms: found.ms, note: `${matches.length} match for "Unduh CSV"` });
+    note({ kind: 'call', tool: 'browser_find_element', ok: true, ms: found.ms, note: `${matches.length} match for "Unduh CSV" (mode text)` });
 
     process.stderr.write('extension run: find done\n');
     const grabbed = await mcp.tool('browser_download_file', {

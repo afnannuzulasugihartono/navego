@@ -6,7 +6,7 @@
 # One product, one driver, one browser half
 
 Navego is one product: one local stdio driver on the machine, one
-browser half it drives, and one tool surface. The 44 tools live once, in the
+browser half it drives, and one tool surface. The 42 tools live once, in the
 local driver. Anything the browser half and the meter both need lives once in
 `shared/` — never copied by hand.
 
@@ -15,7 +15,7 @@ local driver. Anything the browser half and the meter both need lives once in
   MCP client on this machine
          |  stdio
          v
-  local/ (bin/navego.js, 44 tools)
+  local/ (bin/navego.js, 42 tools)
   CDP ⇄ local/ or bridge ⇄ extension/
          |
          v

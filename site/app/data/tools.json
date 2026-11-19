@@ -44,12 +44,8 @@
         "Cari di Bing sebagai data terstruktur (peringkat, judul, URL, situs, cuplikan), bukan halaman yang harus dibaca."
       ],
       [
-        "browser_find_text",
-        "Cari teks terlihat dan balik tiap kecocokan dengan kotak viewport — bisa langsung diklik."
-      ],
-      [
         "browser_find_element",
-        "Cari satu baris berdasar role dan nama; balik handle yang tidak basi. Tanpa nama: daftar semua baris peran itu."
+        "Lokasi, dua jalan: mode element (baris berdasar role dan nama) atau mode text (teks terlihat, kotak viewport yang bisa diklik). Handle tidak pernah basi."
       ],
       [
         "browser_screenshot",
@@ -181,11 +177,7 @@
     "items": [
       [
         "artifact_build_report",
-        "CSV → rencana laporan dengan tiap angka menyebut kolom dan baris asalnya; dicek ulang."
-      ],
-      [
-        "artifact_build_workbook",
-        "CSV → Excel workbook: baris laporan, baris sumber, ledger yang menyebut baris penghasil tiap angka."
+        "CSV → laporan Word (default) atau Excel (format xlsx): baris laporan, baris sumber, ledger yang menyebut baris penghasil tiap angka; setiap angka menyebut kolom dan baris asalnya."
       ],
       [
         "artifact_build_slides",

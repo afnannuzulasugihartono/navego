@@ -69,7 +69,7 @@ test('the server opens the portal tab and reads the page', { skip: noExtensionBr
     const ready = (await mcp.initialize()) as { serverInfo?: { name?: string } } | undefined;
     assert.equal(ready?.serverInfo?.name, 'navego');
     const names = await mcp.listTools();
-    for (const wanted of ['browser_open_url', 'browser_read_page', 'browser_download_file', 'artifact_build_workbook', 'artifact_build_slides', 'artifact_build_document', 'browser_screenshot', 'browser_close_tab']) {
+    for (const wanted of ['browser_open_url', 'browser_read_page', 'browser_download_file', 'artifact_build_report', 'artifact_build_slides', 'artifact_build_document', 'browser_screenshot', 'browser_close_tab']) {
       assert.ok(names.includes(wanted), `the server offers ${wanted}`);
     }
 
