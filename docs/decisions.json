@@ -484,6 +484,15 @@
         "kind": "user",
         "ref": "user 2026-11-18 screenshot of apple.com Shop dropdown; user instruction: \"punya headernya efek memanjang terus full dari pojok ke pojok kemudian redesign lagi kontn panel drop yang beranda dan seterusnya supaya orang tidak bingung lihatnya\""
       }
+    },
+    {
+      "id": "D53",
+      "scope": "web/components",
+      "decision": "No hairline divider between the bar and the mega panel — one continuous dark surface; the panel opens with an opacity plus small vertical rise, dismissed instantly by Escape, and its open state never guesses from time; prefers-reduced-motion turns the transition off entirely.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: \"garisnya dihilangkan aja buat animasi yang smooth\" - the line cut the bar/panel continuity; user wants a smooth open animation"
+      }
     }
   ]
 }
