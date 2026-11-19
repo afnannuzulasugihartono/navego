@@ -11,9 +11,17 @@ import { basename } from 'node:path';
 
 const REF = process.env.SUPABASE_PROJECT_REF || 'nenmkmtvjremqphfqnfw';
 const token = process.env.SUPABASE_ACCESS_TOKEN;
+const TOKEN_MIN_LENGTH = 8;
+const REF_PATTERN = /^[a-z0-9]{20}$/;
 
-if (!token) {
-  process.stderr.write('SUPABASE_ACCESS_TOKEN is not set.\n');
+// A credential that is not here or too short is a deployment nobody intends; refusing names the problem instead of letting the Management API answer 401 to a nameless mistake.
+
+if (!token || token.trim().length < TOKEN_MIN_LENGTH) {
+  process.stderr.write(`SUPABASE_ACCESS_TOKEN is not set or too short for a Supabase PAT (minimum ${TOKEN_MIN_LENGTH} characters).\n`);
+  process.exit(2);
+}
+if (process.env.SUPABASE_PROJECT_REF !== undefined && !REF_PATTERN.test(REF)) {
+  process.stderr.write(`SUPABASE_PROJECT_REF is malformed (${REF}); it must be the 20-character project reference, or unset to use the built-in project.\n`);
   process.exit(2);
 }
 
