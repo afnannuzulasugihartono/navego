@@ -192,10 +192,13 @@
 // The runtime surface, the dispatch tables and the primitives are unchanged; only the brand strings moved.
 // WHY background.ts was re-pinned on 2026-11-18: the product-wide rename retired Opera Agent/Kemudi/legacy tokens including type-only internal global names (example: `__operaAgentContentV1`, `__operaAgentCursorIdle`); the runtime dispatch table and wire contract are unchanged; the change set is the rename sweep itself.
 
+// WHY these three were re-pinned on 2026-11-19: the 1.7.7 release rode them.
+// The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
+
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
   ['../extension/content.ts', '4d9cf6aec864f5c75f318aed43969ffbc37681ab71b19401985349d69d2a60fe'],
   ['../extension/background.ts', '67b1744d986e6efa095a0bc6d9f02a029f9df42a1223acb502c5c7ea21bf40e0'],
-  ['../extension/manifest.json', '2f4fd56fff33a17f56d59bd769c694f03a066d253584dc5482f70978bf935f6f'],
+  ['../extension/manifest.json', 'a49b2265875539402a3b744dbfaa9fcdec9b88a2bce17b0c2018680df203ec9e'],
 ]);
 
 // WHY collect and control-flow moved on 2026-11-17: the hosted functions are now type-checked by CI (deno check in ci.yml).
