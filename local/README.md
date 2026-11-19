@@ -12,6 +12,8 @@ npm i -g navego
 | `navego cloud` | the paired device's browser, through the hosted server | an account, an OAuth login, a paired device |
 | `navego auth` | sign in once, keep the token beside this install | a browser, or `NAVEGO_MCP_TOKEN` |
 | `navego doctor` | print what is connected and what the plan allows | nothing but this install |
+| `navego failures` | print what broke on this machine: counts by tool and code, plus the agent's feedback notes | nothing but this install |
+| `navego feedback` | record what the agent saw while driving — `navego feedback <tool> <note>` | nothing but this install |
 
 `npx -y navego` is the published form of the package.
 
@@ -122,6 +124,24 @@ watched instead of an armed one, because `chrome.debugger` refuses browser-level
 commands there. The last two tools are the statement job: a
 card that names the file before the drive, and a delivery that verifies it and adds the
 client-month to a manifest. See the statement job in the price list migration under `hosted/migrations/`.
+
+## When a tool breaks
+
+`navego failures` reads the append-only log the local road leaves behind: every tool
+call that came back as an error lands in `$OPERA_AGENT_HOME/tool-failures.jsonl`
+(default `~/.opera-agent/tool-failures.jsonl`) with the tool, the code, the message
+and the time it happened — the failure the tool answer cannot carry into the next
+session now survives on the machine. `navego feedback <tool> <note>` appends what the
+agent observed while driving, so the drive can leave a suggestion behind instead of
+a shrug. The log stays local; nothing is sent anywhere, and deleting the file is
+always safe — it is an observation channel, not a ledger. Read it any time:
+
+```bash
+navego failures            # counts by tool and code, plus every note
+navego failures --tool=browser_read_page
+navego failures --json     # for scripts
+navego feedback browser_read_page "canvas editors block every docs drive"
+```
 
 ## Recipes, measured
 

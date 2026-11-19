@@ -184,6 +184,7 @@ function diffElements(prev: AxRow[], curr: AxRow[]) {
 }
 
 import { withAdvice } from './advice.js';
+import { recordFailure } from './tool-failures.js';
 import type { AdviceContext } from './advice.js';
 import type { Driver, JsonRecord } from './types.js';
 import type { SerpResult } from './bing-serp.js';
@@ -1017,11 +1018,14 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         if (method === 'tools/list') return reply({ tools: TOOLS });
         if (method === 'tools/call') {
           const started = Date.now();
+          const callName = isObject(params) ? String((params as JsonRecord).name ?? 'unknown') : 'unknown';
           try {
             const call = isObject(params) ? params : {};
             const out = await run(String(call.name ?? ''), isObject(call.arguments) ? call.arguments : {});
             return reply(withCost(out, Date.now() - started));
           } catch (error: unknown) {
+            const code = typeof (error as { code?: unknown } | null)?.code === 'string' ? String((error as { code: string }).code) : 'MCP_EXECUTION_ERROR';
+            recordFailure({ tool: callName, code, message: String((error as Error)?.message ?? error) });
             return reply(toolFailure(error, { rows: lastSeen }));
           }
         }
