@@ -87,8 +87,11 @@ const driver = {
     return (await attach()).openMenu(options);
   },
 
-  async read() {
-    return (await attach()).read();
+  // THE READ'S OPTIONS ARE THE READ.
+  // This wrapper used to call read() with nothing, so every consent, cap and selector the caller passed was dropped here and the read answered as if it had been asked for none of them.
+  // Passing the options through is what makes browser_read_page's selection copy and maxChars real on the local road rather than only in the driver.
+  async read(options?: { allowCaretMove?: boolean; allowVision?: boolean; maxChars?: unknown; selector?: unknown }) {
+    return (await attach()).read(options);
   },
 
   async settle() {

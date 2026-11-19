@@ -13,8 +13,16 @@ const RETURNABLE = /^\.\/[A-Za-z0-9._~/?=&%-]*$/;
 
 // ?next is attacker-controllable, so only same-site relative paths pass.
 
+// The site runs in a browser, and this module is also read by the Node test project, which has no DOM lib; the cast names the two globals it needs.
+
+type LockManagerLike = { request: (name: string, run: () => Promise<string | null>) => Promise<string | null> };
+const browserGlobals = globalThis as {
+  location?: { search?: string };
+  navigator?: { locks?: LockManagerLike };
+};
+
 export function getReturnTo(): string {
-  const asked = new URLSearchParams(window.location.search).get('next') || '';
+  const asked = new URLSearchParams(browserGlobals.location?.search ?? '').get('next') || '';
   return RETURNABLE.test(asked) ? asked : './dashboard.html';
 }
 
@@ -60,16 +68,22 @@ export async function proveSession(accessToken: string): Promise<{ email?: strin
     headers: { apikey: PUBLISHABLE_KEY, authorization: `Bearer ${accessToken}` }
   });
   if (!response.ok) return { error: response.status };
-  const user = await response.json();
+  const user = await response.json() as { email?: unknown; session?: { refresh_token?: unknown } } | null;
   const refreshed = user?.session?.refresh_token;
-  if (refreshed) storeRefreshToken(refreshed);
-  if (!user?.email) return { error: 'tanpa-email' };
-  return { email: user.email as string };
+  if (typeof refreshed === 'string' && refreshed.length > 0) storeRefreshToken(refreshed);
+  if (typeof user?.email !== 'string' || user.email.length === 0) return { error: 'tanpa-email' };
+  return { email: user.email };
 }
 
 // offline and refusal differ here: a network failure says nothing about the account and must not clear a stored session; only a refused refresh token is death.
 
-export async function renewAccessToken(): Promise<string | null> {
+// decisions.json -> site-auth-01
+
+// A refresh token rotates, so two refreshes at once turn the second one into a stolen-token refusal that clears the session.
+
+const REFRESH_LOCK = 'navego-token-refresh';
+
+async function renewOnce(): Promise<string | null> {
   const refreshToken = getRefreshToken();
   if (!refreshToken) return null;
   let response: Response;
@@ -87,11 +101,32 @@ export async function renewAccessToken(): Promise<string | null> {
     return null;
   }
   if (!response.ok) return null;
-  const renewed = await response.json().catch(() => null);
-  if (!renewed?.access_token) return null;
+  const renewed = await response.json().catch(() => null) as { access_token?: unknown; refresh_token?: unknown } | null;
+  if (typeof renewed?.access_token !== 'string' || renewed.access_token.length === 0) return null;
   storeToken(renewed.access_token);
-  if (renewed.refresh_token) storeRefreshToken(renewed.refresh_token);
-  return renewed.access_token as string;
+  if (typeof renewed.refresh_token === 'string' && renewed.refresh_token.length > 0) storeRefreshToken(renewed.refresh_token);
+  return renewed.access_token;
+}
+
+const withRefreshLock = async (run: () => Promise<string | null>): Promise<string | null> => {
+  const locks = browserGlobals.navigator?.locks;
+  return locks && typeof locks.request === 'function' ? locks.request(REFRESH_LOCK, run) : run();
+};
+
+let renewal: Promise<string | null> | null = null;
+
+export function renewAccessToken(): Promise<string | null> {
+  if (renewal) return renewal;
+  const seen = getStoredToken();
+  renewal = withRefreshLock(async () => {
+    // Another tab may have renewed while this one waited for the lock; its token is the fresh one, and rotating again would refuse the refresh token it just stored.
+    const current = getStoredToken();
+    if (current && current !== seen) return current;
+    return renewOnce();
+  }).finally(() => {
+    renewal = null;
+  });
+  return renewal;
 }
 
 // Prove the stored session, renewing once via the refresh token when the access token aged out.

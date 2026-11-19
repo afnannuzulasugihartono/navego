@@ -416,7 +416,7 @@ export async function runProof({
     note({ tool: 'initialize', ok: true, note: `server ${ready?.serverInfo?.name ?? 'unknown'}` });
 
     const names = await mcp.listTools();
-    for (const wanted of ['browser_open_url', 'browser_read_page', 'browser_download_file', 'artifact_build_report', 'artifact_build_slides', 'artifact_build_document', 'browser_screenshot', 'browser_close_tab']) {
+    for (const wanted of ['browser_open_url', 'browser_read_page', 'browser_download_file', 'artifact_build', 'browser_screenshot', 'browser_close_tab']) {
       if (!names.includes(wanted)) throw new Error(`the server no longer offers ${wanted}`);
     }
     note({ tool: 'tools/list', ok: true, note: `${names.length} tools` });
@@ -467,8 +467,8 @@ export async function runProof({
 
     fs.mkdirSync(out, { recursive: true });
 
-    const workbook = await mcp.tool('artifact_build_report', {
-      format: 'xlsx',
+    const workbook = await mcp.tool('artifact_build', {
+      target: 'xlsx',
       source: csv,
       client: 'Sinar Jaya',
       title: 'Laporan Keuangan September 2026',
@@ -481,12 +481,13 @@ export async function runProof({
     const workbookFile = workbook.answer?.out;
     if (!workbookFile) throw new Error('sheet returned no file');
     compared('laporan-keuangan-2026-09.xlsx', workbookFile, {
-      tool: 'artifact_build_report',
+      tool: 'artifact_build',
       ms: workbook.ms,
       note: `${workbook.answer.sheets?.length ?? 0} sheets, ${workbook.answer.verified?.checked ?? 0} figures checked`
     });
 
-    const deck = await mcp.tool('artifact_build_slides', {
+    const deck = await mcp.tool('artifact_build', {
+      target: 'pptx',
       source: papers['strategi.json'],
       report: workbook.answer.plan,
       out: path.join(out, 'rencana-strategis-2027.pptx')
@@ -494,19 +495,20 @@ export async function runProof({
     const deckFile = deck.answer?.out;
     if (!deckFile) throw new Error('deck returned no file');
     compared('rencana-strategis-2027.pptx', deckFile, {
-      tool: 'artifact_build_slides',
+      tool: 'artifact_build',
       ms: deck.ms,
       note: `${deck.answer.slides ?? 0} content slides and a cover`
     });
 
     for (const [source, name] of [['riset-promo.json', 'riset-promo.docx'], ['pemasaran.json', 'rencana-pemasaran-2027.docx']] as Array<[string, string]>) {
-      const paper = await mcp.tool('artifact_build_document', {
+      const paper = await mcp.tool('artifact_build', {
+        target: 'docx',
         source: papers[source],
         out: path.join(out, name)
       });
       if (!paper.answer?.out) throw new Error(`doc returned no file for ${source}`);
       compared(name, paper.answer.out, {
-        tool: 'artifact_build_document',
+        tool: 'artifact_build',
         ms: paper.ms,
         note: `${paper.answer.blocks ?? 0} blocks, ${paper.answer.title ?? ''}`
       });

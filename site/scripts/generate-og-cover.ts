@@ -1,6 +1,6 @@
-// decisions.json -> D32 (one mark everywhere)
-// Renders site/scripts/og-cover.svg into site/public/og-cover.png.
-// Run: node scripts/generate-og-cover.mjs — after any change to the mark or the wordmark.
+// decisions.json -> D32 (one mark everywhere) Renders site/scripts/og-cover.svg into site/public/og-cover.png.
+// Run: node scripts/generate-og-cover.ts — after any change to the mark or the wordmark.
+
 import { Resvg } from '@resvg/resvg-js';
 import { readFileSync, writeFileSync } from 'node:fs';
 

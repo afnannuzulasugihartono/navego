@@ -22,21 +22,7 @@ import { BURST_ACTIONS, BURST_MAX_STEPS } from './burst.js';
 // It has a local burst for dependent moves on one tab, but no reusable element refs beyond a handle that a row-find step hands to a later step, and no cross-tab steps: those are the cloud server's affordances, and pretending a local stdio process has them would advertise something it cannot honour.
 // Coordinates and a fresh read per action stay honest; the burst is the one call that spends its page read once, at the end, instead of after every step.
 
-const sheetJobSchema = (outDescription: string) => ({
-  type: 'object',
-  properties: {
-    source: stringArg('the CSV file exported from the workbook'),
-    client: stringArg('the client the report is for'),
-    title: stringArg('the report title, as the person wants it read'),
-    period: stringArg('the month the report covers, YYYY-MM'),
-    periodColumn: stringArg('the column that holds each row\'s date, when the sheet has one'),
-    groupBy: stringArg('the column whose values become the report lines'),
-    valueColumn: stringArg('the money column that is summed'),
-    format: { type: 'string', enum: ['word', 'xlsx'], description: 'which file to write; word (default) is the checked report, xlsx is the workbook with report lines, source rows and the ledger' },
-    out: stringArg(outDescription)
-  },
-  required: ['source', 'client', 'title', 'period', 'groupBy', 'valueColumn']
-});
+
 
 const tabArg = { type: ['string', 'number'], description: 'which tab to drive, from tabs. Accepts the numeric tab id or its string form; both name the same tab. Required for anything that writes. A chrome:// page (extensions, settings) refuses every move - name a tab the bridge can drive instead.' };
 
@@ -80,7 +66,7 @@ export const TOOLS = Object.freeze([
   {
     name: 'browser_open_url',
     description: 'Open a url in its own tab and return its id. Never navigates a tab that is already open.',
-    inputSchema: { type: 'object', properties: { url: stringArg('absolute url to open') }, required: ['url'] }
+    inputSchema: { type: 'object', properties: { url: stringArg('absolute url to open'), tabId: { type: ['string', 'number'], description: 'accepted for compatibility and ignored: open always makes a new tab, never navigates the one this names' } }, required: ['url'] }
   },
   {
     name: 'browser_close_tab',
@@ -89,12 +75,13 @@ export const TOOLS = Object.freeze([
   },
   {
     name: 'browser_read_page',
-    description: 'Read one tab: url, title, text, and which read step answered (one of ax, dom, selection-copy, picture - the read names it and what it skipped). maxChars caps the answer with originalChars and truncatedChars reported; selector scopes the DOM read to the first matching subtree, or refuses with the reason.',
+    description: 'Read one tab automatically: the server profiles the surface and tries the selection mirror on a canvas editor, then ax, dom and a vision/OCR fallback in the order that surface warrants, answering with whichever produced text - the strategy and any skipped steps ride in the answer. A canvas document that mirrors nothing in the DOM is copied through the clipboard and the answer carries clipboardUsed; allowCaretMove set false declines that caret-moving copy; allowVision: true permits the OCR fallback, which sends one screenshot of this page to the hosted edge (default false, because the picture leaves this machine); maxChars caps the answer with originalChars and truncatedChars reported; selector scopes the DOM read to the first matching subtree, or refuses with the reason.',
     inputSchema: {
       type: 'object',
       properties: {
         tabId: tabArg,
-        allowCaretMove: { type: 'boolean', description: 'consent, recorded on this call only, for a read that borrows the selection on a canvas editor. Without it that step is skipped and the reason is reported, because a canvas caret is not in the DOM and cannot be promised back.' },
+        allowCaretMove: { type: 'boolean', description: 'set false to decline the selection copy on a canvas editor (default true; the read borrows the selection and tries to restore the caret, reporting caretRestored if it cannot)' },
+        allowVision: { type: 'boolean', description: 'consent to send one screenshot of this page to the hosted OCR edge when no local read answers (default false; the picture leaves this machine)' },
         maxChars: { type: 'number', description: 'cap the returned text at this many characters; the answer reports originalChars and truncatedChars, and caps at 100000 even on a larger ask' },
         selector: { type: 'string', description: 'read only the innerText of the first element matching this CSS selector; no match refuses with the reason instead of the whole page' }
       }
@@ -347,31 +334,21 @@ export const TOOLS = Object.freeze([
     }
   },
   {
-    name: 'artifact_build_report',
-    description: 'Turn an exported sheet (CSV) into either a checked report (word, default) or an Excel workbook (format: xlsx) - report lines, source rows, and the ledger of which rows produced each figure. Every figure names the column and the exact rows; rechecked before the file exists. No browser is touched.',
-    inputSchema: sheetJobSchema('where to write the report or workbook; defaults beside the source')
-  },
-  {
-    name: 'artifact_build_slides',
-    description: 'Turn a deck described as JSON (title, slides with titles, bullets, figures) into a PowerPoint. A slide may name a figure from the checked report and carries that figure’s value; no slide can show a number nobody checked.',
+    name: 'artifact_build',
+    description: 'Build a checked artifact beside its source: a report (word, default), a workbook (xlsx), a deck (pptx), or a paper document (docx) - report lines, source rows, and the ledger of which rows produced each figure, every figure rechecked against its rows before the file exists. No browser is touched.',
     inputSchema: {
       type: 'object',
       properties: {
-        source: stringArg('the JSON file describing the deck'),
+        source: stringArg('the file describing the artifact: the sheet CSV, or the JSON deck or paper'),
+        target: { type: 'string', enum: ['word', 'xlsx', 'pptx', 'docx'], description: 'what to build: word is the checked report (default), xlsx the workbook, pptx the deck, docx the paper document' },
+        client: stringArg('the client, as the card named it'),
+        title: stringArg('the report title, as the person wants it read'),
+        period: stringArg('the month the report covers, YYYY-MM'),
+        periodColumn: stringArg('the column that holds each row\'s date, when the sheet has one'),
+        groupBy: stringArg('the column whose values become the report lines'),
+        valueColumn: stringArg('the money column that is summed'),
         report: stringArg('the report plan the slides may name figures from'),
-        out: stringArg('where to write the presentation; defaults beside the source')
-      },
-      required: ['source']
-    }
-  },
-  {
-    name: 'artifact_build_document',
-    description: 'Turn a paper described as JSON (title, sections, tables, images, graphs) into a Word file in one call. Every graph names its table and is recomputed from those rows before the file exists.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        source: stringArg('the JSON file describing the paper'),
-        out: stringArg('where to write the document; defaults beside the source')
+        out: stringArg('where to write the artifact; defaults beside the source')
       },
       required: ['source']
     }

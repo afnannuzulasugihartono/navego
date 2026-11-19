@@ -95,22 +95,22 @@ export const RECIPES = Object.freeze([
   },
   {
     task: 'Build a report from an exported sheet',
-    do: ['artifact_build_report'],
+    do: ['artifact_build'],
     note: 'CSV in, a checked report out, written beside the source. No browser is touched: month-end reports must not depend on a tab being open. Every figure names the column and the exact rows it came from, and the plan is rechecked against those rows before the file exists.'
   },
   {
     task: 'Build a paper from JSON tables, images, and graphs',
-    do: ['artifact_build_document'],
+    do: ['artifact_build'],
     note: 'JSON in, a .docx out in one call: the checked plan (written beside the source) and the Word file built from it. Every graph names its table and columns, and the graph is recomputed from those rows before the file exists - a graph without a source, or one whose number disagrees with the table, stops the paper instead of reaching a reader.'
   },
   {
     task: 'Turn an exported sheet into an Excel workbook',
-    do: ['artifact_build_report'],
+    do: ['artifact_build'],
     note: 'CSV in, an .xlsx out via format:xlsx - the report lines, the source rows, and the ledger of which rows produced each figure. The totals are numbers, so the customer can use them in another sheet. The plan is rechecked against those rows before the file exists, and the plan is written beside the workbook for the next artifact that needs the same figures.'
   },
   {
     task: 'Turn a written plan into slides',
-    do: ['artifact_build_slides'],
+    do: ['artifact_build'],
     note: 'JSON in, a .pptx out. A slide names a figure from the checked report and carries its value; a name the report does not hold stops the deck. The provenance of every figure is written beside the presentation, so the author can answer "where did this number come from" without opening the slide.'
   },
   {
@@ -155,7 +155,7 @@ export const SIDE_EFFECTS = Object.freeze({
   browser_open_url: ['opens a new tab in the same browser'],
   browser_close_tab: ['closes a tab the caller may still be holding'],
   browser_search_web: ['opens one background tab on the Bing results on the bridged path (the direct CDP fallback opens it in the foreground) and closes it before the answer returns - nothing is left on the browser, and the machine\'s own window is never brought forward'],
-  browser_read_page: ['with allowCaretMove, borrows the selection on a canvas editor to read the text through it, and answers caretRestored as what was measured rather than what was hoped', 'without it, that step is skipped and the reason is reported, because a canvas caret is not in the DOM and cannot be promised back'],
+  browser_read_page: ['with allowCaretMove, borrows the selection on a canvas editor to read the text through it, copies through the clipboard when the page mirrors nothing in the DOM (the answer then carries clipboardUsed), and answers caretRestored as what was measured rather than what was hoped', 'without it, that step is skipped and the reason is reported, because a canvas caret is not in the DOM and cannot be promised back', 'the OCR fallback runs only with allowVision, and a copy is refused when the page is not focused, so a stale clipboard is never returned as this page'],
   browser_find_element: [],
   browser_click: ['moves the pointer and presses'],
   browser_hover: ['moves the pointer'],
@@ -170,9 +170,7 @@ export const SIDE_EFFECTS = Object.freeze({
   browser_download_file: ['brings the tab to front, clicks, and writes a file into the download folder it names'],
   delivery_plan: [],
   delivery_record: ['writes the client-month into the manifest on disk, replacing the record only when asked'],
-  artifact_build_report: ['writes a checked report or an Excel workbook beside the source; no page is touched (format: word | xlsx)'],
-  artifact_build_document: ['writes a checked document plan and the Word file built from it beside the source; no page is touched'],
-  artifact_build_slides: ['writes a PowerPoint presentation and the provenance of its figures beside the source; no page is touched'],
+  artifact_build: ['writes the checked artifact beside the source - report (word, default), workbook (xlsx), deck (pptx), or document (docx); no page is touched (target: word | xlsx | pptx | docx)'],
   browser_check_gate: ['reads the gate on the page and names it — sign-in, one-time code, captcha, or nothing; types nothing', 'waits for the person to clear the gate in their own browser, then answers with the page as it stands'],
   browser_login: ['fills the username and password fields from the credential file and submits; the secret never returns in the answer'],
   browser_solve_captcha: ['reads a captcha image through the configured solver, which spends the person\'s money at that service, then types the answer into the captcha field'],

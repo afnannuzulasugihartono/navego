@@ -120,7 +120,7 @@ test('a canvas surface no read can answer names the picture instead of returning
   const out = await createPrimitives(cdp, { sleep: async () => {} }).read();
 
   assert.equal(out.strategy, 'vision');
-  assert.match(out.visionWhy, /shot/);
+  assert.match(out.visionWhy, /OCR|empty picture/);
   assert.equal(out.text, '');
 });
 
@@ -200,7 +200,7 @@ test('a consent that borrows nothing does not come back as an empty document', a
   assert.equal(out.caretMoved, true, 'the borrow happened, and the answer says so');
   assert.equal(out.caretRestored, false, 'and the verdict it measured');
   const skipped = out.skipped.find((entry: any) => entry.strategy === 'select-all');
-  assert.match(skipped.why, /no text/i, 'the ladder says why it moved on');
+  assert.match(skipped.why, /clipboard/i, 'the ladder says why the copy did not answer');
 });
 
 test('a page that holds its own text is read through the DOM and nothing is gated', async () => {

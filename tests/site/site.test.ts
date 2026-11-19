@@ -109,12 +109,12 @@ test('every inline script is covered by the CSP hashes in build/client/_headers'
 });
 
 const CLAIMS = {
-  '/beranda.html': ['Navego.', '42', 'primitive browser'],
-  '/fitur.html': ['42', 'primitive', 'debugger'],
+  '/beranda.html': ['Navego.', '40', 'primitive browser'],
+  '/fitur.html': ['40', 'primitive', 'debugger'],
   '/harga.html': ['plan.usd-1', 'PayPal', 'Enterprise'],
   '/unduh.html': ['navego-update', 'chrome', 'SHA-256'],
   '/docs.html': ['browser_status', 'navego'],
-  '/mcp.html': ['navego', '42'],
+  '/mcp.html': ['navego', '40'],
   '/dukungan.html': ['Dukungan'],
   '/privasi.html': ['Kebijakan Privasi'],
   '/syarat.html': ['Syarat Layanan'],

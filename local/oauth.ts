@@ -107,14 +107,21 @@ export function openBrowser(url: string, runner: typeof spawn = spawn): import('
   return child;
 }
 
-function waitForCode({ url, state, open }: { url: string; state: string; open: (url: string) => unknown }): Promise<string> {
+export function waitForCode({ url, state, open, port = REDIRECT_PORT, timeoutMs = CALLBACK_TIMEOUT_MS, onListening }: {
+  url: string;
+  state: string;
+  open: (url: string) => unknown;
+  port?: number;
+  timeoutMs?: number;
+  onListening?: (port: number) => void;
+}): Promise<string> {
   return new Promise((resolve, reject) => {
     const server = http.createServer();
     const done = (error: unknown, value?: string) => {
       server.close();
       if (error) reject(error instanceof Error ? error : new Error(String(error))); else resolve(value ?? '');
     };
-    const timer = setTimeout(() => done(new Error('no sign-in completed within three minutes')), CALLBACK_TIMEOUT_MS);
+    const timer = setTimeout(() => done(new Error('no sign-in completed within three minutes')), timeoutMs);
     server.on('request', (req: http.IncomingMessage, res: http.ServerResponse) => {
       const asked = new URL(req.url ?? '/', 'http://127.0.0.1');
       if (asked.pathname !== REDIRECT_PATH) {
@@ -124,11 +131,10 @@ function waitForCode({ url, state, open }: { url: string; state: string; open: (
       }
       const code = asked.searchParams.get('code');
       const got = asked.searchParams.get('state');
+      // A wrong state is not this sign-in, so the listener stays up: closing on the first stray request would let any page on the machine end a login that is still expected.
       if (!code || got !== state) {
-        clearTimeout(timer);
         res.writeHead(400, { 'content-type': 'text/html; charset=utf-8' });
         res.end('<h1>Sign-in did not match the request.</h1>');
-        done(new Error('the sign-in response did not match the request'));
         return;
       }
       clearTimeout(timer);
@@ -138,9 +144,11 @@ function waitForCode({ url, state, open }: { url: string; state: string; open: (
     });
     server.on('error', (error: Error) => {
       clearTimeout(timer);
-      done(new Error(`the sign-in callback could not listen on ${REDIRECT_PORT}: ${error.message}`));
+      done(new Error(`the sign-in callback could not listen on ${port}: ${error.message}`));
     });
-    server.listen(REDIRECT_PORT, '127.0.0.1', () => {
+    server.listen(port, '127.0.0.1', () => {
+      const address = server.address();
+      if (onListening && address && typeof address === 'object') onListening(address.port);
       const opened = open(url);
       if (opened instanceof Promise) opened.catch(() => {});
     });

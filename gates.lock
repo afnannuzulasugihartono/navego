@@ -156,7 +156,7 @@
 #    tests/helpers/canonical-source-hash.ts strips the comment lines and collapses
 #    the whitespace before hashing a tool schema, so the pin holds the tool's
 #    contract and not its indentation.
-scripts/verify/check.ts 7283223ace7a70c2106568f8883f20409b993394282e73f3b9bdfca51d36908e
+scripts/verify/check.ts 7e8e9affe2a30400a3f9cc7208fe8549e481a72ba060e733ed298fe595e4fad5
 scripts/verify/scope.ts be9814cb16f92be323822d99c1182a88c94a68696e30ebbfd3f3fedc3bec8d73
 scripts/verify/scope-check.ts 446f0471915b9ecb99caa3809eee2c44ae14ae8b23a0f907abeecb86e4397815
 
@@ -169,7 +169,7 @@ tests/docs/comment-claims.test.ts 6f5eb92a639e93a2ff4d07483fd2a6b2ef99661b16e549
 
 # --- structural rules a human reviewer would otherwise have to remember ---
 tests/tooling/hygiene.test.ts 2ae4fbe7663729b5f1defc3864150e15c1598db799be140dad40c0c883dedcdd
-tests/tooling/structure-gates.test.ts acbdeb14701470ceedc034b0165dbc49e1aea662b6ad61274b82f6960e379419
+tests/tooling/structure-gates.test.ts b2b1e588082f1c03a8c9b8306ef1393aaf88f8784c140f0d2c972d62154c0895
 tests/tooling/boundary-locks.test.ts bf7ec1c77b9e60603d8e602d9a3d37de942b02af00d7318bd39fbfadb58b4711
 
 # --- controls that decide what the product accepts at runtime ---
@@ -184,4 +184,4 @@ hosted/functions/_shared/cors.ts 73571947a10d95eddf4eb3625509b5568b7ceee9e60740f
 extension/manifest.json a49b2265875539402a3b744dbfaa9fcdec9b88a2bce17b0c2018680df203ec9e
 .gitleaks.toml 49d7c947ab6eddbe4b37de24f07c7811ea33ec87c423c627c7aefc5cde1d4f25
 .github/CODEOWNERS 3cb57783d6bc4c8feb45b0a0651b8e84144ab11cc2d1677f4b8e5894e32b4dca
-.github/workflows/ci.yml d1eacfaaf881913f3037180b5da3c47431911cae2adbf6e54be8b6871cf36dd8
+.github/workflows/ci.yml 4fa39945a983c635f2e09346daa9a6fcd34be23d14beb49eeb26e6db02f33d5f

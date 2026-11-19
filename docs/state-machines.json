@@ -7,7 +7,7 @@
     {
       "id": "bridge-device-lifecycle",
       "kind": "local",
-      "where": "local/bridge-ws.js:483",
+      "where": "local/bridge-ws.ts:483",
       "states": [
         "socket-open",
         "hello",
@@ -45,7 +45,7 @@
     {
       "id": "device-command-socket-machine",
       "kind": "extension",
-      "where": "extension/lib/socket-client.js:173",
+      "where": "extension/lib/socket-client.ts:173",
       "states": [
         "connecting",
         "ready",
@@ -65,7 +65,7 @@
     {
       "id": "device-identity-source",
       "kind": "extension",
-      "where": "extension/worker/pair-cookie.js:1",
+      "where": "extension/worker/pair-cookie.ts:1",
       "states": [
         "cookie",
         "legacy-random"
@@ -98,7 +98,7 @@
     {
       "id": "listen-capture-lifecycle",
       "kind": "extension",
-      "where": "extension/worker/listen.js:21",
+      "where": "extension/worker/listen.ts:21",
       "states": [
         "idle",
         "tapping",
@@ -116,7 +116,7 @@
     {
       "id": "loopback-bridge-link-machine",
       "kind": "extension",
-      "where": "extension/worker/bridge-link.js:85",
+      "where": "extension/worker/bridge-link.ts:85",
       "states": [
         "unstarted",
         "proving",
@@ -134,7 +134,7 @@
     {
       "id": "pending-completion-slot",
       "kind": "extension",
-      "where": "extension/worker/execute-pull.js:155",
+      "where": "extension/worker/execute-pull.ts:155",
       "states": [
         "absent",
         "owed",
@@ -151,7 +151,7 @@
     {
       "id": "tools-output-shape",
       "kind": "local",
-      "where": "local/mcp-server.js:48",
+      "where": "local/mcp-server.ts:48",
       "states": [
         "envelope-nested",
         "flat-tidy"
@@ -166,7 +166,7 @@
     {
       "id": "watcher-lifecycle",
       "kind": "extension",
-      "where": "extension/worker/watch-registry.js:23",
+      "where": "extension/worker/watch-registry.ts:23",
       "states": [
         "armed",
         "firing",
@@ -217,7 +217,7 @@
     {
       "id": "action-pipeline-resolve-machine",
       "kind": "extension",
-      "where": "extension/worker/action-focus.js:154",
+      "where": "extension/worker/action-focus.ts:154",
       "states": [
         "no-ref",
         "resolving",
@@ -238,7 +238,7 @@
     {
       "id": "alarms-vs-interactive-flows",
       "kind": "extension",
-      "where": "extension/worker/execute-pull.js:32",
+      "where": "extension/worker/execute-pull.ts:32",
       "states": [
         "alarmed",
         "user-invoked",
@@ -254,7 +254,7 @@
     {
       "id": "bridge-adopt-probe-machine",
       "kind": "local",
-      "where": "local/bridge.js:57",
+      "where": "local/bridge.ts:57",
       "states": [
         "unstarted",
         "listening-owner",
@@ -290,7 +290,7 @@
     {
       "id": "content-ref-lifecycle",
       "kind": "extension",
-      "where": "extension/content.js:245",
+      "where": "extension/content.ts:245",
       "states": [
         "minted",
         "connected",
@@ -324,7 +324,7 @@
     {
       "id": "debugger-session-registry",
       "kind": "extension",
-      "where": "extension/lib/debugger-session.js:19",
+      "where": "extension/lib/debugger-session.ts:19",
       "states": [
         "unattached",
         "attaching",
@@ -415,7 +415,7 @@
     {
       "id": "mcp-diff-caches",
       "kind": "local",
-      "where": "local/mcp-server.js:129",
+      "where": "local/mcp-server.ts:129",
       "states": [
         "prev-snapshot",
         "diff-computed",
@@ -442,6 +442,22 @@
       "wrongIfConfused": "create a new code and the one you already copied to the second browser silently stops working; expired vs wrong-name vs owned-name are indistinguishable to the person pasting it",
       "decision": "model",
       "why": "issuance rate-limit + ownership + suffixing are one model; the refused-path naming is the gap — UX first",
+      "rank": 2
+    },
+    {
+      "id": "read-ladder",
+      "kind": "local",
+      "where": "local/read-strategy.ts:68",
+      "states": [
+        "dom-page",
+        "canvas-editor",
+        "canvas-without-editor"
+      ],
+      "writers": "buildProfile() in local/surface-profile.ts (canvas, editable, editorFrame, axRich)",
+      "readers": "readLadder(), canvas.read()",
+      "wrongIfConfused": "a canvas document classified as an AX page answers with 56 characters of toolbar while the document holds thousands; before editorFrame, Google Docs was exactly that, and the answer looked successful",
+      "decision": "model",
+      "why": "three declared surfaces, one ordered ladder each; the selection mirror leads where an editor exists and the accessibility tree leads where none does",
       "rank": 2
     },
     {
@@ -497,7 +513,7 @@
     {
       "id": "local-statement-manifest",
       "kind": "local",
-      "where": "local/statements.js:203",
+      "where": "local/statements.ts:203",
       "states": [
         "unrecorded",
         "recorded",
@@ -535,7 +551,7 @@
     {
       "id": "statement-manifest-extension",
       "kind": "extension",
-      "where": "extension/worker/statement.js:22",
+      "where": "extension/worker/statement.ts:22",
       "states": [
         "downloading",
         "complete",
@@ -554,7 +570,7 @@
     {
       "id": "stored-connection-state-slot",
       "kind": "extension",
-      "where": "extension/worker/utils.js:11",
+      "where": "extension/worker/utils.ts:11",
       "states": [
         "starting",
         "connecting",
@@ -589,7 +605,7 @@
     {
       "id": "bridge-command-queue",
       "kind": "local",
-      "where": "local/bridge-ws.js:81",
+      "where": "local/bridge-ws.ts:81",
       "states": [
         "queued",
         "dispatched",
@@ -623,7 +639,7 @@
     {
       "id": "lease-table",
       "kind": "tooling",
-      "where": "local/leases.js:20",
+      "where": "local/leases.ts:20",
       "states": [
         "free",
         "claimed",
@@ -640,7 +656,7 @@
     {
       "id": "local-bridge-device-state",
       "kind": "tooling",
-      "where": "local/bridge-ws.js:69",
+      "where": "local/bridge-ws.ts:69",
       "states": [
         "socket",
         "hello",
@@ -659,7 +675,7 @@
     {
       "id": "popup-inflight-attribution",
       "kind": "extension",
-      "where": "extension/worker/action-focus.js:83",
+      "where": "extension/worker/action-focus.ts:83",
       "states": [
         "empty",
         "pushed",
@@ -690,7 +706,7 @@
     {
       "id": "private-tabs-slot",
       "kind": "extension",
-      "where": "extension/worker/private-tabs.js:8",
+      "where": "extension/worker/private-tabs.ts:8",
       "states": [
         "absent",
         "present"
@@ -705,7 +721,7 @@
     {
       "id": "session-store-fronted",
       "kind": "local",
-      "where": "local/sessions.js:113",
+      "where": "local/sessions.ts:113",
       "states": [
         "no-session",
         "cached-driver",
@@ -737,7 +753,7 @@
     {
       "id": "cdp-closed-flag",
       "kind": "local",
-      "where": "local/cdp.js:16",
+      "where": "local/cdp.ts:16",
       "states": [
         "open",
         "closed"
@@ -752,7 +768,7 @@
     {
       "id": "delta-observation-continuity",
       "kind": "shared",
-      "where": "shared/delta-first-observation.js:138",
+      "where": "shared/delta-first-observation.ts:138",
       "states": [
         "BOOTSTRAP",
         "CONTIGUOUS",
@@ -769,7 +785,7 @@
     {
       "id": "dev-shim-supervisor",
       "kind": "local",
-      "where": "local/dev-shim.js:51",
+      "where": "local/dev-shim.ts:51",
       "states": [
         "live",
         "reloading",
@@ -786,7 +802,7 @@
     {
       "id": "focus-guard-cache",
       "kind": "local",
-      "where": "local/focus-guard.js:39",
+      "where": "local/focus-guard.ts:39",
       "states": [
         "unasked",
         "machine-state-fresh",
@@ -836,7 +852,7 @@
     {
       "id": "oauth-token-expiry",
       "kind": "local",
-      "where": "local/oauth.js:184",
+      "where": "local/oauth.ts:184",
       "states": [
         "no-token",
         "valid",
@@ -868,7 +884,7 @@
     {
       "id": "reactive-vm-host-persistence",
       "kind": "shared",
-      "where": "shared/reactive-vm-host.js:125",
+      "where": "shared/reactive-vm-host.ts:125",
       "states": [
         "quiescent",
         "retry-pending",
@@ -921,7 +937,7 @@
     {
       "id": "waits-settle-watcher",
       "kind": "local",
-      "where": "local/waits.js:28",
+      "where": "local/waits.ts:28",
       "states": [
         "unwatched",
         "watcher-installed",

@@ -1,6 +1,6 @@
-# @last-edited: 2026-11-17 UTC+7.
+# @last-edited: 2026-11-19 UTC+7.
 # @title: backend-language-evaluation - the Rust/Go question, the GPT audit, and the decision.
-# @state: decision recorded; Rust/Go deferred, not banned. The real gaps are Deno check in CI and runtime-boundary validation.
+# @state: decision recorded; Rust/Go deferred, not banned. Deno check and site typecheck are in CI; MCP tool arguments are validated at runtime, and the remaining boundaries are named below.
 # @dependencies: docs/handoff.md, package.json, .github/workflows/ci.yml, ARCHITECTURE.md.
 
 # Why this file exists
@@ -15,11 +15,11 @@ That audit was generated against a stale branch (before the 2026-11-17 full migr
 
 # What the audit got right
 
-- **`deno check` is not wired into CI** for the Supabase/Deno functions under `hosted/functions/`. That is a real gap. Node's `npm run check` enforces `tsc --noEmit` on the local road; the hosted Deno road has an `edge-syntax` test that strips types and parses, which catches syntax errors but is **not** a substitute for `deno check`.
-- **Website `typecheck` is not an explicit CI step** (it exists as a script, but the workflow does not call it out).
+- **`deno check` is not wired into CI** — closed 2026-11-19: `ci.yml` runs `deno check` on every `hosted/functions/*/index.ts` in the `deno-hosted` job.
+- **Website `typecheck` is not an explicit CI step** — closed 2026-11-19: the `site` job runs `npm run typecheck --prefix site`.
 - **Arithmetic on counts** — "844 entries", "221 .mjs" — are snapshots; the current tree differs (everything is `.ts` now, tests pass, `npm run check` is green).
-- **Schema validation at system boundaries** (Zod/Valibot for tool args, env vars, API bodies, database rows) is genuinely missing. TypeScript's strictness is erased at runtime, so any boundary parsing JSON needs a validator, not just a type.
-- **`CODEOWNERS` ownership is declared but branch protection/rulesets could not be verified programmatically** — owner should verify GitHub branch protection includes the gatekeeper paths, and that the required status checks list matches.
+- **Schema validation at system boundaries** — partially closed 2026-11-19: `local/tool-schema.ts` validates every MCP tool call against the same `inputSchema` the client receives (required keys, types, bounds, enums, closed objects). Environment variables, API request bodies, and database rows still need the same treatment. TypeScript's strictness is erased at runtime, so any boundary parsing JSON needs a validator, not just a type.
+- **`CODEOWNERS` ownership is declared but branch protection/rulesets could not be verified programmatically** — verified 2026-11-19: `main` requires all five CI jobs (`unit`, `site`, `deno-hosted`, `secret-scan`, `browser`) with `strict`, `enforce_admins` is true, force pushes and deletions are refused, linear history and conversation resolution are required, and no required review is configured. The remaining gap is the review: an owner review on the gatekeeper paths (`gates.lock`, `.github/`, the boundary locks) would put a human between a gate and its edit.
 
 # What the audit got wrong or outdated
 
@@ -41,8 +41,8 @@ That audit was generated against a stale branch (before the 2026-11-17 full migr
 **Do not port any backend code to Rust or Go now.** Keep the architecture split:
 
 - Browser extension, local driver, shared core, website — TypeScript strict, zero errors, gated.
-- Hosted functions — TypeScript/Deno, strict, **will be wired into CI with `deno check`**.
-- Runtime boundaries — JSON payloads validated with Zod/Valibot as they cross into the system.
+- Hosted functions — TypeScript/Deno, strict, wired into CI with `deno check`.
+- Runtime boundaries — MCP tool arguments validated in `local/tool-schema.ts`; env vars, API bodies and database rows remain to be closed.
 - Architecture gates stay: `ARCHITECTURE.md` + `tests/tooling/architecture.test.ts` + `CODEOWNERS` + branch protection.
 
 **Re-evaluate Rust/Go only when** one of these is true:
@@ -55,9 +55,9 @@ Until then, Rust/Go would solve a language problem for a product that has not ye
 
 # What we will do (in order)
 
-1. Wire `deno check` (or `deno lint` + `deno check`) into CI for `hosted/functions/`.
-2. Verify `site/` has an explicit `typecheck` script in CI, and add if missing.
-3. Add Zod/Valibot-style runtime validation at the boundaries where JSON crosses into the system: MCP tool arguments, environment variables, API request bodies, and database row shapes before they are fed into typed code.
+1. Keep `deno check` and the site `typecheck` in CI as required status checks — done 2026-11-19: all five jobs are required on `main`.
+2. Extend runtime validation to environment variables, API request bodies, and database row shapes before they are fed into typed code.
+3. Require an owner review on the gatekeeper paths (`gates.lock`, `.github/`, the boundary locks) — the only review left between a gate and its edit; every CI job is already required.
 4. Grep regression for stubs: `todo!`, `unimplemented!`, `panic!` (panic used as normal control flow), `@ts-ignore`, `as any` without approval, `process.exit` in library code, silently swallowing errors.
 5. Wire integration tests against a real Postgres for billing/wallet/invoice flows (Deno + Supabase local or testcontainers).
 6. Keep `docs/handoff.md` updated with the cutover facts: npm `navego` published, repo renamed to `navego`, the CRX release live, `type-debt.lock` lineage recorded.

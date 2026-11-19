@@ -86,11 +86,11 @@ test('a worker module with no chrome.* belongs in lib/, with one written excepti
     'lib/ is the chrome-free home; a worker module that never touches chrome.* has no reason to live here');
 });
 
-test('worker modules stay under their ceiling, and background.js does not grow', async () => {
+test('worker modules stay under their ceiling, and background.ts does not grow', async () => {
 
-  const bg = await readFile(new URL('extension/background.js', root), 'utf8');
+  const bg = await readFile(new URL('extension/background.ts', root), 'utf8');
   assert.ok(bg.split('\n').length < 600,
-    `background.js must end up below 600 lines, got ${bg.split('\n').length}`);
+    `background.ts must end up below 600 lines, got ${bg.split('\n').length}`);
 
   const worker = new URL('extension/worker/', root);
 

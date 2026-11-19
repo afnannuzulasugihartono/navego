@@ -214,7 +214,7 @@ test('the surface covers what the driver can actually do', async () => {
   const result = unwrap(await server.handle({ jsonrpc: '2.0', id: 3, method: 'tools/list', params: {} }));
   const names = result.tools.map((t: { name: string }) => t.name).sort();
 
-  for (const required of ['browser_status', 'browser_open_url', 'browser_close_tab', 'browser_list_tabs', 'browser_read_page', 'browser_search_web', 'browser_find_element', 'browser_click', 'browser_hover', 'browser_press_key', 'browser_type_text', 'browser_scroll', 'browser_wait_until', 'browser_upload_file', 'browser_drop_file', 'browser_intercept_picker', 'browser_download_file', 'browser_screenshot', 'browser_run_steps', 'browser_select_browser', 'browser_read_dialog', 'browser_get_guide', 'browser_list_menu', 'delivery_plan', 'delivery_record', 'artifact_build_report', 'artifact_build_slides', 'artifact_build_document', 'browser_check_gate', 'browser_login', 'browser_solve_captcha', 'wallet_pair_device', 'wallet_get_balance', 'wallet_get_price', 'wallet_add_funds', 'wallet_hold_price', 'wallet_charge', 'wallet_refund']) {
+  for (const required of ['browser_status', 'browser_open_url', 'browser_close_tab', 'browser_list_tabs', 'browser_read_page', 'browser_search_web', 'browser_find_element', 'browser_click', 'browser_hover', 'browser_press_key', 'browser_type_text', 'browser_scroll', 'browser_wait_until', 'browser_upload_file', 'browser_drop_file', 'browser_intercept_picker', 'browser_download_file', 'browser_screenshot', 'browser_run_steps', 'browser_select_browser', 'browser_read_dialog', 'browser_get_guide', 'browser_list_menu', 'delivery_plan', 'delivery_record', 'artifact_build', 'browser_check_gate', 'browser_login', 'browser_solve_captcha', 'wallet_pair_device', 'wallet_get_balance', 'wallet_get_price', 'wallet_add_funds', 'wallet_hold_price', 'wallet_charge', 'wallet_refund']) {
     assert.ok(names.includes(required), `missing ${required}`);
   }
 });
@@ -290,7 +290,7 @@ test('report turns an exported sheet into a checked report without a browser', a
     const res = await server.handle({
       jsonrpc: '2.0', id: 7, method: 'tools/call',
       params: {
-        name: 'artifact_build_report',
+        name: 'artifact_build',
         arguments: {
           source,
           client: 'Toko Sinar Jaya',
@@ -326,8 +326,8 @@ test('doc turns a JSON paper into a checked Word file and its plan in one call',
     const res = await server.handle({
       jsonrpc: '2.0', id: 71, method: 'tools/call',
       params: {
-        name: 'artifact_build_document',
-        arguments: { source }
+        name: 'artifact_build',
+        arguments: { source, target: 'docx' }
       }
     });
     assert.equal(unwrap(res).isError, undefined);
@@ -356,8 +356,8 @@ test('doc refuses a graph with no source and writes nothing', async () => {
     const res = await server.handle({
       jsonrpc: '2.0', id: 72, method: 'tools/call',
       params: {
-        name: 'artifact_build_document',
-        arguments: { source }
+        name: 'artifact_build',
+        arguments: { source, target: 'docx' }
       }
     });
     assert.ok(unwrap(res)?.isError, 'an invalid paper is a refusal that answers, not a crash');
@@ -810,6 +810,47 @@ test('a missing required argument is refused before the driver is touched', asyn
 
   assert.ok(unwrap(res)?.isError);
   assert.deepEqual(c.driver.calls, [], 'a refused call must not reach the browser');
+});
+
+test('an argument of the wrong type is refused before the driver is touched', async () => {
+  const c = ctx();
+  const server = createMcpServer(c);
+  const res = await server.handle({
+    jsonrpc: '2.0', id: 61, method: 'tools/call',
+    params: { name: 'browser_type_text', arguments: { text: 5 } }
+  });
+
+  assert.ok(unwrap(res)?.isError);
+  assert.match(failureOf(res), /browser_type_text\.text must be string - got number 5/);
+  assert.deepEqual(c.driver.calls, []);
+});
+
+test('an unknown argument and an out-of-range value are refused by name', async () => {
+  const c = ctx();
+  const server = createMcpServer(c);
+  const unknown = await server.handle({
+    jsonrpc: '2.0', id: 62, method: 'tools/call',
+    params: { name: 'browser_click', arguments: { x: 1, y: 2, tpyo: 3 } }
+  });
+  const range = await server.handle({
+    jsonrpc: '2.0', id: 63, method: 'tools/call',
+    params: { name: 'browser_search_web', arguments: { query: 'navego', pages: 9 } }
+  });
+
+  assert.match(failureOf(unknown), /browser_click\.tpyo is not an argument this tool declares/);
+  assert.match(failureOf(range), /browser_search_web\.pages must be at most 3 - got 9/);
+  assert.deepEqual(c.driver.calls, []);
+});
+
+test('arguments that are not an object are refused instead of read as empty', async () => {
+  const server = createMcpServer(ctx());
+  const res = await server.handle({
+    jsonrpc: '2.0', id: 64, method: 'tools/call',
+    params: { name: 'browser_status', arguments: 'all' }
+  });
+
+  assert.ok(unwrap(res)?.isError);
+  assert.match(failureOf(res), /browser_status arguments must be a JSON object - got string/);
 });
 
 // THIS CLAIM EXISTS.
@@ -1272,7 +1313,7 @@ test('an invalid burst is refused before the browser is touched', async () => {
     params: { name: 'browser_run_steps', arguments: { steps: [] } }
   });
 
-  assert.match(failureOf(res), /1-8 steps/);
+  assert.match(failureOf(res), /at least 1 item/);
   assert.deepEqual(c.driver.calls, []);
 });
 

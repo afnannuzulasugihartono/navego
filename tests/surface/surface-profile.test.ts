@@ -219,6 +219,7 @@ test('the profile the ladder reads carries the evidence under every claim', () =
       textInDom: 0,
       canvas: 0.61,
       editable: 'true',
+      editorFrame: null,
       focused: 'document.hasFocus() is true',
       ax: { textBoxes: 215, textLength: 3063, truncated: false }
     }
