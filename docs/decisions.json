@@ -680,6 +680,16 @@
         "ref": "user 2026-11-19: \"iya hapus aja yng focus window buat semua bisa berjalan di latar belakang\" - the tool existed only to bring a window to the front; the owner wants the drive invisible",
         "also": "recorded: local/focus-guard.ts documents the session-level restore the agent cannot reach"
       }
+    },
+    {
+      "id": "D74",
+      "scope": "agent/tools",
+      "decision": "browser_screenshot always answers: when the compositor has no frame for the tab (a locked screen, a minimized window, a hidden tab), the driver retries with captureBeyondViewport clipped to the current viewport top, and the answer names the road - compositor or beyondviewport. Nothing is ever brought to the foreground (D73).",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"yang screenshot fix supaya bisa screenshot di latar belakang\" - the live drive hit \"Unable to capture screenshot\" on a backgrounded tab",
+        "also": "recorded: local/observe.ts capture() - compositor road first, captureBeyondViewport fallback, scope D73 forbids the foreground path"
+      }
     }
   ]
 }

@@ -93,7 +93,9 @@ export const TOOLS = Object.freeze([
       type: 'object',
       properties: {
         tabId: tabArg,
-        allowCaretMove: { type: 'boolean', description: 'consent, recorded on this call only, for a read that borrows the selection on a canvas editor. Without it that step is skipped and the reason is reported, because a canvas caret is not in the DOM and cannot be promised back.' }
+        allowCaretMove: { type: 'boolean', description: 'consent, recorded on this call only, for a read that borrows the selection on a canvas editor. Without it that step is skipped and the reason is reported, because a canvas caret is not in the DOM and cannot be promised back.' },
+        maxChars: { type: 'number', description: 'cap the returned text at this many characters; the answer reports originalChars and truncatedChars, and caps at 100000 even on a larger ask' },
+        selector: { type: 'string', description: 'read only the innerText of the first element matching this CSS selector; no match refuses with the reason instead of the whole page' }
       }
     }
   },

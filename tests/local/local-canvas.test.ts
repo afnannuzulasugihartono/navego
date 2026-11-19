@@ -42,7 +42,7 @@ const axTree = (texts: any) => {
 
 const CANVAS_CARET = { frame: 0, hostPath: '0/3/2:1', rangeCount: 1, collapsed: true, anchorOffset: 0, text: '', hostTextLength: 0 };
 
-const canvasCdp = ({ probe = CANVAS_PROBE, ax = RICH_AX, copy = null as string | null, caret = CANVAS_CARET, domText = '' } = {}) => {
+const canvasCdp = ({ probe = CANVAS_PROBE, ax = RICH_AX, copy = null as string | null, caret = CANVAS_CARET, domText = '', scopedNull = false } = {}) => {
   const calls: any = [];
   return {
     calls,
@@ -56,6 +56,11 @@ const canvasCdp = ({ probe = CANVAS_PROBE, ax = RICH_AX, copy = null as string |
       // The one selection state: the text the copy reads and the caret position the guard measures, from the same frame.
       if (method === 'Runtime.evaluate' && expression.includes('richest')) {
         return { result: { value: { ...caret, text: typeof copy === 'string' ? copy : '' } } };
+      }
+      if (method === 'Runtime.evaluate' && expression.includes('document.querySelector')) {
+        return scopedNull
+          ? { result: { value: { url: 'https://example.com', title: 'Example', text: null } } }
+          : { result: { value: { url: 'https://example.com', title: 'Example', text: domText } } };
       }
       if (method === 'Runtime.evaluate' && expression.includes('innerText')) {
         return { result: { value: { title: 'Doc', url: DOC_URL, text: domText } } };
@@ -212,6 +217,63 @@ test('a page that holds its own text is read through the DOM and nothing is gate
   assert.equal(out.harm, 'none');
   assert.equal(out.text, 'A page that already holds its own words.');
   assert.equal(out.skipped.length, 0);
+});
+
+test('a scoped read answers only the subtree and names its own strategy', async () => {
+  const domProbe = {
+    textInDom: { value: true, evidence: 4200 },
+    canvas: { value: false, evidence: 0 },
+    editable: { value: false, evidence: 'no editable host' },
+    focused: { value: false, evidence: 'document.hasFocus() is false' }
+  };
+  const cdp = canvasCdp({ probe: domProbe, ax: [], domText: 'The legend sits under the chart.' });
+  const out = await createPrimitives(cdp, { sleep: async () => {} }).read({ selector: '#chart' });
+
+  assert.equal(out.strategy, 'dom-scoped');
+  assert.equal(out.text, 'The legend sits under the chart.');
+  assert.equal(out.settled, true, 'the subtree stood still across two reads a beat apart');
+});
+
+test('a scoped read refuses a selector that matches nothing', async () => {
+  const domProbe = {
+    textInDom: { value: true, evidence: 4200 },
+    canvas: { value: false, evidence: 0 },
+    editable: { value: false, evidence: 'no editable host' },
+    focused: { value: false, evidence: 'document.hasFocus() is false' }
+  };
+  const cdp = canvasCdp({ probe: domProbe, ax: [], scopedNull: true });
+  await assert.rejects(
+    () => createPrimitives(cdp, { sleep: async () => {} }).read({ selector: '#nope' }),
+    /no element matches/
+  );
+});
+
+test('maxChars trims the returned text and says how much was trimmed', async () => {
+  const domProbe = {
+    textInDom: { value: true, evidence: 4200 },
+    canvas: { value: false, evidence: 0 },
+    editable: { value: false, evidence: 'no editable host' },
+    focused: { value: false, evidence: 'document.hasFocus() is false' }
+  };
+  const cdp = canvasCdp({ probe: domProbe, ax: [], domText: 'A page that already holds its own words.' });
+  const out = await createPrimitives(cdp, { sleep: async () => {} }).read({ maxChars: 9 });
+
+  assert.equal(out.text, 'A page th');
+  assert.equal(out.truncatedChars, 'A page that already holds its own words.'.length - 9);
+  assert.equal(out.originalChars, 'A page that already holds its own words.'.length);
+});
+
+test('a maxChars above 100000 is clamped to 100000', async () => {
+  const domProbe = {
+    textInDom: { value: true, evidence: 4200 },
+    canvas: { value: false, evidence: 0 },
+    editable: { value: false, evidence: 'no editable host' },
+    focused: { value: false, evidence: 'document.hasFocus() is false' }
+  };
+  const cdp = canvasCdp({ probe: domProbe, ax: [], domText: 'short' });
+  const out = await createPrimitives(cdp, { sleep: async () => {} }).read({ maxChars: 999999 });
+
+  assert.equal(out.truncatedChars, 0, 'a huge ask does not fabricate a cap below the text it already had');
 });
 
 test('createCanvasMethods exposes read and caretLine', () => {

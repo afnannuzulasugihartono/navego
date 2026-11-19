@@ -210,20 +210,39 @@ export function createObserveMethods({ cdp, primitives, capped, sleep = () => Pr
   // An agent given a picture and nothing else has to guess that number, and it guesses wrong - which is how a click lands on the wrong thing while every answer says the click was delivered.
   async function captureSized({ format = 'jpeg', quality = 60, fullPage = false }: CaptureOptions = {}) {
     const view = await viewport();
-    const data = await capture({ format, quality, fullPage });
+    const { data, road } = await capture({ format, quality, fullPage });
     const pixels = await imageSize(data, format);
     return {
       data,
       viewport: { width: view.width, height: view.height },
       dpr: view.dpr,
       image: pixels,
+      road,
       note: fullPage
         ? 'a full-page capture is the whole document, not the window: convert through the page, not the viewport'
-        : `image pixels are css pixels times ${view.dpr}`
+        : road === 'beyondviewport'
+          ? 'captured beyond the viewport - the compositor had no frame for this tab; the picture is still css pixels times the device scale'
+          : `image pixels are css pixels times ${view.dpr}`
     };
   }
 
-  async function capture({ format = 'jpeg', quality = 60, fullPage = false }: CaptureOptions = {}) {
+  async function scrollY(): Promise<number> {
+    const { result } = await cdp.send('Runtime.evaluate', {
+      expression: 'Math.round(window.scrollY)',
+      returnByValue: true
+    });
+    return Number(result?.value) || 0;
+  }
+
+  const shotData = (reply: unknown): string => {
+    const data = (reply as { data?: unknown } | null)?.data;
+    if (typeof data !== 'string' || data.length === 0) {
+      throw new Error('the browser answered Page.captureScreenshot with no picture bytes');
+    }
+    return data;
+  };
+
+  async function capture({ format = 'jpeg', quality = 60, fullPage = false }: CaptureOptions = {}): Promise<{ data: string; road: 'compositor' | 'beyondviewport' }> {
     if (fullPage) {
       const metrics = await cdp.send('Page.getLayoutMetrics', {});
       const content = metrics?.contentSize ?? {};
@@ -231,21 +250,33 @@ export function createObserveMethods({ cdp, primitives, capped, sleep = () => Pr
       const height = Number(content.height);
       if (!(width > 0 && height > 0)) throw new Error('Full-page capture needs a content size the page did not report.');
       const scale = Math.min(1, 1600 / width, 2400 / height);
-      const { data } = await cdp.send('Page.captureScreenshot', {
+      const data = shotData(await cdp.send('Page.captureScreenshot', {
         format,
         quality,
         captureBeyondViewport: true,
         clip: { x: 0, y: 0, width, height, scale }
-      });
-      return data;
+      }));
+      return { data, road: 'beyondviewport' as const };
     }
     const { width, height } = await viewport();
-    const { data } = await cdp.send('Page.captureScreenshot', {
-      format,
-      quality,
-      clip: { x: 0, y: 0, width, height, scale: 1 }
-    });
-    return data;
+    // a locked screen, a minimized window, or one hidden behind another leaves the compositor without a frame for this tab; the software road then rasterises the region without the composited frame
+    try {
+      const data = shotData(await cdp.send('Page.captureScreenshot', {
+        format,
+        quality,
+        clip: { x: 0, y: 0, width, height, scale: 1 }
+      }));
+      return { data, road: 'compositor' as const };
+    } catch {
+      const top = await scrollY();
+      const data = shotData(await cdp.send('Page.captureScreenshot', {
+        format,
+        quality,
+        captureBeyondViewport: true,
+        clip: { x: 0, y: top, width, height, scale: 1 }
+      }));
+      return { data, road: 'beyondviewport' as const };
+    }
   }
 
   async function resolveRow({ role, name, limit = 120 }: { role: string; name: unknown; limit?: number }) {
