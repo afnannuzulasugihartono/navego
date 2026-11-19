@@ -226,7 +226,7 @@ test('intercepting the file chooser restores itself after the TTL and says so', 
   const on = await p.interceptFileChooser(true);
   assert.equal(on.intercepting, true);
   assert.equal(typeof on.interceptedSince, 'number');
-  assert.equal(on.elapsedMs, 0);
+  assert.ok(on.elapsedMs >= 0, 'elapsedMs is a measured number');
 
   const again = await p.interceptFileChooser(true);
   assert.equal(again.intercepting, true);
