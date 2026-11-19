@@ -55,6 +55,25 @@ import {
 // The borrow selects the whole document and the caret then moves to its end, so the view scrolls with it - and no key in this driver puts the view back, only the caret.
 // A caller that reads viewRestored:false knows the picture it takes next is of the end of the document rather than of where the person was reading.
 
+const scopedExpression = (selector: string): string => `(() => {
+  const el = document.querySelector(${JSON.stringify(selector)});
+  if (!el) return { url: document.location.href, title: document.title, text: null };
+  return { url: document.location.href, title: document.title, text: String(el.innerText ?? '') };
+})()`;
+
+const maxCharsOf = (value: unknown): number | undefined => {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 1) return undefined;
+  return Math.min(Math.floor(parsed), 100000);
+};
+
+const truncateTo = (text: string, maxChars: number | undefined): { text: string; truncatedChars: number; originalChars: number } => {
+  if (maxChars === undefined || text.length <= maxChars) {
+    return { text, truncatedChars: 0, originalChars: text.length };
+  }
+  return { text: text.slice(0, maxChars), truncatedChars: text.length - maxChars, originalChars: text.length };
+};
+
 const VIEW_WHY = 'the borrow selected the whole document, so the view is left where the selection ended;'
   + ' the caret verdict says whether the caret itself came back';
 
@@ -133,14 +152,44 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
       viewWhy: VIEW_WHY
     };
 
-  async function read(options: { allowCaretMove?: boolean } = {}) {
+  async function read(options: { allowCaretMove?: boolean; maxChars?: unknown; selector?: unknown } = {}) {
     const allowCaretMove = options.allowCaretMove === true;
+    const maxChars = maxCharsOf(options.maxChars);
+    const selector = typeof options.selector === 'string' && options.selector.trim().length > 0 ? options.selector.trim() : null;
     const probe = await probeSurface({ evaluate: primitives.evaluate });
     const ax = probe.canvas?.value === true ? await axOf() : {};
     const surface = buildProfile({ probe, ax });
     const ladder = readLadder(surface);
     const skipped: Array<{ strategy: string; harm: string; why: string }> = [];
     let borrow: { caret: { restored: boolean; why?: unknown }; text: string } | null = null;
+
+    if (selector) {
+      const scoped = await primitives.evaluate(scopedExpression(selector)) as { title?: unknown; url?: unknown; text?: unknown } | null;
+      const scopedText = typeof scoped?.text === 'string' ? scoped.text : null;
+      if (scopedText === null) {
+        throw new Error(`no element matches "${selector}" - the read stops here instead of reading the whole page; drop the selector or pick one that exists`);
+      }
+      await primitives.settle();
+      const again = await primitives.evaluate(scopedExpression(selector)) as { title?: unknown; url?: unknown; text?: unknown } | null;
+      const againText = typeof again?.text === 'string' ? again.text : scopedText;
+      const trimmed = truncateTo(againText, maxChars);
+      return {
+        title: String(again?.title ?? scoped?.title ?? ''),
+        url: String(again?.url ?? scoped?.url ?? ''),
+        text: trimmed.text,
+        ready: undefined,
+        settled: againText === scopedText,
+        grewBy: againText.length - scopedText.length,
+        surface,
+        strategy: 'dom-scoped',
+        harm: HARM_NONE,
+        skipped,
+        description: `scoped to ${selector}`,
+        originalChars: trimmed.originalChars,
+        truncatedChars: trimmed.truncatedChars,
+        ...untouched
+      };
+    }
 
     for (const step of ladder) {
       if (step.harm !== HARM_NONE) {
@@ -157,10 +206,11 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
         if (textOf(state.text).trim().length > 0) {
           await primitives.settle();
           const again = await readState();
+          const limited = truncateTo(textOf(again.text), maxChars);
           return {
             title: again.title,
             url: again.url,
-            text: again.text,
+            text: limited.text,
             ready: again.ready ?? null,
             settled: again.text === state.text,
             grewBy: textOf(again.text).length - textOf(state.text).length,
@@ -169,6 +219,8 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
             harm: step.harm,
             skipped,
             description: describeProfile(surface),
+            originalChars: limited.originalChars,
+            truncatedChars: limited.truncatedChars,
             ...untouched
           };
         }
@@ -176,7 +228,9 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
       }
 
       if (step.strategy === STRATEGY_AX) {
-        const text = readAxText(await axOf(), surface);
+        const axFull = readAxText(await axOf(), surface);
+        const limited = axFull ? truncateTo(axFull, maxChars) : { text: '' as string, truncatedChars: 0, originalChars: 0 };
+        const text = limited.text;
         if (text) {
           // The title and url are one cheap call the caller expects on every read; whether the text has stopped moving is not something one sample of the tree can answer.
           const state = await readState();
@@ -192,6 +246,8 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
             harm: step.harm,
             skipped,
             description: describeProfile(surface),
+            originalChars: limited.originalChars,
+            truncatedChars: limited.truncatedChars,
             ...untouched
           };
         }
@@ -203,10 +259,11 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
         if (answer) {
           borrow = { caret: answer.caret, text: answer.text };
           if (answer.text.length > 0) {
+            const limited = truncateTo(answer.text, maxChars);
             return {
               title: '',
               url: '',
-              text: answer.text,
+              text: limited.text,
               caret: answer.caret,
               surface,
               strategy: step.strategy,
@@ -215,6 +272,8 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
               description: describeProfile(surface),
               settled: null,
               settledWhy: SETTLED_WHY_COPY,
+              originalChars: limited.originalChars,
+              truncatedChars: limited.truncatedChars,
               ...afterBorrow(borrow)
             };
           }

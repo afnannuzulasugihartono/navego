@@ -679,7 +679,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         return asText(out);
       }
       case 'browser_read_page':
-        return asText(await driver.read({ allowCaretMove: args.allowCaretMove === true }));
+        return asText(await driver.read({ allowCaretMove: args.allowCaretMove === true, maxChars: args.maxChars, selector: args.selector }));
       // THE SETTLE IS ASKED FOR, BOUNDED AND OPTIONAL.
       // tabs.open already waits for the tab's load event, but load and settled-for-readers are different facts: Bing renders its cards server-side, and the first innerText read is only as fresh as whatever the page did after DOMContentLoaded.
       // The optional call keeps a fake session in the tests working while the real one measures quiet before the read.
@@ -933,7 +933,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         return {
           content: [
             { type: 'image', data: shot.data, mimeType: 'image/jpeg' },
-            { type: 'text', text: JSON.stringify({ viewport: shot.viewport, dpr: shot.dpr, image: shot.image, note: shot.note }) }
+            { type: 'text', text: JSON.stringify({ viewport: shot.viewport, dpr: shot.dpr, image: shot.image, road: shot.road, note: shot.note }) }
           ]
         };
       }
