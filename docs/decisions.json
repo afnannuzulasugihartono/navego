@@ -493,6 +493,15 @@
         "kind": "user",
         "ref": "user 2026-11-18: \"garisnya dihilangkan aja buat animasi yang smooth\" - the line cut the bar/panel continuity; user wants a smooth open animation"
       }
+    },
+    {
+      "id": "D54",
+      "scope": "web/components",
+      "decision": "The bar carries the brand on the left, \"Beranda\" as a plain text link beside it, and two actions on the right: \"Masuk\" (ghost, links to the sign-in page) and \"Pasang gratis\" (solid amber CTA) - the owner reported both missing.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"tombol login dan beranda belum ada\""
+      }
     }
   ]
 }
