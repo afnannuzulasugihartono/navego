@@ -44,12 +44,12 @@
  * No box, no border, no background, no lines.
  */
 
-.nav-notch-wrap { display: flex; position: absolute; inset-inline: 0; bottom: -1px; z-index: 45; justify-content: center; }
+.nav-notch-wrap { display: flex; position: absolute; inset-inline: 0; bottom: -1px; z-index: 45; justify-content: center; background: var(--navy-deep); }
 .nav-notch { display: flex; align-items: center; justify-content: center; inline-size: 72px; block-size: 20px; background: var(--navy-deep); border: 0; cursor: pointer; color: #cdd8f3; }
 .nav-notch:hover, .nav-notch:focus-visible { color: #ffffff; }
 .nav-notch:hover svg, .nav-notch:focus-visible svg { color: var(--amber-hi); }
 .nav-notch-wrap:hover .nav-notch svg, .nav-notch-wrap:focus-within .nav-notch svg { transform: rotate(180deg); }
-.nav-strip { display: block; position: absolute; inset-inline: 0; top: 100%; background: var(--navy-deep); padding: var(--s-7) 0; opacity: 0; translate: 0 -8px; visibility: hidden; transition: opacity 450ms var(--ease-out), translate 500ms var(--ease-out), visibility 500ms var(--ease-out); transition-behavior: allow-discrete; }
+.nav-strip { display: block; position: absolute; inset-inline: 0; top: 100%; margin-top: -1px; background: var(--navy-deep); padding: var(--s-7) 0; opacity: 0; translate: 0 -8px; visibility: hidden; transition: opacity 450ms var(--ease-out), translate 500ms var(--ease-out), visibility 500ms var(--ease-out); transition-behavior: allow-discrete; }
 .nav-notch-wrap:hover .nav-strip, .nav-notch-wrap:focus-within .nav-strip, .nav-strip:hover { opacity: 1; translate: 0 0; visibility: visible; }
 
 @starting-style {

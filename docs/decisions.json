@@ -488,7 +488,7 @@
     {
       "id": "D53",
       "scope": "web/components",
-      "decision": "No divider between the bar and the mega panel - one continuous dark surface; the panel fades and rises slowly (450ms opacity / 500ms rise) over the ease-out, instant during reduced motion; the stuck-state shadow under the bar is removed so the bar reads as one surface with the panel, not a floating plane above it.",
+      "decision": "No divider between the bar and the mega panel - one continuous dark surface; the panel fades and rises slowly (450ms opacity / 500ms rise) over the ease-out, instant during reduced motion; the stuck-state shadow under the bar is removed so the bar reads as one surface with the panel, not a floating plane above it. The seam the shadow left behind is closed twice: the full-width chevron wrapper carries the bar's navy-deep background so the cream ground never shows through at the bottom edge, and the open strip overlaps the seam by 1px (margin-top: -1px).",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-19: \"buat animasinya lebih slow dan hilangkan garis strip yang ada di bawah chevron buat supaya nav bar seperti ke bawah memanjang\" - the shadow was the 1px line passing below the chevron"
