@@ -53,7 +53,7 @@ The owner rejected the copy once as slop. That is a design failure, so it gets r
 - **A heading names a thing, not a mood** — "Tidak kejutan" became "Dua cara bayar", "Semuanya di sini" became "Tiga yang paling sering", "Browser Anda, alat kerja" became "Yang bisa dikerjakan Navego".
 - **Nothing repeats itself on one page** — "Satu extension, satu akun, satu browser" said the same thing twice on beranda; it now appears nowhere, and the band that carried it was replaced by the four example files.
 - **Second person is "Anda"** — the dashboard said "device milikmu sendiri" in the middle of a formal page.
-- **Every number must be one the site can prove** — 45 tool, 36 primitive, 6 izin, Rp10.000, Rp249.000, 23 baris, Rp 65.310.000, sha256, 200/50 kuota.
+- **Every number must be one the site can prove** — 40 tool, 36 primitive, 6 izin, Rp10.000, Rp249.000, 23 baris, Rp 65.310.000, sha256, 200/50 kuota.
 - **A claim that cannot be proved does not ship** — "Paling dipakai" became "Kuota terbesar"; the "TERLARIS" badge was cut before it ever shipped.
 
 - **No eyebrow labels, ever.** The line above a heading — "Contoh nyata.", "Unduh.", "Fitur." — was cut from every page: the information it carried was either already in the heading, dropped, or moved into the lede. The definition lives at [vocab.design](https://vocab.design/eyebrow) ("what category the content belongs to"); it is only useful when a parent grouping exists ([CFPB design system](https://cfpb.github.io/design-system/foundation/headings)), and this site has none. Every heading on the page now names the thing or the claim itself.
