@@ -27,7 +27,7 @@ const SANCTIONED = new Map([
   ['local/bin/opera-local.ts', { count: 1, reason: 'the Driver interface in bin/opera-local.ts takes the concrete driver created above as its transport; both answer the same verbs over different pairs.' }],
   ['local/bridge-ws.ts', { count: 1, reason: 'a ws.destroy() pair exists on net.Socket but not on WebSocket.type, so the dead-socket sweep destroys the underlying handle rather than the wrapper.' }],
   ['local/dev-shim.ts', { count: 1, reason: 'the child stdin piped in is a net.Socket with setEncoding but types it only as a Closeable; the cast names the shape the pipe actually provides.' }],
-  ['local/mcp-server.ts', { count: 4, reason: 'gates.js answers the same verb set as the local Driver surface, typed narrowly for its own use; the cast widens the narrow gate-driver back to the Driver callers here expect.' }],
+  ['local/browser-actions.ts', { count: 4, reason: 'gates.js answers the same verb set as the local Driver surface, typed narrowly for its own use; the cast widens the narrow gate-driver back to the Driver the browser-actions cases call.' }],
   ['local/sessions.ts', { count: 1, reason: 'the session store pairs verbs with opaque keys, so the stored driver is honest-but-untyped; the cast names the type the store pinned above.' }],
   ['local/transport.ts', { count: 1, reason: 'globalThis.WebSocket is only typed for the browser surface; the cast names the shape the CDP transport actually uses.' }],
   ['local/window-focus.ts', { count: 2, reason: 'child.stdout and child.stdin are typed as streams without .unref(); the two casts name the shape node gives these pipes on the platform.' }],

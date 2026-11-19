@@ -1,7 +1,6 @@
 // @last-edited: 2026-11-20 UTC+7.
 // @title: stub-grep — the regression that a stub a reviewer can read is never shipped.
-// @state: product code (shared/, local/, extension/, hosted/functions/) fails the scan when it carries todo!, unimplemented!, panic!
-// or process.exit in library code.
+// @state: product code (shared/, local/, extension/, hosted/functions/) fails the stub scan.
 // @dependencies: node:test, strict, node:fs, node:path, node:url, node:child_process.
 
 import test from 'node:test';
