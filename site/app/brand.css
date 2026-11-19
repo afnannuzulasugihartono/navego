@@ -14,7 +14,6 @@
   z-index: 40;
   background: var(--navy-deep);
   color: #cdd8f3;
-  border-bottom: 1px solid #26355f;
   container-type: scroll-state;
   container-name: site-header;
   transition: transform 180ms var(--ease-out);
@@ -45,8 +44,12 @@
 .nav-notch:hover, .nav-notch:focus-visible { color: #ffffff; }
 .nav-notch:hover svg, .nav-notch:focus-visible svg { color: var(--amber-hi); }
 .nav-notch-wrap:hover .nav-notch svg, .nav-notch-wrap:focus-within .nav-notch svg { transform: rotate(180deg); }
-.nav-strip { display: none; position: absolute; inset-inline: 0; top: 100%; background: var(--navy-deep); border-bottom: 1px solid #26355f; padding: var(--s-7) 0; }
-.nav-notch-wrap:hover .nav-strip, .nav-notch-wrap:focus-within .nav-strip, .nav-strip:hover { display: block; }
+.nav-strip { display: block; position: absolute; inset-inline: 0; top: 100%; background: var(--navy-deep); padding: var(--s-7) 0; opacity: 0; translate: 0 -6px; visibility: hidden; transition: opacity 180ms var(--ease-out), translate 220ms var(--ease-out), visibility 220ms var(--ease-out); transition-behavior: allow-discrete; }
+.nav-notch-wrap:hover .nav-strip, .nav-notch-wrap:focus-within .nav-strip, .nav-strip:hover { opacity: 1; translate: 0 0; visibility: visible; }
+
+@starting-style {
+  .nav-notch-wrap:hover .nav-strip, .nav-notch-wrap:focus-within .nav-strip, .nav-strip:hover { opacity: 0; translate: 0 -6px; }
+}
 .nav-strip-inner { width: min(1120px, 100% - 2 * var(--gutter)); margin-inline: auto; display: grid; grid-template-columns: 1.15fr 1fr 1fr 1fr; gap: var(--s-7); align-items: start; }
 .nav-col-heading { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.12em; text-transform: uppercase; color: #8fa8d8; margin-bottom: var(--s-3); }
 .nav-spot { display: grid; align-content: start; gap: var(--s-3); }
@@ -719,7 +722,7 @@
 /* ========== reduced motion ========== */
 
 @media (prefers-reduced-motion: reduce) {
-  .btn, .plan-fill { transition: none; }
+  .btn, .plan-fill, .nav-strip { transition: none; }
   html { scroll-behavior: auto; }
 }
 
