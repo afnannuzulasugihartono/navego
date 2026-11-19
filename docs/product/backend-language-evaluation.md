@@ -1,4 +1,4 @@
-# @last-edited: 2026-11-19 UTC+7.
+# @last-edited: 2026-11-20 UTC+7.
 # @title: backend-language-evaluation - the Rust/Go question, the GPT audit, and the decision.
 # @state: decision recorded; Rust/Go deferred, not banned. Deno check and site typecheck are in CI; MCP tool arguments are validated at runtime, and the remaining boundaries are named below.
 # @dependencies: docs/handoff.md, package.json, .github/workflows/ci.yml, ARCHITECTURE.md.
@@ -19,7 +19,7 @@ That audit was generated against a stale branch (before the 2026-11-17 full migr
 - **Website `typecheck` is not an explicit CI step** — closed 2026-11-19: the `site` job runs `npm run typecheck --prefix site`.
 - **Arithmetic on counts** — "844 entries", "221 .mjs" — are snapshots; the current tree differs (everything is `.ts` now, tests pass, `npm run check` is green).
 - **Schema validation at system boundaries** — partially closed 2026-11-19: `local/tool-schema.ts` validates every MCP tool call against the same `inputSchema` the client receives (required keys, types, bounds, enums, closed objects). Environment variables, API request bodies, and database rows still need the same treatment. TypeScript's strictness is erased at runtime, so any boundary parsing JSON needs a validator, not just a type.
-- **`CODEOWNERS` ownership is declared but branch protection/rulesets could not be verified programmatically** — verified 2026-11-19: `main` requires all five CI jobs (`unit`, `site`, `deno-hosted`, `secret-scan`, `browser`) with `strict`, `enforce_admins` is true, force pushes and deletions are refused, linear history and conversation resolution are required, and no required review is configured. The remaining gap is the review: an owner review on the gatekeeper paths (`gates.lock`, `.github/`, the boundary locks) would put a human between a gate and its edit.
+- **`CODEOWNERS` ownership is declared but branch protection/rulesets could not be verified programmatically** — closed 2026-11-20: `main` now requires the five CI jobs (`unit`, `site`, `deno-hosted`, `secret-scan`, `browser`) as required checks with `strict` verification, `enforce_admins` is on, force pushes and deletions are refused, dismiss-stale-approvals is on, and every pull request needs an approving review with code-owner sign-off on the gatekeeper surface (`tests/`, `scripts/`, `gates.lock` and the rest of `.github/`) - decisions.json -> docs-branch-protection-01.
 
 # What the audit got wrong or outdated
 
@@ -57,9 +57,9 @@ Until then, Rust/Go would solve a language problem for a product that has not ye
 
 1. Keep `deno check` and the site `typecheck` in CI as required status checks — done 2026-11-19: all five jobs are required on `main`.
 2. Extend runtime validation to environment variables, API request bodies, and database row shapes before they are fed into typed code.
-3. Require an owner review on the gatekeeper paths (`gates.lock`, `.github/`, the boundary locks) — the only review left between a gate and its edit; every CI job is already required.
+3. Require an owner review on the gatekeeper paths (`gates.lock`, `.github/`, the boundary locks) — closed 2026-11-20: decisions.json -> docs-branch-protection-01; `gh api` now requires an approving review with code-owner sign-off on `tests/`, `scripts/`, `gates.lock` and the rest of `.github/` on `main`.
 4. Grep regression for stubs: `todo!`, `unimplemented!`, `panic!` (panic used as normal control flow), `@ts-ignore`, `as any` without approval, `process.exit` in library code, silently swallowing errors.
-5. Wire integration tests against a real Postgres for billing/wallet/invoice flows (Deno + Supabase local or testcontainers).
+5. Wire integration tests against a real Postgres for billing/wallet/invoice flows — closed 2026-11-20: `tests/hosted/integration-postgres.test.ts` + the `postgres` job in `ci.yml`: every migration applies under `ON_ERROR_STOP` to a disposable Postgres, then the test asserts the opera_commands lifecycle check and the billing RLS are real - decisions.json -> ci-postgres-integration-01. Full billing/wallet/invoice flow tests against a live Supabase project still need the project's `DATABASE_URL`/`ACCESS_TOKEN` wired as secrets.
 6. Keep `docs/handoff.md` updated with the cutover facts: npm `navego` published, repo renamed to `navego`, the CRX release live, `type-debt.lock` lineage recorded.
 
 # What this file is not

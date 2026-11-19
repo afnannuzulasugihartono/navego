@@ -1,6 +1,6 @@
-# @last-edited: 2026-10-22 UTC+7.
-# @title: ci — five jobs, all on GitHub Linux runners.
-# @state: unit, site, deno-hosted, secret-scan and browser run on every pull request, whatever it targets, and on a push to main.
+# @last-edited: 2026-11-20 UTC+7.
+# @title: ci — six jobs, all on GitHub Linux runners.
+# @state: the six jobs run on every pull request, whatever it targets, and on a push to main.
 # @dependencies: none stated.
 
 name: CI
@@ -151,3 +151,43 @@ jobs:
           name: browser-harness
           path: ${{ runner.temp }}/harness.json
           if-no-files-found: ignore
+
+# A disposable engine proves the migrations apply and produce the documented shape - opera_commands' full lifecycle check and the billing RLS.
+# decisions.json -> tests-hosted-integration-postgres-01
+
+  postgres:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: navego_test
+          POSTGRES_PASSWORD: navego_test
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 22.20.0
+      - name: Install the toolchain
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Apply the migrations to a disposable Postgres
+        env:
+          DATABASE_URL: postgres://navego_test:navego_test@127.0.0.1:5432/postgres
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          for file in hosted/migrations/*.sql; do
+            psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -q -f "$file" || exit 1
+          done
+      - name: Unit and static tests against the live migration shape
+        env:
+          NAVEGO_TEST_DATABASE_URL: postgres://navego_test:navego_test@127.0.0.1:5432/postgres
+        run: |
+          npm test
+          npm run check

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated": "2026-11-19",
+  "generated": "2026-11-20",
   "source": "The 2026-11-18 navego.pages.dev rebrand and consistency pass: logo, wordmark, eyebrows, type and spacing system, nav notch, copy pass. User direction arrived 2026-11-18; internet sources were verified 2026-11-18. Repo sources point at the docs that already carry the decision. 2026-11-19: a source-backed pass over the agent tool surface added D55-D68 - kind recorded carries the file:line of the recorded performance, per the user evidence mandate.",
   "note": "One decision, one source. Code references this file as decisions.json -> <id>. A decision added from 2026-11-19 onward carries a file-based id (for example local-canvas-01) and names the file it governs; the earlier D-numbers are history and keep their ids. A decision the user asked for carries kind=user; a decision nobody asked for carries the internet source it was taken from; a decision inherited from this repo carries the repo document that already carries it; a decision taken because a recorded performance demanded it carries kind=recorded with the file:line that records it.",
   "decisions": [
@@ -897,6 +897,26 @@
         "kind": "user",
         "ref": "user 2026-11-19 review: \"Pada fungsi renewAccessToken() tidak terlihat mekanisme single-flight atau lock ... Buat test multi-tab dan request concurrent\""
       }
+    },
+    {
+      "id": "docs-branch-protection-01",
+      "scope": "ci/main",
+      "decision": "Main requires all five CI jobs as required checks with strict status verification, enforce_admins is on, force pushes and deletions are refused, dismiss-stale-approvals is on, and every pull request needs an approving review with code-owner sign-off on the gatekeeper surface (tests/, scripts/, gates.lock and the rest of .github/).",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - the audit (its remaining gap) asked for the review on the gatekeeper paths"
+      },
+      "file": "docs/product/backend-language-evaluation.md"
+    },
+    {
+      "id": "tests-hosted-integration-postgres-01",
+      "scope": "ci/testing",
+      "decision": "PostgreSQL integration tests run in CI against a disposable Postgres: every migration applies under ON_ERROR_STOP, and the test asserts opera_commands carries its full lifecycle check and RLS is on the billing tables - the real proof for the migration contract.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - backend-language-evaluation.md item 5 left this open"
+      },
+      "file": "tests/hosted/integration-postgres.test.ts"
     }
   ]
 }
