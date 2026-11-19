@@ -126,7 +126,7 @@ export const RECIPES = Object.freeze([
   {
     task: 'Prove it worked',
     do: ['browser_screenshot', 'browser_read_page'],
-    note: 'A picture and the text, compared against what you expected. A tool saying it succeeded is not proof; the page saying so is.'
+    note: 'Text claim (a table, a value, a setting): a settled read is proof - ask browser_read_page for it. Visual claim (a layout, a colour, an open dialog, a state): only the picture is proof - ask browser_screenshot. When the tool says it worked and the page did not change, suspect the picture first, not the text.'
   }
 ]);
 
