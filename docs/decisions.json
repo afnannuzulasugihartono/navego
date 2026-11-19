@@ -613,7 +613,7 @@
       "decision": "wallet_get_price and wallet_hold_price stay two tools, quote then reserve; the plan shape (artifact page or document, or list with an item count) is defined once in the implementation; no catalog-visible change.",
       "source": {
         "kind": "recorded",
-        "ref": "catalog descriptions of 2026-11-19 verbatim: get_price carries the plan shape and the show-the-person-first contract; hold_price carries the steps-over-cap refusal - the two halves of one quote/reserve flow, not two schemas written twice"
+        "ref": "catalog descriptions of 2026-11-19 verbatim: get_price carries the plan shape and the show-the-person-first contract; hold_price carries the steps-over-cap refusal - the two halves of one quote and reserve flow, not two schemas written twice"
       }
     },
     {

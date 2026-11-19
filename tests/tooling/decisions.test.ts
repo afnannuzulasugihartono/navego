@@ -34,9 +34,72 @@ interface Register {
 const root = new URL('../../', import.meta.url);
 const read = (name: string): Register => JSON.parse(fs.readFileSync(new URL(name, root), 'utf8')) as Register;
 
-// a recorded source points at the file that records the performance - release notes, proof records, the registry - never at a feeling
+// a recorded source points at the file that records the performance - release notes, proof records, the registry - never at a feeling a source nobody can check is a source nobody wrote: internet citations carry a URL any person can open, in-repo citations must resolve to files and lines here, user citations carry the date the owner said it, recorded citations carry a date or a resolvable path
 
 const KINDS = new Set(['user', 'internet', 'repo', 'recorded']);
+
+const REPO_EXTENSIONS = 'md|ts|tsx|js|mjs|cjs|json|jsonl|ya?ml|css|html|svg|txt|sql|py|toml|lock';
+
+const allTrackedFiles = (): Set<string> => {
+  const tracked = execFileSync('git', ['ls-files', '-z'], { cwd: new URL(root) }).toString('utf8').split('\0').filter(Boolean);
+  const untracked = execFileSync('git', ['ls-files', '-z', '--others', '--exclude-standard'], { cwd: new URL(root) }).toString('utf8').split('\0').filter(Boolean);
+  return new Set([...tracked, ...untracked]);
+};
+
+const pathTokens = (ref: string): string[] =>
+  (ref.match(/[\w./-]+(?::\d+(?:-\d+)?)?/g) ?? [])
+    .map((token) => token.trim())
+    .filter((token) => {
+      if (token.includes('/')) {
+        const firstSegment = token.split('/').filter(Boolean)[0] ?? '';
+        return !firstSegment.includes('.');
+      }
+      return new RegExp(`^[\\w-][\\w.-]*\\.(${REPO_EXTENSIONS})(?::\\d+(?:-\\d+)?)?$`).test(token);
+    });
+
+const resolvedPath = (token: string, tracked: Set<string>): { path: string; lineStart?: number | undefined; lineEnd?: number | undefined } | null => {
+  const match = token.match(/^(.*?)(?::(\d+)(?:-(\d+))?)?$/);
+  const bare = match?.[1] ?? token;
+  if (!bare || bare === '.') return null;
+  if (bare.includes('*')) return { path: bare };
+  if (bare.endsWith('/')) {
+    for (const file of tracked) {
+      if (file.startsWith(bare)) return { path: bare };
+    }
+    return null;
+  }
+  if (tracked.has(bare)) return { path: bare, lineStart: match?.[2] ? Number(match[2]) : undefined, lineEnd: match?.[3] ? Number(match[3]) : match?.[2] ? Number(match[2]) : undefined };
+  for (const file of tracked) {
+    if (file === bare || file.endsWith('/' + bare)) {
+      return { path: file, lineStart: match?.[2] ? Number(match[2]) : undefined, lineEnd: match?.[3] ? Number(match[3]) : match?.[2] ? Number(match[2]) : undefined };
+    }
+  }
+  return null;
+};
+
+const lineCountCache = new Map<string, number>();
+const lineCount = (file: string): number => {
+  const cached = lineCountCache.get(file);
+  if (cached !== undefined) return cached;
+  const lines = fs.readFileSync(new URL(file, root), 'utf8').split('\n').length;
+  lineCountCache.set(file, lines);
+  return lines;
+};
+
+const checkSourceResolves = (id: string, ref: string, kind: string, tracked: Set<string>, requireAnchor = true): void => {
+  const tokens = pathTokens(ref);
+  for (const token of tokens) {
+    const resolved = resolvedPath(token, tracked);
+    assert.ok(resolved, `${id} cites ${token}, which does not exist in the repository - a source that resolves to nothing was never a source`);
+    if (resolved.lineStart !== undefined) {
+      const count = lineCount(resolved.path);
+      assert.ok(resolved.lineEnd! <= count, `${id} cites ${resolved.path}:${resolved.lineEnd}, but the file has ${count} lines - the citation points past the end of the evidence`);
+    }
+  }
+  if (requireAnchor && kind === 'recorded' && tokens.length === 0) {
+    assert.match(ref, /\d{4}-\d{2}-\d{2}/, `${id} is a recorded decision with no resolvable path in its ref - it must at least carry the date the performance was measured`);
+  }
+};
 
 // The acceptance surface is not swept and not judged here: the pins define the judge.
 // Every exclusion below is named on purpose - a silent exclusion is how the rule dies.
@@ -105,6 +168,7 @@ test('the register parses and names where it came from', () => {
 test('every decision is complete enough to act on', () => {
   const register = read('docs/decisions.json');
   const seen = new Set<string>();
+  const tracked = allTrackedFiles();
   for (const d of register.decisions) {
     assert.match(d.id, /^D[0-9]{2,}$/, `id ${d.id} is a D-number`);
     assert.ok(!seen.has(d.id), `id ${d.id} appears twice`);
@@ -115,8 +179,20 @@ test('every decision is complete enough to act on', () => {
     assert.ok(typeof d.source.ref === 'string' && d.source.ref.length >= 8, `${d.id} carries a real source, not a placeholder`);
     if (d.source.kind === 'internet') {
       assert.match(d.source.ref, /^https?:\/\//, `${d.id} cites an internet source with a URL - got ${d.source.ref}`);
+      assert.ok(d.source.ref.length >= 30, `${d.id} cites a URL with nothing said about it - a bare link convinces nobody`);
     }
-    if (d.source.also) assert.ok(typeof d.source.also === 'string' && d.source.also.length >= 8, `${d.id} keeps any additional source stated, not bare`);
+    if (d.source.kind === 'user') {
+      assert.match(d.source.ref, /user \d{4}-\d{2}-\d{2}/, `${d.id} is kind=user without the date the owner said it, e.g. user 2026-11-19 - a dated quote can be found again in the conversation`);
+    }
+    if (d.source.kind === 'repo' || d.source.kind === 'recorded') {
+      checkSourceResolves(d.id, d.source.ref, d.source.kind, tracked);
+    }
+    if (d.source.also) {
+      assert.ok(typeof d.source.also === 'string' && d.source.also.length >= 8, `${d.id} keeps any additional source stated, not bare`);
+      if (d.source.kind === 'repo' || d.source.kind === 'recorded') {
+        checkSourceResolves(`${d.id} (also)`, d.source.also, d.source.kind, tracked, false);
+      }
+    }
   }
 });
 
