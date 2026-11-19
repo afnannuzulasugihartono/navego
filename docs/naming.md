@@ -11,7 +11,7 @@ The rule in one line: **a dot separates namespaces, an underscore separates word
 
 | Space | Shape | Example | Read by |
 |---|---|---|---|
-| MCP tool name | family prefix + `verb_noun` | `browser_find_element`, `artifact_build_report`, `wallet_get_price` | the model, and the person reading a tool list |
+| MCP tool name | family prefix + `verb_noun` | `browser_find_element`, `artifact_build`, `wallet_get_price` | the model, and the person reading a tool list |
 | Wire method name | `namespace.action` | `tabs.list`, `page.click`, `browser.burst`, `page.wait_for` | the service worker, the bridge and the gateway |
 | Postgres function and argument name | `snake_case` | `opera_claim_next_wait`, `p_device_name` | Postgres, and the edge functions that call it |
 
@@ -27,13 +27,13 @@ An underscore survives JavaScript, TypeScript and SQL unquoted, so the wire prot
 
 ## The surface
 
-`local/tools.ts` — the local stdio server's tools; the only MCP surface in this tree. The forty-two tools, in four families (per `local/README.md`):
+`local/tools.ts` — the local stdio server's tools; the only MCP surface in this tree. The forty tools, in four families (per `local/README.md`):
 
 - Driving: `browser_status`, `browser_read_dialog`, `browser_select_browser`, `browser_list_tabs`, `browser_open_url`, `browser_close_tab`
 - Reading: `browser_read_page`, `browser_search_web`, `browser_find_element`, `browser_screenshot`
 - Acting: `browser_click`, `browser_hover`, `browser_press_key`, `browser_type_text`, `browser_scroll`, `browser_run_steps`, `browser_wait_until`
 - Files: `browser_upload_file`, `browser_drop_file`, `browser_intercept_picker`, `browser_download_file`, `browser_list_menu`, `browser_get_guide`
-- Delivering: `delivery_plan`, `delivery_record`, `artifact_build_report`, `artifact_build_slides`, `artifact_build_document`, `browser_check_gate`, `browser_login`, `browser_solve_captcha`, `wallet_pair_device`, `wallet_get_balance`, `wallet_get_price`, `wallet_add_funds`, `wallet_hold_price`, `wallet_charge`, `wallet_refund`
+- Delivering: `delivery_plan`, `delivery_record`, `artifact_build`, `browser_check_gate`, `browser_login`, `browser_solve_captcha`, `wallet_pair_device`, `wallet_get_balance`, `wallet_get_price`, `wallet_add_funds`, `wallet_hold_price`, `wallet_charge`, `wallet_refund`
 
 ## The same reasoning is why the wire protocol uses an underscore *inside* a name
 
@@ -62,11 +62,11 @@ A new name belongs to exactly one of the three spaces, and the shape follows fro
 
 A tool is named for the job the caller asks for, never for the method it sends. A tool is `browser_` plus the job: `browser_get_guide` reads the guide, never `browser_docs`; a job that spans steps still gets one name. The mechanics (the CDP click, the burst, the settle) stay underneath with no wire method of their own, because it drives the browser over CDP directly. The hosted cloud surface, which once sent wire methods, is gone — a tool name belongs to this tree's job, and the wire method space is the extension's.
 
-A new wire method is added to `METHOD_SPECS` in `extension/lib/protocol.ts` and nowhere else. That file is the one the service worker, the MCP server and the Node tests all read, which is why a second copy of the list has never been allowed to exist.`local/tools.ts` - the local stdio server's tools; the only MCP surface in this tree. The forty-two tools, in four families (per `local/README.md`):
+A new wire method is added to `METHOD_SPECS` in `extension/lib/protocol.ts` and nowhere else. That file is the one the service worker, the MCP server and the Node tests all read, which is why a second copy of the list has never been allowed to exist.`local/tools.ts` - the local stdio server's tools; the only MCP surface in this tree. The forty tools, in four families (per `local/README.md`):
 
 - Browser (30): `browser_status`, `browser_focus_tab`, `browser_select_browser`, `browser_list_tabs`, `browser_open_url`, `browser_close_tab`, `browser_read_page`, `browser_search_web`, `browser_find_element`, `browser_click`, `browser_hover`, `browser_press_key`, `browser_type_text`, `browser_scroll`, `browser_run_steps`, `browser_wait_until`, `browser_upload_file`, `browser_drop_file`, `browser_intercept_picker`, `browser_download_file`, `browser_list_menu`, `browser_walk_menu`, `browser_get_guide`, `browser_screenshot`, `browser_read_dialog`, `browser_type_into_dialog`, `browser_press_dialog_button`, `browser_check_gate`, `browser_login`, `browser_solve_captcha`
 - Delivery (2): `delivery_plan`, `delivery_record`
-- Artifact (3): `artifact_build_report`, `artifact_build_slides`, `artifact_build_document`
+- Artifact (1): `artifact_build`
 - Wallet (7): `wallet_pair_device`, `wallet_get_balance`, `wallet_get_price`, `wallet_add_funds`, `wallet_hold_price`, `wallet_charge`, `wallet_refund`
 
 ## The same reasoning is why the wire protocol uses an underscore *inside* a name

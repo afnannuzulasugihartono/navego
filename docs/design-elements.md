@@ -33,7 +33,7 @@ Two house rules do the audit's heavy lifting: no element may sell what the produ
 - Plan note `plan.pilot gratis: 200 perintah per hari, 50 per sesi.` — priced honestly from the published pilot quota; the cost before the click — K.
 - Starburst `Pasang gratis!` — one per page; the claim is the pricing FAQ's own first sentence (`Pasang gratis`), nothing invented — K.
 - Framed plate `Corvus corax — setelah Naumann, 1874 · public domain` — chrome frame with aqua rim light around an ink engraving — K.
-- Facts ticker pill `45 tool · 36 primitive · 6 izin` — the three pinned numbers, chrome with magenta numerals — K.
+- Facts ticker pill `40 tool · 36 primitive · 6 izin` — the three pinned numbers, chrome with magenta numerals — K.
 - `Contoh nyata.` + `Satu perintah, satu berkas.` + the Sinar Jaya line — the demo framed by what it really shows: 23 rows in, Rp 65.310.000 out as three sheets — K.
 - `Contoh berkas.` + `Laporan keuangan September.` — the four files, openable now, linked to the study — replaces the old slogan band that said nothing — K (replaced).
 - `Lima hal yang dikerjakan Navego.` + 5 feature rows (endpoint, reading, files, rejected secrets, pairing) — each row names a capability the suite pins — K.

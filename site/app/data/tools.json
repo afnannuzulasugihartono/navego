@@ -176,16 +176,8 @@
     "group": "Berkas keluaran",
     "items": [
       [
-        "artifact_build_report",
-        "CSV → laporan Word (default) atau Excel (format xlsx): baris laporan, baris sumber, ledger yang menyebut baris penghasil tiap angka; setiap angka menyebut kolom dan baris asalnya."
-      ],
-      [
-        "artifact_build_slides",
-        "JSON → PowerPoint; slide yang menyebut angka yang tidak ada di laporan ditolak."
-      ],
-      [
-        "artifact_build_document",
-        "JSON → Word; tiap graph menyebut bagian dan baris asalnya; dicek ulang sebelum ditulis."
+        "artifact_build",
+        "Artifak lokal: artifact_build (target: word | xlsx | pptx | docx) — dari CSV/JSON ke laporan, buku kerja, deck, atau dokumen Word; tiap angka dicek ulang terhadap baris asalnya."
       ]
     ]
   },

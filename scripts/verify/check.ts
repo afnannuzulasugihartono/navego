@@ -146,5 +146,5 @@ for (const marker of ['trustedPointer', 'page.pointer_target', 'Pointer blocked 
 for (const marker of ['capturePage', 'Page.captureScreenshot', 'page.capture_policy', 'captureFramePrivacyProbe', 'allFrames: true', 'MAX_SCREENSHOT_BYTES', 'previousHash', 'privateTabIds', 'screenshotLooksBlank', 'BLANK_SCREENSHOT']) assert.ok(`${background}\n${content}`.includes(marker), marker);
 const burstMigration = fs.readFileSync(path.join(root, 'hosted/migrations/20260910024820_navego_bounded_browser_burst.sql'), 'utf8');
 assert.match(burstMigration, /browser\.burst/);
-for (const marker of ['BURST_MAX_STEPS', 'BURST_MAX_TIMEOUT_MS', 'runBurst', 'MAX_BURST_RESULT_BYTES']) assert.ok(`${fs.readFileSync(path.join(root, 'extension/lib/protocol.js'), 'utf8')}\n${background}`.includes(marker), marker);
+for (const marker of ['BURST_MAX_STEPS', 'BURST_MAX_TIMEOUT_MS', 'runBurst', 'MAX_BURST_RESULT_BYTES']) assert.ok(`${fs.readFileSync(path.join(root, 'extension/lib/protocol.ts'), 'utf8')}\n${background}`.includes(marker), marker);
 console.log(`check ok: ${ALLOWED_METHODS.length} allowlisted browser primitives, ${files.length} runtime safety files, version ${manifest.version}`);

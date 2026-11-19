@@ -1,11 +1,7 @@
-// @last-edited: 2026-10-27 UTC+7.
+// @last-edited: 2026-11-19 UTC+7.
 // @title: read-strategy — which read to attempt first, decided from evidence rather than from a site name.
 // @state: the harm classes, the strategy names, and one pure function that turns a surface profile into an ordered ladder.
 // @dependencies: none.
-
-// THIS MODULE IS PURE.
-// The order a read is attempted in is the one decision that decides whether a user's caret survives, and it is made from five booleans.
-// Keeping it a pure function means the whole decision is a table a test can read, and no browser has to be open to prove it.
 
 export const HARM_NONE = 'none';
 export const HARM_CARET_MOVE = 'caret-move';
@@ -43,7 +39,7 @@ const DOM_STEP = {
 const SELECT_ALL_STEP = {
   strategy: STRATEGY_SELECT_ALL,
   harm: HARM_CARET_MOVE,
-  why: 'a canvas editor mirrors its text through the selection, and that moves the caret'
+  why: 'a canvas editor mirrors its text through the selection or the clipboard, and reading it moves the caret'
 };
 
 const VISION_STEP = {
@@ -52,28 +48,20 @@ const VISION_STEP = {
   why: 'a picture is the last read that still asks nothing of the page'
 };
 
-// THE ORDER FOLLOWS THE PROFILE AND NOT A FIXED LIST.
-// Measured: the accessibility tree answers a canvas document in 19-30ms and the DOM text answers an ordinary page in one innerText.
-// Reading the accessibility tree first on an ordinary page would change every existing caller's answer for no gain, so the DOM leads there and the accessibility tree leads where the DOM is empty.
+// decisions.json -> local-read-strategy-01
 
-// THE ACCESSIBILITY TREE LEADS WHERE A CANVAS COVERS THE VIEWPORT.
-// It answers a canvas document in 19-30ms and touches nothing, so it leads there.
-// A page with no canvas holds its own text in the DOM, where one innerText is the cheaper and the cleaner answer, so the DOM leads there instead.
-// The discriminator is the canvas, which is a structural fact about the page, rather than how much text the DOM happens to hold - a canvas editor keeps real text in its chrome, and a length bar cannot tell that text from a short page's.
-
-// SELECT-ALL NEEDS BOTH SIGNALS.
-// A canvas without an editable region has nothing to select, so offering the step would report an empty read as an answer.
+// The first step that returns text ends the read, so the mirror has to lead for it to run at all.
 
 export function readLadder(profile: SurfaceProfile = {}): ReadStep[] {
   const canvas = profile.canvas === true;
   const editable = profile.editable === true;
   const axRich = profile.axRich === true;
 
+  if (canvas && editable) return [SELECT_ALL_STEP, DOM_STEP, AX_STEP, VISION_STEP].map((step) => ({ ...step }));
   const ladder: ReadStep[] = [];
   if (canvas && axRich) ladder.push(AX_STEP);
   ladder.push(DOM_STEP);
   if (!(canvas && axRich)) ladder.push(AX_STEP);
-  if (canvas && editable) ladder.push(SELECT_ALL_STEP);
   ladder.push(VISION_STEP);
   return ladder.map((step) => ({ ...step }));
 }

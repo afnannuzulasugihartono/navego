@@ -63,8 +63,10 @@ export function asDriver(session: JsonRecord): SessionDriver {
     focus: (match) => session.focusWindow(match)
   });
 
+  // THE READ'S OPTIONS ARE THE READ'S. This adapter used to call session.read() with nothing, so consent, the character cap and the selector a caller passed were dropped here - the same loss the entry-point wrapper had.
+  // A session is the object every local tool drives, so an option dropped here is dropped for every read on the local road.
   return {
-    read: () => session.read(),
+    read: (options?: unknown) => session.read(options),
     surfaceProfile: () => session.surfaceProfile(),
     evaluate: (expression) => session.evaluate(expression),
     settle: () => session.settle(),

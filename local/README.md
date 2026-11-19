@@ -80,7 +80,7 @@ not who drives.
 
 ## Tools
 
-The server advertises 42 tools, named for what they do and grouped by what they touch:
+The server advertises 40 tools, named for what they do and grouped by what they touch:
 
 `browser_status`, `browser_focus_tab`, `browser_select_browser`,
 `browser_list_tabs`, `browser_open_url`, `browser_close_tab`, `browser_read_page`,
@@ -93,7 +93,7 @@ The server advertises 42 tools, named for what they do and grouped by what they 
 
 `delivery_plan`, `delivery_record`.
 
-`artifact_build_report`, `artifact_build_slides`, `artifact_build_document`.
+`artifact_build`.
 
 `wallet_pair_device`, `wallet_get_balance`, `wallet_get_price`, `wallet_add_funds`,
 `wallet_hold_price`, `wallet_charge`, `wallet_refund`.

@@ -1,46 +1,12 @@
-// @last-edited: 2026-10-27 UTC+7.
+// @last-edited: 2026-11-19 UTC+7.
 // @title: canvas — the reads a surface that is not a page full of text can answer, and the guard in front of the one that moves a caret.
 // @state: the ladder walk for read, the caret line read, and the generic selection copy they share.
 // @dependencies: ./page-expressions.js, ./surface-profile.js, ./caret-guard.js, ./read-strategy.js.
 
-// THIS MODULE EXISTS
-
-// A canvas surface is not a page full of text, so reading it is a different question from reading a DOM page.
-// This module asks that question: it measures what the surface is, walks the ladder of reads in the order the measurement justifies, and puts a gate in front of the one read that costs the user something.
-// What used to live here was one site's answer to that question, written as that site's selectors; what lives here now is the question.
-
-// THE READ WALKS A LADDER INSTEAD OF ASKING THE URL.
-// The read this replaces recognised one site by its address and then ran that site's clipboard trick on it, which is why every other canvas page came back empty.
-// A profile measured from the page itself says which reads are available and what each costs, and the ladder is walked in that order.
-// The step that moves a caret is gated, because the measurement behind it showed a canvas caret cannot be put back.
-
-// ONLY AN EDITABLE CANVAS VETOES THE DOM STEP.
-// A canvas editor keeps its chrome in the DOM and its document in pixels, so reading the DOM would answer with the chrome and stop.
-// A canvas without an editable host is a picture beside text - a chart, a map, a viewer - and the text around it is the page's own text, so vetoing that read throws away the only text there is.
-
-// THE DOM READ TAKES TWO SAMPLES.
-// readyState lies: measured live, a page reported complete with a tenth of its text and reached the rest 600ms later.
-// So the read settles and looks again, and answers with whether the text stood still and by how much it grew.
-
-// THE CONSENT IS ASKED BEFORE THE SELECTION IS BORROWED.
-// The borrow is the destructive half of this read, and a caller who did not ask for it must not pay for it.
-// The caret verdict rides along whatever the copy returned, so a caller learns what the read cost even when it succeeded.
-
-// THE ACCESSIBILITY TREE IS MEASURED ONLY WHEN IT CAN REORDER THE LADDER.
-// Measured on the owner's profile: a full accessibility tree answers a canvas document in 19-30ms, and one innerText answers an ordinary page in a single call.
-// On a page with no canvas the DOM leads whatever the tree holds, so the tree is paid for there only when the DOM answers nothing.
-// A profile call still measures both halves: it is the answer to "what is this", and that answer is worth the round trip.
-
-// AN EMPTY COPY IS NOT AN EMPTY DOCUMENT.
-// A canvas editor that selects and copies nothing either has an empty document or a mirror that did not fill, and the two are not the same thing.
-// Reporting the empty string as the read would call both of them an empty page, so the ladder continues to the picture and the caret cost stays in the answer.
-
-// A SURFACE NOTHING CAN ANSWER NAMES THE PICTURE.
-// The driver does not read pixels and does not pretend to: naming the one tool that returns a picture lets the caller decide, rather than handing back an empty string that looks like an empty page.
-
 import { SELECTION_STATE_EXPRESSION } from './page-expressions.js';
 import { probeSurface, measureAx, buildProfile, describeProfile } from './surface-profile.js';
 import { createCaretGuard, gateRead } from './caret-guard.js';
+import { readDevice } from './wallet-client.js';
 import type { JsonRecord } from './types.js';
 import {
   HARM_NONE,
@@ -51,9 +17,7 @@ import {
   readLadder
 } from './read-strategy.js';
 
-// THE VIEW IS REPORTED AS LEFT WHERE IT IS.
-// The borrow selects the whole document and the caret then moves to its end, so the view scrolls with it - and no key in this driver puts the view back, only the caret.
-// A caller that reads viewRestored:false knows the picture it takes next is of the end of the document rather than of where the person was reading.
+// The borrow scrolls the view to the selection end, and nothing here scrolls it back; only the caret is restored.
 
 const scopedExpression = (selector: string): string => `(() => {
   const el = document.querySelector(${JSON.stringify(selector)});
@@ -77,31 +41,21 @@ const truncateTo = (text: string, maxChars: number | undefined): { text: string;
 const VIEW_WHY = 'the borrow selected the whole document, so the view is left where the selection ended;'
   + ' the caret verdict says whether the caret itself came back';
 
-// THE SETTLE VERDICTS ARE NAMED ONCE.
-// settled means one thing on the DOM path - the text stood still across two samples - and cannot mean it anywhere else: the tree was sampled once and the copy cannot be repeated without moving the caret twice.
-// So the other two paths answer settled:null and name what would prove it, and the sentence a caller reads is the same sentence every time rather than one written inline at each return.
+// Only the DOM read samples twice; the tree and the copy sample once, so they answer settled:null and name the proof the caller can run instead.
 
 const SETTLED_WHY_AX = 'this read sampled the accessibility tree once, so it can say what the text is and not that it stopped moving; wait() is the proof of that';
 const SETTLED_WHY_COPY = 'the text came from a selection copy; a second copy would move the caret twice, so read again after wait() or take shot() as the proof';
 
-// A BORROW THAT RETURNED NOTHING IS NOT AN EMPTY DOCUMENT.
-// A canvas editor that selects and copies nothing either has an empty document or a mirror that did not fill, and the two are not the same thing.
-// Reporting the empty string as the read would call both of them an empty page, so the ladder moves on to the picture and the reason travels with the caret cost.
-
 const EMPTY_COPY_WHY = 'the selection answered no text, which is not the same as an empty document; the ladder continues to the picture';
 const NO_MARK_WHY = 'the caret could not be remembered, so the borrow was refused';
+const VISION_CONSENT_WHY = 'the OCR fallback sends one screenshot of this page off the machine, and no consent was recorded on the call - pass allowVision: true to permit it';
 
-// the guard is built but never read: SELECTION_STATE_EXPRESSION is the read itself; the guard import lives here because the callers below call it in the catch path.
-// THE PAGE ANSWERS ARE JsonRecord.
-// Every expression here is computed by the page and read back whole, and each answer shape is owned by the interface that made it.
-// Typing them one field at a time would put the page's shape in three places, so canvas reads them as the documented open record.
+// Page answers are computed in the page and read back whole, so each crosses as the open record its interface owns.
 
-export function createCanvasMethods({ primitives, readState }: { primitives: JsonRecord; readState: () => Promise<{ title?: unknown; url?: unknown; text?: unknown; ready?: unknown }> }) {
-  // THE COPY READS THE SELECTION AND NOT A SITE'S CLIPBOARD TRICK.
-  // The expression this replaces found one site's hidden editable frame by name, asked it to fill itself on a copy event, and stripped the invisible characters that site inserts - which is per-site code, and it is gone.
-  // What is left is the technique without the site: borrow the selection, then read it back from whichever frame holds it.
-  // A surface that mirrors its text through the selection answers; a surface that holds its text as pixels does not, and that is reported rather than papered over.
-  // It reads the same expression the caret guard reads, so the text and the caret verdict come from one frame rather than from two that may not be the same.
+export type OcrReader = () => Promise<{ text: string } | { why: string }>;
+
+export function createCanvasMethods({ primitives, readState, ocr = null }: { primitives: JsonRecord; readState: () => Promise<{ title?: unknown; url?: unknown; text?: unknown; ready?: unknown }>; ocr?: OcrReader | null }) {
+  // SELECTION_STATE_EXPRESSION is the same read the caret guard uses, so the text and the caret verdict come from one frame.
 
   const copySelection = async () => {
     const state = await primitives.evaluate(SELECTION_STATE_EXPRESSION);
@@ -109,7 +63,61 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
     return text.length > 0 ? text : null;
   };
 
+  const readClipboard = async () => {
+    const text = await primitives.evaluate('navigator.clipboard.readText()').catch(() => '');
+    return typeof text === 'string' ? text : '';
+  };
+
+  // decisions.json -> local-canvas-02
+
+  // An unfocused tab cannot write the sentinel and leaves the previous clipboard readable, so focus is checked first.
+  const copyThroughClipboard = async (): Promise<{ text: string } | { why: string }> => {
+    const focused = await primitives.evaluate('document.hasFocus() === true').catch(() => false);
+    if (focused !== true) return { why: 'the page is not focused, so a copy would read whatever was on the clipboard instead of this page - focus the tab and read again' };
+    const before = await readClipboard();
+    const sentinel = `navego-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+    const armed = await primitives.evaluate(`navigator.clipboard.writeText(${JSON.stringify(sentinel)}).then(() => true).catch(() => false)`).catch(() => false);
+    await primitives.key('c', ['Control']);
+    await primitives.settle();
+    const after = await readClipboard();
+    if (armed === true) {
+      await primitives.evaluate(`navigator.clipboard.writeText(${JSON.stringify(before)}).catch(() => null)`).catch(() => null);
+      if (after === sentinel) return { why: 'the copy did not replace the clipboard, so the previous contents were refused rather than read as this page' };
+      return after.trim().length > 0 ? { text: after } : { why: 'the copy left the clipboard empty' };
+    }
+    if (after === before || after.trim().length < 2) {
+      return { why: 'the copy could not be proven fresh because the clipboard did not change; the previous contents were refused rather than read as this page' };
+    }
+    return { text: after };
+  };
+
   const guard = createCaretGuard({ evaluate: primitives.evaluate });
+
+  // decisions.json -> hosted-navego-ocr-01
+  const OCR_ENDPOINT = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-ocr';
+  const defaultOcrFromShot: OcrReader = async () => {
+    let held: { deviceName: string; token: string } | null = null;
+    try { held = readDevice({}); } catch { held = null; }
+    if (!held || !held.token) return { why: 'this machine has no paired device file (~/.navego/device.json), so the OCR edge has no token to accept - pair the driver from the dashboard' };
+    const shot = await primitives.ask('Page.captureScreenshot', { format: 'jpeg', quality: 70, captureBeyondViewport: false }).catch(() => null);
+    const bytes = shot && typeof shot.data === 'string' ? shot.data : '';
+    if (!bytes) return { why: 'the browser answered Page.captureScreenshot with no picture bytes' };
+    try {
+      const response = await fetch(OCR_ENDPOINT, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-navego-token': held.token, 'x-opera-device': held.deviceName },
+        body: JSON.stringify({ image_base64: bytes, mime: 'image/jpeg' }),
+        signal: AbortSignal.timeout(60000)
+      });
+      if (!response.ok) return { why: `the OCR edge answered http ${response.status}` };
+      const answer = await response.json().catch(() => null) as { text?: unknown } | null;
+      const text = answer && typeof answer.text === 'string' ? answer.text.trim() : '';
+      return text.length > 0 ? { text } : { why: 'the OCR edge read no text in the picture' };
+    } catch (error) {
+      return { why: `the OCR edge could not be reached (${String((error as Error)?.name ?? 'error')})` };
+    }
+  };
+  const ocrFromShot = ocr ?? defaultOcrFromShot;
 
   let measured: JsonRecord | null = null;
   const axOf = async () => {
@@ -117,9 +125,7 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
     return measured;
   };
 
-  // THE REGION TEXT IS RETURNED EVEN WHEN THE TREE IS THIN.
-  // The rich bar decides which read leads, not whether a text is worth returning.
-  // On a page with no canvas the DOM has already answered nothing, so the tree is the only text there is; on a canvas page a thin region is the chrome around the picture, and returning it would name the menu as the document.
+  // A thin AX region on a canvas page is chrome, not the document; on a page with no canvas it is the only text left.
   const textOf = (value: unknown): string => (typeof value === 'string' ? value : String(value ?? ''));
   const readAxText = (ax: JsonRecord | null, surface: { canvas?: boolean }) => {
     if (ax === null) return null;
@@ -129,15 +135,25 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
     return null;
   };
 
+  // decisions.json -> local-canvas-01
+
+  // End collapses the selection after the copy; left open, the next keystroke would replace the document.
   const guardedSelectAll = async (allowCaretMove: boolean) => {
     const mark = await guard.remember();
     if (mark.restorable !== true && allowCaretMove !== true) return null;
     await primitives.key('a', ['Control']);
     await primitives.settle();
-    const copied = await copySelection();
+    const selected = await copySelection();
+    const mirrored = selected !== null && selected.trim().length >= 2;
+    const copied = mirrored && selected !== null ? { text: selected } : await copyThroughClipboard();
     await primitives.key('End').catch(() => null);
     const caret = await guard.verdict(mark);
-    return { text: copied ?? '', caret };
+    return {
+      text: 'text' in copied ? copied.text : '',
+      caret,
+      clipboardUsed: !mirrored && 'text' in copied,
+      clipboardWhy: 'why' in copied ? copied.why : ''
+    };
   };
 
   // The caret fields a read that never borrowed carries, and the ones a read that did carries, kept in one place so no answer can claim more than it measured.
@@ -152,8 +168,9 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
       viewWhy: VIEW_WHY
     };
 
-  async function read(options: { allowCaretMove?: boolean; maxChars?: unknown; selector?: unknown } = {}) {
+  async function read(options: { allowCaretMove?: boolean; allowVision?: boolean; maxChars?: unknown; selector?: unknown } = {}) {
     const allowCaretMove = options.allowCaretMove === true;
+    const allowVision = options.allowVision === true;
     const maxChars = maxCharsOf(options.maxChars);
     const selector = typeof options.selector === 'string' && options.selector.trim().length > 0 ? options.selector.trim() : null;
     const probe = await probeSurface({ evaluate: primitives.evaluate });
@@ -161,7 +178,7 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
     const surface = buildProfile({ probe, ax });
     const ladder = readLadder(surface);
     const skipped: Array<{ strategy: string; harm: string; why: string }> = [];
-    let borrow: { caret: { restored: boolean; why?: unknown }; text: string } | null = null;
+    let borrow: { caret: { restored: boolean; why?: unknown }; text: string; clipboardUsed?: boolean } | null = null;
 
     if (selector) {
       const scoped = await primitives.evaluate(scopedExpression(selector)) as { title?: unknown; url?: unknown; text?: unknown } | null;
@@ -232,7 +249,7 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
         const limited = axFull ? truncateTo(axFull, maxChars) : { text: '' as string, truncatedChars: 0, originalChars: 0 };
         const text = limited.text;
         if (text) {
-          // The title and url are one cheap call the caller expects on every read; whether the text has stopped moving is not something one sample of the tree can answer.
+          // The title and url are one cheap call the caller expects; one sample of the tree cannot say the text stopped moving.
           const state = await readState();
           return {
             title: state.title,
@@ -257,14 +274,18 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
       if (step.strategy === STRATEGY_SELECT_ALL) {
         const answer = await guardedSelectAll(allowCaretMove);
         if (answer) {
-          borrow = { caret: answer.caret, text: answer.text };
+          borrow = { caret: answer.caret, text: answer.text, clipboardUsed: answer.clipboardUsed };
           if (answer.text.length > 0) {
             const limited = truncateTo(answer.text, maxChars);
+            // The title and url are one cheap read the caller expects on every answer.
+            const state = await readState();
             return {
-              title: '',
-              url: '',
+              title: state.title,
+              url: state.url,
               text: limited.text,
               caret: answer.caret,
+              ...(answer.clipboardUsed ? { clipboardUsed: true } : {}),
+              ...(answer.clipboardWhy ? { clipboardWhy: answer.clipboardWhy } : {}),
               surface,
               strategy: step.strategy,
               harm: step.harm,
@@ -277,7 +298,7 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
               ...afterBorrow(borrow)
             };
           }
-          skipped.push({ strategy: step.strategy, harm: step.harm, why: EMPTY_COPY_WHY });
+          skipped.push({ strategy: step.strategy, harm: step.harm, why: answer.clipboardWhy || EMPTY_COPY_WHY });
           continue;
         }
         skipped.push({ strategy: step.strategy, harm: step.harm, why: NO_MARK_WHY });
@@ -285,7 +306,43 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
       }
 
       if (step.strategy === STRATEGY_VISION) {
-        // The driver does not read pixels, and does not pretend to: it names the one tool that returns a picture, so the caller decides rather than receiving an empty string that looks like an empty page.
+        // decisions.json -> local-canvas-03
+
+        // The screenshot leaves the machine; the caret step only touches this page.
+        if (!allowVision) {
+          return {
+            title: '',
+            url: '',
+            text: '',
+            surface,
+            strategy: step.strategy,
+            harm: step.harm,
+            skipped,
+            description: describeProfile(surface),
+            visionWhy: VISION_CONSENT_WHY,
+            ...afterBorrow(borrow)
+          };
+        }
+        // The OCR edge holds the paired key, so the driver never handles it.
+        const ocr = await ocrFromShot();
+        if ('text' in ocr) {
+          const limited = truncateTo(ocr.text, maxChars);
+          return {
+            title: '',
+            url: '',
+            text: limited.text,
+            surface,
+            strategy: step.strategy,
+            harm: HARM_NONE,
+            skipped,
+            description: describeProfile(surface),
+            originalChars: limited.originalChars,
+            truncatedChars: limited.truncatedChars,
+            settled: null,
+            visionWhy: 'the text came from a picture; read again after wait() or press again for something to check it against',
+            ...afterBorrow(borrow)
+          };
+        }
         return {
           title: '',
           url: '',
@@ -295,7 +352,7 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
           harm: step.harm,
           skipped,
           description: describeProfile(surface),
-          visionWhy: 'this surface offers no text to any read that asks nothing of it; call shot for the picture',
+          visionWhy: `the OCR fallback could not answer: ${ocr.why}; that is an empty picture, not an empty page`,
           ...afterBorrow(borrow)
         };
       }
@@ -315,10 +372,7 @@ export function createCanvasMethods({ primitives, readState }: { primitives: Jso
     };
   }
 
-  // THE LINE IS READ FROM THE SELECTION FIRST.
-  // This read used to ask the url whether the page was a document editor and then chose the clipboard for it, which is the site recognition this change removes.
-  // The selection is the cheaper answer and works wherever the page holds its text; the selection copy is the fallback for a surface whose mirror only holds what a selection put there, and which one is needed is a question the page answers.
-  // The verdict rides along, so a caret this read could not put back is reported rather than assumed.
+  // The selection is cheaper than the clipboard and answers wherever the page holds its text; the copy is the fallback.
   async function caretLine() {
     const mark = await guard.remember();
     await primitives.key('Home');

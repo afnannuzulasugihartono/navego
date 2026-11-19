@@ -2,7 +2,7 @@
   "version": 1,
   "generated": "2026-11-19",
   "source": "The 2026-11-18 navego.pages.dev rebrand and consistency pass: logo, wordmark, eyebrows, type and spacing system, nav notch, copy pass. User direction arrived 2026-11-18; internet sources were verified 2026-11-18. Repo sources point at the docs that already carry the decision. 2026-11-19: a source-backed pass over the agent tool surface added D55-D68 - kind recorded carries the file:line of the recorded performance, per the user evidence mandate.",
-  "note": "One decision, one source. Code references this file as decisions.json -> D<n>. A decision the user asked for carries kind=user; a decision nobody asked for carries the internet source it was taken from; a decision inherited from this repo carries the repo document that already carries it; a decision taken because a recorded performance demanded it carries kind=recorded with the file:line that records it.",
+  "note": "One decision, one source. Code references this file as decisions.json -> <id>. A decision added from 2026-11-19 onward carries a file-based id (for example local-canvas-01) and names the file it governs; the earlier D-numbers are history and keep their ids. A decision the user asked for carries kind=user; a decision nobody asked for carries the internet source it was taken from; a decision inherited from this repo carries the repo document that already carries it; a decision taken because a recorded performance demanded it carries kind=recorded with the file:line that records it.",
   "decisions": [
     {
       "id": "D01",
@@ -255,7 +255,7 @@
       "decision": "The header hides via a container scroll-state query so it does not depend on JS.",
       "source": {
         "kind": "internet",
-        "ref": "https://developer.mozilla.org/en-US/docs/Web/CSS/@container/scroll-state"
+        "ref": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_conditional_rules/Container_scroll-state_queries (Using container scroll-state queries - the @container scroll-state() at-rule and the queries it answers)"
       }
     },
     {
@@ -407,10 +407,10 @@
     {
       "id": "D44",
       "scope": "web/copy",
-      "decision": "Sentences average ten to fourteen words; the longest sentence on any page stays under twenty-five; shorter lines carry the same meaning with no orphan clauses.",
+      "decision": "Sentences stay short and carry one idea each; paragraphs stay short enough to scan, written for a reader who skims before reading.",
       "source": {
         "kind": "internet",
-        "ref": "https://yourtechnicalcopywriter.com/copywriting-tips-from-apple (average sentence length of iPhone 5 copy: 10.9, 11.9, 14.0 words); https://marketingexamined.com/blog/how-to-write-copy-like-apple (write for scanners)"
+        "ref": "https://marketingexamined.com/blog/how-to-write-copy-like-apple (Apple copy uses short paragraphs, short sentences and simple words; write for scanners)"
       }
     },
     {
@@ -707,6 +707,195 @@
       "source": {
         "kind": "user",
         "ref": "user 2026-11-19: \"fix log navego element masuk dan element pasang gratis yang terpotong\" - the header honours body width; a body pushed wider by an unbreakable element clips the actions on the right and crowds the brand on the left"
+      }
+    },
+    {
+      "id": "D78",
+      "scope": "agent/tools",
+      "decision": "artifact_build_report, artifact_build_slides and artifact_build_document merge into one artifact_build tool with a target parameter (word, xlsx, pptx, docx); the user asked for the merge in the audit conversation.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: audit of the local MCP surface recommended merging the three artifact tools into artifact_build; user: \"kerjakan rekomendasimu\" - the merge runs"
+      }
+    },
+    {
+      "id": "local-surface-profile-01",
+      "scope": "agent/read",
+      "decision": "An iframe that holds focus counts as an editable host when a canvas covers the viewport; the probe reports editorFrame with its own evidence, so a canvas document (Google Docs) reaches the selection-copy step instead of being read as a toolbar-only AX page.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"implementasi selection copy dan ocr kemudian buat read page otomatis ya jangan buat agent menebak nebak\" - measured on a real Google Doc: surface-profile answered editable:false with \"no editable host\" while the document iframe held focus"
+      },
+      "file": "local/surface-profile.ts"
+    },
+    {
+      "id": "hosted-navego-ocr-01",
+      "scope": "hosted/functions",
+      "decision": "The vision step of browser_read_page calls the navego-ocr edge, which authenticates with the paired device token (x-navego-token, sha256 token_hash) or a user Bearer and answers only the text of the picture; it is the last step of the read ladder, after the selection mirror, ax and dom, the screenshot is capped and never stored, the OCR model is named by GROQ_OCR_MODEL with a vision default, and a machine without the pairing file is told so by name instead of being handed an empty picture.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"implementasi selection copy dan ocr\" - OCR could not run locally (no tesseract binary, no dependency allowed in the stock-Node driver) and the product already proxies a model through an edge with a server-held key (navego-listen / GROQ_API_KEY)"
+      },
+      "file": "hosted/functions/navego-ocr/index.ts"
+    },
+    {
+      "id": "docs-security-01",
+      "scope": "extension/security",
+      "decision": "The extension is Manifest V3 and carries no arbitrary eval or remote code; every browser action is a known, validated primitive.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/security.md:10-11 (no arbitrary eval or remote code; browser actions use known, validated primitives); extension/manifest.json:2 (manifest_version 3)"
+      },
+      "file": "docs/security.md"
+    },
+    {
+      "id": "docs-security-02",
+      "scope": "extension/isolation",
+      "decision": "The content script runs in the page's ISOLATED world and reads only the DOM the extension rendered or the bounded accessibility summary; no reader is registered in the MAIN world.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/security.md:12-18 (ISOLATED world, bounded accessibility summary from extension/lib/ax-summary.ts, no registered reader in the MAIN world)"
+      },
+      "file": "docs/security.md"
+    },
+    {
+      "id": "hosted-migrations-core-01",
+      "scope": "database/rls",
+      "decision": "The core opera tables enable row level security in the migration that creates them, and anon and authenticated lose every grant; access is decided by policy on the server, never by a client-held table grant.",
+      "source": {
+        "kind": "repo",
+        "ref": "hosted/migrations/20260907204146_navego_1_0_0_core.sql:83-90 (alter table ... enable row level security; revoke all on ... from anon,authenticated)"
+      },
+      "file": "hosted/migrations/20260907204146_navego_1_0_0_core.sql"
+    },
+    {
+      "id": "docs-concurrent-agents-01",
+      "scope": "database/migrations",
+      "decision": "Applied migrations are history: new SQL is appended in timestamp order, never rewritten, and two sessions never apply migrations at the same time.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/concurrent-agents.md:51 (applied one at a time - two sessions reorder them and the reorder is a production incident); tests/tooling/decisions.test.ts:108 (the applied past is not rewritten)"
+      },
+      "file": "docs/concurrent-agents.md"
+    },
+    {
+      "id": "hosted-migrations-wallet-01",
+      "scope": "database/wallet",
+      "decision": "The wallet ledger is append-only money movement; a correction is a new adjust row carrying its reason, never an update or a delete, and the balance is the sum of amount_cents.",
+      "source": {
+        "kind": "repo",
+        "ref": "hosted/migrations/20261104120000_opera_wallet.sql:51-67 (opera_ledger table and its append-only comment); docs/superpowers/specs/2026-11-04-prabayar-tugas-selesai-design.md:57 (all ledger writes append-only; settle and refund idempotent by unique reservation_id)"
+      },
+      "file": "hosted/migrations/20261104120000_opera_wallet.sql"
+    },
+    {
+      "id": "local-bridge-01",
+      "scope": "mcp/transport",
+      "decision": "The local driver reaches the everyday browser over the loopback bridge, port 9451 by default; a second driver adopts the running bridge as a client of the winner instead of failing or falling back to a debugging port nobody is signed into.",
+      "source": {
+        "kind": "repo",
+        "ref": "local/bridge.ts:54-57 (a second driver becomes a client of the winner); local/README.md:55-56 (NAVEGO_BRIDGE_PORT defaults to 9451)"
+      },
+      "file": "local/bridge.ts"
+    },
+    {
+      "id": "docs-security-03",
+      "scope": "mcp/auth",
+      "decision": "Device tokens travel in x-navego-token, Authorization: Bearer, or body.apiKey only; no gateway route reads a token from the query string.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/security.md:33-36 (the three carriers, and no route reads the query string)"
+      },
+      "file": "docs/security.md"
+    },
+    {
+      "id": "local-read-strategy-01",
+      "scope": "agent/read",
+      "decision": "On a canvas surface with an editable editor, the selection mirror leads the read ladder; DOM, accessibility and OCR follow. A canvas without an editor keeps the accessibility tree first.",
+      "source": {
+        "kind": "recorded",
+        "ref": "measured on a real Google Doc, 2026-11-19: the accessibility tree answered a canvas document in 19-30ms but only 56 characters of toolbar, while the document body held thousands behind the selection; tests/local/read-strategy.test.ts:28 proves the mirror leads on a canvas editor"
+      },
+      "file": "local/read-strategy.ts"
+    },
+    {
+      "id": "local-canvas-01",
+      "scope": "agent/read",
+      "decision": "A canvas document that mirrors no selection in the DOM is read by copying: Ctrl+A, then Ctrl+C, then the clipboard text, and the answer carries clipboardUsed; the DOM selection is asked first so a page that answers there never pays the copy.",
+      "source": {
+        "kind": "recorded",
+        "ref": "measured on a real Google Doc, 2026-11-19: Ctrl+A left every frame's getSelection empty and Ctrl+C put 8,750 characters of the document on the clipboard; tests/surface/surface-drive.test.ts:180 proves the clipboard fallback"
+      },
+      "file": "local/canvas.ts"
+    },
+    {
+      "id": "local-canvas-02",
+      "scope": "agent/read",
+      "file": "local/canvas.ts",
+      "decision": "A clipboard copy is accepted only when the page has focus and the clipboard changed from a sentinel written before Ctrl+C; the previous text clipboard is restored afterwards, and a stale clipboard is refused by name instead of returned as the page.",
+      "source": {
+        "kind": "recorded",
+        "ref": "measured 2026-11-19: an unfocused tab refused writeText with NotAllowedError and left the previous clipboard readable, which a copy that never ran would have returned as this page; tests/surface/surface-drive.test.ts:194 proves the stale clipboard is refused"
+      }
+    },
+    {
+      "id": "local-canvas-03",
+      "scope": "agent/read",
+      "file": "local/canvas.ts",
+      "decision": "The OCR fallback runs only when the caller passes allowVision: true on that call; without it the vision step is declined by name, because the screenshot leaves the machine and the product promise is that pages never leave without consent.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"implementasi selection copy dan ocr kemudian buat read page otomatis\" - the caret consent covered a local selection, not a screenshot uploaded to the hosted edge"
+      }
+    },
+    {
+      "id": "local-surface-profile-02",
+      "scope": "agent/read",
+      "file": "local/surface-profile.ts",
+      "decision": "A document region counts as accessibility-rich at ten or more text boxes; below that the DOM leads, because a toolbar reads as menu labels rather than a document.",
+      "source": {
+        "kind": "recorded",
+        "ref": "measured on a real Google Doc, 2026-11-19: the document region carried 155 text boxes and the chrome around it carried 60, so the ten-box bar separates them by an order of magnitude; tests/surface/surface-profile.test.ts:133 proves a toolbar alone does not lead"
+      }
+    },
+    {
+      "id": "local-tool-schema-01",
+      "scope": "mcp/validation",
+      "file": "local/tool-schema.ts",
+      "decision": "Every tool call is validated at runtime against the same inputSchema the client reads, so a hand-written call cannot skip a required field, type, bound, enum or nested shape the advertised contract declares.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19 review: \"gunakan satu validator runtime yang menjadi sumber validasi setiap tool ... jangan sampai ada dua kontrak yang berkembang secara terpisah\""
+      }
+    },
+    {
+      "id": "local-tool-failures-01",
+      "scope": "mcp/diagnostics",
+      "file": "local/tool-failures.ts",
+      "decision": "The failure log redacts secrets before it writes a byte and names each redaction, and the file and its directory are private to the user; a raw upstream error is never stored.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19 review: \"Redaksi rahasia sebelum menyimpan pesan ... Simpan error code terstruktur, bukan raw error ... Tambahkan test dengan token/password sintetis\""
+      }
+    },
+    {
+      "id": "local-gates-01",
+      "scope": "agent/login",
+      "file": "local/gates.ts",
+      "decision": "A credentials file is accepted only when every account carries a non-empty domain, username and password, and subdomains (when present) is boolean; a malformed account is refused by name before a key is pressed.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19 review: \"perlu memvalidasi domain ... username ... password wajib string dan tidak kosong ... subdomains wajib boolean ... Tambahkan test untuk password hilang, null, angka, dan string kosong\""
+      }
+    },
+    {
+      "id": "site-auth-01",
+      "scope": "web/auth",
+      "file": "site/app/lib/auth.ts",
+      "decision": "A refresh token rotates once per document and once per origin: concurrent callers share one in-flight refresh, and the Web Locks name serialises tabs, so a second tab serves the token the first one stored instead of spending the refresh token again.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19 review: \"Pada fungsi renewAccessToken() tidak terlihat mekanisme single-flight atau lock ... Buat test multi-tab dan request concurrent\""
       }
     }
   ]

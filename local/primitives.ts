@@ -26,7 +26,7 @@ import { createInputMethods } from './input.js';
 import { createPointerMethods } from './pointer.js';
 import { createObserveMethods } from './observe.js';
 import { createWaits } from './waits.js';
-import { createCanvasMethods } from './canvas.js';
+import { createCanvasMethods, type OcrReader } from './canvas.js';
 import { windowState as osWindowState } from './window-focus.js';
 import { dialogState as osDialogState, dialogType as osDialogType, dialogPress as osDialogPress } from './dialog.js';
 
@@ -38,13 +38,14 @@ export interface PrimitivesFactoryOptions {
   path?: typeof import('node:path');
   now?: () => number;
   bridge?: boolean;
+  ocr?: OcrReader | null;
 }
 
 interface PrimitivesCdp {
   send(method: string, params?: Record<string, unknown>): Promise<import('./cdp.js').CdpResult>;
 }
 
-export function createPrimitives(cdp: PrimitivesCdp, { chunkSize = 2000, sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms)), fs = nodeFs, os = nodeOs, path = nodePath, now = Date.now, bridge = false }: PrimitivesFactoryOptions = {}) {
+export function createPrimitives(cdp: PrimitivesCdp, { chunkSize = 2000, sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms)), fs = nodeFs, os = nodeOs, path = nodePath, now = Date.now, bridge = false, ocr = null }: PrimitivesFactoryOptions = {}) {
   const capped = (limit: unknown) => Math.min(Math.max(1, Number(limit) || 120), 500);
 
   // THE RECORD VALUES ARE ANY AND NOT unknown.
@@ -146,7 +147,7 @@ export function createPrimitives(cdp: PrimitivesCdp, { chunkSize = 2000, sleep =
   const pointer = createPointerMethods({ cdp, primitives });
   Object.assign(primitives, pointer);
 
-  const canvas = createCanvasMethods({ primitives, readState });
+  const canvas = createCanvasMethods({ primitives, readState, ocr });
   Object.assign(primitives, canvas);
 
   const waits = createWaits({ cdp, sleep, readState, readRows, read: () => primitives.read(), primitives, now });

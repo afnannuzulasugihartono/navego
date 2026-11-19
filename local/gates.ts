@@ -261,11 +261,39 @@ export async function waitForGateClear(driver: GateDriver, { timeoutMs = 30000, 
   };
 }
 
-// THE CREDENTIALS ARE READ FROM A FILE THE PERSON WROTE.
-// The secret has to come from somewhere the model never sees, or the sign-in is the leak.
-// So the account is matched by domain to the page it is on, the password is typed from disk and never returned, and a domain with no account refuses before a key is pressed.
+// decisions.json -> local-gates-01
 
-function readAccounts(credentialsPath: string | undefined): Array<{ domain: string; username: string; password: string }> {
+// The secret comes from a file the model never sees; the account is matched by domain and the password is typed from disk, never returned.
+
+interface CredentialAccount {
+  domain: string;
+  username: string;
+  password: string;
+  subdomains?: boolean;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const accountAt = (candidate: unknown, index: number, file: string): CredentialAccount => {
+  const where = `account ${index + 1} in ${file}`;
+  if (!isRecord(candidate)) throw new Error(`${where} is not an object; each account is { domain, username, password } with optional subdomains.`);
+  const domain = typeof candidate.domain === 'string' ? candidate.domain.trim().toLowerCase() : '';
+  const username = typeof candidate.username === 'string' ? candidate.username.trim() : '';
+  const password = typeof candidate.password === 'string' ? candidate.password : '';
+  if (!domain || /[\s/@:]/.test(domain)) throw new Error(`${where} needs domain as a bare host name such as contoh.co.id, with no scheme, path, port or spaces.`);
+  if (!username) throw new Error(`${where} needs username as a non-empty string; a missing user name types an empty field.`);
+  if (password.trim().length === 0) throw new Error(`${where} needs password as a non-empty string; a missing or empty password would type "undefined" or nothing into the field.`);
+  if (candidate.subdomains !== undefined && typeof candidate.subdomains !== 'boolean') throw new Error(`${where} has subdomains as ${typeof candidate.subdomains}; it must be true or false when present.`);
+  return {
+    domain,
+    username,
+    password,
+    ...(typeof candidate.subdomains === 'boolean' ? { subdomains: candidate.subdomains } : {})
+  };
+};
+
+function readAccounts(credentialsPath: string | undefined): CredentialAccount[] {
   const wanted = String(credentialsPath ?? '').trim();
   if (!wanted) throw new Error('login needs credentialsPath: the JSON file that holds { accounts: [{ domain, username, password }] }.');
   const file = path.resolve(wanted);
@@ -276,19 +304,16 @@ function readAccounts(credentialsPath: string | undefined): Array<{ domain: stri
     const errno = (error as NodeJS.ErrnoException)?.code ?? (error as Error)?.message ?? String(error);
     throw new Error(`no credentials file at ${file} (${errno}); write { accounts: [{ domain, username, password }] } and pass that path.`);
   }
-  let parsed: { accounts?: unknown[] } | null = null;
+  let parsed: unknown = null;
   try {
     parsed = JSON.parse(raw);
   } catch (error: unknown) {
     const message = (error as Error)?.message ?? String(error);
     throw new Error(`${file} is not JSON (${message}); it must hold { accounts: [{ domain, username, password }] }.`);
   }
-  const accounts = Array.isArray(parsed?.accounts) ? (parsed.accounts as unknown[]).filter((account) => {
-    const candidate = account as { domain?: unknown; username?: unknown } | null;
-    return candidate && typeof candidate.domain === 'string' && typeof candidate.username === 'string';
-  }) as Array<{ domain: string; username: string; password: string }> : [];
-  if (!accounts.length) throw new Error(`${file} holds no accounts; it must hold { accounts: [{ domain, username, password }] }.`);
-  return accounts;
+  const held = isRecord(parsed) && Array.isArray(parsed.accounts) ? parsed.accounts : [];
+  if (!held.length) throw new Error(`${file} holds no accounts; it must hold { accounts: [{ domain, username, password }] }.`);
+  return held.map((account, index) => accountAt(account, index, file));
 }
 
 function domainOf(url: unknown): string {

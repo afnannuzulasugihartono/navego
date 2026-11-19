@@ -173,6 +173,58 @@ test('a sign-in without an account for this domain is refused and names what was
   assert.equal(driver.calls.filter((call: any) => call[0] === 'type').length, 0, 'nothing was typed');
 });
 
+test('a credential entry with no usable password is refused before a field is touched', async () => {
+  const cases: Array<[Record<string, unknown>, RegExp]> = [
+    [{ domain: 'contoh.co.id', username: 'budi@example.com' }, /password as a non-empty string/],
+    [{ domain: 'contoh.co.id', username: 'budi@example.com', password: null }, /password as a non-empty string/],
+    [{ domain: 'contoh.co.id', username: 'budi@example.com', password: 123 }, /password as a non-empty string/],
+    [{ domain: 'contoh.co.id', username: 'budi@example.com', password: '   ' }, /password as a non-empty string/]
+  ];
+  for (const [account, expected] of cases) {
+    const file = credentialFile([account]);
+    const driver = fakeDriver([facts({ password: [{ x: 1, y: 2 }] })]);
+    await assert.rejects(
+      () => loginWithCredentials(driver, { credentialsPath: file, timeoutMs: 100, intervalMs: 10, sleep }),
+      expected,
+      JSON.stringify(account)
+    );
+    assert.equal(driver.calls.filter((call: any) => call[0] === 'type').length, 0, 'nothing was typed');
+  }
+});
+
+test('a credential entry with an unusable domain, user name or subdomains flag is named', async () => {
+  const cases: Array<[Record<string, unknown>, RegExp]> = [
+    [{ username: 'budi@example.com', password: 'x' }, /needs domain as a bare host name/],
+    [{ domain: 'https://contoh.co.id/masuk', username: 'budi@example.com', password: 'x' }, /needs domain as a bare host name/],
+    [{ domain: 'contoh.co.id', password: 'x' }, /needs username as a non-empty string/],
+    [{ domain: 'contoh.co.id', username: 'budi@example.com', password: 'x', subdomains: 'yes' }, /subdomains as string/]
+  ];
+  for (const [account, expected] of cases) {
+    const file = credentialFile([account]);
+    const driver = fakeDriver([facts({ password: [{ x: 1, y: 2 }] })]);
+    await assert.rejects(
+      () => loginWithCredentials(driver, { credentialsPath: file, timeoutMs: 100, intervalMs: 10, sleep }),
+      expected,
+      JSON.stringify(account)
+    );
+    assert.equal(driver.calls.filter((call: any) => call[0] === 'type').length, 0, 'nothing was typed');
+  }
+});
+
+test('an account opts into its subdomains, and one that does not is refused there', async () => {
+  const page = facts({ url: 'https://sub.contoh.co.id/masuk', password: [{ x: 10, y: 20 }], text: [{ x: 5, y: 5 }] });
+  const optIn = credentialFile([{ domain: 'contoh.co.id', username: 'budi@example.com', password: 'rahasia123', subdomains: true }]);
+  const signedIn = await loginWithCredentials(fakeDriver([page, facts({ url: 'https://sub.contoh.co.id/beranda' })]), { credentialsPath: optIn, timeoutMs: 5000, intervalMs: 10, sleep });
+  assert.equal(signedIn.signedIn, true);
+  const exactOnly = credentialFile([{ domain: 'contoh.co.id', username: 'budi@example.com', password: 'rahasia123' }]);
+  const driver = fakeDriver([page]);
+  await assert.rejects(
+    () => loginWithCredentials(driver, { credentialsPath: exactOnly, timeoutMs: 100, intervalMs: 10, sleep }),
+    /no account/i
+  );
+  assert.equal(driver.calls.filter((call: any) => call[0] === 'type').length, 0, 'nothing was typed');
+});
+
 test('a one-time code is refused before anything is typed', async () => {
   const file = credentialFile([{ domain: 'contoh.co.id', username: 'budi@example.com', password: 'rahasia123' }]);
   const driver = fakeDriver([facts({ otp: [{ x: 1, y: 2 }], password: [{ x: 2, y: 3 }] })]);

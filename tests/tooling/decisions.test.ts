@@ -20,6 +20,7 @@ interface Source {
 interface Decision {
   id: string;
   scope: string;
+  file?: string;
   decision: string;
   source: Source;
 }
@@ -155,7 +156,16 @@ const listCodeFiles = (): string[] => {
   return [...tracked, ...untracked].filter(inRepoScope).filter((file) => CODE_EXTENSIONS.has(path.extname(file)));
 };
 
-const ID = /D[0-9]{2,}/g;
+// A citation names either id form; the date in a recorded source is not an id.
+
+const ID = /\b(?:D[0-9]{2,}|(?=[a-z0-9-]*[a-z])[a-z0-9]+(?:-[a-z0-9]+)*-\d{2})\b/g;
+const FILE_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*-\d{2}$/;
+
+// A FILE-BASED ID IS THE NEW FORM, AND IT MUST NAME THE FILE IT GOVERNS.
+// The user asked for decision ids derived from the file so a reader can find the rule from the path and two agents adding rules do not race for the next D-number.
+// The D-numbers stay because they are cited across the tree; the new form is enforced on everything added from 2026-11-19 onward.
+
+const isLegacyId = (id: string): boolean => /^D[0-9]{2,}$/.test(id);
 
 test('the register parses and names where it came from', () => {
   const register = read('docs/decisions.json');
@@ -165,14 +175,33 @@ test('the register parses and names where it came from', () => {
   assert.ok(Array.isArray(register.decisions) && register.decisions.length >= 30, 'the sweep found at least 30 decisions, found none or too few - if this falls below 30, decisions are being made without the register');
 });
 
+// THE REGISTER COVERS THE PRODUCT, NOT ONLY THE PAGE.
+// The user asked for decisions and sources across the website, database, MCP surface and extension; a scope prefix with no decision means one part of Navego is answering to nobody.
+
+test('the register covers every part of the product the user named', () => {
+  const register = read('docs/decisions.json');
+  const scopes = register.decisions.map((d) => d.scope);
+  for (const area of ['web/', 'database/', 'mcp/', 'extension/', 'hosted/', 'agent/']) {
+    assert.ok(
+      scopes.some((scope) => scope.startsWith(area)),
+      `the register carries no decision for ${area} - the website, database, MCP, extension, hosted functions and agent surface each need a sourced decision`
+    );
+  }
+});
+
 test('every decision is complete enough to act on', () => {
   const register = read('docs/decisions.json');
   const seen = new Set<string>();
   const tracked = allTrackedFiles();
   for (const d of register.decisions) {
-    assert.match(d.id, /^D[0-9]{2,}$/, `id ${d.id} is a D-number`);
+    assert.ok(isLegacyId(d.id) || FILE_ID.test(d.id), `id ${d.id} is a D-number or a file-based id such as local-canvas-01`);
     assert.ok(!seen.has(d.id), `id ${d.id} appears twice`);
     seen.add(d.id);
+    if (!isLegacyId(d.id)) {
+      assert.ok(typeof d.file === 'string' && d.file.length > 0, `${d.id} is file-based and must name its file`);
+      assert.ok(resolvedPath(d.file, tracked), `${d.id} names ${d.file}, which does not exist - a file-based id that points at no file answers to nobody`);
+      assert.equal(d.file.split('/')[0], d.id.split('-')[0], `${d.id} says ${d.file} is its file, but the id's first segment names another part of the tree`);
+    }
     assert.ok(typeof d.scope === 'string' && d.scope.length > 0, `${d.id} names a scope`);
     assert.ok(typeof d.decision === 'string' && d.decision.length >= 24, `${d.id} says the decision, at enough length to be checkable`);
     assert.ok(KINDS.has(d.source?.kind), `${d.id} has a kind the gate understands: user, internet, repo or recorded - found ${d.source?.kind}`);

@@ -24,17 +24,46 @@ const KEEP_LINES = 1000;
 const homeOf = (): string => process.env.OPERA_AGENT_HOME || path.join(os.homedir(), '.opera-agent');
 const fileOf = (home: string): string => path.join(home, 'tool-failures.jsonl');
 
-const sanitize = (value: unknown, max: number): string => String(value ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').slice(0, max).trim();
+// decisions.json -> local-tool-failures-01
+
+// A failure message is the one place a driver can still carry a secret, so every string is redacted before it is written.
+
+const SECRET_SHAPES: Array<[RegExp, string]> = [
+  [/(authorization\s*[:=]\s*)(bearer\s+)?[^\s,;]+/gi, '$1$2[redacted]'],
+  [/(\b(?:api[_-]?key|access[_-]?token|refresh[_-]?token|token|secret|password|passwd|pwd)\b\s*[:=]\s*)("[^"]*"|'[^']*'|[^\s,;&]+)/gi, '$1[redacted]'],
+  [/(\bbearer\s+)[A-Za-z0-9._~+/=-]{8,}/gi, '$1[redacted]'],
+  [/([a-z][a-z0-9+.-]*:\/\/)[^/\s@]+@/gi, '$1[redacted]@'],
+  [/([?&](?:token|key|api[_-]?key|access[_-]?token|refresh[_-]?token|password|secret)=)[^&\s]+/gi, '$1[redacted]'],
+  [/\b(?:sk-[A-Za-z0-9_-]{8,}|ghp_[A-Za-z0-9]{8,}|github_pat_[A-Za-z0-9_]{8,}|xox[baprs]-[A-Za-z0-9-]{8,}|sbp_[A-Za-z0-9_-]{8,})/g, '[redacted]'],
+  [/\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b/g, '[redacted]']
+];
+
+const redact = (text: string): string => SECRET_SHAPES.reduce((kept, [shape, replacement]) => kept.replace(shape, replacement), text);
+
+const sanitize = (value: unknown, max: number): string => redact(String(value ?? '')).replace(/[\u0000-\u001f\u007f]/g, ' ').slice(0, max).trim();
+
+const privateMode = (target: string, mode: number): void => {
+  if (process.platform === 'win32') return;
+  try {
+    fs.chmodSync(target, mode);
+  } catch {
+    void 0;
+  }
+};
 
 const append = (home: string, file: string, line: string, capBytes: number): void => {
-  fs.mkdirSync(home, { recursive: true });
-  fs.appendFileSync(file, line + '\n', 'utf8');
+  fs.mkdirSync(home, { recursive: true, mode: 0o700 });
+  privateMode(home, 0o700);
+  fs.appendFileSync(file, line + '\n', { encoding: 'utf8', mode: 0o600 });
+  privateMode(file, 0o600);
   const size = fs.statSync(file).size;
   if (size <= capBytes) return;
   const kept = fs.readFileSync(file, 'utf8').split('\n').filter(Boolean).slice(-KEEP_LINES);
   const tmp = file + '.tmp';
-  fs.writeFileSync(tmp, kept.join('\n') + '\n', 'utf8');
+  fs.writeFileSync(tmp, kept.join('\n') + '\n', { encoding: 'utf8', mode: 0o600 });
+  privateMode(tmp, 0o600);
   fs.renameSync(tmp, file);
+  privateMode(file, 0o600);
 };
 
 // a failure log that cannot keep the record must never turn a refusal into a crash

@@ -1,4 +1,4 @@
-<!-- decisions.json -> D32, D33 (one mark everywhere, mark palette); og-cover master for scripts/generate-og-cover.mjs -->
+<!-- decisions.json -> D32, D33 (one mark everywhere, mark palette); og-cover master for scripts/generate-og-cover.ts -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="#0d1338"/>
   <g transform="translate(88 165) scale(1.25)">

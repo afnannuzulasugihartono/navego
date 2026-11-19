@@ -8,14 +8,14 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 export function meta() {
   return seoMeta({
     title: 'Fitur — Navego',
-    description: '42 tool MCP di atas 36 primitive browser, enam izin, empat berkas contoh.',
+    description: '40 tool MCP di atas 36 primitive browser, enam izin, empat berkas contoh.',
     path: '/fitur'
   });
 }
 
 const ROLES = [
   ['Operator', 'Buka portal, cari data, unduh CSV', 'browser_open_url, browser_find_element (mode text), browser_download_file'],
-  ['Analis', 'Rangkai laporan dan buku kerja, cek asal tiap angka', 'artifact_build_report (format: word | xlsx)'],
+  ['Analis', 'Rangkai laporan, buku kerja, deck, atau dokumen Word — cek asal tiap angka', 'artifact_build (target: word | xlsx | pptx | docx)'],
   ['Pengembang', 'Pasang driver lokal, panggil dari harness', 'browser_status, browser_run_steps, browser_wait_until']
 ] as const;
 
@@ -122,7 +122,7 @@ export default function Fitur() {
               <div>
                 <h2 id="kemampuanTitle" className="section-title">Enam hal, satu mesin.</h2>
               </div>
-              <p className="section-note">42 tool MCP di atas 36 primitive browser.</p>
+              <p className="section-note">40 tool MCP di atas 36 primitive browser.</p>
             </div>
             <div className="card-row">
               {KEMAMPUAN.map(([icon, title, body]) => (

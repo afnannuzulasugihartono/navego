@@ -71,6 +71,7 @@
     "tools.js",
     "transport.js",
     "tool-failures.js",
+    "tool-schema.js",
     "waits.js",
     "wallet-client.js",
     "window-focus.js",

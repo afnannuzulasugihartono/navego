@@ -78,7 +78,7 @@ export default function Beranda() {
               <p className="lede">Satu perintah. Browser Anda bekerja.</p>
               <div className="hero-cta">
                 <Link className="btn btn-solid" to="/unduh">Pasang gratis</Link>
-                <span className="spec"><strong>42 tool MCP</strong>. Gratis untuk mulai.</span>
+                <span className="spec"><strong>40 tool MCP</strong>. Gratis untuk mulai.</span>
               </div>
             </div>
             <div className="demo-window" aria-hidden="true">
@@ -120,7 +120,7 @@ export default function Beranda() {
               ))}
             </div>
             <div className="stat-strip" style={{ marginTop: 'var(--s-6)' }}>
-              <div className="stat"><b>42</b><span>tool MCP</span></div>
+              <div className="stat"><b>40</b><span>tool MCP</span></div>
               <div className="stat"><b>36</b><span>primitive browser</span></div>
               <div className="stat"><b>6</b><span>izin, tidak lebih</span></div>
             </div>

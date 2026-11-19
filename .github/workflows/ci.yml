@@ -1,6 +1,6 @@
 # @last-edited: 2026-10-22 UTC+7.
-# @title: ci — three jobs, all on GitHub Linux runners.
-# @state: all three gates run on every pull request, whatever it targets, and on a push to main.
+# @title: ci — five jobs, all on GitHub Linux runners.
+# @state: unit, site, deno-hosted, secret-scan and browser run on every pull request, whatever it targets, and on a push to main.
 # @dependencies: none stated.
 
 name: CI
@@ -41,8 +41,8 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 22.20.0
       - name: Install the toolchain
@@ -59,8 +59,8 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 22.20.0
       - name: Install the site toolchain
@@ -75,7 +75,7 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed
         with:
           deno-version: v2.x
@@ -95,7 +95,7 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Secret scan (gitleaks)
         run: |
           set -euo pipefail
@@ -103,6 +103,7 @@ jobs:
           version=8.24.0
           curl -sSfL --proto '=https' --proto-redir '=https' -o "${RUNNER_TEMP}/gitleaks.tar.gz" \
             "https://github.com/gitleaks/gitleaks/releases/download/v${version}/gitleaks_${version}_linux_x64.tar.gz"
+          echo "cb49b7de5ee986510fe8666ca0273a6cc15eb82571f2f14832c9e8920751f3a4  ${RUNNER_TEMP}/gitleaks.tar.gz" | sha256sum -c -
           tar -xzf "${RUNNER_TEMP}/gitleaks.tar.gz" -C "${RUNNER_TEMP}" gitleaks
           "${RUNNER_TEMP}/gitleaks" detect --source . --verbose
 
@@ -113,8 +114,8 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 22.20.0
 
@@ -123,7 +124,7 @@ jobs:
           npm ci --ignore-scripts --no-audit --no-fund
           npm run build:extension
 
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
         with:
           python-version: '3.12'
 
@@ -145,7 +146,7 @@ jobs:
 
       - name: Keep the harness record
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: browser-harness
           path: ${{ runner.temp }}/harness.json

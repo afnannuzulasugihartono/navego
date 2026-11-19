@@ -25,9 +25,9 @@ test('an ordinary DOM page keeps its order', () => {
   assert.equal(ladder.every((step) => step.harm === HARM_NONE), true);
 });
 
-test('a canvas editable surface leads with the accessibility tree', () => {
+test('a canvas editable surface leads with the selection mirror', () => {
   const profile = { textInDom: false, canvas: true, editable: true, axRich: true, focused: true };
-  assert.deepEqual(names(profile), [STRATEGY_AX, STRATEGY_DOM, STRATEGY_SELECT_ALL, STRATEGY_VISION]);
+  assert.deepEqual(names(profile), [STRATEGY_SELECT_ALL, STRATEGY_DOM, STRATEGY_AX, STRATEGY_VISION]);
 });
 
 test('a canvas editable surface tags select-all as caret-moving', () => {
@@ -43,9 +43,9 @@ test('a canvas without an editable region offers no caret-moving strategy', () =
   assert.deepEqual(names(profile), [STRATEGY_AX, STRATEGY_DOM, STRATEGY_VISION]);
 });
 
-test('an ax tree with no document text falls through to the DOM', () => {
+test('an ax tree with no document text still leaves the mirror first on a canvas editor', () => {
   const profile = { textInDom: true, canvas: true, editable: true, axRich: false, focused: true };
-  assert.deepEqual(names(profile), [STRATEGY_DOM, STRATEGY_AX, STRATEGY_SELECT_ALL, STRATEGY_VISION]);
+  assert.deepEqual(names(profile), [STRATEGY_SELECT_ALL, STRATEGY_DOM, STRATEGY_AX, STRATEGY_VISION]);
 });
 
 test('contradictory signals still produce one ladder', () => {

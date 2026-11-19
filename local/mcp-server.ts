@@ -48,22 +48,15 @@ import { TOOLS, STRAY_FILE_TAB } from './tools.js';
 import { SERP_EXPRESSION } from './page-expressions.js';
 import { parseBingSerp } from './bing-serp.js';
 import { pairDevice, taskRefund, taskReserve, taskSettle, walletBalance, walletQuote, walletTopUp } from './wallet-client.js';
+import { validateArguments } from './tool-schema.js';
 
 // The tool table lives in tools.js: the surface is data, and this file is the protocol that answers it.
 
 export { TOOLS };
 
-// THE ASSERTION IS AN OPEN RECORD.
-// Every tool branch below reads arguments the tool schema already proved are shaped and typed.
-// Narrowing fifty branches to verify the same promise would buy nothing; the documented exemption in types.ts is where that promise lives.
+// decisions.json -> local-tool-schema-01
 
-function requireArguments(args: Record<string, unknown> | null | undefined, required: string[]): asserts args is JsonRecord {
-  for (const name of required) {
-    if (args?.[name] === undefined || args?.[name] === null || args?.[name] === '') {
-      throw new Error(`missing argument "${name}" - required by the tool schema`);
-    }
-  }
-}
+// Every branch below reads arguments the validator already proved, so the open-record assertion costs nothing a second check would buy.
 
 // A browser that closed mid-call must not take the server with it, because the next tool call is still worth trying.
 
@@ -505,8 +498,10 @@ const pageTitle = async (driver: Driver): Promise<string> => {
 
 const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<string> => (tab ? String(tab.title ?? '') : pageTitle(driver));
 
-  const run = async (name: string, args: JsonRecord): Promise<unknown> => {
-    requireArguments(args, TOOLS.find((t) => t.name === name)?.inputSchema.required ?? []);
+  const run = async (name: string, rawArgs: unknown): Promise<unknown> => {
+    const tool = TOOLS.find((candidate) => candidate.name === name);
+    if (!tool) throw new Error(`Unknown tool: ${name}`);
+    const args = validateArguments(name, rawArgs === undefined ? {} : rawArgs, tool.inputSchema);
 
     // The burst is checked before a tab is resolved, so a malformed step list cannot touch a browser, and a caller learns which step was wrong before any page is changed.
     const burst = name === 'browser_run_steps' ? normalizeBurst(args) : null;
@@ -532,10 +527,28 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         replace: args.replace === true
       }));
     }
-    if (name === 'artifact_build_report') {
-      const format = args.format === 'xlsx' ? 'xlsx' : 'word';
-      if (args.format !== undefined && args.format !== 'word' && args.format !== 'xlsx') {
-        throw new Error(`artifact_build_report format must be "word" or "xlsx" - got: ${String(args.format)}`);
+    if (name === 'artifact_build') {
+      const target = args.target === undefined ? 'word' : String(args.target);
+      if (!['word', 'xlsx', 'pptx', 'docx'].includes(target)) {
+        throw new Error(`artifact_build target must be "word", "xlsx", "pptx" or "docx" - got: ${String(args.target)}`);
+      }
+      if (target === 'pptx') {
+        return asText(deckFromFile({
+          source: args.source,
+          out: args.out ?? null,
+          report: args.report ?? null
+        }));
+      }
+      if (target === 'docx') {
+        const plan = documentFromFile({
+          source: args.source,
+          out: null
+        });
+        const written = documentDocxFromFile({
+          source: args.source,
+          out: args.out ?? null
+        });
+        return asText({ ...written, plan: plan.out, planVerified: plan.verified });
       }
       const job = {
         source: args.source,
@@ -547,25 +560,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         valueColumn: args.valueColumn,
         out: args.out ?? null
       };
-      return asText(format === 'xlsx' ? spreadsheetFromFile(job) : reportFromFile(job));
-    }
-    if (name === 'artifact_build_slides') {
-      return asText(deckFromFile({
-        source: args.source,
-        out: args.out ?? null,
-        report: args.report ?? null
-      }));
-    }
-    if (name === 'artifact_build_document') {
-      const plan = documentFromFile({
-        source: args.source,
-        out: null
-      });
-      const written = documentDocxFromFile({
-        source: args.source,
-        out: args.out ?? null
-      });
-      return asText({ ...written, plan: plan.out, planVerified: plan.verified });
+      return asText(target === 'xlsx' ? spreadsheetFromFile(job) : reportFromFile(job));
     }
 
     // THESE CALLS NEVER RESOLVE A TAB.
@@ -672,7 +667,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         return asText(out);
       }
       case 'browser_read_page':
-        return asText(await driver.read({ allowCaretMove: args.allowCaretMove === true, maxChars: args.maxChars, selector: args.selector }));
+        return asText(await driver.read({ allowCaretMove: args.allowCaretMove !== false, allowVision: args.allowVision === true, maxChars: args.maxChars, selector: args.selector }));
       // THE SETTLE IS ASKED FOR, BOUNDED AND OPTIONAL.
       // tabs.open already waits for the tab's load event, but load and settled-for-readers are different facts: Bing renders its cards server-side, and the first innerText read is only as fresh as whatever the page did after DOMContentLoaded.
       // The optional call keeps a fake session in the tests working while the real one measures quiet before the read.
@@ -982,7 +977,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
         return afterAction(driver, { solved: true, chars: solved.text.length, taskId: solved.taskId });
       }
       default:
-        throw new Error(`Unknown tool: ${name}`);
+        throw new Error(`tool ${name} is advertised without a branch - the table and the dispatcher disagree`);
     }
   };
 
@@ -1012,7 +1007,7 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           const callName = isObject(params) ? String((params as JsonRecord).name ?? 'unknown') : 'unknown';
           try {
             const call = isObject(params) ? params : {};
-            const out = await run(String(call.name ?? ''), isObject(call.arguments) ? call.arguments : {});
+            const out = await run(String(call.name ?? ''), call.arguments);
             return reply(withCost(out, Date.now() - started));
           } catch (error: unknown) {
             const code = typeof (error as { code?: unknown } | null)?.code === 'string' ? String((error as { code: string }).code) : 'MCP_EXECUTION_ERROR';
