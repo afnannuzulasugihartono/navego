@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "generated": "2026-11-18",
-  "source": "The 2026-11-18 navego.pages.dev rebrand and consistency pass: logo, wordmark, eyebrows, type and spacing system, nav notch, copy pass. User direction arrived 2026-11-18; internet sources were verified 2026-11-18. Repo sources point at the docs that already carry the decision.",
-  "note": "One decision, one source. Code references this file as `decisions.json → D<n>`. A decision the user asked for carries kind=user; a decision nobody asked for carries the internet source it was taken from; a decision inherited from this repo carries the repo document that already carries it.",
+  "generated": "2026-11-19",
+  "source": "The 2026-11-18 navego.pages.dev rebrand and consistency pass: logo, wordmark, eyebrows, type and spacing system, nav notch, copy pass. User direction arrived 2026-11-18; internet sources were verified 2026-11-18. Repo sources point at the docs that already carry the decision. 2026-11-19: a source-backed pass over the agent tool surface added D55-D68 - kind recorded carries the file:line of the recorded performance, per the user evidence mandate.",
+  "note": "One decision, one source. Code references this file as decisions.json -> D<n>. A decision the user asked for carries kind=user; a decision nobody asked for carries the internet source it was taken from; a decision inherited from this repo carries the repo document that already carries it; a decision taken because a recorded performance demanded it carries kind=recorded with the file:line that records it.",
   "decisions": [
     {
       "id": "D01",
@@ -501,6 +501,138 @@
       "source": {
         "kind": "user",
         "ref": "user 2026-11-19: \"tombol login dan beranda belum ada\""
+      }
+    },
+    {
+      "id": "D55",
+      "scope": "agent/tools",
+      "decision": "browser_read_page gains a bound on how much it returns (maxChars, and a selector scope or a view-style brief/map split in the implementation); an agent is expected to read a bounded page, never an unbounded one.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/releases/1.6.47.md:8-19 - view brief (default, one viewport at a time) vs view map (the whole document) existed; read_page_map was folded into read_page and the tool count was asserted in CI as a frozen inventory",
+        "also": "https://www.anthropic.com/research/writing-tools-for-agents - pagination, range selection, filtering and truncation for tool responses; the 25,000-token default; redundant tool calls suggest rightsizing pagination or token limits"
+      }
+    },
+    {
+      "id": "D56",
+      "scope": "agent/tools",
+      "decision": "The tool lists in local/README.md and docs/agent-call.md are regenerated from the catalog instead of handwritten; the tool count is asserted in CI the way 1.6.47 and 1.6.48 asserted it; every recipe in browser_get_guide resolves to a live tool name.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/agent-call.md:59 claims 56 tools; local/README.md:79-93 lists the generation-1 agent-native names; 1.6.52.md:12, 1.6.53.md:16, 1.6.54.md:16 say 56 unchanged; 1.6.57.md is a 0-byte file; live catalog 2026-11-19 has 45 browser_-prefixed tools; npm registry opera-agent-mcp 1.7.5 (modified 2026-11-17) vs package.json 1.6.54; docs/proof/extension-run.jsonl recorded toolCount 54 on 2026-11-06"
+      }
+    },
+    {
+      "id": "D57",
+      "scope": "agent/tools",
+      "decision": "artifact_build_workbook and artifact_build_report ship as one tool with a format parameter (word or xlsx); the signed parameters are identical (client, title, period, periodColumn, groupBy, valueColumn, out) and both run the same plan recheck before the file exists.",
+      "source": {
+        "kind": "recorded",
+        "ref": "catalog signatures of 2026-11-19, verbatim: both tools carry client, title, period, periodColumn?, groupBy, valueColumn, out? and refuse the same wrong figure twice",
+        "also": "https://www.anthropic.com/research/writing-tools-for-agents - too many or overlapping tools distract agents from efficient strategies; consolidate functionality into tools with a clear, distinct purpose"
+      }
+    },
+    {
+      "id": "D58",
+      "scope": "agent/tools",
+      "decision": "browser_find_text folds into browser_find_element as mode text: one locate tool, two modalities - role+name resolves a centred anti-stale handle; a plain text resolves viewport rects in the same space a screenshot uses; the handle is the only click currency.",
+      "source": {
+        "kind": "recorded",
+        "ref": "catalog descriptions of 2026-11-19: find_element returns the handle and box, measured from the node at the click; find_text returns each match with a viewport rect in the same space a screenshot uses - one page, two lookups, overlapping purpose",
+        "also": "https://www.anthropic.com/research/writing-tools-for-agents - tools should have a clear, distinct purpose; overlapping tools distract"
+      }
+    },
+    {
+      "id": "D59",
+      "scope": "agent/tools",
+      "decision": "Tool names are not renamed; the documentation is fixed to resolve to the live names - the guide and the README carry two generations of names today, and every unrecorded rename widens that gap.",
+      "source": {
+        "kind": "recorded",
+        "ref": "browser_get_guide output of 2026-11-19: recipes say portal, front, captcha, click; its own sideEffects block names browser_check_gate, browser_focus_window, wallet_hold_price; 1.6.52.md:12 records the #312 rename that produced generation-2 without rewriting the guide or README"
+      }
+    },
+    {
+      "id": "D60",
+      "scope": "agent/tools",
+      "decision": "Every tool description reads at two sentences plus a pointer to the guide topic that carries the detail; refusal semantics, input contracts and side effects stay verbatim; the current catalog measures 3,877 words (about 5,293 description tokens), browser_read_page at 248 words.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://www.anthropic.com/research/writing-tools-for-agents - tool descriptions are loaded into the agent context and steer tool-calling behaviour; context is limited, so every description competes with the task for the same window",
+        "also": "catalog measurement 2026-11-19 (45 tools): descriptions sum to 3,877 words, 21,159 characters"
+      }
+    },
+    {
+      "id": "D61",
+      "scope": "agent/tools",
+      "decision": "browser_get_guide gains a topic bukti teks vs gambar - when a measured text read is enough proof and when a picture is mandatory - and every recipe names exact catalog tools with no short aliases.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"screenshot masih sering digunakan? read page kenapa jarang digunakan?\" - the guide pairs recipe Prove it worked (browser_screenshot plus browser_read_page) with refusals that say a tool that reports success is not proof, so image proof is the only proof the server prescribes today"
+      }
+    },
+    {
+      "id": "D62",
+      "scope": "agent/tools",
+      "decision": "browser_intercept_picker restores the native picker by itself (TTL or end of the drive); a suppressed picker never survives an abandoned drive, and the next call names how long the picker has been suppressed.",
+      "source": {
+        "kind": "recorded",
+        "ref": "catalog description of 2026-11-19: forgetting to disable leaves later Upload clicks silent; guide sideEffects: changes whether the native file picker appears on this tab - a documented silent-failure mode, not a measured incident count"
+      }
+    },
+    {
+      "id": "D63",
+      "scope": "agent/tools",
+      "decision": "browser_console is not added until one recorded incident exists that it would have solved; an empty slot in the catalog is not filled by an honest guess.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"harus ada bukti atau source yang valid bisa dari internet bisa dari user atau performa yang tercatat\" - no JS-error-blind incident is recorded anywhere in the repo; the candidate does not pass the evidence gate"
+      }
+    },
+    {
+      "id": "D64",
+      "scope": "agent/tools",
+      "decision": "browser_screenshot does not gain a clip parameter until one recorded verification failure or slowness trace exists over a full-viewport shot; precision is already documented (viewport 1144x714 to 1186x670, scale 1.25), clipping is not demanded anywhere.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"harus ada bukti atau source yang valid bisa dari internet bisa dari user atau performa yang tercatat\" - no such recording exists; the only recorded screenshot measurements are scale conversions"
+      }
+    },
+    {
+      "id": "D65",
+      "scope": "agent/tools",
+      "decision": "browser_open_url stays counts-only (url, title, textChars, rows, focus); it does not gain an excerpt - the guide recipe for page content is browser_read_page, and open_url is the navigation primitive, not the reading primitive.",
+      "source": {
+        "kind": "recorded",
+        "ref": "browser_get_guide output of 2026-11-19 verbatim: task See what is on the page maps to browser_read_page; open_url is not on that road; no usage record demanding an excerpt exists",
+        "also": "user 2026-11-19: the evidence rule - no valid source, no decision"
+      }
+    },
+    {
+      "id": "D66",
+      "scope": "agent/tools",
+      "decision": "wallet_get_price and wallet_hold_price stay two tools, quote then reserve; the plan shape (artifact page or document, or list with an item count) is defined once in the implementation; no catalog-visible change.",
+      "source": {
+        "kind": "recorded",
+        "ref": "catalog descriptions of 2026-11-19 verbatim: get_price carries the plan shape and the show-the-person-first contract; hold_price carries the steps-over-cap refusal - the two halves of one quote and reserve flow, not two schemas written twice"
+      }
+    },
+    {
+      "id": "D67",
+      "scope": "agent/tools",
+      "decision": "docs/decisions.json accepts source kind recorded (file:line of the performance that records the decision) beside user, internet and repo; tests/tooling/decisions.test.ts carries the new kind and names what a recorded source points at.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"harus ada bukti atau source yang valid bisa dari internet bisa dari user atau performa yang tercatat\" - the mandate extends the register vocabulary, and the gate follows it"
+      }
+    },
+    {
+      "id": "D68",
+      "scope": "agent/tools",
+      "decision": "No tool is split: browser_read_page is not divided into peek/full and browser_run_steps stays one burst primitive - a split would double the catalog this mandate was just told to shrink, while scoping parameters do the work inside one tool.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://www.anthropic.com/research/writing-tools-for-agents - tools can consolidate functionality, and overlapping tools distract agents",
+        "also": "docs/releases/1.6.47.md:8-19 - read_page_map was folded into read_page rather than split from it"
       }
     }
   ]
