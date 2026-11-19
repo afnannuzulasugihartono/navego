@@ -1,4 +1,4 @@
-// @last-edited: 2026-11-18 UTC+7.
+// @last-edited: 2026-11-19 UTC+7.
 // @title: decisions - the register is the rule; a value in code nobody can source is a bug nobody can fix.
 // @state: the register validates, the references in the repo resolve to real decisions, and no comment opens with a WHY prefix - the reason stands on its own.
 // @dependencies: node:test, strict, node:fs.
@@ -34,7 +34,9 @@ interface Register {
 const root = new URL('../../', import.meta.url);
 const read = (name: string): Register => JSON.parse(fs.readFileSync(new URL(name, root), 'utf8')) as Register;
 
-const KINDS = new Set(['user', 'internet', 'repo']);
+// a recorded source points at the file that records the performance - release notes, proof records, the registry - never at a feeling
+
+const KINDS = new Set(['user', 'internet', 'repo', 'recorded']);
 
 // The acceptance surface is not swept and not judged here: the pins define the judge.
 // Every exclusion below is named on purpose - a silent exclusion is how the rule dies.
@@ -109,7 +111,7 @@ test('every decision is complete enough to act on', () => {
     seen.add(d.id);
     assert.ok(typeof d.scope === 'string' && d.scope.length > 0, `${d.id} names a scope`);
     assert.ok(typeof d.decision === 'string' && d.decision.length >= 24, `${d.id} says the decision, at enough length to be checkable`);
-    assert.ok(KINDS.has(d.source?.kind), `${d.id} has a kind the gate understands: user, internet or repo - found ${d.source?.kind}`);
+    assert.ok(KINDS.has(d.source?.kind), `${d.id} has a kind the gate understands: user, internet, repo or recorded - found ${d.source?.kind}`);
     assert.ok(typeof d.source.ref === 'string' && d.source.ref.length >= 8, `${d.id} carries a real source, not a placeholder`);
     if (d.source.kind === 'internet') {
       assert.match(d.source.ref, /^https?:\/\//, `${d.id} cites an internet source with a URL - got ${d.source.ref}`);
