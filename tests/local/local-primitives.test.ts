@@ -29,23 +29,6 @@ test('the window state asks the browser, not the operating system, when it can',
 });
 
 
-test('a bare focusWindow answers the state without moving the window', async () => {
-  const calls: any = [];
-  const cdp = {
-    send: async (method: any, params = {}) => {
-      calls.push({ method, params });
-      if (method === 'Browser.getWindowForTarget') return { windowId: 44, bounds: { windowState: 'minimized' } };
-      if (method === 'Browser.getWindowBounds') return { bounds: { windowState: 'minimized' } };
-      return {};
-    }
-  };
-
-  const out = await createPrimitives(cdp).focusWindow('');
-
-  assert.deepEqual(calls.map((c: any) => c.method), ['Browser.getWindowForTarget', 'Browser.getWindowBounds']);
-  assert.equal(out.focused, false);
-  assert.deepEqual(out.minimized, ['the browser window']);
-});
 
 
 test('front brings the tab forward so the watcher sees where the agent is', async () => {

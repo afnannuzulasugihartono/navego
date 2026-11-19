@@ -127,11 +127,6 @@ export const RECIPES = Object.freeze([
     task: 'Prove it worked',
     do: ['browser_screenshot', 'browser_read_page'],
     note: 'A picture and the text, compared against what you expected. A tool saying it succeeded is not proof; the page saying so is.'
-  },
-  {
-    task: 'Bring a window forward',
-    do: ['browser_status', 'browser_focus_window'],
-    note: 'status names the browser in front and whether it is ours; front takes a piece of the window title. With no match, front answers the state without moving anything — pass a piece of the title to bring one forward. Never an empty match: that used to bring an arbitrary window forward.'
   }
 ]);
 
@@ -148,7 +143,6 @@ export const SIDE_EFFECTS = Object.freeze({
   wallet_charge: ['takes the held price from the wallet, once, for a job that was reported finished'],
   wallet_refund: ['returns the whole held price to the wallet, once, for a job that did not finish'],
   browser_status: [],
-  browser_focus_window: ['brings a browser window to the front of the machine, which takes the keyboard away from whatever was in front'],
   browser_focus_tab: ['brings the window holding one named tab to the front, instead of guessing by window title'],
   browser_read_dialog: ['reads the dialog\'s title, buttons and field text outside the browser — changes nothing'],
   browser_type_into_dialog: ['writes text into an operating system dialog outside the browser and reads the field back'],
@@ -204,7 +198,7 @@ export function guide(topic: unknown) {
       'There is no raw CDP escape hatch — anything that can change the page is a named tool, by design.',
       'A tool that reports success is not proof. The page saying so is.',
       'A page cannot see whether the window in front of it is the one the machine has in front. Clicks and keys go nowhere while status says the window is not focused.',
-      'front with no match answers the state without moving anything — pass a piece of the window title. An empty match used to bring an arbitrary window forward.',
+      'There is no call that brings a window to the front - the browser stays as the person left it; when the window that holds the tab is minimized, what is typed goes nowhere and the answer says why.',
       'A complex document or report is built as a plan on disk (report, doc, sheet, deck) before it reaches a page, not by driving cells one by one.'
     ]
   };

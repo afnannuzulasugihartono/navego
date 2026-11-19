@@ -48,11 +48,6 @@ export const TOOLS = Object.freeze([
     inputSchema: { type: 'object', properties: {}, required: [] }
   },
   {
-    name: 'browser_focus_window',
-    description: 'Bring a browser window to the front of the machine, so the page can take clicks and keys. Give the piece of the window title to bring forward ("Google Docs", "Google Chrome"). With no match, this answers the window state without moving anything — pass a piece of the title to bring one forward. Answers the title it brought, and whether the operating system let it.',
-    inputSchema: { type: 'object', properties: { match: stringArg('piece of the window title to bring forward') } }
-  },
-  {
     name: 'browser_read_dialog',
     description: "Read the operating system's own dialog — title, buttons and field text — wherever one is open. A file picker opened by a page lives outside the browser: no capture, no snapshot, no tab sees it. This reads only and changes nothing; the answer names what was found, including when no dialog is open.",
     inputSchema: { type: 'object', properties: {}, required: [] }

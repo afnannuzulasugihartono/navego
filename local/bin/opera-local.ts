@@ -21,7 +21,7 @@ import { dirname, join } from 'node:path';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { openSession, installedBrowsers } from '../driver.js';
-import { windowState, focusWindow } from '../window-focus.js';
+import { windowState } from '../window-focus.js';
 import { dialogState, dialogType, dialogPress } from '../dialog.js';
 import { createSessionStore } from '../sessions.js';
 import { listPageWebSockets, openTab, closeTab } from '../transport.js';
@@ -143,9 +143,6 @@ const driver = {
     return windowState();
   },
 
-  async focusWindow(match: unknown) {
-    return focusWindow(match);
-  },
 
   async ensureFront(options: unknown) {
     return (await attach()).ensureFront(options);

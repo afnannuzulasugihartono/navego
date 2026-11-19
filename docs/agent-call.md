@@ -57,7 +57,7 @@ first: `port: 9451` means the extension road. When a linked device's daily
 quota is spent the device card carries `planExhaustedDevices` with the device
 names, so a driver sees it before the next call is refused.
 
-The server advertises 45 tools, named for the resource they touch and the job they do: `browser_*` drives a page or window, `artifact_*` builds a file, `delivery_*` records a client-month, `wallet_*` moves account state. `browser_get_guide()` returns them as tasks rather than a
+The server advertises 44 tools, named for the resource they touch and the job they do: `browser_*` drives a page or window, `artifact_*` builds a file, `delivery_*` records a client-month, `wallet_*` moves account state. `browser_get_guide()` returns them as tasks rather than a
 list, and the full list is in [`local/README.md`](../local/README.md).
 
 ### The capture ladder

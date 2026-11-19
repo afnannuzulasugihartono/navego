@@ -101,7 +101,6 @@ export function asDriver(session: JsonRecord): SessionDriver {
     pageLook: (options) => session.pageLook?.(isRecord(options) ? options : {}) ?? null,
     caretLine: () => session.caretLine(),
     windowState: () => session.windowState(),
-    focusWindow: (match) => session.focusWindow(match),
     dialogState: () => session.dialogState(),
     dialogType: (text) => session.dialogType(text),
     dialogPress: (name) => session.dialogPress(name),

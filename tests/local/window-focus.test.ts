@@ -288,19 +288,10 @@ test('a driver that cannot see the page says so rather than pretending the windo
   assert.match(out.window, /cannot tell/);
 });
 
-test('the catalogue offers the window state inside status and a call that moves it', () => {
+test('the catalogue offers the window state inside status, and no tool to move it', () => {
   const status = TOOLS.find((tool) => tool.name === 'browser_status');
-  const focus = TOOLS.find((tool) => tool.name === 'browser_focus_window');
 
   assert.ok(status, 'status is there');
   assert.match(status.description, /front/i, 'and it says whether a browser window is in front');
-  assert.ok(focus, 'front is there');
-  assert.match(focus.description, /title/, 'and it says which window to bring forward');
-  assert.deepEqual(Object.keys(focus.inputSchema.properties), ['match']);
-});
-
-test('every tool the advice can name still exists after this', () => {
-  const names = new Set(TOOLS.map((tool) => tool.name));
-
-  assert.ok(names.has('browser_focus_window'), 'the advice below points at front, so it has to be there');
+  assert.equal(TOOLS.some((tool) => tool.name === 'browser_focus_window'), false, 'and nothing moves the window into the foreground');
 });

@@ -84,7 +84,7 @@ export default function Mcp() {
               <div>
                 <h2 id="harnessTitle" className="section-title">Daftarkan ke AI Anda.</h2>
               </div>
-              <p className="section-note">Server lokal menambah 45 tool MCP di atas 36 primitive browser.</p>
+              <p className="section-note">Server lokal menambah 44 tool MCP di atas 36 primitive browser.</p>
             </div>
             <div className="value-grid" style={{ gridTemplateColumns: '1fr' }}>
               {HARNESS.map(({ id, title, body }) => (

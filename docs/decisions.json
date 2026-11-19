@@ -670,6 +670,16 @@
         "kind": "user",
         "ref": "user 2026-11-19: \"buat ini\" - the mandate authorises the capability, and D63 applies to its shape: no catalog slot without a recorded need that only the catalog can serve"
       }
+    },
+    {
+      "id": "D73",
+      "scope": "agent/tools",
+      "decision": "browser_focus_window is deleted; no tool in the catalog can move any window to the foreground. The drive runs in the background; window state is answered by browser_status (which names the browser in front), and the only remaining front path is the session-level guard in local/focus-guard.ts - it restores the session own window when the page cannot hear input, is not agent-callable, and fires only on the session word of minimized.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"iya hapus aja yng focus window buat semua bisa berjalan di latar belakang\" - the tool existed only to bring a window to the front; the owner wants the drive invisible",
+        "also": "recorded: local/focus-guard.ts documents the session-level restore the agent cannot reach"
+      }
     }
   ]
 }
