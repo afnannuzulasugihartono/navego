@@ -35,6 +35,7 @@
 
 import "@supabase/edge-runtime";
 import { createEdgeLog } from "../_shared/edge-log.ts";
+import { requiredEnv } from "../_shared/required-env.ts";
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from "../_shared/cors.ts";
 import { sha256 } from "../_shared/sha256.ts";
 import { invoicePage } from "../_shared/invoice-page.ts";
@@ -104,9 +105,9 @@ type AttemptClose =
   | { state: "refused"; why: string };
 type BillingClient = Awaited<ReturnType<typeof db>>;
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
-const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-const BILLING_SECRET = Deno.env.get("BILLING_SECRET") || "";
+const SUPABASE_URL = requiredEnv("SUPABASE_URL");
+const SERVICE_ROLE_KEY = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
+const BILLING_SECRET = requiredEnv("BILLING_SECRET");
 const BILLING_TOKEN = Deno.env.get("NAVEGO_BILLING_TOKEN") || "";
 
 // THE OPERATOR'S LINK NAMES THE SITE AND NOT THIS FUNCTION.
@@ -188,6 +189,8 @@ function publishOperatorToken(): void {
 // The operator and the provider post JSON, and the customer's refresh form is a browser form, which posts urlencoded fields.
 // A body that cannot be parsed is an empty object, so a malformed request falls through to "unknown action" instead of a 500 that says nothing about the request.
 
+// A body that is not an object has no action field and no fields to read - the refusal the unknown-action branch already gives.
+
 async function readBody(req: Request): Promise<Record<string, unknown>> {
   const type = (req.headers.get("content-type") || "").toLowerCase();
   if (type.includes("application/x-www-form-urlencoded")) {
@@ -199,8 +202,11 @@ async function readBody(req: Request): Promise<Record<string, unknown>> {
     }
     return body;
   }
-  return await req.json().catch(() => ({})) as Record<string, unknown>;
+  const parsed: unknown = await req.json().catch(() => null);
+  return isRecord(parsed) ? parsed : {};
 }
+
+const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null && !Array.isArray(value);
 
 // THE PAGE'S HEADERS SAY WHAT THE PAGE MAY DO.
 // The page carries a token in its body, so it must not be cached, must not leak the link that opened it as a referrer, and must not be framed by another site.

@@ -5,9 +5,10 @@
 
 import "@supabase/edge-runtime";
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from "../_shared/cors.ts";
+import { requiredEnv } from "../_shared/required-env.ts";
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
-const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") || "";
+const SUPABASE_URL = requiredEnv("SUPABASE_URL");
+const ANON_KEY = requiredEnv("SUPABASE_ANON_KEY");
 
 const headers = {
   "Cache-Control": "no-store",
