@@ -45,6 +45,26 @@ export interface FilePrimitivesOptions {
 export function filePrimitives(primitives: import('./types.js').JsonRecord, { cdp, sleep, fs, os, path, readState, bridge = false }: FilePrimitivesOptions) {
   if (!fs || !os || !path) throw new Error('filePrimitives needs fs, os and path');
 
+  const PICKER_TTL_MS = 120_000;
+  let interceptedSince: number | null = null;
+  let restoreTimer: ReturnType<typeof setTimeout> | null = null;
+
+  const clearTimer = (): void => {
+    if (restoreTimer !== null) {
+      clearTimeout(restoreTimer);
+      restoreTimer = null;
+    }
+  };
+
+  const armRestore = (): void => {
+    clearTimer();
+    restoreTimer = setTimeout(() => {
+      restoreTimer = null;
+      interceptedSince = null;
+      cdp.send('Page.setInterceptFileChooserDialog', { enabled: false }).catch(() => null);
+    }, PICKER_TTL_MS);
+  };
+
   // THE FILE IS PREPARED IN ONE PLACE.
   // Upload and drop take the same two inputs - a base64 payload or a path - and must answer the same three questions: where the bytes are, how many there are, and how to remove the temporary copy.
   // Two copies of that answer drift the moment one gains a guard the other lacks, so it lives here.
@@ -190,8 +210,20 @@ export function filePrimitives(primitives: import('./types.js').JsonRecord, { cd
     },
 
     async interceptFileChooser(enabled: unknown) {
-      await cdp.send('Page.setInterceptFileChooserDialog', { enabled: enabled === true });
-      return { intercepting: enabled === true };
+      if (enabled === true) {
+        if (interceptedSince === null) {
+          await cdp.send('Page.setInterceptFileChooserDialog', { enabled: true });
+          interceptedSince = Date.now();
+        } else {
+          await cdp.send('Page.setInterceptFileChooserDialog', { enabled: true });
+        }
+        armRestore();
+        return { intercepting: true, interceptedSince, elapsedMs: Date.now() - interceptedSince };
+      }
+      clearTimer();
+      interceptedSince = null;
+      await cdp.send('Page.setInterceptFileChooserDialog', { enabled: false });
+      return { intercepting: false, interceptedSince: null, elapsedMs: 0 };
     },
 
     // THE FILE ON DISK IS THE PROOF, NOT THE PROTOCOL EVENT.

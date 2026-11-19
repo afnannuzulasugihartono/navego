@@ -219,15 +219,24 @@ test('the input finder pierces shadow roots and same-origin frames', () => {
 });
 
 
-test('intercepting the file chooser is one page call either way', async () => {
+test('intercepting the file chooser restores itself after the TTL and says so', async () => {
   const cdp = recordingCdp();
   const p = createPrimitives(cdp);
 
-  assert.deepEqual(await p.interceptFileChooser(true), { intercepting: true });
-  assert.deepEqual(await p.interceptFileChooser(false), { intercepting: false });
+  const on = await p.interceptFileChooser(true);
+  assert.equal(on.intercepting, true);
+  assert.equal(typeof on.interceptedSince, 'number');
+  assert.equal(on.elapsedMs, 0);
+
+  const again = await p.interceptFileChooser(true);
+  assert.equal(again.intercepting, true);
+  assert.ok(again.elapsedMs >= 0, 'the answer names how long the picker has been suppressed');
+
+  const off = await p.interceptFileChooser(false);
+  assert.deepEqual(off, { intercepting: false, interceptedSince: null, elapsedMs: 0 });
   assert.deepEqual(
     cdp.calls.filter((c: any) => c.method === 'Page.setInterceptFileChooserDialog').map((c: any) => c.params.enabled),
-    [true, false]
+    [true, true, false]
   );
 });
 
