@@ -5,25 +5,7 @@ import { readConsent, storeConsent, type ConsentChoice } from '../lib/consent.js
 
 const VERSION = '1.7.6';
 
-// one navigation surface: a slim dark bar with the brand and one CTA, and a chevron that drops every link as a panel.
-
-const ALL_LINKS = [
-  { href: '/beranda', label: 'Beranda' },
-  { href: '/fitur', label: 'Fitur' },
-  { href: '/harga', label: 'Harga' },
-  { href: '/unduh', label: 'Unduh' },
-  { href: '/docs', label: 'Docs' },
-  { href: '/artikel', label: 'Artikel' },
-  { href: '/mcp', label: 'MCP' },
-  { href: '/dukungan', label: 'Dukungan' },
-  { href: '/keamanan', label: 'Keamanan' },
-  { href: '/changelog', label: 'Changelog' },
-  { href: '/faq', label: 'FAQ' },
-  { href: '/metodologi', label: 'Metodologi' },
-  { href: '/bandingkan', label: 'Bandingkan' },
-  { href: '/privasi', label: 'Privasi' },
-  { href: '/syarat', label: 'Syarat' }
-];
+// one navigation surface: a slim dark bar with the brand and one CTA, and a chevron that drops the whole menu as a panel.
 
 const PRODUK = [
   { href: '/fitur', label: 'Fitur' },
@@ -34,6 +16,12 @@ const PRODUK = [
   { href: '/artikel', label: 'Artikel' }
 ];
 
+const BANTUAN = [
+  { href: '/dukungan', label: 'Dukungan' },
+  { href: '/privasi', label: 'Privasi' },
+  { href: '/syarat', label: 'Syarat' }
+];
+
 const SUMBER = [
   { href: '/changelog', label: 'Changelog' },
   { href: '/faq', label: 'FAQ' },
@@ -42,16 +30,10 @@ const SUMBER = [
   { href: '/bandingkan', label: 'Bandingkan' }
 ];
 
-const BANTUAN = [
-  { href: '/dukungan', label: 'Dukungan' },
-  { href: '/privasi', label: 'Privasi' },
-  { href: '/syarat', label: 'Syarat' }
-];
-
 export function SiteHeader({ current }: { current?: string }) {
   return (
     <header className="site-header" data-version={VERSION}>
-      <div className="wrap site-header-row header-inner">
+      <div className="site-header-row site-header-bleed header-inner">
         <Link className="brand" to="/beranda" aria-label="Navego — beranda">
           <NavegoMark size={24} />
           <NavegoWordmark size={14} />
@@ -66,13 +48,42 @@ export function SiteHeader({ current }: { current?: string }) {
           </svg>
         </button>
         <div className="nav-strip" id="nav-strip" role="region" aria-label="Menu lengkap">
-          <ul className="nav-strip-list">
-            {ALL_LINKS.map((item) => (
-              <li key={item.href}>
-                <Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link>
-              </li>
-            ))}
-          </ul>
+          <div className="nav-strip-inner">
+            <div className="nav-spot">
+              <p className="nav-col-heading">Beranda</p>
+              <h2 className="nav-spot-title">Satu perintah.<br />Browser Anda bekerja.</h2>
+              <Link className="nav-spot-cta" to="/beranda">Buka beranda <span aria-hidden="true">→</span></Link>
+            </div>
+            <nav className="nav-col" aria-label="Produk">
+              <p className="nav-col-heading">Produk</p>
+              <ul className="nav-col-list">
+                {PRODUK.map((item) => (
+                  <li key={item.href}><Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link></li>
+                ))}
+              </ul>
+            </nav>
+            <nav className="nav-col" aria-label="Kepercayaan dan sumber">
+              <p className="nav-col-heading">Kepercayaan</p>
+              <ul className="nav-col-list">
+                <li><Link to="/keamanan" aria-current={current === '/keamanan' ? 'page' : undefined}>Keamanan</Link></li>
+                <li><Link to="/metodologi" aria-current={current === '/metodologi' ? 'page' : undefined}>Metodologi</Link></li>
+                <li><Link to="/bandingkan" aria-current={current === '/bandingkan' ? 'page' : undefined}>Bandingkan</Link></li>
+              </ul>
+              <p className="nav-col-heading" style={{ marginTop: 'var(--s-4)' }}>Sumber</p>
+              <ul className="nav-col-list">
+                <li><Link to="/changelog" aria-current={current === '/changelog' ? 'page' : undefined}>Changelog</Link></li>
+                <li><Link to="/faq" aria-current={current === '/faq' ? 'page' : undefined}>FAQ</Link></li>
+              </ul>
+            </nav>
+            <nav className="nav-col" aria-label="Bantuan">
+              <p className="nav-col-heading">Bantuan</p>
+              <ul className="nav-col-list">
+                {BANTUAN.map((item) => (
+                  <li key={item.href}><Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link></li>
+                ))}
+              </ul>
+            </nav>
+          </div>
         </div>
       </div>
     </header>

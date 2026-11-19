@@ -475,6 +475,15 @@
         "kind": "user",
         "ref": "user 2026-11-18: \"Hilangkan bar nav atas\" - the flat Beranda..Dukungan row was still displayed on top, duplicating what the chevron panel already carries"
       }
+    },
+    {
+      "id": "D52",
+      "scope": "web/components",
+      "decision": "The chevron panel is a full-width dark mega panel in four columns - Beranda spotlight, Produk, Kepercayaan then Sumber, Bantuan - the Apple Shop-menu pattern the owner sent, so a visitor knows the site structure from the dropdown alone; the header row is full-bleed edge-to-edge, not capped to the 1120px content measure.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18 screenshot of apple.com Shop dropdown; user instruction: \"punya headernya efek memanjang terus full dari pojok ke pojok kemudian redesign lagi kontn panel drop yang beranda dan seterusnya supaya orang tidak bingung lihatnya\""
+      }
     }
   ]
 }
