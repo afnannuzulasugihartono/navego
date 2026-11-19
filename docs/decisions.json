@@ -488,10 +488,19 @@
     {
       "id": "D53",
       "scope": "web/components",
-      "decision": "No hairline divider between the bar and the mega panel — one continuous dark surface; the panel opens with an opacity plus small vertical rise, dismissed instantly by Escape, and its open state never guesses from time; prefers-reduced-motion turns the transition off entirely.",
+      "decision": "No divider between the bar and the mega panel - one continuous dark surface; the panel fades and rises slowly (450ms opacity / 500ms rise) over the ease-out, instant during reduced motion; the stuck-state shadow under the bar is removed so the bar reads as one surface with the panel, not a floating plane above it.",
       "source": {
         "kind": "user",
-        "ref": "user 2026-11-18: \"garisnya dihilangkan aja buat animasi yang smooth\" - the line cut the bar/panel continuity; user wants a smooth open animation"
+        "ref": "user 2026-11-19: \"buat animasinya lebih slow dan hilangkan garis strip yang ada di bawah chevron buat supaya nav bar seperti ke bawah memanjang\" - the shadow was the 1px line passing below the chevron"
+      }
+    },
+    {
+      "id": "D54",
+      "scope": "web/components",
+      "decision": "The bar carries the brand on the left, \"Beranda\" as a plain text link beside it, and two actions on the right: \"Masuk\" (ghost, links to the sign-in page) and \"Pasang gratis\" (solid amber CTA) - the owner reported both missing.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"tombol login dan beranda belum ada\""
       }
     }
   ]
