@@ -47,44 +47,44 @@ export function SiteHeader({ current }: { current?: string }) {
             <path d="M1 1.5l8 7 8-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <div className="nav-strip" id="nav-strip" role="region" aria-label="Menu lengkap">
-          <div className="nav-strip-inner">
-            <div className="nav-spot">
-              <p className="nav-col-heading">Beranda</p>
-              <h2 className="nav-spot-title">Satu perintah.<br />Browser Anda bekerja.</h2>
-              <Link className="nav-spot-cta" to="/beranda">Buka beranda <span aria-hidden="true">→</span></Link>
-            </div>
-            <nav className="nav-col" aria-label="Produk">
-              <p className="nav-col-heading">Produk</p>
-              <ul className="nav-col-list">
-                {PRODUK.map((item) => (
-                  <li key={item.href}><Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link></li>
-                ))}
-              </ul>
-            </nav>
-            <nav className="nav-col" aria-label="Kepercayaan dan sumber">
-              <p className="nav-col-heading">Kepercayaan</p>
-              <ul className="nav-col-list">
-                <li><Link to="/keamanan" aria-current={current === '/keamanan' ? 'page' : undefined}>Keamanan</Link></li>
-                <li><Link to="/metodologi" aria-current={current === '/metodologi' ? 'page' : undefined}>Metodologi</Link></li>
-                <li><Link to="/bandingkan" aria-current={current === '/bandingkan' ? 'page' : undefined}>Bandingkan</Link></li>
-              </ul>
-              <p className="nav-col-heading" style={{ marginTop: 'var(--s-4)' }}>Sumber</p>
-              <ul className="nav-col-list">
-                <li><Link to="/changelog" aria-current={current === '/changelog' ? 'page' : undefined}>Changelog</Link></li>
-                <li><Link to="/faq" aria-current={current === '/faq' ? 'page' : undefined}>FAQ</Link></li>
-              </ul>
-            </nav>
-            <nav className="nav-col" aria-label="Bantuan">
-              <p className="nav-col-heading">Bantuan</p>
-              <ul className="nav-col-list">
-                {BANTUAN.map((item) => (
-                  <li key={item.href}><Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link></li>
-                ))}
-              </ul>
-            </nav>
+      <div className="nav-strip" id="nav-strip" role="region" aria-label="Menu lengkap">
+        <div className="nav-strip-inner">
+          <div className="nav-spot">
+            <p className="nav-col-heading">Beranda</p>
+            <h2 className="nav-spot-title">Satu perintah.<br />Browser Anda bekerja.</h2>
+            <Link className="nav-spot-cta" to="/beranda">Buka beranda <span aria-hidden="true">→</span></Link>
           </div>
+          <nav className="nav-col" aria-label="Produk">
+            <p className="nav-col-heading">Produk</p>
+            <ul className="nav-col-list">
+              {PRODUK.map((item) => (
+                <li key={item.href}><Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link></li>
+              ))}
+            </ul>
+          </nav>
+          <nav className="nav-col" aria-label="Kepercayaan dan sumber">
+            <p className="nav-col-heading">Kepercayaan</p>
+            <ul className="nav-col-list">
+              <li><Link to="/keamanan" aria-current={current === '/keamanan' ? 'page' : undefined}>Keamanan</Link></li>
+              <li><Link to="/metodologi" aria-current={current === '/metodologi' ? 'page' : undefined}>Metodologi</Link></li>
+              <li><Link to="/bandingkan" aria-current={current === '/bandingkan' ? 'page' : undefined}>Bandingkan</Link></li>
+            </ul>
+            <p className="nav-col-heading" style={{ marginTop: 'var(--s-4)' }}>Sumber</p>
+            <ul className="nav-col-list">
+              <li><Link to="/changelog" aria-current={current === '/changelog' ? 'page' : undefined}>Changelog</Link></li>
+              <li><Link to="/faq" aria-current={current === '/faq' ? 'page' : undefined}>FAQ</Link></li>
+            </ul>
+          </nav>
+          <nav className="nav-col" aria-label="Bantuan">
+            <p className="nav-col-heading">Bantuan</p>
+            <ul className="nav-col-list">
+              {BANTUAN.map((item) => (
+                <li key={item.href}><Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link></li>
+              ))}
+            </ul>
+          </nav>
         </div>
+      </div>
       </div>
     </header>
   );
