@@ -27,7 +27,7 @@ import { createPointerMethods } from './pointer.js';
 import { createObserveMethods } from './observe.js';
 import { createWaits } from './waits.js';
 import { createCanvasMethods } from './canvas.js';
-import { windowState as osWindowState, focusWindow as osFocusWindow } from './window-focus.js';
+import { windowState as osWindowState } from './window-focus.js';
 import { dialogState as osDialogState, dialogType as osDialogType, dialogPress as osDialogPress } from './dialog.js';
 
 export interface PrimitivesFactoryOptions {
@@ -131,30 +131,6 @@ export function createPrimitives(cdp: PrimitivesCdp, { chunkSize = 2000, sleep =
       }
     },
 
-    // THE MATCH DECIDES THE ROAD: a bare call answers state without moving anything, via the CDP bounds read; a named call goes through the OS road, because a CDP window cannot be chosen by title and the agent is told which road answered.
-    async focusWindow(match: unknown = '') {
-      const want = String(match ?? '');
-      if (want === '') {
-        try {
-          const { windowId } = await cdp.send('Browser.getWindowForTarget', {});
-          const { bounds } = await cdp.send('Browser.getWindowBounds', { windowId });
-          const focused = (bounds as { windowState?: string } | undefined)?.windowState !== 'minimized';
-          return {
-            platform: process.platform,
-            match: '',
-            focused,
-            title: '',
-            foreground: '',
-            windows: [],
-            minimized: focused ? [] : ['the browser window'],
-            why: ''
-          };
-        } catch {
-          return osWindowState();
-        }
-      }
-      return osFocusWindow(match);
-    },
     dialogState: () => osDialogState(),
     dialogType: (text: unknown) => osDialogType(text),
     dialogPress: (name: unknown) => osDialogPress(name)

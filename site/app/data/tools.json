@@ -7,10 +7,6 @@
         "Cek perangkat ter-pairing, port yang hidup, dan paket plan masing-masing. Jawab pertama waktu klik dan tombol tidak bekerja."
       ],
       [
-        "browser_focus_window",
-        "Bawa window browser ke depan lewat bagian dari judulnya. Tanpa kecocokan, jawab keadaan tanpa memindahkan apa pun."
-      ],
-      [
         "browser_focus_tab",
         "Bawa window yang memegang satu tab ke depan lewat tabId — tidak menebak dari judul yang bisa sama pada dua window."
       ],

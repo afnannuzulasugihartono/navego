@@ -81,6 +81,6 @@ test('the guide names the things it will not pretend to do', () => {
   assert.ok(refusals.some((line) => /raw CDP escape hatch/i.test(line)));
   assert.ok(refusals.some((line) => /not proof/i.test(line)));
   assert.ok(refusals.some((line) => /cannot see whether the window in front/i.test(line)));
-  assert.ok(refusals.some((line) => /front with no match/i.test(line)));
+  assert.ok(refusals.some((line) => /no call that brings a window to the front/i.test(line)));
   assert.ok(refusals.some((line) => /complex document or report/i.test(line)));
 });

@@ -651,8 +651,6 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           ok: fronted === true
         });
       }
-      case 'browser_focus_window':
-        return asText(await driver.focusWindow(args.match ?? ''));
       case 'browser_read_dialog':
         return asText(await driver.dialogState());
       case 'browser_type_into_dialog':

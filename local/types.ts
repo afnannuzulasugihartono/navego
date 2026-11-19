@@ -36,7 +36,6 @@ export interface Driver {
   ensureFront: DriverMethod;
   evaluate: DriverMethod;
   find: DriverMethod;
-  focusWindow: DriverMethod;
   front: DriverMethod;
   guide: DriverMethod;
   hasFocus: DriverMethod;

@@ -9,7 +9,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 export function meta() {
   return seoMeta({
     title: 'Docs — Navego',
-    description: 'Pasang, pair, jalankan, hubungkan. 45 tool MCP di atas 36 primitive browser — langkah yang bisa diikuti.',
+    description: 'Pasang, pair, jalankan, hubungkan. 44 tool MCP di atas 36 primitive browser — langkah yang bisa diikuti.',
     path: '/docs'
   });
 }
@@ -132,7 +132,7 @@ export default function Docs() {
               <p>Sekali beli, langsung aktif. $1–$9 per bulan, $17 Business (6 bulan), $33 Enterprise (1 tahun). Detail di <Link to="/harga">Harga</Link>.</p>
 
               <h2 id="tools">Tools MCP</h2>
-              <p>45 tool dalam empat keluarga — <code>browser_</code>, <code>artifact_</code>, <code>delivery_</code>, <code>wallet_</code> — di atas 36 primitive browser.</p>
+              <p>44 tool dalam empat keluarga — <code>browser_</code>, <code>artifact_</code>, <code>delivery_</code>, <code>wallet_</code> — di atas 36 primitive browser.</p>
               {TOOLS.map(({ group, items }) => (
                 <div key={group}>
                   <h3 style={{ margin: 'var(--s-5) 0 var(--s-3)' }}>{group}</h3>

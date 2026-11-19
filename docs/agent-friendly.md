@@ -15,7 +15,7 @@ How to wire navego into the agents you already use, copy-paste, one snippet per 
 | Cherry Studio | add server in settings (below) | `browser_get_guide` |
 | any MCP client | same 3 commands | `browser_get_guide` |
 
-Follow the one that matches your client, then run `browser_get_guide` — as the FIRST call. It returns the 45 tools as ready-to-use tasks, which is the right entry point regardless of which client you arrived from.
+Follow the one that matches your client, then run `browser_get_guide` — as the FIRST call. It returns the 44 tools as ready-to-use tasks, which is the right entry point regardless of which client you arrived from.
 
 ## One-time machine setup (every client)
 

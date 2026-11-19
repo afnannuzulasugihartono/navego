@@ -45,7 +45,7 @@ From any MCP client:
 ## Fast facts for agents
 
 - Claim a tab before any action: `browser_tabs_list`, then act on the `tabId` you claim; never guess a tab id.
-- Your first call should be `browser_get_guide` — it returns the 45 tools as tasks, not a list you have to read.
+- Your first call should be `browser_get_guide` — it returns the 44 tools as tasks, not a list you have to read.
 - `browser_read_page` answers with the measured text and says `settled: null` when one sample cannot say yet; pair with `browser_wait_until`.
 - Google Sheets / Docs render to canvas; there is no element to write to or text to read back. The SERP/MEMO delivery kits cover the Google flow; the docs do not invent credentials for you.
 - `navego doctor` is the one command to reach for — its verdict names the fix.

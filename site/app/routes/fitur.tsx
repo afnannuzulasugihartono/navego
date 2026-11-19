@@ -8,7 +8,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 export function meta() {
   return seoMeta({
     title: 'Fitur — Navego',
-    description: '45 tool MCP di atas 36 primitive browser, enam izin, empat berkas contoh.',
+    description: '44 tool MCP di atas 36 primitive browser, enam izin, empat berkas contoh.',
     path: '/fitur'
   });
 }
@@ -122,7 +122,7 @@ export default function Fitur() {
               <div>
                 <h2 id="kemampuanTitle" className="section-title">Enam hal, satu mesin.</h2>
               </div>
-              <p className="section-note">45 tool MCP di atas 36 primitive browser.</p>
+              <p className="section-note">44 tool MCP di atas 36 primitive browser.</p>
             </div>
             <div className="card-row">
               {KEMAMPUAN.map(([icon, title, body]) => (
