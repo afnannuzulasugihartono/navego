@@ -38,9 +38,6 @@ export function SiteHeader({ current }: { current?: string }) {
           <NavegoMark size={24} />
           <NavegoWordmark size={14} />
         </Link>
-        <nav className="header-links" aria-label="Gerbang masuk">
-          <Link className="header-link" to="/beranda" aria-current={current === '/beranda' ? 'page' : undefined}>Beranda</Link>
-        </nav>
         <div className="header-actions">
           <Link className="btn btn-ghost btn-sm" to="/">Masuk</Link>
           <Link className="btn btn-solid btn-sm" to="/unduh">Pasang gratis</Link>

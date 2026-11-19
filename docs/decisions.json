@@ -690,6 +690,15 @@
         "ref": "user 2026-11-19: \"yang screenshot fix supaya bisa screenshot di latar belakang\" - the live drive hit \"Unable to capture screenshot\" on a backgrounded tab",
         "also": "recorded: local/observe.ts capture() - compositor road first, captureBeyondViewport fallback, scope D73 forbids the foreground path"
       }
+    },
+    {
+      "id": "D76",
+      "scope": "web/components",
+      "decision": "The bar carries brand (links home) and two actions, Masuk and Pasang gratis, nothing else - the centered Beranda text link is removed; the chevron and the panel spotlight remain the route home.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"fix element beranda yang masih di atas nav bar\" (answer: \"Label Beranda di tengah bar\") - the centered link sits awkwardly against D51: brand left, one amber CTA right, chevron is the sole navigation surface"
+      }
     }
   ]
 }
