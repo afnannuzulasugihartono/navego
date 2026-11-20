@@ -49,6 +49,7 @@ export function buildEnumeration(current: string, newVersion: string): BumpEntry
     { file: 'docs/store/store-manifest.json', from: `"version": "${current}.0"`, to: `"version": "${newVersion}.0"`, expect: 1 },
     { file: 'package.json', from: `"version": "${current}"`, to: `"version": "${newVersion}"`, expect: 1 },
     { file: 'local/package.json', from: `"version": "${current}"`, to: `"version": "${newVersion}"`, expect: 1 },
+    { file: 'server.json', from: `"version": "${current}"`, to: `"version": "${newVersion}"`, expect: 2 },
     { file: 'package-lock.json', from: `"version": "${current}"`, to: `"version": "${newVersion}"`, expect: 2 },
     { file: 'scripts/verify/check.ts', from: q(current), to: q(newVersion), expect: 3 },
     { file: 'tests/extension/burst-atomic-actions.test.ts', from: q(current), to: q(newVersion), expect: 2 },

@@ -41,6 +41,16 @@
         "type": "remote",
         "url": "https://mcp.cloudflare.com/mcp",
         "oauth": {}
+      },
+      "navego": {
+        "type": "local",
+        "command": "navego",
+        "args": ["local"],
+        "timeout": {
+          "startup": 60000,
+          "catalog": 60000,
+          "execution": 600000
+        }
       }
     }
   },

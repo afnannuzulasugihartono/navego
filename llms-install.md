@@ -47,11 +47,15 @@ The extension is an MV3 build. Ways to attach it, in order of preference:
 
 ## Verifying in an MCP client
 
-Point the client's MCP config at the package, for example:
+Point the client's MCP config at the package. The entry is a local command, and
+the local mode is what drives the everyday browser:
 
 ```json
-{ "mcpServers": { "navego": { "command": "npx", "args": ["-y", "navego"] } } }
+{ "mcpServers": { "navego": { "command": "navego", "args": ["local"] } } }
 ```
+
+OpenCode reads the same server under `mcp.servers` with `"type": "local"`; the
+full entry is in [`docs/agent-friendly.md`](docs/agent-friendly.md).
 
 Then call `browser_get_guide` first; every other tool answers faster and safer with it. Ask for `browser_list_tabs` to see whether the extension and bridge agree with each other.
 

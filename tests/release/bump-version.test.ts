@@ -28,6 +28,7 @@ const ENUMERATED = [
   'docs/store/store-manifest.json',
   'package.json',
   'local/package.json',
+  'server.json',
   'package-lock.json',
   'scripts/verify/check.ts',
   'tests/extension/burst-atomic-actions.test.ts',
@@ -50,8 +51,7 @@ const ALLOW = [
   /^docs\/handoff\.md$/,
   /^tests\/helpers\/boundary-locks\.ts$/,
   /^hosted\/functions\/.*\/deno\.lock$/,
-  /^site\/package-lock\.json$/,
-  /^server\.json$/
+  /^site\/package-lock\.json$/
 ];
 
 const isText = (file: any) => /\.(md|mjs|js|ts|json|html|css|yml|yaml|py|sql|toml|txt|xml|svg|lock)$/i.test(file);

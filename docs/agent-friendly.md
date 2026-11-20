@@ -27,10 +27,22 @@ navego doctor   # prints bridge, device, plan, quota — verdict yes/no and the 
 
 ## OpenCode
 
-In `opencode.json` (or the TUI's add tool):
+In `opencode.json` (or the TUI's add tool). OpenCode reads its servers under
+`mcp.servers`, and the entry is a local command:
 
 ```json
-{ "mcpServers": { "navego": { "command": "navego", "args": ["local"] } } }
+{
+  "mcp": {
+    "servers": {
+      "navego": {
+        "type": "local",
+        "command": "navego",
+        "args": ["local"],
+        "timeout": { "startup": 60000, "catalog": 60000, "execution": 600000 }
+      }
+    }
+  }
+}
 ```
 
 Then ask anything that needs your own browser.
