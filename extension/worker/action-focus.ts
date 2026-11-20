@@ -364,6 +364,30 @@ async function sendTextAsKeys(target: chrome.debugger.DebuggerSession, text: str
   return { ok: true, method: 'debugger', input: 'text-keys', valueLength: keys.length, keys: keys.length };
 }
 
+// A canvas editor (Google Docs) holds the focus on its chrome while the caret waits in a hidden host, so a text insertion asks the page for its editing host and focuses it first.
+
+const FOCUS_EDITABLE_EXPRESSION = `(() => {
+  try {
+    const selection = document.getSelection();
+    const node = selection ? selection.anchorNode : null;
+    const element = node && node.nodeType === 1 ? node : (node ? node.parentElement : null);
+    const nearest = element && element.closest ? element.closest('[contenteditable="true"]') : null;
+    const hosts = Array.from(document.querySelectorAll('[contenteditable="true"]'));
+    const host = nearest || hosts[hosts.length - 1] || null;
+    if (!host) return { focused: false };
+    host.focus();
+    return { focused: true, tag: String(host.tagName || '').toLowerCase() };
+  } catch (error) {
+    return { focused: false };
+  }
+})()`;
+
+async function ensureTextTarget(target: chrome.debugger.DebuggerSession): Promise<void> {
+  const answer = await chrome.debugger.sendCommand(target, 'Runtime.evaluate', { expression: FOCUS_EDITABLE_EXPRESSION, returnByValue: true }) as { result?: { value?: unknown } } | undefined;
+  const value = answer?.result?.value;
+  if (!isRecord(value) || value.focused !== true) return;
+}
+
 export async function trustedKey(tabId: number, params: Record<string, unknown> | null | undefined, context: CaptureContext | null | undefined, mode: string = 'background') {
   const request = resolveKeyInput({
     key: params?.key,
@@ -376,6 +400,7 @@ export async function trustedKey(tabId: number, params: Record<string, unknown> 
   return withDebugger(tabId, context, (target: chrome.debugger.DebuggerSession) => withInputFocusEmulation(target, mode, () =>
     withForegroundFocusGate(tabId, mode, async () => {
     if (request.kind === 'text') {
+      await ensureTextTarget(target);
       if (params?.keyEvents === true) {
         return sendTextAsKeys(target, request.text);
       }
@@ -415,6 +440,7 @@ export async function trustedKeyStream(tabId: number, params: Record<string, unk
     let chars = 0;
     for (const event of events) {
       if (event.kind === 'text') {
+        await ensureTextTarget(target);
         if (params?.keyEvents === true) {
           const sent = await sendTextAsKeys(target, event.text);
           chars += sent.keys;
