@@ -25,14 +25,30 @@ interface Site {
 }
 
 // The key is the code the catch belongs to, not its line number: a line number moves with every edit above it, a statement does not.
+// The enclosing function is part of the key because one file can guard the same statement in two places.
+
+const enclosingName = (lines: string[], index: number): string => {
+  for (let i = index; i >= 0; i -= 1) {
+    const text = (lines[i] ?? '').trim();
+    const named = /^(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)/.exec(text)
+      ?? /^(?:export\s+)?(?:const|let)\s+([A-Za-z_$][\w$]*)\s*[:=]/.exec(text);
+    if (named) return named[1] ?? 'anonymous';
+  }
+  return 'anonymous';
+};
+
 const siteKey = (file: string, lines: string[], index: number): string => {
   const line = (lines[index] ?? '').trim();
   const inline = /try\s*\{[^}]*\}\s*catch\s*(\([^)]*\))?\s*\{\s*\}/.exec(line);
-  if (inline) return `${file} :: ${inline[0].replace(/\s+/g, ' ')}`;
-  let body = index;
-  while (body > 0 && (lines[body] ?? '').trim() === '') body -= 1;
-  const opening = (lines[body] ?? '').trim();
-  return `${file} :: ${opening.replace(/\s+/g, ' ')} :: ${line.replace(/\s+/g, ' ')}`;
+  if (inline) return `${file} :: ${enclosingName(lines, index)} :: ${inline[0].replace(/\s+/g, ' ')}`;
+  const sameLine = /try\s*\{\s*(.*?)\s*\}\s*catch/.exec(line);
+  if (sameLine) return `${file} :: ${enclosingName(lines, index)} :: ${sameLine[1]?.replace(/\s+/g, ' ')} :: ${line.replace(/\s+/g, ' ')}`;
+  let open = index;
+  while (open > 0 && !/\btry\b/.test(lines[open] ?? '')) open -= 1;
+  let statement = open + 1;
+  while (statement < lines.length && (lines[statement] ?? '').trim() === '') statement += 1;
+  const guarded = (lines[statement] ?? '').trim();
+  return `${file} :: ${enclosingName(lines, index)} :: ${guarded.replace(/\s+/g, ' ')} :: ${line.replace(/\s+/g, ' ')}`;
 };
 
 const sitesIn = (file: string, body: string): Site[] => {

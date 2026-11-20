@@ -937,6 +937,16 @@
         "ref": "user 2026-11-20: 'ganti semua dari navego ke opera' - a rename that is only half applied leaves a reader with two names and a caller with two answers"
       },
       "file": "tests/tooling/product-name.test.ts"
+    },
+    {
+      "id": "tests-tooling-swallowed-errors-01",
+      "scope": "tooling/gates",
+      "decision": "Every failure the product catches and ignores is listed in tests/tooling/swallowed-errors.lock with the reason it may be ignored, and the gate refuses a failure that is not listed and a line that names a failure the tree no longer has; the list can only shrink.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/product/backend-language-evaluation.md: item 4 of 'What we will do (in order)' - 'Silently swallowing errors' was the part of the stub sweep that was still open"
+      },
+      "file": "tests/tooling/swallowed-errors.test.ts"
     }
   ]
 }

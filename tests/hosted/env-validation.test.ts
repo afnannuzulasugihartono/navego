@@ -30,3 +30,23 @@ test('opera-auth reads its required environment through requiredEnv', () => {
     assert.match(source, new RegExp(`requiredEnv\\("${name}"\\)`), `opera-auth must validate ${name}`);
   }
 });
+
+test('every edge function reads the database environment through requiredEnv', () => {
+  const dir = path.join(root, 'hosted', 'functions');
+  const functions = fs.readdirSync(dir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && entry.name !== '_shared')
+    .map((entry) => entry.name)
+    .sort();
+  assert.ok(functions.length >= 10, `the tree has the edge functions, found ${functions.length}`);
+
+  for (const name of functions) {
+    const source = fs.readFileSync(path.join(dir, name, 'index.ts'), 'utf8');
+    assert.match(source, /requiredEnv\("SUPABASE_URL"\)/, `${name} must validate SUPABASE_URL instead of reading it as an empty string`);
+    for (const variable of ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY']) {
+      assert.doesNotMatch(source, new RegExp(`Deno\\.env\\.get\\("${variable}"\\)`), `${name} must not read ${variable} behind the validator`);
+      if (source.includes(variable)) {
+        assert.match(source, new RegExp(`requiredEnv\\("${variable}"\\)`), `${name} must validate ${variable}`);
+      }
+    }
+  }
+});

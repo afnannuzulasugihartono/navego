@@ -6,6 +6,7 @@
 import "@supabase/edge-runtime";
 import { createClient } from "@supabase/supabase-js";
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from "../_shared/cors.ts";
+import { requiredEnv } from "../_shared/required-env.ts";
 
 import { canonicalJson, digestCanonical } from "../_shared/goal-ledger.ts";
 import {
@@ -26,8 +27,8 @@ import {
   sealVmHostToken,
 } from "../_shared/vm-token.ts";
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
-const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+const SUPABASE_URL = requiredEnv("SUPABASE_URL");
+const SERVICE_ROLE_KEY = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
 const ALLOWED_USER_IDS = new Set(
   (Deno.env.get("OPERA_MCP_USER_IDS") || "").split(",").map((value) => value.trim()).filter(Boolean),
 );
