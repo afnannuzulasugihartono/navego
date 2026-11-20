@@ -1,7 +1,7 @@
 /*
  * @last-edited: 2026-11-12 UTC+7.
  * @title: record-main - the recording pipeline as a MAIN-world program: canvas, captureStream, MediaRecorder webm, in the page's own realm.
- * @state: builds globalThis.OperaRecord on injection; invoked by the worker via chrome.scripting.executeScript({world: 'MAIN'}) for init/frame/stop/cancel; never mutates the page.
+ * @state: builds globalThis.NavegoRecord on injection; invoked by the worker via chrome.scripting.executeScript({world: 'MAIN'}) for init/frame/stop/cancel; never mutates the page.
  * @dependencies: none.
  */
 
@@ -17,7 +17,7 @@
     return typeof value === 'object' && value !== null && !Array.isArray(value);
   }
 
-  if (globalThis.OperaRecord) return;
+  if (globalThis.NavegoRecord) return;
 
   interface RecordState {
     canvas: HTMLCanvasElement;
@@ -61,7 +61,7 @@
     ctx.fillStyle = '#f2f2f2';
     ctx.font = '16px ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace';
     ctx.textBaseline = 'middle';
-    ctx.fillText('Opera recording starting - 0 ms', 24, canvas.height / 2);
+    ctx.fillText('Navego recording starting - 0 ms', 24, canvas.height / 2);
 
     var stream: MediaStream;
 
@@ -137,7 +137,7 @@
       target.ctx.fillStyle = '#f2f2f2';
       target.ctx.font = '18px ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace';
       target.ctx.textBaseline = 'middle';
-      target.ctx.fillText('Recording Opera - ' + elapsed + ' ms', 24, target.canvas.height / 2);
+      target.ctx.fillText('Recording Navego - ' + elapsed + ' ms', 24, target.canvas.height / 2);
     }
 
     target.pumped += 1;
@@ -282,7 +282,7 @@
     };
   }
 
-  globalThis.OperaRecord = {
+  globalThis.NavegoRecord = {
     init: init,
     frame: frame,
     stop: stop,

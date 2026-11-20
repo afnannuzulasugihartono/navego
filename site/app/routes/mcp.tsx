@@ -7,22 +7,22 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return seoMeta({
-    title: 'Pasang MCP — Opera',
-    description: 'Driver lokal Opera berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi.',
+    title: 'Pasang MCP — Navego',
+    description: 'Driver lokal Navego berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi.',
     path: '/mcp'
   });
 }
 
 const BLOCKS = [
-  { id: 'install', title: 'Pasang paketnya', body: 'npm install -g opera-agent', note: 'Satu perintah. Paket ini memakai browser yang sudah Anda gunakan; tidak ada proses tambahan yang perlu dijaga.' },
-  { id: 'doctor', title: 'Periksa yang terhubung', body: 'opera doctor', note: 'Cetakan menyatakan nama device, paket plan, dan sisa kuota hari ini. Kalau tidak ada yang terhubung, paket mencetak langkah perbaikan yang paling mungkin.' },
-  { id: 'pair', title: 'Pair sekali per peramban', body: 'opera local', note: 'Peramban baru memasang ekstensi dulu (lihat Unduh), lalu Dashboard → Pasangkan browser ini. Setelah itu driver lokal mengambil alih otomatis.' }
+  { id: 'install', title: 'Pasang paketnya', body: 'npm install -g navego', note: 'Satu perintah. Paket ini memakai browser yang sudah Anda gunakan; tidak ada proses tambahan yang perlu dijaga.' },
+  { id: 'doctor', title: 'Periksa yang terhubung', body: 'navego doctor', note: 'Cetakan menyatakan nama device, paket plan, dan sisa kuota hari ini. Kalau tidak ada yang terhubung, paket mencetak langkah perbaikan yang paling mungkin.' },
+  { id: 'pair', title: 'Pair sekali per peramban', body: 'navego local', note: 'Peramban baru memasang ekstensi dulu (lihat Unduh), lalu Dashboard → Pasangkan browser ini. Setelah itu driver lokal mengambil alih otomatis.' }
 ];
 
 const HARNESS: Array<{ id: string; title: string; body: string }> = [
-  { id: 'cfg-opencode', title: 'OpenCode — opencode.json atau ~/.config/opencode/opencode.json', body: '{\n  "mcp": {\n    "opera": {\n      "type": "local",\n      "command": "opera",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-kilo', title: 'Kilo Code — MCP settings (JSON)', body: '{\n  "mcpServers": {\n    "opera": {\n      "command": "opera",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-claude', title: 'Claude Desktop — konfigurasi MCP lokal', body: 'command: npx\nargs: ["-y", "opera", "local"]' }
+  { id: 'cfg-opencode', title: 'OpenCode — opencode.json atau ~/.config/opencode/opencode.json', body: '{\n  "mcp": {\n    "navego": {\n      "type": "local",\n      "command": "navego",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-kilo', title: 'Kilo Code — MCP settings (JSON)', body: '{\n  "mcpServers": {\n    "navego": {\n      "command": "navego",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-claude', title: 'Claude Desktop — konfigurasi MCP lokal', body: 'command: npx\nargs: ["-y", "navego", "local"]' }
 ];
 
 export default function Mcp() {
@@ -120,7 +120,7 @@ export default function Mcp() {
           <div className="wrap">
             <div className="cta-band">
               <h2 className="section-title" style={{ color: '#ffffff' }}>Satu perintah untuk mulai.</h2>
-              <p>Pasang paketnya, jalankan <code>opera doctor</code>, lihat device Anda di Dashboard.</p>
+              <p>Pasang paketnya, jalankan <code>navego doctor</code>, lihat device Anda di Dashboard.</p>
               <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
                 <Link className="btn btn-solid" to="/docs">Baca docs lengkap</Link>
                 <Link className="btn btn-ghost" to="/unduh">Pasang extension</Link>

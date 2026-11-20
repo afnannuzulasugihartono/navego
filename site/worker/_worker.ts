@@ -1,7 +1,7 @@
 // @last-edited: 2026-11-18 UTC+7.
 // @title: _worker — serves the invoice page from the product's own domain, because the function's domain refuses HTML.
 // @state: proxies /invoice to the billing function with its query and body, relabels the page, and rewrites the refresh redirect back to /invoice; every other path is the asset server's.
-// @dependencies: the deployed opera-billing function, env.ASSETS.
+// @dependencies: the deployed navego-billing function, env.ASSETS.
 
 // THIS FILE EXISTS because Supabase's shared function domain answered the function's HTML with text/plain and a locked-down CSP - the browser showed the page as source and a customer holding a real invoice had no way to pay it.
 // Measured live on 2026-10-26: Supabase's shared function domain answered the function's HTML with Content-Type text/plain and content-security-policy default-src 'none'; sandbox.
@@ -16,7 +16,7 @@
 // The function sets them, and the gateway keeps the policy but replaces the content type with text/plain.
 // A page that carries a token must not be cached, must not leak the link as a referrer, and must not be framed or indexed, so the worker states all of it on the answer the browser actually receives.
 
-const FUNCTION_URL = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-billing';
+const FUNCTION_URL = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-billing';
 const PAGE_PATH = '/invoice';
 const PAGE_POLICY = "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'";
 
@@ -59,7 +59,7 @@ async function askFunction(request: Request): Promise<Response> {
 // Rewriting the Location keeps the address and the method honest, and only the function's own answer is rewritten, so another host cannot be turned into a link on the product's domain.
 
 // THE PATH THE FUNCTION SEES IS NOT THE PATH IN THIS FILE because the gateway strips the prefix - the rule is the shape of the answer, not a guessed path.
-// Measured live on 2026-10-26: the same function answered a redirect to /opera-billing, not to /functions/v1/opera-billing, because the gateway strips the prefix before the function reads its own URL.
+// Measured live on 2026-10-26: the same function answered a redirect to /navego-billing, not to /functions/v1/navego-billing, because the gateway strips the prefix before the function reads its own URL.
 // So the rule is the shape of the answer, not a path this file guessed: a root-relative Location belongs to the function, and an absolute one is rewritten only when its host is the function's.
 
 function pageLocation(location: string | null): string {

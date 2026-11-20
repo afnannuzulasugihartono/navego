@@ -8,8 +8,8 @@ import assert from 'node:assert/strict';
 
 import { renewAccessToken } from '../../site/app/lib/auth.ts';
 
-const ACCESS = 'opera-access-token';
-const REFRESH = 'opera-refresh-token';
+const ACCESS = 'navego-access-token';
+const REFRESH = 'navego-refresh-token';
 
 const withStore = (entries: Record<string, string>) => {
   const store = new Map(Object.entries(entries));

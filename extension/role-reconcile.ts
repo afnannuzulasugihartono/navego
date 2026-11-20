@@ -33,7 +33,7 @@
 
 (() => {
   'use strict';
-  if (globalThis.OperaRoleReconcile) return;
+  if (globalThis.NavegoRoleReconcile) return;
 
   // A LOCAL GUARD: this file ships as a classic content script the manifest loads directly; a static import would be a SyntaxError at load time.
   // Mirrors extension/lib/guards.ts.
@@ -165,7 +165,7 @@
     return list.map((item) => reconcileElementRole(item, index));
   }
 
-  globalThis.OperaRoleReconcile = Object.freeze({
+  globalThis.NavegoRoleReconcile = Object.freeze({
 
     GENERIC_ROLES: Object.freeze([...GENERIC_ROLES]),
     ROLE_GAP_SAMPLE_SIZE,

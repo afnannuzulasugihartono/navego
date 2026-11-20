@@ -16,7 +16,7 @@ const read = (name: any) => readFile(new URL(name, root), 'utf8');
 test('the plugin bundle exists and names the hosted files', async () => {
   const manifest = JSON.parse(await read('site/public/chatgpt-plugin/ai-plugin.json'));
   assert.equal(manifest.schema_version, 'v1');
-  assert.equal(manifest.name_for_model, 'opera_');
+  assert.equal(manifest.name_for_model, 'navego_');
   assert.match(manifest.description_for_model, /read the envelope/i);
   assert.equal(manifest.auth?.type, 'oauth');
   assert.match(manifest.auth?.authorization_url || '', /supabase\.co\/auth\/v1\/authorize/);
@@ -29,7 +29,7 @@ test('the plugin bundle exists and names the hosted files', async () => {
 });
 
 test('the gateway accepts a user JWT and resolves the caller device', async () => {
-  const source = await read('hosted/functions/opera-gateway/index.ts');
+  const source = await read('hosted/functions/navego-gateway/index.ts');
 
   assert.match(source, /await supabase\.auth\.getUser\(token\)/);
   assert.match(source, /\.from\("opera_devices"\)/);
@@ -42,6 +42,6 @@ test('the plugin logo is the shipped mark', async () => {
   assert.match(icon, /<svg[^>]*viewBox="0 0 240 240"/);
   assert.match(icon, /#233259/, 'the navy disc is the shipped mark');
   assert.match(icon, /#d8923f/, 'and the amber accent');
-  assert.doesNotMatch(icon, /id="opera-chrome"/, 'the mark is flat ink now - no brushed chrome');
+  assert.doesNotMatch(icon, /id="navego-chrome"/, 'the mark is flat ink now - no brushed chrome');
   assert.doesNotMatch(icon, /id="ring"/, 'the old iridescent ring is retired');
 });

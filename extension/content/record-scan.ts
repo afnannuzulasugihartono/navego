@@ -1,7 +1,7 @@
 /*
  * @last-edited: 2026-11-13 UTC+7.
  * @title: record-scan - the scan pipeline and the scroll, inside the page: the scan harvest and rewrite (outerHTML + inline), the dump the agent reads, and the smooth scroll the recorder rides on.
- * @state: exposed as globalThis.OperaRecordScan; scan pipeline collect/inline, dumpPage, record_scroll.scroll; no network from the page's own realm, no mutation of the live DOM.
+ * @state: exposed as globalThis.NavegoRecordScan; scan pipeline collect/inline, dumpPage, record_scroll.scroll; no network from the page's own realm, no mutation of the live DOM.
  * @dependencies: none.
  */
 
@@ -12,7 +12,7 @@
 // Mirrors extension/lib/guards.ts.
 
 declare global {
-  var OperaRecordScan: Record<string, ((payload?: unknown) => unknown) | undefined> | undefined;
+  var NavegoRecordScan: Record<string, ((payload?: unknown) => unknown) | undefined> | undefined;
   var __oaDocumentId: string | undefined;
 }
 
@@ -388,7 +388,7 @@ declare global {
     };
   }
 
-  globalThis.OperaRecordScan = {
+  globalThis.NavegoRecordScan = {
     recordScrollTo: recordScrollTo,
     collectScanAssets: collectScanAssets,
     scanInline: scanInline,
@@ -396,7 +396,7 @@ declare global {
   };
 
   function onMessage(message: unknown, _sender: unknown, sendResponse: (response?: unknown) => void): boolean {
-    if (!isRecord(message) || message.scope !== 'opera-record-scan') return false;
+    if (!isRecord(message) || message.scope !== 'navego-record-scan') return false;
 
     Promise.resolve()
       .then(function (): unknown {

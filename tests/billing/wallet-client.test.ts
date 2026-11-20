@@ -65,8 +65,8 @@ test('an unpaired machine refuses to call the wallet before any request is made'
 
 test('every call carries the device that proves the owner', async () => {
   const dir = home();
-  fs.mkdirSync(path.join(dir, '.opera'), { recursive: true });
-  fs.writeFileSync(path.join(dir, '.opera', 'device.json'), JSON.stringify({ deviceName: 'laptop', token: TOKEN }));
+  fs.mkdirSync(path.join(dir, '.navego'), { recursive: true });
+  fs.writeFileSync(path.join(dir, '.navego', 'device.json'), JSON.stringify({ deviceName: 'laptop', token: TOKEN }));
   const { impl, calls } = fakeFetch({ ok: true, balanceCents: 1000000, availableCents: 990000 });
   const out = await walletBalance({ home: dir, fetchImpl: impl, billingUrl: 'https://billing.test' });
   assert.equal(out.balanceCents, 1000000);
@@ -110,14 +110,14 @@ test('a refund carries the reason the person would read', async () => {
 });
 
 test('the wallet and the bridge are two functions of one project', () => {
-  assert.equal(BILLING_URL, DEFAULT_BRIDGE_URL.replace('opera-bridge', 'opera-billing'));
-  assert.match(BILLING_URL, /^https:\/\/[a-z]+\.supabase\.co\/functions\/v1\/opera-billing$/);
+  assert.equal(BILLING_URL, DEFAULT_BRIDGE_URL.replace('navego-bridge', 'navego-billing'));
+  assert.match(BILLING_URL, /^https:\/\/[a-z]+\.supabase\.co\/functions\/v1\/navego-billing$/);
 });
 
 test('a device file written here reads back with the same token', () => {
   const dir = home();
   const file = saveDevice({ deviceName: 'desk', token: TOKEN }, { home: dir });
-  assert.equal(file, path.join(dir, '.opera', 'device.json'));
+  assert.equal(file, path.join(dir, '.navego', 'device.json'));
   assert.deepEqual(readDevice({ home: dir }), { deviceName: 'desk', token: TOKEN });
   fs.rmSync(dir, { recursive: true, force: true });
 });

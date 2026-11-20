@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "corpusId": "opera-semantic-replay-v1",
+  "corpusId": "navego-semantic-replay-v1",
   "baselineVersion": "1.5.2",
   "privacy": {
     "syntheticOnly": true,

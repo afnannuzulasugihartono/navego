@@ -34,8 +34,8 @@ interface RoleReconcileRuntime {
 }
 
 await import('../../extension/role-reconcile.js');
-const roleRuntime = globalThis.OperaRoleReconcile;
-if (!roleRuntime) throw new Error('OperaRoleReconcile published');
+const roleRuntime = globalThis.NavegoRoleReconcile;
+if (!roleRuntime) throw new Error('NavegoRoleReconcile published');
 const {
   GENERIC_ROLES,
   axRoleIndex,
@@ -215,7 +215,7 @@ test('R9: an oversized read degrades instead of failing the whole call', async (
 test('serialize derives roles from markup instead of only the role attribute', async () => {
   const source = await readFile(new URL('../../extension/content.js', import.meta.url), 'utf8');
 
-  assert.match(source, /const roleRuntime = globalThis\.OperaRoleReconcile;/,
+  assert.match(source, /const roleRuntime = globalThis\.NavegoRoleReconcile;/,
     'the runtime is read once and guarded by type before it is used');
   assert.match(source, /typeof roleRuntime\.implicitRole === 'function'/,
     'implicitRole is not checked before it is used');
@@ -249,14 +249,14 @@ test('the manifest loads the role runtime before the content script', async () =
     scripts.indexOf('role-reconcile.js') < scripts.indexOf('content.js'),
     'the role runtime must load before content.js reads it'
   );
-  assert.equal(manifest.version, '2.0.0');
+  assert.equal(manifest.version, '1.8.0');
 });
 
 test('background shares the one content-script copy instead of duplicating it', async () => {
   const source = await extensionSource();
 
   assert.match(source, /import '\.\/role-reconcile\.js'/);
-  assert.match(source, /globalThis\.OperaRoleReconcile/);
+  assert.match(source, /globalThis\.NavegoRoleReconcile/);
   assert.doesNotMatch(source, /function implicitRole\(/);
   assert.doesNotMatch(source, /const TAG_ROLES/);
 });

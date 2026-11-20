@@ -9,7 +9,7 @@
 # WHY THIS PUBLISHES WITHOUT A TOKEN.
 # npm is restricting the tokens that bypass two-factor authentication, and direct publishing with one ends in January 2027.
 # Trusted publishing replaces the token with the runner's own identity: the workflow asks GitHub for a signed token, npm reads the repository and the workflow out of it, and nothing is stored on any machine.
-# So the identity lives in the npm package settings (GitHub Actions: afnannuzulasugihartono / opera-agent / publish-npm.yml) and this file is the other half of that pair.
+# So the identity lives in the npm package settings (GitHub Actions: afnannuzulasugihartono / navego / publish-npm.yml) and this file is the other half of that pair.
 
 # WHY THERE IS A TOKEN FALLBACK, 2026-11-18.
 # The publish on the runner answered E404 on npm's side, which is what a missing or mismatched trusted-publisher entry looks like; the npm package settings are the owner's page to edit and the agent cannot see them.

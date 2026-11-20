@@ -176,7 +176,7 @@ test('the register parses and names where it came from', () => {
 });
 
 // THE REGISTER COVERS THE PRODUCT, NOT ONLY THE PAGE.
-// The user asked for decisions and sources across the website, database, MCP surface and extension; a scope prefix with no decision means one part of Opera is answering to nobody.
+// The user asked for decisions and sources across the website, database, MCP surface and extension; a scope prefix with no decision means one part of Navego is answering to nobody.
 
 test('the register covers every part of the product the user named', () => {
   const register = read('docs/decisions.json');

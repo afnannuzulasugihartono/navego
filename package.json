@@ -1,9 +1,9 @@
 {
-  "name": "opera-agent",
-  "version": "2.0.0",
+  "name": "navego",
+  "version": "1.8.0",
   "private": true,
   "license": "MIT",
-  "description": "Opera — local browser control bridge with Supabase-powered workflows and automation.",
+  "description": "Navego — local browser control bridge with Supabase-powered workflows and automation.",
   "type": "module",
   "scripts": {
     "build:shared": "node scripts/pack/build-shared.ts",

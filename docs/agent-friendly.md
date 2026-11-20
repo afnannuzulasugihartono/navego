@@ -1,6 +1,6 @@
 # Agent-friendly setup
 
-How to wire opera into the agents you already use, copy-paste, one snippet per client. Every example is what the installed package supports today — nothing below asks for your password, your browser profile, or a cloud relay.
+How to wire navego into the agents you already use, copy-paste, one snippet per client. Every example is what the installed package supports today — nothing below asks for your password, your browser profile, or a cloud relay.
 
 ## What ships, and whether your client sees it
 
@@ -20,9 +20,9 @@ Follow the one that matches your client, then run `browser_get_guide` — as the
 ## One-time machine setup (every client)
 
 ```bash
-npm i -g opera-agent
-opera auth     # sign in once; your token stays on this machine, never committed
-opera doctor   # prints bridge, device, plan, quota — verdict yes/no and the one fix
+npm i -g navego
+navego auth     # sign in once; your token stays on this machine, never committed
+navego doctor   # prints bridge, device, plan, quota — verdict yes/no and the one fix
 ```
 
 ## OpenCode
@@ -30,7 +30,7 @@ opera doctor   # prints bridge, device, plan, quota — verdict yes/no and the o
 In `opencode.json` (or the TUI's add tool):
 
 ```json
-{ "mcpServers": { "opera": { "command": "opera", "args": ["local"] } } }
+{ "mcpServers": { "navego": { "command": "navego", "args": ["local"] } } }
 ```
 
 Then ask anything that needs your own browser.
@@ -38,10 +38,10 @@ Then ask anything that needs your own browser.
 ## Claude Code
 
 ```bash
-claude mcp add opera -- npx -y opera local
+claude mcp add navego -- npx -y navego local
 ```
 
-Confirm with `claude mcp list` → `opera: Ready`. Then any task that needs your signed-in browser.
+Confirm with `claude mcp list` → `navego: Ready`. Then any task that needs your signed-in browser.
 
 ## Claude Desktop
 
@@ -50,7 +50,7 @@ Confirm with `claude mcp list` → `opera: Ready`. Then any task that needs your
 ```json
 {
   "mcpServers": {
-    "opera": { "command": "opera", "args": ["local"] }
+    "navego": { "command": "navego", "args": ["local"] }
   }
 }
 ```
@@ -60,7 +60,7 @@ Confirm with `claude mcp list` → `opera: Ready`. Then any task that needs your
 `.cursor/mcp.json` at the project root:
 
 ```json
-{ "mcpServers": { "opera": { "command": "opera", "args": ["local"] } } }
+{ "mcpServers": { "navego": { "command": "navego", "args": ["local"] } } }
 ```
 
 ## Windsurf
@@ -68,7 +68,7 @@ Confirm with `claude mcp list` → `opera: Ready`. Then any task that needs your
 `mcp_config.json` (Settings → Cascade):
 
 ```json
-{ "mcpServers": { "opera": { "command": "opera", "args": ["local"] } } }
+{ "mcpServers": { "navego": { "command": "navego", "args": ["local"] } } }
 ```
 
 ## Zed
@@ -78,8 +78,8 @@ Confirm with `claude mcp list` → `opera: Ready`. Then any task that needs your
 ```jsonc
 {
   "context_servers": {
-    "opera": {
-      "command": "opera",
+    "navego": {
+      "command": "navego",
       "args": ["local"]
     }
   }
@@ -91,18 +91,18 @@ Confirm with `claude mcp list` → `opera: Ready`. Then any task that needs your
 Settings → MCP → Add Server → stdio:
 
 ```
-name: opera
-command: opera
+name: navego
+command: navego
 args: local
 ```
 
 ## The static-token path (no OAuth round-trip)
 
-If you do not want the interactive `opera auth` (CI, containers, a machine without a display):
+If you do not want the interactive `navego auth` (CI, containers, a machine without a display):
 
 1. Create a device token in the dashboard → copy it once.
-2. Set one env var: `OPERA_AGENT_MCP_TOKEN=<token>` — a static token wins over the OAuth login file.
-3. `opera doctor` — it reports identity, bridge and quota before any agent asks.
+2. Set one env var: `NAVEGO_MCP_TOKEN=<token>` — a static token wins over the OAuth login file.
+3. `navego doctor` — it reports identity, bridge and quota before any agent asks.
 
 ## Rules of thumb that keep sessions sane
 
@@ -110,4 +110,4 @@ If you do not want the interactive `opera auth` (CI, containers, a machine witho
 - Measure before you act: `browser_read_page` tells you whether `settled` is true, how many chars arrived, and which read path was used.
 - Google Sheets / Docs render to canvas — there is no element to read back. Your read path returns pixels/commands; build with `artifact_*` / `delivery_*` instead of trying to write into the canvas.
 - `PLAN_LIMIT_REACHED` means the plan is spent; upgrade in the dashboard or fall back to smaller tasks, never `--force`.
-- `opera doctor` is the arbiter: `ready` / `degraded` / `blocked` and the one fix that applies.
+- `navego doctor` is the arbiter: `ready` / `degraded` / `blocked` and the one fix that applies.

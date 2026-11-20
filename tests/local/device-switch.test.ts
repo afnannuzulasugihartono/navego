@@ -11,7 +11,7 @@
 
 // THE WRAPPER: the loopback bridge gates its /health and /prefer doors on a bridge token; every fetch in this file then carries it.
 
-process.env.OPERA_BRIDGE_TOKEN = 'test-bridge-token';
+process.env.NAVEGO_BRIDGE_TOKEN = 'test-bridge-token';
 const realFetch = globalThis.fetch;
 globalThis.fetch = (url, opts) => realFetch(url, { ...opts, headers: { 'x-opera-bridge-token': 'test-bridge-token', ...(opts?.headers || {}) } });
 
@@ -22,7 +22,7 @@ import { createBridgeServer } from '../../local/bridge-ws.js';
 import { fakeCloud } from '../helpers/fake-cloud.ts';
 import { createScriptedDevice } from '../helpers/scripted-device.ts';
 
-process.env.OPERA_BRIDGE_PORT = '0';
+process.env.NAVEGO_BRIDGE_PORT = '0';
 
 const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
 

@@ -16,7 +16,7 @@
   'use strict';
 
   const scope = globalThis;
-  if (scope.OperaStatementFile) return;
+  if (scope.NavegoStatementFile) return;
 
   const PDF_HEAD = [0x25, 0x50, 0x44, 0x46, 0x2d]; // %PDF-
   const ZIP_HEAD = [0x50, 0x4b, 0x03, 0x04];
@@ -77,5 +77,5 @@
     return digits ? `${negative ? '-' : ''}${digits}` : null;
   };
 
-  scope.OperaStatementFile = { kindOf, countPages, pagesFrom, balanceDigits };
+  scope.NavegoStatementFile = { kindOf, countPages, pagesFrom, balanceDigits };
 })();

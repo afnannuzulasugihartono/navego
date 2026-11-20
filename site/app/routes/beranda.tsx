@@ -7,14 +7,14 @@ import { SiteHeader, SiteFooter } from '../components/Chrome';
 
 export function meta() {
   return seoMeta({
-    title: 'Opera — AI untuk browser Anda',
-    description: 'Opera membaca tab yang Anda tunjuk, mengisi kolom, mengklik tombol, lalu menyimpan hasilnya sebagai berkas.',
+    title: 'Navego — AI untuk browser Anda',
+    description: 'Navego membaca tab yang Anda tunjuk, mengisi kolom, mengklik tombol, lalu menyimpan hasilnya sebagai berkas.',
     path: '/beranda'
   });
 }
 
 const LANGKAH = [
-  { title: 'Tunjuk tab', body: 'Anda tunjuk. Opera yang membaca.' },
+  { title: 'Tunjuk tab', body: 'Anda tunjuk. Navego yang membaca.' },
   { title: 'Tulis perintah', body: 'Bahasa Anda. Tanpa skrip.' },
   { title: 'Ambil berkas', body: 'Hasilnya di folder Anda. .xlsx, .docx, .pptx.' }
 ];
@@ -29,7 +29,7 @@ const KEMAMPUAN = [
 ];
 
 const FAQ = [
-  { q: 'Apakah Opera membaca semua tab saya?', a: 'Tidak. Tab yang Anda tunjuk saja.' },
+  { q: 'Apakah Navego membaca semua tab saya?', a: 'Tidak. Tab yang Anda tunjuk saja.' },
   { q: 'Apakah kata sandi boleh diketik agen?', a: 'Tidak pernah. Kolom itu selalu ditolak.' },
   { q: 'Ke mana data halaman saya pergi?', a: 'Tidak ke mana pun. Dibaca di mesin Anda.' },
   { q: 'Apa yang dipasang di komputer saya?', a: 'Ekstensi dan driver lokal. Keduanya bisa Anda periksa dan cabut.' }
@@ -38,7 +38,7 @@ const FAQ = [
 const JSON_LD = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
-  name: 'Opera',
+  name: 'Navego',
   operatingSystem: 'Windows, macOS, Linux',
   applicationCategory: 'BrowserApplication',
   description: 'Asisten AI yang menjalankan browser Anda dari satu perintah teks.',
@@ -74,7 +74,7 @@ export default function Beranda() {
         <section className="hero" aria-labelledby="judul-beranda">
           <div className="wrap hero-grid">
             <div>
-              <h1 id="judul-beranda">Opera.</h1>
+              <h1 id="judul-beranda">Navego.</h1>
               <p className="lede">Satu perintah. Browser Anda bekerja.</p>
               <div className="hero-cta">
                 <Link className="btn btn-solid" to="/unduh">Pasang gratis</Link>

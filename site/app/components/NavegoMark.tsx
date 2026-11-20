@@ -1,4 +1,4 @@
-// decisions.json -> D28, D29, D30, D31, D33 (hand-drawn stroke, symmetric underline, handwritten wordmark, mark palette) Opera — written, not set.
+// decisions.json -> D28, D29, D30, D31, D33 (hand-drawn stroke, symmetric underline, handwritten wordmark, mark palette) Navego — written, not set.
 // One pen stroke: left stem, the diagonal, right stem; one amber underline beneath.
 // The wordmark is the same hand, one motion per letter.
 // Legible at 16 px; the underline is the warm point at every size.
@@ -7,9 +7,9 @@ const DISC = '#233259';
 const CREAM = '#f4f1e9';
 const AMBER = '#d8923f';
 
-interface OperaMarkProps { size?: number; title?: string; }
+interface NavegoMarkProps { size?: number; title?: string; }
 
-export function OperaMark({ size = 22, title = 'Opera' }: OperaMarkProps) {
+export function NavegoMark({ size = 22, title = 'Navego' }: NavegoMarkProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 240 240" role="img" aria-label={title}>
       <circle cx="120" cy="120" r="116" fill={DISC} />
@@ -20,11 +20,11 @@ export function OperaMark({ size = 22, title = 'Opera' }: OperaMarkProps) {
 }
 
 // The wordmark is the same hand: one stroke per letter, round caps, no tittle.
-// viewBox is 384 × 124; the aspect is carried by OperaWordmark.
+// viewBox is 384 × 124; the aspect is carried by NavegoWordmark.
 
-export function OperaWordmark({ size = 16 }: { size?: number }) {
+export function NavegoWordmark({ size = 16 }: { size?: number }) {
   return (
-    <svg width={Math.round(size * (384 / 124))} height={size} viewBox="0 0 384 124" role="img" aria-label="opera" fill="none">
+    <svg width={Math.round(size * (384 / 124))} height={size} viewBox="0 0 384 124" role="img" aria-label="navego" fill="none">
       <path d="M37 94 C34 72 34 61 39 51 M38 64 C46 47 69 46 74 60 C78 71 77 82 75 94" stroke="currentColor" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M127 54 V96 M127 72 C119 50 89 53 89 75 C89 95 119 97 127 79" stroke="currentColor" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M148 51 C156 67 162 82 167 97 C173 79 180 63 189 47" stroke="currentColor" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />

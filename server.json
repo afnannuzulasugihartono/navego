@@ -1,18 +1,18 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.afnannuzulasugihartono/opera-agent",
-  "title": "Opera",
+  "name": "io.github.afnannuzulasugihartono/navego",
+  "title": "Navego",
   "description": "Drive your signed-in browser from any MCP client. Sheets, Docs, artifacts, wallet.",
   "repository": {
     "url": "https://github.com/afnannuzulasugihartono/navego",
     "source": "github"
   },
-  "version": "2.0.0",
+  "version": "1.7.6",
   "packages": [
     {
       "registryType": "npm",
-      "identifier": "opera-agent",
-      "version": "2.0.0",
+      "identifier": "navego",
+      "version": "1.7.6",
       "transport": {
         "type": "stdio"
       }

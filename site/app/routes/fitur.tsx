@@ -7,7 +7,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return seoMeta({
-    title: 'Fitur — Opera',
+    title: 'Fitur — Navego',
     description: '40 tool MCP di atas 36 primitive browser, enam izin, empat berkas contoh.',
     path: '/fitur'
   });
@@ -87,10 +87,10 @@ export default function Fitur() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <h1>Yang bisa dikerjakan Opera.</h1>
+            <h1>Yang bisa dikerjakan Navego.</h1>
             <p className="lede">Satu perintah. Browser Anda membaca, mengisi, mengklik, lalu menyimpan hasilnya sebagai berkas.</p>
             <div className="hero-cta">
-              <Link className="btn btn-solid" to="/unduh">Unduh opera</Link>
+              <Link className="btn btn-solid" to="/unduh">Unduh navego</Link>
               <Link className="btn btn-ghost" to="/docs">Baca docs</Link>
             </div>
           </div>
@@ -173,7 +173,7 @@ export default function Fitur() {
               <h2 className="section-title" style={{ color: '#ffffff' }}>Mulai dari satu perintah.</h2>
               <p>Buka akun, pair device ini, jalankan satu pekerjaan — hasilnya berkas nyata yang bisa Anda buka sendiri.</p>
               <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
-                <Link className="btn btn-solid" to="/unduh">Unduh opera</Link>
+                <Link className="btn btn-solid" to="/unduh">Unduh navego</Link>
                 <Link className="btn btn-ghost" to="/harga">Lihat harga</Link>
               </div>
             </div>

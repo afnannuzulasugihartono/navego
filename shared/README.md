@@ -14,9 +14,9 @@ Every module here is pure JavaScript with no I/O, no DOM, no fetch, no Postgres,
 | `canonical-order.js` | The code-unit comparator every digest sorts by. | `shared/semantic-working-state.js`, `shared/reactive-vm-host.js`, `hosted/functions/_shared/proof-engine.ts`, `hosted/functions/_shared/goal-ledger.ts` |
 | `delta-first-observation.js` | The changed-fact computation the model consumes as what moved, instead of the page wholesale. | the local read path |
 | `multi-signal-relevance.js` | Relevance scoring the two read ladders use to decide what the model should look at. | the surface drivers |
-| `reactive-vm.js` | The reactive VM: what a program may be, and what it evaluates to. | `hosted/functions/opera-vm`, `tests/vm/` |
-| `reactive-vm-collect.js` | The collector: the run of a program into the evidence it leaves. | `hosted/functions/opera-vm`, `tests/vm/` |
-| `reactive-vm-control-flow.js` | The control-flow state machine: branches, waits, retries, refusals. | `hosted/functions/opera-vm`, `tests/vm/` |
+| `reactive-vm.js` | The reactive VM: what a program may be, and what it evaluates to. | `hosted/functions/navego-vm`, `tests/vm/` |
+| `reactive-vm-collect.js` | The collector: the run of a program into the evidence it leaves. | `hosted/functions/navego-vm`, `tests/vm/` |
+| `reactive-vm-control-flow.js` | The control-flow state machine: branches, waits, retries, refusals. | `hosted/functions/navego-vm`, `tests/vm/` |
 | `reactive-vm-core.js` | The guard factory the three VM modules share — one implementation, byte-identical semantics. | the three `reactive-vm-*` modules |
 | `reactive-vm-host.js` | The host side: what a run may persist and what it must refuse. | `tests/vm/` (pinned) |
 | `secret-pattern.js` | The one credential-shape check the server refuses to cross. | `shared/reactive-vm*.js`, `hosted/functions/_shared/{goal-ledger,proof-engine}.js` |

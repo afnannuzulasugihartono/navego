@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const root = new URL('../../', import.meta.url);
-const fn = fs.readFileSync(new URL('hosted/functions/opera-billing/index.ts', root), 'utf8');
+const fn = fs.readFileSync(new URL('hosted/functions/navego-billing/index.ts', root), 'utf8');
 
 test('the buy action demands a signed-in owner before any plan is named', () => {
   const buy = fn.slice(fn.indexOf('body.action === "paypal-buy"'));

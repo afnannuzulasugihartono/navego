@@ -5,8 +5,8 @@ import { seoMeta } from '../lib/seo.js';
 
 export function meta() {
   return seoMeta({
-    title: 'Syarat Layanan — Opera',
-    description: 'Syarat layanan Opera: akses terbuka, bawa model sendiri, dan pairing yang dapat dicabut.',
+    title: 'Syarat Layanan — Navego',
+    description: 'Syarat layanan Navego: akses terbuka, bawa model sendiri, dan pairing yang dapat dicabut.',
     path: '/syarat'
   });
 }

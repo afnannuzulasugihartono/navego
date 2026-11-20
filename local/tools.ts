@@ -272,7 +272,7 @@ export const TOOLS = Object.freeze([
         name: stringArg('row name for that role'),
         x: numberArg('viewport x, instead of a handle or a row'),
         y: numberArg('viewport y, instead of a handle or a row'),
-        dir: stringArg('folder to download into; defaults to Downloads/opera'),
+        dir: stringArg('folder to download into; defaults to Downloads/navego'),
         saveAs: stringArg('file name to give it once it has stopped growing, without a folder'),
         timeoutMs: numberArg('how long to wait for the file, default 30000')
       }
@@ -383,7 +383,7 @@ export const TOOLS = Object.freeze([
   },
   {
     name: 'browser_solve_captcha',
-    description: "Opt-in: read a captcha image through the configured solver (OPERA_CAPTCHA_*, allowlisted hosts only) and type the answer. Refuses what it cannot honestly answer - widgets, hosts off the list, missing solver.",
+    description: "Opt-in: read a captcha image through the configured solver (NAVEGO_CAPTCHA_*, allowlisted hosts only) and type the answer. Refuses what it cannot honestly answer - widgets, hosts off the list, missing solver.",
     inputSchema: {
       type: 'object',
       properties: {

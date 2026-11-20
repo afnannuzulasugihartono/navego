@@ -281,7 +281,7 @@ test('the mask takes the credential out of an address and leaves the rest alone'
 });
 
 test('the captcha solver refuses a page outside the allowed domains', () => {
-  const settings = solverSettings({ OPERA_CAPTCHA_API_URL: 'https://solver.example', OPERA_CAPTCHA_API_KEY: 'k', OPERA_CAPTCHA_DOMAINS: 'contoh.co.id' });
+  const settings = solverSettings({ NAVEGO_CAPTCHA_API_URL: 'https://solver.example', NAVEGO_CAPTCHA_API_KEY: 'k', NAVEGO_CAPTCHA_DOMAINS: 'contoh.co.id' });
 
   assert.equal(captchaAllowed(settings, 'https://contoh.co.id/masuk'), true);
   assert.equal(captchaAllowed(settings, 'https://lain.example/masuk'), false);

@@ -6,15 +6,15 @@
 import './agent-log.js';
 
 // THE GLOBAL IS READ THROUGH A CAST.
-// agent-log.js publishes the shared writer onto globalThis before the worker imports another module; the protocol surface is the documented OPERA_LOG contract, which this file does not re-declare.
+// agent-log.js publishes the shared writer onto globalThis before the worker imports another module; the protocol surface is the documented NAVEGO_LOG contract, which this file does not re-declare.
 // The cast names what the runtime actually carries and the agent-log contract owns the field list; nothing here is inferred.
 
-export type AgentLogError = OperaLogFault;
+export type AgentLogError = NavegoLogFault;
 
-export type AgentLog = OperaLog;
+export type AgentLog = NavegoLog;
 
 // The field list lives in extension/types/global.d.ts once; this file re-exports it and enforces presence before anything else reads it.
 
-const runtime = globalThis.OperaLog;
+const runtime = globalThis.NavegoLog;
 if (!runtime || typeof runtime.warn !== 'function') throw new Error('Agent log runtime is unavailable.');
 export const log = runtime;

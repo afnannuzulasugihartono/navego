@@ -15,7 +15,7 @@ import { BURST_ACTION_METHODS, BURST_STEP_KEYS, validateBurst } from '../../exte
 import { extensionSource } from '../helpers/extension-source.ts';
 
 await import('../../extension/hover-settle.js');
-const hoverSettle = globalThis.OperaHoverSettle;
+const hoverSettle = globalThis.NavegoHoverSettle;
 if (!hoverSettle) throw new Error('the settle runtime must publish itself');
 const { DEFAULTS, normalize, plan } = hoverSettle;
 
@@ -131,7 +131,7 @@ test('the in-page settle only observes and never carries document text out', asy
   assert.doesNotMatch(block, /innerText|textContent/);
 
   assert.match(source, /case 'page\.hover_settle': return hoverSettleState\(args\)/);
-  assert.match(source, /const hoverRuntime = globalThis\.OperaHoverSettle;/,
+  assert.match(source, /const hoverRuntime = globalThis\.NavegoHoverSettle;/,
     'the runtime is no longer read straight into a bare binding');
   assert.match(source, /typeof hoverRuntime\.plan === 'function'/,
     'the planner is not checked before it is used');
@@ -142,7 +142,7 @@ test('the manifest loads the settle runtime before the content script', async ()
   const scripts = manifest.content_scripts[0].js;
   assert.ok(scripts.includes('hover-settle.js'), 'the settle runtime must be injected');
   assert.ok(scripts.indexOf('hover-settle.js') < scripts.indexOf('content.js'));
-  assert.equal(manifest.version, '2.0.0');
+  assert.equal(manifest.version, '1.8.0');
 });
 
 test('the public burst schema accepts a hover step and still bounds everything', async () => {

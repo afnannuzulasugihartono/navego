@@ -6,8 +6,8 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return seoMeta({
-    title: 'Metodologi — Opera',
-    description: 'Cara Opera mengukur dirinya: halaman nyata (Google Docs, Sheets, YouTube), n=30 per operasi, P50/P95, dan daftar jujur tentang apa yang belum diukur.',
+    title: 'Metodologi — Navego',
+    description: 'Cara Navego mengukur dirinya: halaman nyata (Google Docs, Sheets, YouTube), n=30 per operasi, P50/P95, dan daftar jujur tentang apa yang belum diukur.',
     path: '/metodologi'
   });
 }
@@ -103,11 +103,11 @@ export default function Metodologi() {
               </details>
               <details id="youtube">
                 <summary>YouTube baru sebagian</summary>
-                <p>Terukur: 871 karakter saat readyState complete, 8.478 dua detik kemudian. "Complete" bukan tanda halaman selesai. Semua waits Opera berbasis settle. Tabel penuh YouTube belum ada.</p>
+                <p>Terukur: 871 karakter saat readyState complete, 8.478 dua detik kemudian. "Complete" bukan tanda halaman selesai. Semua waits Navego berbasis settle. Tabel penuh YouTube belum ada.</p>
               </details>
               <details id="remote">
                 <summary>Angka "remote MCP" adalah sejarah</summary>
-                <p>Angka ~380 ms per perintah melewati hosted MCP yang sudah dihapus dari pohon kode (2026-11-14). Jalan yang hidup adalah <code>opera local</code>; tabel di <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/mcp-latency.md" rel="noreferrer">docs/mcp-latency.md</a> bernilai untuk jalan yang sudah dipensiunkan itu.</p>
+                <p>Angka ~380 ms per perintah melewati hosted MCP yang sudah dihapus dari pohon kode (2026-11-14). Jalan yang hidup adalah <code>navego local</code>; tabel di <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/mcp-latency.md" rel="noreferrer">docs/mcp-latency.md</a> bernilai untuk jalan yang sudah dipensiunkan itu.</p>
               </details>
               <details id="paypal">
                 <summary>PayPal sandbox belum dituntaskan end-to-end</summary>
@@ -124,7 +124,7 @@ export default function Metodologi() {
               <h2 className="section-title" style={{ color: '#ffffff' }}>Lihat hasilnya di browser Anda.</h2>
               <p>Satu perintah, satu berkas — lalu Anda yang menilai, bukan kami.</p>
               <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
-                <Link className="btn btn-solid" to="/unduh">Unduh Opera</Link>
+                <Link className="btn btn-solid" to="/unduh">Unduh Navego</Link>
                 <Link className="btn btn-ghost" to="/docs#tugas">Tugas pertama</Link>
               </div>
             </div>

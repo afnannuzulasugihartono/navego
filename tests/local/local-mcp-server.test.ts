@@ -121,12 +121,12 @@ function fakeSearchSession(calls: DriverCall[]) {
     evaluate: async () => {
       evaluation += 1;
       if (evaluation === 1) {
-        return { ...serpFixture, url: 'https://www.bing.com/search?q=opera%20mcp', title: 'opera mcp - Search' };
+        return { ...serpFixture, url: 'https://www.bing.com/search?q=navego%20mcp', title: 'navego mcp - Search' };
       }
       return {
         text: 'another result\nexample.org\nhttps://example.org › deep-dive\nExample Deep Dive\n\nA synthetic second page for the parser.\n',
-        url: 'https://www.bing.com/search?q=opera%20mcp&first=11',
-        title: 'opera mcp - Search',
+        url: 'https://www.bing.com/search?q=navego%20mcp&first=11',
+        title: 'navego mcp - Search',
         links: [
           { href: 'https://example.org/deep-dive', text: 'example.org https://example.org › deep-dive' },
           { href: 'https://example.org/deep-dive', text: 'Example Deep Dive' }
@@ -194,7 +194,7 @@ test('initialize answers with a protocol version and who this server is', async 
   assert.equal(res?.jsonrpc, '2.0');
   assert.equal(res?.id, 1);
   assert.ok(unwrap(res).protocolVersion);
-  assert.match(unwrap(res).serverInfo.name, /opera/);
+  assert.match(unwrap(res).serverInfo.name, /navego/);
 });
 
 test('every advertised tool carries a schema, or a client cannot call it', async () => {
@@ -227,8 +227,8 @@ test('status carries the meter of every linked device', async () => {
   const health = {
     ok: true, linked: true, queued: 0, waiting: 0, meterRefusal: null,
     devices: [
-      { slot: 1, id: 'dev-a', instanceId: 'inst-a', deviceName: 'opera-a', extensionVersion: '1.6.35', connectedAt: 1, meter: { plan: 'plan.usd-17', allowance: 500, dailyQuota: 5000, sent: 2, usedToday: 300, remaining: 4700 } },
-      { slot: 2, id: 'dev-b', instanceId: 'inst-b', deviceName: 'opera-b', extensionVersion: '1.6.35', connectedAt: 2, meter: { plan: 'plan.usd-17', allowance: 500, dailyQuota: 5000, sent: 0, usedToday: 5000, remaining: 0 } }
+      { slot: 1, id: 'dev-a', instanceId: 'inst-a', deviceName: 'navego-a', extensionVersion: '1.6.35', connectedAt: 1, meter: { plan: 'plan.usd-17', allowance: 500, dailyQuota: 5000, sent: 2, usedToday: 300, remaining: 4700 } },
+      { slot: 2, id: 'dev-b', instanceId: 'inst-b', deviceName: 'navego-b', extensionVersion: '1.6.35', connectedAt: 2, meter: { plan: 'plan.usd-17', allowance: 500, dailyQuota: 5000, sent: 0, usedToday: 5000, remaining: 0 } }
     ]
   };
   await withHealthBridge(health, async (ephemeral) => {
@@ -238,14 +238,14 @@ test('status carries the meter of every linked device', async () => {
     const now = new Date();
     const expectedReset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)).toISOString();
     const byName = Object.fromEntries(payload.devices.map((d: { name: string }) => [d.name, d]));
-    assert.equal(byName['opera-a'].plan.plan, 'plan.usd-17');
-    assert.equal(byName['opera-a'].plan.remaining, 4700);
-    assert.equal(byName['opera-a'].plan.dailyQuota, 5000);
-    assert.equal(byName['opera-a'].plan.resetsAt, expectedReset);
-    assert.ok(byName['opera-a'].plan.resetsAt.endsWith('00:00:00.000Z'), 'the reset is the UTC midnight after this one, not a local wall clock');
-    assert.equal(byName['opera-b'].plan.remaining, 0);
+    assert.equal(byName['navego-a'].plan.plan, 'plan.usd-17');
+    assert.equal(byName['navego-a'].plan.remaining, 4700);
+    assert.equal(byName['navego-a'].plan.dailyQuota, 5000);
+    assert.equal(byName['navego-a'].plan.resetsAt, expectedReset);
+    assert.ok(byName['navego-a'].plan.resetsAt.endsWith('00:00:00.000Z'), 'the reset is the UTC midnight after this one, not a local wall clock');
+    assert.equal(byName['navego-b'].plan.remaining, 0);
     assert.equal(payload.planExhausted, true);
-    assert.deepEqual(payload.planExhaustedDevices, ['opera-b']);
+    assert.deepEqual(payload.planExhaustedDevices, ['navego-b']);
   });
 });
 
@@ -254,7 +254,7 @@ test('status stays quiet when every linked device has headroom', async () => {
   const health = {
     ok: true, linked: true, queued: 0, waiting: 0, meterRefusal: null,
     devices: [
-      { slot: 1, id: 'dev-a', instanceId: 'inst-a', deviceName: 'opera-a', extensionVersion: '1.6.35', connectedAt: 1, meter: { plan: 'plan.usd-17', allowance: 500, dailyQuota: 5000, sent: 0, usedToday, remaining: 4794 } }
+      { slot: 1, id: 'dev-a', instanceId: 'inst-a', deviceName: 'navego-a', extensionVersion: '1.6.35', connectedAt: 1, meter: { plan: 'plan.usd-17', allowance: 500, dailyQuota: 5000, sent: 0, usedToday, remaining: 4794 } }
     ]
   };
   await withHealthBridge(health, async (ephemeral) => {
@@ -613,7 +613,7 @@ const namedCtx = (tabs: Array<{ id: string; url: string; title: string }>) => {
 };
 
 const PAGES = [
-  { id: '111', url: 'https://navego.pages.dev/beranda', title: 'Opera' },
+  { id: '111', url: 'https://navego.pages.dev/beranda', title: 'Navego' },
   { id: '222', url: 'https://docs.google.com/document/d/one', title: 'Thesis - Google Docs' },
   { id: '333', url: 'https://docs.google.com/document/d/two', title: 'Notes - Google Docs' }
 ];
@@ -834,7 +834,7 @@ test('an unknown argument and an out-of-range value are refused by name', async 
   });
   const range = await server.handle({
     jsonrpc: '2.0', id: 63, method: 'tools/call',
-    params: { name: 'browser_search_web', arguments: { query: 'opera', pages: 9 } }
+    params: { name: 'browser_search_web', arguments: { query: 'navego', pages: 9 } }
   });
 
   assert.match(failureOf(unknown), /browser_click\.tpyo is not an argument this tool declares/);
@@ -989,9 +989,9 @@ test('the claim is renewed by every call, and released when the tab is closed', 
 });
 
 test('a configured window is the one the claim asks for', async () => {
-  const previous = process.env.OPERA_LEASE_TTL_MS;
+  const previous = process.env.NAVEGO_LEASE_TTL_MS;
   try {
-    process.env.OPERA_LEASE_TTL_MS = '1234';
+    process.env.NAVEGO_LEASE_TTL_MS = '1234';
     const c = ctx();
     const server = createMcpServer(c);
 
@@ -1001,8 +1001,8 @@ test('a configured window is the one the claim asks for', async () => {
     assert.ok(firstClaim, 'a claim was recorded');
     assert.equal(firstClaim[2], 1234, 'the claim carries the configured window');
   } finally {
-    if (previous === undefined) delete process.env.OPERA_LEASE_TTL_MS;
-    else process.env.OPERA_LEASE_TTL_MS = previous;
+    if (previous === undefined) delete process.env.NAVEGO_LEASE_TTL_MS;
+    else process.env.NAVEGO_LEASE_TTL_MS = previous;
   }
 });
 
@@ -1423,7 +1423,7 @@ test('browser_search_web answers with the structured results and closes its tab'
 
   const res = await server.handle({
     jsonrpc: '2.0', id: 60, method: 'tools/call',
-    params: { name: 'browser_search_web', arguments: { query: 'opera mcp' } }
+    params: { name: 'browser_search_web', arguments: { query: 'navego mcp' } }
   });
   const payload = JSON.parse(unwrap(res).content[0].text);
 
@@ -1434,11 +1434,11 @@ test('browser_search_web answers with the structured results and closes its tab'
   assert.equal(payload.search.count, 10);
   assert.equal(payload.search.truncated, true);
   assert.equal(payload.search.results[0].rank, 1);
-  assert.equal(payload.search.results[0].title, 'Opera: Private Local MCP Browser Automation Bridge');
-  assert.equal(payload.search.results[0].url, 'https://mcpmarket.com/server/opera');
+  assert.equal(payload.search.results[0].title, 'Navego: Private Local MCP Browser Automation Bridge');
+  assert.equal(payload.search.results[0].url, 'https://mcpmarket.com/server/navego');
   assert.equal(payload.search.results[0].site, 'mcpmarket.com');
   assert.ok(payload.search.results.every((result: any) => result.snippet.length > 0), 'every result carries its snippet');
-  assert.ok(c.driver.calls.some((call) => call[0] === 'open' && call[1] === 'https://www.bing.com/search?q=opera%20mcp'));
+  assert.ok(c.driver.calls.some((call) => call[0] === 'open' && call[1] === 'https://www.bing.com/search?q=navego%20mcp'));
   assert.deepEqual(c.driver.calls.at(-1), ['close', 't2'], 'the search tab is closed, nothing is left on the browser');
 });
 
@@ -1448,7 +1448,7 @@ test('search across two pages navigates to the next first, merges and re-numbers
 
   const res = await server.handle({
     jsonrpc: '2.0', id: 61, method: 'tools/call',
-    params: { name: 'browser_search_web', arguments: { query: 'opera mcp', pages: 2 } }
+    params: { name: 'browser_search_web', arguments: { query: 'navego mcp', pages: 2 } }
   });
   const payload = JSON.parse(unwrap(res).content[0].text);
 
@@ -1457,7 +1457,7 @@ test('search across two pages navigates to the next first, merges and re-numbers
   assert.equal(payload.search.truncated, false, 'no next-page link remains on page 2');
   assert.equal(payload.search.results.at(-1).rank, 11);
   assert.equal(payload.search.results.at(-1).title, 'Example Deep Dive');
-  assert.ok(c.driver.calls.some((call) => call[0] === 'navigate' && call[1] === 'https://www.bing.com/search?q=opera%20mcp&first=11'));
+  assert.ok(c.driver.calls.some((call) => call[0] === 'navigate' && call[1] === 'https://www.bing.com/search?q=navego%20mcp&first=11'));
   assert.deepEqual(c.driver.calls.at(-1), ['close', 't2']);
 });
 

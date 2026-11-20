@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-16 UTC+7.
-// @title: site — the rebuilt Opera site, gated on its own build.
+// @title: site — the rebuilt Navego site, gated on its own build.
 // @state: builds the site, type-checks it, then parses build/client for the per-page contract.
 // @dependencies: site/ (React Router v7 + TypeScript), node:test, node:child_process.
 
@@ -35,7 +35,7 @@ const siteDir = path.join(root, 'site');
 
 function buildSite() {
   if (built) return built;
-  // no --prefix: with --prefix npm re-registers the enclosing package (opera) as a file: dependency of the site every run.
+  // no --prefix: with --prefix npm re-registers the enclosing package (navego) as a file: dependency of the site every run.
   const quiet = (args: string[]) => {
     try {
       execFileSync(npm, args, { cwd: siteDir, stdio: ['ignore', 'pipe', 'pipe'], shell: process.platform === 'win32' });
@@ -109,12 +109,12 @@ test('every inline script is covered by the CSP hashes in build/client/_headers'
 });
 
 const CLAIMS = {
-  '/beranda.html': ['Opera.', '40', 'primitive browser'],
+  '/beranda.html': ['Navego.', '40', 'primitive browser'],
   '/fitur.html': ['40', 'primitive', 'debugger'],
   '/harga.html': ['plan.usd-1', 'PayPal', 'Enterprise'],
-  '/unduh.html': ['opera-update', 'chrome', 'SHA-256'],
-  '/docs.html': ['browser_status', 'opera'],
-  '/mcp.html': ['opera', '40'],
+  '/unduh.html': ['navego-update', 'chrome', 'SHA-256'],
+  '/docs.html': ['browser_status', 'navego'],
+  '/mcp.html': ['navego', '40'],
   '/dukungan.html': ['Dukungan'],
   '/privasi.html': ['Kebijakan Privasi'],
   '/syarat.html': ['Syarat Layanan'],
@@ -123,10 +123,10 @@ const CLAIMS = {
   '/dashboard.html': ['Memeriksa sesi'],
   '/404.html': ['Halaman ini tidak ada'],
   '/artikel.html': ['Artikel', 'AI yang mengenal browser'],
-  '/artikel/ai-browser-indonesia.html': ['Opera', 'browser Anda'],
-  '/bandingkan.html': ['WebDriver', 'canvas', 'Opera'],
+  '/artikel/ai-browser-indonesia.html': ['Navego', 'browser Anda'],
+  '/bandingkan.html': ['WebDriver', 'canvas', 'Navego'],
   '/changelog.html': ['1.6.22', 'docs/releases'],
-  '/faq.html': ['Apa itu Opera', 'Berapa harganya', 'PayPal'],
+  '/faq.html': ['Apa itu Navego', 'Berapa harganya', 'PayPal'],
   '/keamanan.html': ['Tanpa eval', 'Kata sandi', 'SECURITY.md'],
   '/metodologi.html': ['Diukur, bukan diklaim', 'Google Docs', 'p50'],
   '/': ['Masuk atau daftar', 'magic link']
@@ -145,7 +145,7 @@ for (const [route, needles] of Object.entries(CLAIMS)) {
 test('_worker.js is compiled from the checked-in TypeScript source', () => {
   buildSite();
   const fromBuild = fs.readFileSync(path.join(client, '_worker.js'), 'utf8');
-  assert.ok(fromBuild.includes('opera-billing'), 'the invoice proxy is intact');
+  assert.ok(fromBuild.includes('navego-billing'), 'the invoice proxy is intact');
   assert.ok(fromBuild.includes('/invoice'), 'the worker owns /invoice');
   assert.ok(fromBuild.includes('x-frame-options'), 'the page denies framing');
   assert.ok(fromBuild.includes('env.ASSETS') || fromBuild.includes('ASSETS.fetch'), 'everything else is the asset server');

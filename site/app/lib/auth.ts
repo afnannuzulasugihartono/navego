@@ -1,14 +1,14 @@
-// Opera's client-side auth + API helpers.
+// Navego's client-side auth + API helpers.
 // No SDK, no secrets: the publishable key is public by design, the session lives in this browser's localStorage, and every call that carries identity goes to the project's Auth or REST host only.
 
 export const PUBLISHABLE_KEY = 'sb_publishable_jAbS_QIQsmXQA-Rj8RWPcg_JVeBedJ6';
 export const REST = 'https://nenmkmtvjremqphfqnfw.supabase.co/rest/v1';
 export const AUTH_HOST = 'https://nenmkmtvjremqphfqnfw.supabase.co/auth/v1';
-export const BILLING = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-billing';
-export const UPDATE_FN = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-update';
+export const BILLING = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-billing';
+export const UPDATE_FN = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update';
 
-const ACCESS_KEY = 'opera-access-token';
-const REFRESH_KEY = 'opera-refresh-token';
+const ACCESS_KEY = 'navego-access-token';
+const REFRESH_KEY = 'navego-refresh-token';
 const RETURNABLE = /^\.\/[A-Za-z0-9._~/?=&%-]*$/;
 
 // ?next is attacker-controllable, so only same-site relative paths pass.
@@ -81,7 +81,7 @@ export async function proveSession(accessToken: string): Promise<{ email?: strin
 
 // A refresh token rotates, so two refreshes at once turn the second one into a stolen-token refusal that clears the session.
 
-const REFRESH_LOCK = 'opera-token-refresh';
+const REFRESH_LOCK = 'navego-token-refresh';
 
 async function renewOnce(): Promise<string | null> {
   const refreshToken = getRefreshToken();

@@ -82,7 +82,7 @@ function fakeBrowser({ bytes = PDF, state = 'complete', interrupted = null }: { 
           }
           const args = options.args ?? [];
           calls.verified.push(args[0]);
-          const helpers = globalThis.OperaStatementFile;
+          const helpers = globalThis.NavegoStatementFile;
           assert.ok(helpers, 'the page helpers are published');
           const kind = helpers.kindOf(new Uint8Array(bytes));
           const pages = kind === 'pdf' ? helpers.countPages(new Uint8Array(bytes)) : null;

@@ -3,7 +3,7 @@
 
 # Security
 
-Opera can interact with a local browser and therefore uses a strict allowlisted command model. This page carries the detail; the short policy GitHub renders on the security tab is [`SECURITY.md`](../SECURITY.md).
+Navego can interact with a local browser and therefore uses a strict allowlisted command model. This page carries the detail; the short policy GitHub renders on the security tab is [`SECURITY.md`](../SECURITY.md).
 
 ## Security principles
 
@@ -30,7 +30,7 @@ cannot disagree.
 
 ## Token transport
 
-The gateway accepts device tokens via header (`x-opera-token`,
+The gateway accepts device tokens via header (`x-navego-token`,
 `Authorization: Bearer`) or `body.apiKey`, because GPT Actions cannot set
 custom headers. No gateway route reads the query string, so `?apiKey=` is not a
 token carrier anywhere. Tokens are verified then
@@ -57,7 +57,7 @@ For whoever holds the pager. Assumes no chat history.
   owner-only and takes direct SQL. If you find yourself wanting a second way to do this, that is
   the signal to write the writer first, not to reach for SQL.
 - Publishing the site: `.github/workflows/deploy-site.yml`, dispatched by hand, running
-  `wrangler pages deploy landing --project-name=opera --branch=main`. A green push
+  `wrangler pages deploy landing --project-name=navego --branch=main`. A green push
   publishes nothing; the CRX publishes through `.github/workflows/publish-crx.yml`.
 
 ## Model calls

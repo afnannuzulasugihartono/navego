@@ -7,7 +7,7 @@
 // The frame codec is unit-pinned separately; what can only be proven over a real connection is the part that actually failed in production: a handshake that completes, a command that arrives the instant it is sent, a completion that settles the caller, and a heartbeat that keeps an otherwise idle worker from dying.
 // A mock proves none of those.
 
-process.env.OPERA_BRIDGE_TOKEN = 'test-bridge-token';
+process.env.NAVEGO_BRIDGE_TOKEN = 'test-bridge-token';
 
 import test from 'node:test';
 import assert from 'node:assert/strict';

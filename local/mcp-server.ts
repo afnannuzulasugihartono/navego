@@ -25,7 +25,6 @@ const PROTOCOL_VERSION = '2024-11-05';
 // THE JOB TOOLS ARE IMPORTED HERE AND NOT ROUTED THROUGH A DRIVER.
 // A card, a manifest, a report line set and a wallet quote are work the server or the disk owns: they open no tab, read no page and need no browser to be running - the jobs live in job-tools.js, and their import site is for the same reason: opening a session would touch a browser the job does not need.
 
-import './legacy-env-bootstrap.js';
 import { randomUUID } from 'node:crypto';
 import { BURST_INPUT_ACTIONS, normalizeBurst } from './burst.js';
 import { leaseTab, releaseTab } from './bridge.js';
@@ -294,14 +293,14 @@ const INPUT_TOOLS = new Set(['browser_click', 'browser_hover', 'browser_type_tex
 // THE OWNER IS A LABEL AND A NUMBER.
 // The label is what a refusal reads back to an agent that can go and drive another tab, and the number keeps two agents that share a label from sharing one claim.
 
-const OWNER = `${process.env.OPERA_LABEL || 'driver'}-${randomUUID().slice(0, 8)}`;
+const OWNER = `${process.env.NAVEGO_LABEL || 'driver'}-${randomUUID().slice(0, 8)}`;
 
 // THE WINDOW IS TUNABLE AND DEFAULTS TO A MINUTE.
 // A minute outlives any single call and still clears an agent that went quiet; a caller whose agents idle for longer can widen it, and one that wants a fast hand-over can narrow it.
 // The window is read per call rather than held, so a change takes effect on the next claim without a restart.
 
 const leaseWindow = () => {
-  const ttl = Number(process.env.OPERA_LEASE_TTL_MS);
+  const ttl = Number(process.env.NAVEGO_LEASE_TTL_MS);
   return Number.isFinite(ttl) && ttl > 0 ? ttl : undefined;
 };
 
@@ -472,8 +471,8 @@ const windowMatch = async (tab: JsonRecord | null, driver: Driver): Promise<stri
           return reply({
             protocolVersion: PROTOCOL_VERSION,
             capabilities: { tools: {} },
-            serverInfo: { name: 'opera', version: context.version ?? '0.0.0' },
-            instructions: "Opera drives the user's real, signed-in browser: read pages, fill forms, run flows in the same tabs the user sees. Start with `read` to see the page (or `guide` if you do not know which tool to reach for), `wait` after an action that moves the page, and `run` for dependent steps. The session uses the person's accounts; passwords, one-time codes and payment data are refused — treat that as the answer, never retry around it. When a page asks something the person must answer, stop and ask."
+            serverInfo: { name: 'navego', version: context.version ?? '0.0.0' },
+            instructions: "Navego drives the user's real, signed-in browser: read pages, fill forms, run flows in the same tabs the user sees. Start with `read` to see the page (or `guide` if you do not know which tool to reach for), `wait` after an action that moves the page, and `run` for dependent steps. The session uses the person's accounts; passwords, one-time codes and payment data are refused — treat that as the answer, never retry around it. When a page asks something the person must answer, stop and ask."
           });
         }
         if (method === 'tools/list') return reply({ tools: TOOLS });

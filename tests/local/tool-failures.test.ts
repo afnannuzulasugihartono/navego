@@ -11,7 +11,7 @@ import path from 'node:path';
 
 import { readRecords, recordFailure, recordFeedback, summarize } from '../../local/tool-failures.js';
 
-const tempHome = () => fs.mkdtempSync(path.join(os.tmpdir(), 'opera-tool-failures-'));
+const tempHome = () => fs.mkdtempSync(path.join(os.tmpdir(), 'navego-tool-failures-'));
 
 test('a failure appended then read back carries the tool, the code and the message', () => {
   const home = tempHome();

@@ -22,7 +22,7 @@ async function ensureRecordMain(tabId: number) {
   try {
     const [probe] = await chrome.scripting.executeScript({
       target: { tabId },
-      func: () => Boolean(globalThis.OperaRecord),
+      func: () => Boolean(globalThis.NavegoRecord),
       world: 'MAIN'
     });
 
@@ -42,12 +42,12 @@ async function ensureRecordMain(tabId: number) {
   try {
     const [probe2] = await chrome.scripting.executeScript({
       target: { tabId },
-      func: () => Boolean(globalThis.OperaRecord),
+      func: () => Boolean(globalThis.NavegoRecord),
       world: 'MAIN'
     });
 
     if (!probe2?.result) {
-      throw codedError('RECORD_MAIN_INJECT_SILENT', 'The script ran but did not build OperaRecord.', { tabId, world: 'MAIN' });
+      throw codedError('RECORD_MAIN_INJECT_SILENT', 'The script ran but did not build NavegoRecord.', { tabId, world: 'MAIN' });
     }
   } catch (error) {
     if (isRecord(error) && error.code) throw error;
@@ -62,7 +62,7 @@ async function mainCall(tabId: number, method: string, args?: unknown): Promise<
   const [frame] = await chrome.scripting.executeScript({
     target: { tabId },
     func: (name: string, payload: unknown) => {
-      const api = globalThis.OperaRecord;
+      const api = globalThis.NavegoRecord;
       const fn = api ? api[name] : undefined;
 
       if (typeof fn !== 'function') {
@@ -142,12 +142,12 @@ function attachmentName(tabUrl: string) {
   try {
     const host = new URL(tabUrl).hostname.replace(/[^a-z0-9.-]/gi, '-');
 
-    if (host) return `opera-record-${host}-${Date.now()}.webm`;
+    if (host) return `navego-record-${host}-${Date.now()}.webm`;
   } catch {
 
   }
 
-  return `opera-record-${Date.now()}.webm`;
+  return `navego-record-${Date.now()}.webm`;
 }
 
 function spreadSamples(samples: RecordingSample[], count: number): RecordingSample[] {
@@ -172,7 +172,7 @@ async function guardTab(id: number) {
 
   if (tab.incognito) throw codedError('CAPTURE_BLOCKED', 'Recordings are blocked in incognito tabs.', { tabId: id, reason: 'INCOGNITO' });
 
-  if (await isPrivateTab(id)) throw codedError('CAPTURE_BLOCKED', 'This tab was marked private in the Opera popup.', { tabId: id, reason: 'USER_PRIVATE' });
+  if (await isPrivateTab(id)) throw codedError('CAPTURE_BLOCKED', 'This tab was marked private in the Navego popup.', { tabId: id, reason: 'USER_PRIVATE' });
 
   const policy = await contentCall(id, 'page.capture_policy', {});
 

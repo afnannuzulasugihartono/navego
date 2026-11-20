@@ -22,7 +22,7 @@ export interface ToolFailureRecord {
 const DEFAULT_CAP_BYTES = 2_000_000;
 const KEEP_LINES = 1000;
 
-const homeOf = (): string => process.env.OPERA_AGENT_HOME || path.join(os.homedir(), '.opera-agent');
+const homeOf = (): string => process.env.NAVEGO_AGENT_HOME || path.join(os.homedir(), '.navego');
 const fileOf = (home: string): string => path.join(home, 'tool-failures.jsonl');
 
 // decisions.json -> local-tool-failures-01

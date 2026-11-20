@@ -18,7 +18,7 @@
 (() => {
   'use strict';
   const scope = globalThis;
-  if (scope.OperaHoverSettle) return;
+  if (scope.NavegoHoverSettle) return;
 
   const DEFAULTS = Object.freeze({ timeoutMs: 1500, intervalMs: 50, stableRounds: 2 });
 
@@ -66,5 +66,5 @@
     return { done: false, reason: 'mutating' };
   }
 
-  scope.OperaHoverSettle = Object.freeze({ DEFAULTS, normalize, plan });
+  scope.NavegoHoverSettle = Object.freeze({ DEFAULTS, normalize, plan });
 })();

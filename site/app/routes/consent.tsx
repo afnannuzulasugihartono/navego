@@ -8,8 +8,8 @@ import { AUTH_HOST, clearSession, ensureSession, getStoredToken, getRefreshToken
 
 export function meta() {
   return seoMeta({
-    title: "Izin aplikasi - Opera",
-    description: "Tinjau aplikasi yang meminta akses ke akun Opera Anda sebelum memberi izin.",
+    title: "Izin aplikasi - Navego",
+    description: "Tinjau aplikasi yang meminta akses ke akun Navego Anda sebelum memberi izin.",
     path: "/oauth/consent",
   });
 }
@@ -195,7 +195,7 @@ export default function Consent() {
               </table>
             </div>
             {redirectHost ? <p className="note" style={{ marginTop: 'var(--s-3)' }}>Kode hanya dikirim ke {redirectHost}.</p> : null}
-            <p className="note" style={{ marginTop: 'var(--s-2)' }}>Opera tetap memblokir password, kode sekali pakai, data pembayaran, tab pribadi, dan unggah file. Izin ini hanya mengizinkan aplikasi itu meminta tindakan lewat Opera.</p>
+            <p className="note" style={{ marginTop: 'var(--s-2)' }}>Navego tetap memblokir password, kode sekali pakai, data pembayaran, tab pribadi, dan unggah file. Izin ini hanya mengizinkan aplikasi itu meminta tindakan lewat Navego.</p>
             <div className="hero-cta" style={{ marginTop: 'var(--s-4)' }}>
               <button className="btn btn-solid" type="button" disabled={busy} onClick={() => decide('approve')}>Izinkan</button>
               <button className="btn btn-ghost" type="button" disabled={busy} onClick={() => decide('deny')} style={{ color: 'var(--danger)' }}>Tolak</button>

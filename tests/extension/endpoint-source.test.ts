@@ -20,7 +20,7 @@ test('the consent screen is a page of the site, not a deployment of its own', as
   const auth = await readFile(new URL('../../site/app/lib/auth.ts', import.meta.url), 'utf8');
   const endpoints = await import('../../extension/lib/endpoints.js');
 
-  assert.equal(endpoints.CONSENT_CONFIG_URL, `${CONSENT_CONFIG_URL.split('/functions')[0]}/functions/v1/opera-auth/config`);
+  assert.equal(endpoints.CONSENT_CONFIG_URL, `${CONSENT_CONFIG_URL.split('/functions')[0]}/functions/v1/navego-auth/config`);
   assert.equal(endpoints.CONSENT_CONFIG_URL, CONSENT_CONFIG_URL, 'the shared constant is the one the extension uses');
   assert.match(auth, /AUTH_HOST = 'https:\/\/nenmkmtvjremqphfqnfw\.supabase\.co\/auth\/v1'/, 'the page reads the project Auth host');
 
@@ -35,7 +35,7 @@ test('the consent screen is a page of the site, not a deployment of its own', as
 });
 
 test('update function derives base from SUPABASE_URL, no literal ref', async () => {
-  const src = await readFile(new URL('../../hosted/functions/opera-update/index.ts', import.meta.url), 'utf8');
+  const src = await readFile(new URL('../../hosted/functions/navego-update/index.ts', import.meta.url), 'utf8');
 
   assert.doesNotMatch(src, /nenmkmtvjremqphfqnfw/);
 
@@ -44,8 +44,8 @@ test('update function derives base from SUPABASE_URL, no literal ref', async () 
 
 test('every exported endpoint constant is derived from the project ref', () => {
   const base = `https://${SUPABASE_PROJECT_REF}.supabase.co`;
-  assert.equal(DEFAULT_BRIDGE_URL, `${base}/functions/v1/opera-bridge`);
-  assert.equal(LISTEN_BASE_URL, `${base}/functions/v1/opera-listen`);
-  assert.equal(UPDATE_BASE_URL, `${base}/functions/v1/opera-update`);
-  assert.equal(CONSENT_CONFIG_URL, `${base}/functions/v1/opera-auth/config`);
+  assert.equal(DEFAULT_BRIDGE_URL, `${base}/functions/v1/navego-bridge`);
+  assert.equal(LISTEN_BASE_URL, `${base}/functions/v1/navego-listen`);
+  assert.equal(UPDATE_BASE_URL, `${base}/functions/v1/navego-update`);
+  assert.equal(CONSENT_CONFIG_URL, `${base}/functions/v1/navego-auth/config`);
 });

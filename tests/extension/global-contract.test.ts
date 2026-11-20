@@ -20,29 +20,29 @@ await import('../../extension/lib/page-map.js');
 await import('../../extension/role-reconcile.js');
 
 test('the log publishes exactly the declared members', () => {
-  const log = globalThis.OperaLog;
-  assert.ok(log, 'OperaLog published');
+  const log = globalThis.NavegoLog;
+  assert.ok(log, 'NavegoLog published');
   const expected = ['configure', 'log', 'debug', 'warn', 'error', 'entries', 'clear', 'errors', 'clearErrors', 'errorCount'] as const;
   assert.deepEqual(Object.keys(log).sort(), [...expected].sort());
   for (const member of expected) assert.equal(typeof log[member], 'function', `log.${member} is a function`);
 });
 
 test('the log names the browser before it is asked', () => {
-  const id = globalThis.OperaBrowserId;
+  const id = globalThis.NavegoBrowserId;
   assert.ok(id && typeof id.browserName === 'string' && id.browserName.length > 0);
 });
 
 test('the log counts a fault it was asked to record', () => {
-  const log = globalThis.OperaLog;
-  assert.ok(log, 'OperaLog published');
+  const log = globalThis.NavegoLog;
+  assert.ok(log, 'NavegoLog published');
   const before = log.errorCount();
   log.error('GLOBAL_CONTRACT_TEST_FAULT', 'recorded by the contract test');
   assert.equal(log.errorCount(), before + 1);
 });
 
 test('the hover settle plan terminates with a reason', () => {
-  const hs = globalThis.OperaHoverSettle;
-  assert.ok(hs, 'OperaHoverSettle published');
+  const hs = globalThis.NavegoHoverSettle;
+  assert.ok(hs, 'NavegoHoverSettle published');
   assert.deepEqual(Object.keys(hs).sort(), ['DEFAULTS', 'normalize', 'plan']);
   assert.equal(typeof hs.DEFAULTS.stableRounds, 'number');
   assert.equal(hs.normalize({ timeoutMs: 'not a number' }).timeoutMs, 1500, 'an unreadable budget falls back to the default');
@@ -52,8 +52,8 @@ test('the hover settle plan terminates with a reason', () => {
 });
 
 test('the statement file answers kind, pages and digits from the bytes', () => {
-  const file = globalThis.OperaStatementFile;
-  assert.ok(file, 'OperaStatementFile published');
+  const file = globalThis.NavegoStatementFile;
+  assert.ok(file, 'NavegoStatementFile published');
   assert.deepEqual(Object.keys(file).sort(), ['balanceDigits', 'countPages', 'kindOf', 'pagesFrom']);
   const pdf = new TextEncoder().encode('%PDF-1.4 test /Type /Page /Type /Pages end');
   assert.equal(file.kindOf(pdf), 'pdf');
@@ -63,8 +63,8 @@ test('the statement file answers kind, pages and digits from the bytes', () => {
 });
 
 test('the semantic identity engine is created per document and carries a stable hash', () => {
-  const si = globalThis.OperaSemanticIdentity;
-  assert.ok(si, 'OperaSemanticIdentity published');
+  const si = globalThis.NavegoSemanticIdentity;
+  assert.ok(si, 'NavegoSemanticIdentity published');
   assert.deepEqual(Object.keys(si).sort(), ['createIdentityEngine', 'stableHash']);
   assert.equal(si.stableHash('same'), si.stableHash('same'));
   const engine = si.createIdentityEngine({ documentId: 'contract-test' });
@@ -74,8 +74,8 @@ test('the semantic identity engine is created per document and carries a stable 
 });
 
 test('the semantic views engine is created and classifies', () => {
-  const sv = globalThis.OperaSemanticViews;
-  assert.ok(sv, 'OperaSemanticViews published');
+  const sv = globalThis.NavegoSemanticViews;
+  assert.ok(sv, 'NavegoSemanticViews published');
   assert.deepEqual(Object.keys(sv).sort(), ['COMPLETION_STATUSES', 'classifyCompletion', 'createViewEngine']);
   assert.ok(sv.COMPLETION_STATUSES.length >= 4);
   const engine = sv.createViewEngine();
@@ -85,8 +85,8 @@ test('the semantic views engine is created and classifies', () => {
 });
 
 test('the page map publishes the seventeen classes and a pull that pages', () => {
-  const pm = globalThis.OperaPageMap;
-  assert.ok(pm, 'OperaPageMap published');
+  const pm = globalThis.NavegoPageMap;
+  assert.ok(pm, 'NavegoPageMap published');
   assert.equal(pm.PAGE_MAP_CLASSES.length, 17, 'the pull records exactly the seventeen classes');
   assert.equal(typeof pm.classify, 'function');
   assert.equal(typeof pm.isMapClass, 'function');
@@ -101,8 +101,8 @@ test('the page map publishes the seventeen classes and a pull that pages', () =>
 });
 
 test('the role reconcile publishes the gap detector and the reconcilers', () => {
-  const rr = globalThis.OperaRoleReconcile;
-  assert.ok(rr, 'OperaRoleReconcile published');
+  const rr = globalThis.NavegoRoleReconcile;
+  assert.ok(rr, 'NavegoRoleReconcile published');
   assert.deepEqual(
     Object.keys(rr).sort(),
     ['GENERIC_ROLES', 'ROLE_GAP_SAMPLE_SIZE', 'axRoleIndex', 'hasRoleGap', 'implicitRole', 'isGenericRole', 'normalizeAxRole', 'reconcileElementRole', 'reconcileElements'],

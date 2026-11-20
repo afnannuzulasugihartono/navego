@@ -1,21 +1,21 @@
-# Opera
+# Navego
 
 Drive your own browser from an MCP client, with no dependencies. One command:
 
 ```bash
-npm i -g opera-agent
+npm i -g navego
 ```
 
 | mode | what drives | what it needs |
 |---|---|---|
-| `opera local` | the everyday profile on this machine, over the loopback bridge | Node 20+, the extension, a paired device |
-| `opera cloud` | the paired device's browser, through the hosted server | an account, an OAuth login, a paired device |
-| `opera auth` | sign in once, keep the token beside this install | a browser, or `OPERA_MCP_TOKEN` |
-| `opera doctor` | print what is connected and what the plan allows | nothing but this install |
-| `opera failures` | print what broke on this machine: counts by tool and code, plus the agent's feedback notes | nothing but this install |
-| `opera feedback` | record what the agent saw while driving — `opera feedback <tool> <note>` | nothing but this install |
+| `navego local` | the everyday profile on this machine, over the loopback bridge | Node 20+, the extension, a paired device |
+| `navego cloud` | the paired device's browser, through the hosted server | an account, an OAuth login, a paired device |
+| `navego auth` | sign in once, keep the token beside this install | a browser, or `NAVEGO_MCP_TOKEN` |
+| `navego doctor` | print what is connected and what the plan allows | nothing but this install |
+| `navego failures` | print what broke on this machine: counts by tool and code, plus the agent's feedback notes | nothing but this install |
+| `navego feedback` | record what the agent saw while driving — `navego feedback <tool> <note>` | nothing but this install |
 
-`npx -y opera` is the published form of the package.
+`npx -y navego` is the published form of the package.
 
 ## Why this exists
 
@@ -34,7 +34,7 @@ not by reading documentation.
 
 ## Requirements
 
-Node 20 or newer, the Opera extension on the everyday browser, and a paired
+Node 20 or newer, the Navego extension on the everyday browser, and a paired
 device for the meter. The bridge — not a debugging port — is the road: Chrome
 refuses a debugging port on the Default profile, the extension cannot be driven
 from a headless harness, and the everyday window is the one people actually use.
@@ -47,13 +47,13 @@ device to name whose allowance the session spends.
 Then:
 
 ```bash
-opera doctor
+navego doctor
 ```
 
 is the one command to reach for. It prints the bridge, the device, the
 extension version, the plan, the quota, and the fix when something is degraded —
-`ready` when everything is wired. `OPERA_BRIDGE_PORT` (default `9451`) names
-the loopback port; `OPERA_HOME` names the paired device file's folder.
+`ready` when everything is wired. `NAVEGO_BRIDGE_PORT` (default `9451`) names
+the loopback port; `NAVEGO_HOME` names the paired device file's folder.
 A dedicated, separate test profile with the extension pre-loaded is
 `local\bin\opera-chrome.cmd` — on macOS and Linux the equivalent is one
 Chrome invocation with `--load-extension`.
@@ -127,20 +127,20 @@ client-month to a manifest. See the statement job in the price list migration un
 
 ## When a tool breaks
 
-`opera failures` reads the append-only log the local road leaves behind: every tool
-call that came back as an error lands in `$OPERA_AGENT_HOME/tool-failures.jsonl`
-(default `~/.opera-agent/tool-failures.jsonl`) with the tool, the code, the message
+`navego failures` reads the append-only log the local road leaves behind: every tool
+call that came back as an error lands in `$NAVEGO_AGENT_HOME/tool-failures.jsonl`
+(default `~/.navego/tool-failures.jsonl`) with the tool, the code, the message
 and the time it happened — the failure the tool answer cannot carry into the next
-session now survives on the machine. `opera feedback <tool> <note>` appends what the
+session now survives on the machine. `navego feedback <tool> <note>` appends what the
 agent observed while driving, so the drive can leave a suggestion behind instead of
 a shrug. The log stays local; nothing is sent anywhere, and deleting the file is
 always safe — it is an observation channel, not a ledger. Read it any time:
 
 ```bash
-opera failures            # counts by tool and code, plus every note
-opera failures --tool=browser_read_page
-opera failures --json     # for scripts
-opera feedback browser_read_page "canvas editors block every docs drive"
+navego failures            # counts by tool and code, plus every note
+navego failures --tool=browser_read_page
+navego failures --json     # for scripts
+navego feedback browser_read_page "canvas editors block every docs drive"
 ```
 
 ## Recipes, measured

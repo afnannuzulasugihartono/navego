@@ -6,7 +6,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return seoMeta({
-    title: 'Artikel — Opera',
+    title: 'Artikel — Navego',
     description: 'Tulisan pendek tentang browser yang digerakkan satu perintah teks: cara kerja, alasan di balik keputusan, dan batasan yang dijaga.',
     path: '/artikel'
   });

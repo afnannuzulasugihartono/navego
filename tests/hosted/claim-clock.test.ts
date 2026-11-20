@@ -29,7 +29,7 @@ import fs from 'node:fs';
 const root = new URL('../../', import.meta.url);
 const read = (p: any) => fs.readFileSync(new URL(p, root), 'utf8');
 
-const MIGRATION = 'hosted/migrations/20261011120000_opera_claim_clock_timestamps.sql';
+const MIGRATION = 'hosted/migrations/20261011120000_navego_claim_clock_timestamps.sql';
 const migration = read(MIGRATION);
 
 const open = migration.indexOf('$$');
@@ -72,7 +72,7 @@ test('exactly one overload of the claim function can exist', () => {
 
 test('the signature the migration writes is the signature the bridge calls', () => {
 
-  const bridge = read('hosted/functions/opera-bridge/index.ts');
+  const bridge = read('hosted/functions/navego-bridge/index.ts');
   assert.match(bridge, /rpc\("opera_claim_next_wait", \{/,
     'the bridge still calls the long-poll claim');
 

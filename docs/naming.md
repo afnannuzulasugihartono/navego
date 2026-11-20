@@ -46,7 +46,7 @@ The wire contract is one file, `extension/lib/protocol.ts`, and it is the source
 - `METHOD_SPECS` holds the dotted methods: `browser.ping`, `browser.burst`, `tabs.list`, `tabs.open`, `tabs.navigate`, `page.read`, `page.click`, `page.key`, `page.wait_for`.
 - `BURST_ACTION_METHODS` maps a burst step's short verb to the dotted method it runs: `read` to `page.read`, `wait` to `page.wait_for`, `navigate` to `tabs.navigate`.
 
-The Postgres names are in the migrations, and the edge functions refuse anything that is not a bare identifier before it reaches the database: `hosted/functions/opera-bridge/index.ts` rejects a function or argument name that fails `^[a-z_][a-z0-9_]*$`.
+The Postgres names are in the migrations, and the edge functions refuse anything that is not a bare identifier before it reaches the database: `hosted/functions/navego-bridge/index.ts` rejects a function or argument name that fails `^[a-z_][a-z0-9_]*$`.
 
 ## What enforces it
 
@@ -80,7 +80,7 @@ The wire contract is one file, `extension/lib/protocol.ts`, and it is the source
 - `METHOD_SPECS` holds the dotted methods: `browser.ping`, `browser.burst`, `tabs.list`, `tabs.open`, `tabs.navigate`, `page.read`, `page.click`, `page.key`, `page.wait_for`.
 - `BURST_ACTION_METHODS` maps a burst step's short verb to the dotted method it runs: `read` to `page.read`, `wait` to `page.wait_for`, `navigate` to `tabs.navigate`.
 
-The Postgres names are in the migrations, and the edge functions refuse anything that is not a bare identifier before it reaches the database: `hosted/functions/opera-bridge/index.ts` rejects a function or argument name that fails `^[a-z_][a-z0-9_]*$`.
+The Postgres names are in the migrations, and the edge functions refuse anything that is not a bare identifier before it reaches the database: `hosted/functions/navego-bridge/index.ts` rejects a function or argument name that fails `^[a-z_][a-z0-9_]*$`.
 
 ## What enforces it
 

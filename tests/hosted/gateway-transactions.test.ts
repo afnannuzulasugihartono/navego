@@ -10,7 +10,6 @@ import { stripTypeScriptTypes } from 'node:module';
 import vm from 'node:vm';
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from '../../hosted/functions/_shared/cors.ts';
 import { requiredEnv } from '../../hosted/functions/_shared/required-env.ts';
-import { tokenFromHeaders } from '../../hosted/functions/_shared/legacy-auth.ts';
 
 // THE PROCESS GETS A Deno AND THESE TWO.
 // required-env is the real module the edge bundle uses, not a stand-in; it reads Deno from its own closure, which is this process.
@@ -21,7 +20,7 @@ process.env.SUPABASE_SERVICE_ROLE_KEY ??= 'test';
 const denoStub = { env: { get: (key: string) => process.env[key] } };
 (globalThis as { Deno?: typeof denoStub }).Deno = denoStub;
 
-const source = stripTypeScriptTypes(readFileSync(new URL('../../hosted/functions/opera-gateway/index.ts', import.meta.url), 'utf8')
+const source = stripTypeScriptTypes(readFileSync(new URL('../../hosted/functions/navego-gateway/index.ts', import.meta.url), 'utf8')
   .replace(/^import .*;\r?\n/gm, ''));
 const commandId = '00000000-0000-4000-8000-000000000001';
 
@@ -94,14 +93,14 @@ function harness({ merged = { ok: true, commandId }, user = null, enqueue = { ok
     }
   };
 
-  vm.runInNewContext(source, { createClient: () => client, CORS_DEFAULT_ORIGINS, resolveAllowedOrigin, requiredEnv, tokenFromHeaders, Deno: { env: { get: (key: any) => (key in env ? env[key] : process.env[key]) }, serve: (fn: any) => { handler = fn; } }, Request, Response, URL, TextEncoder, TextDecoder, crypto });
+  vm.runInNewContext(source, { createClient: () => client, CORS_DEFAULT_ORIGINS, resolveAllowedOrigin, requiredEnv, Deno: { env: { get: (key: any) => (key in env ? env[key] : process.env[key]) }, serve: (fn: any) => { handler = fn; } }, Request, Response, URL, TextEncoder, TextDecoder, crypto });
   for (const [key, value] of Object.entries(savedEnv)) {
     if (value === undefined) delete process.env[key]; else process.env[key] = value;
   }
-  return { calls, request: (body = {}, headers = {}) => handler(new Request('https://example.test/functions/v1/opera-gateway/command', {
+  return { calls, request: (body = {}, headers = {}) => handler(new Request('https://example.test/functions/v1/navego-gateway/command', {
     method: 'POST', headers: { 'Content-Type': 'application/json', ...headers },
     body: JSON.stringify({ apiKey: 'TEST-TOKEN', method: 'tabs.list', ...body })
-  })), raw: (req: any) => handler(req), getOpenApi: () => handler(new Request('https://proxy.test/opera-gateway/openapi.json')) };
+  })), raw: (req: any) => handler(req), getOpenApi: () => handler(new Request('https://proxy.test/navego-gateway/openapi.json')) };
 }
 
 test('one caller request authenticates and enqueues in a single call, then adaptive await with unchanged arguments', async () => {
@@ -232,14 +231,14 @@ test('openapi servers url is the full public base path from SUPABASE_URL, never 
   assert.equal(response.status, 200);
   const spec = await response.json();
   assert.equal(spec.info.version, '1.0.1');
-  assert.equal(spec.servers[0].url, 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-gateway');
+  assert.equal(spec.servers[0].url, 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-gateway');
 });
 
 function streamRequest(payload: string) {
 
   const bytes = new TextEncoder().encode(payload);
   const stream = new ReadableStream({ start(controller) { controller.enqueue(bytes); controller.close(); } });
-  return new Request('https://example.test/functions/v1/opera-gateway/command', {
+  return new Request('https://example.test/functions/v1/navego-gateway/command', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: stream, duplex: 'half'
   });
 }
@@ -280,7 +279,7 @@ test('an oversize chunked body aborts at the cap instead of buffering whole', as
     }
   });
   const h = harness({});
-  const response = await h.raw(new Request('https://example.test/functions/v1/opera-gateway/command', {
+  const response = await h.raw(new Request('https://example.test/functions/v1/navego-gateway/command', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: stream, duplex: 'half'
   }));
   assert.equal(response.status, 413);

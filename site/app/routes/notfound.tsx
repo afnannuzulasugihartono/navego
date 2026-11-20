@@ -6,7 +6,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return seoMeta({
-    title: 'Halaman tidak ditemukan — Opera',
+    title: 'Halaman tidak ditemukan — Navego',
     description: 'Alamatnya mungkin salah ketik, atau halaman itu sudah dipindahkan. Lima jalan keluar.',
     path: '/404'
   });

@@ -54,7 +54,7 @@ function assertKind(kind: unknown): string {
 }
 
 function aad(kind: string): Uint8Array<ArrayBuffer> {
-  return new TextEncoder().encode(`opera-vm:v1:${assertKind(kind)}`);
+  return new TextEncoder().encode(`navego-vm:v1:${assertKind(kind)}`);
 }
 
 export function decodeVmHostKey(encoded: unknown): Uint8Array<ArrayBuffer> {

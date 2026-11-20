@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const migration = fs.readFileSync(
-  new URL('../../hosted/migrations/20261008160000_opera_maps_search.sql', import.meta.url), 'utf8'
+  new URL('../../hosted/migrations/20261008160000_navego_maps_search.sql', import.meta.url), 'utf8'
 );
 
 function definition() {

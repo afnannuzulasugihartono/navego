@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-09 UTC+7.
-// @title: opera-bridge - the cloud bridge: the device socket, the command queue it serves, and the session meter the local drive pays.
+// @title: navego-bridge - the cloud bridge: the device socket, the command queue it serves, and the session meter the local drive pays.
 // @state: the socket upgrade, the CORS answer, the enqueue a device claims from, and the session open and report the loopback bridge asks once per session.
 // @dependencies: edge-runtime, supabase-js, edge-log.
 
@@ -304,7 +304,7 @@ async function handle(req: Request) {
       return json({ ok: false, error: "Body must be JSON." }, 400);
     }
     const message = error instanceof Error ? error.message : String(error);
-    createEdgeLog({}).error("opera-bridge error", message);
+    createEdgeLog({}).error("navego-bridge error", message);
     return json({ ok: false, error: "Bridge request failed." }, 500);
   }
 }

@@ -8,9 +8,9 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const FUNCTIONS = [
-  'opera-gateway',
-  'opera-bridge',
-  'opera-runner',
+  'navego-gateway',
+  'navego-bridge',
+  'navego-runner',
 ];
 
 const TOKEN_MATERIAL = /\b(?:token|apiKey|authorization|body|headers|req)\b/;
@@ -84,7 +84,7 @@ for (const name of FUNCTIONS) {
   });
 }
 
-for (const name of ['opera-gateway']) {
+for (const name of ['navego-gateway']) {
   test(`${name}: 401/405 bodies contain no Bearer echo`, async () => {
     const source = await functionSource(name);
     const bodies = errorBodies(source, [401, 405]);
@@ -99,7 +99,7 @@ for (const name of ['opera-gateway']) {
 
 test('extractor self-check: locks trip on token-shaped calls', async () => {
 
-  const update = await functionSource('opera-update');
+  const update = await functionSource('navego-update');
   const calls = consoleCalls(update);
   assert.ok(calls.length >= 1, 'extractor must find the known update log calls');
   for (const call of calls) {

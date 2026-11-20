@@ -24,10 +24,10 @@ export interface CaptchaSettings {
 export function solverSettings(env: NodeJS.ProcessEnv = {}): CaptchaSettings {
   // A LOOP AND NOT A REGEX FOR THE TRAILING SLASHES.
   // /\/+$/ is the shape the linter flags for variable-length backtracking on long strings; a loop strips the tail in one pass and says exactly that.
-  let baseUrl = String(env.OPERA_CAPTCHA_API_URL ?? '').trim();
+  let baseUrl = String(env.NAVEGO_CAPTCHA_API_URL ?? '').trim();
   while (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
-  const apiKey = String(env.OPERA_CAPTCHA_API_KEY ?? '').trim();
-  const domains = String(env.OPERA_CAPTCHA_DOMAINS ?? '')
+  const apiKey = String(env.NAVEGO_CAPTCHA_API_KEY ?? '').trim();
+  const domains = String(env.NAVEGO_CAPTCHA_DOMAINS ?? '')
     .split(',')
     .map((domain) => domain.trim().toLowerCase())
     .filter(Boolean);
@@ -76,7 +76,7 @@ export async function solveImageCaptcha({
   timeoutMs = 60000,
   pollMs = 2000
 }: SolveImageCaptchaOptions = {}): Promise<SolveImageCaptchaResult> {
-  if (!baseUrl || !apiKey) throw new Error('the captcha solver is not configured: set OPERA_CAPTCHA_API_URL and OPERA_CAPTCHA_API_KEY.');
+  if (!baseUrl || !apiKey) throw new Error('the captcha solver is not configured: set NAVEGO_CAPTCHA_API_URL and NAVEGO_CAPTCHA_API_KEY.');
   if (!image) throw new Error('solveImageCaptcha needs the captcha image as base64 in image.');
 
   const post = async (method: string, body: Record<string, unknown>): Promise<Record<string, unknown>> => {

@@ -1,7 +1,7 @@
 @last-edited: 2026-11-09 UTC+7.
 @related: [`AGENTS.md`](AGENTS.md) - [`docs/security.md`](docs/security.md) - [`docs/api.md`](docs/api.md)
 
-# Opera
+# Navego
 
 A private, local-browser control bridge.
 
@@ -41,30 +41,30 @@ A private, local-browser control bridge.
 ## One command
 
 ```bash
-npm i -g opera-agent
+npm i -g navego
 ```
 
 | | |
 |---|---|
-| `opera local` | the everyday browser on this machine, over the loopback bridge |
-| `opera auth` | sign in once; the token stays beside this install |
-| `opera doctor` | print what is connected and what the plan allows |
-| `opera install` | register the extension with every Chromium browser on this Windows machine |
-| `opera uninstall` | remove the keys, the Opera folder, and the package itself |
+| `navego local` | the everyday browser on this machine, over the loopback bridge |
+| `navego auth` | sign in once; the token stays beside this install |
+| `navego doctor` | print what is connected and what the plan allows |
+| `navego install` | register the extension with every Chromium browser on this Windows machine |
+| `navego uninstall` | remove the keys, the Navego folder, and the package itself |
 
 
 ## For AI agents
 
 ```bash
-npm i -g opera-agent
-opera auth     # sign in once
-opera doctor   # prints bridge, device, plan, quota — verdict yes/no and the one fix
+npm i -g navego
+navego auth     # sign in once
+navego doctor   # prints bridge, device, plan, quota — verdict yes/no and the one fix
 ```
 
 Then point your agent at the package — see [`llms.txt`](llms.txt), [`llms-install.md`](llms-install.md) and [`docs/agent-friendly.md`](docs/agent-friendly.md) for the exact copy-paste snippets for OpenCode, Claude Code, Claude Desktop, Cursor, Windsurf and Zed. Start every session with `browser_get_guide`.
 
 The local drive is metered where it happens: the local bridge calls the cloud once per session to open the meter and reads the plan from there, then enforces it locally and reports usage into the same daily count the hosted surface reads, so a command past the allowance answers `PLAN_LIMIT_REACHED` with the plan named. The gate lives in the bridge and in the plan's data in the database, never in readable client code. The package is
-on the registry: `npm i -g opera-agent`, or from a clone with
+on the registry: `npm i -g navego`, or from a clone with
 `cd local && npm install -g .`. The full answer: [`docs/agent-call.md`](docs/agent-call.md).
 
 Every number in that table is measured, not typed: `tests/docs/readme.test.ts` reads the

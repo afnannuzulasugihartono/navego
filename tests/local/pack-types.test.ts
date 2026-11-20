@@ -22,9 +22,9 @@ const walk = (dir: any): string[] => readdirSync(dir, { withFileTypes: true }).f
 });
 
 test('the packed tarball carries no .ts source, keeps the generated copies, and its bin runs', () => {
-  const scratch = mkdtempSync(path.join(tmpdir(), 'opera-pack-'));
+  const scratch = mkdtempSync(path.join(tmpdir(), 'navego-pack-'));
   try {
-    // --json names the tarball exactly once; guessing opera-<version>.tgz breaks on the day the version moves.
+    // --json names the tarball exactly once; guessing navego-<version>.tgz breaks on the day the version moves.
     // --ignore-scripts because this test runs inside a suite of tests that import the twins: npm always runs prepack, and prepack recompiles local/*.js in place, which races the readers.
     // Freshness is pretest's job, not this test's; here the tarball is judged as the tree builds it.
     const packed = execFileSync(npm, ['pack', '--json', '--ignore-scripts', '--pack-destination', scratch], {
@@ -48,15 +48,15 @@ test('the packed tarball carries no .ts source, keeps the generated copies, and 
       assert.ok(files.includes(shipped), `the tarball carries ${shipped}`);
     }
 
-    // The shebang must survive packing; without it `npx opera` dies on a machine that cannot guess the interpreter.
-    const bin = readFileSync(path.join(packageDir, 'bin', 'opera.js'), 'utf8');
+    // The shebang must survive packing; without it `npx navego` dies on a machine that cannot guess the interpreter.
+    const bin = readFileSync(path.join(packageDir, 'bin', 'navego.js'), 'utf8');
     const [firstLine] = bin.split('\n', 1);
     assert.ok(firstLine);
-    assert.equal(firstLine.trim(), '#!/usr/bin/env node', 'bin/opera.js keeps its shebang on line 1');
+    assert.equal(firstLine.trim(), '#!/usr/bin/env node', 'bin/navego.js keeps its shebang on line 1');
 
-    const help = spawnSync(process.execPath, [path.join(packageDir, 'bin', 'opera.js'), '--help'], { encoding: 'utf8' });
+    const help = spawnSync(process.execPath, [path.join(packageDir, 'bin', 'navego.js'), '--help'], { encoding: 'utf8' });
     assert.equal(help.status, 0, `the packed bin answers --help: ${help.stderr || help.stdout}`);
-    assert.equal((help.stdout.match(/opera <mode>/g) || []).length, 1, 'the packed bin prints the usage block exactly once');
+    assert.equal((help.stdout.match(/navego <mode>/g) || []).length, 1, 'the packed bin prints the usage block exactly once');
   } finally {
     rmSync(scratch, { recursive: true, force: true });
   }

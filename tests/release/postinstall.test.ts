@@ -32,12 +32,12 @@ test('CI=true exits 0 and does not attempt the install', () => {
   assert.equal(out, '');
 });
 
-test('OPERA_NO_INSTALL=1 exits 0 silently', () => {
-  const out = run({ npm_config_global: 'true', OPERA_NO_INSTALL: '1' });
+test('NAVEGO_NO_INSTALL=1 exits 0 silently', () => {
+  const out = run({ npm_config_global: 'true', NAVEGO_NO_INSTALL: '1' });
   assert.equal(out, '');
 });
 
-test('OPERA_NO_INSTALL=1 exits 0 silently (the renamed opt-out)', () => {
-  const out = run({ npm_config_global: 'true', OPERA_NO_INSTALL: '1' });
+test('NAVEGO_NO_INSTALL=1 exits 0 silently (the renamed opt-out)', () => {
+  const out = run({ npm_config_global: 'true', NAVEGO_NO_INSTALL: '1' });
   assert.equal(out, '');
 });

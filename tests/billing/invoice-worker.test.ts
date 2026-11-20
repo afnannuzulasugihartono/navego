@@ -18,7 +18,7 @@ interface PagesWorker {
 const worker = (await import(new URL('../../site/worker/_worker.ts', import.meta.url).href) as { default: PagesWorker }).default;
 
 const PAGE = 'https://navego.pages.dev/invoice?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234';
-const UPSTREAM = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-billing?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234';
+const UPSTREAM = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-billing?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234';
 
 const calls: any = [];
 const assetCalls: any = [];
@@ -115,7 +115,7 @@ test('the refresh form is forwarded whole, and its redirect comes back to the pa
 test('a redirect written as a path is rewritten too, because the function only knows its own address', async () => {
   reset(() => new Response(null, {
     status: 303,
-    headers: { location: '/opera-billing?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234&refresh=failed' }
+    headers: { location: '/navego-billing?invoice_id=Uji%20Sandbox%3A2027-09&token=tok-1234&refresh=failed' }
   }));
 
   const response = await worker.fetch(new Request(PAGE, {
@@ -163,7 +163,7 @@ test('the trailing slash is the same page, so a form posted without an action st
   const response = await worker.fetch(new Request('https://navego.pages.dev/invoice/?invoice_id=x&token=y'), env);
 
   assert.equal(response.status, 200);
-  assert.equal(calls[0].url, 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-billing?invoice_id=x&token=y');
+  assert.equal(calls[0].url, 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-billing?invoice_id=x&token=y');
 });
 
 test('a function that cannot be reached answers with a page and no reason a customer cannot use', async () => {

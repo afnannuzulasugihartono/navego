@@ -86,9 +86,9 @@ function runStep({ version = '1.6.27', assetCount = 4, viewStatus = 0, tags = ['
   fs.writeFileSync(log, '');
   fs.writeFileSync(tagFile, tags.join('\n') + '\n');
   for (const name of [
-    `Opera-${version}-extension.zip`,
-    `Opera-${version}-source.zip`,
-    `Opera-${version}.crx`,
+    `Navego-${version}-extension.zip`,
+    `Navego-${version}-source.zip`,
+    `Navego-${version}.crx`,
     'SHA256SUMS'
   ]) {
     fs.writeFileSync(path.join(dir, name), 'x');

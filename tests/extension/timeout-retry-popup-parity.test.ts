@@ -92,5 +92,5 @@ test('the local burst guidance covers dependent steps across state, not fixed re
 });
 
 test('U-R line ships as release 1.6.32', () => {
-  assert.equal(PRODUCT_VERSION, '2.0.0');
+  assert.equal(PRODUCT_VERSION, '1.8.0');
 });

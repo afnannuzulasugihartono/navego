@@ -240,7 +240,7 @@ test('popup keeps its controls accessible and responsive in narrow Opera panels'
     assert.match(popup, new RegExp(`id="${id}"`));
   }
 
-  assert.match(popup, /<h1[^>]*>Opera<\/h1>/);
+  assert.match(popup, /<h1[^>]*>Navego<\/h1>/);
   assert.match(popup, /role="alert"/);
   assert.match(styles, /width:\s*400px/);
   assert.match(styles, /min-width:\s*400px/, 'the popup may not collapse below the design width, whatever the viewport reports');

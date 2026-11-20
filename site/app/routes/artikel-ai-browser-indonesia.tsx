@@ -6,8 +6,8 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return seoMeta({
-    title: 'AI yang mengenal browser Anda, dalam bahasa Indonesia — Opera',
-    description: 'Kenapa asisten AI harus dijalankan di browser Anda sendiri — bukan di server orang lain — dan bagaimana Opera bekerja tanpa browser otomatis di cloud.',
+    title: 'AI yang mengenal browser Anda, dalam bahasa Indonesia — Navego',
+    description: 'Kenapa asisten AI harus dijalankan di browser Anda sendiri — bukan di server orang lain — dan bagaimana Navego bekerja tanpa browser otomatis di cloud.',
     path: '/artikel/ai-browser-indonesia'
   });
 }
@@ -29,7 +29,7 @@ export default function AiBrowserIndonesia() {
           <div className="wrap">
             <h1>AI yang mengenal browser Anda, dalam bahasa Indonesia.</h1>
             <p className="lede" style={{ marginTop: 'var(--s-4)', fontSize: 'var(--text-lg)', maxWidth: '56ch', color: 'var(--muted-2)' }}>Asisten AI yang mengambil alih browser bukan hal baru. Yang jarang dibicarakan: di mana asisten itu seharusnya berjalan.</p>
-            <p className="article-meta"><span>18 November 2026</span><span>8 menit baca</span><span>Opera</span></p>
+            <p className="article-meta"><span>18 November 2026</span><span>8 menit baca</span><span>Navego</span></p>
           </div>
         </header>
 
@@ -47,7 +47,7 @@ export default function AiBrowserIndonesia() {
 
             <h2 id="luar">Bukan otomasi dari luar.</h2>
             <p>Solusi lain memasang Chrome baru di server. Skrip ditulis di muka untuk tiap situs. Bekerja sampai tata letak berubah — lalu berhenti diam-diam.</p>
-            <p>Opera memakai browser Anda, dengan sesi yang sudah ada. Halaman dibaca apa adanya. Kolom ditemukan dari label. Tindakan dilakukan terhadapnya.</p>
+            <p>Navego memakai browser Anda, dengan sesi yang sudah ada. Halaman dibaca apa adanya. Kolom ditemukan dari label. Tindakan dilakukan terhadapnya.</p>
 
             <div className="pull">Yang dibaca struktur halaman, bukan alamat tetap. Itu yang membuat satu perintah berlaku di situs yang belum pernah dilihat.</div>
 
@@ -74,7 +74,7 @@ export default function AiBrowserIndonesia() {
             <p>Pengguna pertama produk ini bekerja di kantor Indonesia: portal, dasbor, spreadsheet, dan dokumen berbahasa Indonesia. Memerintah asisten dalam bahasa kedua menambah gesekan yang tidak perlu.</p>
 
             <h2 id="batas">Yang belum bisa, jujur.</h2>
-            <p>Opera belum berjalan di Firefox dan Safari — fitur yang dibutuhkan ekstensi tidak tersedia di sana. Extension-nya juga belum ada di Chrome Web Store; pemasangan sementara lewat Load unpacked atau satu klik di Windows lewat berkas kebijakan yang dijelaskan di <Link to="/unduh">halaman Unduh</Link>.</p>
+            <p>Navego belum berjalan di Firefox dan Safari — fitur yang dibutuhkan ekstensi tidak tersedia di sana. Extension-nya juga belum ada di Chrome Web Store; pemasangan sementara lewat Load unpacked atau satu klik di Windows lewat berkas kebijakan yang dijelaskan di <Link to="/unduh">halaman Unduh</Link>.</p>
             <p>Ini alat yang sedang tumbuh. Batasannya disebutkan apa adanya, bukan disembunyikan di halaman syarat.</p>
 
             <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 'var(--s-5)', flexWrap: 'wrap', marginTop: 'var(--s-7)' }}>

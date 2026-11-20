@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
-import { OperaMark } from '../components/OperaMark';
+import { NavegoMark } from '../components/NavegoMark';
 import { AUTH_HOST, clearSession, ensureSession, headersFor } from '../lib/auth';
 import {
   type Device,
@@ -25,7 +25,7 @@ import {
 
 export function meta() {
   return seoMeta({
-    title: "Dashboard - Opera",
+    title: "Dashboard - Navego",
     description: "Device ter-pairing, perintah, plan, tagihan, dan kendali atas semuanya - dalam satu konsol.",
     path: "/dashboard",
   });
@@ -159,10 +159,10 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    const check = () => setInstallState(document.documentElement.dataset.opera !== undefined ? 'installed' : 'unknown');
+    const check = () => setInstallState(document.documentElement.dataset.navego !== undefined ? 'installed' : 'unknown');
     check();
     const observer = new MutationObserver(check);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-opera'] });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-navego'] });
     return () => observer.disconnect();
   }, []);
 
@@ -173,7 +173,7 @@ export default function Dashboard() {
       if (!value) return;
       document.cookie = `oa_device_id=${value}; Max-Age=31536000; Path=/; Secure; SameSite=Lax`;
     } catch {
-      console.warn('[opera] the device cookie could not be written; pairing will use a random identity this time');
+      console.warn('[navego] the device cookie could not be written; pairing will use a random identity this time');
     }
   }, []);
 
@@ -323,7 +323,7 @@ export default function Dashboard() {
         ) : (
           <div className="app">
             <nav className="rail" aria-label="Navigasi konsol">
-              <OperaMark size={26} title="Opera" />
+              <NavegoMark size={26} title="Navego" />
               {renderNavItem('ringkasan', 'Ringkasan')}
               {renderNavItem('device', `Device (${total})`)}
               {renderNavItem('riwayat', 'Riwayat')}
@@ -388,7 +388,7 @@ export default function Dashboard() {
                   {devices && devices.length === 0 ? (
                     <div className="empty">
                       <p><strong>Belum ada device.</strong></p>
-                      <p>Pasang Opera di browser ini, lalu klik “Pasangkan browser ini”.</p>
+                      <p>Pasang Navego di browser ini, lalu klik “Pasangkan browser ini”.</p>
                       <button className="btn btn-solid btn-sm" type="button" onClick={() => go('pairing')} style={{ marginTop: 'var(--s-2)' }}>Pasangkan browser ini</button>
                     </div>
                   ) : null}

@@ -3,7 +3,7 @@
 
 # Security
 
-Opera can interact with a local browser, and a local browser is the most
+Navego can interact with a local browser, and a local browser is the most
 trusted thing on a person's machine. The whole model is that the extension
 exposes a small allowlist of generic primitives, and everything site-specific
 lives server-side where it can be reviewed and updated without touching the

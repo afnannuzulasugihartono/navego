@@ -8,7 +8,7 @@ import { AUTH_HOST, clearSession, ensureSession, headersFor, REST } from '../lib
 
 export function meta() {
   return seoMeta({
-    title: 'Akun Anda — Opera',
+    title: 'Akun Anda — Navego',
     description: 'Identitas akun, penyedia tertaut, device Anda, dan sesi.',
     path: '/akun'
   });
@@ -102,7 +102,7 @@ export default function Akun() {
     user_metadata?: { full_name?: string; name?: string; user_name?: string };
   } | null;
 
-  const name = user ? (user.user_metadata?.full_name || user.user_metadata?.name || user.user_metadata?.user_name || user.email || 'Akun Opera') : 'Memeriksa sesi…';
+  const name = user ? (user.user_metadata?.full_name || user.user_metadata?.name || user.user_metadata?.user_name || user.email || 'Akun Navego') : 'Memeriksa sesi…';
   const email = user?.email || '—';
   const provider = user ? providerOf(user) : 'email';
 
@@ -148,7 +148,7 @@ export default function Akun() {
                 <span style={{ minWidth: 0 }}>
                   <span style={{ display: 'block', fontWeight: 800, overflowWrap: 'anywhere' }}>{name}</span>
                   <span style={{ display: 'block', fontSize: 'var(--text-sm)', color: 'var(--muted-2)', overflowWrap: 'anywhere' }}>{email}</span>
-                  <span style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>{user ? `Masuk lewat ${PROVIDER_LABEL[provider] || provider}` : 'Akun Opera'}</span>
+                  <span style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>{user ? `Masuk lewat ${PROVIDER_LABEL[provider] || provider}` : 'Akun Navego'}</span>
                 </span>
               </div>
               <nav className="card" aria-label="Bagian akun" style={{ display: 'grid', gap: 'var(--s-2)', fontSize: 'var(--text-sm)' }}>

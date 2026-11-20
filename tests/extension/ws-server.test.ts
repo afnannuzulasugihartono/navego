@@ -190,18 +190,18 @@ test('frame sizes are visible on request and silent otherwise', () => {
   const errors: string[] = [];
   const real = console.error;
   console.error = (line) => errors.push(String(line));
-  const previous = process.env.OPERA_BRIDGE_DEBUG_FRAMES;
+  const previous = process.env.NAVEGO_BRIDGE_DEBUG_FRAMES;
   try {
-    process.env.OPERA_BRIDGE_DEBUG_FRAMES = '1';
+    process.env.NAVEGO_BRIDGE_DEBUG_FRAMES = '1';
     createFrameReader(() => {})(maskedFrame(0x1, 'hi'));
     assert.ok(errors.some((line) => line.includes('length=2')), 'sizes go to stderr when asked');
     errors.length = 0;
-    delete process.env.OPERA_BRIDGE_DEBUG_FRAMES;
+    delete process.env.NAVEGO_BRIDGE_DEBUG_FRAMES;
     createFrameReader(() => {})(maskedFrame(0x1, 'hi'));
     assert.deepEqual(errors, [], 'and stay quiet otherwise');
   } finally {
     console.error = real;
-    if (previous === undefined) delete process.env.OPERA_BRIDGE_DEBUG_FRAMES;
-    else process.env.OPERA_BRIDGE_DEBUG_FRAMES = previous;
+    if (previous === undefined) delete process.env.NAVEGO_BRIDGE_DEBUG_FRAMES;
+    else process.env.NAVEGO_BRIDGE_DEBUG_FRAMES = previous;
   }
 });

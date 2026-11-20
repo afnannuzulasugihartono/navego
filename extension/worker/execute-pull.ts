@@ -32,7 +32,7 @@ import { scheduleSelfUpdate } from './self-update.js';
 import { dispatch } from '../background.js';
 import { isRecord } from '../lib/guards.js';
 
-const WAKE_ALARM = 'opera-wake';
+const WAKE_ALARM = 'navego-wake';
 
 type WorkerConfig = Awaited<ReturnType<typeof getConfig>>;
 
@@ -309,21 +309,21 @@ chrome.runtime.onMessageExternal?.addListener((message, sender, sendResponse) =>
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message && message.scope === 'opera-listen-chunk') {
+  if (message && message.scope === 'navego-listen-chunk') {
     const tabId = sender?.tab?.id;
     Promise.resolve(postListenChunk(tabId, message.seq, message.audio, message.mime))
       .then(() => sendResponse({ ok: true }))
       .catch((error) => sendResponse({ ok: false, error: String(error?.message || error).slice(0, 200) }));
     return true;
   }
-  if (message && message.scope === 'opera-watch' && message.method === 'watch.facts') {    const tabId = sender?.tab?.id;
+  if (message && message.scope === 'navego-watch' && message.method === 'watch.facts') {    const tabId = sender?.tab?.id;
     if (tabId == null) { sendResponse({ ok: false, error: 'No sender tab.' }); return true; }
     Promise.resolve(handleWatchFacts(tabId, message.params || {}))
       .then((r) => sendResponse({ ok: true, ...r }))
       .catch((error) => sendResponse({ ok: false, error: String(error?.message || error).slice(0, 500) }));
     return true;
   }
-  if (message && message.scope === 'opera-options' && message.action === 'testModel') {
+  if (message && message.scope === 'navego-options' && message.action === 'testModel') {
     (async () => {
       const cfg = await readModelConfig(chrome.storage.local);
       if (!cfg.configured) { const missingList = 'missing' in cfg && Array.isArray(cfg.missing) ? cfg.missing : []; return { ok: false, code: 'MODEL_NOT_CONFIGURED', message: `Belum dikonfigurasi: ${missingList.join(', ')}.` }; }
@@ -337,7 +337,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       .catch((error) => sendResponse({ ok: false, code: 'MODEL_HTTP_ERROR', message: String(error?.message || error).slice(0, 200) }));
     return true;
   }
-  if (!message || message.scope !== 'opera-popup') return false;
+  if (!message || message.scope !== 'navego-popup') return false;
   Promise.resolve().then(async () => {
     if (message.action === 'status') {
       const cfg = await getConfig();

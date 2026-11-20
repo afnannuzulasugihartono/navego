@@ -282,7 +282,7 @@
       "decision": "The wordmark is the same hand: single-stroke round-capped letters, one motion per glyph, no tittle over the g.",
       "source": {
         "kind": "user",
-        "ref": "user 2026-11-18: 'kata opera buat jadi tulisan tangan'; 'di atas huruf g tidak perlu ada titik'; 'tulisan tangan opera buat konsisten untuk stylenya'"
+        "ref": "user 2026-11-18: 'kata navego buat jadi tulisan tangan'; 'di atas huruf g tidak perlu ada titik'; 'tulisan tangan navego buat konsisten untuk stylenya'"
       }
     },
     {
@@ -297,7 +297,7 @@
     {
       "id": "D32",
       "scope": "web/identity",
-      "decision": "One mark everywhere: components, favicon (icon.svg), standalone mark (opera-mark.svg), 88x31 badge, og-cover.",
+      "decision": "One mark everywhere: components, favicon (icon.svg), standalone mark (navego-mark.svg), 88x31 badge, og-cover.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-18: 'satu mark di semua tempat'"
@@ -309,16 +309,16 @@
       "decision": "The mark palette is fixed: disc #233259, stroke #f4f1e9, accent #d8923f (badge uses the reversed navy-on-cream form).",
       "source": {
         "kind": "repo",
-        "ref": "docs/design-elements.md (navy disc, chrome, amber accent); site/app/components/OperaMark.tsx (current art)"
+        "ref": "docs/design-elements.md (navy disc, chrome, amber accent); site/app/components/NavegoMark.tsx (current art)"
       }
     },
     {
       "id": "D34",
       "scope": "web/identity",
-      "decision": "No Huginn & Muninn anywhere; the footer line is 'Opera — Browser Anda, atas perintah Anda.' and the auth panel carries the logo lockup, not a myth label.",
+      "decision": "No Huginn & Muninn anywhere; the footer line is 'Navego — Browser Anda, atas perintah Anda.' and the auth panel carries the logo lockup, not a myth label.",
       "source": {
         "kind": "user",
-        "ref": "user 2026-11-18: 'ganti huginn & muninn dengan opera dan logonya'"
+        "ref": "user 2026-11-18: 'ganti huginn & muninn dengan navego dan logonya'"
       }
     },
     {
@@ -425,7 +425,7 @@
     {
       "id": "D46",
       "scope": "web/copy",
-      "decision": "Facts pinned by the site gate survive any rewrite verbatim: Opera, 45, primitive browser, plan.usd-1, PayPal, Enterprise, SHA-256, 1.6.22, docs/releases, browser_status, debugger, Tanpa eval, Kata sandi, SECURITY.md, Diukur bukan diklaim, Google Docs, p50, Apa itu Opera, Berapa harganya, Halaman ini tidak ada, browser Anda, Penyedia, Izin aplikasi, Memeriksa sesi, WebDriver, canvas, Artikel, AI yang mengenal browser, Dukungan, Kebijakan Privasi, Syarat Layanan.",
+      "decision": "Facts pinned by the site gate survive any rewrite verbatim: Navego, 45, primitive browser, plan.usd-1, PayPal, Enterprise, SHA-256, 1.6.22, docs/releases, browser_status, debugger, Tanpa eval, Kata sandi, SECURITY.md, Diukur bukan diklaim, Google Docs, p50, Apa itu Navego, Berapa harganya, Halaman ini tidak ada, browser Anda, Penyedia, Izin aplikasi, Memeriksa sesi, WebDriver, canvas, Artikel, AI yang mengenal browser, Dukungan, Kebijakan Privasi, Syarat Layanan.",
       "source": {
         "kind": "repo",
         "ref": "tests/site/site.test.ts (CLAIMS); site/app/routes/*.tsx"
@@ -638,7 +638,7 @@
     {
       "id": "D69",
       "scope": "agent/tools",
-      "decision": "Every tool call that throws at the dispatch point is recorded append-only in $OPERA_AGENT_HOME/tool-failures.jsonl with the tool, the error code, the message and the time; the record never throws into the caller and is capped at 2 MB by keeping the newest 1000 lines.",
+      "decision": "Every tool call that throws at the dispatch point is recorded append-only in $NAVEGO_AGENT_HOME/tool-failures.jsonl with the tool, the error code, the message and the time; the record never throws into the caller and is capped at 2 MB by keeping the newest 1000 lines.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-19: \"buat ini ya log untuk tools yang error atau buggy sama feedback juga\" - a failure that the answer cannot carry into the next session survives on the machine instead of vanishing"
@@ -647,7 +647,7 @@
     {
       "id": "D70",
       "scope": "agent/tools",
-      "decision": "The log is read with opera failures (counts by tool and code, the recent failures, every note) and never leaves the machine; the owner machine is the sink, not a server; deleting the file is always safe - it is an observation channel, not a ledger.",
+      "decision": "The log is read with navego failures (counts by tool and code, the recent failures, every note) and never leaves the machine; the owner machine is the sink, not a server; deleting the file is always safe - it is an observation channel, not a ledger.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-19: \"log untuk tools yang error atau buggy\" - the observation stays local and deletable; nothing is uploaded anywhere"
@@ -656,7 +656,7 @@
     {
       "id": "D71",
       "scope": "agent/tools",
-      "decision": "The calling agent leaves the suggestion behind with opera feedback <tool> <note> - one append-only line tied to the tool, surfaced beside the failure counts; that is how an agent that uses a tool and sees it break leaves the fix idea where the maintainer will find it without a server round trip.",
+      "decision": "The calling agent leaves the suggestion behind with navego feedback <tool> <note> - one append-only line tied to the tool, surfaced beside the failure counts; that is how an agent that uses a tool and sees it break leaves the fix idea where the maintainer will find it without a server round trip.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-19: \"supaya ai bisa kasih saran perbaikan saat menggunakan tools\" - the feedback path ships as a CLI command an agent shell can append; the catalog is not touched"
@@ -665,7 +665,7 @@
     {
       "id": "D72",
       "scope": "agent/tools",
-      "decision": "No new MCP catalog tool is introduced for feedback reporting; the feedback channel is the CLI (opera feedback), not a 46th tool - the frozen tool surface stays as it is, and a catalog tool awaits the same recorded-evidence gate as any addition, the rule applied to browser_console in D63.",
+      "decision": "No new MCP catalog tool is introduced for feedback reporting; the feedback channel is the CLI (navego feedback), not a 46th tool - the frozen tool surface stays as it is, and a catalog tool awaits the same recorded-evidence gate as any addition, the rule applied to browser_console in D63.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-19: \"buat ini\" - the mandate authorises the capability, and D63 applies to its shape: no catalog slot without a recorded need that only the catalog can serve"
@@ -706,7 +706,7 @@
       "decision": "html and body carry overflow-x: clip; the page never forces itself wider than the viewport, so the sticky header regains its real width and the brand and the two action pills cannot be pushed past the screen edge.",
       "source": {
         "kind": "user",
-        "ref": "user 2026-11-19: \"fix log opera element masuk dan element pasang gratis yang terpotong\" - the header honours body width; a body pushed wider by an unbreakable element clips the actions on the right and crowds the brand on the left"
+        "ref": "user 2026-11-19: \"fix log navego element masuk dan element pasang gratis yang terpotong\" - the header honours body width; a body pushed wider by an unbreakable element clips the actions on the right and crowds the brand on the left"
       }
     },
     {
@@ -729,14 +729,14 @@
       "file": "local/surface-profile.ts"
     },
     {
-      "id": "hosted-opera-ocr-01",
+      "id": "hosted-navego-ocr-01",
       "scope": "hosted/functions",
-      "decision": "The vision step of browser_read_page calls the opera-ocr edge, which authenticates with the paired device token (x-opera-token, sha256 token_hash) or a user Bearer and answers only the text of the picture; it is the last step of the read ladder, after the selection mirror, ax and dom, the screenshot is capped and never stored, the OCR model is named by GROQ_OCR_MODEL with a vision default, and a machine without the pairing file is told so by name instead of being handed an empty picture.",
+      "decision": "The vision step of browser_read_page calls the navego-ocr edge, which authenticates with the paired device token (x-navego-token, sha256 token_hash) or a user Bearer and answers only the text of the picture; it is the last step of the read ladder, after the selection mirror, ax and dom, the screenshot is capped and never stored, the OCR model is named by GROQ_OCR_MODEL with a vision default, and a machine without the pairing file is told so by name instead of being handed an empty picture.",
       "source": {
         "kind": "user",
-        "ref": "user 2026-11-19: \"implementasi selection copy dan ocr\" - OCR could not run locally (no tesseract binary, no dependency allowed in the stock-Node driver) and the product already proxies a model through an edge with a server-held key (opera-listen / GROQ_API_KEY)"
+        "ref": "user 2026-11-19: \"implementasi selection copy dan ocr\" - OCR could not run locally (no tesseract binary, no dependency allowed in the stock-Node driver) and the product already proxies a model through an edge with a server-held key (navego-listen / GROQ_API_KEY)"
       },
-      "file": "hosted/functions/opera-ocr/index.ts"
+      "file": "hosted/functions/navego-ocr/index.ts"
     },
     {
       "id": "docs-security-01",
@@ -764,9 +764,9 @@
       "decision": "The core opera tables enable row level security in the migration that creates them, and anon and authenticated lose every grant; access is decided by policy on the server, never by a client-held table grant.",
       "source": {
         "kind": "repo",
-        "ref": "hosted/migrations/20260907204146_opera_1_0_0_core.sql:83-90 (alter table ... enable row level security; revoke all on ... from anon,authenticated)"
+        "ref": "hosted/migrations/20260907204146_navego_1_0_0_core.sql:83-90 (alter table ... enable row level security; revoke all on ... from anon,authenticated)"
       },
-      "file": "hosted/migrations/20260907204146_opera_1_0_0_core.sql"
+      "file": "hosted/migrations/20260907204146_navego_1_0_0_core.sql"
     },
     {
       "id": "docs-concurrent-agents-01",
@@ -794,14 +794,14 @@
       "decision": "The local driver reaches the everyday browser over the loopback bridge, port 9451 by default; a second driver adopts the running bridge as a client of the winner instead of failing or falling back to a debugging port nobody is signed into.",
       "source": {
         "kind": "repo",
-        "ref": "local/bridge.ts:54-57 (a second driver becomes a client of the winner); local/README.md:55-56 (OPERA_BRIDGE_PORT defaults to 9451)"
+        "ref": "local/bridge.ts:54-57 (a second driver becomes a client of the winner); local/README.md:55-56 (NAVEGO_BRIDGE_PORT defaults to 9451)"
       },
       "file": "local/bridge.ts"
     },
     {
       "id": "docs-security-03",
       "scope": "mcp/auth",
-      "decision": "Device tokens travel in x-opera-token, Authorization: Bearer, or body.apiKey only; no gateway route reads a token from the query string.",
+      "decision": "Device tokens travel in x-navego-token, Authorization: Bearer, or body.apiKey only; no gateway route reads a token from the query string.",
       "source": {
         "kind": "repo",
         "ref": "docs/security.md:33-36 (the three carriers, and no route reads the query string)"
@@ -904,7 +904,7 @@
       "decision": "Main requires all five CI jobs as required checks with strict status verification, enforce_admins is on, force pushes and deletions are refused, dismiss-stale-approvals is on, and every pull request needs an approving review with code-owner sign-off on the gatekeeper surface (tests/, scripts/, gates.lock and the rest of .github/).",
       "source": {
         "kind": "user",
-        "ref": "user 2026-11-20: 'tugasnya buat opera jadi repo enterprise' - the audit (its remaining gap) asked for the review on the gatekeeper paths"
+        "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - the audit (its remaining gap) asked for the review on the gatekeeper paths"
       },
       "file": "docs/product/backend-language-evaluation.md"
     },
@@ -914,29 +914,9 @@
       "decision": "PostgreSQL integration tests run in CI against a disposable Postgres: every migration applies under ON_ERROR_STOP, and the test asserts opera_commands carries its full lifecycle check and RLS is on the billing tables - the real proof for the migration contract.",
       "source": {
         "kind": "user",
-        "ref": "user 2026-11-20: 'tugasnya buat opera jadi repo enterprise' - backend-language-evaluation.md item 5 left this open"
+        "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - backend-language-evaluation.md item 5 left this open"
       },
       "file": "tests/hosted/integration-postgres.test.ts"
-    },
-    {
-      "id": "local-legacy-names-01",
-      "scope": "product/identity",
-      "decision": "The product is Opera. The tree, the extension, the site, the edge functions, the MCP server and the docs answer Opera; the npm package is opera-agent because the registry name opera belongs to a third party, the command is opera with navego kept as an alias for one major; the 1.x names - NAVEGO_* environment variables, the x-navego-token header, the ~/.navego home - are still read, and the applied migration history keeps its bytes under a renamed file label.",
-      "source": {
-        "kind": "user",
-        "ref": "user 2026-11-20: 'ganti semua dari navego ke opera' and 'paket opera-agent, bin opera' - the registry name opera is taken (opera@0.0.10, another owner) and the Pages project and the GitHub repository still carry the old name until the owner renames them out of band"
-      },
-      "file": "local/legacy-names.ts"
-    },
-    {
-      "id": "tests-tooling-product-name-01",
-      "scope": "tooling/gates",
-      "decision": "The tree carries one product name. The gate refuses the old name in every tracked file outside an explicit list, and every entry in that list says why it keeps the old name: the applied history, the dated records, the live infrastructure addresses, and the three places the 1.x names are still read.",
-      "source": {
-        "kind": "user",
-        "ref": "user 2026-11-20: 'ganti semua dari navego ke opera' - a rename that is only half applied leaves a reader with two names and a caller with two answers"
-      },
-      "file": "tests/tooling/product-name.test.ts"
     },
     {
       "id": "tests-tooling-swallowed-errors-01",

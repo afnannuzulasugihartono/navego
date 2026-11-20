@@ -5,7 +5,7 @@
 
 (() => {
   'use strict';
-  if (globalThis.OperaPageMap) return;
+  if (globalThis.NavegoPageMap) return;
 
   interface Descriptor {
     readonly tag: string;
@@ -155,7 +155,7 @@
 
   const EMPTY_VALUES: readonly unknown[] = [undefined, null, ''];
 
-  function projectElement(raw: Record<string, unknown> = {}): OperaPageMapElement {
+  function projectElement(raw: Record<string, unknown> = {}): NavegoPageMapElement {
     const projected: Record<string, unknown> = { rect: rectOf(raw) };
     for (const field of COMMON_FIELDS) projected[field] = raw[field];
     const rawClass = raw.class;
@@ -164,10 +164,10 @@
     const cleaned = Object.fromEntries(
       Object.entries(projected).filter(([, value]) => !EMPTY_VALUES.includes(value))
     );
-    return cleaned as OperaPageMapElement;
+    return cleaned as NavegoPageMapElement;
   }
 
-  function paginate(elements: OperaPageMapElement[], offset: unknown, limit: unknown) {
+  function paginate(elements: NavegoPageMapElement[], offset: unknown, limit: unknown) {
     const list = Array.isArray(elements) ? elements : [];
     const total = list.length;
     const start = Math.max(0, Math.min(Number.isFinite(Number(offset)) ? Math.trunc(Number(offset)) : 0, total));
@@ -179,7 +179,7 @@
     return { elements: page, offset: start, limit: size, total, hasMore, nextOffset: hasMore ? next : null };
   }
 
-  function unionBox(elements: OperaPageMapElement[]): { x: number; y: number; width: number; height: number } | null {
+  function unionBox(elements: NavegoPageMapElement[]): { x: number; y: number; width: number; height: number } | null {
     let minX = Infinity;
     let minY = Infinity;
     let maxX = -Infinity;
@@ -197,12 +197,12 @@
     return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
   }
 
-  function summarizeClass(className: string, elements: OperaPageMapElement[]): { class: string; count: number; bbox: { x: number; y: number; width: number; height: number } | null } {
+  function summarizeClass(className: string, elements: NavegoPageMapElement[]): { class: string; count: number; bbox: { x: number; y: number; width: number; height: number } | null } {
     const list = Array.isArray(elements) ? elements : [];
     return { class: className, count: list.length, bbox: unionBox(list) };
   }
 
-  globalThis.OperaPageMap = Object.freeze({
+  globalThis.NavegoPageMap = Object.freeze({
     PAGE_MAP_CLASSES,
     CLASS_FIELDS,
     PAGE_MAP_MAX_ELEMENTS,

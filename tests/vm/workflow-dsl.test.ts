@@ -11,13 +11,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { extensionSource } from '../helpers/extension-source.ts';
 
-const core = fs.readFileSync(new URL('../../hosted/migrations/20260907204146_opera_1_0_0_core.sql', import.meta.url), 'utf8');
-const workflow = fs.readFileSync(new URL('../../hosted/migrations/20260907204221_opera_1_0_0_workflows.sql', import.meta.url), 'utf8');
-const seed = fs.readFileSync(new URL('../../hosted/migrations/20260907204248_opera_1_0_0_seed_workflows.sql', import.meta.url), 'utf8');
-const efficiency = fs.readFileSync(new URL('../../hosted/migrations/20260908233759_opera_efficiency_workflows.sql', import.meta.url), 'utf8');
+const core = fs.readFileSync(new URL('../../hosted/migrations/20260907204146_navego_1_0_0_core.sql', import.meta.url), 'utf8');
+const workflow = fs.readFileSync(new URL('../../hosted/migrations/20260907204221_navego_1_0_0_workflows.sql', import.meta.url), 'utf8');
+const seed = fs.readFileSync(new URL('../../hosted/migrations/20260907204248_navego_1_0_0_seed_workflows.sql', import.meta.url), 'utf8');
+const efficiency = fs.readFileSync(new URL('../../hosted/migrations/20260908233759_navego_efficiency_workflows.sql', import.meta.url), 'utf8');
 const sql = core + '\n' + workflow + '\n' + seed + '\n' + efficiency;
 
-test('migration defines clean Opera objects without modifying legacy tables', () => {
+test('migration defines clean Navego objects without modifying legacy tables', () => {
   for (const name of ['opera_devices','opera_commands','opera_workflows','opera_workflow_versions','opera_audit']) {
     assert.match(sql, new RegExp(`create table if not exists public\\.${name}`));
   }

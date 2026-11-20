@@ -17,7 +17,6 @@
 // the port comes from the environment.
 // npx must work without a config file, so the two things a user may need to override, which port and which browser, are environment variables rather than arguments a client would have to know about.
 
-import '../legacy-env-bootstrap.js';
 import { dirname, join } from 'node:path';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -34,7 +33,7 @@ import type { Driver, JsonRecord } from '../types.js';
 const here = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(join(here, '..', 'package.json'), 'utf8')) as { version?: string; [key: string]: unknown };
 
-const PORT = Number(process.env.OPERA_LOCAL_PORT || 9333);
+const PORT = Number(process.env.NAVEGO_LOCAL_PORT || 9333);
 
 // THE LINK IS ASKED PER CALL.
 // One `BRIDGED` constant decided the pipe at startup and then decided it for good: an extension that was asleep at that moment lost the run to a debugging port, which opens a profile nobody is logged into.

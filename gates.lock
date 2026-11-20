@@ -156,24 +156,24 @@
 #    tests/helpers/canonical-source-hash.ts strips the comment lines and collapses
 #    the whitespace before hashing a tool schema, so the pin holds the tool's
 #    contract and not its indentation.
-scripts/verify/check.ts c76268c778d5d325273b4e07c8f9d179a45d31d5549b0bea5d1eba5baec7cdea
+scripts/verify/check.ts 9f7626a8fa09233da899cdf50804035e06dd5dfcaca988c2d07ec51d1367cdb4
 scripts/verify/scope.ts be9814cb16f92be323822d99c1182a88c94a68696e30ebbfd3f3fedc3bec8d73
 scripts/verify/scope-check.ts 446f0471915b9ecb99caa3809eee2c44ae14ae8b23a0f907abeecb86e4397815
 
 # --- the pins themselves: editing these is how a drift goes unnoticed ---
-tests/helpers/boundary-locks.ts 1b11bb5cc1e38260d14557d52e3b900ec3ad168623dade55e277269dd9bea531
+tests/helpers/boundary-locks.ts dd7eb65e992cc184ed1b07a58be78302c043222ab5acf542374ca7f99a6dfdf7
 tests/helpers/canonical-source-hash.ts f156e8ebaa77f91cfb2199b40990b58a73ae70b80eeff625028426dcde01d614
 tests/helpers/comment-format.ts 1edb82d5a06669a056a9632a5d294aa22875f6b703b836dded31bbb855f7dd67
-tests/docs/comment-format.test.ts 652fb8bd2badb43b2a0f31526399982e596a2c1101ad6375e230eaa06f48d660
+tests/docs/comment-format.test.ts 1cd8037c4b51001900dfc54a7a63a2dadabda27fd5bd5fff9d6e7e773cd205f6
 tests/docs/comment-claims.test.ts 6f5eb92a639e93a2ff4d07483fd2a6b2ef99661b16e5491350b1d752700d74f9
 
 # --- structural rules a human reviewer would otherwise have to remember ---
-tests/tooling/hygiene.test.ts 5b8d168a6e12149799fb00da75094569db39ce31f3a079021ce88109ed43d03a
+tests/tooling/hygiene.test.ts 2ae4fbe7663729b5f1defc3864150e15c1598db799be140dad40c0c883dedcdd
 tests/tooling/structure-gates.test.ts b2b1e588082f1c03a8c9b8306ef1393aaf88f8784c140f0d2c972d62154c0895
 tests/tooling/boundary-locks.test.ts bf7ec1c77b9e60603d8e602d9a3d37de942b02af00d7318bd39fbfadb58b4711
 
 # --- controls that decide what the product accepts at runtime ---
-extension/lib/protocol.ts 35877c82f7999ef5ba51151c34ac6a684abc4b9e61653f9c5342a68fe8c4539e
+extension/lib/protocol.ts ff20bb95a9bd3220ad1c955bb912f40d2fbee55fe3048d01114ee9dcd8f3a278
 # The runtime-safety scan moved from shared/secret-pattern.js to shared/secret-pattern.ts when the core became strict TypeScript; the artifact is tsc output and is never committed, so the criterion pins the source.
 shared/secret-pattern.ts 6f4645b11979a776af33000eb68b438d15e60659a7847e5e376c9cc481c1b546
 # The one pinned shared edge module moved from .js to .ts unchanged; same bytes, same criterion, new path.
@@ -181,7 +181,7 @@ hosted/functions/_shared/cors.ts 73571947a10d95eddf4eb3625509b5568b7ceee9e60740f
 
 # --- surfaces an owner, not an agent, should have to look at ---
 # The merge took main's Kemudi manifest for the file and this branch's .gitleaks.toml bytes; both pins match what the merged tree actually holds.
-extension/manifest.json b9754e7cce29e482eb750e10e7525dbdd661e779d200eace532285a7ee653158
-.gitleaks.toml 439445dd5cb19bc5d1094fcdf54abb1b1498aa6d3119e200d1b38408b492a6d5
+extension/manifest.json 09b3494170b08c3f27ad82b1521a523704cf42bc6abcd0a93a85a1ade2aacee6
+.gitleaks.toml 49d7c947ab6eddbe4b37de24f07c7811ea33ec87c423c627c7aefc5cde1d4f25
 .github/CODEOWNERS 3cb57783d6bc4c8feb45b0a0651b8e84144ab11cc2d1677f4b8e5894e32b4dca
-.github/workflows/ci.yml cb6dd7af393b0c17adf3a788510a3451ba7bc80a7aa16cf11d81b973a45cddd7
+.github/workflows/ci.yml af42f7a5881891d1d6c543387f49806b4726833c1b56c34daf3fbb9a27c79f28

@@ -60,9 +60,9 @@ jobs:
             echo "::error::CF_TOKEN and CF_ACCOUNT_ID are unset; not publishing from a guess"
             exit 1
           fi
-          npx --yes --ignore-scripts wrangler@4 pages project list | grep -q opera || npx --yes --ignore-scripts wrangler@4 pages project create opera --production-branch=main
+          npx --yes --ignore-scripts wrangler@4 pages project list | grep -q navego || npx --yes --ignore-scripts wrangler@4 pages project create navego --production-branch=main
           npx --yes --ignore-scripts wrangler@4 pages deploy site/build/client \
-            --project-name=opera \
+            --project-name=navego \
             --branch=main \
             --commit-hash="$GITHUB_SHA" \
             --commit-message="${{ inputs.reason || format('deploy {0}', github.sha) }}"

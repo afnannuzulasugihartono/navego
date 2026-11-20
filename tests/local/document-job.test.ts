@@ -20,7 +20,7 @@ function firstOf<T>(items: readonly T[] | undefined, what: string): T {
 
 const DOC = {
   title: 'Menu inventory',
-  author: 'Opera',
+  author: 'Navego',
   sections: [
     {
       heading: 'Insert menu',

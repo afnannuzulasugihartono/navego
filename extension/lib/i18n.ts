@@ -32,7 +32,7 @@ const ID = {
   'doors.updateNow': 'Perbarui sekarang',
   'doors.forgetFolder': 'Lupakan folder',
   'update.closeable': 'Halaman ini boleh ditutup.',
-  'update.title': 'Update otomatis — Opera',
+  'update.title': 'Update otomatis — Navego',
   'update.state.granted': 'Folder: {name}',
   'update.state.prompt': 'Izin folder perlu diulang',
   'update.state.none': 'Belum diizinkan',
@@ -50,7 +50,7 @@ const ID = {
   'footer.help': 'Bantuan',
   'footer.changes': 'Catatan perubahan',
   'footer.source': 'Kode sumber di GitHub',
-  'popup.title': 'Opera'
+  'popup.title': 'Navego'
 };
 
 const EN = {
@@ -77,7 +77,7 @@ const EN = {
   'doors.updateNow': 'Update now',
   'doors.forgetFolder': 'Forget the folder',
   'update.closeable': 'You can close this page.',
-  'update.title': 'Automatic updates — Opera',
+  'update.title': 'Automatic updates — Navego',
   'update.state.granted': 'Folder: {name}',
   'update.state.prompt': 'The folder permission needs to be granted again',
   'update.state.none': 'Not allowed yet',
@@ -95,7 +95,7 @@ const EN = {
   'footer.help': 'Help',
   'footer.changes': 'Changelog',
   'footer.source': 'Source on GitHub',
-  'popup.title': 'Opera'
+  'popup.title': 'Navego'
 };
 
 const DICTIONARIES = Object.freeze({ id: Object.freeze(ID), en: Object.freeze(EN) });

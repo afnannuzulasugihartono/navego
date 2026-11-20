@@ -3,7 +3,7 @@
 // @state: env-driven environment (sandbox default, live via PAYPAL_ENV=live), three operations exposed for the billing function, and one verifier PayPal itself signs.
 // @dependencies: edge runtime fetch.
 
-// THIS IS A MODULE AND NOT A STRING INSIDE opera-billing.
+// THIS IS A MODULE AND NOT A STRING INSIDE navego-billing.
 // The HTTP surface here is small but the signature care is not: a wrong header, a stale transmission, a mismatched webhook id, or a timing-broken comparison are all ways to make a forged USD claim look like a real one.
 // One module houses one authority about how PayPal's endpoints answer so test harnesses can drive them and the rest does not re-implement token acquisition or the header names.
 
@@ -80,7 +80,7 @@ export async function createPaypalOrder(env: PaypalEnvironment, input: PaypalOrd
         description: input.description,
         custom_id: input.customId
       }],
-      application_context: { brand_name: 'Opera' }
+      application_context: { brand_name: 'Navego' }
     })
   });
   const body = await response.json() as Record<string, unknown>;

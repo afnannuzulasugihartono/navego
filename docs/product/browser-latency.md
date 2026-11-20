@@ -103,8 +103,8 @@ The cloud path pays isolate boot and database crossings before the browser sees
 anything. This report does not re-measure it; existing code comments record
 ~1.8 s for an edge isolate boot, 269/417 ms for two data-API crossings, and
 238 ms browser work against 496 ms transport for a six-step burst
-(`hosted/functions/opera-mcp/index.ts:660`,
-`hosted/functions/opera-mcp/index.ts:243`,
+(`hosted/functions/navego-mcp/index.ts:660`,
+`hosted/functions/navego-mcp/index.ts:243`,
 `extension/worker/execute-pull.js:148`).
 
 ## Measurements
@@ -288,7 +288,7 @@ device on the same `bridge-ws` measured:
 The loopback frames themselves are not the problem. The production cost is in
 the extension/worker path and in the per-command liveness proof
 (`local/bridge.ts:124-168`): `attempt()` sends a `ping` before every command
-unless `OPERA_BRIDGE_TRUST_MS` is set. Each CDP primitive is therefore two
+unless `NAVEGO_BRIDGE_TRUST_MS` is set. Each CDP primitive is therefore two
 bridge commands, not one. That is a code-level finding; its real p50/p95 over
 the extension is unverified.
 

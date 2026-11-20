@@ -1,16 +1,16 @@
-# Opera
+# Navego
 
 Drive your own signed-in browser from an MCP client — no cloud hop, no exported session, one npm install.
 
 Site: https://navego.pages.dev/
 Source: https://github.com/afnannuzulasugihartono/navego
-Package: `opera` on npm. License: MIT.
+Package: `navego` on npm. License: MIT.
 
 ## One command to try
 
 ```bash
-npm i -g opera-agent
-opera doctor --json   # one object: bridge, device, plan, quota — the fix when degraded
+npm i -g navego
+navego doctor --json   # one object: bridge, device, plan, quota — the fix when degraded
 ```
 
 From any MCP client:
@@ -18,7 +18,7 @@ From any MCP client:
 ```json
 {
   "mcpServers": {
-    "opera": { "command": "npx", "args": ["-y", "opera"] }
+    "navego": { "command": "npx", "args": ["-y", "navego"] }
   }
 }
 ```
@@ -28,7 +28,7 @@ From any MCP client:
 - 45 `browser_*` / `artifact_*` / `delivery_*` / `wallet_*` tools over a loopback bridge.
 - Reads pages, clicks, types, navigates, downloads artifacts; your own everyday browser, not a sandboxed one.
 - 36 allowlisted browser primitives, no free `eval`, no per-site gadgets.
-- Structured output: `opera doctor --json` answers with `{ ready, port, bridge, problems[], crxUrl }`.
+- Structured output: `navego doctor --json` answers with `{ ready, port, bridge, problems[], crxUrl }`.
 - Metered by plan; a request past the allowance answers `PLAN_LIMIT_REACHED` naming the plan.
 
 ## What it does not do

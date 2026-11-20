@@ -1,7 +1,7 @@
 // @last-edited: 2026-11-09 UTC+7.
 // @title: local-cloud.test — the same tools, the hosted server, and a bearer token.
 // @state: a tool call round-tripped against a fake hosted endpoint, and the door it closes when there is no token.
-// @dependencies: node:test, strict, node:http, node:os, node:fs, node:child_process, ../local/bin/opera.js.
+// @dependencies: node:test, strict, node:http, node:os, node:fs, node:child_process, ../local/bin/navego.js.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -26,7 +26,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
-const bin = path.join(root, 'local', 'bin', 'opera.js');
+const bin = path.join(root, 'local', 'bin', 'navego.js');
 
 // THE FAKE SPEAKS MCP OVER HTTP.
 // The proxy has no opinions about methods, so a fake that answers initialize, tools/list and tools/call proves the pipe forwards a call intact, which is the only claim worth making about a proxy.
@@ -77,7 +77,7 @@ async function fakeHosted() {
       requests.push({ authorization: req.headers.authorization, provider: req.headers['x-opera-provider'], device: req.headers['x-opera-device'], message });
       if (req.headers.authorization !== 'Bearer test-token') {
         res.writeHead(401, { 'content-type': 'application/json' });
-        res.end(JSON.stringify({ error: 'unauthorized', error_description: 'A valid Opera access token is required.' }));
+        res.end(JSON.stringify({ error: 'unauthorized', error_description: 'A valid Navego access token is required.' }));
         return;
       }
       const reply = (result: any) => {
@@ -106,7 +106,7 @@ test('a tool call round-trips through the cloud proxy to the hosted server', asy
   const host = await fakeHosted();
   const configHome = fs.mkdtempSync(path.join(os.tmpdir(), 'opera-cloud-config-'));
   const child = spawn(process.execPath, [bin, 'cloud'], {
-    env: { ...process.env, OPERA_MCP_TOKEN: 'test-token', OPERA_MCP_BASE_URL: host.url, OPERA_MCP_CONFIG_HOME: configHome, OPERA_MCP_DEVICE_NAME: 'opera' },
+    env: { ...process.env, NAVEGO_MCP_TOKEN: 'test-token', NAVEGO_MCP_BASE_URL: host.url, NAVEGO_MCP_CONFIG_HOME: configHome, NAVEGO_MCP_DEVICE_NAME: 'opera' },
     stdio: ['pipe', 'pipe', 'pipe']
   });
   const io = collect(child);
@@ -129,7 +129,7 @@ test('a tool call round-trips through the cloud proxy to the hosted server', asy
     assert.equal(host.requests.length, 3);
     for (const seen of host.requests) {
       assert.equal(seen.authorization, 'Bearer test-token', 'the proxy carried the account token');
-      assert.equal(seen.provider, 'opera-mcp', 'and said which client it was (the wire pin keeps the legacy identifier)');
+      assert.equal(seen.provider, 'navego-mcp', 'and said which client it was (the wire pin keeps the legacy identifier)');
       assert.equal(seen.device, 'opera', 'and named the browser it drives, so every call of one session lands on the same one');
     }
   } finally {
@@ -143,7 +143,7 @@ test('a tool call round-trips through the cloud proxy to the hosted server', asy
 test('without a token, the proxy names the sign-in and opens nothing', async () => {
   const configHome = fs.mkdtempSync(path.join(os.tmpdir(), 'opera-cloud-config-'));
   const child = spawn(process.execPath, [bin, 'cloud'], {
-    env: { ...process.env, OPERA_MCP_TOKEN: '', OPERA_MCP_CONFIG_HOME: configHome },
+    env: { ...process.env, NAVEGO_MCP_TOKEN: '', NAVEGO_MCP_CONFIG_HOME: configHome },
     stdio: ['pipe', 'pipe', 'pipe']
   });
   let out = '';
@@ -153,7 +153,7 @@ test('without a token, the proxy names the sign-in and opens nothing', async () 
   const code = await new Promise((resolve) => child.on('close', resolve));
   assert.equal(code, 3, 'an install without a token exits named, not half-signed-in');
   assert.equal(out, '', 'and says nothing to the MCP client');
-  assert.match(err, /opera auth/, 'the sign-in named');
+  assert.match(err, /navego auth/, 'the sign-in named');
   assert.match(err, /oauth\/authorize/, 'and the URL is on the page');
   fs.rmSync(configHome, { recursive: true, force: true });
 });
@@ -161,15 +161,15 @@ test('without a token, the proxy names the sign-in and opens nothing', async () 
 test('the OAuth helpers size the home and point the sign-in', () => {
   const home = fs.mkdtempSync(path.join(os.tmpdir(), 'opera-oauth-'));
   try {
-    assert.equal(configDir({ OPERA_MCP_CONFIG_HOME: home }), home);
-    assert.equal(tokenPath({ OPERA_MCP_CONFIG_HOME: home }), path.join(home, 'token.json'));
-    assert.equal(readStoredToken({ OPERA_MCP_CONFIG_HOME: home }), null);
+    assert.equal(configDir({ NAVEGO_MCP_CONFIG_HOME: home }), home);
+    assert.equal(tokenPath({ NAVEGO_MCP_CONFIG_HOME: home }), path.join(home, 'token.json'));
+    assert.equal(readStoredToken({ NAVEGO_MCP_CONFIG_HOME: home }), null);
     const url = authorizeUrl('verifier', 'state');
     assert.match(url, /oauth\/authorize/);
     assert.match(url, /code_challenge_method=S256/);
     assert.match(url, /state=state/);
     assert.match(url, /redirect_uri=/);
-    assert.match(loginInstructions({}), /opera auth/);
+    assert.match(loginInstructions({}), /navego auth/);
     assert.match(loginInstructions({}), /oauth\/authorize/);
   } finally {
     fs.rmSync(home, { recursive: true, force: true });
@@ -197,17 +197,17 @@ test('the exchange and the refresh speak to the token endpoint and keep what the
 });
 
 test('the environment wins over the stored token, and the proxy honours a base override', async () => {
-  assert.equal(await accessToken({ env: { OPERA_MCP_TOKEN: 'env-token' } }), 'env-token');
-  assert.equal(hostedBase({ OPERA_MCP_BASE_URL: 'http://127.0.0.1:9/mcp' }), 'http://127.0.0.1:9/mcp');
+  assert.equal(await accessToken({ env: { NAVEGO_MCP_TOKEN: 'env-token' } }), 'env-token');
+  assert.equal(hostedBase({ NAVEGO_MCP_BASE_URL: 'http://127.0.0.1:9/mcp' }), 'http://127.0.0.1:9/mcp');
 });
 
 test('the pin comes from the environment, then from the paired device file, and never from nothing', () => {
   const home = fs.mkdtempSync(path.join(os.tmpdir(), 'opera-pin-'));
   try {
-    assert.equal(pinnedDeviceName({ OPERA_MCP_DEVICE_NAME: 'from-env' }, { home }), 'from-env');
+    assert.equal(pinnedDeviceName({ NAVEGO_MCP_DEVICE_NAME: 'from-env' }, { home }), 'from-env');
     assert.equal(pinnedDeviceName({}, { home }), '', 'an unpaired machine names no browser');
-    fs.mkdirSync(path.join(home, '.opera'), { recursive: true });
-    fs.writeFileSync(path.join(home, '.opera', 'device.json'), JSON.stringify({ deviceName: 'opera-7', token: 'a'.repeat(64) }));
+    fs.mkdirSync(path.join(home, '.navego'), { recursive: true });
+    fs.writeFileSync(path.join(home, '.navego', 'device.json'), JSON.stringify({ deviceName: 'opera-7', token: 'a'.repeat(64) }));
     assert.equal(pinnedDeviceName({}, { home }), 'opera-7', 'the paired device file names the browser this machine drives');
   } finally {
     fs.rmSync(home, { recursive: true, force: true });
@@ -233,9 +233,9 @@ test('serveCloud without a token answers 3 on an already-closed stream', async (
     write: (chunk, _encoding, callback) => { lines.push(String(chunk)); callback(); }
   });
   try {
-    const code = await serveCloud({ env: { OPERA_MCP_TOKEN: '', OPERA_MCP_CONFIG_HOME: home }, input: Readable.from([]), stderr });
+    const code = await serveCloud({ env: { NAVEGO_MCP_TOKEN: '', NAVEGO_MCP_CONFIG_HOME: home }, input: Readable.from([]), stderr });
     assert.equal(code, 3);
-    assert.ok(lines.some((line) => /opera auth/.test(line)));
+    assert.ok(lines.some((line) => /navego auth/.test(line)));
   } finally {
     fs.rmSync(home, { recursive: true, force: true });
   }

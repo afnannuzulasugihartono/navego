@@ -65,7 +65,7 @@ test('a bare transport failure falls back to COMMAND_FAILED', () => {
 
 test('the runner fails a step on the unwrapped failure unless continued', () => {
   const runner = fs.readFileSync(
-    new URL('../../hosted/functions/opera-runner/index.ts', import.meta.url),
+    new URL('../../hosted/functions/navego-runner/index.ts', import.meta.url),
     'utf8'
   );
   const branch = runner.slice(
