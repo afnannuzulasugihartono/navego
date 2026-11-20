@@ -32,6 +32,8 @@ test('the migrations produce opera_commands with its full lifecycle and RLS on t
       const relation = rls.find((row: any) => row.schema === 'public' && row.relkind === 'r' && row.relname === table);
       assert.ok(relation, `public.${table} must exist as a table; the relations with that name are ${JSON.stringify(rls)}`);
       assert.equal(relation.relrowsecurity, true, `public.${table} must carry row level security once the billing lockdown migration lands; the relations with that name are ${JSON.stringify(rls)}`);
+      const elsewhere = rls.filter((row: any) => !(row.schema === 'public' && row.relkind === 'r' && row.relname === table));
+      assert.deepEqual(elsewhere, [], `a second relation shares the name of a billing table, so the billing function could read a different one; the relations with that name are ${JSON.stringify(rls)}`);
     }
     const { rows: constraints } = await client.query("SELECT pg_get_constraintdef(oid) AS definition FROM pg_constraint WHERE conrelid = 'public.opera_commands'::regclass AND contype = 'c'");
     const definition = constraints.map((row) => row.definition).join(' ');
