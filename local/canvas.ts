@@ -119,6 +119,9 @@ export function createCanvasMethods({ primitives, readState, ocr = null }: { pri
   };
   const ocrFromShot = ocr ?? defaultOcrFromShot;
 
+  // One read, one snapshot.
+  // Measured live on a Google Doc: the first read cached the accessibility tree for the life of the driver, so every later read answered with the document as it stood minutes earlier - 17,310 characters while the page had grown well past it, and a fresh section typed into the page was invisible to the read that should have proven it.
+  // The snapshot is therefore asked for again at the start of every read and reused only inside that one ladder walk.
   let measured: JsonRecord | null = null;
   const axOf = async () => {
     if (!measured) measured = await measureAx({ ask: primitives.ask });
@@ -169,6 +172,7 @@ export function createCanvasMethods({ primitives, readState, ocr = null }: { pri
     };
 
   async function read(options: { allowCaretMove?: boolean; allowVision?: boolean; maxChars?: unknown; selector?: unknown } = {}) {
+    measured = null;
     const allowCaretMove = options.allowCaretMove === true;
     const allowVision = options.allowVision === true;
     const maxChars = maxCharsOf(options.maxChars);

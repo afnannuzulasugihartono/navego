@@ -97,6 +97,12 @@ async function writeBuild(folder: BuildFolderHandle, entries: ReadonlyArray<{ na
   return true;
 }
 
+// THE NAMES AN INSTALL MAY CARRY.
+// The zip this build serves is named Navego, and an install that shipped under the predecessor product's name verifies the download against the name it was shipped as.
+// Without the old name in this list those installs refuse every folder-apply and are stranded on the browser updater, so the predecessor's name is carried here on purpose and nowhere else in the tree.
+
+const ACCEPTED_MANIFEST_NAMES = ['Navego', 'Opera Agent'];
+
 export async function applyBuild({ folder, installedVersion, fetchImpl = fetch }: { folder?: BuildFolderHandle | undefined; installedVersion?: string | undefined; fetchImpl?: typeof fetch }) {
   if (!folder) return { ok: false, reason: 'no-folder' };
   const served = await servedVersion(fetchImpl);
@@ -107,11 +113,9 @@ export async function applyBuild({ folder, installedVersion, fetchImpl = fetch }
   const response = await fetchImpl(`${UPDATE_BASE_URL}/download/navego.zip`, NO_STORE);
   if (!response.ok) return { ok: false, reason: 'download-failed' };
   const entries = await readZip(new Uint8Array(await response.arrayBuffer()));
-  // TWO NAMES: installs that shipped before the rebrand verify the zip the extension downloads against the name they shipped as ('Opera Agent'); if this build accepted only the current brand, those machines would refuse every folder-apply and be forced through the browser updater forever.
-  // The check accepts the name this zip carries now and the name the install was shipped under.
   // The bytes it writes over the folder are still required to carry a version, and the browser CRX road never consulted this name at all.
   const manifest = manifestOf(entries);
-  if (!manifest || (manifest.name !== 'Navego' && manifest.name !== 'Opera Agent')) return { ok: false, reason: 'not-ours' };
+  if (!manifest || !ACCEPTED_MANIFEST_NAMES.includes(String(manifest.name ?? ''))) return { ok: false, reason: 'not-ours' };
   if (!newerThan(installedVersion, String(manifest.version ?? ''))) {
     return { ok: true, changed: false, version: manifest.version ?? installedVersion };
   }

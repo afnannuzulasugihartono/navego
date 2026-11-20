@@ -83,6 +83,22 @@ test('a canvas surface is read through the accessibility tree and the caret is n
     'no key is pressed on a surface that answered without one');
 });
 
+test('a second read sees the document as it stands, not the snapshot the first read took', async () => {
+  const growing = [...RICH_AX];
+  const cdp = canvasCdp({ ax: growing });
+  const primitives = createPrimitives(cdp, { sleep: async () => {} });
+
+  const first = await primitives.read();
+  growing.push('SECTION ADDED AFTER THE FIRST READ');
+  const second = await primitives.read();
+
+  assert.equal(first.strategy, 'ax');
+  assert.equal(second.strategy, 'ax');
+  assert.ok(!first.text.includes('SECTION ADDED AFTER THE FIRST READ'), 'the first read cannot see text that did not exist yet');
+  assert.ok(second.text.includes('SECTION ADDED AFTER THE FIRST READ'),
+    'a read taken after the page changed answers with the page as it stands, not the tree the previous read cached');
+});
+
 test('a caret-moving read is refused without consent and the refusal is named', async () => {
   const cdp = canvasCdp({ ax: POOR_AX });
   const out = await createPrimitives(cdp, { sleep: async () => {} }).read({ allowCaretMove: false });

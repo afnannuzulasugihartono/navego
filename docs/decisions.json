@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated": "2026-11-19",
+  "generated": "2026-11-20",
   "source": "The 2026-11-18 navego.pages.dev rebrand and consistency pass: logo, wordmark, eyebrows, type and spacing system, nav notch, copy pass. User direction arrived 2026-11-18; internet sources were verified 2026-11-18. Repo sources point at the docs that already carry the decision. 2026-11-19: a source-backed pass over the agent tool surface added D55-D68 - kind recorded carries the file:line of the recorded performance, per the user evidence mandate.",
   "note": "One decision, one source. Code references this file as decisions.json -> <id>. A decision added from 2026-11-19 onward carries a file-based id (for example local-canvas-01) and names the file it governs; the earlier D-numbers are history and keep their ids. A decision the user asked for carries kind=user; a decision nobody asked for carries the internet source it was taken from; a decision inherited from this repo carries the repo document that already carries it; a decision taken because a recorded performance demanded it carries kind=recorded with the file:line that records it.",
   "decisions": [
@@ -638,7 +638,7 @@
     {
       "id": "D69",
       "scope": "agent/tools",
-      "decision": "Every tool call that throws at the dispatch point is recorded append-only in $OPERA_AGENT_HOME/tool-failures.jsonl with the tool, the error code, the message and the time; the record never throws into the caller and is capped at 2 MB by keeping the newest 1000 lines.",
+      "decision": "Every tool call that throws at the dispatch point is recorded append-only in $NAVEGO_AGENT_HOME/tool-failures.jsonl with the tool, the error code, the message and the time; the record never throws into the caller and is capped at 2 MB by keeping the newest 1000 lines.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-19: \"buat ini ya log untuk tools yang error atau buggy sama feedback juga\" - a failure that the answer cannot carry into the next session survives on the machine instead of vanishing"
@@ -897,6 +897,46 @@
         "kind": "user",
         "ref": "user 2026-11-19 review: \"Pada fungsi renewAccessToken() tidak terlihat mekanisme single-flight atau lock ... Buat test multi-tab dan request concurrent\""
       }
+    },
+    {
+      "id": "docs-branch-protection-01",
+      "scope": "ci/main",
+      "decision": "Main requires all five CI jobs as required checks with strict status verification, enforce_admins is on, force pushes and deletions are refused, dismiss-stale-approvals is on, and every pull request needs an approving review with code-owner sign-off on the gatekeeper surface (tests/, scripts/, gates.lock and the rest of .github/).",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - the audit (its remaining gap) asked for the review on the gatekeeper paths"
+      },
+      "file": "docs/product/backend-language-evaluation.md"
+    },
+    {
+      "id": "tests-hosted-integration-postgres-01",
+      "scope": "ci/testing",
+      "decision": "PostgreSQL integration tests run in CI against a disposable Postgres: every migration applies under ON_ERROR_STOP, and the test asserts opera_commands carries its full lifecycle check and RLS is on the billing tables - the real proof for the migration contract.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - backend-language-evaluation.md item 5 left this open"
+      },
+      "file": "tests/hosted/integration-postgres.test.ts"
+    },
+    {
+      "id": "tests-tooling-swallowed-errors-01",
+      "scope": "tooling/gates",
+      "decision": "Every failure the product catches and ignores is listed in tests/tooling/swallowed-errors.lock with the reason it may be ignored, and the gate refuses a failure that is not listed and a line that names a failure the tree no longer has; the list can only shrink.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/product/backend-language-evaluation.md: item 4 of 'What we will do (in order)' - 'Silently swallowing errors' was the part of the stub sweep that was still open"
+      },
+      "file": "tests/tooling/swallowed-errors.test.ts"
+    },
+    {
+      "id": "tests-tooling-predecessor-name-01",
+      "scope": "tooling/gates",
+      "decision": "The predecessor product's name survives only where a reason says it must: the applied migration history, the dated records, the cited decisions, the one compatibility list that still recognises an install from that era, and the files that document the cleanup. The gate refuses it in every other file, so the tree cannot drift back into two names.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'bersihkan juga repo opera agent supaya tidak membingungkan supaya repo tetap navego' - a name that lingers in a live surface is a name a reader cannot tell apart from the product"
+      },
+      "file": "tests/tooling/predecessor-name.test.ts"
     }
   ]
 }

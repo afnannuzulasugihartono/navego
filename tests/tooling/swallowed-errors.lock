@@ -1,0 +1,45 @@
+# @last-edited: 2026-11-20 UTC+7.
+# @title: swallowed-errors - every failure the product ignores, and the reason it may be ignored.
+# @state: one line per empty catch in product code; the gate refuses a failure that is not listed and a line that names a failure the tree no longer has.
+# @dependencies: tests/tooling/swallowed-errors.test.ts.
+
+# A caught and ignored failure is sometimes the right thing to do.
+# What is not acceptable is doing it where the next reader cannot tell a deliberate choice from an oversight, so every one of them is written here.
+# The list can only shrink: a site that stops ignoring its failure loses its line, and a new one has to say why it may be ignored.
+
+extension/content.ts :: scheduleEnd :: try { listenCapture.recorder?.stop(); } catch {} :: The capture window ends on a timer, and the recorder may already have stopped when the timer fires; the recording is finished either way.
+extension/content.ts :: recorder :: try { recorder.stop(); } catch {} :: The browser throws when a recorder is stopped twice, and this call flushes a recorder that may already be stopped.
+extension/content/record-main.ts :: pump :: frameTrack.requestFrame(); :: } catch { :: The frame track is closed when the recording ends, and the pump may ask for one more frame after that.
+extension/content/record-main.ts :: frame :: current.lastBmp.close(); :: } catch { :: The bitmap was already closed when the frame it belonged to was replaced.
+extension/content/record-main.ts :: stop :: held.recorder.stop(); :: } catch { :: The recorder may already be inactive, and a second stop throws in the browser.
+extension/content/record-scan.ts :: collectScanAssets :: var sheet = document.styleSheets[i]; :: } catch { :: A cross-origin stylesheet throws when it is read, and the scan keeps the stylesheets the page lets it read.
+extension/content/record-scan.ts :: onMessage :: chrome.runtime.onMessage.addListener(onMessage); :: } catch { :: The content script can be torn down while it installs its listener, and by then the extension context is gone.
+extension/lib/model-client.ts :: delta :: const parsed: unknown = JSON.parse(payload); :: } catch {} :: A model stream can carry a chunk that is not JSON; the chunk is skipped and the rest of the answer is kept.
+extension/lib/socket-client.ts :: sendFrame :: frame(text); :: } catch { } :: The socket can close between the check and the send, and a frame that cannot be sent is not worth failing the caller for.
+extension/lib/socket-client.ts :: closeSocket :: if (target.readyState === 1) { :: } catch { } :: Closing a socket that is already closed throws in some browsers, and the socket is going away either way.
+extension/worker/capture.ts :: attachResilient :: await chrome.debugger.detach(target); :: } catch { :: The debugger was never attached, so the detach has nothing to detach and the attach that follows is the point.
+extension/worker/execute-pull.ts :: unpair :: try { socketClient?.stop(); } catch { } :: The pairing is being dropped, so the socket is stopped on the way out whether or not it answers.
+extension/worker/execute-pull.ts :: restartSocket :: try { socketClient?.stop(); } catch { } :: The socket is replaced by a new one, so the old one is stopped whether or not it is still open.
+extension/worker/record-session.ts :: ensureRecordMain :: const [probe] = await chrome.scripting.executeScript({ :: } catch {} :: The probe only asks whether the recorder is already in the page; a page the extension may not script answers nothing, and the script is injected instead.
+extension/worker/record-session.ts :: host :: const host = new URL(tabUrl).hostname.replace(/[^a-z0-9.-]/gi, '-'); :: } catch { :: A tab whose url cannot be parsed still gets a file, named without the host.
+extension/worker/record-session.ts :: now :: chrome.debugger.onEvent.removeListener(session.listener); :: } catch { :: The listener may already be gone when the session is torn down, and removing it twice is harmless.
+extension/worker/record-session.ts :: now :: await chrome.debugger.detach(target); :: } catch { :: The debugger may already be detached when the session ends, and the detach answers with the same state.
+extension/worker/record-session.ts :: scrolled :: if (held.listener) { :: } catch { :: The listener is removed only when it was installed, and the remove throws when the debugger session is already gone.
+extension/worker/record-session.ts :: scrolled :: await chrome.debugger.sendCommand(target, 'Page.stopScreencast', {}); :: } catch { :: The screencast may already be stopped, and the recording is closed either way.
+extension/worker/record-session.ts :: scrolled :: await chrome.debugger.detach(target); :: } catch { :: The debugger is detached at the end of the recording whether or not the session answers the detach.
+extension/worker/scan-page.ts :: host :: const host = new URL(tabUrl).hostname.replace(/[^a-z0-9.-]/gi, '-'); :: } catch { :: A tab whose url cannot be parsed still gets a file, named without the host.
+hosted/functions/navego-bridge/bridge-socket.ts :: teardown :: try { unsubscribe(); } catch { } :: The subscription is dropped when the socket closes, and the channel may already be gone.
+hosted/functions/navego-bridge/index.ts :: total :: await reader.cancel(); :: try { await reader.cancel(); } catch { :: The body is refused because it is too large; cancelling the reader is the cleanup, and a reader that cannot be cancelled has already failed the request.
+hosted/functions/navego-gateway/index.ts :: total :: await reader.cancel(); :: try { await reader.cancel(); } catch { :: The body is refused because it is too large; cancelling the reader is the cleanup, and a reader that cannot be cancelled has already failed the request.
+hosted/functions/navego-gateway/index.ts :: payload :: const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))); :: } catch { :: The client id is read from the token to name the provider; a token whose payload is not base64 JSON simply has no client id.
+hosted/functions/navego-gateway/index.ts :: name :: const ua = req.headers.get("user-agent") || ""; :: } catch { :: The provider name is a convenience for the dashboard; a caller whose headers cannot be read is still routed by its device.
+local/bridge-token.ts :: stored :: const stored = fs.readFileSync(TOKEN_FILE, 'utf8').trim(); :: } catch { :: There is no stored token on a machine that never ran the bridge; a new one is made instead.
+local/bridge-token.ts :: token :: fs.mkdirSync(path.dirname(TOKEN_FILE), { recursive: true, mode: 0o700 }); :: } catch { :: A machine whose home cannot be written keeps the token in memory for this run rather than failing the bridge.
+local/dev-shim.ts :: dying :: dying.kill('SIGKILL'); :: } catch {} :: The process is already gone when the kill is sent, and the shim waits for the exit either way.
+local/dev-shim.ts :: stop :: watcher?.close(); :: } catch {} :: The watcher may already be closed when the shim stops, and a closed watcher is the state the shim wants.
+local/page-expressions.ts :: hit :: const inner = el.contentDocument; :: } catch {} :: A frame from another origin cannot be read, and the scan keeps looking in the frames it can.
+local/primitives-file.ts :: target :: fs.unlinkSync(target); :: } catch {} :: The temporary file is removed after the caller has read it, and a file that is already gone is the state wanted.
+local/primitives-file.ts :: target :: fs.rmdirSync(dir); :: } catch {} :: The temporary directory is removed after the file, and a directory that is not empty or already gone is left as it is.
+local/transport.ts :: timer :: try { socket.close(); } catch {} :: The socket is closed when the page goes away, and closing a socket that is already closed throws in some browsers.
+local/window-focus.ts :: shells :: try { shell.kill(); } catch { } :: The shell that launched the browser may already be gone, and the browser it launched is what the caller asked for.
+local/window-focus.ts :: drop :: try { child.kill(); } catch { } :: The child is dropped from the list of windows whatever the kill answers, because the window it opened is already gone.

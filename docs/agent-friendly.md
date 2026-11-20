@@ -101,7 +101,7 @@ args: local
 If you do not want the interactive `navego auth` (CI, containers, a machine without a display):
 
 1. Create a device token in the dashboard → copy it once.
-2. Set one env var: `OPERA_AGENT_MCP_TOKEN=<token>` — a static token wins over the OAuth login file.
+2. Set one env var: `NAVEGO_MCP_TOKEN=<token>` — a static token wins over the OAuth login file.
 3. `navego doctor` — it reports identity, bridge and quota before any agent asks.
 
 ## Rules of thumb that keep sessions sane

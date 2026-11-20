@@ -128,8 +128,8 @@ client-month to a manifest. See the statement job in the price list migration un
 ## When a tool breaks
 
 `navego failures` reads the append-only log the local road leaves behind: every tool
-call that came back as an error lands in `$OPERA_AGENT_HOME/tool-failures.jsonl`
-(default `~/.opera-agent/tool-failures.jsonl`) with the tool, the code, the message
+call that came back as an error lands in `$NAVEGO_AGENT_HOME/tool-failures.jsonl`
+(default `~/.navego/tool-failures.jsonl`) with the tool, the code, the message
 and the time it happened — the failure the tool answer cannot carry into the next
 session now survives on the machine. `navego feedback <tool> <note>` appends what the
 agent observed while driving, so the drive can leave a suggestion behind instead of

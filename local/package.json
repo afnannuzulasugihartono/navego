@@ -1,6 +1,6 @@
 {
   "name": "navego",
-  "version": "1.7.7",
+  "version": "1.8.0",
   "mcpName": "io.github.afnannuzulasugihartono/navego",
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
     "bridge-token.js",
     "bridge-ws.js",
     "bridge.js",
+    "browser-actions.js",
     "browsers.js",
     "burst.js",
     "canvas.js",
@@ -42,6 +43,7 @@
     "focus-guard.js",
     "gates.js",
     "input.js",
+    "job-tools.js",
     "leases.js",
     "lib/endpoints.js",
     "lib/socket-protocol.js",

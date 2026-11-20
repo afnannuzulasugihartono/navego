@@ -8,6 +8,7 @@ What each release contained, and why. The notes live in
 
 | Release | Date | Notes |
 | --- | --- | --- |
+| 1.8.0 | 2026-11-20 | [the release notes are written in the PR that carries this bump](docs/releases/1.8.0.md) |
 | 1.7.7 | 2026-11-19 | [the release notes are written in the PR that carries this bump](docs/releases/1.7.7.md) |
 | 1.7.6 | 2026-11-18 | [the release notes are written in the PR that carries this bump](docs/releases/1.7.6.md) |
 | 1.7.5 | 2026-11-17 | [the release notes are written in the PR that carries this bump](docs/releases/1.7.5.md) |

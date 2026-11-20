@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { NavegoMark, NavegoWordmark } from './NavegoMark';
 import { readConsent, storeConsent, type ConsentChoice } from '../lib/consent.js';
 
-const VERSION = '1.7.7';
+const VERSION = '1.8.0';
 
 // one navigation surface: a slim dark bar with the brand and one CTA, and a chevron that drops the whole menu as a panel.
 

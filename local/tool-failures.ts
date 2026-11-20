@@ -6,6 +6,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 export type FailureKind = 'failure' | 'feedback';
 
@@ -21,7 +22,7 @@ export interface ToolFailureRecord {
 const DEFAULT_CAP_BYTES = 2_000_000;
 const KEEP_LINES = 1000;
 
-const homeOf = (): string => process.env.OPERA_AGENT_HOME || path.join(os.homedir(), '.opera-agent');
+const homeOf = (): string => process.env.NAVEGO_AGENT_HOME || path.join(os.homedir(), '.navego');
 const fileOf = (home: string): string => path.join(home, 'tool-failures.jsonl');
 
 // decisions.json -> local-tool-failures-01
@@ -42,8 +43,19 @@ const redact = (text: string): string => SECRET_SHAPES.reduce((kept, [shape, rep
 
 const sanitize = (value: unknown, max: number): string => redact(String(value ?? '')).replace(/[\u0000-\u001f\u007f]/g, ' ').slice(0, max).trim();
 
+// Windows files carry no POSIX bits, so the private mode is enforced by denying everyone but the writing account through icacls - the equivalent of the 0700/0600 the POSIX paths set.
+
 const privateMode = (target: string, mode: number): void => {
-  if (process.platform === 'win32') return;
+  if (process.platform === 'win32') {
+    const user = process.env.USERNAME || '';
+    if (!user) return;
+    try {
+      execFileSync('icacls', [target, '/inheritance:r', `/grant:r "${user}:(F)"`], { stdio: 'ignore' });
+    } catch {
+      void 0;
+    }
+    return;
+  }
   try {
     fs.chmodSync(target, mode);
   } catch {

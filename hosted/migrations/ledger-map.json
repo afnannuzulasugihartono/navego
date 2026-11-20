@@ -8,11 +8,11 @@
     "content": 20,
     "ledger-names-the-file": 2,
     "name": 25,
-    "no-ledger-row": 5,
+    "no-ledger-row": 6,
     "part-of-combined": 13,
     "version-and-name": 49
   },
-  "treeFiles": 130,
+  "treeFiles": 131,
   "resolved": 111,
   "unapplied": 13,
   "map": [
@@ -794,6 +794,12 @@
       "file": "20261118090100_opera_usd_plan_readers.sql",
       "remote": null,
       "evidence": "applied-outside-ledger",
+      "cover": null
+    },
+    {
+      "file": "20261120120000_navego_predecessor_endpoints.sql",
+      "remote": null,
+      "evidence": "no-ledger-row",
       "cover": null
     }
   ]

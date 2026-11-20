@@ -6,7 +6,7 @@ select public.opera_register_workflow(
       jsonb_build_object('type','if','id','check','condition',jsonb_build_object('left',jsonb_build_object('$ref','vars.marker'),'op','eq','right','cloud-ok'),
         'then',jsonb_build_array(jsonb_build_object('type','set','name','passed','value',true)),
         'else',jsonb_build_array(jsonb_build_object('type','fail','code','SELF_TEST_FAILED','message','Workflow resolver/condition engine failed.'))
-    ),
+    )),
     'output', jsonb_build_object('passed',jsonb_build_object('$ref','vars.passed'),'marker',jsonb_build_object('$ref','vars.marker'))
   ),
   'Cloud-only self-test for the Opera Agent workflow DSL.',

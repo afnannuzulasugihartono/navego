@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated": "2026-11-14T00:00:00+07:00",
+  "generated": "2026-11-20",
   "source": "Two read-only sweeps, 2026-11-09 UTC: extension/|local/|shared/ (~200 files) and hosted/|site/|scripts/|docs/store/|.github/ (site/ rebuilt 2026-11-16; the five site entries follow their files to site/)",
   "why": "An implicit state machine is code whose behavior hangs on state nobody declared. It is the shape of every silent failure in this product: the 'connected but dead' bridge, the ghost listen session, the command that completes after its timeout, the plan that runs out mid-run. The register names each one, and the gate (tests/tooling/implicit-state-machines.test.ts) refuses hidden state nobody can point at. The decision order is fixed: UX > DX > AX — a failure the user can feel is fixed before a convenience for either of us.",
   "machines": [
@@ -129,6 +129,23 @@
       "wrongIfConfused": "socket closes at 00:00:10 and the alarm only fires at 00:00:30 → loopback commands silently take the cloud road for ~20s; three entry roads race and generation arbitrates invisibly",
       "decision": "model",
       "why": "one starter, one alarm, everyone else calls the starter; the 30-second blind spot is paid for in every slow call — UX first",
+      "rank": 1
+    },
+    {
+      "id": "main-branch-protection-review",
+      "kind": "tooling",
+      "where": ".github/CODEOWNERS",
+      "states": [
+        "unprotected",
+        "checks-required",
+        "review-required",
+        "owner-signed"
+      ],
+      "writers": "gh api PUT repos/afnannuzulasugihartono/navego/branches/main/protection",
+      "readers": "PR merging on main, the gatekeeper surface (gates.lock, .github/, tests/, scripts/)",
+      "wrongIfConfused": "main accepts a merge with no human approval, and the gatekeeper files (gates.lock, ci.yml) are writable by the agent - a gate and its judge both live in files an agent can edit in the same breath",
+      "decision": "model",
+      "why": "CODEOWNERS names the gatekeeper surface, so branch protection with an approving review and code-owner sign-off puts a human between a gate and its edit - the enterprise boundary",
       "rank": 1
     },
     {
@@ -524,6 +541,22 @@
       "wrongIfConfused": "a replace:false on a delivery whose file was overwritten by hand blocks the correction; the extension and local stores never compare, so one month shows delivered on one surface and missing on the other",
       "decision": "model",
       "why": "two stores, one client-month, one duplicate rule — decide which file is the record and make the other read it; UX first",
+      "rank": 3
+    },
+    {
+      "id": "postgres-integration-testing",
+      "kind": "sql",
+      "where": "tests/hosted/integration-postgres.test.ts",
+      "states": [
+        "not-run",
+        "applied",
+        "asserted"
+      ],
+      "writers": "npm test with NAVEGO_TEST_DATABASE_URL set by the ci.yml postgres job",
+      "readers": "the postgres CI job, every consumer of the migration-produced schema",
+      "wrongIfConfused": "migrations pass the checker with no engine ever seeing them, so the status enum and RLS the migrations promise are wrong in production",
+      "decision": "model",
+      "why": "the SQL is plain and long: 130 migrations with RLS, checks and functions. Only a real engine proves they apply and carry the documented shape - no other lane asserts it",
       "rank": 3
     },
     {

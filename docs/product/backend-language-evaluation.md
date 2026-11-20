@@ -1,6 +1,6 @@
-# @last-edited: 2026-11-19 UTC+7.
+# @last-edited: 2026-11-20 UTC+7.
 # @title: backend-language-evaluation - the Rust/Go question, the GPT audit, and the decision.
-# @state: decision recorded; Rust/Go deferred, not banned. Deno check and site typecheck are in CI; MCP tool arguments are validated at runtime, and the remaining boundaries are named below.
+# @state: decision recorded; Rust/Go deferred, not banned. Deno check and site typecheck are in CI; MCP tool arguments are validated at runtime (tool-schema, apply-migrations env, site auth responses), and the remaining boundaries are named below.
 # @dependencies: docs/handoff.md, package.json, .github/workflows/ci.yml, ARCHITECTURE.md.
 
 # Why this file exists
@@ -18,8 +18,8 @@ That audit was generated against a stale branch (before the 2026-11-17 full migr
 - **`deno check` is not wired into CI** — closed 2026-11-19: `ci.yml` runs `deno check` on every `hosted/functions/*/index.ts` in the `deno-hosted` job.
 - **Website `typecheck` is not an explicit CI step** — closed 2026-11-19: the `site` job runs `npm run typecheck --prefix site`.
 - **Arithmetic on counts** — "844 entries", "221 .mjs" — are snapshots; the current tree differs (everything is `.ts` now, tests pass, `npm run check` is green).
-- **Schema validation at system boundaries** — partially closed 2026-11-19: `local/tool-schema.ts` validates every MCP tool call against the same `inputSchema` the client receives (required keys, types, bounds, enums, closed objects). Environment variables, API request bodies, and database rows still need the same treatment. TypeScript's strictness is erased at runtime, so any boundary parsing JSON needs a validator, not just a type.
-- **`CODEOWNERS` ownership is declared but branch protection/rulesets could not be verified programmatically** — verified 2026-11-19: `main` requires all five CI jobs (`unit`, `site`, `deno-hosted`, `secret-scan`, `browser`) with `strict`, `enforce_admins` is true, force pushes and deletions are refused, linear history and conversation resolution are required, and no required review is configured. The remaining gap is the review: an owner review on the gatekeeper paths (`gates.lock`, `.github/`, the boundary locks) would put a human between a gate and its edit.
+- **Schema validation at system boundaries** — partially closed: `local/tool-schema.ts` validates every MCP tool call against the same `inputSchema` the client receives (required keys, types, bounds, enums, closed objects). Closed 2026-11-20: env vars at `scripts/release/apply-migrations.ts` (the `SUPABASE_ACCESS_TOKEN` shape, the `SUPABASE_PROJECT_REF` shape); site auth refresh responses at `site/app/lib/auth.ts` (access/refresh token shapes); the hosted functions at boot (every function reads `SUPABASE_URL` and, where it needs it, `SUPABASE_SERVICE_ROLE_KEY` through `requiredEnv`, and the gate refuses a raw read - `tests/hosted/env-validation.test.ts`). Database row shapes proven by migration CHECK constraints and `tests/hosted/integration-postgres.test.ts`. Still open: the site's remaining fetch bodies. TypeScript's strictness is erased at runtime, so any boundary parsing JSON needs a validator, not just a type.
+- **`CODEOWNERS` ownership is declared but branch protection/rulesets could not be verified programmatically** — closed 2026-11-20: `main` now requires the five CI jobs (`unit`, `site`, `deno-hosted`, `secret-scan`, `browser`) as required checks with `strict` verification, `enforce_admins` is on, force pushes and deletions are refused, dismiss-stale-approvals is on, and every pull request needs an approving review with code-owner sign-off on the gatekeeper surface (`tests/`, `scripts/`, `gates.lock` and the rest of `.github/`) - decisions.json -> docs-branch-protection-01.
 
 # What the audit got wrong or outdated
 
@@ -42,7 +42,7 @@ That audit was generated against a stale branch (before the 2026-11-17 full migr
 
 - Browser extension, local driver, shared core, website — TypeScript strict, zero errors, gated.
 - Hosted functions — TypeScript/Deno, strict, wired into CI with `deno check`.
-- Runtime boundaries — MCP tool arguments validated in `local/tool-schema.ts`; env vars, API bodies and database rows remain to be closed.
+- Runtime boundaries — MCP tool arguments validated in `local/tool-schema.ts`; env vars validated at `scripts/release/apply-migrations.ts`; site auth refresh responses validated at `site/app/lib/auth.ts`; database row shapes proven by migration CHECK constraints and the postgres integration test. The hosted-function inputs remain open.
 - Architecture gates stay: `ARCHITECTURE.md` + `tests/tooling/architecture.test.ts` + `CODEOWNERS` + branch protection.
 
 **Re-evaluate Rust/Go only when** one of these is true:
@@ -56,10 +56,10 @@ Until then, Rust/Go would solve a language problem for a product that has not ye
 # What we will do (in order)
 
 1. Keep `deno check` and the site `typecheck` in CI as required status checks — done 2026-11-19: all five jobs are required on `main`.
-2. Extend runtime validation to environment variables, API request bodies, and database row shapes before they are fed into typed code.
-3. Require an owner review on the gatekeeper paths (`gates.lock`, `.github/`, the boundary locks) — the only review left between a gate and its edit; every CI job is already required.
-4. Grep regression for stubs: `todo!`, `unimplemented!`, `panic!` (panic used as normal control flow), `@ts-ignore`, `as any` without approval, `process.exit` in library code, silently swallowing errors.
-5. Wire integration tests against a real Postgres for billing/wallet/invoice flows (Deno + Supabase local or testcontainers).
+2. Extend runtime validation to the remaining boundaries (hosted-function inputs, the site's fetch bodies) before they are fed into typed code - the env vars, the site auth responses and the database row shapes are closed (2026-11-20).
+3. Require an owner review on the gatekeeper paths (`gates.lock`, `.github/`, the boundary locks) — closed 2026-11-20: decisions.json -> docs-branch-protection-01; `gh api` now requires an approving review with code-owner sign-off on `tests/`, `scripts/`, `gates.lock` and the rest of `.github/` on `main`.
+4. Grep regression for stubs — done for the crisp ones: `tests/tooling/stub-grep.test.ts` (todo!, unimplemented!, panic!, process.exit in library code) and `scripts/audit/audit-cheats.ts` bans @ts-ignore, as any and require() in product code; `tests/tooling/no-explicit-any.test.ts` holds as any in tests. 'Silently swallowing errors' closed 2026-11-20: every empty catch in product code is listed with the reason it may be ignored (`tests/tooling/swallowed-errors.lock`), and the gate refuses a failure that is not listed and a line that names a failure the tree no longer has - the list can only shrink.
+5. Wire integration tests against a real Postgres for billing/wallet/invoice flows — closed 2026-11-20: `tests/hosted/integration-postgres.test.ts` + the `postgres` job in `ci.yml`: every migration applies under `ON_ERROR_STOP` to a disposable Postgres, then the test asserts the opera_commands lifecycle check and the billing RLS are real - decisions.json -> ci-postgres-integration-01. Full billing/wallet/invoice flow tests against a live Supabase project still need the project's `DATABASE_URL`/`ACCESS_TOKEN` wired as secrets.
 6. Keep `docs/handoff.md` updated with the cutover facts: npm `navego` published, repo renamed to `navego`, the CRX release live, `type-debt.lock` lineage recorded.
 
 # What this file is not

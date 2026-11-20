@@ -1,4 +1,4 @@
-﻿-- USD plans for international buyers: the three plan readers learn the new names, the unlimited tiers, and the firm-shaped ones.
+-- USD plans for international buyers: the three plan readers learn the new names, the unlimited tiers, and the firm-shaped ones.
 -- WHY the readers sit in one file: they are the contract a paired device and the dashboard ask about the same account, and they must not disagree about a quota when the midnight clock crosses a plan boundary.
 -- WHY null means unlimited: usd-33 promises no daily cap, and "no cap" reads faster as null than as a billion.
 -- The daily count adds two terms: rows in opera_commands (the hosted surface) and rows in opera_usage_reports (the local surface, reported at session end).

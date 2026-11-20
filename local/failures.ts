@@ -30,7 +30,7 @@ const printHuman = (report: FailureReport, toolFilter?: string): void => {
       process.stdout.write(`  ${formatWhen(note.at)}  ${note.tool}: ${note.note}\n`);
     }
   }
-  process.stdout.write('\nthe log lives at $OPERA_AGENT_HOME/tool-failures.jsonl (default ~/.opera-agent) - delete it freely; it is an observation channel, not a ledger\n');
+  process.stdout.write('\nthe log lives at $NAVEGO_AGENT_HOME/tool-failures.jsonl (default ~/.navego) - delete it freely; it is an observation channel, not a ledger\n');
 };
 
 export async function failures({ args }: { args: string[] }): Promise<number> {

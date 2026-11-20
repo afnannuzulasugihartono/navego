@@ -195,10 +195,13 @@
 // WHY these three were re-pinned on 2026-11-19: the 1.7.7 release rode them.
 // The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
 
+// WHY the manifest pin was re-pinned on 2026-11-20: the 1.8.0 release rode it.
+// The manifest carries the version (1.7.7 to 1.8.0) and nothing else moved: the name, the permissions, the update url and the extension id are the same bytes as before.
+
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
   ['../extension/content.ts', '4d9cf6aec864f5c75f318aed43969ffbc37681ab71b19401985349d69d2a60fe'],
   ['../extension/background.ts', '67b1744d986e6efa095a0bc6d9f02a029f9df42a1223acb502c5c7ea21bf40e0'],
-  ['../extension/manifest.json', 'a49b2265875539402a3b744dbfaa9fcdec9b88a2bce17b0c2018680df203ec9e'],
+  ['../extension/manifest.json', '09b3494170b08c3f27ad82b1521a523704cf42bc6abcd0a93a85a1ade2aacee6'],
 ]);
 
 // WHY collect and control-flow moved on 2026-11-17: the hosted functions are now type-checked by CI (deno check in ci.yml).
