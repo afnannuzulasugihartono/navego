@@ -44,6 +44,7 @@ const ENUMERATED = [
 const ALLOW = [
   /^docs\/releases\//,
   /^docs\/superpowers\//,
+  /^docs\/benchmark-navego\.md$/,
   /^archive\//,
   /^CHANGELOG\.md$/,
   /^docs\/handoff\.md$/,
