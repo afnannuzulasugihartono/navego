@@ -174,7 +174,9 @@ block share one transaction and stay invisible until it commits.
 
 ## `POST /command` request body
 
-- Body must be JSON.
+- Body must be JSON, and it must be a JSON object: `null`, an array, a string,
+  a number or a boolean are refused with `INVALID_JSON` and status 400 before
+  any field is read.
 - A body over 256 KiB is rejected with `TOO_LARGE`, whatever framing the
   client used (`content-length` or chunked): the gateway buffers and measures
   the actual bytes before parsing.
