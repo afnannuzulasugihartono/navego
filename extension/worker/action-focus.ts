@@ -385,7 +385,8 @@ const FOCUS_EDITABLE_EXPRESSION = `(() => {
 async function ensureTextTarget(target: chrome.debugger.DebuggerSession): Promise<void> {
   const answer = await chrome.debugger.sendCommand(target, 'Runtime.evaluate', { expression: FOCUS_EDITABLE_EXPRESSION, returnByValue: true }) as { result?: { value?: unknown } } | undefined;
   const value = answer?.result?.value;
-  if (!isRecord(value) || value.focused !== true) return;
+  if (isRecord(value) && value.focused === true) return;
+  throw new Error('The focused element takes no text and the page offers no editable host to focus - click the place that should receive the text first.');
 }
 
 export async function trustedKey(tabId: number, params: Record<string, unknown> | null | undefined, context: CaptureContext | null | undefined, mode: string = 'background') {
