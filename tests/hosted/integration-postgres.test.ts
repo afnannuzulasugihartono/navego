@@ -29,11 +29,12 @@ test('the migrations produce opera_commands with its full lifecycle and RLS on t
     }
     const { rows: rls } = await client.query("SELECT c.relname, n.nspname AS schema, c.relkind, c.relrowsecurity FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE c.relname IN ('opera_price_list', 'opera_invoices', 'opera_notification_log') ORDER BY n.nspname, c.relname");
     for (const table of BILLING_TABLES) {
-      const relation = rls.find((row: any) => row.schema === 'public' && row.relkind === 'r' && row.relname === table);
-      assert.ok(relation, `public.${table} must exist as a table; the relations with that name are ${JSON.stringify(rls)}`);
-      assert.equal(relation.relrowsecurity, true, `public.${table} must carry row level security once the billing lockdown migration lands; the relations with that name are ${JSON.stringify(rls)}`);
-      const elsewhere = rls.filter((row: any) => !(row.schema === 'public' && row.relkind === 'r' && row.relname === table));
-      assert.deepEqual(elsewhere, [], `a second relation shares the name of a billing table, so the billing function could read a different one; the relations with that name are ${JSON.stringify(rls)}`);
+      const named = rls.filter((row: any) => row.relname === table);
+      assert.equal(named.length, 1, `a billing table name belongs to one relation, so the billing function cannot read a different one; the relations with that name are ${JSON.stringify(named)}`);
+      const relation = named[0];
+      assert.equal(relation.schema, 'public', `public.${table} must be the public table; the relations with that name are ${JSON.stringify(named)}`);
+      assert.equal(relation.relkind, 'r', `public.${table} must be a table; the relations with that name are ${JSON.stringify(named)}`);
+      assert.equal(relation.relrowsecurity, true, `public.${table} must carry row level security once the billing lockdown migration lands; the relations with that name are ${JSON.stringify(named)}`);
     }
     const { rows: constraints } = await client.query("SELECT pg_get_constraintdef(oid) AS definition FROM pg_constraint WHERE conrelid = 'public.opera_commands'::regclass AND contype = 'c'");
     const definition = constraints.map((row) => row.definition).join(' ');

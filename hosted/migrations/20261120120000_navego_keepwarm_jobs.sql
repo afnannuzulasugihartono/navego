@@ -21,3 +21,31 @@ select cron.schedule(
   '*/2 * * * *',
   $$SELECT net.http_post('https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-bridge', '{"action":"heartbeat","token":"","deviceName":""}'::jsonb, '{}'::jsonb, '{"Content-Type": "application/json", "x-region": "ap-southeast-1"}'::jsonb, 8000);$$
 );
+
+-- The QRIS detector called the predecessor product's billing endpoint.
+-- The platform still answers that slug from an old deployment, so the detector ran against a build nobody ships; it now calls the billing function that is deployed.
+
+create or replace function public.opera_qris_detect_cron()
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, vault
+as $$
+declare
+  v_token text;
+  v_request_id bigint;
+begin
+  select decrypted_secret into v_token from vault.decrypted_secrets where name = 'opera_billing_token' limit 1;
+  if v_token is null or v_token = '' then
+    return jsonb_build_object('ok', false, 'why', 'opera_billing_token is not in vault');
+  end if;
+  v_request_id := net.http_post(
+    url := 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-billing',
+    headers := jsonb_build_object('content-type', 'application/json', 'authorization', 'Bearer ' || v_token),
+    body := jsonb_build_object('action', 'qris-detect')
+  );
+  return jsonb_build_object('ok', true, 'request_id', v_request_id);
+end $$;
+
+revoke all on function public.opera_qris_detect_cron() from public, anon, authenticated;
+grant execute on function public.opera_qris_detect_cron() to service_role;
