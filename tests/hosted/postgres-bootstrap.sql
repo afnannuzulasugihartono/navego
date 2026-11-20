@@ -1,3 +1,5 @@
+-- The Supabase image's superuser is supabase_admin; this file runs as that role, while the migrations run as postgres, as they do on the hosted project.
+
 -- The hosted project grew from a predecessor that left public.loa_v3_config behind.
 -- Two migrations of the 1.0.0 goal head read and write that table, and a later migration drops it; a fresh database needs it before the history can replay, so this baseline restores the shape those migrations touch.
 
@@ -6,8 +8,8 @@ create table if not exists public.loa_v3_config (
   value text not null default ''
 );
 
--- The Supabase image ships the auth schema and auth.uid(), but GoTrue creates its tables when it boots.
--- The migration history reads them: foreign keys to auth.users, session identity in the transaction journal, consent revocation over refresh tokens.
+-- GoTrue creates its tables when it boots, after migrations.
+-- The history needs them first: foreign keys to auth.users, session identity in the transaction journal, consent revocation over refresh tokens.
 -- These are the columns the SQL names, with the real types (uuid ids, timestamptz instants), so the replay exercises the same joins and updates production runs.
 
 create table if not exists auth.users (
@@ -38,3 +40,14 @@ create table if not exists auth.oauth_consents (
   granted_at timestamptz not null default now(),
   revoked_at timestamptz
 );
+
+-- The migrations run as postgres: they grant select on auth.sessions to service_role, and several security definer functions read auth.uid().
+-- On the hosted project postgres holds those privileges; here the superuser hands them over so the same statements mean the same thing.
+
+create or replace function auth.uid() returns uuid
+language sql stable
+as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
+
+grant usage on schema auth to postgres;
+grant select, insert, update, delete on all tables in schema auth to postgres with grant option;
+grant execute on function auth.uid() to postgres;

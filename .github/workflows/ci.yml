@@ -177,8 +177,8 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Restore the legacy baseline the early migrations were written on
         env:
-          DATABASE_URL: postgres://postgres:navego_test@127.0.0.1:5432/postgres
-        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -q -f tests/hosted/postgres-bootstrap.sql
+          BOOTSTRAP_DATABASE_URL: postgres://supabase_admin:navego_test@127.0.0.1:5432/postgres
+        run: psql "$BOOTSTRAP_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f tests/hosted/postgres-bootstrap.sql
       - name: Apply the migrations to a disposable Postgres
         env:
           DATABASE_URL: postgres://postgres:navego_test@127.0.0.1:5432/postgres
