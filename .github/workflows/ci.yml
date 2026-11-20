@@ -175,6 +175,10 @@ jobs:
           node-version: 22.20.0
       - name: Install the toolchain
         run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Restore the legacy baseline the early migrations were written on
+        env:
+          DATABASE_URL: postgres://postgres:navego_test@127.0.0.1:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -q -f tests/hosted/postgres-bootstrap.sql
       - name: Apply the migrations to a disposable Postgres
         env:
           DATABASE_URL: postgres://postgres:navego_test@127.0.0.1:5432/postgres
