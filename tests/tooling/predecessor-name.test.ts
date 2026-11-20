@@ -1,4 +1,4 @@
-// @last-edited: 2026-11-20 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: predecessor-name - the predecessor product's name survives only where a reason says it must.
 // @state: the files allowed to keep the old name, each with the reason, and the gate that refuses it everywhere else.
 // @dependencies: node:test, strict, node:fs, node:child_process.
@@ -31,6 +31,7 @@ const ALLOWED_FILES: Array<{ path: string; why: string }> = [
   { path: 'docs/handoff.md', why: 'the handoff names the endpoints and jobs that carried the old name so the cleanup can be checked' },
   { path: 'tests/helpers/boundary-locks.ts', why: 'the re-pin notes say which name each pin rode' },
   { path: 'extension/lib/self-update.ts', why: 'the accepted manifest names are the one place an install from that era is still recognised' },
+  { path: 'extension/lib/endpoints.ts', why: 'the compatibility migration must recognise the predecessor bridge slug stored by devices paired before the rename' },
   { path: 'tests/release/self-update.test.ts', why: 'the test proves that an install from that era is still recognised' },
   { path: 'tests/tooling/predecessor-name.test.ts', why: 'this gate names the old product to say what it refuses' }
 ];

@@ -1,10 +1,10 @@
-// @last-edited: 2026-10-09 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: utils — storage access, tab mutation retry and time helpers.
-// @state: owns STORAGE_KEYS and connectionState; every module that reads pair status imports these from here.
+// @state: owns STORAGE_KEYS and connectionState; every module that reads pair status imports these from here, and getConfig migrates a stale bridge URL in storage.
 // @dependencies: log, endpoints.
 
 import { log } from '../lib/log.js';
-import { DEFAULT_BRIDGE_URL } from '../lib/endpoints.js';
+import { DEFAULT_BRIDGE_URL, normalizeBridgeUrl } from '../lib/endpoints.js';
 
 const STORAGE_KEYS = ['paired', 'deviceName', 'deviceToken', 'bridgeUrl', 'deviceId', 'logLevel', 'listenSession'];
 
@@ -49,8 +49,16 @@ export function randomToken() {
   return [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+// The worker persists the compatibility rewrite so the installed device leaves the stale deployment once.
+// decisions.json -> extension-bridge-url-migration-01
+
 export async function getConfig() {
   const cfg = await chrome.storage.local.get(STORAGE_KEYS);
+  const storedBridgeUrl = String(cfg.bridgeUrl || DEFAULT_BRIDGE_URL);
+  const bridgeUrl = normalizeBridgeUrl(storedBridgeUrl);
+  if (bridgeUrl !== storedBridgeUrl) {
+    await chrome.storage.local.set({ bridgeUrl });
+  }
 
   try {
     const rawLevel = String(cfg.logLevel);
@@ -65,7 +73,7 @@ export async function getConfig() {
     deviceName: String(cfg.deviceName || 'opera'),
     deviceToken: String(cfg.deviceToken || ''),
     deviceId: String(cfg.deviceId || ''),
-    bridgeUrl: String(cfg.bridgeUrl || DEFAULT_BRIDGE_URL),
+    bridgeUrl,
     logLevel: ['debug', 'warn', 'error'].includes(String(cfg.logLevel)) ? String(cfg.logLevel) : 'warn'
   };
 }

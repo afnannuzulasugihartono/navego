@@ -1,6 +1,6 @@
-// @last-edited: 2026-11-18 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: plan-gate — the questions the bridge asks before it moves a command.
-// @state: the plan check, the daily quota (null = unlimited), the firm-only methods, and the refusal that names the plan.
+// @state: the plan check, the profile quota with the bundled plan table as fallback (null = unlimited), the firm-only methods, and the refusal that names the plan.
 // @dependencies: ./index.ts through the claim path.
 
 // THIS FILE EXISTS
@@ -44,11 +44,15 @@ export function capabilityAllowed(plan: unknown, method: unknown, params: unknow
   return { ok: true };
 }
 
-export function dailyQuota(plan: unknown): number | null {
+// The account profile is the source of truth for its quota, and the bundled table remains the fallback for profiles that do not carry one.
+// decisions.json -> hosted-plan-quota-01
+
+export function dailyQuota(plan: unknown, profileQuota?: unknown): number | null {
+  if (typeof profileQuota === 'number' && Number.isFinite(profileQuota)) return profileQuota;
   return planFor(String(plan ?? DEFAULT_PLAN)).dailyQuota;
 }
 
-export interface PlanProfile { status?: unknown; plan?: unknown; usedToday?: unknown }
+export interface PlanProfile { status?: unknown; plan?: unknown; dailyQuota?: unknown; usedToday?: unknown }
 export interface GateCommand { method?: unknown; params?: unknown }
 
 export function handshakeVerdict(profile: PlanProfile | null | undefined): { ok: true } | { ok: false; code: string; message: string } {
@@ -58,8 +62,8 @@ export function handshakeVerdict(profile: PlanProfile | null | undefined): { ok:
   return { ok: true };
 }
 
-export function quotaAllowance(plan: unknown, usedToday: unknown): { ok: boolean; quota: number | null; used: number } {
-  const quota = dailyQuota(plan);
+export function quotaAllowance(plan: unknown, usedToday: unknown, profileQuota?: unknown): { ok: boolean; quota: number | null; used: number } {
+  const quota = dailyQuota(plan, profileQuota);
   const used = Number(usedToday) || 0;
   if (quota === null) return { ok: true, quota: null, used };
   return { ok: used < quota, quota, used };
@@ -81,7 +85,7 @@ export function gateVerdict(profile: PlanProfile | null | undefined, command: Ga
       message: `${FIRM_FEATURES[feature] ?? feature} requires a paid plan; plan is ${plan}`
     };
   }
-  const allowance = quotaAllowance(plan, profile?.usedToday);
+  const allowance = quotaAllowance(plan, profile?.usedToday, profile?.dailyQuota);
   if (!allowance.ok) {
     return {
       ok: false,
