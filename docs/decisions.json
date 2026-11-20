@@ -937,6 +937,16 @@
         "ref": "user 2026-11-20: 'bersihkan juga repo opera agent supaya tidak membingungkan supaya repo tetap navego' - a name that lingers in a live surface is a name a reader cannot tell apart from the product"
       },
       "file": "tests/tooling/predecessor-name.test.ts"
+    },
+    {
+      "id": "docs-branch-protection-02",
+      "scope": "ci/main",
+      "decision": "The owner may merge without the required review on main, because GitHub refuses an approving review from a pull request's own author and this repository has one account; every other rule stays: one approving review with code-owner sign-off, the five CI checks with strict verification, no force pushes, no deletions, and resolved conversations before a merge.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'oke approve apply publish rotasi tunda dulu' - the owner asked for the approval and for the release; the API refused to put the owner on the bypass list, so enforce-admins was turned off, which is the same permission in a repository with one admin"
+      },
+      "file": "docs/product/backend-language-evaluation.md"
     }
   ]
 }
