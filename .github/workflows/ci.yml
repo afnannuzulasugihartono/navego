@@ -163,12 +163,11 @@ jobs:
         shell: bash
     services:
       postgres:
-        image: postgres:16
+        image: supabase/postgres:15.20.0.002
         env:
-          POSTGRES_USER: navego_test
           POSTGRES_PASSWORD: navego_test
         ports: ['5432:5432']
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        options: --health-cmd "pg_isready -U postgres" --health-interval 10s --health-timeout 5s --health-retries 12
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
@@ -178,7 +177,7 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Apply the migrations to a disposable Postgres
         env:
-          DATABASE_URL: postgres://navego_test:navego_test@127.0.0.1:5432/postgres
+          DATABASE_URL: postgres://postgres:navego_test@127.0.0.1:5432/postgres
         run: |
           set -euo pipefail
           shopt -s nullglob
@@ -187,7 +186,7 @@ jobs:
           done
       - name: Unit and static tests against the live migration shape
         env:
-          NAVEGO_TEST_DATABASE_URL: postgres://navego_test:navego_test@127.0.0.1:5432/postgres
+          NAVEGO_TEST_DATABASE_URL: postgres://postgres:navego_test@127.0.0.1:5432/postgres
         run: |
           npm test
           npm run check
