@@ -41,6 +41,16 @@ create table if not exists auth.oauth_consents (
   revoked_at timestamptz
 );
 
+-- One migration records its own application in the Supabase migrations ledger, which the hosted platform creates before any project SQL runs.
+
+create schema if not exists supabase_migrations;
+create table if not exists supabase_migrations.schema_migrations (
+  version text primary key,
+  statements text[]
+);
+grant usage on schema supabase_migrations to postgres;
+grant select, insert, update, delete on supabase_migrations.schema_migrations to postgres;
+
 -- The migrations run as postgres: they grant select on auth.sessions to service_role, and several security definer functions read auth.uid().
 -- On the hosted project postgres holds those privileges; here the superuser hands them over so the same statements mean the same thing.
 
