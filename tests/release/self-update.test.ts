@@ -196,6 +196,16 @@ test('a build that is not ours is refused', async () => {
   assert.equal(folder.files.size, 0, 'and nothing is written');
 });
 
+test('a build that carries the name an old install shipped under is still ours', async () => {
+  // An install from the predecessor product's era verifies the download against the name it was shipped as; refusing it would strand those machines on the browser updater for good.
+  const zip = buildZip([{ name: 'manifest.json', text: '{"name":"Opera Agent","version":"1.6.38"}' }]);
+  const folder = fakeFolder();
+  const outcome = await applyBuild({ folder, installedVersion: '1.6.37', fetchImpl: fetchImpl('1.6.38', zip) });
+  assert.equal(outcome.ok, true);
+  assert.equal(outcome.changed, true);
+  assert.equal(outcome.version, '1.6.38');
+});
+
 test('the served version is the one the build carries, asked by a head on the archive', async () => {
   const seen: Array<{ url: string; method: string }> = [];
   const probe = async (url: string | URL | Request, options?: RequestInit): Promise<Response> => {

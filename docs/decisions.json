@@ -927,6 +927,16 @@
         "ref": "docs/product/backend-language-evaluation.md: item 4 of 'What we will do (in order)' - 'Silently swallowing errors' was the part of the stub sweep that was still open"
       },
       "file": "tests/tooling/swallowed-errors.test.ts"
+    },
+    {
+      "id": "tests-tooling-predecessor-name-01",
+      "scope": "tooling/gates",
+      "decision": "The predecessor product's name survives only where a reason says it must: the applied migration history, the dated records, the cited decisions, the one compatibility list that still recognises an install from that era, and the files that document the cleanup. The gate refuses it in every other file, so the tree cannot drift back into two names.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'bersihkan juga repo opera agent supaya tidak membingungkan supaya repo tetap navego' - a name that lingers in a live surface is a name a reader cannot tell apart from the product"
+      },
+      "file": "tests/tooling/predecessor-name.test.ts"
     }
   ]
 }
