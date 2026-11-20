@@ -7,9 +7,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadOptions, saveBridgeUrl, saveLogLevel, saveModelEndpoint, saveModelKey, saveModelName, readModelConfig, MODEL_PROVIDERS, DEFAULT_PROVIDER_ID } from '../../extension/lib/options-store.js';
 import { DEFAULT_BRIDGE_URL } from '../../extension/lib/endpoints.js';
-
-const PREDECESSOR_BRIDGE_SLUG = ['opera', 'agent', 'bridge'].join('-');
-const PREDECESSOR_BRIDGE_URL = DEFAULT_BRIDGE_URL.replace('navego-bridge', PREDECESSOR_BRIDGE_SLUG);
+import { PREDECESSOR_BRIDGE_SLUG, PREDECESSOR_BRIDGE_URL } from '../helpers/bridge-url-fixture.ts';
 
 const fake = (seed: Record<string, unknown> = {}) => {
   const data: Record<string, unknown> = { ...seed };
@@ -66,9 +64,10 @@ test('loadOptions leaves the current and custom bridge URLs unchanged', async ()
 });
 
 test('loadOptions does not rewrite a predecessor slug without a path prefix', async () => {
-  const stored = `https://${PREDECESSOR_BRIDGE_SLUG}`;
-  const loaded = await loadOptions(fake({ bridgeUrl: stored }));
-  assert.equal(loaded.bridgeUrl, stored);
+  for (const stored of [PREDECESSOR_BRIDGE_SLUG, `https://${PREDECESSOR_BRIDGE_SLUG}`]) {
+    const loaded = await loadOptions(fake({ bridgeUrl: stored }));
+    assert.equal(loaded.bridgeUrl, stored);
+  }
 });
 
 test('saveModelEndpoint accepts https and loopback, refuses remote http', async () => {

@@ -49,6 +49,9 @@ export function randomToken() {
   return [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+// The worker persists the compatibility rewrite so the installed device leaves the stale deployment once.
+// decisions.json -> extension-bridge-url-migration-01
+
 export async function getConfig() {
   const cfg = await chrome.storage.local.get(STORAGE_KEYS);
   const storedBridgeUrl = String(cfg.bridgeUrl || DEFAULT_BRIDGE_URL);

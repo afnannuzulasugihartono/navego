@@ -112,6 +112,9 @@ function isLoopbackHttp(value: unknown) {
   }
 }
 
+// The Options page reads the same compatibility rewrite as the worker, so the two surfaces name one bridge.
+// decisions.json -> extension-bridge-url-migration-01
+
 export async function loadOptions(storage: StorageAreaLike) {
   const cfg = await storage.get(['bridgeUrl', 'logLevel', 'modelEndpoint', 'modelName', 'modelKey']);
   const bridgeUrl = isString(cfg.bridgeUrl) && cfg.bridgeUrl
