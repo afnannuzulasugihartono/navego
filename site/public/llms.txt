@@ -25,7 +25,7 @@ From any MCP client:
 
 ## What it does
 
-- 45 `browser_*` / `artifact_*` / `delivery_*` / `wallet_*` tools over a loopback bridge.
+- 40 `browser_*` / `artifact_*` / `delivery_*` / `wallet_*` tools over a loopback bridge.
 - Reads pages, clicks, types, navigates, downloads artifacts; your own everyday browser, not a sandboxed one.
 - 36 allowlisted browser primitives, no free `eval`, no per-site gadgets.
 - Structured output: `navego doctor --json` answers with `{ ready, port, bridge, problems[], crxUrl }`.
