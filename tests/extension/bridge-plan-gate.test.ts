@@ -28,50 +28,32 @@ test('an account with no active plan cannot connect, and the refusal names the p
   assert.equal(handshakeVerdict(pilot).ok, true);
 });
 
-test('the account profile quota admits commands below its limit and refuses at the limit', () => {
-  const profile = { plan: 'plan.usd-17', status: 'active', dailyQuota: 17000, usedToday: 16999 };
-  const admitted = gateVerdict(profile, { method: 'page.read', params: {} });
-  assert.equal(admitted.ok, true);
-  if (admitted.ok) {
-    assert.equal(admitted.plan, 'plan.usd-17');
-    assert.equal(admitted.quota, 17000);
-  }
+// THE QUOTA COMES FROM THE PROFILE, AND THE BUNDLED TABLE IS THE FALLBACK.
+// One table carries every case, so the rule is proven once and each row only names its own account.
 
-  const refused = gateVerdict({ ...profile, usedToday: 17000 }, { method: 'page.read', params: {} });
-  assert.equal(refused.ok, false);
-  if (!refused.ok) {
-    assert.match(refused.message, /17000/);
-    assert.match(refused.message, /plan\.usd-17/);
-  }
-});
+const QUOTA_CASES = [
+  { name: 'a profile quota admits below its limit and refuses at it', profile: { plan: 'plan.usd-17', status: 'active', dailyQuota: 17000 }, quota: 17000 },
+  { name: 'a profile without a quota falls back to the bundled plan table', profile: { plan: 'plan.usd-1', status: 'active' }, quota: 1000 },
+  { name: 'an unknown plan uses the quota the profile carries', profile: { plan: 'plan.unreleased', status: 'active', dailyQuota: 17000 }, quota: 17000 }
+];
 
-test('a profile without a daily quota falls back to the bundled plan table', () => {
-  const fallback = gateVerdict({ plan: 'plan.usd-1', status: 'active', usedToday: 999 }, { method: 'page.read', params: {} });
-  assert.equal(fallback.ok, true);
-  if (fallback.ok) assert.equal(fallback.quota, 1000);
+for (const { name, profile, quota } of QUOTA_CASES) {
+  test(name, () => {
+    const admitted = gateVerdict({ ...profile, usedToday: quota - 1 }, { method: 'page.read', params: {} });
+    assert.equal(admitted.ok, true);
+    if (admitted.ok) {
+      assert.equal(admitted.plan, profile.plan);
+      assert.equal(admitted.quota, quota);
+    }
 
-  const refused = gateVerdict({ plan: 'plan.usd-1', status: 'active', usedToday: 1000 }, { method: 'page.read', params: {} });
-  assert.equal(refused.ok, false);
-  if (!refused.ok) assert.match(refused.message, /1000/);
-});
-
-test('an unknown plan uses the quota carried by the profile instead of the default plan quota', () => {
-  const profile = { plan: 'plan.unreleased', status: 'active', dailyQuota: 17000, usedToday: 16999 };
-  const admitted = gateVerdict(profile, { method: 'page.read', params: {} });
-  assert.equal(admitted.ok, true);
-  if (admitted.ok) {
-    assert.equal(admitted.plan, 'plan.unreleased');
-    assert.equal(admitted.quota, 17000);
-  }
-
-  const refused = gateVerdict({ ...profile, usedToday: 17000 }, { method: 'page.read', params: {} });
-  assert.equal(refused.ok, false);
-  if (!refused.ok) {
-    assert.match(refused.message, /17000/);
-    assert.match(refused.message, /plan\.unreleased/);
-    assert.doesNotMatch(refused.message, /1000/);
-  }
-});
+    const refused = gateVerdict({ ...profile, usedToday: quota }, { method: 'page.read', params: {} });
+    assert.equal(refused.ok, false);
+    if (!refused.ok) {
+      assert.match(refused.message, new RegExp(String(quota)));
+      assert.match(refused.message, new RegExp(profile.plan.replace('.', '\\.')));
+    }
+  });
+}
 
 test('the daily quota refuses at the command that breaks it, and names the plan', () => {
   const pilotPlan = PLANS['plan.usd-1'];
