@@ -34,7 +34,6 @@ ALTER FUNCTION opera_agent_tx_candidate.snapshot(navego_tx_candidate.runs, boole
 ALTER FUNCTION opera_agent_tx_candidate.tx_limit(text, text, text, integer) SET SCHEMA navego_tx_candidate;
 ALTER FUNCTION opera_agent_tx_candidate.read_run(text, text, text) SET SCHEMA navego_tx_candidate;
 ALTER FUNCTION opera_agent_tx_candidate.prepare(text, text, text, text, text, text, text, bigint, text, timestamp with time zone, timestamp with time zone) SET SCHEMA navego_tx_candidate;
-ALTER FUNCTION opera_agent_tx_candidate.mark_validated(text, text, text, integer, text) SET SCHEMA navego_tx_candidate;
 ALTER FUNCTION opera_agent_tx_candidate.reserve_slot(text, text, text, integer, text) SET SCHEMA navego_tx_candidate;
 ALTER FUNCTION opera_agent_tx_candidate.claim(text, text, text, text) SET SCHEMA navego_tx_candidate;
 ALTER FUNCTION opera_agent_tx_candidate.await_approval(text, text, text, integer, text, text) SET SCHEMA navego_tx_candidate;
