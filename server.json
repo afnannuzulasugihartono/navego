@@ -7,12 +7,12 @@
     "url": "https://github.com/afnannuzulasugihartono/navego",
     "source": "github"
   },
-  "version": "1.7.6",
+  "version": "1.8.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "navego",
-      "version": "1.7.6",
+      "version": "1.8.0",
       "transport": {
         "type": "stdio"
       }
