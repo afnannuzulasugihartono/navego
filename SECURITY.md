@@ -25,7 +25,7 @@ short version GitHub shows on the security tab.
 
 ## Supported versions
 
-Only the latest patch of the current minor line receives security fixes: 1.6.x is
+Only the latest patch of the current minor line receives security fixes: 1.8.x is
 supported, anything below it is not. The version in
 [`extension/manifest.json`](extension/manifest.json) is the source of truth.
 

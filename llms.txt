@@ -22,7 +22,7 @@ From any MCP client:
 
 ## What it does
 
-- 45 `browser_*`/`artifact_*`/`delivery_*`/`wallet_*` tools over the loopback bridge — your own everyday browser, Canvas/UI paths (Google Sheets, Docs), plus the meter your plan pays for.
+- 40 `browser_*`/`artifact_*`/`delivery_*`/`wallet_*` tools over the loopback bridge — your own everyday browser, Canvas/UI paths (Google Sheets, Docs), plus the meter your plan pays for.
 - Reads pages, clicks, types, navigates, downloads artifacts, records sessions.
 - Publisher: `afnannuzulasugihartono/navego` (GitHub). Package: `navego` (npm). License: MIT.Protocol 1, 36-primitive wire allowlist.
 
