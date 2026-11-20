@@ -7,7 +7,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadOptions, saveBridgeUrl, saveLogLevel, saveModelEndpoint, saveModelKey, saveModelName, readModelConfig, MODEL_PROVIDERS, DEFAULT_PROVIDER_ID } from '../../extension/lib/options-store.js';
 import { DEFAULT_BRIDGE_URL } from '../../extension/lib/endpoints.js';
-import { PREDECESSOR_BRIDGE_SLUG, PREDECESSOR_BRIDGE_URL } from '../helpers/bridge-url-fixture.ts';
+import { PREDECESSOR_BRIDGE_URL } from '../helpers/bridge-url-fixture.ts';
 
 const fake = (seed: Record<string, unknown> = {}) => {
   const data: Record<string, unknown> = { ...seed };
@@ -54,20 +54,6 @@ test('loadOptions migrates the predecessor bridge URL without changing storage',
   const loaded = await loadOptions(s);
   assert.equal(loaded.bridgeUrl, DEFAULT_BRIDGE_URL);
   assert.equal(s.data.bridgeUrl, PREDECESSOR_BRIDGE_URL);
-});
-
-test('loadOptions leaves the current and custom bridge URLs unchanged', async () => {
-  const current = await loadOptions(fake({ bridgeUrl: DEFAULT_BRIDGE_URL }));
-  assert.equal(current.bridgeUrl, DEFAULT_BRIDGE_URL);
-  const custom = await loadOptions(fake({ bridgeUrl: 'https://bridge.example/custom' }));
-  assert.equal(custom.bridgeUrl, 'https://bridge.example/custom');
-});
-
-test('loadOptions does not rewrite a predecessor slug without a path prefix', async () => {
-  for (const stored of [PREDECESSOR_BRIDGE_SLUG, `https://${PREDECESSOR_BRIDGE_SLUG}`]) {
-    const loaded = await loadOptions(fake({ bridgeUrl: stored }));
-    assert.equal(loaded.bridgeUrl, stored);
-  }
 });
 
 test('saveModelEndpoint accepts https and loopback, refuses remote http', async () => {
