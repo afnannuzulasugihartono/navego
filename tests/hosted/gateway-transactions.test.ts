@@ -1,7 +1,7 @@
-// @last-edited: 2026-10-21 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: gateway-transactions.test — the gateway admits a signed-in person and a device, and nothing else.
 // @state: the token it accepts, the device it resolves, and the command it enqueues.
-// @dependencies: node:test, strict, node:fs, node:module, node:vm, cors.
+// @dependencies: node:test, strict, node:fs, node:module, node:vm, cors, request-body.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,6 +10,7 @@ import { stripTypeScriptTypes } from 'node:module';
 import vm from 'node:vm';
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from '../../hosted/functions/_shared/cors.ts';
 import { requiredEnv } from '../../hosted/functions/_shared/required-env.ts';
+import { parseJsonObject } from '../../hosted/functions/_shared/request-body.ts';
 
 // THE PROCESS GETS A Deno AND THESE TWO.
 // required-env is the real module the edge bundle uses, not a stand-in; it reads Deno from its own closure, which is this process.
@@ -93,7 +94,7 @@ function harness({ merged = { ok: true, commandId }, user = null, enqueue = { ok
     }
   };
 
-  vm.runInNewContext(source, { createClient: () => client, CORS_DEFAULT_ORIGINS, resolveAllowedOrigin, requiredEnv, Deno: { env: { get: (key: any) => (key in env ? env[key] : process.env[key]) }, serve: (fn: any) => { handler = fn; } }, Request, Response, URL, TextEncoder, TextDecoder, crypto });
+  vm.runInNewContext(source, { createClient: () => client, CORS_DEFAULT_ORIGINS, resolveAllowedOrigin, requiredEnv, parseJsonObject, Deno: { env: { get: (key: any) => (key in env ? env[key] : process.env[key]) }, serve: (fn: any) => { handler = fn; } }, Request, Response, URL, TextEncoder, TextDecoder, crypto });
   for (const [key, value] of Object.entries(savedEnv)) {
     if (value === undefined) delete process.env[key]; else process.env[key] = value;
   }

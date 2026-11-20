@@ -1,13 +1,14 @@
-// @last-edited: 2026-10-21 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: navego-gateway — the gateway a browser reaches when the caller is a person, not a device.
 // @state: the CORS answer, the token it accepts, and the command it enqueues for the device.
-// @dependencies: edge-runtime, supabase-js, cors.
+// @dependencies: edge-runtime, supabase-js, cors, request-body.
 
 import "@supabase/edge-runtime";
 import { createClient } from "@supabase/supabase-js";
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from "../_shared/cors.ts";
 
 import { requiredEnv } from "../_shared/required-env.ts";
+import { parseJsonObject } from "../_shared/request-body.ts";
 
 const SUPABASE_URL = requiredEnv("SUPABASE_URL");
 const SERVICE_ROLE_KEY = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
@@ -98,12 +99,12 @@ async function command(req: Request, _url: URL) {
   if (raw === null) {
     return json(req, { ok: false, error: { code: "TOO_LARGE", message: "Request too large." } }, 413);
   }
-  let body: Record<string, unknown>;
-  try {
-    body = JSON.parse(raw) as Record<string, unknown>;
-  } catch {
+  // decisions.json -> hosted-request-body-01
+  const parsed = parseJsonObject(raw);
+  if (!parsed.ok) {
     return json(req, { ok: false, error: { code: "INVALID_JSON", message: "Body must be JSON." } }, 400);
   }
+  const body = parsed.body;
   const token = extractToken(req, body);
   if (!token) {
     return json(req, { ok: false, error: { code: "UNAUTHORIZED", message: "Missing token (x-navego-token header or body.apiKey)." } }, 401);

@@ -1,4 +1,4 @@
-// @last-edited: 2026-11-13 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: tools - the MCP tool surface of the local driver, with the schema each call is answered against.
 // @state: every tool name, its description and its input schema, frozen in one table.
 // @dependencies: ./burst.js.
@@ -73,6 +73,7 @@ export const TOOLS = Object.freeze([
     description: 'Close one tab by id and drop its cached session, so abandoned drives do not pile tabs in the browser and stale input cannot answer the next one.',
     inputSchema: { type: 'object', properties: { tabId: stringArg('which tab to close, from tabs') }, required: ['tabId'] }
   },
+  // decisions.json -> local-tools-bounds-01
   {
     name: 'browser_read_page',
     description: 'Read one tab automatically: the server profiles the surface and tries the selection mirror on a canvas editor, then ax, dom and a vision/OCR fallback in the order that surface warrants, answering with whichever produced text - the strategy and any skipped steps ride in the answer. A canvas document that mirrors nothing in the DOM is copied through the clipboard and the answer carries clipboardUsed; allowCaretMove set false declines that caret-moving copy; allowVision: true permits the OCR fallback, which sends one screenshot of this page to the hosted edge (default false, because the picture leaves this machine); maxChars caps the answer with originalChars and truncatedChars reported; selector scopes the DOM read to the first matching subtree, or refuses with the reason.',
@@ -82,7 +83,7 @@ export const TOOLS = Object.freeze([
         tabId: tabArg,
         allowCaretMove: { type: 'boolean', description: 'set false to decline the selection copy on a canvas editor (default true; the read borrows the selection and tries to restore the caret, reporting caretRestored if it cannot)' },
         allowVision: { type: 'boolean', description: 'consent to send one screenshot of this page to the hosted OCR edge when no local read answers (default false; the picture leaves this machine)' },
-        maxChars: { type: 'number', description: 'cap the returned text at this many characters; the answer reports originalChars and truncatedChars, and caps at 100000 even on a larger ask' },
+        maxChars: { type: 'integer', minimum: 1, maximum: 100000, description: 'cap the returned text at this many characters; the answer reports originalChars and truncatedChars, and caps at 100000 even on a larger ask' },
         selector: { type: 'string', description: 'read only the innerText of the first element matching this CSS selector; no match refuses with the reason instead of the whole page' }
       }
     }
@@ -95,7 +96,7 @@ export const TOOLS = Object.freeze([
       properties: {
         query: stringArg('what to search for; handed to Bing verbatim as the query'),
         pages: { type: 'integer', minimum: 1, maximum: 3, description: 'how many result pages to fetch, following Bing\'s own pagination links. Defaults to 1; at most 3.' },
-        timeoutMs: { type: 'number', description: 'budget for the results page to render in the background tab, default 10000, capped at 30000' }
+        timeoutMs: { type: 'integer', minimum: 1000, maximum: 30000, description: 'budget for the results page to render in the background tab, default 10000, capped at 30000' }
       },
       required: ['query']
     }
@@ -103,7 +104,7 @@ export const TOOLS = Object.freeze([
   {
     name: 'browser_find_element',
     description: 'Locate on one page: one interactive row by role and name (element, default; exact first, substring after; the handle is never stale - the box is measured from the node at the click) or visible text anywhere (mode: text; returns viewport rects in the same space a screenshot uses). Pass a role without a name to list every row of that role up to limit.',
-    inputSchema: { type: 'object', properties: { tabId: tabArg, role: stringArg('row role, e.g. menuitem, button, option, link; required unless mode is text'), name: stringArg('if given, the one row; exact first, substring after'), limit: { type: 'number', description: 'rows to return when no name is given; default 120, cap 500' }, mode: { type: 'string', enum: ['element', 'text'], description: 'element (default): locate rows by role and name; text: locate visible text and return rects' }, text: stringArg('with mode text: the text to look for') } }
+    inputSchema: { type: 'object', properties: { tabId: tabArg, role: stringArg('row role, e.g. menuitem, button, option, link; required unless mode is text'), name: stringArg('if given, the one row; exact first, substring after'), limit: { type: 'integer', minimum: 1, maximum: 500, description: 'rows to return when no name is given; default 120, cap 500' }, mode: { type: 'string', enum: ['element', 'text'], description: 'element (default): locate rows by role and name; text: locate visible text and return rects' }, text: stringArg('with mode text: the text to look for') } }
   },  {
     name: 'browser_click',
     description: 'Click in one tab: by point, by handle from browser_find_element, or by role+name (exact first, substring after). The answer carries where the page stands and the rows that changed.',
@@ -163,7 +164,7 @@ export const TOOLS = Object.freeze([
       type: 'object',
       properties: {
         tabId: tabArg,
-        timeoutMs: { type: 'number', description: 'budget for the whole burst, default 12000, capped at 12000' },
+        timeoutMs: { type: 'integer', minimum: 500, maximum: 12000, description: 'budget for the whole burst, default 12000, capped at 12000' },
         steps: {
           type: 'array',
           minItems: 1,
@@ -212,7 +213,7 @@ export const TOOLS = Object.freeze([
         contains: stringArg('until=url: substring the url must contain, e.g. "/dashboard"'),
         matches: stringArg('until=url: regular expression the url must match'),
         quietMs: { type: 'number', description: 'until=stable: how long the page must hold still, default 120' },
-        timeoutMs: { type: 'number', description: 'budget; defaults: text 8000 (cap 30000), row 10000 (cap 60000), url 8000 (cap 60000), stable 8000' },
+        timeoutMs: { type: 'integer', minimum: 500, maximum: 60000, description: 'budget; defaults: text 8000 (cap 30000), row 10000 (cap 60000), url 8000 (cap 60000), stable 8000' },
         intervalMs: { type: 'number', description: 'kept for compatibility; the wait settles on the page instead of sleeping a fixed gap' }
       },
       required: []

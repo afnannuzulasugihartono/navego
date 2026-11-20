@@ -1,7 +1,7 @@
-// @last-edited: 2026-11-09 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: navego-bridge - the cloud bridge: the device socket, the command queue it serves, and the session meter the local drive pays.
 // @state: the socket upgrade, the CORS answer, the enqueue a device claims from, and the session open and report the loopback bridge asks once per session.
-// @dependencies: edge-runtime, supabase-js, edge-log.
+// @dependencies: edge-runtime, supabase-js, edge-log, request-body.
 
 import "@supabase/edge-runtime";
 import { createClient } from "@supabase/supabase-js";
@@ -12,6 +12,7 @@ import { isUpgradeRequest, serveDeviceSocket } from "./bridge-socket.ts";
 
 import { requiredEnv } from "../_shared/required-env.ts";
 import { sha256 } from "../_shared/sha256.ts";
+import { parseJsonObject } from "../_shared/request-body.ts";
 
 const SUPABASE_URL = requiredEnv("SUPABASE_URL");
 const SERVICE_ROLE_KEY = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
@@ -289,7 +290,12 @@ async function handle(req: Request) {
     if (raw === null) {
       return json({ ok: false, error: "Request too large." }, 413);
     }
-    const body = JSON.parse(raw) as Record<string, unknown>;
+    // decisions.json -> hosted-request-body-01
+    const parsed = parseJsonObject(raw);
+    if (!parsed.ok) {
+      return json({ ok: false, error: "Body must be JSON." }, 400);
+    }
+    const body = parsed.body;
     const action = String(body.action || "");
     if (action === "pair") return await pair(body);
     if (action === "heartbeat") return await heartbeat(body);

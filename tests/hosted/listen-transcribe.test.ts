@@ -1,7 +1,7 @@
-// @last-edited: 2026-10-21 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: listen-transcribe.test — one live listen session per device, transcribed as it arrives.
 // @state: the second start it refuses, the transcript it returns, and the transcriber it uses.
-// @dependencies: node:test, strict, node:fs, node:module, node:vm.
+// @dependencies: node:test, strict, node:fs, node:module, node:vm, request-body.
 
 // The listen function turns tab audio into timestamped segments: device-token auth per action, one live session per device, 10-second windows to Gemini, segments stored, audio deleted (retention 0 for voice).
 // The vm harness below drives start, two appends and stop against an in-memory store with a canned transcriber, proving offsets, deletion and session end without network.
@@ -14,6 +14,7 @@ import { createHash } from 'node:crypto';
 import vm from 'node:vm';
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from '../../hosted/functions/_shared/cors.ts';
 import { requiredEnv } from '../../hosted/functions/_shared/required-env.ts';
+import { readJsonObject } from '../../hosted/functions/_shared/request-body.ts';
 
 // THE PROCESS GETS THE TWO THE BUNDLE DEMANDS.
 // required-env is the real module the edge bundle uses, not a stand-in; it reads Deno from its own closure, which is this process.
@@ -134,6 +135,7 @@ function harness(db: ListenStore, fetchImpl?: (url: string | URL | Request, init
   vm.runInNewContext(source, {
     createClient: () => client, createEdgeLog: () => edgeLog,
     requiredEnv,
+    readJsonObject,
     CORS_DEFAULT_ORIGINS, resolveAllowedOrigin,
     Deno: { env: { get: (key: any) => (key === 'SUPABASE_URL' || key === 'SUPABASE_SERVICE_ROLE_KEY' ? 'test' : (key === 'GROQ_API_KEY' ? 'test-key' : '')) }, serve: (fn: any) => { handler = fn; } },
     Request, Response, Headers, URL, TextEncoder, FormData, Blob, atob, fetch: fakeFetch, crypto
