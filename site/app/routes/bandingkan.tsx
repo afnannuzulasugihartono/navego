@@ -6,13 +6,13 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return seoMeta({
-    title: 'Bandingkan — Navego',
-    description: 'Kejujuran membandingkan: apa yang bisa WebDriver/Selenium dan tidak bisa Navego, apa yang bisa Navego dan tidak bisa tool generik — sebelum Anda memilih.',
+    title: 'Bandingkan — Opera',
+    description: 'Kejujuran membandingkan: apa yang bisa WebDriver/Selenium dan tidak bisa Opera, apa yang bisa Opera dan tidak bisa tool generik — sebelum Anda memilih.',
     path: '/bandingkan'
   });
 }
 
-const ROWS: Array<[dimensi: string, navego: string, webdriver: string, generik: string]> = [
+const ROWS: Array<[dimensi: string, opera: string, webdriver: string, generik: string]> = [
   ['Cara kerja', '36 primitive tervalidasi di atas browser Anda; 40 tool MCP di atasnya', 'Protokol penuh (Chrome DevTools/WebDriver) — akses ke semuanya, termasuk kata sandi', 'Bervariasi per produk; biasanya kontrol jarak jauh lengkap'],
   ['Aplikasi canvas (Google Docs, Sheets)', 'Bisa — diukur di halaman asli: settle p50 ~46 ms, read ~2 ms', 'Sulit — tidak ada DOM untuk diisi atau dibaca', 'Sebagian besar tidak bisa; dokumen canvas tidak punya elemen untuk diklik'],
   ['Kata sandi & PIN', 'Selalu ditolak, di kode, bukan di kebijakan', 'Bisa membaca dan mengisi apa pun di halaman', 'Bervariasi; banyak yang mengisi semuanya demi "berhasil"'],
@@ -32,7 +32,7 @@ export default function Bandingkan() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <h1>Di mana Navego berdiri.</h1>
+            <h1>Di mana Opera berdiri.</h1>
             <p className="lede">Bukan tabel yang menulis menakut-nakuti. Dua pendekatan lain punya tempatnya — ini perbandingannya apa adanya.</p>
           </div>
         </section>
@@ -41,13 +41,13 @@ export default function Bandingkan() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <h2 id="tabelTitle" className="section-title">Navego vs WebDriver vs ekstensi AI generik.</h2>
+                <h2 id="tabelTitle" className="section-title">Opera vs WebDriver vs ekstensi AI generik.</h2>
               </div>
             </div>
             <div className="table-wrapper">
               <table className="table">
                 <thead>
-                  <tr><th>Dimensi</th><th>Navego</th><th>WebDriver/Selenium</th><th>Ekstensi AI generik</th></tr>
+                  <tr><th>Dimensi</th><th>Opera</th><th>WebDriver/Selenium</th><th>Ekstensi AI generik</th></tr>
                 </thead>
                 <tbody>
                   {ROWS.map(([dim, a, b, c]) => (
@@ -64,7 +64,7 @@ export default function Bandingkan() {
             <p className="section-note" style={{ marginTop: 'var(--s-4)' }}>
               Tabel ini soal kelas pendekatan, bukan klaim. Kami tidak menguji produk orang lain.
               Kalau Anda butuh regresi UI yang identik setiap malam, WebDriver lebih tepat. Kalau Anda butuh asisten yang bisa diajak bicara
-              untuk pekerjaan berantakan sehari-hari — formulir, portal, berkas — itu wilayah Navego.
+              untuk pekerjaan berantakan sehari-hari — formulir, portal, berkas — itu wilayah Opera.
             </p>
           </div>
         </section>
@@ -73,9 +73,9 @@ export default function Bandingkan() {
           <div className="wrap">
             <div className="cta-band">
               <h2 className="section-title" style={{ color: '#ffffff' }}>Sudah tahu yang Anda butuhkan?</h2>
-              <p>Unduh Navego dan buktikan di halaman nyata Anda — portals, portal HR, dokumen milik Anda.</p>
+              <p>Unduh Opera dan buktikan di halaman nyata Anda — portals, portal HR, dokumen milik Anda.</p>
               <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
-                <Link className="btn btn-solid" to="/unduh">Unduh Navego</Link>
+                <Link className="btn btn-solid" to="/unduh">Unduh Opera</Link>
                 <Link className="btn btn-ghost" to="/metodologi">Lihat angkanya</Link>
               </div>
             </div>

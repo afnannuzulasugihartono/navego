@@ -27,7 +27,7 @@ const bodyRecord = (body: unknown): Record<string, unknown> | null =>
 // THE CLOUD METER IS ANSWERED BY A LOCAL STUB IN THIS RUN.
 // The bridge opens every session against the cloud meter, which knows an account and its plan; a throwaway Chrome with a throwaway profile has neither, so the meter refuses it with "Unauthorized device" and the extension is dropped before the first command.
 // Measured on 2026-11-15: the proof's first open_url came back empty, then the bridge's own health answered linked:false with meterRefusal "Unauthorized device." - the drive was refused, not slow.
-// So the proof points NAVEGO_CLOUD_URL at a loopback stub that grants a pilot session, exactly the way the local suite proves the bridge's own side of that conversation.
+// So the proof points OPERA_CLOUD_URL at a loopback stub that grants a pilot session, exactly the way the local suite proves the bridge's own side of that conversation.
 // Everything else in the run is the product: the shipped extension, the shipped bridge, the shipped MCP server, and the shipped bytes.
 // The record says this out loud, because a receipt that hid the stub would be a receipt of something nobody runs.
 
@@ -122,7 +122,7 @@ function extensionForProof(root: string, bridgePort: number) {
 }
 
 function findExtensionBrowser() {
-  if (process.env.NAVEGO_PROOF_BROWSER) return process.env.NAVEGO_PROOF_BROWSER;
+  if (process.env.OPERA_PROOF_BROWSER) return process.env.OPERA_PROOF_BROWSER;
   return browserBinary(EXTENSION_CANDIDATES());
 }
 
@@ -177,10 +177,10 @@ async function waitForBridge(bridgePort: number, timeoutMs = 15000) {
   return false;
 }
 
-export async function launchProofBrowser({ port = Number(process.env.NAVEGO_PROOF_PORT || 9444), bridgePort = Number(process.env.NAVEGO_PROOF_BRIDGE_PORT || PROOF_BRIDGE_PORT), root = process.cwd(), extraArgs = [] } = {} as { port?: number; bridgePort?: number; root?: string; extraArgs?: string[] }) {
+export async function launchProofBrowser({ port = Number(process.env.OPERA_PROOF_PORT || 9444), bridgePort = Number(process.env.OPERA_PROOF_BRIDGE_PORT || PROOF_BRIDGE_PORT), root = process.cwd(), extraArgs = [] } = {} as { port?: number; bridgePort?: number; root?: string; extraArgs?: string[] }) {
   if (port === SHARED_PORT || bridgePort === SHARED_PORT) throw new Error(`${SHARED_PORT} is the shared browser; the proof run refuses to drive it.`);
   const binary = findExtensionBrowser();
-  if (!binary) throw new Error('no browser that can load the proof extension is installed; set NAVEGO_PROOF_BROWSER to one (Chrome for Testing or Chromium)');
+  if (!binary) throw new Error('no browser that can load the proof extension is installed; set OPERA_PROOF_BROWSER to one (Chrome for Testing or Chromium)');
   const extension = extensionForProof(root, bridgePort);
   const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'opera-proof-'));
   const entry = { id: 'proof', name: 'Proof Chrome', family: 'chromium', protocol: 'cdp', binary, paths: { win32: [binary], darwin: [binary], linux: [binary] } };
@@ -227,7 +227,7 @@ const parseAnswer = (text: string) => {
 export function speakMcp({ port, cwd = process.cwd(), env = process.env, bridgePort = null }: { port: number; cwd?: string; env?: NodeJS.ProcessEnv; bridgePort?: number | null }) {
   const child = spawn(process.execPath, [path.join(cwd, 'local', 'bin', 'opera-local.js')], {
     cwd,
-    env: { ...env, NAVEGO_BRIDGE_PORT: String(bridgePort ?? port ?? env.NAVEGO_BRIDGE_PORT ?? 9451) },
+    env: { ...env, OPERA_BRIDGE_PORT: String(bridgePort ?? port ?? env.OPERA_BRIDGE_PORT ?? 9451) },
     stdio: ['pipe', 'pipe', 'inherit']
   });
 
@@ -373,9 +373,9 @@ export async function runProof({
   const company = path.join(root, 'tests', 'fixtures', 'mock-company');
   const portal = await serveCompany(company);
   const cloud = await startFakeCloud();
-  const port = Number(process.env.NAVEGO_PROOF_PORT || 9444);
-  const bridgePort = Number(process.env.NAVEGO_PROOF_BRIDGE_PORT || PROOF_BRIDGE_PORT);
-  const mcp = speakMcp({ port, bridgePort, cwd: root, env: { ...env, NAVEGO_CLOUD_URL: cloud.url } });
+  const port = Number(process.env.OPERA_PROOF_PORT || 9444);
+  const bridgePort = Number(process.env.OPERA_PROOF_BRIDGE_PORT || PROOF_BRIDGE_PORT);
+  const mcp = speakMcp({ port, bridgePort, cwd: root, env: { ...env, OPERA_CLOUD_URL: cloud.url } });
   if (!(await waitForBridge(bridgePort))) {
     await mcp.close().catch(() => null);
     await portal.close();

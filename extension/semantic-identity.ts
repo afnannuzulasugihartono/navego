@@ -5,7 +5,7 @@
 
 (() => {
   'use strict';
-  if (globalThis.NavegoSemanticIdentity) return;
+  if (globalThis.OperaSemanticIdentity) return;
 
   const DEFAULT_MAX_ENTITIES = 500;
   const DEFAULT_MAX_CACHE_BYTES = 256 * 1024;
@@ -111,7 +111,7 @@
       return url.toString();
     } catch (error) {
 
-      globalThis.NavegoLog?.debug?.('HREF_CANONICALIZE_FAILED', error instanceof Error ? error.message : String(error));
+      globalThis.OperaLog?.debug?.('HREF_CANONICALIZE_FAILED', error instanceof Error ? error.message : String(error));
       return '';
     }
   }
@@ -497,5 +497,5 @@
     return Object.freeze({ observe, reset, inspect });
   }
 
-  globalThis.NavegoSemanticIdentity = Object.freeze({ createIdentityEngine, stableHash });
+  globalThis.OperaSemanticIdentity = Object.freeze({ createIdentityEngine, stableHash });
 })();

@@ -3,7 +3,7 @@
 # @state: the consent screen lives on the site, at /oauth/consent.
 # @dependencies: none stated.
 
-project_id = "navego"
+project_id = "opera"
 
 [auth]
 

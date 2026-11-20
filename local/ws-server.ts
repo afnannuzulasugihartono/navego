@@ -18,7 +18,7 @@ const GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 // The only peer is the extension on this machine over loopback, past the origin check, so the cap guards against accidents, not attackers — and a whole pierced document is legitimately megabytes.
 // Measured live: fetching one to find a hidden file input tripped the old one-megabyte cap, which answered by closing the socket and failing every call in flight.
 // An oversized message is now skipped by its own declared length while the link — and every other call on it — carries on.
-// Set NAVEGO_BRIDGE_DEBUG_FRAMES to watch sizes.
+// Set OPERA_BRIDGE_DEBUG_FRAMES to watch sizes.
 
 const MAX_FRAME_BYTES = 16 * 1024 * 1024;
 
@@ -121,7 +121,7 @@ export function createFrameReader(onText: (text: string) => void, onControl: (ki
         offset += 4;
       }
       if (buffer.length < offset + length) return;
-      if (process.env.NAVEGO_BRIDGE_DEBUG_FRAMES) {
+      if (process.env.OPERA_BRIDGE_DEBUG_FRAMES) {
         console.error(`[ws-server] opcode=${opcode} fin=${fin} length=${length}`);
       }
       const held = fragments ? fragments.length : 0;

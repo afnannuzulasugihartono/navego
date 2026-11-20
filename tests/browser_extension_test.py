@@ -192,9 +192,9 @@ LONG_TEXT = "BEGIN " + ("civil-engineering-semantic-reader " * 695) + " END"
 EXTRA_CONTROLS = "".join(
     f'<button aria-label="Synthetic action {index}"></button>' for index in range(100)
 )
-PAGE = f"""<!doctype html><html><head><title>Navego Test Page</title></head>
+PAGE = f"""<!doctype html><html><head><title>Opera Test Page</title></head>
 <body>
-<h1>Navego Browser Test</h1>
+<h1>Opera Browser Test</h1>
 <p id="long">{LONG_TEXT}</p>
 <button id="toggle" aria-pressed="false" onclick="this.setAttribute('aria-pressed', this.getAttribute('aria-pressed')==='true'?'false':'true')">Toggle</button>
 <button id="rerender" onclick="this.replaceWith(this.cloneNode(true))">Rerender target</button>
@@ -236,7 +236,7 @@ document.getElementById('scrollbox').addEventListener('scroll', (event) => {{
 </script>
 </body></html>"""
 
-VISUAL_PAGE = """<!doctype html><html><head><title>Navego Visual Test</title></head>
+VISUAL_PAGE = """<!doctype html><html><head><title>Opera Visual Test</title></head>
 <body style="margin:0;background:#eef2ff;color:#172554;font-family:sans-serif">
 <main style="padding:32px"><h1>Adaptive screenshot</h1><canvas id="visual" width="640" height="320"></canvas></main>
 <script>
@@ -245,13 +245,13 @@ const ctx = canvas.getContext('2d');
 const gradient = ctx.createLinearGradient(0, 0, 640, 320);
 gradient.addColorStop(0, '#2563eb'); gradient.addColorStop(1, '#7c3aed');
 ctx.fillStyle = gradient; ctx.fillRect(0, 0, 640, 320);
-ctx.fillStyle = 'white'; ctx.font = 'bold 38px sans-serif'; ctx.fillText('Navego Vision', 110, 175);
+ctx.fillStyle = 'white'; ctx.font = 'bold 38px sans-serif'; ctx.fillText('Opera Vision', 110, 175);
 </script></body></html>"""
 
-BLANK_PAGE = """<!doctype html><html><head><title>Navego Blank Test</title>
+BLANK_PAGE = """<!doctype html><html><head><title>Opera Blank Test</title>
 <style>html,body{margin:0;width:100%;height:100%;background:#fff}</style></head><body></body></html>"""
 
-IFRAME_PAGE = """<!doctype html><html><head><title>Navego Iframe Privacy Test</title></head>
+IFRAME_PAGE = """<!doctype html><html><head><title>Opera Iframe Privacy Test</title></head>
 <body><h1>Safe-looking parent</h1><iframe src="/page?embedded-sensitive=1" width="500" height="300"></iframe></body></html>"""
 
 ACTIONABILITY_PAGE = (
@@ -685,7 +685,7 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         if self.path.startswith("/pre8e-xml"):
-            payload = b'<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title>Navego XML Feed</title><entry><title>first</title></entry></feed>'
+            payload = b'<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title>Opera XML Feed</title><entry><title>first</title></entry></feed>'
             self.send_response(200)
             self.send_header("Content-Type", "application/xml; charset=utf-8")
             self.send_header("Content-Length", str(len(payload)))
@@ -780,7 +780,7 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
 
     def do_POST(self):
-        if self.path == "/navego-listen":
+        if self.path == "/opera-listen":
             length = int(self.headers.get("content-length", "0"))
             body = json.loads(self.rfile.read(length) or b"{}")
             action = body.get("action")
@@ -1192,7 +1192,7 @@ def managed_browser_resources(func):
         server = ThreadingHTTPServer((HOST, 0), Handler)
         port = server.server_address[1]
         threading.Thread(target=server.serve_forever, daemon=True).start()
-        profile_dir = tempfile.TemporaryDirectory(prefix="navego-browser-")
+        profile_dir = tempfile.TemporaryDirectory(prefix="opera-browser-")
         try:
             await asyncio.sleep(0.2)
             return await func(port, Path(profile_dir.name))
@@ -1245,7 +1245,7 @@ async def run(port, profile):
         )
         await popup.reload()
         pair_reply = await popup.evaluate(
-            f"chrome.runtime.sendMessage({{scope: 'navego-popup', action: 'pair', code: '{PAIR_CODE}'}})"
+            f"chrome.runtime.sendMessage({{scope: 'opera-popup', action: 'pair', code: '{PAIR_CODE}'}})"
         )
         assert pair_reply.get("ok") is True, pair_reply
         assert STATE.paired
@@ -1293,7 +1293,7 @@ async def run(port, profile):
         )
         result = assert_completed_ok(await asyncio.to_thread(STATE.wait, cid))
         tab_id = result["tab"]["id"]
-        assert result["tab"]["title"] == "Navego Test Page"
+        assert result["tab"]["title"] == "Opera Test Page"
 
         cid = STATE.push(
             "tabs.open",
@@ -1308,7 +1308,7 @@ async def run(port, profile):
             "page.record_start",
             {
                 "tabId": scan_tab,
-                "filename": "navego-test-record.webm",
+                "filename": "opera-test-record.webm",
                 "fps": 15,
                 "maxWidth": 800,
                 "quality": 50,
@@ -1317,7 +1317,7 @@ async def run(port, profile):
             benchmark="page.record_start",
         )
         armed = assert_completed_ok(await asyncio.to_thread(STATE.wait, cid, 60))
-        assert armed["armed"]["filename"] == "navego-test-record.webm", armed
+        assert armed["armed"]["filename"] == "opera-test-record.webm", armed
         assert armed["armed"]["startedAt"] > 0, armed
 
         cid = STATE.push(
@@ -1381,7 +1381,7 @@ async def run(port, profile):
 
         cid = STATE.push(
             "page.scan",
-            {"tabId": scan_tab, "filename": "navego-test-scan.html"},
+            {"tabId": scan_tab, "filename": "opera-test-scan.html"},
             timeout=60000,
             benchmark="page.scan",
         )
@@ -1434,7 +1434,7 @@ async def run(port, profile):
         page = result["page"]
         assert page["textChars"] > 2400, page["textChars"]
         assert page["totalTextChars"] > 2400
-        assert page["text"].startswith("Navego Browser Test")
+        assert page["text"].startswith("Opera Browser Test")
         assert page["semanticState"]["schemaVersion"] == 1
         assert page["semanticState"]["documentGeneration"] == 1
         assert page["semanticState"]["ambiguityCount"] >= 2
@@ -3405,7 +3405,7 @@ async def run(port, profile):
         ]
         cid = STATE.push("page.read", {"tabId": xml_tab, "includeElements": False})
         xml_read = assert_completed_ok(await asyncio.to_thread(STATE.wait, cid))["page"]
-        assert "Navego XML Feed" in xml_read["text"], (
+        assert "Opera XML Feed" in xml_read["text"], (
             "the content script survives a document whose root has no dataset"
         )
         cid = STATE.push("tabs.close", {"tabId": xml_tab})
@@ -4250,7 +4250,7 @@ async def run(port, profile):
         safe_ref = result["item"]["ref"]
         cid = STATE.push(
             "page.fill",
-            {"tabId": tab_id, "ref": safe_ref, "value": "hello navego"},
+            {"tabId": tab_id, "ref": safe_ref, "value": "hello opera"},
             benchmark="fill+enter.fill",
         )
         assert_completed_ok(await asyncio.to_thread(STATE.wait, cid))
@@ -4264,7 +4264,7 @@ async def run(port, profile):
             "page.query", {"tabId": tab_id, "selector": "#safe", "includeValue": True}
         )
         result = assert_completed_ok(await asyncio.to_thread(STATE.wait, cid))
-        assert result["item"]["value"] == "hello navego"
+        assert result["item"]["value"] == "hello opera"
 
         burst_steps = [
             {"action": "fill", "ref": safe_ref, "value": "fast burst"},
@@ -4723,7 +4723,7 @@ async def run(port, profile):
         assert background_input_burst["results"][2]["result"]["visiblePointer"] is True
         assert background_input_burst["results"][2]["result"]["focusEmulated"] is True
 
-        cursor_sel = "#__navego_pointer_cursor"
+        cursor_sel = "#__opera_pointer_cursor"
         body = await audited_background_command(
             worker, focus_audit, "page.query", {"tabId": tab_id, "selector": cursor_sel}
         )

@@ -46,7 +46,7 @@ import { isRecord } from '../lib/guards.js';
 // Measured: a stale extension dialled ws://127.0.0.1:19451 while the local server listened on 9451, the connection was refused, and every command silently took the cloud relay instead - 268 to 797 ms a call where loopback answers in 8 to 13 ms. The port is the one thing a stale build gets wrong, and getting it wrong costs twenty to fifty times the latency with nothing in the answer that says so.
 // So the candidates are probed, the one that answers is used, and the state names the port it found - a reader can see which road is live rather than inferring it from how slow everything is.
 
-const CONFIGURED_WS = globalThis.NAVEGO_BRIDGE_WS || 'ws://127.0.0.1:9451';
+const CONFIGURED_WS = globalThis.OPERA_BRIDGE_WS || 'ws://127.0.0.1:9451';
 const CANDIDATE_PORTS = [9451, 19451, 9333, 9222];
 const NO_STORE_GET = { method: 'GET', cache: 'no-store' as const };
 
@@ -142,7 +142,7 @@ function publicBridgeTab(tab?: chrome.tabs.Tab | undefined) {
 // Raising it back is one environment variable.
 
 function handleTimeoutMs() {
-  return Number(globalThis.NAVEGO_BRIDGE_HANDLE_TIMEOUT_MS ?? 8000);
+  return Number(globalThis.OPERA_BRIDGE_HANDLE_TIMEOUT_MS ?? 8000);
 }
 
 function withHandleTimeout<T>(promise: Promise<T>): Promise<T> {

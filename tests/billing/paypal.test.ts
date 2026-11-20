@@ -95,7 +95,7 @@ test('an order carries the amount in dollars, the currency, and the custom id', 
     return jsonResponse({}, 404);
   });
   try {
-    const out = await createPaypalOrder(envOf(), { amountCents: 1700, currency: 'USD', description: 'Navego Business', customId: 'plan.usd-17:owner-1' });
+    const out = await createPaypalOrder(envOf(), { amountCents: 1700, currency: 'USD', description: 'Opera Business', customId: 'plan.usd-17:owner-1' });
     assert.equal(out.id, 'ORDER-1');
     assert.equal(out.approvalUrl, 'https://paypal.test/approve');
     const body = JSON.parse(bodies[0] ?? '{}');

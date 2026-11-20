@@ -4,7 +4,7 @@
 // @dependencies: node:test, strict, node:fs, node:url, local/tools.js.
 
 // THE GUIDE IS PINNED TO THE CODE.
-// A reader who asks how to call Navego is sent to one file.
+// A reader who asks how to call Opera is sent to one file.
 // If that file names a tool the server does not register, or a command that does not exist, the reader finds out from an error.
 
 import test from 'node:test';
@@ -18,9 +18,9 @@ const tools = TOOLS.map((entry) => entry.name);
 
 test('the call guide names the one surface, and no dead one', () => {
   const guide = read('docs/agent-call.md');
-  assert.ok(guide.includes('navego'), 'the installed command is named');
-  assert.match(guide, /navego local/, 'the local mode is named');
-  assert.doesNotMatch(guide, /navego cloud/, 'the deleted cloud mode is not named');
+  assert.ok(guide.includes('opera'), 'the installed command is named');
+  assert.match(guide, /opera local/, 'the local mode is named');
+  assert.doesNotMatch(guide, /opera cloud/, 'the deleted cloud mode is not named');
   assert.match(guide, /extension/, 'the extension road is named');
 });
 
@@ -36,7 +36,7 @@ test('every page a reader is sent to names the install that works today', () => 
     ['the README', read('local/README.md')]
   ];
   for (const [name, text] of pages) {
-    assert.match(text, /npm i -g navego|npm install -g \./, `${name} must name the install that works today`);
+    assert.match(text, /npm i -g opera-agent|npm install -g \./, `${name} must name the install that works today`);
   }
 });
 
@@ -49,7 +49,7 @@ test('the guide says the bridge is the one road, with no transport flag left', (
   const readme = read('local/README.md');
   const bridge: Array<[string, string]> = [['the guide', guide], ['the README', readme]];
   for (const [name, text] of bridge) {
-    assert.doesNotMatch(text, /NAVEGO_LOCAL_TRANSPORT/, `${name} does not carry the dead flag`);
+    assert.doesNotMatch(text, /OPERA_LOCAL_TRANSPORT/, `${name} does not carry the dead flag`);
   }
   assert.match(guide, /loopback bridge/i, 'the guide names the road');
 });
@@ -60,7 +60,7 @@ test('the guide says the bridge is the one road, with no transport flag left', (
 
 test('the guide names the doctor as the answer for a broken install', () => {
   const guide = read('docs/agent-call.md');
-  assert.match(guide, /navego doctor/, 'the doctor is named');
+  assert.match(guide, /opera doctor/, 'the doctor is named');
   assert.match(guide, /PLAN_LIMIT_REACHED/, 'the meter refusal is named');
   assert.doesNotMatch(guide, /No browser is listening on port 9333/, 'the dead port refusal is gone');
 });

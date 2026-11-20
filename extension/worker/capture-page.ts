@@ -180,7 +180,7 @@ export async function capturePage(tabId: number, params: Record<string, unknown>
   const tab = await chrome.tabs.get(tabId);
   if (!HTTP_URL_RE.test(tab.url || '')) throw codedError('CAPTURE_BLOCKED', 'Screenshots only support HTTP/HTTPS tabs.', { tabId });
   if (tab.incognito) throw codedError('CAPTURE_BLOCKED', 'Screenshots are blocked in incognito tabs.', { tabId, reason: 'INCOGNITO' });
-  if (await isPrivateTab(tabId)) throw codedError('CAPTURE_BLOCKED', 'This tab was marked private in the Navego popup.', { tabId, reason: 'USER_PRIVATE' });
+  if (await isPrivateTab(tabId)) throw codedError('CAPTURE_BLOCKED', 'This tab was marked private in the Opera popup.', { tabId, reason: 'USER_PRIVATE' });
 
   const policy = await contentCall(tabId, 'page.capture_policy', {});
   if (!policy || !policy.allowed) {

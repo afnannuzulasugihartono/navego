@@ -3,7 +3,7 @@
 // @state: level-aware console sink published on globalThis, with a bounded fault list beside its ring; deliberately has no export so manifest content_scripts can load it as a classic script.
 // @dependencies: none.
 
-// Ring buffer of the last 200 log entries, published on globalThis as NavegoLog for the popup's log view.
+// Ring buffer of the last 200 log entries, published on globalThis as OperaLog for the popup's log view.
 
 // a classic script and not a module: the manifest loads this file into both the module service worker and a classic content script, and a classic script cannot import.
 // Hence the IIFE and the globalThis publish, and hence the guard below.
@@ -33,7 +33,7 @@ const scope = globalThis;
 (() => {
   'use strict';
 
-  if (!scope.NavegoBrowserId) {
+  if (!scope.OperaBrowserId) {
     const nav = globalThis.navigator;
     const ua = String(nav?.userAgent || '');
     let brands: string[] = [];
@@ -62,10 +62,10 @@ const scope = globalThis;
     else if (/Vivaldi/i.test(ua)) browserName = 'Vivaldi';
     else if (/Firefox/i.test(ua)) browserName = 'Firefox';
     else if (/Chrome/i.test(ua)) browserName = 'Chrome';
-    scope.NavegoBrowserId = { browserName };
+    scope.OperaBrowserId = { browserName };
   }
 
-  if (scope.NavegoLog) return;
+  if (scope.OperaLog) return;
   const MAX_ENTRIES = 200;
   const MAX_FAULTS = 20;
   const LEVELS = { debug: 10, warn: 30, error: 50 };
@@ -109,14 +109,14 @@ const scope = globalThis;
     if (buffer.length > MAX_ENTRIES) buffer = buffer.slice(buffer.length - MAX_ENTRIES);
     if (level === 'error') recordFault(entry);
     if (LEVELS[level] >= threshold) {
-      const text = `[navego:${level}] ${entry.code} ${entry.message}`;
+      const text = `[opera:${level}] ${entry.code} ${entry.message}`;
       if (level === 'error') console.error(text);
       else if (level === 'warn') console.warn(text);
       else console.debug(text);
     }
     return entry;
   }
-  scope.NavegoLog = {
+  scope.OperaLog = {
     configure(options: { level?: keyof typeof LEVELS } | undefined) {
       const level = options && options.level;
       if (!level || !VALID.has(level)) throw new Error('Invalid log level.');

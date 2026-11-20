@@ -127,7 +127,7 @@ export interface BridgeServer {
 const CLOUD_TIMEOUT_MS = 10000;
 const METER_WINDOW_MS = 60000;
 
-export function createCloudMeter({ url = process.env.NAVEGO_CLOUD_URL || DEFAULT_BRIDGE_URL, fetchImpl = fetch, timeoutMs = CLOUD_TIMEOUT_MS }: CloudMeterOptions = {}): CloudMeter {
+export function createCloudMeter({ url = process.env.OPERA_CLOUD_URL || DEFAULT_BRIDGE_URL, fetchImpl = fetch, timeoutMs = CLOUD_TIMEOUT_MS }: CloudMeterOptions = {}): CloudMeter {
   const post = async (body: Record<string, unknown>): Promise<CloudMeterOpenAnswer> => {
     const response = await fetchImpl(url, {
       method: 'POST',

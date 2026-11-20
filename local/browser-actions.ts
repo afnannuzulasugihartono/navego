@@ -460,11 +460,11 @@ export async function runBrowserAction(name: string, args: JsonRecord, deps: Bro
     case 'browser_solve_captcha': {
       const settings = solverSettings(process.env);
       if (!settings.configured) {
-        throw new Error('captcha is opt-in and no solver is configured: set NAVEGO_CAPTCHA_API_URL, NAVEGO_CAPTCHA_API_KEY and NAVEGO_CAPTCHA_DOMAINS, or let the person solve it and use portal.');
+        throw new Error('captcha is opt-in and no solver is configured: set OPERA_CAPTCHA_API_URL, OPERA_CAPTCHA_API_KEY and OPERA_CAPTCHA_DOMAINS, or let the person solve it and use portal.');
       }
       const gate = await detectGate(driver as unknown as import('./gates.js').GateDriver);
       if (!captchaAllowed(settings, gate.url)) {
-        throw new Error(`captcha refuses ${gate.url || 'this page'}: its host is not in NAVEGO_CAPTCHA_DOMAINS, and the allowlist is what makes the spend the person's decision.`);
+        throw new Error(`captcha refuses ${gate.url || 'this page'}: its host is not in OPERA_CAPTCHA_DOMAINS, and the allowlist is what makes the spend the person's decision.`);
       }
       const image = gate.fields.captchaImage[0];
       const field = gate.fields.captchaInput[0];

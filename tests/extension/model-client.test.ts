@@ -198,7 +198,7 @@ test('endpoint allowlist: https or loopback only', () => {
 
 test('background routes the options probe action to the compiler module', async () => {
   const bg = await extensionSource();
-  assert.ok(bg.includes(`scope === 'navego-options'`));
+  assert.ok(bg.includes(`scope === 'opera-options'`));
   assert.ok(bg.includes(`action === 'testModel'`));
   assert.ok(bg.includes('buildProbeRequest'));
 });

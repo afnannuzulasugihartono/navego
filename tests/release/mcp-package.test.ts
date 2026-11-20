@@ -37,8 +37,9 @@ function importsOf(source: string): string[] {
 }
 
 test('the package is named and run the way the guide says', () => {
-  assert.equal(manifest.name, 'navego');
-  assert.ok(manifest.bin['navego'], 'the package installs one command');
+  assert.equal(manifest.name, 'opera-agent');
+  assert.ok(manifest.bin['opera'], 'the package installs one command');
+  assert.equal(manifest.bin['navego'], manifest.bin['opera'], 'the 1.x command name is an alias of the same file');
   assert.equal(manifest.type, 'module');
   assert.ok(manifest.engines.node, 'the package says which node it needs');
 });
@@ -68,7 +69,7 @@ test('the packaged copy of the shared endpoint module still pins the region', as
   assert.equal(socketUrl('https://example.test/bridge'), 'wss://example.test/bridge?forceFunctionRegion=ap-southeast-1');
 });
 
-const bin = fileURLToPath(new URL('../../local/bin/navego.js', import.meta.url));
+const bin = fileURLToPath(new URL('../../local/bin/opera.js', import.meta.url));
 
 async function fakeHealthBridge(payload: unknown) {
   const server = http.createServer((req, res) => {
@@ -89,15 +90,15 @@ async function fakeHealthBridge(payload: unknown) {
 }
 
 async function fakeHome() {
-  const home = await mkdtemp(path.join(os.tmpdir(), 'navego-doctor-'));
-  await mkdir(path.join(home, '.navego'), { recursive: true });
-  await writeFile(path.join(home, '.navego', 'device.json'), JSON.stringify({ deviceName: 'everyday-test', token: 'a'.repeat(64) }));
+  const home = await mkdtemp(path.join(os.tmpdir(), 'opera-doctor-'));
+  await mkdir(path.join(home, '.opera'), { recursive: true });
+  await writeFile(path.join(home, '.opera', 'device.json'), JSON.stringify({ deviceName: 'everyday-test', token: 'a'.repeat(64) }));
   return home;
 }
 
 async function runDoctor(env: Record<string, string>) {
   const clean = { ...process.env };
-  delete clean.NAVEGO_MCP_TOKEN;
+  delete clean.OPERA_MCP_TOKEN;
   try {
     const { stdout } = await exec(process.execPath, [bin, 'doctor'], {
       encoding: 'utf8',
@@ -133,9 +134,9 @@ test('the doctor prints what is connected, the plan, and what the plan allows', 
   const home = await fakeHome();
   try {
     const { out, code } = await runDoctor({
-      NAVEGO_BRIDGE_PORT: String(bridge.port),
-      NAVEGO_HOME: home,
-      NAVEGO_MCP_CONFIG_HOME: path.join(home, 'config')
+      OPERA_BRIDGE_PORT: String(bridge.port),
+      OPERA_HOME: home,
+      OPERA_MCP_CONFIG_HOME: path.join(home, 'config')
     });
     assert.equal(code, 0, 'a ready machine exits zero');
     assert.match(out, /everyday-test/);
@@ -144,7 +145,7 @@ test('the doctor prints what is connected, the plan, and what the plan allows', 
     assert.match(out, /5000/, 'the daily quota is printed');
     assert.match(out, /4679/, 'the remaining quota is printed');
     assert.match(out, /1\.6\.32/, 'the extension version is printed');
-    assert.match(out, /navego-update\/download\/navego\.crx/, 'the CRX download link is printed');
+    assert.match(out, /opera-update\/download\/opera\.crx/, 'the CRX download link is printed');
     assert.match(out, /verdict +ready/, 'the ready verdict is the last word');
   } finally {
     await bridge.close();
@@ -157,9 +158,9 @@ test('a bridge from before the meter is named as the problem, not mistaken for a
   const home = await fakeHome();
   try {
     const { out, code } = await runDoctor({
-      NAVEGO_BRIDGE_PORT: String(bridge.port),
-      NAVEGO_HOME: home,
-      NAVEGO_MCP_CONFIG_HOME: path.join(home, 'config')
+      OPERA_BRIDGE_PORT: String(bridge.port),
+      OPERA_HOME: home,
+      OPERA_MCP_CONFIG_HOME: path.join(home, 'config')
     });
     assert.equal(code, 1);
     assert.match(out, /before the meter/);
@@ -171,17 +172,17 @@ test('a bridge from before the meter is named as the problem, not mistaken for a
 });
 
 test('the doctor says why a machine is degraded instead of crashing', async () => {
-  const home = await mkdtemp(path.join(os.tmpdir(), 'navego-doctor-'));
+  const home = await mkdtemp(path.join(os.tmpdir(), 'opera-doctor-'));
   try {
     const { out, code } = await runDoctor({
-      NAVEGO_BRIDGE_PORT: '1',
-      NAVEGO_HOME: home,
-      NAVEGO_MCP_CONFIG_HOME: path.join(home, 'config')
+      OPERA_BRIDGE_PORT: '1',
+      OPERA_HOME: home,
+      OPERA_MCP_CONFIG_HOME: path.join(home, 'config')
     });
     assert.equal(code, 1, 'a degraded machine says so in its exit code');
     assert.match(out, /device file/, 'the device-file state is printed');
     assert.match(out, /not listening/i, 'the bridge state is printed');
-    assert.match(out, /navego-update\/download\/navego\.crx/, 'the fix is the CRX link');
+    assert.match(out, /opera-update\/download\/opera\.crx/, 'the fix is the CRX link');
     assert.match(out, /degraded/, 'the verdict names the state');
   } finally {
     await rm(home, { recursive: true, force: true });
@@ -192,7 +193,7 @@ test('the docs name the two modes and where the gate lives', async () => {
   const readme = await readFile(new URL('../../README.md', import.meta.url), 'utf8');
   const agentCall = await readFile(new URL('../../docs/agent-call.md', import.meta.url), 'utf8');
   const localReadme = await readFile(new URL('../../local/README.md', import.meta.url), 'utf8');
-  assert.match(readme, /navego/, 'the README names the installed command');
+  assert.match(readme, /opera/, 'the README names the installed command');
   assert.match(readme, /local/);
   assert.match(readme, /cloud/);
   assert.match(agentCall, /PLAN_LIMIT_REACHED/, 'the refusal is named in the docs');
@@ -204,7 +205,7 @@ test('the docs name the two modes and where the gate lives', async () => {
 
 test('the package lists every module the server needs, and its shared copies are the current ones', async () => {
   const files = manifest.files;
-  for (const needed of ['bin/navego.js', 'mcp-server.js', 'bridge-ws.js', 'tools.js', 'lib/endpoints.js', 'lib/socket-protocol.js']) {
+  for (const needed of ['bin/opera.js', 'mcp-server.js', 'bridge-ws.js', 'tools.js', 'lib/endpoints.js', 'lib/socket-protocol.js']) {
     assert.ok(files.includes(needed), `the package must ship ${needed}`);
   }
   for (const name of ['socket-protocol.js', 'endpoints.js']) {

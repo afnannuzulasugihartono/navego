@@ -17,91 +17,91 @@
   "unapplied": 13,
   "map": [
     {
-      "file": "20260907204146_navego_1_0_0_core.sql",
+      "file": "20260907204146_opera_1_0_0_core.sql",
       "remote": "20260907204146",
       "evidence": "version-and-name",
       "cover": 0.875
     },
     {
-      "file": "20260907204221_navego_1_0_0_workflows.sql",
+      "file": "20260907204221_opera_1_0_0_workflows.sql",
       "remote": "20260907204221",
       "evidence": "version-and-name",
       "cover": 0.92
     },
     {
-      "file": "20260907204248_navego_1_0_0_seed_workflows.sql",
+      "file": "20260907204248_opera_1_0_0_seed_workflows.sql",
       "remote": "20260907204248",
       "evidence": "version-and-name",
       "cover": 0.84
     },
     {
-      "file": "20260908021039_navego_releases.sql",
+      "file": "20260908021039_opera_releases.sql",
       "remote": "20260908021039",
       "evidence": "version-and-name",
       "cover": 0.9594594594594594
     },
     {
-      "file": "20260908025018_navego_lock_internal_workflow_functions.sql",
+      "file": "20260908025018_opera_lock_internal_workflow_functions.sql",
       "remote": "20260908025018",
       "evidence": "version-and-name",
       "cover": 0.5471698113207547
     },
     {
-      "file": "20260908025218_navego_command_method_index.sql",
+      "file": "20260908025218_opera_command_method_index.sql",
       "remote": "20260908025218",
       "evidence": "version-and-name",
       "cover": null
     },
     {
-      "file": "20260908031756_navego_async_workflow_runner.sql",
+      "file": "20260908031756_opera_async_workflow_runner.sql",
       "remote": "20260908031756",
       "evidence": "version-and-name",
       "cover": 0.92
     },
     {
-      "file": "20260908035531_navego_two_phase_command_api.sql",
+      "file": "20260908035531_opera_two_phase_command_api.sql",
       "remote": "20260908035531",
       "evidence": "version-and-name",
       "cover": 0.9538461538461539
     },
     {
-      "file": "20260908074202_navego_update_telemetry.sql",
+      "file": "20260908074202_opera_update_telemetry.sql",
       "remote": "20260908074202",
       "evidence": "version-and-name",
       "cover": 0.953125
     },
     {
-      "file": "20260908233759_navego_efficiency_workflows.sql",
+      "file": "20260908233759_opera_efficiency_workflows.sql",
       "remote": "20260908233759",
       "evidence": "version-and-name",
       "cover": 0.85
     },
     {
-      "file": "20260908233810_navego_parallel_crawl_workflow.sql",
+      "file": "20260908233810_opera_parallel_crawl_workflow.sql",
       "remote": "20260908233810",
       "evidence": "version-and-name",
       "cover": 0.8455284552845529
     },
     {
-      "file": "20260909000412_navego_youtube_transcript_fast_path.sql",
+      "file": "20260909000412_opera_youtube_transcript_fast_path.sql",
       "remote": "20260909000412",
       "evidence": "version-and-name",
       "cover": 0.7388888888888889
     },
     {
-      "file": "20260909001248_navego_youtube_transcript_render_ready.sql",
+      "file": "20260909001248_opera_youtube_transcript_render_ready.sql",
       "remote": "20260909001248",
       "evidence": "version-and-name",
       "cover": 0.735
     },
     {
-      "file": "20260909011331_navego_v2.sql",
+      "file": "20260909011331_opera_v2.sql",
       "remote": "20260909011331",
       "evidence": "version-and-name",
       "cover": 0.56
     },
     {
-      "file": "20260909012749_navego_quarantine_unreleased_v2.sql",
+      "file": "20260909012749_opera_quarantine_unreleased_v2.sql",
       "remote": "20260909012749",
       "evidence": "version-and-name",
       "cover": 0.9305555555555556
@@ -113,55 +113,55 @@
       "cover": 0.8958333333333334
     },
     {
-      "file": "20260909045456_navego_per_identity_update_channels.sql",
+      "file": "20260909045456_opera_per_identity_update_channels.sql",
       "remote": "20260909045456",
       "evidence": "version-and-name",
       "cover": 0.9591836734693877
     },
     {
-      "file": "20260909063406_navego_generic_pointer.sql",
+      "file": "20260909063406_opera_generic_pointer.sql",
       "remote": "20260909063406",
       "evidence": "version-and-name",
       "cover": 0.9285714285714286
     },
     {
-      "file": "20260910024820_navego_bounded_browser_burst.sql",
+      "file": "20260910024820_opera_bounded_browser_burst.sql",
       "remote": "20260910024820",
       "evidence": "version-and-name",
       "cover": 0.8292682926829268
     },
     {
-      "file": "20260910121107_navego_adaptive_screenshot.sql",
+      "file": "20260910121107_opera_adaptive_screenshot.sql",
       "remote": "20260910121107",
       "evidence": "version-and-name",
       "cover": 0.795
     },
     {
-      "file": "20260911162525_navego_goal_head.sql",
+      "file": "20260911162525_opera_goal_head.sql",
       "remote": "20260911162525",
       "evidence": "version-and-name",
       "cover": 0.88
     },
     {
-      "file": "20260911162819_navego_goal_head_first_apply.sql",
+      "file": "20260911162819_opera_goal_head_first_apply.sql",
       "remote": "20260911162819",
       "evidence": "version-and-name",
       "cover": 0.9523809523809523
     },
     {
-      "file": "20260911231331_navego_goal_head_timestamp_order.sql",
+      "file": "20260911231331_opera_goal_head_timestamp_order.sql",
       "remote": "20260911231331",
       "evidence": "version-and-name",
       "cover": 0.9382716049382716
     },
     {
-      "file": "20260912061541_navego_reactive_vm_host.sql",
+      "file": "20260912061541_opera_reactive_vm_host.sql",
       "remote": "20260912061541",
       "evidence": "version-and-name",
       "cover": 0.88
     },
     {
-      "file": "20260912061656_navego_reactive_vm_host_hardening.sql",
+      "file": "20260912061656_opera_reactive_vm_host_hardening.sql",
       "remote": "20260912061656",
       "evidence": "version-and-name",
       "cover": 0.825
@@ -197,91 +197,91 @@
       "cover": 0.75
     },
     {
-      "file": "20260921163000_navego_youtube_skip_ads_workflow.sql",
+      "file": "20260921163000_opera_youtube_skip_ads_workflow.sql",
       "remote": "20260921163000",
       "evidence": "version-and-name",
       "cover": null
     },
     {
-      "file": "20260922000000_navego_ut_etw.sql",
+      "file": "20260922000000_opera_ut_etw.sql",
       "remote": "20260922000000",
       "evidence": "version-and-name",
       "cover": null
     },
     {
-      "file": "20260923010000_navego_watch_methods.sql",
+      "file": "20260923010000_opera_watch_methods.sql",
       "remote": "20260923010000",
       "evidence": "version-and-name",
       "cover": null
     },
     {
-      "file": "20261002090000_navego_claim_wait.sql",
+      "file": "20261002090000_opera_claim_wait.sql",
       "remote": "20261002090000",
       "evidence": "version-and-name",
       "cover": 0.935
     },
     {
-      "file": "20261003110000_navego_claim_budget_and_wait_ramp.sql",
+      "file": "20261003110000_opera_claim_budget_and_wait_ramp.sql",
       "remote": "20261003110000",
       "evidence": "version-and-name",
       "cover": 0.905
     },
     {
-      "file": "20261004090000_navego_restore_run_fast.sql",
+      "file": "20261004090000_opera_restore_run_fast.sql",
       "remote": "20261004090000",
       "evidence": "version-and-name",
       "cover": 0.93
     },
     {
-      "file": "20261004120000_navego_verify_device_last_seen.sql",
+      "file": "20261004120000_opera_verify_device_last_seen.sql",
       "remote": "20261004120000",
       "evidence": "version-and-name",
       "cover": 0.9370629370629371
     },
     {
-      "file": "20261005120000_navego_account_device_binding.sql",
+      "file": "20261005120000_opera_account_device_binding.sql",
       "remote": "20261005034739",
       "evidence": "name",
       "cover": 0.7564766839378239
     },
     {
-      "file": "20261005130000_navego_dashboard_actions.sql",
+      "file": "20261005130000_opera_dashboard_actions.sql",
       "remote": "20261005040630",
       "evidence": "name",
       "cover": 0.7922077922077922
     },
     {
-      "file": "20261005140000_navego_account_run.sql",
+      "file": "20261005140000_opera_account_run.sql",
       "remote": "20261005042143",
       "evidence": "name",
       "cover": 0.9320388349514563
     },
     {
-      "file": "20261005150000_navego_pairing_rate_limit.sql",
+      "file": "20261005150000_opera_pairing_rate_limit.sql",
       "remote": "20261005061618",
       "evidence": "name",
       "cover": 0.9478260869565217
     },
     {
-      "file": "20261005160000_navego_pairing_issuer_unambiguous.sql",
+      "file": "20261005160000_opera_pairing_issuer_unambiguous.sql",
       "remote": "20261005062431",
       "evidence": "name",
       "cover": null
     },
     {
-      "file": "20261005174703_navego_device_idle_expiry.sql",
+      "file": "20261005174703_opera_device_idle_expiry.sql",
       "remote": "20261005174703",
       "evidence": "version-and-name",
       "cover": 0.860655737704918
     },
     {
-      "file": "20261007000000_navego_claim_wait_fast_tail.sql",
+      "file": "20261007000000_opera_claim_wait_fast_tail.sql",
       "remote": "20261006180216",
       "evidence": "name",
       "cover": null
     },
     {
-      "file": "20261007030000_navego_pairing_ownership.sql",
+      "file": "20261007030000_opera_pairing_ownership.sql",
       "remote": "20261007024129",
       "evidence": "name",
       "cover": 0.945
@@ -311,7 +311,7 @@
       "cover": 0.896
     },
     {
-      "file": "20261007080000_navego_loop_methods.sql",
+      "file": "20261007080000_opera_loop_methods.sql",
       "remote": "20261007162530",
       "evidence": "name",
       "cover": 0.8518518518518519
@@ -353,163 +353,163 @@
       "cover": 0.9090909090909091
     },
     {
-      "file": "20261008090000_navego_loop_state_methods.sql",
+      "file": "20261008090000_opera_loop_state_methods.sql",
       "remote": "20261008144355",
       "evidence": "content",
       "cover": 0.875
     },
     {
-      "file": "20261008100000_navego_youtube_watch_summarize.sql",
+      "file": "20261008100000_opera_youtube_watch_summarize.sql",
       "remote": "20261008150344",
       "evidence": "content",
       "cover": 0.77
     },
     {
-      "file": "20261008110000_navego_youtube_watch_summarize_v2.sql",
+      "file": "20261008110000_opera_youtube_watch_summarize_v2.sql",
       "remote": "20261008150355",
       "evidence": "content",
       "cover": 0.78
     },
     {
-      "file": "20261008120000_navego_youtube_watch_summarize_v3.sql",
+      "file": "20261008120000_opera_youtube_watch_summarize_v3.sql",
       "remote": "20261008150405",
       "evidence": "content",
       "cover": 0.8
     },
     {
-      "file": "20261008130000_navego_youtube_watch_summarize_v4.sql",
+      "file": "20261008130000_opera_youtube_watch_summarize_v4.sql",
       "remote": "20261008150415",
       "evidence": "content",
       "cover": 0.8
     },
     {
-      "file": "20261008140000_navego_youtube_watch_summarize_v5.sql",
+      "file": "20261008140000_opera_youtube_watch_summarize_v5.sql",
       "remote": "20261008150426",
       "evidence": "content",
       "cover": 0.785
     },
     {
-      "file": "20261008150000_navego_youtube_watch_summarize_v6.sql",
+      "file": "20261008150000_opera_youtube_watch_summarize_v6.sql",
       "remote": "20261008150438",
       "evidence": "content",
       "cover": 0.735
     },
     {
-      "file": "20261008160000_navego_maps_search.sql",
+      "file": "20261008160000_opera_maps_search.sql",
       "remote": "20261008150449",
       "evidence": "content",
       "cover": 0.8076923076923077
     },
     {
-      "file": "20261008170000_navego_docs_append.sql",
+      "file": "20261008170000_opera_docs_append.sql",
       "remote": "20261008150500",
       "evidence": "content",
       "cover": 0.8333333333333334
     },
     {
-      "file": "20261008180000_navego_youtube_watch_summarize_v7.sql",
+      "file": "20261008180000_opera_youtube_watch_summarize_v7.sql",
       "remote": "20261008150510",
       "evidence": "content",
       "cover": 0.76
     },
     {
-      "file": "20261008190000_navego_docs_read.sql",
+      "file": "20261008190000_opera_docs_read.sql",
       "remote": "20261008150520",
       "evidence": "content",
       "cover": 0.8773584905660378
     },
     {
-      "file": "20261008200000_navego_browse_find.sql",
+      "file": "20261008200000_opera_browse_find.sql",
       "remote": "20261008150530",
       "evidence": "content",
       "cover": 0.8181818181818182
     },
     {
-      "file": "20261008210000_navego_browse_find_v2.sql",
+      "file": "20261008210000_opera_browse_find_v2.sql",
       "remote": "20261008150540",
       "evidence": "content",
       "cover": 0.8299319727891157
     },
     {
-      "file": "20261008220000_navego_browse_find_v3.sql",
+      "file": "20261008220000_opera_browse_find_v3.sql",
       "remote": "20261008150549",
       "evidence": "content",
       "cover": 0.8292682926829268
     },
     {
-      "file": "20261008230000_navego_skills.sql",
+      "file": "20261008230000_opera_skills.sql",
       "remote": "20261008150557",
       "evidence": "content",
       "cover": 0.935
     },
     {
-      "file": "20261009000000_navego_ephemeral_workflows.sql",
+      "file": "20261009000000_opera_ephemeral_workflows.sql",
       "remote": "20261008150607",
       "evidence": "content",
       "cover": 0.8333333333333334
     },
     {
-      "file": "20261009000001_navego_browse_recon.sql",
+      "file": "20261009000001_opera_browse_recon.sql",
       "remote": "20261008150617",
       "evidence": "content",
       "cover": 0.7857142857142857
     },
     {
-      "file": "20261009000002_navego_deprecate_dead_rpcs.sql",
+      "file": "20261009000002_opera_deprecate_dead_rpcs.sql",
       "remote": "20261008150623",
       "evidence": "content",
       "cover": 0.9583333333333334
     },
     {
-      "file": "20261009000003_navego_listen_live_uniq.sql",
+      "file": "20261009000003_opera_listen_live_uniq.sql",
       "remote": "20261008150628",
       "evidence": "content",
       "cover": 0.9693877551020408
     },
     {
-      "file": "20261009000004_navego_skill_memory_rpcs.sql",
+      "file": "20261009000004_opera_skill_memory_rpcs.sql",
       "remote": "20261008151025",
       "evidence": "content",
       "cover": 0.8888888888888888
     },
     {
-      "file": "20261010080000_navego_v2_releases.sql",
+      "file": "20261010080000_opera_v2_releases.sql",
       "remote": "20261010144506",
       "evidence": "name",
       "cover": null
     },
     {
-      "file": "20261010090000_navego_konsol_tables.sql",
+      "file": "20261010090000_opera_konsol_tables.sql",
       "remote": "20261010104805",
       "evidence": "ledger-names-the-file",
       "cover": null
     },
     {
-      "file": "20261011120000_navego_claim_clock_timestamps.sql",
+      "file": "20261011120000_opera_claim_clock_timestamps.sql",
       "remote": "20261010180023",
       "evidence": "name",
       "cover": null
     },
     {
-      "file": "20261011140000_navego_command_events.sql",
+      "file": "20261011140000_opera_command_events.sql",
       "remote": "20261011055439",
       "evidence": "name",
       "cover": 0.5734265734265734
     },
     {
-      "file": "20261011150000_navego_command_event_status.sql",
+      "file": "20261011150000_opera_command_event_status.sql",
       "remote": "20261011061405",
       "evidence": "name",
       "cover": 0.9803921568627451
     },
     {
-      "file": "20261012090000_navego_command_push_channel.sql",
+      "file": "20261012090000_opera_command_push_channel.sql",
       "remote": "20261012090000",
       "evidence": "version-and-name",
       "cover": null
     },
     {
-      "file": "20261012100000_navego_command_insert_signal.sql",
+      "file": "20261012100000_opera_command_insert_signal.sql",
       "remote": "20261012100000",
       "evidence": "version-and-name",
       "cover": null
@@ -521,25 +521,25 @@
       "cover": null
     },
     {
-      "file": "20261012120000_navego_verify_enqueue.sql",
+      "file": "20261012120000_opera_verify_enqueue.sql",
       "remote": "20261012120000",
       "evidence": "version-and-name",
       "cover": null
     },
     {
-      "file": "20261012130000_navego_enqueue_provider.sql",
+      "file": "20261012130000_opera_enqueue_provider.sql",
       "remote": null,
       "evidence": "no-ledger-row",
       "cover": 0.4207650273224044
     },
     {
-      "file": "20261012140000_navego_stream_method.sql",
+      "file": "20261012140000_opera_stream_method.sql",
       "remote": null,
       "evidence": "no-ledger-row",
       "cover": 0.12
     },
     {
-      "file": "20261014000000_navego_edge_keepwarm.sql",
+      "file": "20261014000000_opera_edge_keepwarm.sql",
       "remote": "20261014000645",
       "evidence": "name",
       "cover": 0.8918918918918919

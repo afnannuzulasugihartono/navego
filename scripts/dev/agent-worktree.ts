@@ -66,7 +66,7 @@ const commands: Record<string, (arg?: string, base?: string, topic?: string) => 
     const topicRef = requireName(topic ?? 'main', 'topic');
     const branch = `agent/${wantedName}/${topicRef}`;
     const parent = resolve(repo, '..');
-    const path = join(parent, `navego-${wantedName}`);
+    const path = join(parent, `opera-${wantedName}`);
     if (!path.startsWith(parent + sep)) throw new Error(`refusing to escape ${parent}: ${path}`);
     if (existsSync(path)) throw new Error(`${path} already exists; pick another name, or remove it first`);
     git('worktree', 'add', path, '-b', branch, baseRef);
@@ -103,7 +103,7 @@ const commands: Record<string, (arg?: string, base?: string, topic?: string) => 
   remove(wanted?: string) {
     const wantedName = requireName(wanted, 'name');
     const parent = resolve(repo, '..');
-    const path = join(parent, `navego-${wantedName}`);
+    const path = join(parent, `opera-${wantedName}`);
     if (!path.startsWith(parent + sep)) throw new Error(`refusing to escape ${parent}: ${path}`);
     const branch = `agent/${wantedName}`;
 
@@ -124,7 +124,7 @@ const commands: Record<string, (arg?: string, base?: string, topic?: string) => 
 const fn = name ? commands[name] : undefined;
 if (!name || !fn) {
   console.log('usage: node scripts/dev/agent-worktree.ts <create|list|remove> [name] [base] [topic]');
-  console.log('  create <name> [base] [topic]  a worktree at ../navego-<name> on agent/<name>/<topic>');
+  console.log('  create <name> [base] [topic]  a worktree at ../opera-<name> on agent/<name>/<topic>');
   console.log('  list                          every worktree, and which branch it holds');
   console.log('  remove <name>                 archive the merged branch, drop the worktree');
   process.exit(1);

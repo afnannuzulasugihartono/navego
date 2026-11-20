@@ -49,12 +49,12 @@ function cleanFilename(value: unknown, tabUrl: string): string {
   try {
     const host = new URL(tabUrl).hostname.replace(/[^a-z0-9.-]/gi, '-');
 
-    if (host) return `navego-scan-${host}-${Date.now()}.html`;
+    if (host) return `opera-scan-${host}-${Date.now()}.html`;
   } catch {
 
   }
 
-  return `navego-scan-${Date.now()}.html`;
+  return `opera-scan-${Date.now()}.html`;
 }
 
 function base64(bytes: Uint8Array): string {
@@ -181,7 +181,7 @@ export async function scanPage(tabId: unknown, params: Record<string, unknown> |
 
   if (tab.incognito) throw codedError('CAPTURE_BLOCKED', 'Scans are blocked in incognito tabs.', { tabId: id, reason: 'INCOGNITO' });
 
-  if (await isPrivateTab(id)) throw codedError('CAPTURE_BLOCKED', 'This tab was marked private in the Navego popup.', { tabId: id, reason: 'USER_PRIVATE' });
+  if (await isPrivateTab(id)) throw codedError('CAPTURE_BLOCKED', 'This tab was marked private in the Opera popup.', { tabId: id, reason: 'USER_PRIVATE' });
 
   const policy = await contentCall(id, 'page.capture_policy', {});
 

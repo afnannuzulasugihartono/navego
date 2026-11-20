@@ -175,8 +175,8 @@ def run_step(mcp, name, args, tab_id):
 
 
 def main():
-    if not os.environ.get('NAVEGO_MCP_TOKEN'):
-        print('paper_e2e SKIP: NAVEGO_MCP_TOKEN is not set.')
+    if not os.environ.get('OPERA_MCP_TOKEN'):
+        print('paper_e2e SKIP: OPERA_MCP_TOKEN is not set.')
         return 2
     mcp = Mcp()
     try:

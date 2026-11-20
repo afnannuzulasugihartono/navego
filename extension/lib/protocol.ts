@@ -9,7 +9,7 @@
 // WHY one file: the service worker, the MCP server, and the Node tests must agree on exactly which primitives exist.
 // A second copy of the list would eventually disagree.
 
-export const PRODUCT_VERSION = '1.7.7';
+export const PRODUCT_VERSION = '2.0.0';
 export const PROTOCOL_VERSION = 1;
 
 import { resolveKeyInput } from './keyboard.js';
@@ -417,7 +417,7 @@ export function safeUrl(value: unknown): string | null {
     return url.toString();
   } catch (error) {
 
-    globalThis.NavegoLog?.debug?.('SAFE_URL_PARSE_FAILED', error instanceof Error ? error.message : String(error));
+    globalThis.OperaLog?.debug?.('SAFE_URL_PARSE_FAILED', error instanceof Error ? error.message : String(error));
     return null;
   }
 }

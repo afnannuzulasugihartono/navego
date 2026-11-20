@@ -16,7 +16,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> => typeof va
 declare global {
   interface Window {
     readonly webkitAudioContext?: typeof AudioContext | undefined;
-    __navegoCursorIdle?: number | undefined;
+    __operaCursorIdle?: number | undefined;
   }
 }
 
@@ -144,8 +144,8 @@ interface PageMapSkeleton {
 interface PageMapCache {
   readonly mutationVersion: number;
   readonly skeleton: PageMapSkeleton;
-  readonly groups: Map<string, NavegoPageMapElement[]>;
-  readonly elements: NavegoPageMapElement[];
+  readonly groups: Map<string, OperaPageMapElement[]>;
+  readonly elements: OperaPageMapElement[];
 }
 
 interface ExpectSpec {
@@ -212,41 +212,41 @@ interface ListenCaptureState {
 
 (() => {
   'use strict';
-  if (globalThis.__navegoContentV1) return;
-  globalThis.__navegoContentV1 = true;
+  if (globalThis.__operaContentV1) return;
+  globalThis.__operaContentV1 = true;
 
   function markInstalled() {
 
     if (!document.documentElement) return;
-    document.documentElement.setAttribute('data-navego', 'installed');
-    const browser = globalThis.NavegoBrowserId?.browserName || '';
-    if (browser) document.documentElement.setAttribute('data-navego-browser', browser);
+    document.documentElement.setAttribute('data-opera', 'installed');
+    const browser = globalThis.OperaBrowserId?.browserName || '';
+    if (browser) document.documentElement.setAttribute('data-opera-browser', browser);
   }
 
   markInstalled();
 
   if (!document.documentElement) document.addEventListener('DOMContentLoaded', markInstalled, { once: true });
 
-  const roleRuntime = globalThis.NavegoRoleReconcile;
-  const hoverRuntime = globalThis.NavegoHoverSettle;
-  const pageMap = globalThis.NavegoPageMap;
+  const roleRuntime = globalThis.OperaRoleReconcile;
+  const hoverRuntime = globalThis.OperaHoverSettle;
+  const pageMap = globalThis.OperaPageMap;
   const semanticRuntime = !!roleRuntime
     && typeof roleRuntime.implicitRole === 'function'
     && !!hoverRuntime
     && typeof hoverRuntime.plan === 'function';
 
   if (!semanticRuntime) {
-    console.warn('[navego] semantic helpers unavailable; role and hover features are off on this page');
+    console.warn('[opera] semantic helpers unavailable; role and hover features are off on this page');
   }
 
   const implicitRole: (item: unknown) => string = roleRuntime && typeof roleRuntime.implicitRole === 'function'
     ? roleRuntime.implicitRole
     : () => '';
-  const hoverSettle: NavegoHoverSettle = hoverRuntime && typeof hoverRuntime.plan === 'function'
+  const hoverSettle: OperaHoverSettle = hoverRuntime && typeof hoverRuntime.plan === 'function'
     ? hoverRuntime
     : {
         DEFAULTS: { timeoutMs: 0, intervalMs: 0, stableRounds: 0 },
-        normalize: (args): NavegoHoverSettleNormalized => ({
+        normalize: (args): OperaHoverSettleNormalized => ({
           timeoutMs: Number(args?.timeoutMs) || 0,
           intervalMs: Number(args?.intervalMs) || 0,
           stableRounds: Number(args?.stableRounds) || 0,
@@ -260,20 +260,20 @@ interface ListenCaptureState {
   const MAX_QUERY = 100;
   const MAX_LINKS = 500;
   const documentId = crypto.randomUUID();
-  const semanticIdentity = globalThis.NavegoSemanticIdentity?.createIdentityEngine({ documentId });
+  const semanticIdentity = globalThis.OperaSemanticIdentity?.createIdentityEngine({ documentId });
   if (!semanticIdentity) throw new Error('Semantic identity runtime is unavailable.');
-  const semanticViews = globalThis.NavegoSemanticViews?.createViewEngine();
+  const semanticViews = globalThis.OperaSemanticViews?.createViewEngine();
   if (!semanticViews) throw new Error('Semantic view runtime is unavailable.');
-  const requireSemanticIdentity = (): NavegoSemanticIdentity => {
-    const engine = globalThis.NavegoSemanticIdentity;
+  const requireSemanticIdentity = (): OperaSemanticIdentity => {
+    const engine = globalThis.OperaSemanticIdentity;
     if (!engine) throw new Error('Semantic identity runtime is unavailable.');
     return engine;
   };
-  const requireIdentityEngine = (): NavegoIdentityEngine => {
+  const requireIdentityEngine = (): OperaIdentityEngine => {
     if (!semanticIdentity) throw new Error('Semantic identity runtime is unavailable.');
     return semanticIdentity;
   };
-  const requireViewEngine = (): NavegoViewEngine => {
+  const requireViewEngine = (): OperaViewEngine => {
     if (!semanticViews) throw new Error('Semantic view runtime is unavailable.');
     return semanticViews;
   };
@@ -286,7 +286,7 @@ interface ListenCaptureState {
   let disposed = false;
   let mutationVersion = 0;
   let pageMapCache: PageMapCache | null = null;
-  let pageMapIdentity: NavegoIdentityEngine | null = null;
+  let pageMapIdentity: OperaIdentityEngine | null = null;
 
   const mutationObserver = new MutationObserver(() => {
     mutationVersion += 1;
@@ -411,7 +411,7 @@ interface ListenCaptureState {
     try {
       pool = [...document.querySelectorAll<HTMLElement>(INTERACTIVE_SELECTOR)].slice(0, 500);
     } catch (error) {
-      globalThis.NavegoLog?.warn?.('SIGNATURE_REBIND_POOL_FAILED', error instanceof Error ? error.message : String(error));
+      globalThis.OperaLog?.warn?.('SIGNATURE_REBIND_POOL_FAILED', error instanceof Error ? error.message : String(error));
       return [];
     }
     return pool.filter((el) => {
@@ -434,7 +434,7 @@ interface ListenCaptureState {
       try {
         pool = [...document.querySelectorAll<HTMLElement>(`#${CSS.escape(descriptor.id)}`)];
       } catch (error) {
-        globalThis.NavegoLog?.warn?.('REVALIDATION_POOL_FAILED', error instanceof Error ? error.message : String(error));
+        globalThis.OperaLog?.warn?.('REVALIDATION_POOL_FAILED', error instanceof Error ? error.message : String(error));
         return [];
       }
     } else if (descriptor.stableKeySource === 'href' && descriptor.href) {
@@ -875,7 +875,7 @@ interface ListenCaptureState {
     let shadowRoots = 0;
     const visit = (root: Document | ShadowRoot): void => {
       let matches: HTMLElement[];
-      try { matches = [...root.querySelectorAll<HTMLElement>(INTERACTIVE_SELECTOR)]; } catch (error) { globalThis.NavegoLog?.debug?.('SHADOW_COLLECT_FAILED', error instanceof Error ? error.message : String(error)); return; }
+      try { matches = [...root.querySelectorAll<HTMLElement>(INTERACTIVE_SELECTOR)]; } catch (error) { globalThis.OperaLog?.debug?.('SHADOW_COLLECT_FAILED', error instanceof Error ? error.message : String(error)); return; }
       for (const el of matches) {
         if (!el.isConnected || seen.has(el)) continue;
         seen.add(el);
@@ -1310,8 +1310,8 @@ interface ListenCaptureState {
     });
     pageMapEngine()?.observe(items);
 
-    const groups = new Map<string, NavegoPageMapElement[]>(pageMap.PAGE_MAP_CLASSES.map((name) => [name, []]));
-    const elements: NavegoPageMapElement[] = [];
+    const groups = new Map<string, OperaPageMapElement[]>(pageMap.PAGE_MAP_CLASSES.map((name) => [name, []]));
+    const elements: OperaPageMapElement[] = [];
     collected.forEach((entry, index) => {
       const item = items[index];
       if (!item) return;
@@ -1527,7 +1527,7 @@ interface ListenCaptureState {
     try {
       nodes = [...document.querySelectorAll(selector)];
     } catch (error) {
-      globalThis.NavegoLog?.warn?.('PAGE_QUERY_INVALID_SELECTOR', error instanceof Error ? error.message : String(error));
+      globalThis.OperaLog?.warn?.('PAGE_QUERY_INVALID_SELECTOR', error instanceof Error ? error.message : String(error));
       throw new Error('Invalid CSS selector.');
     }
     if (args.visibleOnly !== false) nodes = nodes.filter(isVisible);
@@ -1651,7 +1651,7 @@ interface ListenCaptureState {
     const links: Array<{ url: string; text: string }> = [];
     for (const a of document.querySelectorAll<HTMLAnchorElement>('a[href]')) {
       let url: URL;
-      try { url = new URL(a.href, location.href); } catch (error) { globalThis.NavegoLog?.debug?.('LINK_URL_PARSE_FAILED', error instanceof Error ? error.message : String(error)); continue; }
+      try { url = new URL(a.href, location.href); } catch (error) { globalThis.OperaLog?.debug?.('LINK_URL_PARSE_FAILED', error instanceof Error ? error.message : String(error)); continue; }
       if (!['http:', 'https:'].includes(url.protocol)) continue;
       if (sameOrigin && url.origin !== location.origin) continue;
       url.hash = '';
@@ -1718,11 +1718,11 @@ interface ListenCaptureState {
     if (spec.urlChanged !== undefined) check('urlChanged', url !== String(before.url || ''));
     if (spec.selectorAppears !== undefined) {
       const selector = spec.selectorAppears;
-      try { check('selectorAppears', document.querySelector(selector) != null); } catch (error) { globalThis.NavegoLog?.debug?.('EXPECT_SELECTOR_APPEARS_FAILED', error instanceof Error ? error.message : String(error)); check('selectorAppears', false); }
+      try { check('selectorAppears', document.querySelector(selector) != null); } catch (error) { globalThis.OperaLog?.debug?.('EXPECT_SELECTOR_APPEARS_FAILED', error instanceof Error ? error.message : String(error)); check('selectorAppears', false); }
     }
     if (spec.selectorGone !== undefined) {
       const selector = spec.selectorGone;
-      try { check('selectorGone', document.querySelector(selector) == null); } catch (error) { globalThis.NavegoLog?.debug?.('EXPECT_SELECTOR_GONE_FAILED', error instanceof Error ? error.message : String(error)); check('selectorGone', false); }
+      try { check('selectorGone', document.querySelector(selector) == null); } catch (error) { globalThis.OperaLog?.debug?.('EXPECT_SELECTOR_GONE_FAILED', error instanceof Error ? error.message : String(error)); check('selectorGone', false); }
     }
     if (spec.textGone !== undefined) check('textGone', !(document.body?.innerText || '').toLowerCase().includes(spec.textGone));
     if (spec.minMutationDelta !== undefined) check('minMutationDelta', (mutationVersion - Number(before.beforeMutationVersion ?? mutationVersion)) >= spec.minMutationDelta);
@@ -1924,7 +1924,7 @@ interface ListenCaptureState {
           const json = m?.[1];
           candidates = json ? JSON.parse(json) : [];
         } catch (parseError) {
-          globalThis.NavegoLog?.debug?.('REBIND_CANDIDATES_PARSE_FAILED', parseError instanceof Error ? parseError.message : String(parseError));
+          globalThis.OperaLog?.debug?.('REBIND_CANDIDATES_PARSE_FAILED', parseError instanceof Error ? parseError.message : String(parseError));
           candidates = [];
         }
         return { present: true, actionable: false, ambiguous: true, candidates, refusal: msg };
@@ -1962,10 +1962,10 @@ interface ListenCaptureState {
     if (blocked) throw new Error(`Pointer blocked on sensitive target (${blocked}).`);
     if (args.showCursor) {
 
-      let cursor = document.getElementById('__navego_pointer_cursor');
+      let cursor = document.getElementById('__opera_pointer_cursor');
       if (!cursor) {
         cursor = document.createElement('div');
-        cursor.id = '__navego_pointer_cursor';
+        cursor.id = '__opera_pointer_cursor';
         cursor.setAttribute('aria-hidden', 'true');
         cursor.style.cssText = 'position:fixed;width:16px;height:16px;border:2px solid #ef4444;border-radius:50%;background:#ef444433;transform:translate(-50%,-50%);pointer-events:none;z-index:2147483647;transition:left 90ms linear,top 90ms linear,opacity 200ms linear;';
         document.documentElement.append(cursor);
@@ -1973,9 +1973,9 @@ interface ListenCaptureState {
       cursor.style.left = `${x}px`;
       cursor.style.top = `${y}px`;
       cursor.style.opacity = '1';
-      clearTimeout(window.__navegoCursorIdle);
-      window.__navegoCursorIdle = setTimeout(() => {
-        const idle = document.getElementById('__navego_pointer_cursor');
+      clearTimeout(window.__operaCursorIdle);
+      window.__operaCursorIdle = setTimeout(() => {
+        const idle = document.getElementById('__opera_pointer_cursor');
         if (idle) idle.style.opacity = '0.3';
       }, 2500);
     }
@@ -2209,7 +2209,7 @@ interface ListenCaptureState {
         const el = resolveRef(args.ref);
         if (el) candidates = [el];
       } else if (args.selector) {
-        try { candidates = [...document.querySelectorAll(String(args.selector))]; } catch (error) { globalThis.NavegoLog?.warn?.('WAIT_INVALID_SELECTOR', error instanceof Error ? error.message : String(error)); throw new Error('Invalid CSS selector.'); }
+        try { candidates = [...document.querySelectorAll(String(args.selector))]; } catch (error) { globalThis.OperaLog?.warn?.('WAIT_INVALID_SELECTOR', error instanceof Error ? error.message : String(error)); throw new Error('Invalid CSS selector.'); }
       } else {
         candidates = collectInteractiveNodes();
       }
@@ -2262,13 +2262,13 @@ interface ListenCaptureState {
         listenCapture.seq += 1;
         try {
           chrome.runtime.sendMessage({
-            scope: 'navego-listen-chunk',
+            scope: 'opera-listen-chunk',
             seq: listenCapture.seq,
             audio: base64,
             mime: blob.type || 'audio/webm'
           })?.catch?.(() => {});
         } catch (sendError) {
-          globalThis.NavegoLog?.debug?.('MEDIA_TRANSCRIPT_SEND_FAILED', sendError instanceof Error ? sendError.message : String(sendError));
+          globalThis.OperaLog?.debug?.('MEDIA_TRANSCRIPT_SEND_FAILED', sendError instanceof Error ? sendError.message : String(sendError));
         }
       };
       reader.readAsDataURL(blob);
@@ -2429,13 +2429,13 @@ interface ListenCaptureState {
         const el = document.querySelector(sel);
         facts[rule.ruleId] = { present: !!el };
       } catch (error) {
-        globalThis.NavegoLog?.warn?.('WATCH_FACTS_SELECTOR_FAILED', error instanceof Error ? error.message : String(error));
+        globalThis.OperaLog?.warn?.('WATCH_FACTS_SELECTOR_FAILED', error instanceof Error ? error.message : String(error));
         facts[rule.ruleId] = { present: false, invalidSelector: true };
       }
     }
     let text: string | null = null;
     if (rules.some((r) => r.trigger?.kind === 'textMatch')) {
-      try { text = String(document.body?.innerText || '').slice(0, 20000); } catch (error) { globalThis.NavegoLog?.debug?.('WATCH_TEXT_SNAPSHOT_FAILED', error instanceof Error ? error.message : String(error)); text = ''; }
+      try { text = String(document.body?.innerText || '').slice(0, 20000); } catch (error) { globalThis.OperaLog?.debug?.('WATCH_TEXT_SNAPSHOT_FAILED', error instanceof Error ? error.message : String(error)); text = ''; }
     }
     return { facts, text };
   }
@@ -2443,7 +2443,7 @@ interface ListenCaptureState {
   function adShowingNow(adSelectors: unknown): boolean {
     const list = Array.isArray(adSelectors) ? adSelectors.filter((s): s is string => typeof s === 'string').slice(0, 8) : [];
     return list.some((sel) => {
-      try { return !!document.querySelector(sel); } catch (error) { globalThis.NavegoLog?.debug?.('AD_SELECTOR_PROBE_FAILED', error instanceof Error ? error.message : String(error)); return false; }
+      try { return !!document.querySelector(sel); } catch (error) { globalThis.OperaLog?.debug?.('AD_SELECTOR_PROBE_FAILED', error instanceof Error ? error.message : String(error)); return false; }
     });
   }
 
@@ -2467,10 +2467,10 @@ interface ListenCaptureState {
         now: Date.now(),
         state: watchState
       };
-      const r = await chrome.runtime.sendMessage({ scope: 'navego-watch', method: 'watch.facts', params: snapshot });
+      const r = await chrome.runtime.sendMessage({ scope: 'opera-watch', method: 'watch.facts', params: snapshot });
       if (isRecord(r) && isRecord(r.state)) watchState = r.state;
     } catch (watchError) {
-      globalThis.NavegoLog?.debug?.('WATCH_FACTS_FAILED', watchError instanceof Error ? watchError.message : String(watchError));
+      globalThis.OperaLog?.debug?.('WATCH_FACTS_FAILED', watchError instanceof Error ? watchError.message : String(watchError));
     } finally {
       watchChecking = false;
     }
@@ -2544,7 +2544,7 @@ interface ListenCaptureState {
   }
 
   function onMessage(message: unknown, _sender: chrome.runtime.MessageSender, sendResponse: (response?: unknown) => void): boolean {
-    if (!isRecord(message) || message.scope !== 'navego-content') return false;
+    if (!isRecord(message) || message.scope !== 'opera-content') return false;
     const method = typeof message.method === 'string' ? message.method : '';
     const params = isRecord(message.params) ? message.params : {};
     Promise.resolve(handle(method, params))
@@ -2556,7 +2556,7 @@ interface ListenCaptureState {
   try {
     chrome.runtime.onMessage.addListener(onMessage);
   } catch (error) {
-    globalThis.NavegoLog?.warn?.('MESSAGE_LISTENER_REGISTER_FAILED', error instanceof Error ? error.message : String(error));
+    globalThis.OperaLog?.warn?.('MESSAGE_LISTENER_REGISTER_FAILED', error instanceof Error ? error.message : String(error));
     disposed = true;
     mutationObserver.disconnect();
   }

@@ -32,7 +32,7 @@
   var host = document.createElement('div');
   host.id = CHIP_ID;
   host.setAttribute('role', 'note');
-  host.setAttribute('aria-label', 'Navego sedang menggunakan tab ini');
+  host.setAttribute('aria-label', 'Opera sedang menggunakan tab ini');
   host.style.cssText = [
     'all: initial',
     'position: fixed',
@@ -71,7 +71,7 @@
   dot.className = 'dot';
   var label = document.createElement('span');
   label.className = 'label';
-  label.textContent = 'Navego';
+  label.textContent = 'Opera';
   chip.appendChild(dot);
   chip.appendChild(label);
   shadow.appendChild(style);
@@ -85,7 +85,7 @@
 
   chrome.runtime.onMessage.addListener(function (message) {
     if (!message || typeof message !== 'object') return;
-    if (message.scope === 'navego-content' && message.method === 'chip.hide') removeChip();
+    if (message.scope === 'opera-content' && message.method === 'chip.hide') removeChip();
   });
 
   // If the page turns into a sensitive surface while the agent is in it, the mark goes away.

@@ -24,10 +24,10 @@ if (gateVerdict.status !== 0) {
 
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'extension/manifest.json'), 'utf8'));
 const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
-assert.equal(manifest.name, 'Navego');
-assert.equal(manifest.version, '1.7.7');
-assert.equal(PRODUCT_VERSION, '1.7.7');
-assert.equal(pkg.version, '1.7.7');
+assert.equal(manifest.name, 'Opera');
+assert.equal(manifest.version, '2.0.0');
+assert.equal(PRODUCT_VERSION, '2.0.0');
+assert.equal(pkg.version, '2.0.0');
 assert.equal(manifest.manifest_version, 3);
 assert.ok(manifest.permissions.includes('debugger'));
 assert.ok(manifest.permissions.includes('storage'));
@@ -102,14 +102,14 @@ assert.match(ensureContent, /method: 'content\.ping'/);
 assert.doesNotMatch(ensureContent, /method: 'page\.read'/);
 assert.match(content, /args\.includeElements !== false/);
 assert.match(content, /case 'content\.ping'/);
-const bridge = fs.readFileSync(path.join(root, 'hosted/functions/navego-bridge/index.ts'), 'utf8');
+const bridge = fs.readFileSync(path.join(root, 'hosted/functions/opera-bridge/index.ts'), 'utf8');
 
 assert.match(bridge, /rpc\("opera_claim_next_wait", \{/);
 assert.doesNotMatch(bridge, /rpc\("opera_claim_next",/);
 for (const marker of ['FAST_PULL_POLLS', 'FAST_PULL_INTERVAL_MS', 'IDLE_PULL_INTERVAL_MS']) {
   assert.ok(!bridge.includes(marker), `${marker} must not return to the bridge`);
 }
-const runner = fs.readFileSync(path.join(root, 'hosted/functions/navego-runner/index.ts'), 'utf8');
+const runner = fs.readFileSync(path.join(root, 'hosted/functions/opera-runner/index.ts'), 'utf8');
 for (const marker of ['opera_await', 'normalizeAwaitTiming', 'SAFE_RETRY_DELAY_MS', 'transientFailure', 'MAX_PARALLEL_ITEMS', 'createWorkflowMetrics', 'recordCommandMetrics', 'intentionalWaitMs']) assert.ok(runner.includes(marker), marker);
 assert.doesNotMatch(runner, /\.from\("opera_commands"\)/);
 assert.doesNotMatch(runner, /COMMAND_POLL_(?:MIN|MAX)_MS/);
@@ -128,23 +128,23 @@ for (const field of ['permissions', 'host_permissions', 'content_scripts', 'back
   'options_page', 'externally_connectable', 'content_security_policy']) {
   assert.deepEqual(storeManifest[field], manifest[field], `docs/store/store-manifest.json ${field} drifted from extension/manifest.json`);
 }
-const efficiency = fs.readFileSync(path.join(root, 'hosted/migrations/20260908233759_navego_efficiency_workflows.sql'), 'utf8');
+const efficiency = fs.readFileSync(path.join(root, 'hosted/migrations/20260908233759_opera_efficiency_workflows.sql'), 'utf8');
 for (const marker of ['research.read_current_full', 'research.read_url_full', 'youtube.get_transcript', '"limit":12000', '"maxElements":1']) assert.ok(efficiency.includes(marker), marker);
-const parallel = fs.readFileSync(path.join(root, 'hosted/migrations/20260908233810_navego_parallel_crawl_workflow.sql'), 'utf8');
+const parallel = fs.readFileSync(path.join(root, 'hosted/migrations/20260908233810_opera_parallel_crawl_workflow.sql'), 'utf8');
 for (const marker of ['research.crawl_urls_parallel', '"parallel":true', '"maxConcurrency":4']) assert.ok(parallel.includes(marker), marker);
-const transcript = fs.readFileSync(path.join(root, 'hosted/migrations/20260909000412_navego_youtube_transcript_fast_path.sql'), 'utf8');
+const transcript = fs.readFileSync(path.join(root, 'hosted/migrations/20260909000412_opera_youtube_transcript_fast_path.sql'), 'utf8');
 for (const marker of ['panelWasOpen', 'openSynthetic', 'openTrusted', 'openMethod', '"limit":12000']) assert.ok(transcript.includes(marker), marker);
-const transcriptRender = fs.readFileSync(path.join(root, 'hosted/migrations/20260909001248_navego_youtube_transcript_render_ready.sql'), 'utf8');
+const transcriptRender = fs.readFileSync(path.join(root, 'hosted/migrations/20260909001248_opera_youtube_transcript_render_ready.sql'), 'utf8');
 for (const marker of ['ytd-transcript-segment-renderer', 'ENGAGEMENT_PANEL_VISIBILITY_EXPANDED', 'activatedForRender', 'activateForRender', 'restoreActive', '"limit":12000']) assert.ok(transcriptRender.includes(marker), marker);
-const updateFunction = fs.readFileSync(path.join(root, 'hosted/functions/navego-update/index.ts'), 'utf8');
-for (const marker of ['opera_update_events', 'update_xml', 'passiveUpdateTelemetry', 'requestedExtensionId', 'navego-${release.extension_id}-${release.version}.crx']) assert.ok(updateFunction.includes(marker), marker);
-const perIdentityUpdateMigration = fs.readFileSync(path.join(root, 'hosted/migrations/20260909045456_navego_per_identity_update_channels.sql'), 'utf8');
+const updateFunction = fs.readFileSync(path.join(root, 'hosted/functions/opera-update/index.ts'), 'utf8');
+for (const marker of ['opera_update_events', 'update_xml', 'passiveUpdateTelemetry', 'requestedExtensionId', 'opera-${release.extension_id}-${release.version}.crx']) assert.ok(updateFunction.includes(marker), marker);
+const perIdentityUpdateMigration = fs.readFileSync(path.join(root, 'hosted/migrations/20260909045456_opera_per_identity_update_channels.sql'), 'utf8');
 for (const marker of ['drop constraint if exists opera_releases_pkey', 'add primary key (extension_id, version)', 'opera_releases_one_active_per_identity_idx']) assert.ok(perIdentityUpdateMigration.includes(marker), marker);
-const genericPointerMigration = fs.readFileSync(path.join(root, 'hosted/migrations/20260909063406_navego_generic_pointer.sql'), 'utf8');
+const genericPointerMigration = fs.readFileSync(path.join(root, 'hosted/migrations/20260909063406_opera_generic_pointer.sql'), 'utf8');
 assert.match(genericPointerMigration, /page\.pointer/);
 for (const marker of ['trustedPointer', 'page.pointer_target', 'Pointer blocked on sensitive target']) assert.ok(`${background}\n${content}`.includes(marker), marker);
 for (const marker of ['capturePage', 'Page.captureScreenshot', 'page.capture_policy', 'captureFramePrivacyProbe', 'allFrames: true', 'MAX_SCREENSHOT_BYTES', 'previousHash', 'privateTabIds', 'screenshotLooksBlank', 'BLANK_SCREENSHOT']) assert.ok(`${background}\n${content}`.includes(marker), marker);
-const burstMigration = fs.readFileSync(path.join(root, 'hosted/migrations/20260910024820_navego_bounded_browser_burst.sql'), 'utf8');
+const burstMigration = fs.readFileSync(path.join(root, 'hosted/migrations/20260910024820_opera_bounded_browser_burst.sql'), 'utf8');
 assert.match(burstMigration, /browser\.burst/);
 for (const marker of ['BURST_MAX_STEPS', 'BURST_MAX_TIMEOUT_MS', 'runBurst', 'MAX_BURST_RESULT_BYTES']) assert.ok(`${fs.readFileSync(path.join(root, 'extension/lib/protocol.ts'), 'utf8')}\n${background}`.includes(marker), marker);
 console.log(`check ok: ${ALLOWED_METHODS.length} allowlisted browser primitives, ${files.length} runtime safety files, version ${manifest.version}`);

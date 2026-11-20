@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-11 UTC+7.
-// @title: navego-update — the update service: the manifest, the signed CRX and the newest build.
+// @title: opera-update — the update service: the manifest, the signed CRX and the newest build.
 // @state: the two extension ids it answers, the update.xml it writes, and the CRX it serves.
 // @dependencies: edge-runtime, supabase-js, cors.
 
@@ -116,7 +116,7 @@ async function logUpdateEvent(
     user_agent: userAgent ? userAgent.slice(0, 512) : null,
     accept_header: accept ? accept.slice(0, 512) : null
   });
-  if (error) console.warn("navego-update telemetry", error.message);
+  if (error) console.warn("opera-update telemetry", error.message);
 }
 
 Deno.serve(async (req: Request) => {
@@ -126,7 +126,7 @@ Deno.serve(async (req: Request) => {
   try {
     const url = new URL(req.url);
     const path = url.pathname;
-    const base = `${SUPABASE_URL.replace(/\/$/, "")}/functions/v1/navego-update`;
+    const base = `${SUPABASE_URL.replace(/\/$/, "")}/functions/v1/opera-update`;
 
     if (path.endsWith("/update.xml")) {
       const asked = askedExtensionIds(url);
@@ -136,7 +136,7 @@ Deno.serve(async (req: Request) => {
       );
       if (!releases.length) return response(req, "No active release for extension ID", 404, { "Content-Type": "text/plain; charset=utf-8" });
       await logUpdateEvent("update_xml", req, releases[0], url);
-      const apps = releases.map((release) => `  <app appid="${release.extension_id}">\n    <updatecheck codebase="${base}/navego-${release.extension_id}-${release.version}.crx" version="${release.version}" />\n  </app>`).join("\n");
+      const apps = releases.map((release) => `  <app appid="${release.extension_id}">\n    <updatecheck codebase="${base}/opera-${release.extension_id}-${release.version}.crx" version="${release.version}" />\n  </app>`).join("\n");
       const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<gupdate xmlns="http://www.google.com/update2/response" protocol="2.0">\n${apps}\n</gupdate>\n`;
       return response(req, req.method === "HEAD" ? null : xml, 200, {
         "Content-Type": "application/xml; charset=utf-8",
@@ -144,8 +144,8 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    if (path.endsWith("/download/navego.crx") || path.endsWith("/download/navego.zip")) {
-      const wantsZip = path.endsWith("/download/navego.zip");
+    if (path.endsWith("/download/opera.crx") || path.endsWith("/download/opera.zip")) {
+      const wantsZip = path.endsWith("/download/opera.zip");
       const current = await activeRelease(CURRENT_EXTENSION_ID);
       if (!current) return response(req, "No active release for extension ID", 404, { "Content-Type": "text/plain; charset=utf-8" });
 
@@ -159,7 +159,7 @@ Deno.serve(async (req: Request) => {
       // The name carries the browser and the version, so the folder each one lands in says which browser it belongs to.
       const wanted = String(url.searchParams.get("for") ?? "").trim().toLowerCase();
       const browser = /^[a-z][a-z0-9]{1,11}$/.test(wanted) ? wanted : "";
-      const filename = `navego${browser ? `-${browser}` : ""}-${current.version}${wantsZip ? ".zip" : ".crx"}`;
+      const filename = `opera${browser ? `-${browser}` : ""}-${current.version}${wantsZip ? ".zip" : ".crx"}`;
       // THE VERSION IS READABLE FROM ANOTHER ORIGIN: the extension's self-update decides from this one header, and a browser hides headers the server did not name as visible - so the version it carries may not land in the caller's hands without saying so here.
       return response(req, req.method === "HEAD" ? null : new Uint8Array(bytes).buffer, 200, {
         "Content-Type": wantsZip ? "application/zip" : "application/x-chrome-extension",
@@ -175,7 +175,7 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const identityCrxMatch = path.match(/\/navego-([a-p]{32})-([0-9]+\.[0-9]+\.[0-9]+)\.crx$/);
+    const identityCrxMatch = path.match(/\/opera-([a-p]{32})-([0-9]+\.[0-9]+\.[0-9]+)\.crx$/);
     const extensionId = identityCrxMatch?.[1] ?? requestedExtensionId(url);
     if (!extensionId) return response(req, "Invalid extension ID", 400, { "Content-Type": "text/plain; charset=utf-8" });
     const release = await activeRelease(extensionId);
@@ -184,9 +184,9 @@ Deno.serve(async (req: Request) => {
       return response(req, "Release not found", 404, { "Content-Type": "text/plain; charset=utf-8" });
     }
 
-    const identityCrxPath = `/navego-${release.extension_id}-${release.version}.crx`;
+    const identityCrxPath = `/opera-${release.extension_id}-${release.version}.crx`;
     const legacyCrxPath = release.extension_id === LEGACY_EXTENSION_ID
-      ? `/navego-${release.version}.crx`
+      ? `/opera-${release.version}.crx`
       : null;
     if (path.endsWith(identityCrxPath) || (legacyCrxPath !== null && path.endsWith(legacyCrxPath))) {
       await logUpdateEvent("crx", req, release, url);
@@ -199,10 +199,10 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    if (path.endsWith("/health") || path.endsWith("/navego-update") || path.endsWith("/")) {
+    if (path.endsWith("/health") || path.endsWith("/opera-update") || path.endsWith("/")) {
       const body = JSON.stringify({
         ok: true,
-        product: "Navego",
+        product: "Opera",
         version: release.version,
         extensionId: release.extension_id,
         sha256: release.sha256,
@@ -216,7 +216,7 @@ Deno.serve(async (req: Request) => {
 
     return response(req, "Not Found", 404, { "Content-Type": "text/plain; charset=utf-8" });
   } catch (error) {
-    console.error("navego-update", error instanceof Error ? error.message : String(error));
+    console.error("opera-update", error instanceof Error ? error.message : String(error));
     return response(req, "Update service error", 500, { "Content-Type": "text/plain; charset=utf-8" });
   }
 });

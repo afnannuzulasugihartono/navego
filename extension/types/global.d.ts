@@ -1,32 +1,32 @@
 // @last-edited: 2026-11-14 UTC+7.
 // @title: global.d.ts — the contract between the classic content scripts and the worker: every helper a manifest classic script publishes on globalThis, declared once, here.
-// @state: owns every `Navego*` global the extension publishes; a classic script cannot import, so it publishes, and the worker reads the value back through this type.
+// @state: owns every `Opera*` global the extension publishes; a classic script cannot import, so it publishes, and the worker reads the value back through this type.
 // @dependencies: none.
 // @why-no-casts: reading a global through a double assertion closes this file's eyes and the type then lies by omission; declaring the global here is the one place the shape is named, and both sides check against it.
 
 export {};
 
 declare global {
-  var __navegoContentV1: boolean | undefined;
-  var NAVEGO_BRIDGE_WS: string | undefined;
-  var NAVEGO_BRIDGE_HANDLE_TIMEOUT_MS: number | string | undefined;
-  var NAVEGO_SOCKET_EXECUTE_TIMEOUT_MS: number | string | undefined;
-  var NavegoBrowserId: { browserName: string } | undefined;
-  var NavegoLog: NavegoLog | undefined;
-  var NavegoRoleReconcile: NavegoRoleReconcile | undefined;
-  var NavegoHoverSettle: NavegoHoverSettle | undefined;
-  var NavegoStatementFile: NavegoStatementFile | undefined;
-  var NavegoSemanticIdentity: NavegoSemanticIdentity | undefined;
-  var NavegoSemanticViews: NavegoSemanticViews | undefined;
-  var NavegoPageMap: NavegoPageMap | undefined;
-  var NavegoRecord: Record<string, ((payload?: unknown) => unknown) | undefined> | undefined;
+  var __operaContentV1: boolean | undefined;
+  var OPERA_BRIDGE_WS: string | undefined;
+  var OPERA_BRIDGE_HANDLE_TIMEOUT_MS: number | string | undefined;
+  var OPERA_SOCKET_EXECUTE_TIMEOUT_MS: number | string | undefined;
+  var OperaBrowserId: { browserName: string } | undefined;
+  var OperaLog: OperaLog | undefined;
+  var OperaRoleReconcile: OperaRoleReconcile | undefined;
+  var OperaHoverSettle: OperaHoverSettle | undefined;
+  var OperaStatementFile: OperaStatementFile | undefined;
+  var OperaSemanticIdentity: OperaSemanticIdentity | undefined;
+  var OperaSemanticViews: OperaSemanticViews | undefined;
+  var OperaPageMap: OperaPageMap | undefined;
+  var OperaRecord: Record<string, ((payload?: unknown) => unknown) | undefined> | undefined;
 
   interface Navigator {
     readonly userAgentData?: { brands?: Array<{ brand?: unknown }> | undefined } | undefined;
     readonly brave?: { isBrave?: (() => boolean) | undefined } | undefined;
   }
 
-  interface NavegoLogEntry {
+  interface OperaLogEntry {
     readonly t: string;
     readonly level: 'debug' | 'warn' | 'error';
     readonly code: string;
@@ -34,7 +34,7 @@ declare global {
     readonly commandId: string | null;
   }
 
-  interface NavegoLogFault {
+  interface OperaLogFault {
     readonly code: string;
     readonly message: string;
     readonly count: number;
@@ -42,20 +42,20 @@ declare global {
     readonly lastAt?: string | undefined;
   }
 
-  interface NavegoLog {
+  interface OperaLog {
     readonly configure: (options: { level?: 'debug' | 'warn' | 'error' } | undefined) => void;
-    readonly log: (level: 'debug' | 'warn' | 'error', code: unknown, message: unknown, fields?: { commandId?: unknown } | undefined) => NavegoLogEntry;
-    readonly debug: (code: unknown, message: unknown, fields?: { commandId?: unknown } | undefined) => NavegoLogEntry;
-    readonly warn: (code: unknown, message: unknown, fields?: { commandId?: unknown } | undefined) => NavegoLogEntry;
-    readonly error: (code: unknown, message: unknown, fields?: { commandId?: unknown } | undefined) => NavegoLogEntry;
-    readonly entries: () => NavegoLogEntry[];
+    readonly log: (level: 'debug' | 'warn' | 'error', code: unknown, message: unknown, fields?: { commandId?: unknown } | undefined) => OperaLogEntry;
+    readonly debug: (code: unknown, message: unknown, fields?: { commandId?: unknown } | undefined) => OperaLogEntry;
+    readonly warn: (code: unknown, message: unknown, fields?: { commandId?: unknown } | undefined) => OperaLogEntry;
+    readonly error: (code: unknown, message: unknown, fields?: { commandId?: unknown } | undefined) => OperaLogEntry;
+    readonly entries: () => OperaLogEntry[];
     readonly clear: () => void;
-    readonly errors: () => NavegoLogFault[];
+    readonly errors: () => OperaLogFault[];
     readonly clearErrors: () => void;
     readonly errorCount: () => number;
   }
 
-  interface NavegoRoleReconcile {
+  interface OperaRoleReconcile {
     readonly GENERIC_ROLES: readonly string[];
     readonly ROLE_GAP_SAMPLE_SIZE: number;
     readonly isGenericRole: (role: unknown) => boolean;
@@ -67,61 +67,61 @@ declare global {
     readonly reconcileElements: (items: unknown, index: unknown) => unknown;
   }
 
-  interface NavegoHoverSettleNormalized {
+  interface OperaHoverSettleNormalized {
     readonly timeoutMs: number;
     readonly intervalMs: number;
     readonly stableRounds: number;
     readonly text: string;
   }
 
-  interface NavegoHoverSettleDecision {
+  interface OperaHoverSettleDecision {
     readonly done: boolean;
     readonly reason: string;
     readonly stableRounds?: unknown;
     readonly expectedText?: string | undefined;
   }
 
-  interface NavegoHoverSettle {
+  interface OperaHoverSettle {
     readonly DEFAULTS: Readonly<{ timeoutMs: number; intervalMs: number; stableRounds: number }>;
-    readonly normalize: (options?: Record<string, unknown> | undefined) => NavegoHoverSettleNormalized;
-    readonly plan: (state?: Record<string, unknown> | undefined) => NavegoHoverSettleDecision;
+    readonly normalize: (options?: Record<string, unknown> | undefined) => OperaHoverSettleNormalized;
+    readonly plan: (state?: Record<string, unknown> | undefined) => OperaHoverSettleDecision;
   }
 
-  interface NavegoStatementFile {
+  interface OperaStatementFile {
     readonly kindOf: (bytes: Uint8Array) => string;
     readonly countPages: (bytes: Uint8Array) => number;
     readonly pagesFrom: (kind: string, pages: number) => string;
     readonly balanceDigits: (raw: unknown) => string | null;
   }
 
-  interface NavegoSemanticState {
+  interface OperaSemanticState {
     readonly observationRevision?: number | undefined;
     readonly [key: string]: unknown;
   }
 
-  interface NavegoSemanticObservation {
+  interface OperaSemanticObservation {
     readonly items: unknown[];
-    readonly state: NavegoSemanticState;
+    readonly state: OperaSemanticState;
     readonly delta: unknown;
   }
 
-  interface NavegoIdentityEngine {
+  interface OperaIdentityEngine {
     readonly reset: (reason?: string) => void;
-    readonly observe: (items: unknown[]) => NavegoSemanticObservation;
-    readonly inspect: () => NavegoSemanticState;
+    readonly observe: (items: unknown[]) => OperaSemanticObservation;
+    readonly inspect: () => OperaSemanticState;
   }
 
-  interface NavegoSemanticIdentity {
-    readonly createIdentityEngine: (options?: Record<string, unknown> | undefined) => NavegoIdentityEngine;
+  interface OperaSemanticIdentity {
+    readonly createIdentityEngine: (options?: Record<string, unknown> | undefined) => OperaIdentityEngine;
     readonly stableHash: (value: unknown) => string;
   }
 
-  interface NavegoViewEngine {
+  interface OperaViewEngine {
     readonly observe: (input?: Record<string, unknown> | undefined) => unknown;
     readonly reset: () => void;
   }
 
-  interface NavegoSemanticViews {
+  interface OperaSemanticViews {
     readonly COMPLETION_STATUSES: readonly string[];
     readonly classifyCompletion: (input?: Record<string, unknown> | undefined) => {
       readonly status: string;
@@ -131,10 +131,10 @@ declare global {
       readonly unresolved: string[];
       readonly blockedReason?: string | undefined;
     };
-    readonly createViewEngine: (options?: Record<string, unknown> | undefined) => NavegoViewEngine;
+    readonly createViewEngine: (options?: Record<string, unknown> | undefined) => OperaViewEngine;
   }
 
-  interface NavegoPageMapElement {
+  interface OperaPageMapElement {
     readonly kind?: string | undefined;
     readonly tag?: string | undefined;
     readonly role?: string | null | undefined;
@@ -147,7 +147,7 @@ declare global {
     readonly [key: string]: unknown;
   }
 
-  interface NavegoPageMapPull<T = NavegoPageMapElement> {
+  interface OperaPageMapPull<T = OperaPageMapElement> {
     readonly elements: T[];
     readonly total: number;
     readonly offset: number;
@@ -156,16 +156,16 @@ declare global {
     readonly nextOffset?: number | null | undefined;
   }
 
-  interface NavegoPageMap {
+  interface OperaPageMap {
     readonly PAGE_MAP_CLASSES: readonly string[];
     readonly CLASS_FIELDS: Readonly<Record<string, readonly string[]>>;
     readonly PAGE_MAP_MAX_ELEMENTS: number;
     readonly classify: (input: Record<string, unknown>) => string;
     readonly isMapClass: (name: unknown) => boolean;
     readonly isActionableClass: (kind: unknown) => boolean;
-    readonly projectElement: (raw: Record<string, unknown>) => NavegoPageMapElement;
-    readonly paginate: (elements: NavegoPageMapElement[], offset: unknown, limit: unknown) => NavegoPageMapPull;
-    readonly unionBox: (elements: NavegoPageMapElement[]) => { x: number; y: number; width: number; height: number } | null;
-    readonly summarizeClass: (className: string, elements: NavegoPageMapElement[]) => { class: string; count: number; bbox: { x: number; y: number; width: number; height: number } | null };
+    readonly projectElement: (raw: Record<string, unknown>) => OperaPageMapElement;
+    readonly paginate: (elements: OperaPageMapElement[], offset: unknown, limit: unknown) => OperaPageMapPull;
+    readonly unionBox: (elements: OperaPageMapElement[]) => { x: number; y: number; width: number; height: number } | null;
+    readonly summarizeClass: (className: string, elements: OperaPageMapElement[]) => { class: string; count: number; bbox: { x: number; y: number; width: number; height: number } | null };
   }
 }

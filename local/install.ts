@@ -8,7 +8,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
-export const ZIP_URL = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/download/navego.zip?for=chrome';
+export const ZIP_URL = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-update/download/opera.zip?for=chrome';
 export const SHA256_HEADER = 'x-opera-sha256';
 export const EXTENSION_ID = 'ofgemipoobcnbjkfanmofjbdonjapmgl';
 
@@ -28,11 +28,11 @@ export async function fetchVerifiedZip({ url = ZIP_URL, sha256Header = SHA256_HE
 
 export function crxReadme(browser: unknown): string {
   const name = String(browser);
-  return `Navego for ${name}
+  return `Opera for ${name}
 
-This folder keeps a verified copy of the extension build (navego.zip) in
+This folder keeps a verified copy of the extension build (opera.zip) in
 case the browser cannot install it from the policy. To install manually:
-extract navego.zip, then chrome://extensions (edge: edge://extensions,
+extract opera.zip, then chrome://extensions (edge: edge://extensions,
 brave: brave://extensions) -> Developer mode -> Load unpacked -> the extracted folder.
 
 How the automatic install works: the browser reads HKCU\\Software\\Policies\\...\\ExtensionInstallForcelist,
@@ -40,8 +40,8 @@ finds the entry whose data names ${EXTENSION_ID}, fetches the update manifest, d
 update endpoint, installs it, and keeps it there. Deleting the policy entry removes your protection of it;
 the installed copy stays until you remove it at chrome://extensions (edge: edge://extensions, brave: brave://extensions).
 
-Uninstall: run \`navego uninstall\`. It removes exactly this extension's policy entries, nothing else.
-Pairing: run \`navego auth\` to sign in, then open the extension and pair the device.
+Uninstall: run \`opera uninstall\`. It removes exactly this extension's policy entries, nothing else.
+Pairing: run \`opera auth\` to sign in, then open the extension and pair the device.
 `;
 }
 
@@ -51,7 +51,7 @@ export async function installCrxInto(root: string, browser: string, bytes: Uint8
   }
   const folder = path.join(root, browser.charAt(0).toUpperCase() + browser.slice(1));
   await mkdir(folder, { recursive: true });
-  const crx = path.join(folder, 'navego.zip');
+  const crx = path.join(folder, 'opera.zip');
   await writeFile(crx, bytes);
   await writeFile(path.join(folder, 'README.txt'), readme);
   return { folder, crx };
@@ -62,7 +62,7 @@ import { execFileSync } from 'node:child_process';
 import { detectBrowsers } from './browsers.js';
 import { writeExtensionKey } from './registry.js';
 
-const NON_WINDOWS = 'Navego installs its extension only into Windows browsers. On this platform, install from the Chrome Web Store or the Navego download page (https://navego.pages.dev/unduh).';
+const NON_WINDOWS = 'Opera installs its extension only into Windows browsers. On this platform, install from the Chrome Web Store or the Opera download page (https://navego.pages.dev/unduh).';
 
 const NO_BROWSER = 'No Chrome, Brave, Edge or Chrome for Testing was found on this machine. Install one of them, or grab the signed build from https://navego.pages.dev/unduh.';
 
@@ -94,7 +94,7 @@ export async function install({
   exec = defaultExec,
   fetchImpl = globalThis.fetch,
   existsAt = fs.existsSync,
-  root = env.LOCALAPPDATA ? path.join(env.LOCALAPPDATA, 'Navego') : path.join(os.homedir(), 'Navego'),
+  root = env.LOCALAPPDATA ? path.join(env.LOCALAPPDATA, 'Opera') : path.join(os.homedir(), 'Opera'),
   print = () => {},
 }: InstallOptions = {}) {
   if (platform !== 'win32') return { ok: false, browsers: [], message: NON_WINDOWS };
@@ -134,7 +134,7 @@ export async function install({
       if (entry.crx === 'written') return `${entry.id}: force-installed on the next browser start; backup written to ${entry.destination}`;
       return `${entry.id}: force-installed on the next browser start (the backup ZIP failed: ${entry.error})`;
     }),
-    'Sign in with `navego auth`, then open the extension and pair the device.',
+    'Sign in with `opera auth`, then open the extension and pair the device.',
   ].join('\n');
   print(message);
   return { ok, browsers: results, message };
@@ -144,8 +144,11 @@ import { existsSync } from 'node:fs';
 import { rm } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { deleteExtensionKey } from './registry.js';
+import { homeFile } from './legacy-names.js';
 
-export const deviceFile = (home: string): string => path.join(home, '.navego', 'device.json');
+// A pair made before the rename lives at ~/.navego/device.json; the read follows it, and a machine with neither is told the canonical path.
+
+export const deviceFile = (home: string): string => homeFile(home, 'device.json').file;
 
 const defaultSpawn = (cmd: string, args: string[], opts: import('node:child_process').SpawnOptions) => {
   const child = spawn(cmd, args, opts);
@@ -169,8 +172,8 @@ export async function uninstall({
   platform = process.platform,
   exec = defaultExec,
   spawnImpl = defaultSpawn,
-  root = env.LOCALAPPDATA ? path.join(env.LOCALAPPDATA, 'Navego') : path.join(os.homedir(), 'Navego'),
-  home = env.NAVEGO_HOME || os.homedir(),
+  root = env.LOCALAPPDATA ? path.join(env.LOCALAPPDATA, 'Opera') : path.join(os.homedir(), 'Opera'),
+  home = env.OPERA_HOME || os.homedir(),
   keepPair = false,
   print = () => {},
 }: UninstallOptions = {}) {
@@ -184,15 +187,15 @@ export async function uninstall({
     try {
       if (existsSync(root)) {
         await rm(root, { recursive: true, force: true });
-        steps.push({ step: 'Navego folder', result: `deleted ${root}` });
+        steps.push({ step: 'Opera folder', result: `deleted ${root}` });
       } else {
-        steps.push({ step: 'Navego folder', result: 'not found' });
+        steps.push({ step: 'Opera folder', result: 'not found' });
       }
     } catch (error: unknown) {
-      steps.push({ step: 'Navego folder', result: `could not delete: ${String((error as Error)?.message ?? error)}` });
+      steps.push({ step: 'Opera folder', result: `could not delete: ${String((error as Error)?.message ?? error)}` });
     }
   } else {
-    steps.push({ step: 'Navego folder', result: 'not applicable (the folder is Windows-only)' });
+    steps.push({ step: 'Opera folder', result: 'not applicable (the folder is Windows-only)' });
   }
   const device = deviceFile(home);
   if (keepPair) {
@@ -207,15 +210,15 @@ export async function uninstall({
   } else {
     steps.push({ step: 'device pairing', result: 'not found' });
   }
-  // THREE NAMES: the package was published as navego-mcp, then as kemudi, and now ships as navego; a machine that installed before today carries either legacy name.
-  // `npm uninstall -g navego` alone would leave the legacy installs behind.
+  // THREE NAMES: the package was published as opera-mcp, then as kemudi, and now ships as opera; a machine that installed before today carries either legacy name.
+  // `npm uninstall -g opera` alone would leave the legacy installs behind.
   // the three are uninstalled together: one command feels cleaner than three separate lines.
   // One spawn, both specs.
   try {
-    spawnImpl('npm', ['uninstall', '-g', 'navego', 'kemudi', 'navego-mcp'], { detached: true, stdio: 'ignore' });
+    spawnImpl('npm', ['uninstall', '-g', 'opera', 'kemudi', 'opera-mcp'], { detached: true, stdio: 'ignore' });
     steps.push({ step: 'npm package', result: 'uninstall spawned in its own process (both names, new and legacy); it finishes after this command exits' });
   } catch (error: unknown) {
-    steps.push({ step: 'npm package', result: `could not spawn the uninstall (${String((error as Error)?.message ?? error)}); run \`npm uninstall -g navego kemudi navego-mcp\` yourself` });
+    steps.push({ step: 'npm package', result: `could not spawn the uninstall (${String((error as Error)?.message ?? error)}); run \`npm uninstall -g opera kemudi opera-mcp\` yourself` });
   }
   const instructions = [
     'The policy entries are gone; the browser no longer forces the extension.',

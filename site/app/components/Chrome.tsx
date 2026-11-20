@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
-import { NavegoMark, NavegoWordmark } from './NavegoMark';
+import { OperaMark, OperaWordmark } from './OperaMark';
 import { readConsent, storeConsent, type ConsentChoice } from '../lib/consent.js';
 
-const VERSION = '1.7.7';
+const VERSION = '2.0.0';
 
 // one navigation surface: a slim dark bar with the brand and one CTA, and a chevron that drops the whole menu as a panel.
 
@@ -34,9 +34,9 @@ export function SiteHeader({ current }: { current?: string }) {
   return (
     <header className="site-header" data-version={VERSION}>
       <div className="site-header-row site-header-bleed header-inner">
-        <Link className="brand" to="/beranda" aria-label="Navego — beranda">
-          <NavegoMark size={24} />
-          <NavegoWordmark size={14} />
+        <Link className="brand" to="/beranda" aria-label="Opera — beranda">
+          <OperaMark size={24} />
+          <OperaWordmark size={14} />
         </Link>
         <div className="header-actions">
           <Link className="btn btn-ghost btn-sm" to="/">Masuk</Link>
@@ -110,13 +110,13 @@ function CookieConsent() {
   const decide = (value: 'granted' | 'denied') => {
     storeConsent(value);
     setChoice(value);
-    window.dispatchEvent(new CustomEvent('navego:consent', { detail: value }));
+    window.dispatchEvent(new CustomEvent('opera:consent', { detail: value }));
   };
 
   return (
     <div className="consent-banner" role="region" aria-label="Persetujuan cookie">
       <div className="wrap consent-inner">
-        <p>Navego memakai dua cookie first-party: <code>navego_consent</code> (mengingat pilihan ini) dan <code>navego_region</code> (mengingat kawasan harga Anda). Tidak ada analytics, iklan, atau pelacakan. <Link to="/privasi#cookie">Detail di Kebijakan Privasi</Link></p>
+        <p>Opera memakai dua cookie first-party: <code>opera_consent</code> (mengingat pilihan ini) dan <code>opera_region</code> (mengingat kawasan harga Anda). Tidak ada analytics, iklan, atau pelacakan. <Link to="/privasi#cookie">Detail di Kebijakan Privasi</Link></p>
         <div className="hero-cta">
           <button className="btn btn-solid btn-sm" type="button" onClick={() => decide('granted')}>Accept cookies</button>
           <button className="btn btn-ghost btn-sm" type="button" onClick={() => decide('denied')}>Tolak</button>
@@ -133,11 +133,11 @@ export function SiteFooter() {
       <div className="wrap">
         <div className="footer-cols">
           <div>
-            <Link className="brand" to="/beranda" aria-label="Navego — beranda" style={{ color: '#ffffff' }}>
-              <NavegoMark size={36} />
-              <NavegoWordmark size={16} />
+            <Link className="brand" to="/beranda" aria-label="Opera — beranda" style={{ color: '#ffffff' }}>
+              <OperaMark size={36} />
+              <OperaWordmark size={16} />
             </Link>
-            <p className="footer-tag">Navego — Browser Anda, atas perintah Anda.</p>
+            <p className="footer-tag">Opera — Browser Anda, atas perintah Anda.</p>
           </div>
           <nav aria-label="Produk">
             <h3>Produk</h3>
@@ -151,7 +151,7 @@ export function SiteFooter() {
             <h3>Open source</h3>
             <ul>
               <li><a href="https://github.com/afnannuzulasugihartono/navego" rel="noreferrer">GitHub</a></li>
-              <li><a href="https://www.npmjs.com/package/navego" rel="noreferrer">npm</a></li>
+              <li><a href="https://www.npmjs.com/package/opera" rel="noreferrer">npm</a></li>
               <li><Link to="/mcp">Pasang sebagai MCP</Link></li>
             </ul>
           </nav>
@@ -161,7 +161,7 @@ export function SiteFooter() {
           </nav>
         </div>
         <div className="footer-bar">
-          <span>© 2026 Navego — private, local, signed.</span>
+          <span>© 2026 Opera — private, local, signed.</span>
           <span><Link to="/privasi">Privasi</Link>, <Link to="/syarat">Syarat</Link>, <Link to="/dukungan">Dukungan</Link></span>
         </div>
       </div>

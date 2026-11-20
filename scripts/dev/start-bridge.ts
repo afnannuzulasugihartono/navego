@@ -9,7 +9,7 @@
 
 import { createBridgeServer } from '../../local/bridge-ws.js';
 
-const PORT = Number(process.env.NAVEGO_BRIDGE_PORT || 9451);
+const PORT = Number(process.env.OPERA_BRIDGE_PORT || 9451);
 
 const server = createBridgeServer({ port: PORT });
 try {

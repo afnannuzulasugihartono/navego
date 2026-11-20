@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: navego-vm — the VM host: one program, one run, one result.
+// @title: opera-vm — the VM host: one program, one run, one result.
 // @state: the collection it advances, the tokens it seals, and the status it reports.
 // @dependencies: edge-runtime, supabase-js, goal-ledger, reactive-vm-collect, reactive-vm-host, vm-token.
 
@@ -29,10 +29,10 @@ import {
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 const ALLOWED_USER_IDS = new Set(
-  (Deno.env.get("NAVEGO_MCP_USER_IDS") || "").split(",").map((value) => value.trim()).filter(Boolean),
+  (Deno.env.get("OPERA_MCP_USER_IDS") || "").split(",").map((value) => value.trim()).filter(Boolean),
 );
 const ALLOWED_USER_EMAILS = new Set(
-  (Deno.env.get("NAVEGO_MCP_USER_EMAILS") || "").split(",").map((value) => value.trim().toLowerCase()).filter(Boolean),
+  (Deno.env.get("OPERA_MCP_USER_EMAILS") || "").split(",").map((value) => value.trim().toLowerCase()).filter(Boolean),
 );
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
   auth: { persistSession: false, autoRefreshToken: false },
@@ -618,7 +618,7 @@ async function handle(req: Request) {
     const failure = error && typeof error === "object" ? error as { code?: unknown } : {};
     const code = boundedErrorCode(failure.code, "VM_HOST_ERROR");
     const status = error instanceof HostError ? error.status : code === "CROSS_TENANT" ? 403 : code === "OVER_LIMIT" ? 413 : 400;
-    console.error("navego-vm", code);
+    console.error("opera-vm", code);
     return response({ ok: false, error: { code } }, status);
   }
 }

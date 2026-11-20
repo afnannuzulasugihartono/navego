@@ -24,18 +24,18 @@ import readline from 'node:readline';
 import { HOSTED_MCP_URL, accessToken, loginInstructions } from './oauth.js';
 import { readDevice } from './wallet-client.js';
 
-// THE WIRE STILL SAYS navego-mcp.
+// THE WIRE STILL SAYS opera-mcp.
 // The provider pin is a wire identifier matched by the server's per-provider routing (opera_provider_pins); renaming the default on release day would orphan every pin a caller already set without a word about it.
-// The product says Navego everywhere a human reads; the pin is a machine word and stays until a reviewed migration moves the table too.
+// The product says Opera everywhere a human reads; the pin is a machine word and stays until a reviewed migration moves the table too.
 
-const PROVIDER = process.env.NAVEGO_MCP_PROVIDER || 'navego-mcp';
+const PROVIDER = process.env.OPERA_MCP_PROVIDER || 'opera-mcp';
 
 export function hostedBase(env: NodeJS.ProcessEnv = process.env): string {
-  return String(env.NAVEGO_MCP_BASE_URL || HOSTED_MCP_URL).trim();
+  return String(env.OPERA_MCP_BASE_URL || HOSTED_MCP_URL).trim();
 }
 
 export function pinnedDeviceName(env: NodeJS.ProcessEnv = process.env, { home = null }: { home?: string | null } = {}): string {
-  const named = String(env.NAVEGO_MCP_DEVICE_NAME || '').trim();
+  const named = String(env.OPERA_MCP_DEVICE_NAME || '').trim();
   if (named) return named;
   try {
     return String(readDevice({ home })?.deviceName || '').trim();
@@ -102,8 +102,8 @@ export async function serveCloud({ env = process.env, input = process.stdin, out
   }
   const base = hostedBase(env);
   const deviceName = pinnedDeviceName(env);
-  stderr.write(`navego cloud: ${base}\n`);
-  if (deviceName) stderr.write(`navego cloud: driving the paired device "${deviceName}"\n`);
+  stderr.write(`opera cloud: ${base}\n`);
+  if (deviceName) stderr.write(`opera cloud: driving the paired device "${deviceName}"\n`);
 
   const lines = readline.createInterface({ input, terminal: false });
   lines.on('line', (line: string) => {

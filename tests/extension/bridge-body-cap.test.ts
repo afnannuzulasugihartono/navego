@@ -11,10 +11,10 @@ import vm from 'node:vm';
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from '../../hosted/functions/_shared/cors.ts';
 import { requiredEnv } from '../../hosted/functions/_shared/required-env.ts';
 import { sha256 } from '../../hosted/functions/_shared/sha256.ts';
-import { isUpgradeRequest, serveDeviceSocket } from '../../hosted/functions/navego-bridge/bridge-socket.ts';
-import { gateVerdict } from '../../hosted/functions/navego-bridge/plan-gate.ts';
+import { isUpgradeRequest, serveDeviceSocket } from '../../hosted/functions/opera-bridge/bridge-socket.ts';
+import { gateVerdict } from '../../hosted/functions/opera-bridge/plan-gate.ts';
 
-const source = stripTypeScriptTypes(readFileSync(new URL('../../hosted/functions/navego-bridge/index.ts', import.meta.url), 'utf8')
+const source = stripTypeScriptTypes(readFileSync(new URL('../../hosted/functions/opera-bridge/index.ts', import.meta.url), 'utf8')
   .replace(/^import .*;\r?\n/gm, ''));
 
 // THE PROCESS GETS A Deno AND THESE TWO.
@@ -55,7 +55,7 @@ function harness() {
     headers?: Record<string, string>;
     duplex?: 'half';
   }
-  const post = (body: ReadableStream<Uint8Array>, init: PostInit = {}) => handler(new Request('https://example.test/functions/v1/navego-bridge', {
+  const post = (body: ReadableStream<Uint8Array>, init: PostInit = {}) => handler(new Request('https://example.test/functions/v1/opera-bridge', {
     method: 'POST', headers: { 'Content-Type': 'application/json', ...init.headers }, body, ...init
   }));
   return { calls, post };

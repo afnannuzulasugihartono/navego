@@ -9,7 +9,7 @@
 // The bridge now keeps every browser it is given, hands each a numeric namespace, and carries each command to the browser that owns the target it names.
 // A namespace cannot collide because the slot rides in the upper digits of a decimal number, while a Chromium build numbers tab ids across the whole 32-bit range; the stride is sized past that range, not past a comfortable guess.
 
-process.env.NAVEGO_BRIDGE_TOKEN = 'test-bridge-token';
+process.env.OPERA_BRIDGE_TOKEN = 'test-bridge-token';
 const realFetch = globalThis.fetch;
 globalThis.fetch = (url, opts) => realFetch(url, { ...opts, headers: { 'x-opera-bridge-token': 'test-bridge-token', ...(opts?.headers || {}) } });
 
@@ -20,7 +20,7 @@ import { createBridgeServer } from '../../local/bridge-ws.js';
 import { fakeCloud } from '../helpers/fake-cloud.ts';
 import { createScriptedDevice } from '../helpers/scripted-device.ts';
 
-process.env.NAVEGO_BRIDGE_PORT = '0';
+process.env.OPERA_BRIDGE_PORT = '0';
 
 const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
 

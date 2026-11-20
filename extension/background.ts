@@ -15,7 +15,7 @@ import { isRecord } from './lib/guards.js';
 
 import './role-reconcile.js';
 import { isPrivateTab } from './worker/private-tabs.js';
-const { axRoleIndex, reconcileElements, hasRoleGap } = globalThis.NavegoRoleReconcile ?? { axRoleIndex: undefined, reconcileElements: undefined, hasRoleGap: undefined };
+const { axRoleIndex, reconcileElements, hasRoleGap } = globalThis.OperaRoleReconcile ?? { axRoleIndex: undefined, reconcileElements: undefined, hasRoleGap: undefined };
 
 import { log } from './lib/log.js';
 import { popupsSince } from './lib/popup-events.js';
@@ -135,7 +135,7 @@ export async function dispatch(method: string, params: DispatchParams = {}, cont
       const fitted = fitWithinBudget(faults, RESULT_BUDGET_BYTES - 16 * 1024);
       return {
         ok: true,
-        product: 'Navego',
+        product: 'Opera',
         version: PRODUCT_VERSION,
         protocolVersion: PROTOCOL_VERSION,
         deviceName: cfg.deviceName,

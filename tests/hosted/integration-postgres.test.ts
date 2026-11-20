@@ -1,6 +1,6 @@
 // @last-edited: 2026-11-20 UTC+7.
 // @title: integration-postgres - the migration contract, proven against a disposable database.
-// @state: asserts against the live database only when NAVEGO_TEST_DATABASE_URL is set - the ci.yml postgres job sets it after applying every migration under ON_ERROR_STOP; without it the test skips.
+// @state: asserts against the live database only when OPERA_TEST_DATABASE_URL is set - the ci.yml postgres job sets it after applying every migration under ON_ERROR_STOP; without it the test skips.
 // @dependencies: node:test, strict, pg.
 
 // decisions.json -> tests-hosted-integration-postgres-01
@@ -12,7 +12,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Client } from 'pg';
 
-const DATABASE_URL = process.env.NAVEGO_TEST_DATABASE_URL;
+const DATABASE_URL = process.env.OPERA_TEST_DATABASE_URL;
 
 const BILLING_TABLES = ['opera_price_list', 'opera_invoices', 'opera_notification_log'];
 const CORE_TABLES = ['opera_commands', 'opera_devices', 'opera_pairing_codes', 'opera_workflows'];

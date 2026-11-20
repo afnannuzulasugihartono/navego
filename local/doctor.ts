@@ -14,7 +14,7 @@ import { readStoredToken } from './oauth.js';
 import { resolveBridgeToken } from './bridge-token.js';
 import { UPDATE_BASE_URL } from './lib/endpoints.js';
 
-const CRX_URL = `${UPDATE_BASE_URL}/download/navego.crx`;
+const CRX_URL = `${UPDATE_BASE_URL}/download/opera.crx`;
 const PROBE_TIMEOUT_MS = 2000;
 
 interface BridgeProbe {
@@ -50,8 +50,8 @@ async function probeBridge(port: number, fetchImpl: typeof fetch): Promise<Bridg
 }
 
 export async function doctor({ env = process.env, stdout = process.stdout, fetchImpl = fetch, args = [] }: { env?: NodeJS.ProcessEnv; stdout?: { write(chunk: string): unknown }; fetchImpl?: typeof fetch; args?: readonly string[] } = {}): Promise<number> {
-  const port = Number(env.NAVEGO_BRIDGE_PORT || 9451);
-  const home = typeof env.NAVEGO_HOME === 'string' ? env.NAVEGO_HOME : undefined;
+  const port = Number(env.OPERA_BRIDGE_PORT || 9451);
+  const home = typeof env.OPERA_HOME === 'string' ? env.OPERA_HOME : undefined;
   const jsonMode = args.includes('--json');
   const lines: string[] = [];
   const problems: string[] = [];
@@ -59,7 +59,7 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
 
   const paired = readDevice(home === undefined ? {} : { home });
 
-  const envToken = typeof env.NAVEGO_MCP_TOKEN === 'string' && env.NAVEGO_MCP_TOKEN.trim();
+  const envToken = typeof env.OPERA_MCP_TOKEN === 'string' && env.OPERA_MCP_TOKEN.trim();
   const stored = envToken ? null : readStoredToken(env);
 
   const probe = await probeBridge(port, fetchImpl);
@@ -70,14 +70,14 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
 
   const bridgeOk = probe.ok;
   if (!bridgeOk) {
-    problems.push('start the everyday browser with the Navego extension installed');
+    problems.push('start the everyday browser with the Opera extension installed');
   } else {
     const healthForDevices = probe.health as Record<string, unknown> | undefined;
     const devicesRaw = Array.isArray(healthForDevices?.devices) ? (healthForDevices?.devices as Array<Record<string, unknown>>) : [];
     const linked = healthForDevices?.linked === true;
     const refusal = typeof healthForDevices?.meterRefusal === 'string' && healthForDevices.meterRefusal.trim() ? (healthForDevices.meterRefusal as string).trim() : null;
     if (refusal) problems.push('the meter refused the session; update the extension to the current release and reload it');
-    else if (!devicesRaw.length && !linked) problems.push('the extension is not linked to this bridge; reload the everyday browser with Navego installed');
+    else if (!devicesRaw.length && !linked) problems.push('the extension is not linked to this bridge; reload the everyday browser with Opera installed');
     else if (!devicesRaw.length) problems.push('the bridge runs pre-meter code; restart the driver process so it can report the session');
     for (const device of devicesRaw) {
       if (!device?.meter) {
@@ -109,11 +109,11 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
   say('device file', paired ? `paired as ${paired.deviceName} (wallet and hosted tools use it)` : 'none (only the wallet and hosted tools need it)');
 
   if (envToken) {
-    say('cloud login', 'NAVEGO_MCP_TOKEN (a static token from the environment)');
+    say('cloud login', 'OPERA_MCP_TOKEN (a static token from the environment)');
   } else if (stored) {
     say('cloud login', `signed in (token expires ${new Date(Number(stored.expires_at) || 0).toISOString()})`);
   } else {
-    say('cloud login', 'not signed in - cloud mode needs it (`navego auth`, or NAVEGO_MCP_TOKEN)');
+    say('cloud login', 'not signed in - cloud mode needs it (`opera auth`, or OPERA_MCP_TOKEN)');
   }
 
   if (!probe.ok) {
@@ -152,6 +152,6 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
   const ready = problems.length === 0;
   say('verdict', ready ? 'ready' : `degraded: ${problems[0]}`);
   for (const problem of problems.slice(1)) say('  also', problem);
-  stdout.write(`navego doctor\n\n${lines.join('\n')}\n`);
+  stdout.write(`opera doctor\n\n${lines.join('\n')}\n`);
   return ready ? 0 : 1;
 }

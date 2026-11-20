@@ -14,7 +14,7 @@ node scripts/dev/agent-worktree.ts create <name> [base-branch] [topic]
 
 That one command:
 
-- creates a worktree beside the repo, at `../navego-<name>`,
+- creates a worktree beside the repo, at `../opera-<name>`,
 - puts it on the branch `agent/<name>/<topic>`, cut from the base you named (default `main`),
 - copies every `.env*` file from the main checkout, because a worktree without them cannot run the gates,
 - runs the install, so the worktree is immediately usable.

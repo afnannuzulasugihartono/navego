@@ -9,7 +9,8 @@ import { readFile } from 'node:fs/promises';
 import { SUPABASE_PROJECT_REF } from '../../extension/lib/endpoints.js';
 import { stripComments } from '../helpers/source-scan.ts';
 
-const gatewayPath = new URL('../../hosted/functions/navego-gateway/index.ts', import.meta.url);
+const gatewayPath = new URL('../../hosted/functions/opera-gateway/index.ts', import.meta.url);
+const legacyAuthPath = new URL('../../hosted/functions/_shared/legacy-auth.ts', import.meta.url);
 const docPath = new URL('../../docs/api.md', import.meta.url);
 
 function tableRows(doc: any) {
@@ -75,16 +76,21 @@ test('api.md documents every error code the gateway emits', async () => {
   }
 });
 
-test('extractToken accepts exactly the three documented carriers', async () => {
+test('extractToken accepts exactly the documented carriers', async () => {
 
   const gateway = await readFile(gatewayPath, 'utf8');
   const code = stripComments(gateway, 'javascript');
+  const legacyAuth = await readFile(legacyAuthPath, 'utf8');
 
   const extract = code.match(/function extractToken[\s\S]*?\n}/);
   assert.ok(extract, 'extractToken is present in the gateway');
   const body = extract[0];
 
-  for (const carrier of ['x-navego-token', 'authorization', 'apiKey']) {
+  // The header carriers live in one shared reader, so the gateway and the edge functions that read a token cannot drift apart.
+  for (const carrier of ['x-opera-token', 'x-navego-token']) {
+    assert.ok(legacyAuth.includes(`"${carrier}"`), `the shared token reader reads the ${carrier} carrier`);
+  }
+  for (const carrier of ['tokenFromHeaders', 'authorization', 'apiKey']) {
     assert.ok(body.includes(carrier), `extractToken reads the ${carrier} carrier`);
   }
   assert.doesNotMatch(
@@ -142,7 +148,7 @@ test('api.md states that the query string is never a carrier', async () => {
 
 test('api.md base URL matches the shared endpoint constants', async () => {
   const doc = await readFile(docPath, 'utf8');
-  const expected = `https://${SUPABASE_PROJECT_REF}.supabase.co/functions/v1/navego-gateway`;
+  const expected = `https://${SUPABASE_PROJECT_REF}.supabase.co/functions/v1/opera-gateway`;
   assert.ok(doc.includes(expected), 'docs/api.md states the gateway base URL derived from the project ref');
 });
 

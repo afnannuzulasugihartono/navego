@@ -75,7 +75,7 @@ export function createCanvasMethods({ primitives, readState, ocr = null }: { pri
     const focused = await primitives.evaluate('document.hasFocus() === true').catch(() => false);
     if (focused !== true) return { why: 'the page is not focused, so a copy would read whatever was on the clipboard instead of this page - focus the tab and read again' };
     const before = await readClipboard();
-    const sentinel = `navego-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+    const sentinel = `opera-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
     const armed = await primitives.evaluate(`navigator.clipboard.writeText(${JSON.stringify(sentinel)}).then(() => true).catch(() => false)`).catch(() => false);
     await primitives.key('c', ['Control']);
     await primitives.settle();
@@ -93,19 +93,19 @@ export function createCanvasMethods({ primitives, readState, ocr = null }: { pri
 
   const guard = createCaretGuard({ evaluate: primitives.evaluate });
 
-  // decisions.json -> hosted-navego-ocr-01
-  const OCR_ENDPOINT = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-ocr';
+  // decisions.json -> hosted-opera-ocr-01
+  const OCR_ENDPOINT = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-ocr';
   const defaultOcrFromShot: OcrReader = async () => {
     let held: { deviceName: string; token: string } | null = null;
     try { held = readDevice({}); } catch { held = null; }
-    if (!held || !held.token) return { why: 'this machine has no paired device file (~/.navego/device.json), so the OCR edge has no token to accept - pair the driver from the dashboard' };
+    if (!held || !held.token) return { why: 'this machine has no paired device file (~/.opera/device.json), so the OCR edge has no token to accept - pair the driver from the dashboard' };
     const shot = await primitives.ask('Page.captureScreenshot', { format: 'jpeg', quality: 70, captureBeyondViewport: false }).catch(() => null);
     const bytes = shot && typeof shot.data === 'string' ? shot.data : '';
     if (!bytes) return { why: 'the browser answered Page.captureScreenshot with no picture bytes' };
     try {
       const response = await fetch(OCR_ENDPOINT, {
         method: 'POST',
-        headers: { 'content-type': 'application/json', 'x-navego-token': held.token, 'x-opera-device': held.deviceName },
+        headers: { 'content-type': 'application/json', 'x-opera-token': held.token, 'x-opera-device': held.deviceName },
         body: JSON.stringify({ image_base64: bytes, mime: 'image/jpeg' }),
         signal: AbortSignal.timeout(60000)
       });

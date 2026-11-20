@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: navego-auth — the OAuth configuration the site and the extension read.
+// @title: opera-auth — the OAuth configuration the site and the extension read.
 // @state: the public config the consent page needs, and the CORS answer every edge function gives.
 // @dependencies: edge-runtime.
 
@@ -39,7 +39,7 @@ function handle(req: Request) {
 
   return new Response(JSON.stringify({
     ok: true,
-    service: "navego-auth-config",
+    service: "opera-auth-config",
     consentUrl: "https://navego.pages.dev/oauth/consent"
   }), { headers: { ...headers, "Cache-Control": "no-store" } });
 }

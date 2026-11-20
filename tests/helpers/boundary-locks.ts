@@ -195,10 +195,14 @@
 // WHY these three were re-pinned on 2026-11-19: the 1.7.7 release rode them.
 // The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
 
+// WHY these three were re-pinned again on 2026-11-20: the product was renamed from Navego to Opera for the 2.0.0 release.
+// content.ts and background.ts carry the brand strings and the 2.0.0 version; manifest.json carries the name, the version and the renamed update endpoint.
+// The dispatch tables, the primitives, the wire contract and the permission set are unchanged; only names and versions moved.
+
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
-  ['../extension/content.ts', '4d9cf6aec864f5c75f318aed43969ffbc37681ab71b19401985349d69d2a60fe'],
-  ['../extension/background.ts', '67b1744d986e6efa095a0bc6d9f02a029f9df42a1223acb502c5c7ea21bf40e0'],
-  ['../extension/manifest.json', 'a49b2265875539402a3b744dbfaa9fcdec9b88a2bce17b0c2018680df203ec9e'],
+  ['../extension/content.ts', '9370ef7f33e4ca025e4ba7d75fc2698d04503813f82e536a14868f13188a0c00'],
+  ['../extension/background.ts', '4f1d515f182d2a0844e449d8ae65dd26354725f78da5a55e30957b3877d734ef'],
+  ['../extension/manifest.json', 'b9754e7cce29e482eb750e10e7525dbdd661e779d200eace532285a7ee653158'],
 ]);
 
 // WHY collect and control-flow moved on 2026-11-17: the hosted functions are now type-checked by CI (deno check in ci.yml).

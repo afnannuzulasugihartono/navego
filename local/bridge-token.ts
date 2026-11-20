@@ -13,18 +13,20 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-const TOKEN_FILE = path.join(os.homedir(), '.navego', 'bridge-token');
+import { homeFile } from './legacy-names.js';
+
+const TOKEN_FILE = path.join(os.homedir(), '.opera', 'bridge-token');
 
 let cached: string | null = null;
 
 export function resolveBridgeToken() {
   if (cached) return cached;
-  if (process.env.NAVEGO_BRIDGE_TOKEN) {
-    cached = process.env.NAVEGO_BRIDGE_TOKEN;
+  if (process.env.OPERA_BRIDGE_TOKEN) {
+    cached = process.env.OPERA_BRIDGE_TOKEN;
     return cached;
   }
   try {
-    const stored = fs.readFileSync(TOKEN_FILE, 'utf8').trim();
+    const stored = fs.readFileSync(homeFile(os.homedir(), 'bridge-token').file, 'utf8').trim();
     if (stored) {
       cached = stored;
       return cached;

@@ -9,11 +9,11 @@
 
 export const SUPABASE_PROJECT_REF = 'nenmkmtvjremqphfqnfw';
 const SUPABASE_URL = `https://${SUPABASE_PROJECT_REF}.supabase.co`;
-export const DEFAULT_BRIDGE_URL = `${SUPABASE_URL}/functions/v1/navego-bridge`;
-export const BILLING_URL = `${SUPABASE_URL}/functions/v1/navego-billing`;
-export const LISTEN_BASE_URL = `${SUPABASE_URL}/functions/v1/navego-listen`;
-export const UPDATE_BASE_URL = `${SUPABASE_URL}/functions/v1/navego-update`;
-export const CONSENT_CONFIG_URL = `${SUPABASE_URL}/functions/v1/navego-auth/config`;
+export const DEFAULT_BRIDGE_URL = `${SUPABASE_URL}/functions/v1/opera-bridge`;
+export const BILLING_URL = `${SUPABASE_URL}/functions/v1/opera-billing`;
+export const LISTEN_BASE_URL = `${SUPABASE_URL}/functions/v1/opera-listen`;
+export const UPDATE_BASE_URL = `${SUPABASE_URL}/functions/v1/opera-update`;
+export const CONSENT_CONFIG_URL = `${SUPABASE_URL}/functions/v1/opera-auth/config`;
 
 // every cloud call is pinned to Singapore.
 // Edge functions run closest to the requester, and from this machine that is Tokyo while the database sits in Singapore — measured live as DENO_REGION ap-northeast-1 against a db host in ap-southeast-1.

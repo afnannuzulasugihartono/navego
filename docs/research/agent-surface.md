@@ -5,10 +5,10 @@ that follows can be argued with.
 
 ## The question
 
-Not "what would make Navego better" — that invites a feature list. The question is:
+Not "what would make Opera better" — that invites a feature list. The question is:
 
 > An AI agent has a browser task. It can fetch the HTML, drive its own browser, use
-> Playwright MCP, or use Navego. What makes it reach for Navego **first**, and
+> Playwright MCP, or use Opera. What makes it reach for Opera **first**, and
 > what makes it come back the second time?
 
 The second half matters more. Agents do not form habits; they form expectations from the
@@ -56,7 +56,7 @@ Neither ships what this product's architecture is built around: a **real signed-
 profile** and **server-side, site-generic workflows**. That is the moat. Everything below
 is about not losing the race to the moat.
 
-## Where Navego stands, measured
+## Where Opera stands, measured
 
 All numbers from this repository, today.
 
@@ -115,7 +115,7 @@ one area where the code is ahead of the notes.
 
 The competitor is not Playwright MCP. It is `fetch` plus reading the HTML, or whatever
 browser the agent harness already has. For a public page, `fetch` is one call, zero
-schema, and no browser to start. Navego wins only where the session matters: the
+schema, and no browser to start. Opera wins only where the session matters: the
 signed-in profile, the real app, the click that changes state.
 
 So the product is not competing on capability. It is competing on **the cost of the first

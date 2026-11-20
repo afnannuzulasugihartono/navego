@@ -17,7 +17,7 @@ const denoStub = { env: { get: (key: string) => process.env[key] } };
 (globalThis as { Deno?: typeof denoStub }).Deno = denoStub;
 
 const source = stripTypeScriptTypes(
-  readFileSync(new URL('../../hosted/functions/navego-feedback/index.ts', import.meta.url), 'utf8')
+  readFileSync(new URL('../../hosted/functions/opera-feedback/index.ts', import.meta.url), 'utf8')
     .replace(/^import\s+["']@supabase\/edge-runtime["'];?\s*$/m, '')
     .replace(/^import\s+\{[^}]*\}\s+from\s+["']@supabase\/supabase-js["'];?\s*$/m, '')
     .replace(/^import\s+\{[^}]*\}\s+from\s+["'][^"']*cors\.ts["'];?\s*$/m, '')
@@ -53,7 +53,7 @@ function harness() {
     TextDecoder,
     crypto
   });
-  const post = (body: any, headers = {}) => handler(new Request('https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-feedback', {
+  const post = (body: any, headers = {}) => handler(new Request('https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-feedback', {
     method: 'POST',
     headers: { 'content-type': 'application/json', origin: 'https://navego.pages.dev', ...headers },
     body: typeof body === 'string' ? body : JSON.stringify(body)
@@ -104,7 +104,7 @@ test('a body that is not an object, and a method that is not POST, are refused',
   const { post, raw } = harness();
   const notJson = await post('not json at all');
   assert.equal(notJson.status, 400);
-  const get = await raw(new Request('https://x.test/functions/v1/navego-feedback', { method: 'GET' }));
+  const get = await raw(new Request('https://x.test/functions/v1/opera-feedback', { method: 'GET' }));
   assert.equal(get.status, 405);
 });
 
@@ -126,7 +126,7 @@ test('the fields are cut to the length the table holds, so a long answer cannot 
 
 test('the preflight answers 204 with no body, because a 204 with a body is refused by the runtime', async () => {
   const { raw } = harness();
-  const preflight = await raw(new Request('https://x.test/functions/v1/navego-feedback', {
+  const preflight = await raw(new Request('https://x.test/functions/v1/opera-feedback', {
     method: 'OPTIONS',
     headers: { origin: 'https://navego.pages.dev', 'access-control-request-method': 'POST' }
   }));

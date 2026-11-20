@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-26 UTC+7.
-// @title: navego-billing — the invoice a customer opens, and the callback that closes it.
+// @title: opera-billing — the invoice a customer opens, and the callback that closes it.
 // @state: quotes a delivery into an amount, opens one payable transaction per invoice, serves the page in the state the row is in, closes it from a signed notification or the provider's own answer, records a transfer by hand, opens a new link when the customer asks, and answers a wallet's balance, quote, reserve, settle, refund and top-up.
 // @dependencies: edge-runtime, supabase-js, ../_shared/billing.ts, ../_shared/wallet.ts, ../_shared/wallet-api.ts, ../_shared/invoice-page.ts, ../_shared/cors.ts, ../_shared/edge-log.ts.
 
@@ -108,7 +108,7 @@ type BillingClient = Awaited<ReturnType<typeof db>>;
 const SUPABASE_URL = requiredEnv("SUPABASE_URL");
 const SERVICE_ROLE_KEY = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
 const BILLING_SECRET = requiredEnv("BILLING_SECRET");
-const BILLING_TOKEN = Deno.env.get("NAVEGO_BILLING_TOKEN") || "";
+const BILLING_TOKEN = Deno.env.get("OPERA_BILLING_TOKEN") || "";
 
 // THE OPERATOR'S LINK NAMES THE SITE AND NOT THIS FUNCTION.
 // Measured live on 2026-10-26: the gateway that fronts every project's functions answers this function's HTML as text/plain under a sandbox policy, so a customer sees the page's source.
@@ -791,7 +791,7 @@ async function openTopUp(owner: string): Promise<{ url: string; amountCents: num
     lines: [{ kind: DEPOSIT_KIND, quantity: 1 }],
     rail: BILLING_RAIL
   });
-  const base = BILLING_PAGE_URL || `${SUPABASE_URL}/functions/v1/navego-billing`;
+  const base = BILLING_PAGE_URL || `${SUPABASE_URL}/functions/v1/opera-billing`;
   return {
     url: `${base}?invoice_id=${encodeURIComponent(out.invoice.id)}&token=${out.token}`,
     amountCents: Number(out.invoice.amount_cents)
@@ -1145,7 +1145,7 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
           const order = await createPaypalOrder(env, {
             amountCents: Number(row.amount_cents),
             currency: String(row.currency),
-            description: `Navego ${plan}`,
+            description: `Opera ${plan}`,
             customId: `${plan}:${owner}`
           });
           return json({ ok: true, plan, orderId: order.id, approvalUrl: order.approvalUrl }, 200, cors);
@@ -1180,7 +1180,7 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
         });
         if (reusable) {
           const token = invoiceToken(String(reusable.id), BILLING_SECRET);
-          const base = BILLING_PAGE_URL || `${SUPABASE_URL}/functions/v1/navego-billing`;
+          const base = BILLING_PAGE_URL || `${SUPABASE_URL}/functions/v1/opera-billing`;
           const link = `${base}?invoice_id=${encodeURIComponent(String(reusable.id))}&token=${token}`;
           return json({ ok: true, url: link, invoice: reusable, reused: true }, 200, cors);
         }
@@ -1190,7 +1190,7 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
           period: `plan-${date}-${Date.now().toString(36)}`,
           lines: [{ kind: "plan.usd-17", quantity: 1, description: "Plan Firm - 30 hari, kuota 5000 perintah per hari" }]
         });
-        const base = BILLING_PAGE_URL || `${SUPABASE_URL}/functions/v1/navego-billing`;
+        const base = BILLING_PAGE_URL || `${SUPABASE_URL}/functions/v1/opera-billing`;
         const link = `${base}?invoice_id=${encodeURIComponent(out.invoice.id)}&token=${out.token}`;
         return json({ ok: true, url: link, invoice: out.invoice }, 200, cors);
       }
@@ -1289,7 +1289,7 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
         }
         if (!lines.length) return json({ error: "no deliveries to charge for" }, 400, cors);
         const out = await createInvoice({ customer_id: customerId, period, lines });
-        const base = BILLING_PAGE_URL || `${SUPABASE_URL}/functions/v1/navego-billing`;
+        const base = BILLING_PAGE_URL || `${SUPABASE_URL}/functions/v1/opera-billing`;
         const link = `${base}?invoice_id=${encodeURIComponent(out.invoice.id)}&token=${out.token}`;
         return json({ invoice: out.invoice, url: link }, 200, cors);
       }

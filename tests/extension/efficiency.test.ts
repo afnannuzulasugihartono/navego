@@ -8,14 +8,14 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { extensionSource } from '../helpers/extension-source.ts';
 
-const bridge = fs.readFileSync(new URL('../../hosted/functions/navego-bridge/index.ts', import.meta.url), 'utf8');
-const runner = fs.readFileSync(new URL('../../hosted/functions/navego-runner/index.ts', import.meta.url), 'utf8');
+const bridge = fs.readFileSync(new URL('../../hosted/functions/opera-bridge/index.ts', import.meta.url), 'utf8');
+const runner = fs.readFileSync(new URL('../../hosted/functions/opera-runner/index.ts', import.meta.url), 'utf8');
 const background = await extensionSource();
 const content = fs.readFileSync(new URL('../../extension/content.js', import.meta.url), 'utf8');
-const migration = fs.readFileSync(new URL('../../hosted/migrations/20260908233759_navego_efficiency_workflows.sql', import.meta.url), 'utf8');
-const parallelMigration = fs.readFileSync(new URL('../../hosted/migrations/20260908233810_navego_parallel_crawl_workflow.sql', import.meta.url), 'utf8');
-const transcriptMigration = fs.readFileSync(new URL('../../hosted/migrations/20260909000412_navego_youtube_transcript_fast_path.sql', import.meta.url), 'utf8');
-const transcriptRenderMigration = fs.readFileSync(new URL('../../hosted/migrations/20260909001248_navego_youtube_transcript_render_ready.sql', import.meta.url), 'utf8');
+const migration = fs.readFileSync(new URL('../../hosted/migrations/20260908233759_opera_efficiency_workflows.sql', import.meta.url), 'utf8');
+const parallelMigration = fs.readFileSync(new URL('../../hosted/migrations/20260908233810_opera_parallel_crawl_workflow.sql', import.meta.url), 'utf8');
+const transcriptMigration = fs.readFileSync(new URL('../../hosted/migrations/20260909000412_opera_youtube_transcript_fast_path.sql', import.meta.url), 'utf8');
+const transcriptRenderMigration = fs.readFileSync(new URL('../../hosted/migrations/20260909001248_opera_youtube_transcript_render_ready.sql', import.meta.url), 'utf8');
 const textOnlyMigration = fs.readFileSync(new URL('../../hosted/migrations/20260909021225_extension_1_1_text_only_workflows.sql', import.meta.url), 'utf8');
 
 // The pull endpoint is gone: no client asked through it anymore — the device learns work over its socket — so the deployed contract it was is deleted rather than kept warm.

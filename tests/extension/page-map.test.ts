@@ -7,11 +7,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 await import('../../extension/lib/page-map.js');
-if (!globalThis.NavegoPageMap) throw new Error('NavegoPageMap published');
+if (!globalThis.OperaPageMap) throw new Error('OperaPageMap published');
 const {
   PAGE_MAP_CLASSES, CLASS_FIELDS, PAGE_MAP_MAX_ELEMENTS,
   classify, isMapClass, isActionableClass, projectElement, paginate, summarizeClass
-} = globalThis.NavegoPageMap;
+} = globalThis.OperaPageMap;
 
 test('the map knows exactly seventeen classes, in the order the rules run', () => {
   assert.deepEqual(PAGE_MAP_CLASSES, [
@@ -83,7 +83,7 @@ test('the projection carries the class fields once and drops what is empty', () 
 });
 
 test('a pull pages without gaps or duplicates', () => {
-  const elements = [0, 1, 2, 3, 4].map((index) => ({ ref: 'oa_' + index })) as unknown as NavegoPageMapElement[];
+  const elements = [0, 1, 2, 3, 4].map((index) => ({ ref: 'oa_' + index })) as unknown as OperaPageMapElement[];
   assert.deepEqual(paginate(elements, 0, 2), {
     elements: [{ ref: 'oa_0' }, { ref: 'oa_1' }], offset: 0, limit: 2, total: 5, hasMore: true, nextOffset: 2
   });
@@ -100,7 +100,7 @@ test('a class summary counts its elements and boxes them', () => {
   const summary = summarizeClass('link', [
     { rect: { x: 10, y: 20, width: 100, height: 14 } },
     { rect: { x: 30, y: 60, width: 50, height: 10 } }
-  ] as unknown as NavegoPageMapElement[]);
+  ] as unknown as OperaPageMapElement[]);
   assert.deepEqual(summary, { class: 'link', count: 2, bbox: { x: 10, y: 20, width: 100, height: 50 } });
   assert.equal(summarizeClass('media', []).bbox, null);
 });

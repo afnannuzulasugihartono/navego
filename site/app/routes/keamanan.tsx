@@ -6,8 +6,8 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return seoMeta({
-    title: 'Keamanan — Navego',
-    description: 'Aturan keamanan Navego yang dipatuhi kode: tanpa eval, katasandi dan OTP ditolak selalu, token diverifikasi lalu dibuang, izin eksplisit dan bisa dicabut, dan cara melaporkan kerentanan secara privat.',
+    title: 'Keamanan — Opera',
+    description: 'Aturan keamanan Opera yang dipatuhi kode: tanpa eval, katasandi dan OTP ditolak selalu, token diverifikasi lalu dibuang, izin eksplisit dan bisa dicabut, dan cara melaporkan kerentanan secara privat.',
     path: '/keamanan'
   });
 }
@@ -16,7 +16,7 @@ const PRINSIP = [
   ['Tanpa eval', 'Satu-satunya jalan ke halaman adalah 36 primitive browser yang divalidasi — tidak ada eval, tidak ada remote code, tidak ada pengecualian untuk Anda maupun untuk pengembangnya.'],
   ['Isolated world', 'Content script berjalan di ISOLATED world. Ia tidak pernah membaca JavaScript halaman; ringkasan yang dipakainya dibangun oleh extension sendiri, bukan oleh halaman.'],
   ['Kata sandi dan OTP tidak disentuh', 'Kolom password, PIN, OTP/2FA, CVV/CVC, dan kode keamanan selalu ditolak — di mana pun, kapan pun, tanpa saklar untuk mematikannya.'],
-  ['Berkas upload diblok', 'input file tidak pernah diisi oleh Navego. Unduhan hanya mendarat di folder yang Anda pilih.'],
+  ['Berkas upload diblok', 'input file tidak pernah diisi oleh Opera. Unduhan hanya mendarat di folder yang Anda pilih.'],
   ['Tab pribadi di luar jangkauan', 'Private tabs ditolak di setiap gerbang — capture, listen, dan semua primitive lainnya.'],
   ['Token diverifikasi, lalu dibuang', 'Token diperiksa lalu dihapus dari memori. Tidak ada di log, tidak ada di payload, tidak ada di penyimpanan mana pun.'],
   ['Bridge loopback tertutup', 'Loopback bridge menuntut satu token. Pemanggil tanpa token tidak belajar lebih dari "ada yang terhubung".'],
@@ -83,8 +83,8 @@ export default function Keamanan() {
         <section className="band">
           <div className="wrap">
             <div className="cta-band">
-              <h2 className="section-title" style={{ color: '#ffffff' }}>Ingin tahu persis apa yang dikerjakan Navego?</h2>
-              <p>Baca daftar lengkap primitive dan tool di docs, atau lihat posisi Navego dibanding pendekatan lain.</p>
+              <h2 className="section-title" style={{ color: '#ffffff' }}>Ingin tahu persis apa yang dikerjakan Opera?</h2>
+              <p>Baca daftar lengkap primitive dan tool di docs, atau lihat posisi Opera dibanding pendekatan lain.</p>
               <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
                 <Link className="btn btn-solid" to="/docs#tools">Lihat tools MCP</Link>
                 <Link className="btn btn-ghost" to="/bandingkan">Bandingkan pendekatan</Link>

@@ -1,4 +1,4 @@
-; Navego - remove the force install policy, Windows, per-user.
+; Opera - remove the force install policy, Windows, per-user.
 ; @last-edited: 2026-11-15 UTC+7.
 ; @title: extension force install removal - deletes exactly the value the install file wrote.
 ; @state: per-user policy (HKCU). Removes only value "1", never the ExtensionInstallForcelist key itself and never your own entries under other numbers.

@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
+import '../legacy-env-bootstrap.js';
+
 // @last-edited: 2026-11-08 UTC+7.
-// @title: navego - the installed entry point: one command, two modes.
+// @title: opera - the installed entry point: one command, two modes.
 // @state: the mode comes from the first argument; each mode starts the server it names.
 // @dependencies: ./opera-local.js for the local mode.
 
@@ -9,16 +11,16 @@
 // A caller that has to remember a flag has two ways to get it wrong; a caller that names the mode cannot.
 // The modes share every tool name and every answer shape, so the choice is only about who drives the browser.
 
-const USAGE = `navego <mode>
+const USAGE = `opera <mode>
 
   local      drive the everyday browser on this machine, over the loopback bridge
-  cloud      drive it through the hosted Navego server
+  cloud      drive it through the hosted Opera server
   auth       sign in with a browser and keep the token beside this install
   doctor     print what is connected, the plan, and what the plan allows (--json for scripts)
   failures   print what broke on this machine: counts by tool and code, plus the agent's feedback notes (--tool=name, --limit=N, --json)
-  feedback   record what the agent saw while driving, e.g. navego feedback browser_read_page "canvas editors block every docs drive"
+  feedback   record what the agent saw while driving, e.g. opera feedback browser_read_page "canvas editors block every docs drive"
   install    detect this machine's browsers, register the extension, keep a verified CRX backup
-  uninstall  remove the extension's policy entries, the Navego folder, and this package; prints what it cannot remove
+  uninstall  remove the extension's policy entries, the Opera folder, and this package; prints what it cannot remove
 
   --help     print this
 `;

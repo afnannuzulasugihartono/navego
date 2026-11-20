@@ -11,8 +11,8 @@ import vm from 'node:vm';
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from '../../hosted/functions/_shared/cors.ts';
 import { requiredEnv } from '../../hosted/functions/_shared/required-env.ts';
 import { sha256 } from '../../hosted/functions/_shared/sha256.ts';
-import { isUpgradeRequest, serveDeviceSocket } from '../../hosted/functions/navego-bridge/bridge-socket.ts';
-import { gateVerdict } from '../../hosted/functions/navego-bridge/plan-gate.ts';
+import { isUpgradeRequest, serveDeviceSocket } from '../../hosted/functions/opera-bridge/bridge-socket.ts';
+import { gateVerdict } from '../../hosted/functions/opera-bridge/plan-gate.ts';
 
 // THE PROCESS GETS A Deno AND THESE TWO.
 // required-env is the real module the edge bundle uses, not a stand-in; it reads Deno from its own closure, which is this process.
@@ -58,11 +58,11 @@ test('env list overrides defaults', () => {
 });
 
 const EDGE_FUNCTIONS = [
-  'navego-auth',
-  'navego-bridge',
-  'navego-listen',
-  'navego-runner',
-  'navego-vm'
+  'opera-auth',
+  'opera-bridge',
+  'opera-listen',
+  'opera-runner',
+  'opera-vm'
 ];
 
 test('no edge function answers a wildcard origin any more', () => {
@@ -76,13 +76,13 @@ test('no edge function answers a wildcard origin any more', () => {
 
 test('the config endpoint is not a publicly cacheable copy of the anon key', () => {
 
-  const source = readFileSync(new URL('../../hosted/functions/navego-auth/index.ts', import.meta.url), 'utf8');
+  const source = readFileSync(new URL('../../hosted/functions/opera-auth/index.ts', import.meta.url), 'utf8');
   assert.doesNotMatch(source, /"Cache-Control":\s*"public/);
   assert.match(source, /"Cache-Control":\s*"no-store"/);
 });
 
 function loadBridge() {
-  const source = stripTypeScriptTypes(readFileSync(new URL('../../hosted/functions/navego-bridge/index.ts', import.meta.url), 'utf8')
+  const source = stripTypeScriptTypes(readFileSync(new URL('../../hosted/functions/opera-bridge/index.ts', import.meta.url), 'utf8')
     .replace(/^import .*;\r?\n/gm, ''));
   let handler: any;
   vm.runInNewContext(source, {
@@ -95,7 +95,7 @@ function loadBridge() {
     Deno: { env: { get: () => 'test' }, serve: (fn: any) => { handler = fn; } },
     Request, Response, Headers, URL, TextEncoder, TextDecoder, crypto
   });
-  return (origin: any) => handler(new Request('https://example.test/functions/v1/navego-bridge', {
+  return (origin: any) => handler(new Request('https://example.test/functions/v1/opera-bridge', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(origin ? { Origin: origin } : {}) },
     body: '{"action":"unknown"}'

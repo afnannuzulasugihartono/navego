@@ -39,7 +39,7 @@ test('program-run RPCs grant EXECUTE only, never table grants', () => {
   for (const table of ['vm_runs', 'vm_effects', 'vm_rate_windows']) {
     assert.doesNotMatch(
       body,
-      new RegExp(`grant\\s[^;]*on\\s+(table\\s+)?navego_private\\.${table}\\s+to\\s+(public|anon|authenticated)`, 'i'),
+      new RegExp(`grant\\s[^;]*on\\s+(table\\s+)?opera_private\\.${table}\\s+to\\s+(public|anon|authenticated)`, 'i'),
       `${table} must grant no table rights to client roles`
     );
   }

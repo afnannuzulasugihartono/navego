@@ -21,7 +21,7 @@ https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1
 Gateway base (append the routed paths to this):
 
 ```
-https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-gateway
+https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-gateway
 ```
 
 - The gateway does not trust the incoming request URL when advertising its own base.
@@ -36,13 +36,16 @@ https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-gateway
 
 The gateway accepts the token in three carriers, checked in this order:
 
-1. `x-navego-token: <device-token>` request header.
+1. `x-opera-token: <device-token>` request header.
 2. `Authorization: Bearer <device-token>` request header. The `Bearer ` prefix is
    optional and matched case-insensitively, so a bare token is accepted too.
 3. `apiKey` in the JSON request body.
 
 - The body carrier exists because GPT Actions cannot set custom request headers.
 - Prefer header carriers: they keep the token out of request bodies that may be logged.
+- The header `x-navego-token` is still read as a fallback for a client that has not
+  moved to `x-opera-token` yet. It is the same carrier under its 1.x name; it is
+  deprecated and will stop being read in 3.0.
 
 - A fourth path applies only to per-user callers such as the ChatGPT plugin
   OAuth bundle in `landing/chatgpt-plugin/`: when device-token verification
@@ -229,9 +232,9 @@ Run a command with the token in a header:
 
 ```bash
 curl -X POST \
-  "https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-gateway/command" \
+  "https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-gateway/command" \
   -H "content-type: application/json" \
-  -H "x-navego-token: $NAVEGO_TOKEN" \
+  -H "x-opera-token: $OPERA_TOKEN" \
   -d '{
     "method": "tabs.list",
     "params": {},
@@ -243,10 +246,10 @@ curl -X POST \
 Fetch the live spec (no token required):
 
 ```bash
-curl "https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-gateway/openapi.json"
+curl "https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-gateway/openapi.json"
 ```
 
-- Export `$NAVEGO_TOKEN` from the device token issued at pairing time.
+- Export `$OPERA_TOKEN` from the device token issued at pairing time.
 - Never paste a real token into a script, a shell history file, or a commit.
 
 ## If this document disagrees with the gateway

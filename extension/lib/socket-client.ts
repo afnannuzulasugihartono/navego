@@ -170,7 +170,7 @@ const RECYCLE_AGE_MS = 120000;
 const DEFAULT_EXECUTE_TIMEOUT_MS = 45000;
 
 export function executeBoundMs() {
-  return Number(globalThis.NAVEGO_SOCKET_EXECUTE_TIMEOUT_MS ?? DEFAULT_EXECUTE_TIMEOUT_MS);
+  return Number(globalThis.OPERA_SOCKET_EXECUTE_TIMEOUT_MS ?? DEFAULT_EXECUTE_TIMEOUT_MS);
 }
 
 export async function withExecuteTimeout(run: (command: SocketCommand) => unknown, command: SocketCommand): Promise<unknown> {

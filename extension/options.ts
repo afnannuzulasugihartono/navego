@@ -115,7 +115,7 @@ function init() {
     const probe = $('modelProbe', HTMLButtonElement);
     probe.disabled = true;
     try {
-      const reply: unknown = await chrome.runtime.sendMessage({ scope: 'navego-options', action: 'testModel' });
+      const reply: unknown = await chrome.runtime.sendMessage({ scope: 'opera-options', action: 'testModel' });
       const record = isRecord(reply) ? reply : {};
       showProbeStatus(record.ok ? 'Tersambung.' : String(record.message || record.error || 'Gagal tersambung.'));
     } catch (error) {

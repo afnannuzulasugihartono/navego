@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const root = new URL('../../', import.meta.url);
-const fn = fs.readFileSync(new URL('hosted/functions/navego-billing/index.ts', root), 'utf8');
+const fn = fs.readFileSync(new URL('hosted/functions/opera-billing/index.ts', root), 'utf8');
 const sql = fs.readFileSync(new URL('hosted/migrations/20261104120000_opera_wallet.sql', root), 'utf8');
 const api = fs.readFileSync(new URL('hosted/functions/_shared/wallet-api.ts', root), 'utf8');
 

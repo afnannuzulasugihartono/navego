@@ -3,14 +3,14 @@
 import { useEffect, useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
-import { NavegoMark, NavegoWordmark } from '../components/NavegoMark';
+import { OperaMark, OperaWordmark } from '../components/OperaMark';
 
 import { AUTH_HOST, clearSession, getReturnTo, getRefreshToken, getStoredToken, proveSession, renewAccessToken, storeRefreshToken, storeToken, PUBLISHABLE_KEY } from '../lib/auth';
 
 export function meta() {
   return seoMeta({
-    title: 'Masuk dashboard — Navego',
-    description: 'Akun Navego dipakai hanya untuk dashboard: mengelola device, plan, dan pemakaian Anda. Masuk dengan Google, GitHub, atau magic link email — tanpa password.',
+    title: 'Masuk dashboard — Opera',
+    description: 'Akun Opera dipakai hanya untuk dashboard: mengelola device, plan, dan pemakaian Anda. Masuk dengan Google, GitHub, atau magic link email — tanpa password.',
     path: '/'
   });
 }
@@ -120,11 +120,11 @@ export default function Index() {
   return (
     <>
       <SiteHeader current="/" />
-      <main className="auth-stage" aria-label="Masuk ke Navego">
+      <main className="auth-stage" aria-label="Masuk ke Opera">
         <div className="auth-art" aria-hidden="true">
           <div className="auth-lockup">
-            <NavegoMark size={34} />
-            <NavegoWordmark size={19} />
+            <OperaMark size={34} />
+            <OperaWordmark size={19} />
           </div>
           <h2>Asisten AI di browser Anda.</h2>
           <p>Bukan agen di server orang lain — asisten yang menggerakkan browser Anda sendiri, di mesin Anda.</p>

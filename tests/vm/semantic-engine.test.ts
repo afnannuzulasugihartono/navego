@@ -109,10 +109,10 @@ interface ViewsModule {
   createViewEngine: (options?: Record<string, unknown>) => ViewEngine;
 }
 
-if (!globalThis.NavegoSemanticIdentity) throw new Error('semantic-identity.js did not install the global');
-if (!globalThis.NavegoSemanticViews) throw new Error('semantic-views.js did not install the global');
-const { createIdentityEngine } = globalThis.NavegoSemanticIdentity as unknown as IdentityModule;
-const { COMPLETION_STATUSES, classifyCompletion, createViewEngine } = globalThis.NavegoSemanticViews as unknown as ViewsModule;
+if (!globalThis.OperaSemanticIdentity) throw new Error('semantic-identity.js did not install the global');
+if (!globalThis.OperaSemanticViews) throw new Error('semantic-views.js did not install the global');
+const { createIdentityEngine } = globalThis.OperaSemanticIdentity as unknown as IdentityModule;
+const { COMPLETION_STATUSES, classifyCompletion, createViewEngine } = globalThis.OperaSemanticViews as unknown as ViewsModule;
 
 const corpus = JSON.parse(fs.readFileSync(new URL('../fixtures/semantic-replay-v1.json', import.meta.url), 'utf8'));
 const thresholds = JSON.parse(fs.readFileSync(new URL('../fixtures/semantic-baseline-thresholds-v1.json', import.meta.url), 'utf8'));

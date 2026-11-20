@@ -6,8 +6,8 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return seoMeta({
-    title: 'Changelog — Navego',
-    description: 'Setiap rilis Navego tercatat: tanggal, judul jujur, dan isi patch — dari 1.6.22 sampai versi yang berjalan di browser Anda.',
+    title: 'Changelog — Opera',
+    description: 'Setiap rilis Opera tercatat: tanggal, judul jujur, dan isi patch — dari 1.6.22 sampai versi yang berjalan di browser Anda.',
     path: '/changelog'
   });
 }
@@ -17,11 +17,11 @@ export function meta() {
 // Every row below is generated from docs/releases/<version>.md (the @title line plus the first bullets), so the page cannot drift from what shipped — regenerate with the script and review the diff.
 
 const ENTRIES: Array<[version: string, date: string, title: string, points: string[]]> = [
-  ['1.7.6', '2026-11-18', 'the rename ships end-to-end; MCP Registry publishes from CI.', ['Navego is the only name left on the wire, in the CLI, in the CRX, on the site, in the docs, and in the MCP registry.', '`navego doctor --json` emits one object', 'MCP Registry publishes from CI']],
+  ['1.7.6', '2026-11-18', 'the rename ships end-to-end; MCP Registry publishes from CI.', ['Opera is the only name left on the wire, in the CLI, in the CRX, on the site, in the docs, and in the MCP registry.', '`opera doctor --json` emits one object', 'MCP Registry publishes from CI']],
   ['1.7.5', '2026-11-17', 'audit fixes; bridge loopback door behind one token; CSP tightened.', ['The loopback door now requires one token.', 'CSP dropped the bare `https:` wildcard', 'Contract fixes:']],
   ['1.7.4', '2026-11-17', 'install baru membuka dashboard pair langsung; halaman onboarding dihapus.', ['Fresh install membuka halaman pairing dashboard', '`extension/onboarding.html` dihapus.']],
   ['1.7.3', '2026-11-17', 'onboarding first-run: jelas dalam satu layar, satu tombol.', ['Onboarding page disederhanakan.']],
-  ['1.7.2', '2026-11-17', 'the product is Navego; the update service answers both appids without an id.', ['Satu nama produk: Navego.', 'Paket npm tetap `kemudi`', '`navego-update` sudah live']],
+  ['1.7.2', '2026-11-17', 'the product is Opera; the update service answers both appids without an id.', ['Satu nama produk: Opera.', 'Paket npm tetap `kemudi`', '`opera-update` sudah live']],
   ['1.7.1', '2026-11-16', '40 tools, every one `browser_` + a job name; the site ships Corbin again.', []],
   ['1.6.59', '2026-11-15', 'the Tampermonkey idiom closed; every icon, no dots.', []],
   ['1.6.58', '2026-11-15', 'one face for the whole product, and pages that show it.', []],
@@ -107,7 +107,7 @@ export default function Changelog() {
           <div className="wrap">
             <div className="cta-band">
               <h2 className="section-title" style={{ color: '#ffffff' }}>Versi Anda tertinggal?</h2>
-              <p>Navego memberi tahu sendiri, sekali ditanya. Atau ambil versi terbaru dari halaman Unduh.</p>
+              <p>Opera memberi tahu sendiri, sekali ditanya. Atau ambil versi terbaru dari halaman Unduh.</p>
               <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
                 <Link className="btn btn-solid" to="/unduh">Unduh versi terbaru</Link>
                 <Link className="btn btn-ghost" to="/dukungan">Tanya dukungan</Link>

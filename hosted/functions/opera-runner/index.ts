@@ -1,5 +1,5 @@
 // @last-edited: 2026-10-21 UTC+7.
-// @title: navego-runner — the runner: the edge that waits for one command to finish.
+// @title: opera-runner — the runner: the edge that waits for one command to finish.
 // @state: the enqueue it makes, the command result it returns, and the CORS answer it gives.
 // @dependencies: edge-runtime, supabase-js, edge-log.
 

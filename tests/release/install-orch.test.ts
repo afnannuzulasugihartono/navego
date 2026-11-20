@@ -11,7 +11,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { install } from '../../local/install.js';
 
-const makeCrx = () => Buffer.from('zip-payload-of-the-navego-build-for-tests');
+const makeCrx = () => Buffer.from('zip-payload-of-the-opera-build-for-tests');
 
 const goodReply = (bytes: Buffer, sha: string) => (async (_url: string | URL | Request, opts: { method?: string } = {}): Promise<Response> => {
   if (opts.method === 'HEAD') return { ok: true, status: 200, headers: { get: () => sha } } as unknown as Response;
@@ -62,7 +62,7 @@ test('writes keys for each detected browser and reports success', async () => {
       'HKCU\\Software\\Policies\\BraveSoftware\\Brave-Browser\\ExtensionInstallForcelist',
     ].sort());
     for (const id of ['Chrome', 'Brave']) {
-      assert.equal((await stat(path.join(root, id, 'navego.zip'))).size, bytes.length);
+      assert.equal((await stat(path.join(root, id, 'opera.zip'))).size, bytes.length);
     }
   } finally {
     await rm(root, { recursive: true, force: true });

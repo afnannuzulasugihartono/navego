@@ -8,7 +8,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return seoMeta({
-    title: 'Docs — Navego',
+    title: 'Docs — Opera',
     description: 'Pasang, pair, jalankan, hubungkan. 40 tool MCP di atas 36 primitive browser — langkah yang bisa diikuti.',
     path: '/docs'
   });
@@ -17,9 +17,9 @@ export function meta() {
 const TOOLS = catalog as Array<{ group: string; items: Array<[string, string]> }>;
 
 const CONFIGS: Array<{ id: string; title: string; body: string }> = [
-  { id: 'cfg-opencode', title: 'OpenCode', body: '{\n  "mcp": {\n    "navego": {\n      "type": "local",\n      "command": "navego",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-kilo', title: 'Kilo Code', body: '{\n  "mcpServers": {\n    "navego": {\n      "command": "navego",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-claude', title: 'Claude Desktop', body: 'command: npx\nargs: ["-y", "navego", "local"]' }
+  { id: 'cfg-opencode', title: 'OpenCode', body: '{\n  "mcp": {\n    "opera": {\n      "type": "local",\n      "command": "opera",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-kilo', title: 'Kilo Code', body: '{\n  "mcpServers": {\n    "opera": {\n      "command": "opera",\n      "args": ["local"]\n    }\n  }\n}' },
+  { id: 'cfg-claude', title: 'Claude Desktop', body: 'command: npx\nargs: ["-y", "opera", "local"]' }
 ];
 
 const MULAI = [
@@ -94,9 +94,9 @@ export default function Docs() {
               <h2 id="pasang">Pasang extension</h2>
               <ol className="steps">
                 <li><span><strong>Unduh.</strong> Ambil arsip <code>.zip</code> dari halaman <Link to="/unduh">Unduh</Link>.</span></li>
-                <li><span><strong>Ekstrak.</strong> Ke folder yang tidak akan dirapikan lagi — misalnya <code>C:\Navego\</code>.</span></li>
+                <li><span><strong>Ekstrak.</strong> Ke folder yang tidak akan dirapikan lagi — misalnya <code>C:\Opera\</code>.</span></li>
                 <li><span><strong>Muat.</strong> Buka <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>, Brave: <code>brave://extensions</code>, Opera: <code>opera://extensions</code>), nyalakan Mode Pengembang, muat folder tadi.</span></li>
-                <li><span><strong>Periksa.</strong> Navego muncul di daftar extension.</span></li>
+                <li><span><strong>Periksa.</strong> Opera muncul di daftar extension.</span></li>
               </ol>
               <p>Mesin kelolaan perusahaan memasang <code>.crx</code> bertanda tangan lewat <code>chrome://policy</code>. Firefox tidak didukung: izin <code>debugger</code> tidak tersedia di sana.</p>
               <div className="callout"><strong>Gratis untuk dipasang.</strong> Yang dibayar nanti adalah pekerjaan yang selesai.</div>
@@ -126,7 +126,7 @@ export default function Docs() {
                 <li><a href="/contoh/riset-promo.docx" download>Riset promo</a> — Word: judul, bagian, tabel, grafik.</li>
                 <li><a href="/contoh/rencana-pemasaran-2027.docx" download>Rencana pemasaran 2027</a> — Word: positioning, segmentasi, rencana kanal.</li>
               </ul>
-              <p>Portal yang minta masuk: Anda menyelesaikannya dulu. Lalu Navego lanjut di tab yang sama.</p>
+              <p>Portal yang minta masuk: Anda menyelesaikannya dulu. Lalu Opera lanjut di tab yang sama.</p>
 
               <h2 id="paket">Paket dan pembayaran</h2>
               <p>Sekali beli, langsung aktif. $1–$9 per bulan, $17 Business (6 bulan), $33 Enterprise (1 tahun). Detail di <Link to="/harga">Harga</Link>.</p>
@@ -155,8 +155,8 @@ export default function Docs() {
               <h2 id="mcp">Hubungkan AI harness</h2>
               <p>Satu MCP per mesin: driver lokal, jalan di mesin Anda sendiri, tanpa biaya per panggilan. <Link to="/mcp">Pasang driver lokal</Link>.</p>
               <div style={{ position: 'relative', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)', maxWidth: '40rem', marginBottom: 'var(--s-4)' }}>
-                <code style={{ background: 'transparent', border: 0, padding: 0, color: '#cfe0ff' }}>npx -y navego local</code>
-                {copyBlock('npx -y navego local', 'mcp-url')}
+                <code style={{ background: 'transparent', border: 0, padding: 0, color: '#cfe0ff' }}>npx -y opera local</code>
+                {copyBlock('npx -y opera local', 'mcp-url')}
               </div>
               {CONFIGS.map(({ id, title, body }) => (
                 <div key={id}>
@@ -167,7 +167,7 @@ export default function Docs() {
                   </div>
                 </div>
               ))}
-              <p>Tidak perlu login atau langganan untuk driver lokal. Kuota paket tetap dihitung di jembatan Navego — sisa kuota bisa dicek dengan <code>navego doctor</code>. Semua jalur dijelaskan di <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-call.md">docs/agent-call.md</a>.</p>
+              <p>Tidak perlu login atau langganan untuk driver lokal. Kuota paket tetap dihitung di jembatan Opera — sisa kuota bisa dicek dengan <code>opera doctor</code>. Semua jalur dijelaskan di <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-call.md">docs/agent-call.md</a>.</p>
               <h3 style={{ margin: 'var(--s-5) 0 var(--s-2)' }}>ChatGPT dan harness lain</h3>
               <p>MCP harness = aplikasi AI Anda (Claude Desktop, OpenCode, dsb.). Konektor ChatGPT memakai remote-HTTP dan tidak lagi disediakan. Untuk ChatGPT dan harness serupa, gunakan harness lokal (atau Claude Desktop/OpenCode yang menerima MCP stdio).</p>
               <p>Setelah terpasang, alat baru muncul sesudah harness restart — itu perilaku harness, bukan error koneksi.</p>

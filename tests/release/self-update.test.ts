@@ -137,10 +137,10 @@ const buildResponse = (body: Uint8Array, headers: Record<string, string> = {}): 
 
 const fetchImpl = (version: string, zip: Uint8Array) => async (url: string | URL | Request, options?: RequestInit): Promise<Response> => {
   const u = String(url);
-  if (u.includes('/download/navego.zip') && options?.method === 'HEAD') {
+  if (u.includes('/download/opera.zip') && options?.method === 'HEAD') {
     return asResponse({ ok: true, status: 200, headers: { get: (name: string) => (String(name).toLowerCase() === 'x-opera-version' ? version : null) } });
   }
-  if (u.includes('/download/navego.zip')) return buildResponse(zip, { 'x-opera-version': version });
+  if (u.includes('/download/opera.zip')) return buildResponse(zip, { 'x-opera-version': version });
   throw new Error(`unexpected url ${u}`);
 };
 
@@ -153,19 +153,19 @@ test('the version comparison reads as numbers, not as text', () => {
 
 test('the zip reader gives back the files the archive holds', async () => {
   const zip = buildZip([
-    { name: 'manifest.json', text: '{"name":"Navego","version":"1.6.38"}' },
+    { name: 'manifest.json', text: '{"name":"Opera","version":"1.6.38"}' },
     { name: 'lib/browser-id.js', text: 'export const x = 1;' }
   ]);
   const entries = await readZip(zip);
   assert.deepEqual(entries.map((entry) => entry.name), ['manifest.json', 'lib/browser-id.js']);
   const [firstEntry] = entries;
   assert.ok(firstEntry);
-  assert.equal(new TextDecoder().decode(firstEntry.bytes), '{"name":"Navego","version":"1.6.38"}');
+  assert.equal(new TextDecoder().decode(firstEntry.bytes), '{"name":"Opera","version":"1.6.38"}');
 });
 
 test('a newer build is written over the folder, file by file', async () => {
   const zip = buildZip([
-    { name: 'manifest.json', text: '{"name":"Navego","version":"1.6.38"}' },
+    { name: 'manifest.json', text: '{"name":"Opera","version":"1.6.38"}' },
     { name: 'lib/browser-id.js', text: 'export const family = () => "Brave";' }
   ]);
   const folder = fakeFolder();
@@ -180,7 +180,7 @@ test('a newer build is written over the folder, file by file', async () => {
 });
 
 test('the same version writes nothing', async () => {
-  const zip = buildZip([{ name: 'manifest.json', text: '{"name":"Navego","version":"1.6.38"}' }]);
+  const zip = buildZip([{ name: 'manifest.json', text: '{"name":"Opera","version":"1.6.38"}' }]);
   const folder = fakeFolder();
   const outcome = await applyBuild({ folder, installedVersion: '1.6.38', fetchImpl: fetchImpl('1.6.38', zip) });
   assert.equal(outcome.changed, false);
@@ -208,11 +208,11 @@ test('the served version is the one the build carries, asked by a head on the ar
   const [probeCall] = seen;
   assert.ok(probeCall);
   assert.equal(probeCall.method, 'HEAD', 'and it is asked for cheaply, without carrying the build');
-  assert.match(probeCall.url, /\/download\/navego\.zip$/, 'and it is the archive this extension is updated from, not another surface');
+  assert.match(probeCall.url, /\/download\/opera\.zip$/, 'and it is the archive this extension is updated from, not another surface');
 });
 
 test('a head that cannot say leaves the download to decide, and the write still happens', async () => {
-  const zip = buildZip([{ name: 'manifest.json', text: '{"name":"Navego","version":"1.6.38"}' }]);
+  const zip = buildZip([{ name: 'manifest.json', text: '{"name":"Opera","version":"1.6.38"}' }]);
   const folder = fakeFolder();
   const blind = async (_url: string | URL | Request, options?: RequestInit): Promise<Response> => {
     if (options?.method === 'HEAD') return asResponse({ ok: false, status: 503, headers: { get: () => null } });

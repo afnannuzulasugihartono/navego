@@ -7,8 +7,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 await import('../../extension/lib/agent-log.js');
-const log = globalThis.NavegoLog;
-if (!log) throw new Error('agent-log.js must install globalThis.NavegoLog');
+const log = globalThis.OperaLog;
+if (!log) throw new Error('agent-log.js must install globalThis.OperaLog');
 
 test('a repeated fault is one row with a count', () => {
   log.clearErrors();

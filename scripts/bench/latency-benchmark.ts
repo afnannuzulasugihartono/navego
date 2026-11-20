@@ -23,7 +23,7 @@ import { createMcpServer } from '../../local/mcp-server.js';
 import type { Driver } from '../../local/types.js';
 
 const RUNS = Number(process.argv.find((value) => value.startsWith('--runs='))?.split('=')[1] || 9);
-const PORT = Number(process.env.NAVEGO_BENCHMARK_PORT || 9477);
+const PORT = Number(process.env.OPERA_BENCHMARK_PORT || 9477);
 const URL_FIXTURE = `http://127.0.0.1:${PORT}/latency-fixture.html`;
 
 // THE FIXTURE IS SERVED BY THIS SCRIPT.

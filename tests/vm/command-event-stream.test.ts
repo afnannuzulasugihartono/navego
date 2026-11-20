@@ -26,7 +26,7 @@ import fs from 'node:fs';
 const root = new URL('../../', import.meta.url);
 const read = (p: any) => fs.readFileSync(new URL(p, root), 'utf8');
 
-const migrationName = '20261011140000_navego_command_events.sql';
+const migrationName = '20261011140000_opera_command_events.sql';
 
 const migration = () => {
   try {
@@ -117,7 +117,7 @@ test('events are swept, because nothing else prunes this table', () => {
 });
 
 test('the bridge carries the command-event ingress, so the channel is not dead code', () => {
-  const bridge = read('hosted/functions/navego-bridge/index.ts');
+  const bridge = read('hosted/functions/opera-bridge/index.ts');
   assert.match(bridge, /commandEvent/);
   assert.match(bridge, /opera_emit_command_event/);
 });

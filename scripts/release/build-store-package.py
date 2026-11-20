@@ -23,10 +23,10 @@ import zipfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 EXT = os.path.join(REPO, "extension")
-OUT_ZIP = os.path.join(REPO, "docs", "store", "navego-store.zip")
+OUT_ZIP = os.path.join(REPO, "docs", "store", "opera-store.zip")
 OUT_MANIFEST = os.path.join(REPO, "docs", "store", "store-manifest.json")
 
-STORE_NAME = "Navego"
+STORE_NAME = "Opera"
 
 STORE_DESC = (
     "Bawa asisten AI Anda mengemudikan browser: klik, ketik, isi formulir, "

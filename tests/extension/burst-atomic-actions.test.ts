@@ -76,7 +76,7 @@ test('the local surface exposes run only, never a cloud-side run_workflow', () =
 
 test('skip_ads workflow migration registers a re-querying loop workflow', () => {
   const migrations = fs.readdirSync(new URL('../../hosted/migrations', import.meta.url));
-  const name = migrations.find((file) => file.includes('navego_youtube_skip_ads_workflow'));
+  const name = migrations.find((file) => file.includes('opera_youtube_skip_ads_workflow'));
   assert.ok(name, 'a youtube skip_ads workflow migration must exist');
   const sql = fs.readFileSync(new URL(`../../hosted/migrations/${name}`, import.meta.url), 'utf8');
   assert.match(sql, /opera_register_workflow\(\s*'youtube\.skip_ads'/);
@@ -88,9 +88,9 @@ test('skip_ads workflow migration registers a re-querying loop workflow', () => 
 test('version bumped to 1.6.32 for the local loop release', () => {
   assert.equal(BURST_STEP_KEYS && true, true);
   const protocol = fs.readFileSync(new URL('../../extension/lib/protocol.js', import.meta.url), 'utf8');
-  assert.match(protocol, /PRODUCT_VERSION = '1.7.7'/);
+  assert.match(protocol, /PRODUCT_VERSION = '2.0.0'/);
   const manifest = JSON.parse(fs.readFileSync(new URL('../../extension/manifest.json', import.meta.url), 'utf8'));
-  assert.equal(manifest.version, '1.7.7');
+  assert.equal(manifest.version, '2.0.0');
 });
 
 test('validateBurst accepts grid and file macro steps with tight params', () => {

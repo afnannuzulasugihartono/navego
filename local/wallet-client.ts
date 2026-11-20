@@ -17,8 +17,9 @@ import path from 'node:path';
 import { randomBytes } from 'node:crypto';
 
 import { BILLING_URL, DEFAULT_BRIDGE_URL } from './lib/endpoints.js';
+import { homeFile } from './legacy-names.js';
 
-const DEVICE_FILE = path.join(os.homedir(), '.navego', 'device.json');
+const DEVICE_FILE = path.join(os.homedir(), '.opera', 'device.json');
 
 export interface WalletCallOptions {
   home?: string | null;
@@ -27,8 +28,14 @@ export interface WalletCallOptions {
   device?: { deviceName: string; token: string } | null;
 }
 
+// A wallet paired before the rename is read from its 1.x home; a new pair is written to the 2.0 one.
+
 function devicePath(home: string | null) {
-  return home ? path.join(home, '.navego', 'device.json') : DEVICE_FILE;
+  return home ? homeFile(home, 'device.json').file : DEVICE_FILE;
+}
+
+function deviceWritePath(home: string | null) {
+  return home ? path.join(home, '.opera', 'device.json') : DEVICE_FILE;
 }
 
 export function readDevice({ home = null }: { home?: string | null } = {}): { deviceName: string; token: string } | null {
@@ -47,7 +54,7 @@ export function readDevice({ home = null }: { home?: string | null } = {}): { de
 // A file another user on the same machine can read is a wallet another user can spend.
 
 export function saveDevice({ deviceName, token }: { deviceName: string; token: string }, { home = null }: { home?: string | null } = {}): string {
-  const file = devicePath(home);
+  const file = deviceWritePath(home);
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, JSON.stringify({ deviceName, token }, null, 2), { mode: 0o600 });
   return file;

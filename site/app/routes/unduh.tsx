@@ -7,14 +7,14 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return seoMeta({
-    title: 'Unduh — Navego',
-    description: 'Unduh build Navego untuk Chrome, Edge, Brave, Opera, dan Vivaldi. Satu klik di Windows lewat berkas .reg, atau developer mode. Masuk, lalu pair device dari dashboard.',
+    title: 'Unduh — Opera',
+    description: 'Unduh build Opera untuk Chrome, Edge, Brave, Opera, dan Vivaldi. Satu klik di Windows lewat berkas .reg, atau developer mode. Masuk, lalu pair device dari dashboard.',
     path: '/unduh'
   });
 }
 
-const DOWNLOAD = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/download/navego';
-const MANIFEST = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl';
+const DOWNLOAD = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-update/download/opera';
+const MANIFEST = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl';
 
 const BROWSERS = [
   { key: 'chrome', name: 'Chrome', letter: 'C' },
@@ -42,8 +42,8 @@ const BROWSER_SUPPORT: Array<[string, string, string]> = [
   ['Firefox', 'ditolak — tidak ada izin debugger', 'ditolak']
 ];
 
-const CURL = 'curl.exe -sI https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/download/navego.zip | findstr /i x-opera-sha256';
-const LOCAL = 'Get-FileHash .\\navego-*.zip -Algorithm SHA256';
+const CURL = 'curl.exe -sI https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-update/download/opera.zip | findstr /i x-opera-sha256';
+const LOCAL = 'Get-FileHash .\\opera-*.zip -Algorithm SHA256';
 
 export default function Unduh() {
   const [copied, setCopied] = useState<string | null>(null);
@@ -66,8 +66,8 @@ export default function Unduh() {
             <h1>Pasang dalam satu klik.</h1>
             <p className="lede">Satu build, lima browser.</p>
             <div className="hero-cta">
-              <a className="btn btn-solid" href="/download/forceinstall.reg" download="navego-forceinstall.reg">Unduh .reg — satu klik</a>
-              <a className="btn btn-ghost" href="/download/forceinstall-remove.reg" download="navego-forceinstall-remove.reg">Hapus kebijakannya</a>
+              <a className="btn btn-solid" href="/download/forceinstall.reg" download="opera-forceinstall.reg">Unduh .reg — satu klik</a>
+              <a className="btn btn-ghost" href="/download/forceinstall-remove.reg" download="opera-forceinstall-remove.reg">Hapus kebijakannya</a>
             </div>
             <p className="note">Windows saja. HKCU, tanpa admin. <code>ExtensionInstallForcelist</code>. Browser ini ikut rilis terbaru.</p>
           </div>

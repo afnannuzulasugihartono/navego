@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 
-// Pratinjau alur: pengunjung memilih perintah, lalu melihat jejak primitive yang akan dipakai Navego.
+// Pratinjau alur: pengunjung memilih perintah, lalu melihat jejak primitive yang akan dipakai Opera.
 // Tidak menjalankan browser siapa pun, tidak mengarang hasil — tautan docs tetap jujur.
 
 const DEFAULT_COMMAND = 'Ringkas halaman yang sedang saya buka jadi tiga poin.';
@@ -23,8 +23,8 @@ export function CommandPreview() {
 
   return (
     <div className="try-panel" data-ui>
-      <div className="try-command" aria-label="Pratinjau perintah Navego">
-        <p className="try-eyebrow">navego ❯ coba</p>
+      <div className="try-command" aria-label="Pratinjau perintah Opera">
+        <p className="try-eyebrow">opera ❯ coba</p>
         <p className="try-typed">{command}<span className="try-caret" aria-hidden="true" /></p>
         <div className="try-presets" role="group" aria-label="Contoh perintah">
           {PRESETS.map((preset) => (

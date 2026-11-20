@@ -116,7 +116,7 @@ test('a session never opens a debugging port', async () => {
 
 test('the driver has no port road left in it', () => {
   const driver = fs.readFileSync(new URL('../../local/driver.js', import.meta.url), 'utf8');
-  assert.doesNotMatch(driver, /NAVEGO_LOCAL_TRANSPORT/, 'the transport switch is gone');
+  assert.doesNotMatch(driver, /OPERA_LOCAL_TRANSPORT/, 'the transport switch is gone');
   assert.doesNotMatch(driver, /remote-debugging-port/, 'the driver launches no browser');
   assert.doesNotMatch(driver, /spawnBrowser/, 'and it spawns nothing');
 });

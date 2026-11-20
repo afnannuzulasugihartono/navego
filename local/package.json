@@ -1,25 +1,28 @@
 {
-  "name": "navego",
-  "version": "1.7.7",
-  "mcpName": "io.github.afnannuzulasugihartono/navego",
+  "name": "opera-agent",
+  "version": "2.0.0",
+  "mcpName": "io.github.afnannuzulasugihartono/opera-agent",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/afnannuzulasugihartono/navego.git"
   },
-  "description": "Navego — drive your own browser from an MCP client over the loopback bridge; metered per plan through the paired device.",
+  "description": "Opera — drive your own browser from an MCP client over the loopback bridge; metered per plan through the paired device.",
   "type": "module",
   "bin": {
-    "navego": "bin/navego.js"
+    "opera": "bin/opera.js",
+    "navego": "bin/opera.js"
   },
   "files": [
     "action-strategy.js",
     "advice.js",
     "agent-guide.js",
-    "bin/navego.js",
+    "bin/opera.js",
     "bin/opera-local.js",
     "bin/opera-local-dev.js",
     "bin/opera-chrome.cmd",
     "doctor.js",
+    "legacy-env-bootstrap.js",
+    "legacy-names.js",
     "bridge-token.js",
     "bridge-ws.js",
     "bridge.js",

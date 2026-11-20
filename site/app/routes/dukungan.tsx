@@ -6,7 +6,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 
 export function meta() {
   return seoMeta({
-    title: 'Dukungan — Navego',
+    title: 'Dukungan — Opera',
     description: 'Lima perbaikan paling sering, kontak yang tepat, dan langkah berikutnya — jawaban yang bisa langsung diikuti.',
     path: '/dukungan'
   });

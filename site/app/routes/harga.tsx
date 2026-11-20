@@ -10,7 +10,7 @@ import { bandForCountry, type PricingBand } from '../lib/region.js';
 
 export function meta() {
   return seoMeta({
-    title: 'Harga — Navego',
+    title: 'Harga — Opera',
     description: 'Sekali beli, langsung aktif. PayPal. Tidak ada tagihan tersembunyi.',
     path: '/harga'
   });
@@ -117,12 +117,12 @@ export default function Harga() {
       const detail = (event as CustomEvent).detail;
       if (detail === 'granted' && countryRef.current) storeRegionCookie(countryRef.current);
     };
-    window.addEventListener('navego:consent', onConsent);
+    window.addEventListener('opera:consent', onConsent);
     // THE PAGE ASKS FOR LOCATION IMMEDIATELY because the owner requires the region to come from the device geolocation whenever the browser can answer it - a visitor behind a VPN is priced by where they actually are, not by where the VPN exits.
     // The browser owns the final say: a denial, a timeout or a missing API falls back to the IP the edge reports, and nothing here blocks the page from rendering either way.
     detectFromDevice();
     return () => {
-      window.removeEventListener('navego:consent', onConsent);
+      window.removeEventListener('opera:consent', onConsent);
     };
   }, []);
 
@@ -223,7 +223,7 @@ export default function Harga() {
                 {geoBusy ? 'Mendeteksi lokasi…' : 'Perbarui dengan lokasi saya'}
               </button>
               {geoError ? <p className="status warn" role="status" style={{ marginTop: 'var(--s-2)' }}>{geoError}</p> : null}
-              <p className="note" style={{ marginTop: 'var(--s-2)' }}>Perangkat dipakai lebih dulu — akurat di balik VPN. Koordinat tidak disimpan. Cookie navego_region tersimpan hanya jika Anda setuju di banner bawah.</p>
+              <p className="note" style={{ marginTop: 'var(--s-2)' }}>Perangkat dipakai lebih dulu — akurat di balik VPN. Koordinat tidak disimpan. Cookie opera_region tersimpan hanya jika Anda setuju di banner bawah.</p>
             </div>
           </section>
         ) : null}

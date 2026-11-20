@@ -24,7 +24,7 @@ test('the drain bounds every command it executes', () => {
 
 test('the bound is a race that rejects with a named error, and it is injectable', () => {
   assert.match(source, /export function executeBoundMs\(/, 'the bound is a function so a test can call it');
-  assert.match(source, /globalThis\.NAVEGO_SOCKET_EXECUTE_TIMEOUT_MS/, 'tests shorten the bound without waiting a minute');
+  assert.match(source, /globalThis\.OPERA_SOCKET_EXECUTE_TIMEOUT_MS/, 'tests shorten the bound without waiting a minute');
   assert.match(source, /no answer from the tab within/, 'the failure names what hung');
 });
 
@@ -33,8 +33,8 @@ test('a hung command still releases the queue for the next one', async () => {
   const bound = module.executeBoundMs ?? null;
   assert.equal(typeof bound, 'function', 'the bound helper is exported for the unit test');
 
-  const previous = globalThis.NAVEGO_SOCKET_EXECUTE_TIMEOUT_MS;
-  globalThis.NAVEGO_SOCKET_EXECUTE_TIMEOUT_MS = '40';
+  const previous = globalThis.OPERA_SOCKET_EXECUTE_TIMEOUT_MS;
+  globalThis.OPERA_SOCKET_EXECUTE_TIMEOUT_MS = '40';
   try {
     const command = { id: 'c1', method: 'tabs.list', params: {}, timeoutMs: 40_000 };
     const slow = () => new Promise(() => {});
@@ -44,7 +44,7 @@ test('a hung command still releases the queue for the next one', async () => {
     assert.ok(after && typeof after === 'object' && 'ok' in after);
     assert.equal(after.ok, true, 'the queue walks free behind the abandoned command');
   } finally {
-    if (previous === undefined) delete (globalThis as { NAVEGO_SOCKET_EXECUTE_TIMEOUT_MS?: number | string | undefined }).NAVEGO_SOCKET_EXECUTE_TIMEOUT_MS;
-    else globalThis.NAVEGO_SOCKET_EXECUTE_TIMEOUT_MS = previous;
+    if (previous === undefined) delete (globalThis as { OPERA_SOCKET_EXECUTE_TIMEOUT_MS?: number | string | undefined }).OPERA_SOCKET_EXECUTE_TIMEOUT_MS;
+    else globalThis.OPERA_SOCKET_EXECUTE_TIMEOUT_MS = previous;
   }
 });

@@ -144,7 +144,7 @@ async function verifyInPage(tabId: number, url: string): Promise<FileVerificatio
     func: async (target: string): Promise<
       { ok: false; error: string } | { ok: true; bytes: number; kind: string; pages: number | null; pagesFrom: string }
     > => {
-      const helpers = globalThis.NavegoStatementFile;
+      const helpers = globalThis.OperaStatementFile;
       if (!helpers) return { ok: false, error: 'the statement helpers were not injected into the page.' };
       const noStore = { credentials: 'include' as const, cache: 'no-store' as const };
       let response: Response | undefined;
@@ -197,7 +197,7 @@ export async function statementDownload(params: Record<string, unknown> = {}) {
     pages: proof.pages ?? null,
     pagesFrom: proof.pagesFrom,
     balance: params.balance
-      ? { raw: String(params.balance), digits: globalThis.NavegoStatementFile?.balanceDigits(params.balance) ?? null }
+      ? { raw: String(params.balance), digits: globalThis.OperaStatementFile?.balanceDigits(params.balance) ?? null }
       : null,
     balanceFrom: params.balance ? String(params.balanceFrom || 'the page the statement was downloaded from') : null,
     deliveredAt: new Date().toISOString()

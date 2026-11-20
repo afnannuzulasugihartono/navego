@@ -26,7 +26,7 @@ That audit was generated against a stale branch (before the 2026-11-17 full migr
 - "AI refuses Rust because of `ARCHITECTURE.md`" — the gate does not forbid Rust or Go per se; it constrains the shape of the repo (root-level allowed directories, import direction, extra dependencies). Adding `backend/` with a Cargo workspace would need an architecture amendment, which is a deliberate product/architecture decision, not an accident of the tool.
 - TypeScript strict is already strong in this tree: `tsconfig.base.json` already sets `strict`, `noImplicitAny`, `strictNullChecks`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noImplicitOverride`, `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch`, `noEmitOnError`. Product code compiles with zero errors.
 - A full Rust port would not fix "AI ships stubbed logic" — AI can emit `todo!()` / `unimplemented!()` / empty `match` in Rust too. The wrong move is choosing a language to solve a process problem.
-- Rust makes the **local agent** (the product on users' machines alongside their everyday browsers) harder to reason about for end-users (install, permissions, debugging) and harder to ship; the npm install path is already live (`npm i -g navego`) and the `navego doctor` flow works against it.
+- Rust makes the **local agent** (the product on users' machines alongside their everyday browsers) harder to reason about for end-users (install, permissions, debugging) and harder to ship; the npm install path is already live (`npm i -g opera`) and the `opera doctor` flow works against it.
 - "Rust-first" for a solo founder without backend engineers would consume months of solo runway for no revenue-facing improvement.
 
 # What shipped between audit and this record
@@ -60,7 +60,7 @@ Until then, Rust/Go would solve a language problem for a product that has not ye
 3. Require an owner review on the gatekeeper paths (`gates.lock`, `.github/`, the boundary locks) — closed 2026-11-20: decisions.json -> docs-branch-protection-01; `gh api` now requires an approving review with code-owner sign-off on `tests/`, `scripts/`, `gates.lock` and the rest of `.github/` on `main`.
 4. Grep regression for stubs — done for the crisp ones: `tests/tooling/stub-grep.test.ts` (todo!, unimplemented!, panic!, process.exit in library code) and `scripts/audit/audit-cheats.ts` bans @ts-ignore, as any and require() in product code; `tests/tooling/no-explicit-any.test.ts` holds as any in tests. 'Silently swallowing errors' remains open.
 5. Wire integration tests against a real Postgres for billing/wallet/invoice flows — closed 2026-11-20: `tests/hosted/integration-postgres.test.ts` + the `postgres` job in `ci.yml`: every migration applies under `ON_ERROR_STOP` to a disposable Postgres, then the test asserts the opera_commands lifecycle check and the billing RLS are real - decisions.json -> ci-postgres-integration-01. Full billing/wallet/invoice flow tests against a live Supabase project still need the project's `DATABASE_URL`/`ACCESS_TOKEN` wired as secrets.
-6. Keep `docs/handoff.md` updated with the cutover facts: npm `navego` published, repo renamed to `navego`, the CRX release live, `type-debt.lock` lineage recorded.
+6. Keep `docs/handoff.md` updated with the cutover facts: npm `opera` published, repo renamed to `opera`, the CRX release live, `type-debt.lock` lineage recorded.
 
 # What this file is not
 

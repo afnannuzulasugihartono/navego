@@ -1,16 +1,16 @@
-# Calling Navego
+# Calling Opera
 
-One road, one command: `navego local`. Local on the machine where the browser already is.
+One road, one command: `opera local`. Local on the machine where the browser already is.
 
 The install is one command:
 
 ```bash
-npm i -g navego
+npm i -g opera-agent
 ```
 
 ## The installer and the driver
 
-`navego` is one command with one road: stdio on this machine,
+`opera` is one command with one road: stdio on this machine,
 driving the everyday browser through the loopback bridge — no cloud round trip
 per command.
 
@@ -20,9 +20,9 @@ Point a client at it (OpenCode reads `.mcp.servers` in `~/.config/opencode/openc
 {
   "mcp": {
     "servers": {
-      "navego": {
+      "opera": {
         "type": "local",
-        "command": "navego",
+        "command": "opera",
         "args": ["local"],
         "timeout": { "startup": 60000, "catalog": 60000, "execution": 600000 }
       }
@@ -33,10 +33,10 @@ Point a client at it (OpenCode reads `.mcp.servers` in `~/.config/opencode/openc
 
 | variable | default | meaning |
 |---|---|---|
-| `NAVEGO_BRIDGE_PORT` | `9451` | the loopback port the extension dials into |
-| `NAVEGO_HOME` | `~/.navego` | where the paired device file lives |
-| `NAVEGO_MCP_CONFIG_HOME` | platform config dir | where the OAuth token lives |
-| `NAVEGO_MCP_TOKEN` | unset | a static token wins over the OAuth login |
+| `OPERA_BRIDGE_PORT` | `9451` | the loopback port the extension dials into |
+| `OPERA_HOME` | `~/.opera` | where the paired device file lives |
+| `OPERA_MCP_CONFIG_HOME` | platform config dir | where the OAuth token lives |
+| `OPERA_MCP_TOKEN` | unset | a static token wins over the OAuth login |
 
 ### The meter, and what refuses you
 
@@ -49,7 +49,7 @@ session ends, so the local road and the pairing account share one daily count �
 `plan.usd-1` carries 1.000 commands per day and 50 per session;
 `plan.usd-17` carries 17.000 and 500, and `plan.usd-33` carries no daily
 limit; every USD plan carries no per-minute cap. The gate lives in the bridge — never in
-readable client code. `navego doctor` prints the bridge, the device,
+readable client code. `opera doctor` prints the bridge, the device,
 the extension version, the plan, and the quota.
 
 `browser_status` answers with the port the drive is really on, so read it
@@ -77,7 +77,7 @@ says so.
 
 ### The harness I use myself
 
-`scripts/dev/navego-agent.ts` is the thin client I drive Navego through from an agent harness that has a shell but no Navego tool in its own catalog. `list` and `tabs` are lookups; `open-and-read <url> [text] [file]` opens one tab, waits for a real text, reads it and writes a screenshot in the **same process**, because a tab claim belongs to one driver lease — separate CLI processes collide on the claim. `batch <file.json>` runs a list of commands in one lease. Every write tool takes an explicit `tabId`: no default tab, because the everyday browser carries private tabs.
+`scripts/dev/opera-agent.ts` is the thin client I drive Opera through from an agent harness that has a shell but no Opera tool in its own catalog. `list` and `tabs` are lookups; `open-and-read <url> [text] [file]` opens one tab, waits for a real text, reads it and writes a screenshot in the **same process**, because a tab claim belongs to one driver lease — separate CLI processes collide on the claim. `batch <file.json>` runs a list of commands in one lease. Every write tool takes an explicit `tabId`: no default tab, because the everyday browser carries private tabs.
 
 ## The extension road
 
@@ -89,7 +89,7 @@ socket is one WebSocket on `127.0.0.1:9451`.
    `chrome://extensions` with developer mode on loads it unpacked.
 2. Pair the browser in the dashboard — the meter needs a paired device to name
    the account the session belongs to.
-3. Run `navego doctor`. It prints the bridge, the device, the
+3. Run `opera doctor`. It prints the bridge, the device, the
    extension version, the plan, and the quota; a `degraded` verdict names the
    one fix that applies.
 

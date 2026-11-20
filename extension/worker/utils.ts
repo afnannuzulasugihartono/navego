@@ -55,10 +55,10 @@ export async function getConfig() {
   try {
     const rawLevel = String(cfg.logLevel);
     const level = rawLevel === 'debug' || rawLevel === 'warn' || rawLevel === 'error' ? rawLevel : 'warn';
-    globalThis.NavegoLog?.configure?.({ level });
+    globalThis.OperaLog?.configure?.({ level });
   } catch (error) {
     const record = error as { message?: unknown } | null;
-    globalThis.NavegoLog?.debug?.('LOG_CONFIGURE_FAILED', record && 'message' in record ? String(record.message) : String(error));
+    globalThis.OperaLog?.debug?.('LOG_CONFIGURE_FAILED', record && 'message' in record ? String(record.message) : String(error));
   }
   return {
     paired: !!cfg.paired,

@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-19 UTC+7.
-// @title: failures - the navego command that prints what broke, and collects what the agent observed while driving.
+// @title: failures - the opera command that prints what broke, and collects what the agent observed while driving.
 // @state: read-mostly; feedback appends one line; nothing leaves this machine.
 // @dependencies: ./tool-failures.js.
 
@@ -12,7 +12,7 @@ const formatWhen = (at: number): string => new Date(at).toISOString();
 
 const printHuman = (report: FailureReport, toolFilter?: string): void => {
   const filtered = toolFilter ? report.byTool.filter((row) => row.tool === toolFilter) : report.byTool;
-  const head = `navego failures - ${report.failures} failure${report.failures === 1 ? '' : 's'}, ${report.feedback} feedback note${report.feedback === 1 ? '' : 's'} on this machine`;
+  const head = `opera failures - ${report.failures} failure${report.failures === 1 ? '' : 's'}, ${report.feedback} feedback note${report.feedback === 1 ? '' : 's'} on this machine`;
   process.stdout.write(head + '\n');
   if (filtered.length === 0) {
     process.stdout.write('no tool has failed yet on this machine - nothing to fix, nothing to replay\n');
@@ -47,7 +47,7 @@ export async function failures({ args }: { args: string[] }): Promise<number> {
   return 0;
 }
 
-const usage = 'navego feedback <tool> <note...> - record what the agent saw, e.g. "browser_read_page: timeout on canvas editors blocks every docs drive"';
+const usage = 'opera feedback <tool> <note...> - record what the agent saw, e.g. "browser_read_page: timeout on canvas editors blocks every docs drive"';
 
 export async function feedback({ args }: { args: string[] }): Promise<number> {
   const [tool, ...noteParts] = args;

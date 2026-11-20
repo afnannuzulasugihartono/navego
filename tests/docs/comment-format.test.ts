@@ -122,12 +122,12 @@ const CASES: CaseEntry[] = [
     ext: '.cmd',
     lines: [
       '@echo off',
-      'REM Navego dedicated Chrome: persistent profile, debugging port, extension always loaded.',
+      'REM Opera dedicated Chrome: persistent profile, debugging port, extension always loaded.',
       'REM Run this instead of opening Chrome normally. Sign in to Google once; the',
       'REM profile keeps the login and the flag keeps the extension across restarts.',
       'setlocal',
     ],
-    expected: '@echo off\n\nREM Navego dedicated Chrome: persistent profile, debugging port, extension always loaded.\n'
+    expected: '@echo off\n\nREM Opera dedicated Chrome: persistent profile, debugging port, extension always loaded.\n'
       + 'REM Run this instead of opening Chrome normally.\n'
       + 'REM Sign in to Google once; the profile keeps the login and the flag keeps the extension across restarts.\n\n'
       + 'setlocal\n',

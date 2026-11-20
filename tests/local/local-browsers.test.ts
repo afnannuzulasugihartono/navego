@@ -99,12 +99,13 @@ test('protocolsFor reports only what is actually installed, so a caller can refu
 });
 
 test('a path in the table never names this machine, so the driver carries no local state', () => {
+  // The product is Opera and the Opera browser is one of the drivers, so the product name can no longer be a forbidden token in a path; the machine-specific names still are.
   for (const entry of BROWSERS) {
     for (const platform of ['win32', 'darwin', 'linux']) {
       const candidates = entry.paths[platform];
       assert.ok(candidates, `${entry.id} has ${platform} candidates`);
       for (const path of candidates) {
-        assert.ok(!/ASUS|Users\\ASUS|navego|opencode/i.test(path),
+        assert.ok(!/ASUS|Users\\ASUS|opencode/i.test(path),
           `${entry.id} leaks a machine-specific path: ${path}`);
       }
     }

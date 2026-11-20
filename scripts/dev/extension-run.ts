@@ -137,7 +137,7 @@ async function runExtensionProof({
   const mcp = speakMcp({
     port: debugPort,
     cwd: root,
-    env: { ...process.env, NAVEGO_BRIDGE_PORT: String(bridgePort) }
+    env: { ...process.env, OPERA_BRIDGE_PORT: String(bridgePort) }
   });
   const rows: Array<Record<string, unknown>> = [];
   let browser: Awaited<ReturnType<typeof launchProofBrowser>> | null = null;

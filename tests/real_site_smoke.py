@@ -3,7 +3,7 @@
 # @state: the sites it drives by hand, and what it prints for each.
 # @dependencies: asyncio, hashlib, json, os, re.
 
-"""Real-site smoke: navego against live pages, opt-in.
+"""Real-site smoke: opera against live pages, opt-in.
 
 WHY separate from browser_extension_test.py: that suite is deterministic and
 offline by contract, and a flaky third-party page must never read as a product
@@ -2612,7 +2612,7 @@ async def run(port, profile):
         )
         await popup.reload()
         pair_reply = await popup.evaluate(
-            f"chrome.runtime.sendMessage({{scope: 'navego-popup', action: 'pair', code: '{PAIR_CODE}'}})"
+            f"chrome.runtime.sendMessage({{scope: 'opera-popup', action: 'pair', code: '{PAIR_CODE}'}})"
         )
         assert pair_reply.get("ok") is True, pair_reply
         assert harness.STATE.paired

@@ -19,9 +19,9 @@ import { launchProofBrowser, runProof, serveCompany, sha256, speakMcp } from '..
 const root = path.resolve(fileURLToPath(new URL('../../', import.meta.url)));
 const company = path.join(root, 'tests', 'fixtures', 'mock-company');
 
-const noExtensionBrowser = process.env.NAVEGO_PROOF_BROWSER
+const noExtensionBrowser = process.env.OPERA_PROOF_BROWSER
   ? false
-  : 'this run has no extension-capable browser; set NAVEGO_PROOF_BROWSER to one (Chrome for Testing or Chromium)';
+  : 'this run has no extension-capable browser; set OPERA_PROOF_BROWSER to one (Chrome for Testing or Chromium)';
 
 test('the fixture portal answers with the page and the CSV a drive needs', async () => {
   const portal = await serveCompany(company);
@@ -67,7 +67,7 @@ test('the server opens the portal tab and reads the page', { skip: noExtensionBr
   const mcp = speakMcp({ port: browser.port, cwd: root });
   try {
     const ready = (await mcp.initialize()) as { serverInfo?: { name?: string } } | undefined;
-    assert.equal(ready?.serverInfo?.name, 'navego');
+    assert.equal(ready?.serverInfo?.name, 'opera');
     const names = await mcp.listTools();
     for (const wanted of ['browser_open_url', 'browser_read_page', 'browser_download_file', 'artifact_build', 'browser_screenshot', 'browser_close_tab']) {
       assert.ok(names.includes(wanted), `the server offers ${wanted}`);

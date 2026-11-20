@@ -24,7 +24,7 @@ const withRoots = async (fn: (roots: Roots) => Promise<unknown>) => {
   }
 };
 
-const env = (root: string, home: string) => ({ LOCALAPPDATA: root, NAVEGO_HOME: home });
+const env = (root: string, home: string) => ({ LOCALAPPDATA: root, OPERA_HOME: home });
 const quietExec = () => '';
 const noSpawn = () => ({ unref() {} }) as unknown as ChildProcess;
 const absentKey = () => { const e = new Error('Unable to find the specified registry key or value.') as Error & { status: number }; e.status = 1; throw e; };
@@ -37,14 +37,14 @@ test('clean machine reports nothing removed and exits ok', async () => {
       env: env(root, home),
       exec: absentKey,
       spawnImpl: () => { spawned.yes = true; return noSpawn(); },
-      root: path.join(home, 'Navego'),
+      root: path.join(home, 'Opera'),
       home,
     });
     assert.equal(result.ok, true);
     assert.equal(spawned.yes, true, 'npm uninstall was spawned anyway');
     for (const vendor of ['chrome', 'brave', 'edge']) assert.match(result.message, new RegExp(`policy entry for ${vendor}`));
     assert.match(result.message, /chromeForTesting/);
-    assert.match(result.message, /Navego folder: not found/);
+    assert.match(result.message, /Opera folder: not found/);
     assert.match(result.message, /device pairing: not found/);
   });
 });
@@ -57,11 +57,11 @@ test('deletes our entries from the three policy lists, chromeForTesting untouche
       env: env(root, home),
       exec: (cmd, args) => {
         calls.push([cmd, ...args]);
-        if (args[0] === 'query') return '    2    REG_SZ    ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl\r\n';
+        if (args[0] === 'query') return '    2    REG_SZ    ofgemipoobcnbjkfanmofjbdonjapmgl;https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/opera-update/update.xml?id=ofgemipoobcnbjkfanmofjbdonjapmgl\r\n';
         return '';
       },
       spawnImpl: noSpawn,
-      root: path.join(home, 'Navego'),
+      root: path.join(home, 'Opera'),
       home,
     });
     const vendors = calls.filter(([, op]) => op === 'delete').map(([, , key]) => String(key).includes('Google\\Chrome\\') ? 'chrome' : String(key).includes('Brave') ? 'brave' : String(key).includes('Microsoft\\Edge') ? 'edge' : '??');
@@ -72,7 +72,7 @@ test('deletes our entries from the three policy lists, chromeForTesting untouche
   });
 });
 
-test('deletes the Navego folder including the dedicated ChromeProfile', async () => {
+test('deletes the Opera folder including the dedicated ChromeProfile', async () => {
   await withRoots(async ({ root, home }) => {
     await mkdir(path.join(root, 'ChromeProfile'), { recursive: true });
     await writeFile(path.join(root, 'ChromeProfile', 'marker.txt'), 'x');
@@ -85,14 +85,14 @@ test('deletes the Navego folder including the dedicated ChromeProfile', async ()
       home,
     });
     await assert.rejects(() => stat(path.join(root, 'ChromeProfile')), /ENOENT/);
-    assert.match(result.message, /Navego folder: deleted/);
+    assert.match(result.message, /Opera folder: deleted/);
   });
 });
 
 test('keepPair preserves the device file; everything else still goes', async () => {
   await withRoots(async ({ root, home }) => {
     await mkdir(path.join(root, 'Chrome'), { recursive: true });
-    await mkdir(path.join(home, '.navego'), { recursive: true });
+    await mkdir(path.join(home, '.opera'), { recursive: true });
     await writeFile(deviceFile(home), '{"deviceName":"opera-9"}');
     const result = await uninstall({
       platform: 'win32',
@@ -104,13 +104,13 @@ test('keepPair preserves the device file; everything else still goes', async () 
       keepPair: true,
     });
     assert.match(result.message, /device pairing: kept \(--keep-pair\)/);
-    assert.match(result.message, /Navego folder: deleted/);
+    assert.match(result.message, /Opera folder: deleted/);
   });
 });
 
 test('deletes the paired device file by default', async () => {
   await withRoots(async ({ root, home }) => {
-    await mkdir(path.join(home, '.navego'), { recursive: true });
+    await mkdir(path.join(home, '.opera'), { recursive: true });
     await writeFile(deviceFile(home), '{"deviceName":"opera-9"}');
     const result = await uninstall({
       platform: 'win32',
@@ -136,7 +136,7 @@ test('spawns npm uninstall -g with both names, new and legacy, detached:true', a
       root,
       home,
     });
-    assert.deepEqual(calls, [['npm', 'uninstall', '-g', 'navego', 'kemudi', 'navego-mcp', { detached: true, stdio: 'ignore' }]]);
+    assert.deepEqual(calls, [['npm', 'uninstall', '-g', 'opera', 'kemudi', 'opera-mcp', { detached: true, stdio: 'ignore' }]]);
   });
 });
 
@@ -152,7 +152,7 @@ test('spawn failure is reported and the command still exits ok', async () => {
     });
     assert.equal(result.ok, true);
     assert.match(result.message, /could not spawn/);
-    assert.match(result.message, /npm uninstall -g navego kemudi navego-mcp/);
+    assert.match(result.message, /npm uninstall -g opera kemudi opera-mcp/);
   });
 });
 

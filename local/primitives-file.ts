@@ -260,7 +260,7 @@ export function filePrimitives(primitives: import('./types.js').JsonRecord, { cd
       if (renameTo !== null && (renameTo === '' || path.basename(renameTo) !== renameTo || renameTo === '.' || renameTo === '..')) {
         throw new Error(`download saveAs must be a file name, not a path: "${renameTo}". The folder is dir.`);
       }
-      const target = dir ? path.resolve(String(dir)) : path.join(os.homedir(), 'Downloads', 'navego');
+      const target = dir ? path.resolve(String(dir)) : path.join(os.homedir(), 'Downloads', 'opera');
       fs.mkdirSync(target, { recursive: true });
 
       // THE EXTENSION ROAD WATCHES THE FOLDERS CHROME MAY USE.

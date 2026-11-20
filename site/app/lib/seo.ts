@@ -5,7 +5,7 @@
 
 const SITE = 'https://navego.pages.dev';
 const OG_IMAGE = `${SITE}/og-cover.png`;
-const TWITTER = '@navego';
+const TWITTER = '@opera';
 
 interface SeoInput {
   title: string;
@@ -18,7 +18,7 @@ export function seoMeta({ title, description, path }: SeoInput) {
   return [
     { title },
     { name: 'description', content: description },
-    { property: 'og:site_name', content: 'Navego' },
+    { property: 'og:site_name', content: 'Opera' },
     { property: 'og:locale', content: 'id_ID' },
     { property: 'og:type', content: 'website' },
     { property: 'og:title', content: title },
@@ -27,7 +27,7 @@ export function seoMeta({ title, description, path }: SeoInput) {
     { property: 'og:image', content: OG_IMAGE },
     { property: 'og:image:width', content: '1200' },
     { property: 'og:image:height', content: '630' },
-    { property: 'og:image:alt', content: 'Navego — Asisten AI di browser Anda' },
+    { property: 'og:image:alt', content: 'Opera — Asisten AI di browser Anda' },
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: title },
     { name: 'twitter:description', content: description },

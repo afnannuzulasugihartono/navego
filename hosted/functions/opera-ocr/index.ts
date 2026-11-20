@@ -1,5 +1,5 @@
 // @last-edited: 2026-11-19 UTC+7.
-// @title: navego-ocr — one image in, its text out.
+// @title: opera-ocr — one image in, its text out.
 // @state: the endpoint the read reaches when neither ax/dom nor a canvas selection mirror could answer; a device token or a user Bearer authenticates; nothing is stored and nothing echoes the image back.
 // @dependencies: edge-runtime, supabase-js, cors.
 
@@ -7,6 +7,7 @@ import "@supabase/edge-runtime";
 import { createClient } from "@supabase/supabase-js";
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from "../_shared/cors.ts";
 import { requiredEnv } from "../_shared/required-env.ts";
+import { tokenFromHeaders } from "../_shared/legacy-auth.ts";
 
 const SUPABASE_URL = requiredEnv("SUPABASE_URL");
 const SERVICE_ROLE_KEY = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
@@ -18,7 +19,7 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
 });
 
 const cors = {
-  "Access-Control-Allow-Headers": "x-navego-token, authorization, content-type",
+  "Access-Control-Allow-Headers": "x-opera-token, x-navego-token, authorization, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Cache-Control": "no-store"
 };
@@ -54,7 +55,7 @@ async function userFromBearer(header: string | null): Promise<{ id: string } | n
 }
 
 async function principal(req: Request): Promise<{ id: string; kind: string } | null> {
-  const token = req.headers.get("x-navego-token");
+  const token = tokenFromHeaders(req.headers);
   if (token) {
     const device = await deviceFromToken(token.trim());
     if (device) return { id: device.id, kind: "device" };
