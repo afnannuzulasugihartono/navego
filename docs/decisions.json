@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated": "2026-11-20",
+  "generated": "2026-11-21",
   "source": "The 2026-11-18 navego.pages.dev rebrand and consistency pass: logo, wordmark, eyebrows, type and spacing system, nav notch, copy pass. User direction arrived 2026-11-18; internet sources were verified 2026-11-18. Repo sources point at the docs that already carry the decision. 2026-11-19: a source-backed pass over the agent tool surface added D55-D68 - kind recorded carries the file:line of the recorded performance, per the user evidence mandate.",
   "note": "One decision, one source. Code references this file as decisions.json -> <id>. A decision added from 2026-11-19 onward carries a file-based id (for example local-canvas-01) and names the file it governs; the earlier D-numbers are history and keep their ids. A decision the user asked for carries kind=user; a decision nobody asked for carries the internet source it was taken from; a decision inherited from this repo carries the repo document that already carries it; a decision taken because a recorded performance demanded it carries kind=recorded with the file:line that records it.",
   "decisions": [
@@ -967,6 +967,26 @@
         "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - the enterprise audit found advertised caps the schema did not declare; docs/product/backend-language-evaluation.md item 2 names the boundary"
       },
       "file": "local/tools.ts"
+    },
+    {
+      "id": "extension-bridge-url-migration-01",
+      "scope": "extension/endpoints",
+      "decision": "A device paired before the bridge function was renamed stores the predecessor bridge slug, which now resolves to a stale deployment; the extension rewrites that stored URL to the current slug and persists it, so the device leaves the old deployment once and stays on the deployed one.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'lanjutkan navego jadi enterprise ready' - the enterprise pass left the update and quota defects found on the live machine"
+      },
+      "file": "extension/lib/endpoints.ts"
+    },
+    {
+      "id": "hosted-plan-quota-01",
+      "scope": "hosted/functions",
+      "decision": "The daily quota comes from the account profile the bridge reads, and the bundled plan table is only the fallback for a profile that carries no quota; a build whose table predates the current sale can no longer charge an account a quota it never bought.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'lanjutkan navego jadi enterprise ready' - the enterprise pass left the hosted plan gate measured against a stale deployment"
+      },
+      "file": "hosted/functions/navego-bridge/plan-gate.ts"
     }
   ]
 }

@@ -1,6 +1,6 @@
-// @last-edited: 2026-10-09 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: options-store — validation and persistence for the Options page.
-// @state: The bridge URL, log level, and the user's own model endpoint, name and key, kept in local storage.
+// @state: The normalized bridge URL, log level, and the user's own model endpoint, name and key, kept in local storage.
 // @dependencies: endpoints.
 
 // Validation and persistence for the Options page: the bridge URL override and the log level, stored in chrome.storage.local.
@@ -12,7 +12,7 @@
 // Two consequences shape this file: the endpoint is held to the same https rule as the bridge, because it receives page content, and the key is never handed back to the page.
 // The page is told whether a key exists, not what it is, so opening Options cannot read it out of the DOM.
 
-import { DEFAULT_BRIDGE_URL } from './endpoints.js';
+import { DEFAULT_BRIDGE_URL, normalizeBridgeUrl } from './endpoints.js';
 import { isString } from './guards.js';
 
 // NOT chrome.storage.StorageArea.
@@ -114,7 +114,9 @@ function isLoopbackHttp(value: unknown) {
 
 export async function loadOptions(storage: StorageAreaLike) {
   const cfg = await storage.get(['bridgeUrl', 'logLevel', 'modelEndpoint', 'modelName', 'modelKey']);
-  const bridgeUrl = isString(cfg.bridgeUrl) && cfg.bridgeUrl ? cfg.bridgeUrl : DEFAULT_BRIDGE_URL;
+  const bridgeUrl = isString(cfg.bridgeUrl) && cfg.bridgeUrl
+    ? normalizeBridgeUrl(cfg.bridgeUrl)
+    : DEFAULT_BRIDGE_URL;
   const logLevel = isString(cfg.logLevel) && LEVELS.includes(cfg.logLevel) ? cfg.logLevel : DEFAULT_LEVEL;
   const storedEndpoint = isString(cfg.modelEndpoint) ? cfg.modelEndpoint : '';
   const storedModel = isString(cfg.modelName) ? cfg.modelName : '';

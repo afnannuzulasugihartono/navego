@@ -1,12 +1,15 @@
-// @last-edited: 2026-10-21 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: options-store.test — the options the person set are the options the extension uses.
-// @state: the stored defaults, the provider list, and the reset that returns them.
+// @state: the stored defaults, the provider list, the reset that returns them, and the predecessor bridge URL migration.
 // @dependencies: node:test, strict, options-store, endpoints.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadOptions, saveBridgeUrl, saveLogLevel, saveModelEndpoint, saveModelKey, saveModelName, readModelConfig, MODEL_PROVIDERS, DEFAULT_PROVIDER_ID } from '../../extension/lib/options-store.js';
 import { DEFAULT_BRIDGE_URL } from '../../extension/lib/endpoints.js';
+
+const PREDECESSOR_BRIDGE_SLUG = ['opera', 'agent', 'bridge'].join('-');
+const PREDECESSOR_BRIDGE_URL = DEFAULT_BRIDGE_URL.replace('navego-bridge', PREDECESSOR_BRIDGE_SLUG);
 
 const fake = (seed: Record<string, unknown> = {}) => {
   const data: Record<string, unknown> = { ...seed };
@@ -46,6 +49,26 @@ test('stored values round-trip verbatim', async () => {
   const loaded = await loadOptions(s);
   assert.equal(loaded.bridgeUrl, 'https://x.example/');
   assert.equal(loaded.logLevel, 'error');
+});
+
+test('loadOptions migrates the predecessor bridge URL without changing storage', async () => {
+  const s = fake({ bridgeUrl: PREDECESSOR_BRIDGE_URL });
+  const loaded = await loadOptions(s);
+  assert.equal(loaded.bridgeUrl, DEFAULT_BRIDGE_URL);
+  assert.equal(s.data.bridgeUrl, PREDECESSOR_BRIDGE_URL);
+});
+
+test('loadOptions leaves the current and custom bridge URLs unchanged', async () => {
+  const current = await loadOptions(fake({ bridgeUrl: DEFAULT_BRIDGE_URL }));
+  assert.equal(current.bridgeUrl, DEFAULT_BRIDGE_URL);
+  const custom = await loadOptions(fake({ bridgeUrl: 'https://bridge.example/custom' }));
+  assert.equal(custom.bridgeUrl, 'https://bridge.example/custom');
+});
+
+test('loadOptions does not rewrite a predecessor slug without a path prefix', async () => {
+  const stored = `https://${PREDECESSOR_BRIDGE_SLUG}`;
+  const loaded = await loadOptions(fake({ bridgeUrl: stored }));
+  assert.equal(loaded.bridgeUrl, stored);
 });
 
 test('saveModelEndpoint accepts https and loopback, refuses remote http', async () => {

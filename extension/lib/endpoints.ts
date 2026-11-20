@@ -1,6 +1,6 @@
-// @last-edited: 2026-10-13 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: endpoints — the single source of deployment endpoint truth for the deploy unit.
-// @state: the Supabase project ref, the function URLs derived from it, and the Cloudflare Pages site origin; tests/extension/endpoint-source.test.ts asserts the derivation.
+// @state: the Supabase project ref, the function URLs derived from it, the Cloudflare Pages site origin, and the compatibility migration for the predecessor bridge slug; tests/extension/endpoint-source.test.ts asserts the derivation.
 // @dependencies: none.
 
 // Single source of deployment endpoint truth for the extension deploy unit.
@@ -10,6 +10,27 @@
 export const SUPABASE_PROJECT_REF = 'nenmkmtvjremqphfqnfw';
 const SUPABASE_URL = `https://${SUPABASE_PROJECT_REF}.supabase.co`;
 export const DEFAULT_BRIDGE_URL = `${SUPABASE_URL}/functions/v1/navego-bridge`;
+
+// Devices paired before the function rename stored the predecessor bridge slug, which now resolves to a stale deployment.
+// The compatibility literal stays here so every reader applies the same migration.
+// decisions.json -> extension-bridge-url-migration-01
+
+const PREDECESSOR_BRIDGE_SLUG = 'opera-agent-bridge';
+const CURRENT_BRIDGE_SLUG = DEFAULT_BRIDGE_URL.slice(DEFAULT_BRIDGE_URL.lastIndexOf('/') + 1);
+
+export function normalizeBridgeUrl(bridgeUrl: string): string {
+  let url: URL;
+  try {
+    url = new URL(bridgeUrl);
+  } catch {
+    return bridgeUrl;
+  }
+  if (!url.pathname.endsWith(`/${PREDECESSOR_BRIDGE_SLUG}`)) return bridgeUrl;
+  const rewrittenPath = `${url.pathname.slice(0, -PREDECESSOR_BRIDGE_SLUG.length)}${CURRENT_BRIDGE_SLUG}`;
+  const pathStart = bridgeUrl.indexOf(url.pathname);
+  return `${bridgeUrl.slice(0, pathStart)}${rewrittenPath}${bridgeUrl.slice(pathStart + url.pathname.length)}`;
+}
+
 export const BILLING_URL = `${SUPABASE_URL}/functions/v1/navego-billing`;
 export const LISTEN_BASE_URL = `${SUPABASE_URL}/functions/v1/navego-listen`;
 export const UPDATE_BASE_URL = `${SUPABASE_URL}/functions/v1/navego-update`;
