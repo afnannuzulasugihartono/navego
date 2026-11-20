@@ -1,4 +1,4 @@
-// @last-edited: 2026-11-20 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: env-validation — the hosted functions validate the environment and request body before feeding typed code.
 // @state: the hosted functions read their required environment through requiredEnv before feeding typed code; navego-billing's request body is an object before any action reads it.
 // @dependencies: node:test, strict, node:fs, node:path, node:url.
@@ -21,7 +21,8 @@ test('navego-billing reads its required environment through requiredEnv', () => 
 
 test('navego-billing parses the request body as an object before any action reads it', () => {
   const source = read('hosted/functions/navego-billing/index.ts');
-  assert.match(source, /isRecord\(parsed\)\s*\?\s*parsed\s*:\s*\{\}/);
+  assert.match(source, /import \{ readJsonObject \} from "\.\.\/_shared\/request-body\.ts";/);
+  assert.match(source, /const parsed = await readJsonObject\(req\);\s*return parsed\.ok \? parsed\.body : \{\};/);
 });
 
 test('navego-auth reads its required environment through requiredEnv', () => {

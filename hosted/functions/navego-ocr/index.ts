@@ -1,12 +1,13 @@
-// @last-edited: 2026-11-19 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: navego-ocr — one image in, its text out.
 // @state: the endpoint the read reaches when neither ax/dom nor a canvas selection mirror could answer; a device token or a user Bearer authenticates; nothing is stored and nothing echoes the image back.
-// @dependencies: edge-runtime, supabase-js, cors.
+// @dependencies: edge-runtime, supabase-js, cors, request-body.
 
 import "@supabase/edge-runtime";
 import { createClient } from "@supabase/supabase-js";
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from "../_shared/cors.ts";
 import { requiredEnv } from "../_shared/required-env.ts";
+import { readJsonObject } from "../_shared/request-body.ts";
 
 const SUPABASE_URL = requiredEnv("SUPABASE_URL");
 const SERVICE_ROLE_KEY = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
@@ -76,14 +77,18 @@ Deno.serve(async (req: Request): Promise<Response> => {
     return json(req, { ok: false, error: "ocr is not configured" }, 503);
   }
 
-  let body: { image_base64?: unknown; mime?: unknown } | null = null;
-  try { body = await req.json(); } catch { return json(req, { ok: false, error: "body must be JSON" }, 400); }
+  // decisions.json -> hosted-request-body-01
+  const parsed = await readJsonObject(req);
+  if (!parsed.ok) {
+    return json(req, { ok: false, error: "body must be JSON" }, 400);
+  }
+  const body = parsed.body;
 
-  const image = typeof body?.image_base64 === "string" ? body.image_base64.replace(/\s/g, "") : "";
+  const image = typeof body.image_base64 === "string" ? body.image_base64.replace(/\s/g, "") : "";
   if (image.length < 100 || image.length > MAX_IMAGE_BASE64) {
     return json(req, { ok: false, error: "image_base64 must be between 100 and 6,000,000 characters" }, 400);
   }
-  const mime = typeof body?.mime === "string" && /^image\/(jpeg|png|webp)$/.test(body.mime) ? body.mime : "image/jpeg";
+  const mime = typeof body.mime === "string" && /^image\/(jpeg|png|webp)$/.test(body.mime) ? body.mime : "image/jpeg";
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",

@@ -1,7 +1,7 @@
-// @last-edited: 2026-10-26 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: navego-billing — the invoice a customer opens, and the callback that closes it.
 // @state: quotes a delivery into an amount, opens one payable transaction per invoice, serves the page in the state the row is in, closes it from a signed notification or the provider's own answer, records a transfer by hand, opens a new link when the customer asks, and answers a wallet's balance, quote, reserve, settle, refund and top-up.
-// @dependencies: edge-runtime, supabase-js, ../_shared/billing.ts, ../_shared/wallet.ts, ../_shared/wallet-api.ts, ../_shared/invoice-page.ts, ../_shared/cors.ts, ../_shared/edge-log.ts.
+// @dependencies: edge-runtime, supabase-js, ../_shared/billing.ts, ../_shared/wallet.ts, ../_shared/wallet-api.ts, ../_shared/invoice-page.ts, ../_shared/cors.ts, ../_shared/edge-log.ts, ../_shared/request-body.ts.
 
 // THIS FUNCTION EXISTS.
 // The product sells a delivered client-month, and a sale that nobody can pay for is a demo.
@@ -69,6 +69,7 @@ import { handleWalletAction, isWalletAction, type ReserveOutcome, type SettleOut
 import { toDynamicQris } from "../_shared/qris.ts";
 import { FEED_URL, TOKEN_URL, detectorPlan, feedHeaders, feedQuery, matchOpenInvoices, parseFeed, refreshBody, sessionHeaders } from "../_shared/qris-detector.ts";
 import { paypalEnvironment, createPaypalOrder, verifyPaypalWebhook } from "../_shared/paypal.ts";
+import { readJsonObject } from "../_shared/request-body.ts";
 
 type PriceRow = { kind: string; unit: string; amount_cents: number; currency: string; active: boolean };
 type Line = { kind: string; unit?: string; description?: string | null; quantity: number; amountCents?: number; reason?: string };
@@ -188,8 +189,9 @@ function publishOperatorToken(): void {
 // THE BODY IS READ BY ITS CONTENT TYPE.
 // The operator and the provider post JSON, and the customer's refresh form is a browser form, which posts urlencoded fields.
 // A body that cannot be parsed is an empty object, so a malformed request falls through to "unknown action" instead of a 500 that says nothing about the request.
-
 // A body that is not an object has no action field and no fields to read - the refusal the unknown-action branch already gives.
+
+// decisions.json -> hosted-request-body-01
 
 async function readBody(req: Request): Promise<Record<string, unknown>> {
   const type = (req.headers.get("content-type") || "").toLowerCase();
@@ -202,11 +204,9 @@ async function readBody(req: Request): Promise<Record<string, unknown>> {
     }
     return body;
   }
-  const parsed: unknown = await req.json().catch(() => null);
-  return isRecord(parsed) ? parsed : {};
+  const parsed = await readJsonObject(req);
+  return parsed.ok ? parsed.body : {};
 }
-
-const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null && !Array.isArray(value);
 
 // THE PAGE'S HEADERS SAY WHAT THE PAGE MAY DO.
 // The page carries a token in its body, so it must not be cached, must not leak the link that opened it as a referrer, and must not be framed by another site.

@@ -1,7 +1,7 @@
-// @last-edited: 2026-10-21 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: bridge-body-cap.test — the bridge reads a body of unknown length without trusting the header.
 // @state: the chunked body is measured, not assumed, and the cap refuses the body that is too large.
-// @dependencies: node:test, strict, node:fs, node:module, node:vm.
+// @dependencies: node:test, strict, node:fs, node:module, node:vm, request-body.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -11,6 +11,7 @@ import vm from 'node:vm';
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from '../../hosted/functions/_shared/cors.ts';
 import { requiredEnv } from '../../hosted/functions/_shared/required-env.ts';
 import { sha256 } from '../../hosted/functions/_shared/sha256.ts';
+import { parseJsonObject } from '../../hosted/functions/_shared/request-body.ts';
 import { isUpgradeRequest, serveDeviceSocket } from '../../hosted/functions/navego-bridge/bridge-socket.ts';
 import { gateVerdict } from '../../hosted/functions/navego-bridge/plan-gate.ts';
 
@@ -46,6 +47,7 @@ function harness() {
 
     CORS_DEFAULT_ORIGINS, resolveAllowedOrigin,
     requiredEnv, sha256,
+    parseJsonObject,
     isUpgradeRequest, serveDeviceSocket,
     gateVerdict,
     Deno: { env: { get: () => 'test' }, serve: (fn: any) => { handler = fn; } },

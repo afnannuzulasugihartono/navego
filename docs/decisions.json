@@ -947,6 +947,26 @@
         "ref": "user 2026-11-20: 'oke approve apply publish rotasi tunda dulu' - the owner asked for the approval and for the release; the API refused to put the owner on the bypass list, so enforce-admins was turned off, which is the same permission in a repository with one admin"
       },
       "file": "docs/product/backend-language-evaluation.md"
+    },
+    {
+      "id": "hosted-request-body-01",
+      "scope": "hosted/functions",
+      "decision": "Every hosted edge function reads its JSON request body through one shared rule: a body must be a plain object, and a body that is malformed JSON, null, an array or a primitive is refused with that function's own 400 envelope before typed action code sees it. A malformed body and valid JSON that is not an object stay two different refusals.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - the enterprise audit left hosted-function input validation open; docs/product/backend-language-evaluation.md item 2 names it"
+      },
+      "file": "hosted/functions/_shared/request-body.ts"
+    },
+    {
+      "id": "local-tools-bounds-01",
+      "scope": "mcp/validation",
+      "decision": "A cap the tool description advertises is declared in the same inputSchema the client reads, so the runtime validator enforces the number the prose promises: maxChars at most 100000, the search budget at most 30000, the row limit at most 500, the burst budget at most 12000, and the wait budget at most 60000.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - the enterprise audit found advertised caps the schema did not declare; docs/product/backend-language-evaluation.md item 2 names the boundary"
+      },
+      "file": "local/tools.ts"
     }
   ]
 }

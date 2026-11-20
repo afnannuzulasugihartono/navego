@@ -1,7 +1,7 @@
-// @last-edited: 2026-11-15 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: navego-feedback — the pilot page's answers, written down so the first customers are not a memory.
 // @state: takes one answer from the pilot page, keeps the newest answer per contact, and answers with what it did.
-// @dependencies: edge-runtime, supabase-js, cors, required-env.
+// @dependencies: edge-runtime, supabase-js, cors, required-env, request-body.
 
 // THIS FUNCTION EXISTS.
 // The pilot page asks three questions - which portal, how many clients, what wears them out - and the answers decide which bank gets built first.
@@ -20,6 +20,7 @@ import "@supabase/edge-runtime";
 import { createClient } from "@supabase/supabase-js";
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from "../_shared/cors.ts";
 import { requiredEnv } from "../_shared/required-env.ts";
+import { readJsonObject } from "../_shared/request-body.ts";
 
 const SUPABASE_URL = requiredEnv("SUPABASE_URL");
 const SERVICE_ROLE_KEY = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
@@ -59,15 +60,15 @@ Deno.serve(async (req: Request) => {
   const length = Number(req.headers.get("content-length") ?? 0);
   if (length > MAX_BODY_BYTES) return response(req, { ok: false, error: "That answer is longer than the door accepts." }, 413);
 
-  let payload: Record<string, unknown>;
-  try {
-    payload = await req.json();
-  } catch {
-    return response(req, { ok: false, error: "The body was not JSON." }, 400);
-  }
-  if (payload === null || typeof payload !== "object" || Array.isArray(payload)) {
+  // decisions.json -> hosted-request-body-01
+  const parsed = await readJsonObject(req);
+  if (!parsed.ok) {
+    if (parsed.reason === "invalid_json") {
+      return response(req, { ok: false, error: "The body was not JSON." }, 400);
+    }
     return response(req, { ok: false, error: "The body was not an object." }, 400);
   }
+  const payload = parsed.body;
 
   const name = text(payload.name, LIMITS.name);
   const contact = text(payload.contact, LIMITS.contact);

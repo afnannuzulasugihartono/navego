@@ -1,7 +1,7 @@
-// @last-edited: 2026-11-15 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: feedback.test — the pilot door: one answer in, one row stored, nothing else readable.
 // @state: the handler accepts a POST with a name and a contact, stores the newest answer per contact, and refuses everything else with a named reason.
-// @dependencies: node:test, strict, fs, module, vm, cors, required-env.
+// @dependencies: node:test, strict, fs, module, vm, cors, required-env, request-body.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,6 +10,7 @@ import { stripTypeScriptTypes } from 'node:module';
 import vm from 'node:vm';
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from '../../hosted/functions/_shared/cors.ts';
 import { requiredEnv } from '../../hosted/functions/_shared/required-env.ts';
+import { readJsonObject } from '../../hosted/functions/_shared/request-body.ts';
 
 process.env.SUPABASE_URL ??= 'test';
 process.env.SUPABASE_SERVICE_ROLE_KEY ??= 'test';
@@ -22,6 +23,7 @@ const source = stripTypeScriptTypes(
     .replace(/^import\s+\{[^}]*\}\s+from\s+["']@supabase\/supabase-js["'];?\s*$/m, '')
     .replace(/^import\s+\{[^}]*\}\s+from\s+["'][^"']*cors\.ts["'];?\s*$/m, '')
     .replace(/^import\s+\{[^}]*\}\s+from\s+["'][^"']*required-env\.ts["'];?\s*$/m, '')
+    .replace(/^import\s+\{[^}]*\}\s+from\s+["'][^"']*request-body\.ts["'];?\s*$/m, '')
 );
 
 function harness() {
@@ -45,6 +47,7 @@ function harness() {
     CORS_DEFAULT_ORIGINS,
     resolveAllowedOrigin,
     requiredEnv,
+    readJsonObject,
     Deno: { env: { get: (key: any) => process.env[key] }, serve: (fn: any) => { handler = fn; } },
     Request,
     Response,

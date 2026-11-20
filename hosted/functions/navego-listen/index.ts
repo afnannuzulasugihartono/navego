@@ -1,7 +1,7 @@
-// @last-edited: 2026-10-21 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: navego-listen — the listen edge: audio in, transcripts out, audio deleted behind them.
 // @state: the live session it holds, the segments it stores, and the window it transcribes.
-// @dependencies: edge-runtime, supabase-js, edge-log.
+// @dependencies: edge-runtime, supabase-js, edge-log, request-body.
 
 import "@supabase/edge-runtime";
 import { createClient } from "@supabase/supabase-js";
@@ -9,6 +9,7 @@ import { createEdgeLog } from "../_shared/edge-log.ts";
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from "../_shared/cors.ts";
 
 import { requiredEnv } from "../_shared/required-env.ts";
+import { readJsonObject } from "../_shared/request-body.ts";
 
 const SUPABASE_URL = requiredEnv("SUPABASE_URL");
 const SERVICE_ROLE_KEY = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
@@ -137,12 +138,12 @@ async function transcribeDue(session: { id: string; device_id: string; window_se
 async function handle(req: Request) {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
   if (req.method !== "POST") return json({ ok: false, error: "Use POST." }, 405);
-  let body: Record<string, unknown>;
-  try {
-    body = await req.json() as Record<string, unknown>;
-  } catch {
+  // decisions.json -> hosted-request-body-01
+  const parsed = await readJsonObject(req);
+  if (!parsed.ok) {
     return json({ ok: false, error: "Body must be JSON." }, 400);
   }
+  const body = parsed.body;
   const action = body.action;
   if (action !== "start" && action !== "append" && action !== "stop") {
     return json({ ok: false, error: "Unknown action." }, 400);

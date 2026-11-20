@@ -1,7 +1,7 @@
-// @last-edited: 2026-10-21 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: edge-cors.test — every edge function answers the same origin rule, and nothing else.
 // @state: the allowlist, the fail-closed answer for an unknown origin, and the function that must use it.
-// @dependencies: node:test, strict, fs, module, vm, cors.
+// @dependencies: node:test, strict, fs, module, vm, cors, request-body.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -11,6 +11,7 @@ import vm from 'node:vm';
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from '../../hosted/functions/_shared/cors.ts';
 import { requiredEnv } from '../../hosted/functions/_shared/required-env.ts';
 import { sha256 } from '../../hosted/functions/_shared/sha256.ts';
+import { parseJsonObject } from '../../hosted/functions/_shared/request-body.ts';
 import { isUpgradeRequest, serveDeviceSocket } from '../../hosted/functions/navego-bridge/bridge-socket.ts';
 import { gateVerdict } from '../../hosted/functions/navego-bridge/plan-gate.ts';
 
@@ -90,6 +91,7 @@ function loadBridge() {
     createEdgeLog: () => ({ error() {} }),
     CORS_DEFAULT_ORIGINS, resolveAllowedOrigin,
     requiredEnv, sha256,
+    parseJsonObject,
     isUpgradeRequest, serveDeviceSocket,
     gateVerdict,
     Deno: { env: { get: () => 'test' }, serve: (fn: any) => { handler = fn; } },

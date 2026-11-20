@@ -1,7 +1,7 @@
-// @last-edited: 2026-10-21 UTC+7.
+// @last-edited: 2026-11-21 UTC+7.
 // @title: navego-runner — the runner: the edge that waits for one command to finish.
 // @state: the enqueue it makes, the command result it returns, and the CORS answer it gives.
-// @dependencies: edge-runtime, supabase-js, edge-log.
+// @dependencies: edge-runtime, supabase-js, edge-log, request-body.
 
 import "@supabase/edge-runtime";
 import { createClient } from "@supabase/supabase-js";
@@ -10,6 +10,7 @@ import { commandFailure } from "../_shared/command-result.ts";
 import { CORS_DEFAULT_ORIGINS, resolveAllowedOrigin } from "../_shared/cors.ts";
 
 import { requiredEnv } from "../_shared/required-env.ts";
+import { readJsonObject } from "../_shared/request-body.ts";
 const SUPABASE_URL = requiredEnv("SUPABASE_URL");
 const SERVICE_ROLE_KEY = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
@@ -668,9 +669,14 @@ async function handle(req: Request) {
   if (req.method !== "POST") return json({ ok: false, error: "POST required." }, 405);
 
   try {
-    const body = await req.json();
-    const runId = String(body?.runId || "");
-    const token = String(body?.token || "");
+    // decisions.json -> hosted-request-body-01
+    const parsed = await readJsonObject(req);
+    if (!parsed.ok) {
+      return json({ ok: false, error: "Invalid runner request." }, 400);
+    }
+    const body = parsed.body;
+    const runId = String(body.runId || "");
+    const token = String(body.token || "");
     if (!/^[0-9a-f-]{36}$/i.test(runId) || !/^[a-f0-9]{48}$/i.test(token)) {
       return json({ ok: false, error: "Invalid runner request." }, 400);
     }
