@@ -4,17 +4,17 @@
   "method": "a tree file is proved applied by the ledger naming it (version, or the name the CLI recorded), or by the applied SQL carrying the file's tokens; a file whose SQL is in the database with no ledger row is applied-outside-ledger; a file applied by hand from its own text and then recorded with migration repair is applied-then-recorded, which claims the objects exist and does not claim a content match the ledger never stored",
   "counts": {
     "version-and-name": 49,
-    "name": 25,
+    "name": 26,
     "content": 20,
     "ledger-names-the-file": 2,
-    "no-ledger-row": 7,
+    "no-ledger-row": 6,
     "part-of-combined": 13,
     "applied-outside-ledger": 14,
     "applied-then-recorded": 2
   },
   "treeFiles": 132,
-  "resolved": 111,
-  "unapplied": 14,
+  "resolved": 112,
+  "unapplied": 20,
   "map": [
     {
       "file": "20260907204146_navego_1_0_0_core.sql",
@@ -804,8 +804,8 @@
     },
     {
       "file": "20261122140000_opera_dashboard_action_two_phase.sql",
-      "remote": null,
-      "evidence": "no-ledger-row",
+      "remote": "20261121233256",
+      "evidence": "name",
       "cover": null
     }
   ]
