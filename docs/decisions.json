@@ -987,6 +987,16 @@
         "ref": "user 2026-11-20: 'lanjutkan navego jadi enterprise ready' - the enterprise pass left the hosted plan gate measured against a stale deployment"
       },
       "file": "hosted/functions/navego-bridge/plan-gate.ts"
+    },
+    {
+      "id": "site-auth-return-path-01",
+      "scope": "web/auth",
+      "decision": "A return path after sign-in keeps its intent when it stays on this site: a relative path such as ./dashboard or a root-relative path such as /dashboard?pair=1#pairing. A scheme-relative or absolute path to another origin is refused, so an attacker cannot turn the login page into an open redirect.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://owasp.org/www-community/attacks/Open_redirects (an unvalidated redirect target lets an attacker send a person off-site after a trusted login)"
+      },
+      "file": "site/app/lib/auth.ts"
     }
   ]
 }

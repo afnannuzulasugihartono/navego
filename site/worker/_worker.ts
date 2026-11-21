@@ -154,7 +154,9 @@ export default {
     }
     if (path.endsWith('.html')) {
       const pretty = path.slice(0, -'.html'.length) || '/';
-      return new Response(null, { status: 301, headers: { location: pretty } });
+      const asked = new URL(request.url);
+      const suffix = `${asked.search}${asked.hash}`;
+      return new Response(null, { status: 301, headers: { location: `${pretty}${suffix}` } });
     }
     if (path === PAGE_PATH || path === `${PAGE_PATH}/`) return serveInvoice(request);
     const asset = await env.ASSETS.fetch(request);

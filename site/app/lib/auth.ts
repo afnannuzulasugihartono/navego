@@ -9,9 +9,21 @@ export const UPDATE_FN = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/
 
 const ACCESS_KEY = 'navego-access-token';
 const REFRESH_KEY = 'navego-refresh-token';
-const RETURNABLE = /^\.\/[A-Za-z0-9._~/?=&%-]*$/;
+const RETURNABLE = /^\.\/[A-Za-z0-9._~/?=&%#-]*$/;
+const SAME_SITE_RETURNABLE = /^\/(?!\/)[A-Za-z0-9._~/?=&%#-]*$/;
 
-// ?next is attacker-controllable, so only same-site relative paths pass.
+// ?next is attacker-controllable, so only same-site paths pass: a relative path, or a root-relative path on this origin.
+// The dashboard and the OAuth consent page hand each other root-relative paths such as /dashboard?pair=1#pairing, so a rule that accepted only ./... silently turned every pairing and consent request into "open the dashboard".
+
+// decisions.json -> site-auth-return-path-01
+
+export function safeReturnPath(asked: string): string | null {
+  const value = String(asked || '').trim();
+  if (!value) return null;
+  if (RETURNABLE.test(value)) return value;
+  if (SAME_SITE_RETURNABLE.test(value)) return value;
+  return null;
+}
 
 // The site runs in a browser, and this module is also read by the Node test project, which has no DOM lib; the cast names the two globals it needs.
 
@@ -23,7 +35,7 @@ const browserGlobals = globalThis as {
 
 export function getReturnTo(): string {
   const asked = new URLSearchParams(browserGlobals.location?.search ?? '').get('next') || '';
-  return RETURNABLE.test(asked) ? asked : './dashboard.html';
+  return safeReturnPath(asked) || './dashboard';
 }
 
 export function getStoredToken(): string | null {

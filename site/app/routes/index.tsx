@@ -36,9 +36,6 @@ export default function Index() {
       url.searchParams.set('redirect_to', `${origin}/?next=${encodeURIComponent(returnTo())}`);
       link.href = url.toString();
     }
-    const cont = document.getElementById('continueButton') as HTMLAnchorElement | null;
-    if (cont) cont.href = returnTo();
-
     void (async () => {
       const fragment = new URLSearchParams(window.location.hash.replace(/^#/, ''));
       const accessToken = fragment.get('access_token');
@@ -63,15 +60,17 @@ export default function Index() {
           if (renewed) {
             stored = renewed;
             proof = await proveSession(stored).catch(() => ({}));
+          } else if (getStoredToken()) {
+            setStatus('Tidak bisa menghubungi layanan auth. Sesi Anda tetap tersimpan — coba lagi saat jaringan kembali.');
+            return;
           } else {
-            clearSession();
             return;
           }
         }
         if ('email' in proof) {
           setWho(proof.email as string);
           setPhase('signedIn');
-          if (returnTo() !== './beranda') setReturning(true);
+          setReturning(true);
         }
       }
     })();
@@ -88,7 +87,7 @@ export default function Index() {
       response = await fetch(`${AUTH_HOST}/otp`, {
         method: 'POST',
         headers: { apikey: PUBLISHABLE_KEY, 'content-type': 'application/json' },
-        body: JSON.stringify({ email: target })
+        body: JSON.stringify({ email: target, options: { emailRedirectTo: `${window.location.origin}/?next=${encodeURIComponent(returnTo())}` } })
       });
     } catch {
       setStatus('Tidak bisa mencapai layanan auth. Periksa koneksi Anda.');
@@ -159,8 +158,8 @@ export default function Index() {
                 <p className="auth-intro">Masuk sebagai <strong>{who}</strong>.</p>
                 {returning ? (
                   <div className="hero-cta" style={{ marginTop: 'var(--s-4)' }}>
-                    <a className="btn btn-solid" id="continueButton" href="./beranda">Lanjut ke izin</a>
-                    <a className="btn btn-ghost" href="./beranda">Beranda</a>
+                    <a className="btn btn-solid" id="continueButton" href={returnTo()}>Lanjutkan ke tujuan</a>
+                    <a className="btn btn-ghost" href="/dashboard">Buka dashboard</a>
                   </div>
                 ) : (
                   <div className="hero-cta" style={{ marginTop: 'var(--s-4)' }}>

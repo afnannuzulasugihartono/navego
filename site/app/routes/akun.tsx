@@ -73,8 +73,7 @@ export default function Akun() {
         if (!response.ok) throw new Error(`auth ${response.status}`);
         user = await response.json();
       } catch {
-        clearSession();
-        window.location.replace('/');
+        setState((s) => ({ ...s, loading: false, status: 'Tidak bisa menghubungi layanan auth. Sesi Anda tetap tersimpan — coba lagi saat jaringan kembali.' }));
         return;
       }
       setState((s) => ({ ...s, loading: false, user }));
