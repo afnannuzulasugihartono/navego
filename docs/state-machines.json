@@ -166,6 +166,25 @@
       "rank": 1
     },
     {
+      "id": "site-dashboard-action-run",
+      "kind": "site",
+      "where": "site/app/routes/dashboard.tsx (runAction)",
+      "states": [
+        "idle",
+        "sending",
+        "waiting",
+        "answered",
+        "queued",
+        "failed"
+      ],
+      "writers": "runAction (startOnDevice then awaitMyCommand), the two server functions opera_start_on_my_device and opera_await_my_command",
+      "readers": "the Aksi view status line, the Device view command history",
+      "wrongIfConfused": "the enqueue and the wait share one transaction, so the paired device cannot see the command until the wait has already timed out; the dashboard reports a timeout for work that never reached the browser",
+      "decision": "model",
+      "why": "the two server functions are the two transactions, the client holds the command id between them, and the Device view shows the same row the status line describes — UX first",
+      "rank": 1
+    },
+    {
       "id": "tools-output-shape",
       "kind": "local",
       "where": "local/mcp-server.ts:48",

@@ -90,7 +90,14 @@ export const fetchPlan = () => rpc<PlanAnswer>('opera_my_plan');
 export const fetchDevices = () => rpc<{ devices?: Device[] }>('opera_my_devices');
 export const fetchListen = () => rpc<{ sessions?: Array<{ id?: string; deviceName?: string; status?: string; startedAt?: string; segments?: number }> }>('opera_my_listen');
 export const revokeDevice = (deviceId: string) => rpc('opera_revoke_my_device', { p_device_id: deviceId });
-export const runOnDevice = (method: string) => rpc('opera_run_on_my_device', { p_method: method });
+
+// The command and the answer are two calls because one SQL call cannot do both.
+// The enqueue and the wait in one function share one transaction, so the paired device cannot see the row until the wait has already timed out; the device then claims the command in a tenth of a second on the next transaction.
+
+// decisions.json -> site-dashboard-action-two-phase-01
+
+export const startOnDevice = (method: string) => rpc<{ commandId?: string; deviceName?: string; status?: string }>('opera_start_on_my_device', { p_method: method });
+export const awaitMyCommand = (commandId: string, timeoutMs = 45000) => rpc('opera_await_my_command', { p_command_id: commandId, p_timeout_ms: timeoutMs });
 export const createPairingCode = (name: string) => rpc<{ code?: string; deviceName?: string }>('opera_create_pairing_code', { p_device_name: name });
 export const revokeConsent = (p_client_id: string) => rpc('opera_revoke_consent', { p_client_id });
 export const listConsents = () => rpc<{ consents?: Array<{ clientId?: string; clientName?: string; scopes?: string; grantedAt?: string }> }>('opera_my_consents');
