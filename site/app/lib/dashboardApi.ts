@@ -26,10 +26,11 @@ export interface Device {
 export interface PlanAnswer {
   plan?: string;
   status?: string;
-  remaining?: number;
-  used?: number;
-  quota?: number;
+  expiresAt?: string | null;
+  dailyQuota?: number | null;
+  usedToday?: number;
   sessionAllowance?: number;
+  rpm?: number | null;
 }
 
 export interface KonsolColumn { name: string; type: string; }
@@ -94,7 +95,7 @@ export const createPairingCode = (name: string) => rpc<{ code?: string; deviceNa
 export const revokeConsent = (p_client_id: string) => rpc('opera_revoke_consent', { p_client_id });
 export const listConsents = () => rpc<{ consents?: Array<{ clientId?: string; clientName?: string; scopes?: string; grantedAt?: string }> }>('opera_my_consents');
 
-export const konsolTables = () => rpc<{ tables?: Array<{ name: string; label?: string; count?: number }> }>('opera_konsol_tables');
+export const konsolTables = () => rpc<{ operator?: boolean; tables?: Array<{ name: string; scope?: string; readable?: boolean; total?: number | null }> }>('opera_konsol_tables');
 export const konsolTable = (body: Record<string, unknown>) => rpc<KonsolTableAnswer>('opera_konsol_table', body);
 
 export const walletBalance = () => billing<{ balanceCents?: number; availableCents?: number }>('wallet-balance');

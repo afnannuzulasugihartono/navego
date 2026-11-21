@@ -94,6 +94,7 @@ export default function Dashboard() {
   const [statusLine, setStatusLine] = useState('');
 
   const [devices, setDevices] = useState<Device[] | null>(null);
+  const [devicesFailed, setDevicesFailed] = useState(false);
   const [plan, setPlan] = useState<PlanAnswer | null>(null);
   const [historyFilter, setHistoryFilter] = useState<'' | 'completed' | 'failed' | 'pending'>('');
   const [historyQuery, setHistoryQuery] = useState('');
@@ -102,6 +103,7 @@ export default function Dashboard() {
   const [pairName, setPairName] = useState('');
   const [pairStatus, setPairStatus] = useState('');
   const [pairOk, setPairOk] = useState(false);
+  const [pairPending, setPairPending] = useState(false);
   const [installState, setInstallState] = useState<'unknown' | 'installed'>('unknown');
   const [runMethod, setRunMethod] = useState('tabs.list');
   const [runStatus, setRunStatus] = useState('');
@@ -114,22 +116,34 @@ export default function Dashboard() {
   async function loadDevices() {
     const answer = await fetchDevices();
     if (!answer?.ok) {
-      setDevices([]);
-      setStatusLine('Belum bisa memuat device. Coba lagi sebentar.');
+      setDevices(null);
+      setDevicesFailed(true);
+      setStatusLine('Device belum bisa dimuat. Koneksi atau sesi mungkin kedaluwarsa — coba lagi sebentar.');
       return;
     }
     const list = answer.devices ?? [];
     setDevices(list);
+    setDevicesFailed(false);
     setStatusLine(list.length ? '' : 'Belum ada device ter-pairing di akun ini.');
   }
 
   async function loadPlan() {
-    setPlan(await fetchPlan());
+    const answer = await fetchPlan();
+    if (!answer?.ok) {
+      setPlan(null);
+      setStatusLine('Plan belum bisa dimuat. Coba lagi sebentar.');
+      return;
+    }
+    setPlan(answer);
   }
 
   async function loadListen() {
     const answer = await fetchListen();
-    setListens(answer?.ok && Array.isArray(answer.sessions) ? answer.sessions : []);
+    if (!answer?.ok) {
+      setListens(null);
+      return;
+    }
+    setListens(Array.isArray(answer.sessions) ? answer.sessions : []);
   }
 
   async function loadAll() {
@@ -209,11 +223,14 @@ export default function Dashboard() {
   }
 
   async function runPairQuick() {
+    if (pairPending) return;
     const name = (pairName.trim() || 'opera').slice(0, 64);
     setPairOk(false);
+    setPairPending(true);
     setPairStatus('Memasangkan browser ini…');
     const created = await createPairingCode(name);
     if (!created?.ok || !created.code) {
+      setPairPending(false);
       setPairStatus(`Gagal memasangkan: ${say(created?.error ?? 'server menolak')}`);
       return;
     }
@@ -231,6 +248,7 @@ export default function Dashboard() {
         resolve({ ok: false, reason: 'send-threw', message: String(error) });
       }
     });
+    setPairPending(false);
     if (delivered.ok) {
       setPairStatus(`Browser ini ter-pairing: ${delivered.deviceName || created.deviceName || name}.`);
       setPairOk(true);
@@ -305,8 +323,12 @@ export default function Dashboard() {
   const doneSum = (devices ?? []).reduce((n, d) => n + (d.completedCommands ?? 0), 0);
   const totalSum = (devices ?? []).reduce((n, d) => n + (d.totalCommands ?? 0), 0);
 
-  const planPercent = plan?.quota ? Math.max(0, Math.min(100, Math.round(((plan.used ?? 0) / plan.quota) * 100))) : 0;
-  const planRemaining = plan?.remaining ?? 0;
+  const planQuota = plan?.dailyQuota ?? null;
+  const planUsed = plan?.usedToday ?? 0;
+  const planUnlimited = planQuota === null;
+  const planPercent = planQuota ? Math.max(0, Math.min(100, Math.round((planUsed / planQuota) * 100))) : 0;
+  const planRemaining = planUnlimited ? Number.POSITIVE_INFINITY : Math.max(0, (planQuota ?? 0) - planUsed);
+  const planAllowance = plan?.sessionAllowance ?? (plan?.plan === 'plan.usd-17' ? 500 : 50);
 
   const renderNavItem = (id: View, label: string) => (
     <a key={id} href={`#${id}`} className={view === id ? 'is-active' : ''} aria-current={view === id ? 'page' : undefined} onClick={(event) => { event.preventDefault(); go(id); }}>
@@ -323,10 +345,18 @@ export default function Dashboard() {
         ) : (
           <div className="app">
             <nav className="rail" aria-label="Navigasi konsol">
-              <NavegoMark size={26} title="Navego" />
+              <div className="rail__brand">
+                <NavegoMark size={24} title="Navego" />
+                <span className="rail__brand-text">Konsol</span>
+              </div>
+              <p className="rail__group">Operasional</p>
               {renderNavItem('ringkasan', 'Ringkasan')}
               {renderNavItem('device', `Device (${total})`)}
               {renderNavItem('riwayat', 'Riwayat')}
+              {renderNavItem('pairing', 'Pairing')}
+              {renderNavItem('aksi', 'Aksi')}
+              <p className="rail__group">Keuangan</p>
+              {renderNavItem('saldo', 'Saldo')}
               <button className="rail-item" aria-expanded={operatorOpen} aria-controls="operatorGroup" onClick={() => setOperatorOpen(!operatorOpen)}>Operator ▸</button>
               {operatorOpen ? (
                 <div id="operatorGroup">
@@ -334,9 +364,7 @@ export default function Dashboard() {
                   {renderNavItem('dengar', 'Sesi dengar')}
                 </div>
               ) : null}
-              {renderNavItem('saldo', 'Saldo')}
-              {renderNavItem('pairing', 'Pairing')}
-              {renderNavItem('aksi', 'Aksi')}
+              <p className="rail__group">Akun</p>
               {renderNavItem('akun', 'Akun ini')}
               <p className="who">Perangkat milik {userEmail || '…'}</p>
             </nav>
@@ -350,41 +378,56 @@ export default function Dashboard() {
                     <div className="tile-metric"><small>Daring sekarang</small><b>{online}</b></div>
                     <div className="tile-metric"><small>Perintah selesai</small><b>{doneSum}<span style={{ color: 'var(--muted)', fontSize: 'var(--text-sm)' }}> / {totalSum}</span></b></div>
                     <div className="tile-metric">
-                      <small>Kuota hari ini</small><b>{planPercent}%</b>
-                      <div className="usage-bar" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={planPercent} aria-label="Pemakaian kuota hari ini"><i style={{ width: `${planPercent}%` }} /></div>
+                      <small>Kuota hari ini</small><b>{planUnlimited ? '∞' : `${planPercent}%`}</b>
+                      {!planUnlimited ? <div className="usage-bar" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={planPercent} aria-label="Pemakaian kuota hari ini"><i style={{ width: `${planPercent}%` }} /></div> : null}
                     </div>
                   </div>
 
-                  <div className="panel" style={{ background: planRemaining <= 0 ? '#f6dcd6' : planPercent >= 80 ? '#fbeab6' : 'var(--panel-2)' }}>
+                  <div className="panel" style={{ background: !planUnlimited && planRemaining <= 0 ? '#f6dcd6' : planPercent >= 80 ? '#fbeab6' : 'var(--panel-2)' }}>
                     <div className="panel-head">
                       <h2 style={{ fontSize: 'var(--text-base)' }}>Plan</h2>
-                      <span className={`chip ${plan?.status === 'active' ? 'good' : 'warn'}`}>{plan?.status === 'active' ? 'aktif' : plan?.status || 'memuat…'}</span>
+                      <span className={`chip ${plan?.status === 'active' ? 'good' : 'warn'}`}>{plan?.status === 'active' ? 'aktif' : plan ? plan.status || 'tidak diketahui' : 'belum bisa dimuat'}</span>
                     </div>
-                    <p style={{ fontFamily: 'ui-monospace, Consolas, monospace', fontWeight: 800 }}>{plan?.plan || 'plan.usd-1'}</p>
-                    <div className="plan-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={planPercent} aria-label="Pemakaian kuota hari ini">
+                    <p style={{ fontFamily: 'ui-monospace, Consolas, monospace', fontWeight: 800 }}>{plan?.plan || 'belum diketahui'}</p>
+                    {!planUnlimited ? <div className="plan-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={planPercent} aria-label="Pemakaian kuota hari ini">
                       <div className="plan-fill" style={{ width: `${planPercent}%` }} />
-                    </div>
-                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)' }}><strong>{(plan?.used ?? 0).toLocaleString('id-ID')}</strong> dari <strong>{(plan?.quota ?? 0).toLocaleString('id-ID')}</strong> perintah dipakai hari ini, {(plan?.sessionAllowance ?? (plan?.plan === 'plan.usd-17' ? 500 : 50)).toLocaleString('id-ID')} / sesi, reset besok 00.00 UTC</p>
-                    {planRemaining <= 0 ? <p style={{ marginTop: 'var(--s-2)', fontSize: 'var(--text-xs)', color: 'var(--danger)' }}>Plan habis — reset besok 00.00 UTC. <Link to="/harga">Lihat paket</Link></p> : null}
+                    </div> : null}
+                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)' }}>
+                      {planUnlimited
+                        ? <><strong>Tanpa batas harian</strong> pada plan ini, {planAllowance.toLocaleString('id-ID')} perintah / sesi.</>
+                        : <><strong>{planUsed.toLocaleString('id-ID')}</strong> dari <strong>{(planQuota ?? 0).toLocaleString('id-ID')}</strong> perintah dipakai hari ini, {planAllowance.toLocaleString('id-ID')} / sesi, reset besok 00.00 UTC</>}
+                    </p>
+                    {!planUnlimited && planRemaining <= 0 ? <p style={{ marginTop: 'var(--s-2)', fontSize: 'var(--text-xs)', color: 'var(--danger)' }}>Plan habis — reset besok 00.00 UTC. <Link to="/harga">Lihat paket</Link></p> : null}
                   </div>
 
                   <div className="panel">
                     <div className="panel-head"><h2 style={{ fontSize: 'var(--text-base)' }}>Checklist pemasangan</h2></div>
-                    <ol style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-2)', fontSize: 'var(--text-sm)' }}>
-                      <li>{installState === 'installed' ? 'siap' : '○'} Pasang extension di browser ini</li>
-                      <li>{total > 0 ? 'siap' : '○'} Pair device</li>
-                      <li>{doneSum > 0 ? 'siap' : '○'} Jalankan perintah pertama</li>
+                    <ol className="setup-checklist">
+                      <li className={installState === 'installed' ? 'is-done' : ''}><span className="setup-checklist__mark" aria-hidden="true">{installState === 'installed' ? '✓' : '○'}</span> Pasang extension di browser ini</li>
+                      <li className={total > 0 ? 'is-done' : ''}><span className="setup-checklist__mark" aria-hidden="true">{total > 0 ? '✓' : '○'}</span> Pair device</li>
+                      <li className={doneSum > 0 ? 'is-done' : ''}><span className="setup-checklist__mark" aria-hidden="true">{doneSum > 0 ? '✓' : '○'}</span> Jalankan perintah pertama</li>
                     </ol>
+                    <div className="hero-cta">
+                      {installState !== 'installed' ? <Link className="btn btn-solid btn-sm" to="/unduh">Pasang extension</Link> : null}
+                      {total === 0 ? <Link className="btn btn-solid btn-sm" to="/dashboard#pairing">Pasangkan browser ini</Link> : null}
+                      {doneSum === 0 ? <Link className="btn btn-ghost btn-sm" to="/docs">Baca cara menjalankan perintah</Link> : null}
+                    </div>
                   </div>
-                  {statusLine ? <p className="status warn" role="status">{statusLine}</p> : null}
+                  {statusLine ? <p className="status warn" role="status" aria-live="polite">{statusLine}</p> : null}
                 </>
               ) : null}
 
               {view === 'device' ? (
                 <>
                   <h1>Device</h1>
-                  {statusLine ? <p className="status warn" role="status">{statusLine}</p> : null}
-                  {devices === null ? <p className="empty">Memuat…</p> : null}
+                  {statusLine ? <p className="status warn" role="status" aria-live="polite">{statusLine}</p> : null}
+                  {devices === null ? (devicesFailed
+                    ? <div className="empty">
+                      <p><strong>Device belum bisa dimuat.</strong></p>
+                      <p>Koneksi atau sesi mungkin kedaluwarsa. Muat ulang halaman ini untuk mencoba lagi.</p>
+                      <button className="btn btn-solid btn-sm" type="button" onClick={() => void loadDevices()} style={{ marginTop: 'var(--s-2)' }}>Coba lagi</button>
+                    </div>
+                    : <p className="empty">Memuat…</p>) : null}
                   {devices && devices.length === 0 ? (
                     <div className="empty">
                       <p><strong>Belum ada device.</strong></p>
@@ -466,7 +509,7 @@ export default function Dashboard() {
                 <>
                   <h1>Sesi dengar</h1>
                   <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)', marginBottom: 'var(--s-2)' }}>Sesi dengar di akun ini: metadata saja, tidak pernah kata-katanya. Transkrip hanya hidup di hasil tool model.</p>
-                  {listens === null ? <p className="empty">Memuat…</p> : listens.length === 0 ? <p className="empty">Belum ada sesi dengar. Mulai dari model dengan <code>media_stream_start</code>.</p> : (
+                  {listens === null ? <p className="empty">Sesi dengar belum bisa dimuat. Coba lagi sebentar.</p> : listens.length === 0 ? <p className="empty">Belum ada sesi dengar. Mulai dari model dengan <code>media_stream_start</code>.</p> : (
                     <div style={{ display: 'grid', gap: 'var(--s-2)' }}>
                       {listens.map((session) => (
                         <div key={session.id} className="panel">
@@ -490,7 +533,7 @@ export default function Dashboard() {
                     <div className="hero-cta" style={{ marginTop: 'var(--s-1)' }}>
                       <button className="btn btn-ghost" type="button" onClick={loadWallet}>Muat ulang</button>
                     </div>
-                    <p className="status" role="status" style={{ marginTop: 'var(--s-2)' }}>{wallet.status}</p>
+                    <p className="status" role="status" aria-live="polite" style={{ marginTop: 'var(--s-2)' }}>{wallet.status}</p>
                   </div>
 
                   {wallet.prices ? (
@@ -536,8 +579,8 @@ export default function Dashboard() {
                       <label htmlFor="pairName">Nama device</label>
                       <input id="pairName" type="text" autoComplete="off" spellCheck={false} maxLength={64} placeholder="opera" value={pairName} onChange={(event) => setPairName(event.target.value)} />
                     </div>
-                    <button className="btn btn-solid" type="button" onClick={runPairQuick}>{pairOk ? 'siap Ter-pairing' : 'Pasangkan browser ini'}</button>
-                    <p className="status" role="status" style={{ marginTop: 'var(--s-2)' }}>{pairStatus}</p>
+                    <button className="btn btn-solid" type="button" disabled={pairPending} aria-busy={pairPending} onClick={runPairQuick}>{pairOk ? 'siap Ter-pairing' : pairPending ? 'Memasangkan…' : 'Pasangkan browser ini'}</button>
+                    <p className="status" role="status" aria-live="polite" style={{ marginTop: 'var(--s-2)' }}>{pairStatus}</p>
                   </div>
                 </>
               ) : null}
@@ -552,7 +595,7 @@ export default function Dashboard() {
                       <input id="runMethod" type="text" autoComplete="off" spellCheck={false} maxLength={64} value={runMethod} onChange={(event) => setRunMethod(event.target.value)} />
                     </div>
                     <button className="btn btn-solid" type="button" disabled={runPending} onClick={runAction}>Jalankan</button>
-                    <p className="status" role="status" style={{ marginTop: 'var(--s-2)' }}>{runStatus}</p>
+                    <p className="status" role="status" aria-live="polite" style={{ marginTop: 'var(--s-2)' }}>{runStatus}</p>
                   </div>
                 </>
               ) : null}
@@ -600,7 +643,7 @@ function walletKindLabel(kind?: string): string {
 }
 
 function KonsolView({ deviceCount }: { deviceCount: number }) {
-  const [state, setState] = useState<{ ready: boolean; tables: Array<{ name: string; label?: string; count?: number }>; selected: string | null; columns: Array<{ name: string; type: string }>; rows: Array<Record<string, unknown>>; total: number; offset: number; search: string; status: string }>({
+  const [state, setState] = useState<{ ready: boolean; tables: Array<{ name: string; scope?: string; readable?: boolean; total?: number | null }>; selected: string | null; columns: Array<{ name: string; type: string }>; rows: Array<Record<string, unknown>>; total: number; offset: number; search: string; status: string }>({
     ready: false, tables: [], selected: null, columns: [], rows: [], total: 0, offset: 0, search: '', status: 'Memuat…'
   });
   const pageSize = 50;
@@ -677,9 +720,9 @@ function KonsolView({ deviceCount }: { deviceCount: number }) {
       <h1>Tabel</h1>
       <div className="konsol-split">
         <nav className="panel" style={{ minWidth: 190, display: 'grid', gap: 'var(--s-1)', alignContent: 'start' }} aria-label="Daftar tabel">
-          {!state.ready ? <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Memuat…</span> : state.tables.length === 0 ? <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Konsol data belum bisa dimuat.</span> : state.tables.map((table) => (
+          {!state.ready ? <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Memuat…</span> : state.tables.length === 0 ? <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Konsol data belum bisa dimuat.</span> : state.tables.filter((table) => table.readable !== false).map((table) => (
             <button key={table.name} className="rail-item" style={{ color: 'var(--ink)', background: state.selected === table.name ? 'var(--panel-2)' : 'transparent', borderRadius: 'var(--radius-sm)', border: 0, padding: 'var(--s-2) var(--s-3)', textAlign: 'left', cursor: 'pointer', fontSize: 'var(--text-sm)' }} onClick={() => openTable(table.name)}>
-              {table.label || table.name}{typeof table.count === 'number' ? <span style={{ color: 'var(--muted)' }}> ({table.count})</span> : null}
+              {table.name}{typeof table.total === 'number' ? <span style={{ color: 'var(--muted)' }}> ({table.total.toLocaleString('id-ID')})</span> : null}
             </button>
           ))}
         </nav>
@@ -711,7 +754,7 @@ function KonsolView({ deviceCount }: { deviceCount: number }) {
               </div>
             </>
           ) : <p className="empty">Pilih tabel di kiri. {deviceCount === 0 ? 'Konsol hanya terisi setelah device Anda ter-pairing.' : ''}</p>}
-          {state.status ? <p className="status" role="status" style={{ marginTop: 'var(--s-2)' }}>{state.status}</p> : null}
+          {state.status ? <p className="status" role="status" aria-live="polite" style={{ marginTop: 'var(--s-2)' }}>{state.status}</p> : null}
         </div>
       </div>
     </>

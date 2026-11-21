@@ -8,7 +8,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 export function meta() {
   return seoMeta({
     title: 'Pasang MCP — Navego',
-    description: 'Driver lokal Navego berjalan di mesin Anda sendiri — stdio, tanpa login, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi.',
+    description: 'Driver lokal Navego berjalan di mesin Anda sendiri — stdio, tanpa biaya per panggilan. Server hosted sudah tidak disediakan lagi.',
     path: '/mcp'
   });
 }
@@ -50,7 +50,7 @@ export default function Mcp() {
         <section className="page-hero">
           <div className="wrap">
             <h1>Driver lokal, di mesin Anda.</h1>
-            <p className="lede">Stdio, tanpa login, tanpa biaya per panggilan. Yang dibutuhkan hanya browser yang masuk akun dan ekstensi terpasang.</p>
+            <p className="lede">Stdio, tanpa biaya per panggilan. Yang dibutuhkan hanya browser yang masuk akun dan ekstensi terpasang.</p>
           </div>
         </section>
 

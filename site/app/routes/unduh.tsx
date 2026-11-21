@@ -104,7 +104,7 @@ export default function Unduh() {
             <div className="value-grid">
               <div className="value-card"><span className="start-num">1</span><b>Ekstrak</b><p>Buka <code>chrome://extensions</code>. Aktifkan Developer mode. Load unpacked.</p></div>
               <div className="value-card"><span className="start-num">2</span><b>Masuk</b><p>Masuk dengan magic link atau OAuth.</p></div>
-              <div className="value-card"><span className="start-num">3</span><b>Pair</b><p>Dashboard → Device → Pasangkan browser ini. Satu klik.</p></div>
+              <div className="value-card"><span className="start-num">3</span><b>Pair</b><p>Dashboard → Pairing → Pasangkan browser ini. Satu klik.</p></div>
             </div>
           </div>
         </section>
