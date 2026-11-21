@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Navego",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "Navego drives your own browser from the AI you already use; the pages never leave this machine.",
   "permissions": [
     "tabs",
