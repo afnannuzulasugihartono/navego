@@ -997,6 +997,50 @@
         "ref": "https://owasp.org/www-community/attacks/Open_redirects (an unvalidated redirect target lets an attacker send a person off-site after a trusted login)"
       },
       "file": "site/app/lib/auth.ts"
+    },
+    {
+      "id": "site-plan-shape-01",
+      "scope": "web/dashboard",
+      "decision": "The dashboard reads the plan fields the server actually sends: dailyQuota, usedToday, sessionAllowance and status. A null dailyQuota means no daily cap, and a failed read is reported as a failure with a retry rather than as an empty plan, because a zero quota told every account its plan was exhausted.",
+      "source": {
+        "kind": "repo",
+        "ref": "hosted/migrations/20261118090100_opera_usd_plan_readers.sql:23-49 (opera_my_plan returns dailyQuota, usedToday, sessionAllowance and rpm; a null dailyQuota is an unlimited tier)",
+        "also": "site/app/lib/dashboardApi.ts:26-34 (the typed plan contract the dashboard reads)"
+      },
+      "file": "site/app/lib/dashboardApi.ts"
+    },
+    {
+      "id": "site-console-shape-01",
+      "scope": "web/dashboard",
+      "decision": "The operator console reads the table fields the server sends: name, scope, readable and total. A table the account may not read is not listed at all, so the console never offers a row the server would refuse.",
+      "source": {
+        "kind": "repo",
+        "ref": "hosted/migrations/20261010090000_navego_konsol_tables.sql:53-76 (opera_konsol_tables returns name, scope, readable and total)",
+        "also": "site/app/lib/dashboardApi.ts:98 (the typed console contract)"
+      },
+      "file": "site/app/lib/dashboardApi.ts"
+    },
+    {
+      "id": "site-type-01",
+      "scope": "web/tokens",
+      "decision": "The site uses one sans family for text and display, a monospace family for code and command output, and a small even-pixel scale: 12, 14, 16, 18, 20, 24, 28, 32, 40, 56, 64. Weight carries hierarchy: 400 body, 500 controls, 600 headings, 700 hero. Arial Black is gone, because one heavy display face for every heading removes the subhead level and makes the documentation and operator surfaces unreadable.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://developer.apple.com/design/human-interface-guidelines/typography (Apple uses one family across sizes and advises Regular, Medium, Semibold and Bold rather than decorative weights)",
+        "also": "https://linear.app/now/how-we-redesigned-the-linear-ui (Inter for body copy, Inter Display only for expressive headings, denser app UI)"
+      },
+      "file": "site/app/tokens.css"
+    },
+    {
+      "id": "site-motion-01",
+      "scope": "web/motion",
+      "decision": "Motion is short and purposeful: 120 ms for hover and state feedback, 180 ms for menus and tab changes, 320 ms for a panel opening. Two curves carry it: cubic-bezier(0.4, 0, 0.2, 1) for standard transitions and cubic-bezier(0.22, 1, 0.36, 1) for entrances. Under prefers-reduced-motion the durations collapse and every state stays readable through text and colour.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://developer.apple.com/design/human-interface-guidelines/motion (motion should be brief and precise, and must be optional)",
+        "also": "https://linear.app/now/how-we-redesigned-the-linear-ui (short state transitions in the app shell)"
+      },
+      "file": "site/app/tokens.css"
     }
   ]
 }

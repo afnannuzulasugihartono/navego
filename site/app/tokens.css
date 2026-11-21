@@ -1,9 +1,9 @@
-/* decisions.json -> D01, D02, D03, D04, D05, D06, D07, D08, D09, D10, D11, D12, D13, D14, D15, D16, D25 (body, scale, rhythm, alignment, fonts, focus, text-wrap) */
+/* decisions.json -> D01, D02, D03, D04, D05, D06, D07, D08, D09, D10, D11, D12, D13, D14, D15, D16, D25, site-type-01, site-motion-01 (body, scale, rhythm, alignment, fonts, focus, text-wrap) */
 /*
  * Navego — design tokens.
  * The single source of truth for color, space, type and layout.
- * Corporate Y2K done flat: cream ground, deep navy ink, one amber accent.
- * @last-edited: 2026-11-18 UTC+7.
+ * One family, one accent, even pixel steps: cream ground, deep navy ink, one amber action color.
+ * @last-edited: 2026-11-21 UTC+7.
  */
 
 /* ground and panels */
@@ -32,17 +32,23 @@
   --good-bg: #e7f6e3;
   --warn-bg: #fdf0b8;
   --danger: #c0123f;
+
+  --surface-dark: #10173c;
+  --surface-dark-soft: #1a2450;
+  --text-on-dark: #eef2ff;
+  --text-on-dark-muted: #a9bce8;
 }
 
 /*
- * type — every step is an even pixel size; the body is 14 px.
- * scale in px: 12 xs, 14 sm (body), 16 base, 18 lg, 20 xl, 24 2xl, 28 3xl (h2), 40 title (h1), 64 hero (beranda h1) decisions.json -> D01, D02, D03
+ * type — one family, even pixel steps, and the app shell gets its own density.
+ * scale in px: 12 xs, 14 ui, 16 body, 18 lead, 20 h4, 24 h3, 28 h2, 32 title, 40 h1, 56 hero, 64 hero-wide
+ * decisions.json -> D01, D02, D03, D12, D13, site-type-01
  */
 
 :root {
-  --font-sans: Tahoma, Verdana, system-ui, sans-serif;
-  --font-display: 'Arial Black', 'Arial Rounded MT Bold', Verdana, sans-serif;
-  --font-mono: 'Lucida Console', ui-monospace, Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', Inter, Roboto, system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI Variable Display', 'Segoe UI', Inter, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'SF Mono', Consolas, 'Liberation Mono', monospace;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
@@ -51,7 +57,7 @@
   --text-2xl: 1.5rem;
   --text-3xl: 1.75rem;
   --text-title: 2.5rem;
-  --text-hero: 4rem;
+  --text-hero: 3.5rem;
 }
 
 /*
@@ -69,10 +75,10 @@
  */
 
 :root {
-  --leading-display: 1.1;
-  --leading-heading: 1.25;
-  --leading-body: 1.5;
-  --leading-small: 1.4;
+  --leading-display: 1.06;
+  --leading-heading: 1.2;
+  --leading-body: 1.55;
+  --leading-small: 1.45;
 }
 
 /* space */
@@ -94,9 +100,15 @@
 :root {
   --maxw: 1120px;
   --gutter: 20px;
-  --radius: 14px;
+  --radius: 16px;
   --radius-sm: 10px;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-fast: 120ms;
+  --motion-base: 180ms;
+  --motion-slow: 320ms;
+  --focus-ring: 2px solid var(--navy);
+  --focus-offset: 3px;
 }
 
 @media (min-width: 940px) {
@@ -111,7 +123,7 @@ body { overflow-x: clip; }
 :target { scroll-margin-top: 4.75rem; }
 
 h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
-h1, h2, h3, h4, h5, h6 { margin: 0; font-family: var(--font-display); font-weight: 900; letter-spacing: -0.02em; color: var(--navy-deep); text-align: left; }
+h1, h2, h3, h4, h5, h6 { margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: var(--navy-deep); text-align: left; }
 h1 { font-size: var(--text-title); line-height: var(--leading-display); }
 h2 { font-size: var(--text-3xl); line-height: var(--leading-heading); }
 h3 { font-size: var(--text-xl); line-height: var(--leading-heading); }
@@ -133,7 +145,7 @@ p, li, blockquote, dd { text-wrap: pretty; }
 body {
   background: var(--ground);
   color: var(--ink);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   line-height: var(--leading-body);
   -webkit-font-smoothing: antialiased;
 }
@@ -144,7 +156,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 .wrap { width: min(var(--maxw), 100% - 2 * var(--gutter)); margin-inline: auto; }
 
-:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; border-radius: var(--radius-sm); }
+:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); border-radius: var(--radius-sm); }
 
 code {
   font-family: var(--font-mono);
