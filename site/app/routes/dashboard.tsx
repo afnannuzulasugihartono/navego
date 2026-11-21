@@ -9,6 +9,7 @@ import { AUTH_HOST, clearSession, ensureSession, headersFor } from '../lib/auth'
 import {
   type Device,
   type PlanAnswer,
+  awaitMyCommand,
   createPairingCode,
   fetchDevices,
   fetchListen,
@@ -17,8 +18,8 @@ import {
   konsolTables,
   priceList,
   revokeDevice,
-  runOnDevice,
   say,
+  startOnDevice,
   walletBalance,
   walletHistory
 } from '../lib/dashboardApi';
@@ -267,23 +268,45 @@ export default function Dashboard() {
     if (!method) return;
     setRunPending(true);
     setRunStatus('Mengirim…');
-    const result = await runOnDevice(method);
+    const started = await startOnDevice(method);
+    if (!started) {
+      setRunPending(false);
+      setRunStatus('Gagal (jaringan).');
+      return;
+    }
+    if (!started.ok) {
+      setRunPending(false);
+      const error = started.error as { code?: string; message?: string } | undefined;
+      setRunStatus(`Gagal: ${say(error?.message || error)}.`);
+      return;
+    }
+    const commandId = started.commandId;
+    if (!commandId) {
+      setRunPending(false);
+      setRunStatus('Gagal: server tidak memberi command id.');
+      return;
+    }
+    setRunStatus(`Menunggu ${started.deviceName || 'device'} menjawab…`);
+    const result = await awaitMyCommand(commandId);
     setRunPending(false);
     if (!result) {
-      setRunStatus('Gagal (jaringan).');
+      setRunStatus(`${method} masuk antrean; device mengambilnya dalam hitungan detik. Riwayat di Device akan memperbarui sendiri.`);
+      window.setTimeout(() => void loadDevices(), 4000);
       return;
     }
     const error = result.error as { code?: string; message?: string } | undefined;
     if (!result.ok) {
       if (error?.code === 'AWAIT_TIMEOUT' || (result as { status?: string }).status === 'queued') {
-        setRunStatus(`${method} masuk antrean; device mengambilnya dalam hitungan detik. Riwayat di Device akan memperbarui sendiri.`);
+        setRunStatus(`${method} masuk antrean; device mengambilnya dalam hitungan detik. Riwayat di Device akan memperbarui diri.`);
         window.setTimeout(() => void loadDevices(), 4000);
         return;
       }
       setRunStatus(`Gagal: ${say(error?.message || error)}.`);
       return;
     }
-    setRunStatus(`${method} — ${String((result as { status?: string }).status || 'ok')}.`);
+    const timing = (result as { timing?: { totalMs?: number } }).timing;
+    const total = typeof timing?.totalMs === 'number' ? ` (${timing.totalMs} ms)` : '';
+    setRunStatus(`${method} — ${String((result as { status?: string }).status || 'ok')}${total}.`);
     window.setTimeout(() => void loadDevices(), 2000);
   }
 

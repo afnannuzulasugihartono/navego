@@ -1041,6 +1041,16 @@
         "also": "https://linear.app/now/how-we-redesigned-the-linear-ui (short state transitions in the app shell)"
       },
       "file": "site/app/tokens.css"
+    },
+    {
+      "id": "site-dashboard-action-two-phase-01",
+      "scope": "web/dashboard",
+      "decision": "The dashboard's run button asks the server for the command first and waits for the answer in a second call, because a SQL function that enqueues and waits holds both in one transaction and the paired device cannot see the row until the wait has already timed out.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-21: 'upgrade website navego menjadi enterprise ready ... test end to end mulai dari login daftar/masuk dashboard pair dan seterusnya sampai navego dapat digunakan' - the end-to-end drive found the dashboard action timing out on an awake browser"
+      },
+      "file": "site/app/lib/dashboardApi.ts"
     }
   ]
 }
