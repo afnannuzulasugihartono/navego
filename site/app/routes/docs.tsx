@@ -104,9 +104,9 @@ export default function Docs() {
               <h2 id="pairing">Masuk dan pair device</h2>
               <p>Masuk dengan magic link email, Google, atau GitHub dari <Link to="/">halaman Masuk</Link>.</p>
               <ol className="steps">
-                <li><span><strong>Klik.</strong> Di <Link to="/dashboard">Dashboard</Link>, buka Device — atau klik <strong>Pasangkan browser ini</strong> di popup.</span></li>
+                <li><span><strong>Klik.</strong> Di <Link to="/dashboard">Dashboard</Link>, buka Pairing — atau klik <strong>Pasangkan browser ini</strong> di popup.</span></li>
                 <li><span><strong>Izin.</strong> Browser meminta izin pairing sekali; tidak ada kode yang diketik.</span></li>
-                <li><span><strong>Periksa.</strong> Device muncul di daftar dengan status daring.</span></li>
+                <li><span><strong>Periksa.</strong> Device muncul di daftar. Status daring muncul setelah ekstensi heartbeat ke jembatan.</span></li>
               </ol>
               <p>Device yang tidak dikenali bisa dicabut kapan saja di Dashboard.</p>
 
@@ -167,7 +167,7 @@ export default function Docs() {
                   </div>
                 </div>
               ))}
-              <p>Tidak perlu login atau langganan untuk driver lokal. Kuota paket tetap dihitung di jembatan Navego — sisa kuota bisa dicek dengan <code>navego doctor</code>. Semua jalur dijelaskan di <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-call.md">docs/agent-call.md</a>.</p>
+              <p>Driver lokalnya sendiri tidak perlu langganan. Kuota paket tetap dihitung di jembatan Navego — sisa kuota bisa dicek dengan <code>navego doctor</code>. Semua jalur dijelaskan di <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-call.md">docs/agent-call.md</a>.</p>
               <h3 style={{ margin: 'var(--s-5) 0 var(--s-2)' }}>ChatGPT dan harness lain</h3>
               <p>MCP harness = aplikasi AI Anda (Claude Desktop, OpenCode, dsb.). Konektor ChatGPT memakai remote-HTTP dan tidak lagi disediakan. Untuk ChatGPT dan harness serupa, gunakan harness lokal (atau Claude Desktop/OpenCode yang menerima MCP stdio).</p>
               <p>Setelah terpasang, alat baru muncul sesudah harness restart — itu perilaku harness, bukan error koneksi.</p>
