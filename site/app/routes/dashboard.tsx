@@ -345,10 +345,18 @@ export default function Dashboard() {
         ) : (
           <div className="app">
             <nav className="rail" aria-label="Navigasi konsol">
-              <NavegoMark size={26} title="Navego" />
+              <div className="rail__brand">
+                <NavegoMark size={24} title="Navego" />
+                <span className="rail__brand-text">Konsol</span>
+              </div>
+              <p className="rail__group">Operasional</p>
               {renderNavItem('ringkasan', 'Ringkasan')}
               {renderNavItem('device', `Device (${total})`)}
               {renderNavItem('riwayat', 'Riwayat')}
+              {renderNavItem('pairing', 'Pairing')}
+              {renderNavItem('aksi', 'Aksi')}
+              <p className="rail__group">Keuangan</p>
+              {renderNavItem('saldo', 'Saldo')}
               <button className="rail-item" aria-expanded={operatorOpen} aria-controls="operatorGroup" onClick={() => setOperatorOpen(!operatorOpen)}>Operator ▸</button>
               {operatorOpen ? (
                 <div id="operatorGroup">
@@ -356,9 +364,7 @@ export default function Dashboard() {
                   {renderNavItem('dengar', 'Sesi dengar')}
                 </div>
               ) : null}
-              {renderNavItem('saldo', 'Saldo')}
-              {renderNavItem('pairing', 'Pairing')}
-              {renderNavItem('aksi', 'Aksi')}
+              <p className="rail__group">Akun</p>
               {renderNavItem('akun', 'Akun ini')}
               <p className="who">Perangkat milik {userEmail || '…'}</p>
             </nav>
@@ -396,11 +402,16 @@ export default function Dashboard() {
 
                   <div className="panel">
                     <div className="panel-head"><h2 style={{ fontSize: 'var(--text-base)' }}>Checklist pemasangan</h2></div>
-                    <ol style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-2)', fontSize: 'var(--text-sm)' }}>
-                      <li>{installState === 'installed' ? 'siap' : '○'} Pasang extension di browser ini</li>
-                      <li>{total > 0 ? 'siap' : '○'} Pair device</li>
-                      <li>{doneSum > 0 ? 'siap' : '○'} Jalankan perintah pertama</li>
+                    <ol className="setup-checklist">
+                      <li className={installState === 'installed' ? 'is-done' : ''}><span className="setup-checklist__mark" aria-hidden="true">{installState === 'installed' ? '✓' : '○'}</span> Pasang extension di browser ini</li>
+                      <li className={total > 0 ? 'is-done' : ''}><span className="setup-checklist__mark" aria-hidden="true">{total > 0 ? '✓' : '○'}</span> Pair device</li>
+                      <li className={doneSum > 0 ? 'is-done' : ''}><span className="setup-checklist__mark" aria-hidden="true">{doneSum > 0 ? '✓' : '○'}</span> Jalankan perintah pertama</li>
                     </ol>
+                    <div className="hero-cta">
+                      {installState !== 'installed' ? <Link className="btn btn-solid btn-sm" to="/unduh">Pasang extension</Link> : null}
+                      {total === 0 ? <Link className="btn btn-solid btn-sm" to="/dashboard#pairing">Pasangkan browser ini</Link> : null}
+                      {doneSum === 0 ? <Link className="btn btn-ghost btn-sm" to="/docs">Baca cara menjalankan perintah</Link> : null}
+                    </div>
                   </div>
                   {statusLine ? <p className="status warn" role="status" aria-live="polite">{statusLine}</p> : null}
                 </>
