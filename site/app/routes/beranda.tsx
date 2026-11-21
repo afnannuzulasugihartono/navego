@@ -1,4 +1,4 @@
-// decisions.json -> D43, D42, D45, D46, D48 (one idea per tile, short sentences, second person, facts pinned, inverted pyramid)
+// decisions.json -> D43, D42, D45, D46, D48, site-type-01 (one idea per tile, short sentences, second person, facts pinned, inverted pyramid)
 
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
@@ -73,13 +73,16 @@ export default function Beranda() {
 
         <section className="hero" aria-labelledby="judul-beranda">
           <div className="wrap hero-grid">
-            <div>
-              <h1 id="judul-beranda">Navego.</h1>
-              <p className="lede">Satu perintah. Browser Anda bekerja.</p>
+            <div className="hero-copy">
+              <h1 id="judul-beranda">Kendalikan browser lokal Anda lewat AI agent.</h1>
+              <p className="lede">
+                Navego menghubungkan MCP ke browser Chrome lokal Anda — 40 alat MCP, 36 primitif browser, dan tanpa eval.
+              </p>
               <div className="hero-cta">
-                <Link className="btn btn-solid" to="/unduh">Pasang gratis</Link>
-                <span className="spec"><strong>40 tool MCP</strong>. Gratis untuk mulai.</span>
+                <Link className="btn btn-solid" to="/unduh">Mulai gratis</Link>
+                <Link className="btn btn-ghost" to="/docs">Lihat dokumentasi</Link>
               </div>
+              <p className="microcopy">Ekstensi dan driver lokal. Bisa Anda periksa dan cabut sendiri.</p>
             </div>
             <div className="demo-window" aria-hidden="true">
               <div className="demo-bar">
@@ -147,7 +150,7 @@ export default function Beranda() {
           </div>
         </section>
 
-        <section className="section" aria-labelledby="judul-coba">
+        <section className="section section-dark" aria-labelledby="judul-coba">
           <div className="wrap">
             <div className="section-head">
               <div>
@@ -203,9 +206,9 @@ export default function Beranda() {
         <section className="section">
           <div className="wrap">
             <div className="cta-band">
-              <h2 className="section-title" style={{ color: '#ffffff' }}>Satu pekerjaan. Satu berkas.</h2>
+              <h2 className="section-title">Satu pekerjaan. Satu berkas.</h2>
               <p>Mulai dari tab Anda sendiri.</p>
-              <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
+              <div className="hero-cta">
                 <Link className="btn btn-solid" to="/unduh">Pasang gratis</Link>
                 <Link className="btn btn-ghost" to="/docs">Baca docs</Link>
               </div>
