@@ -7,7 +7,7 @@ What is true now, and what to do next. Cap 150 lines. Spent detail: git history.
 
 ## State
 
-- **2026-11-21 - 1.8.1 is the enterprise continuation.** Every hosted edge function reads its JSON body through one shared rule, so a body that is malformed, null, an array or a primitive is refused with that function's own 400 before typed code sees it; every cap a tool description advertises is declared in the schema the client reads, so the runtime validator enforces the number the prose promised; a device paired before the bridge function was renamed rewrites its stored bridge URL onto the deployed function and persists it; and the daily quota comes from the account profile the bridge already reads, so a build whose plan table predates the current sale can no longer charge an account a quota it never bought. The repository now says what it holds (131 migrations, ten edge functions, six required CI gates, 40 tools), the MCP Registry manifest moves with every release, and the client snippets carry the shape each client reads. See [`docs/releases/1.8.1.md`](releases/1.8.1.md).
+- **2026-11-21 - 1.8.1 is live, the enterprise continuation.** Every hosted edge function reads its JSON body through one shared rule, so a body that is malformed, null, an array or a primitive is refused with that function's own 400 before typed code sees it; every cap a tool description advertises is declared in the schema the client reads, so the runtime validator enforces the number the prose promised; a device paired before the bridge function was renamed rewrites its stored bridge URL onto the deployed function and persists it; and the daily quota comes from the account profile the bridge already reads, so a build whose plan table predates the current sale can no longer charge an account a quota it never bought. The repository now says what it holds (131 migrations, ten edge functions, six required CI gates, 40 tools), the MCP Registry manifest moves with every release, and the client snippets carry the shape each client reads. Release commit `eacd2754` passed all six CI gates; npm, the MCP Registry, the signed CRX endpoint and the site all serve 1.8.1. See [`docs/releases/1.8.1.md`](releases/1.8.1.md).
 
 - **The benchmark paper has its source in the tree.** [`docs/benchmark-navego.md`](benchmark-navego.md) holds the full text of the Google Scholar-style benchmark paper (abstract, seven sections, references), so the document that lives in Google Docs can be re-created or corrected from the repository instead of from a browser session.
 
@@ -47,7 +47,22 @@ What is true now, and what to do next. Cap 150 lines. Spent detail: git history.
 - **The served-version check asked the wrong endpoint for years** and nothing noticed; measured live: `/health` answers `{"version":"1.0.1","extensionId":"pagjlnohdemoohcncicjmaejedcmcocm"}`, `/health?id=ofgemipoobcnbjkfanmofjbdonjapmgl` answers the current release, and the zip HEAD answers `X-Opera-Version`.
 
 ## Still open
-0j. **The pilot door is no longer open (2026-11-16).** The `/pilot` page the Kemudi rebrand added does not exist in the Corbin-built React site; if the first bookkeeping customer still needs that offer, say so and it gets ported.
+
+**Owner actions remaining after 1.8.1**
+
+1. **Rotate the Cloudflare token to a read-only scope.** `CF_TOKEN` remains a break-glass write credential; the 1.8.1 security review left the scope change with the owner.
+2. **Rename the GitHub repository and the Cloudflare Pages project when the names are free to move.** The tree keeps the current addresses, so the shipped links keep working until the rename.
+3. **The policy-based extension install path is still unmeasured.** The repository repeats Chromium's documented behavior, but no throwaway-profile drive has yet proved the extension installs and keeps itself on a fresh Windows machine.
+
+**Product risks carried forward**
+
+- **The pilot door is no longer open (2026-11-16).** The `/pilot` page the Kemudi rebrand added does not exist in the rebuilt React site; if the first bookkeeping customer still needs that offer, say so and it gets ported.
+- **Google sign-in is unverified.** OAuth works end to end through OpenCode, but the Google sign-in path has not been driven.
+- **Production billing is unverified.** A sandbox payment closed a signed invoice; the live PayPal path has not closed a production invoice.
+- **The hosted polling path is the remaining latency lever.** `opera_claim_next_wait` measured p95 1914.4 ms; the local browser road does not pay that wait.
+- **Publishable-key rotation still needs owner action.** Edge deploys use the logged-in CLI; the long-lived publishing credentials are not yet rotated to least privilege.
+- **The live migration ledger moved beyond its old count.** The current tree has 131 migration files; the evidence map is gate-enforced, but the handoff's historical "122 files" line is history, not the current count.
+
 
 
 0. **The 1.6.41 release shipped on 2026-11-11.** PR #254 merged, `navego-update` and `navego-mcp` are deployed, `publish-crx` signed and served it (update.xml advertises 1.6.41, `/health?id=` answers 1.6.41, the zip answers `X-Opera-Version: 1.6.41` and carries the flat TM popup and the site icon), and the site redeployed. The reader on 1.6.40 does one manual folder overwrite (the build could not pull itself before this) or presses Unduh once; after that it is hands-free.

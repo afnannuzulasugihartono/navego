@@ -118,7 +118,7 @@ If you do not want the interactive `navego auth` (CI, containers, a machine with
 
 ## Rules of thumb that keep sessions sane
 
-- One browser tab, one driver. `browser_tabs_list` → claim, never guess.
+- One browser tab, one driver. `browser_list_tabs` → claim, never guess.
 - Measure before you act: `browser_read_page` tells you whether `settled` is true, how many chars arrived, and which read path was used.
 - Google Sheets / Docs render to canvas — there is no element to read back. Your read path returns pixels/commands; build with `artifact_*` / `delivery_*` instead of trying to write into the canvas.
 - `PLAN_LIMIT_REACHED` means the plan is spent; upgrade in the dashboard or fall back to smaller tasks, never `--force`.
