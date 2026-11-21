@@ -41,8 +41,7 @@
 
 /*
  * type — one family, even pixel steps, and the app shell gets its own density.
- * scale in px: 12 xs, 14 ui, 16 body, 18 lead, 20 h4, 24 h3, 28 h2, 32 title, 40 h1, 56 hero, 64 hero-wide
- * decisions.json -> D01, D02, D03, D12, D13, site-type-01
+ * scale in px: 12 xs, 14 ui, 16 body, 18 lead, 20 h4, 24 h3, 28 h2, 32 title, 40 h1, 56 hero, 64 hero-wide decisions.json -> D01, D02, D03, D12, D13, site-type-01
  */
 
 :root {
