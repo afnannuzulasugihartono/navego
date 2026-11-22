@@ -254,6 +254,8 @@ test('the bar is never cut off, at any width', () => {
   assert.match(css, /\.header-inner > \* \{ min-width: 0; white-space: nowrap; \}/);
   assert.match(css, /\.brand \{[^}]*flex-shrink: 1;/);
   assert.match(css, /\.header-actions \{[^}]*flex-shrink: 0;/);
+  assert.match(css, /\.header-actions \{[^}]*flex-wrap: wrap;/);
+  assert.match(css, /\.site-header-row \{[^}]*flex-wrap: wrap;/);
   assert.match(css, /@media \(max-width: 400px\) \{/);
 });
 
