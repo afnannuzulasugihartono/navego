@@ -4,37 +4,39 @@
  * The header carries the brand and one amber CTA; the chevron is the only navigation surface.
  * Alignment: left everywhere; center only for symmetric fixed-box icons and figures.
  *
- * Section map (the blocks below, in order):
- *   header — brand and CTA; the chevron is the only navigation surface — lines 9-82
- *   buttons - one voice — lines 83-110
- *   hero - one voice everywhere — lines 111-159
- *   shared section chrome — lines 160-185
- *   cards - one surface system — lines 186-196
- *   steps — lines 197-226
- *   pricing (harga) — lines 227-255
- *   comparison table (prices) — lines 256-295
- *   FAQ — lines 296-316
- *   download cards (/unduh) — lines 317-332
- *   footer — lines 333-374
- *   docs layout — lines 375-411
- *   dashboard — lines 412-468
- *   auth — lines 469-521
- *   legal — lines 522-529
- *   miscellany — lines 530-542
- *   dashboard utilities — lines 543-567
- *   misc — lines 568-570
- *   command preview (beranda) — lines 571-573
- *   try (beranda) — one product demo, two panels — lines 574-598
- *   visual system: browser window, tiles, article, docs, dashboard — lines 599-692
- *   apple-style page language — lines 693-728
- *   role tabs (fitur) — lines 729-738
- *   akun page split — lines 739-743
- *   reduced motion — lines 744-750
- *   changelog — the release ledger, one row per version — lines 751-762
- *   route components — the classes the routes carry — lines 763-869
- *   utility layer — every value below comes from a token — lines 870-911
- *   consent banner — one first-party cookie, said plainly, fixed to the bottom — lines 912-920
+ *
+ * Section map of the blocks below, in order.
+ * header — brand and CTA; the chevron is the only navigation surface - lines 40-113.
+ * buttons - one voice - lines 114-141.
+ * hero - one voice everywhere - lines 142-190.
+ * shared section chrome - lines 191-216.
+ * cards - one surface system - lines 217-227.
+ * steps - lines 228-257.
+ * pricing (harga) - lines 258-286.
+ * comparison table (prices) - lines 287-326.
+ * FAQ - lines 327-347.
+ * download cards (/unduh) - lines 348-363.
+ * footer - lines 364-405.
+ * docs layout - lines 406-442.
+ * dashboard - lines 443-500.
+ * auth - lines 501-553.
+ * legal - lines 554-561.
+ * miscellany - lines 562-574.
+ * dashboard utilities - lines 575-599.
+ * misc - lines 600-602.
+ * command preview (beranda) - lines 603-605.
+ * try (beranda) — one product demo, two panels - lines 606-630.
+ * visual system: browser window, tiles, article, docs, dashboard - lines 631-724.
+ * apple-style page language - lines 725-760.
+ * role tabs (fitur) - lines 761-770.
+ * akun page split - lines 771-775.
+ * reduced motion - lines 776-782.
+ * changelog — the release ledger, one row per version - lines 783-794.
+ * route components — the classes the routes carry - lines 795-908.
+ * utility layer — every value below comes from a token - lines 909-950.
+ * consent banner — one first-party cookie, said plainly, fixed to the bottom - lines 951-959.
  */
+
 /* ========== header — brand and CTA; the chevron is the only navigation surface ========== */
 
 .site-header {
