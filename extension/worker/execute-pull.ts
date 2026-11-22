@@ -100,12 +100,14 @@ async function pair(code: unknown) {
   const token = randomToken();
   const identity = await pairIdentity();
   const family = browserFamily();
-  // A NEW DEVICE TAKES THE BROWSER'S NAME: a list of devices is how a person tells two browsers apart, and "opera-4" names none of them.
+  // A DEVICE TAKES THE BROWSER'S NAME: a list of devices is how a person tells two browsers apart, and "opera-13" names neither of them.
+  // The browser's own family wins over the name this profile happens to have stored, so a browser paired under an older name is renamed by its next pairing.
+  const wanted = deviceNameFor(family);
   const data = await fetchJson(cfg.bridgeUrl, {
     action: 'pair',
     code: pairCode,
     token,
-    deviceName: cfg.deviceName || deviceNameFor(family),
+    deviceName: wanted,
     extensionVersion: PRODUCT_VERSION,
     protocolVersion: PROTOCOL_VERSION,
     capabilities: Object.keys(METHOD_SPECS),
@@ -116,7 +118,7 @@ async function pair(code: unknown) {
   if (!data || !data.ok) throw new Error(String(data?.error || 'Pairing failed.'));
   await chrome.storage.local.set({
     paired: true,
-    deviceName: data.deviceName || cfg.deviceName || 'opera',
+    deviceName: data.deviceName || wanted,
     deviceToken: token,
     deviceId: data.deviceId || '',
     bridgeUrl: cfg.bridgeUrl

@@ -1074,6 +1074,17 @@
         "ref": "user 2026-11-21: 'upgrade website navego menjadi enterprise ready ... test end to end mulai dari login daftar/masuk dashboard pair dan seterusnya sampai navego dapat digunakan' - the end-to-end drive found the dashboard action timing out on an awake browser"
       },
       "file": "site/app/lib/dashboardApi.ts"
+    },
+    {
+      "id": "site-device-name-01",
+      "scope": "web/dashboard",
+      "file": "site/app/routes/dashboard.tsx",
+      "decision": "A device takes the name of the browser it is, not the name of the product that made it: the extension derives the browser family from what the browser publishes, and the server falls back to that family rather than to a product name, so the account's device list says which browser each row is.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-22: 'hapus juga project opera agent ganti full menjadi navego'",
+        "also": "extension/lib/browser-id.ts (the family the browser publishes); hosted/migrations/20261122160000_opera_devices_browser_names.sql (the server's fallback and the rename)"
+      }
     }
   ]
 }

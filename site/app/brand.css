@@ -56,16 +56,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--s-5);
+  gap: var(--s-3);
   min-block-size: 3.25rem;
 }
 .site-header-bleed { inline-size: 100%; padding-inline: var(--gutter); }
 
-.header-inner > * { flex-shrink: 0; white-space: nowrap; }
-.header-actions { display: flex; align-items: center; gap: var(--s-3); white-space: nowrap; }
+/* The bar must never be cut off: the brand keeps its room, the actions shrink, and the pills tighten before the row overflows. */
 
-.brand { display: flex; align-items: center; gap: var(--s-3); text-decoration: none; color: #ffffff; }
+.header-inner > * { min-width: 0; white-space: nowrap; }
+.brand { display: flex; align-items: center; gap: var(--s-3); text-decoration: none; color: #ffffff; flex-shrink: 1; overflow: hidden; }
 .brand--footer { color: #ffffff; }
+.header-actions { display: flex; align-items: center; gap: var(--s-2); white-space: nowrap; flex-shrink: 0; }
+.header-actions .btn { min-inline-size: 0; padding-inline: var(--s-3); }
+@media (max-width: 400px) {
+  .header-actions .btn { font-size: var(--text-xs); padding-inline: var(--s-2); }
+  .site-header-row { gap: var(--s-2); }
+}
 
 /* the header carries the brand and one CTA; the chevron is the only navigation surface */
 
