@@ -48,6 +48,17 @@ What is true now, and what to do next. Cap 150 lines. Spent detail: git history.
 - **A publish step must fail loudly.** The CRX base64 exceeds the Linux argument limit, so the run went green having published nothing; `publish-crx.yml` now fails unless the status is 2xx.
 - **The served-version check asked the wrong endpoint for years** and nothing noticed; measured live: `/health` answers `{"version":"1.0.1","extensionId":"pagjlnohdemoohcncicjmaejedcmcocm"}`, `/health?id=ofgemipoobcnbjkfanmofjbdonjapmgl` answers the current release, and the zip HEAD answers `X-Opera-Version`.
 
+
+**Remaining operational risks, measured live on 2026-11-22**
+
+| Risk | Evidence | Severity |
+|---|---|---|
+| The dashboard counts a device online by its stored status, and nothing ever writes that status back down when the device stops checking in | 4 of the 5 listed devices carry status=online with last_seen_at between 2026-11-14 and 2026-11-21; the dashboard read "5 daring sekarang"; the register declares an idle-expired state with no writer, because the 7-day idle check only refuses at validation time | high |
+| The device rows keep a status the reader cannot trust, so the online count is a lie | opera_my_devices returns the stored status and the site reads it with a regex on the word online; no function in the live database writes status=offline for a device that went quiet | high |
+| Old commands pile up in the queue | 14383 rows still queued, 3 of them already past their expiry | medium |
+| The published extension is newer than the build installed in the browser under test | the update service serves 1.8.1 and the installed Brave extension reports 1.8.0 | low |
+| The Cloudflare token is still a break-glass write credential | gh secret list shows CF_TOKEN and CF_ACCOUNT_ID; the scope change is an owner action | medium |
+
 ## Still open
 
 **Owner actions remaining after 1.8.1**
