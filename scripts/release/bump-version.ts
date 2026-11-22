@@ -15,6 +15,7 @@ import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { buildEnumeration, applyEntries, buildWhyBlock, buildChangelogRow, buildReleaseNote } from './bump-version-lib.ts';
+import { buildReleasesJson } from './build-changelog.ts';
 
 const GIT_CANDIDATES = process.platform === 'win32'
   ? ['C:\\Program Files\\Git\\cmd\\git.exe', 'C:\\Program Files\\Git\\bin\\git.exe']
@@ -94,6 +95,10 @@ if (!arg || !/^\d+\.\d+\.\d+$/.test(arg)) fail('pass one version, e.g. node scri
 
   const recentCommits = execFileSync(GIT_BIN, ['log', '--oneline', '-12'], { cwd: repo, encoding: 'utf8' }).trim().split('\n').map((line) => `- ${line}`).join('\n');
   writes.set(releaseNote, buildReleaseNote(newVersion, today, recentCommits));
+
+  const releaseOverrides = new Map<string, string>([[path.join(repo, releaseNote), writes.get(releaseNote) ?? '']]);
+  const changelogOverrides = new Map<string, string>([[changelogPath, writes.get('CHANGELOG.md') ?? changelog]]);
+  writes.set('site/app/data/releases.json', buildReleasesJson(repo, new Map([...releaseOverrides, ...changelogOverrides])));
 
   const packageLockPath = path.join(repo, 'package-lock.json');
   if (fs.existsSync(packageLockPath)) {

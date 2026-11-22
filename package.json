@@ -24,6 +24,7 @@
     "bridge": "node scripts/dev/start-bridge.ts",
     "diagnose:mcp": "node scripts/dev/mcp-connection-diagnostics.ts",
     "migrate": "node scripts/release/apply-migrations.ts",
+    "changelog": "node scripts/release/build-changelog.ts",
     "store": "python scripts/release/build-store-package.py",
     "icons": "python scripts/dev/draw-icon.py",
     "gates:refresh": "node scripts/verify/gates.ts --refresh",

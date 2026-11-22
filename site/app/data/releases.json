@@ -1,0 +1,329 @@
+{
+  "entries": [
+    {
+      "version": "1.8.1",
+      "date": "2026-11-21",
+      "title": "the boundaries validate their input, the caps are enforced, and a paired device leaves the deployment it was stranded on.",
+      "points": [
+        "Every hosted edge function reads its JSON body through one shared rule. A body must be a plain object: a body that is malformed JSON, null, an array or a primitive is refused with that function's own 400 before typed action code sees it. The gateway answers INVALID_JSON and status 400 for a JSON null or array, as docs/api.md promises; the bridge, listen, runner, OCR and feedback edges keep their own envelopes, and billing still normalises a non-object body to the empty object so its documented \"unknown action\" refusal is unchanged.",
+        "Every cap a tool description advertises is declared in the schema the client reads. The runtime validator now enforces what the prose promised: browser_read_page.maxChars at most 100000, browser_search_web.timeoutMs at most 30000, browser_find_element.limit at most 500, browser_run_steps.timeoutMs at most 12000, and browser_wait_until.timeoutMs at most 60000. A call past a cap is refused by name instead of being quietly clamped.",
+        "A paired device leaves the predecessor's bridge deployment. A device paired before the bridge function was renamed still stored the predecessor's bridge URL, so it kept talking to a deployment whose bundled plan table predated the USD sale. The extension now rewrites that stored URL to the current slug and persists it, once, so the device leaves the old deployment and stays on the deployed one. The Options page and the worker read the same rule."
+      ]
+    },
+    {
+      "version": "1.8.0",
+      "date": "2026-11-20",
+      "title": "the enterprise pass: every boundary validated, every failure named, and the migration history proven against a real database.",
+      "points": [
+        "Every tool call is validated against the schema the client reads. The runtime check and the catalog cannot drift apart, because both read the same inputSchema.",
+        "The boundaries validate their input before typed code sees it. The migration script validates the shape of the Supabase token and project reference; the site validates the shape of an auth refresh answer; every edge function reads SUPABASE_URL and, where it needs it, SUPABASE_SERVICE_ROLE_KEY through one validator instead of reading them as empty strings.",
+        "The migration history is proven against a real database. CI applies all 131 migrations to a disposable Postgres on the Supabase baseline image under ON_ERROR_STOP and then asserts the shapes that matter: the command lifecycle check and the row-level security on the billing tables. Three files could not have run from the repository as committed - one closed a call it never closed, one began with a byte-order mark, and one moved a function twice - and all three are fixed."
+      ]
+    },
+    {
+      "version": "1.7.7",
+      "date": "2026-11-19",
+      "title": "the evidence-backed cleanup: the backgrounded drive answers everything, the tool surface shrinks to what earns its place, and every decision carries a source.",
+      "points": [
+        "Nothing brings a window to the foreground anymore. browser_focus_window is deleted end-to-end: the schema, the dispatch case, the driver method, the primitive, the bin wrapper, the guide recipe and its side-effects entry are all gone. browser_status still answers which browser is in front, and the session-level guard in local/focus-guard.ts restores a minimized session window only when the page cannot hear input — it is not agent-callable. The drive runs in the background.",
+        "Screenshot answers in the background. When the compositor has no frame for the tab (locked screen, minimized or hidden window), browser_screenshot retries with captureBeyondViewport clipped to the current viewport top, and the answer names the road: compositor or beyondviewport.",
+        "browser_read_page is bounded. maxChars (clamped to 100000, originalChars/truncatedChars reported) caps the text it returns, and selector reads only the innerText of the first matching subtree — settled twice, and a match it cannot make refuses with the reason instead of streaming the whole page."
+      ]
+    },
+    {
+      "version": "1.7.6",
+      "date": "2026-11-18",
+      "title": "the rename ships end-to-end; MCP Registry publishes from CI.",
+      "points": [
+        "Navego is the only name left on the wire, in the CLI, in the CRX, on the site, in the docs, and in the MCP registry. Everywhere a name appears - packages, hosted function directories, schemas, CI, migrations - it is navego.",
+        "navego doctor --json emits one object: { ready, port, deviceFile, cloudLogin, bridge: { ok, devices, linked, refusal, preferredSlot }, problems[], crxUrl }, so MCP clients and scripts stop parsing prose.",
+        "MCP Registry publishes from CI via publish-mcp.yml: npm OIDC trusted publishing plus GitHub OIDC for the registry, triggered by the same dispatch flow used for releases."
+      ]
+    },
+    {
+      "version": "1.7.5",
+      "date": "2026-11-17",
+      "title": "audit fixes; bridge loopback door behind one token; CSP tightened.",
+      "points": [
+        "The loopback door now requires one token. All POST endpoints (/command, /prefer, /lease, /health) read the same secret from NAVEGO_BRIDGE_TOKEN or ~/.navego/bridge-token. Unauthenticated callers learn nothing beyond \"something is linked\". A page hosted on another site in the browser can no longer drive the browser.",
+        "CSP dropped the bare https: wildcard — named hosts only now (Supabase).",
+        "Contract fixes: browser_open_url never navigates an already-open tab; until:'text' honors absent:true; until:'url' actually waits for the URL; wait budgets respect documented caps; focusWindow answers state without moving the window; CDP frames no longer crash the local driver."
+      ]
+    },
+    {
+      "version": "1.7.4",
+      "date": "2026-11-17",
+      "title": "install baru membuka dashboard pair langsung; halaman onboarding dihapus.",
+      "points": [
+        "Fresh install membuka halaman pairing dashboard (dashboard.html?pair=1#pairing) langsung. Halaman pertama pengguna baru bukan lagi layar produk; dia langsung masuk ke alur satu klik menyambungkan browser.",
+        "extension/onboarding.html dihapus. Tidak ada yang membukanya; tidak ada referensi lagi di pohon aktif.",
+        "Semua murni UX first-run; tidak ada perubahan MCP, wire protocol, atau izin."
+      ]
+    },
+    {
+      "version": "1.7.3",
+      "date": "2026-11-17",
+      "title": "onboarding first-run: jelas dalam satu layar, satu tombol.",
+      "points": [
+        "Onboarding page disederhanakan. Bahasa jargon internal (\"MCP native\", \"Bridge lokal\", \"56 tool\") dibuang. Yang tersisa: satu kalimat, satu tombol (\"Pasangkan browser ini\"), dua fakta yang relevan (tab sendiri, password tetap di tangan Anda), dan satu tautan Dokumentasi. Kartu pratinjau popup beserta tombol gandanya dihapus — klik pasang tidak lagi tampil dua kali.",
+        "Tidak ada perubahan permit, mode, atau wire protocol; ini murni perubahan teks dan markup di extension/onboarding.html."
+      ]
+    },
+    {
+      "version": "1.7.2",
+      "date": "2026-11-17",
+      "title": "the product is Navego; the update service answers both appids without an id.",
+      "points": [
+        "Satu nama produk: Navego. Semua permukaan aktif — situs, manifes ekstensi (name/short_name/default_title), popup, chrome.runtime identity yang manusia baca, serverInfo.name MCP, dokumen, tes, dan pin di gate — kini bernama Navego. \"Corbin\" dan \"Kemudi\" tinggal di catatan sejarah (docs/releases/**, CHANGELOG, proof) yang tidak ditulis ulang.",
+        "Paket npm tetap kemudi (plus alias navego-mcp) sebagai identitas internal yang sudah terpasang di mesin — tidak dipublikasikan ulang dengan nama baru. Perintah CLI tetap kemudi.",
+        "navego-update sudah live dengan perbaikan update.xml: permintaan tanpa ?id= kini menjawab satu entri untuk setiap rilis aktif (legacy dan current), dan permintaan yang membawa appid di parameter x dibaca. Dipasang lewat run 43919875835."
+      ]
+    },
+    {
+      "version": "1.7.1",
+      "date": "2026-11-16",
+      "title": "40 tools, every one browser_ + a job name; the site ships Corbin again.",
+      "points": []
+    },
+    {
+      "version": "1.6.59",
+      "date": "2026-11-15",
+      "title": "the Tampermonkey idiom closed; every icon, no dots.",
+      "points": []
+    },
+    {
+      "version": "1.6.58",
+      "date": "2026-11-15",
+      "title": "one face for the whole product, and pages that show it.",
+      "points": []
+    },
+    {
+      "version": "1.6.57",
+      "date": "2026-11-15",
+      "title": "one frame for every full-height screen the extension owns, and a first-run page whose button pairs.",
+      "points": []
+    },
+    {
+      "version": "1.6.56",
+      "date": "2026-11-15",
+      "title": "the paired browser is told so, and the update is one door.",
+      "points": []
+    },
+    {
+      "version": "1.6.55",
+      "date": "2026-11-15",
+      "title": "the panel reads like a product: one ground, one identity, one verdict, one action, quiet doors.",
+      "points": []
+    },
+    {
+      "version": "1.6.54",
+      "date": "2026-11-15",
+      "title": "one door: the manual pairing path is deleted everywhere; the one-click pair is the only way to tie a browser to an account.",
+      "points": []
+    },
+    {
+      "version": "1.6.53",
+      "date": "2026-11-15",
+      "title": "the pair lives everywhere: the popup's first row, the first-run page, the dashboard that fires it for you.",
+      "points": []
+    },
+    {
+      "version": "1.6.52",
+      "date": "2026-11-15",
+      "title": "the dashboard pairs the browser in one click, and the local road is the only road.",
+      "points": []
+    },
+    {
+      "version": "1.6.51",
+      "date": "2026-11-14",
+      "title": "the extension is TypeScript end-to-end and loads without a SyntaxError.",
+      "points": []
+    },
+    {
+      "version": "1.6.50",
+      "date": "2026-11-12",
+      "title": "dump_page reads the tab it was asked for, not the one it happens to be looking at.",
+      "points": []
+    },
+    {
+      "version": "1.6.49",
+      "date": "2026-11-12",
+      "title": "the agent can read a page as data, and save one without a dialog.",
+      "points": []
+    },
+    {
+      "version": "1.6.48",
+      "date": "2026-11-12",
+      "title": "provider pins: switch_device and per-provider routing.",
+      "points": [
+        "switch_device with no arguments: read the current pin, the caller's provider, and the browsers awake right now.",
+        "switch_device({ device: \"opera-8\" }): pin this provider to that browser for every later call. The name must exist on the account; a sleeping browser is accepted and reported as asleep, and calls are refused by name until it is awake.",
+        "switch_device({ device: \"any\" }): clear the pin; the freshest awake browser answers (the pre-1.6.48 default)."
+      ]
+    },
+    {
+      "version": "1.6.47",
+      "date": "2026-11-12",
+      "title": "one reader, two answers: read_page with view.",
+      "points": []
+    },
+    {
+      "version": "1.6.46",
+      "date": "2026-11-12",
+      "title": "the command installs the extension, and uninstall removes it.",
+      "points": []
+    },
+    {
+      "version": "1.6.45",
+      "date": "2026-11-12",
+      "title": "the registry accepts the runner's identity, proven once.",
+      "points": []
+    },
+    {
+      "version": "1.6.44",
+      "date": "2026-11-12",
+      "title": "record and scan a page, and see what the visitor sees.",
+      "points": []
+    },
+    {
+      "version": "1.6.43",
+      "date": "2026-11-11",
+      "title": "the local road asks the bridge its own question, and every road has a number.",
+      "points": []
+    },
+    {
+      "version": "1.6.42",
+      "date": "2026-11-11",
+      "title": "the panel sizes once, and the release pushes itself out.",
+      "points": []
+    },
+    {
+      "version": "1.6.41",
+      "date": "2026-11-11",
+      "title": "the update can be pulled, and the page can close.",
+      "points": []
+    },
+    {
+      "version": "1.6.40",
+      "date": "2026-11-11",
+      "title": "the refusal names the flag that turns the feature on.",
+      "points": []
+    },
+    {
+      "version": "1.6.39",
+      "date": "2026-11-11",
+      "title": "the extension updates itself, once the reader has said where it may write.",
+      "points": []
+    },
+    {
+      "version": "1.6.38",
+      "date": "2026-11-11",
+      "title": "the extension says when it is behind, so a version that stands still is no longer a mystery.",
+      "points": []
+    },
+    {
+      "version": "1.6.37",
+      "date": "2026-11-11",
+      "title": "the dashboard tells the truth, and a device knows which browser it is.",
+      "points": []
+    },
+    {
+      "version": "1.6.36",
+      "date": "2026-11-09",
+      "title": "one browser, one device, even when the extension is removed and installed again.",
+      "points": []
+    },
+    {
+      "version": "1.6.35",
+      "date": "2026-11-09",
+      "title": "the plan you are on is visible before it runs out, and the dashboard says so.",
+      "points": []
+    },
+    {
+      "version": "1.6.34",
+      "date": "2026-11-09",
+      "title": "the local bridge retries once its socket drops.",
+      "points": []
+    },
+    {
+      "version": "1.6.33",
+      "date": "2026-11-09",
+      "title": "no websocket at a dead bridge, and a second browser keeps its name.",
+      "points": []
+    },
+    {
+      "version": "1.6.32",
+      "date": "2026-11-09",
+      "title": "the everyday browser names itself to the meter.",
+      "points": []
+    },
+    {
+      "version": "1.6.31",
+      "date": "2026-11-09",
+      "title": "a second browser is a device, not a rejection.",
+      "points": []
+    },
+    {
+      "version": "1.6.30",
+      "date": "2026-11-09",
+      "title": "a full-page capture that comes back in time to be read.",
+      "points": []
+    },
+    {
+      "version": "1.6.29",
+      "date": "2026-11-08",
+      "title": "a full-page capture that survives the whole document.",
+      "points": []
+    },
+    {
+      "version": "1.6.28",
+      "date": "2026-11-08",
+      "title": "the whole page in one answer, and a worker that says what broke.",
+      "points": []
+    },
+    {
+      "version": "1.6.27",
+      "date": "2026-10-15",
+      "title": "the local loop tells the truth about itself.",
+      "points": []
+    },
+    {
+      "version": "1.6.26",
+      "date": "2026-10-25",
+      "title": "the release notes, written from the commits that made it.",
+      "points": []
+    },
+    {
+      "version": "1.6.25",
+      "date": "2026-10-25",
+      "title": "the release notes, written from the commits that made it.",
+      "points": []
+    },
+    {
+      "version": "1.6.24",
+      "date": "2026-10-11",
+      "title": "the release notes, written from the commits that made it.",
+      "points": []
+    },
+    {
+      "version": "1.6.23",
+      "date": "2026-10-11",
+      "title": "the release notes, written from the commits that made it.",
+      "points": [
+        "opera_command_events. A command's events, with a cursor. The wait function returns the instant rows appear rather than at a deadline — measured at 4.48ms with rows present against 802.7ms against an 800ms budget when there are none — and reports the command's status on the same pass, so the consumer needs one call rather than two.",
+        "The device emits received, step and done. The emit is deliberately not awaited. An awaited emit inside the burst loop would add a network round trip to every step of every burst, which is the exact latency the channel exists to remove.",
+        "The transport streams. enableJsonResponse was true since the first MCP commit in September, with no reason recorded beyond the SDK's own example. Against a real MCP client running the same four-step tool, that setting produced zero progress notifications. Turning it off produced four, spread across 917ms, arriving as the work happened, with total time unchanged."
+      ]
+    },
+    {
+      "version": "1.6.22",
+      "date": "2026-10-10",
+      "title": "the release notes, written from the commits that made it.",
+      "points": [
+        "Two floating promises. heartbeat().finally(...) in the dispatcher and loopTick(...) in the loop engine were discarded. A rejection there vanished with no trace at all, which is why a heartbeat that stopped was invisible and a loop that died mid-task looked like a device that went quiet. Both now land on a warning that says which one failed.",
+        "connectionState could be reassigned. It was export let, so a stray assignment anywhere would have replaced the whole state object instead of updating it, and every reader would silently follow the new one.",
+        "The state-bridge listener trusted a tag. It accepted any message event carrying source: 'navego-state'. It now checks that the event came from this document's own origin, and that the type is one of the seven the bridge actually sends — duck-start, duck-end, game-over, heartbeat, jump, started, stopped. Anything else never reaches the state it feeds."
+      ]
+    }
+  ]
+}
