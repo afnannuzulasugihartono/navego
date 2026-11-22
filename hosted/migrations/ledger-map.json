@@ -9,12 +9,12 @@
     "ledger-names-the-file": 2,
     "no-ledger-row": 6,
     "part-of-combined": 13,
-    "applied-outside-ledger": 14,
+    "applied-outside-ledger": 15,
     "applied-then-recorded": 2
   },
-  "treeFiles": 132,
+  "treeFiles": 133,
   "resolved": 112,
-  "unapplied": 20,
+  "unapplied": 21,
   "map": [
     {
       "file": "20260907204146_navego_1_0_0_core.sql",
@@ -800,6 +800,12 @@
       "file": "20261120120000_navego_predecessor_endpoints.sql",
       "remote": null,
       "evidence": "no-ledger-row",
+      "cover": null
+    },
+    {
+      "file": "20261122120000_opera_run_on_my_device_prefers_live.sql",
+      "remote": null,
+      "evidence": "applied-outside-ledger",
       "cover": null
     },
     {
