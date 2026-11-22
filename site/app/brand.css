@@ -460,8 +460,9 @@
 }
 .rail__brand { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-2) var(--s-3) var(--s-4); color: #ffffff; }
 .rail__brand-text { font-size: var(--text-base); font-weight: 600; }
-.rail__group { margin: var(--s-4) var(--s-3) var(--s-1); font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.1em; text-transform: uppercase; color: #8fa8d8; }
+.rail__group { margin: var(--s-4) var(--s-3) var(--s-1); font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.12em; text-transform: uppercase; color: #8fa8d8; }
 .rail__group:first-of-type { margin-top: 0; }
+.rail__group-list { display: grid; gap: var(--s-1); }
 .rail a, .rail .rail-item {
   display: flex;
   align-items: center;
@@ -828,6 +829,13 @@
 .device-facts dt { color: var(--muted); }
 .device-commands { list-style: none; display: grid; gap: var(--s-1); margin-top: var(--s-2); font-size: var(--text-xs); }
 .device-commands li { display: flex; gap: var(--s-2); }
+
+/* the action result: what ran, how it ended, how long it took, who answered */
+
+.run-result { margin-top: var(--s-4); }
+.run-result__facts { display: grid; grid-template-columns: auto 1fr; gap: var(--s-1) var(--s-4); font-size: var(--text-sm); margin-top: var(--s-2); }
+.run-result__facts dt { color: var(--muted); }
+.run-result__facts dd { display: flex; align-items: center; gap: var(--s-2); }
 
 /* the operator console */
 

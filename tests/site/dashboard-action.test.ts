@@ -31,7 +31,7 @@ test('the one-transaction function is gone rather than left beside the pair', ()
 
 test('the client asks for the command first and waits in a second call', () => {
   assert.match(api, /rpc<[^>]*>\('opera_start_on_my_device', \{ p_method: method \}\)/);
-  assert.match(api, /rpc\('opera_await_my_command', \{ p_command_id: commandId, p_timeout_ms: timeoutMs \}\)/);
+  assert.match(api, /rpc<[^>]*>\('opera_await_my_command', \{ p_command_id: commandId, p_timeout_ms: timeoutMs \}\)/);
   assert.doesNotMatch(api, /opera_run_on_my_device/);
 });
 
@@ -47,4 +47,13 @@ test('the wait only reads a command that belongs to the caller', () => {
 
 test('the wait outlives the API statement timeout the caller would otherwise hit', () => {
   assert.match(migration, /set statement_timeout = '60s'/);
+});
+
+test('the answer is a panel, not a one-line status', () => {
+  assert.match(dashboard, /runResult/);
+  assert.match(dashboard, /run-result__facts/);
+  for (const field of ['Primitive', 'Status', 'Durasi', 'Device']) {
+    assert.ok(dashboard.includes(`<dt>${field}</dt>`), `the result panel names ${field}`);
+  }
+  assert.match(dashboard, /totalMs/);
 });

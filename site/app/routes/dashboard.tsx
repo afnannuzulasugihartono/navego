@@ -109,6 +109,7 @@ export default function Dashboard() {
   const [runMethod, setRunMethod] = useState('tabs.list');
   const [runStatus, setRunStatus] = useState('');
   const [runPending, setRunPending] = useState(false);
+  const [runResult, setRunResult] = useState<{ method: string; status: string; totalMs?: number; deviceName?: string } | null>(null);
 
   const [wallet, setWallet] = useState<{ balance?: number; available?: number; entries: Array<{ at?: string; kind?: string; amountCents?: number; note?: string | null }>; prices: Array<{ kind: string; amount_cents: number }> | null; status: string }>({ entries: [], prices: null, status: '' });
 
@@ -267,6 +268,7 @@ export default function Dashboard() {
     const method = runMethod.trim();
     if (!method) return;
     setRunPending(true);
+    setRunResult(null);
     setRunStatus('Mengirim…');
     const started = await startOnDevice(method);
     if (!started) {
@@ -286,7 +288,8 @@ export default function Dashboard() {
       setRunStatus('Gagal: server tidak memberi command id.');
       return;
     }
-    setRunStatus(`Menunggu ${started.deviceName || 'device'} menjawab…`);
+    const deviceName = started.deviceName || undefined;
+    setRunStatus(`Menunggu ${deviceName || 'device'} menjawab…`);
     const result = await awaitMyCommand(commandId);
     setRunPending(false);
     if (!result) {
@@ -296,7 +299,7 @@ export default function Dashboard() {
     }
     const error = result.error as { code?: string; message?: string } | undefined;
     if (!result.ok) {
-      if (error?.code === 'AWAIT_TIMEOUT' || (result as { status?: string }).status === 'queued') {
+      if (error?.code === 'AWAIT_TIMEOUT' || result.status === 'queued') {
         setRunStatus(`${method} masuk antrean; device mengambilnya dalam hitungan detik. Riwayat di Device akan memperbarui diri.`);
         window.setTimeout(() => void loadDevices(), 4000);
         return;
@@ -304,9 +307,13 @@ export default function Dashboard() {
       setRunStatus(`Gagal: ${say(error?.message || error)}.`);
       return;
     }
-    const timing = (result as { timing?: { totalMs?: number } }).timing;
-    const total = typeof timing?.totalMs === 'number' ? ` (${timing.totalMs} ms)` : '';
-    setRunStatus(`${method} — ${String((result as { status?: string }).status || 'ok')}${total}.`);
+    setRunResult({
+      method,
+      status: String(result.status || 'ok'),
+      totalMs: typeof result.timing?.totalMs === 'number' ? result.timing.totalMs : undefined,
+      deviceName,
+    });
+    setRunStatus(`${method} selesai.`);
     window.setTimeout(() => void loadDevices(), 2000);
   }
 
@@ -373,22 +380,28 @@ export default function Dashboard() {
                 <span className="rail__brand-text">Konsol</span>
               </div>
               <p className="rail__group">Operasional</p>
-              {renderNavItem('ringkasan', 'Ringkasan')}
-              {renderNavItem('device', `Device (${total})`)}
-              {renderNavItem('riwayat', 'Riwayat')}
-              {renderNavItem('pairing', 'Pairing')}
-              {renderNavItem('aksi', 'Aksi')}
+              <div className="rail__group-list">
+                {renderNavItem('ringkasan', 'Ringkasan')}
+                {renderNavItem('device', `Device (${total})`)}
+                {renderNavItem('riwayat', 'Riwayat')}
+                {renderNavItem('pairing', 'Pairing')}
+                {renderNavItem('aksi', 'Aksi')}
+              </div>
               <p className="rail__group">Keuangan</p>
-              {renderNavItem('saldo', 'Saldo')}
-              <button className="rail-item" aria-expanded={operatorOpen} aria-controls="operatorGroup" onClick={() => setOperatorOpen(!operatorOpen)}>Operator ▸</button>
-              {operatorOpen ? (
-                <div id="operatorGroup">
-                  {renderNavItem('tabel', 'Tabel')}
-                  {renderNavItem('dengar', 'Sesi dengar')}
-                </div>
-              ) : null}
+              <div className="rail__group-list">
+                {renderNavItem('saldo', 'Saldo')}
+                <button className="rail-item" aria-expanded={operatorOpen} aria-controls="operatorGroup" onClick={() => setOperatorOpen(!operatorOpen)}>Operator ▸</button>
+                {operatorOpen ? (
+                  <div id="operatorGroup" className="rail__group-list">
+                    {renderNavItem('tabel', 'Tabel')}
+                    {renderNavItem('dengar', 'Sesi dengar')}
+                  </div>
+                ) : null}
+              </div>
               <p className="rail__group">Akun</p>
-              {renderNavItem('akun', 'Akun ini')}
+              <div className="rail__group-list">
+                {renderNavItem('akun', 'Akun ini')}
+              </div>
               <p className="who">Perangkat milik {userEmail || '…'}</p>
             </nav>
 
@@ -618,6 +631,17 @@ export default function Dashboard() {
                     <button className="btn btn-solid" type="button" disabled={runPending} onClick={runAction}>Jalankan</button>
                     <p className="status mt-2" role="status" aria-live="polite">{runStatus}</p>
                   </div>
+                  {runResult ? (
+                    <div className="panel run-result">
+                      <p className="eyebrow">Hasil terakhir</p>
+                      <dl className="run-result__facts">
+                        <dt>Primitive</dt><dd><code>{runResult.method}</code></dd>
+                        <dt>Status</dt><dd><span className={`chip ${runResult.status === 'completed' ? 'good' : 'warn'}`}>{runResult.status}</span></dd>
+                        <dt>Durasi</dt><dd>{typeof runResult.totalMs === 'number' ? `${runResult.totalMs} ms` : '–'}</dd>
+                        <dt>Device</dt><dd>{runResult.deviceName || '–'}</dd>
+                      </dl>
+                    </div>
+                  ) : null}
                 </>
               ) : null}
 

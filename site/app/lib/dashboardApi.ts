@@ -33,6 +33,13 @@ export interface PlanAnswer {
   rpm?: number | null;
 }
 
+export interface AwaitAnswer {
+  commandId?: string;
+  status?: string;
+  result?: unknown;
+  timing?: { queuedMs?: number; totalMs?: number };
+}
+
 export interface KonsolColumn { name: string; type: string; }
 export interface KonsolTableAnswer {
   ok?: boolean;
@@ -97,7 +104,7 @@ export const revokeDevice = (deviceId: string) => rpc('opera_revoke_my_device', 
 // decisions.json -> site-dashboard-action-two-phase-01
 
 export const startOnDevice = (method: string) => rpc<{ commandId?: string; deviceName?: string; status?: string }>('opera_start_on_my_device', { p_method: method });
-export const awaitMyCommand = (commandId: string, timeoutMs = 45000) => rpc('opera_await_my_command', { p_command_id: commandId, p_timeout_ms: timeoutMs });
+export const awaitMyCommand = (commandId: string, timeoutMs = 45000) => rpc<AwaitAnswer>('opera_await_my_command', { p_command_id: commandId, p_timeout_ms: timeoutMs });
 export const createPairingCode = (name: string) => rpc<{ code?: string; deviceName?: string }>('opera_create_pairing_code', { p_device_name: name });
 export const revokeConsent = (p_client_id: string) => rpc('opera_revoke_consent', { p_client_id });
 export const listConsents = () => rpc<{ consents?: Array<{ clientId?: string; clientName?: string; scopes?: string; grantedAt?: string }> }>('opera_my_consents');

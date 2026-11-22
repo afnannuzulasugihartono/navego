@@ -76,7 +76,7 @@ export default function Beranda() {
             <div className="hero-copy">
               <h1 id="judul-beranda">Kendalikan browser lokal Anda lewat AI agent.</h1>
               <p className="lede">
-                Navego menghubungkan MCP ke browser Chrome lokal Anda — 40 alat MCP, 36 primitif browser, dan tanpa eval.
+                Navego menghubungkan MCP ke browser lokal Anda — Chrome, Edge, Brave, Opera, atau Vivaldi. 40 alat MCP, 36 primitif browser, dan tanpa eval.
               </p>
               <div className="hero-cta">
                 <Link className="btn btn-solid" to="/unduh">Mulai gratis</Link>
