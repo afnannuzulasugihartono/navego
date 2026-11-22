@@ -88,11 +88,11 @@
         "revoked",
         "idle-expired"
       ],
-      "writers": "opera_pair_device, heartbeat, revoke (hash rotation), 7-day idle check",
+      "writers": "opera_pair_device, heartbeat, revoke (hash rotation), 7-day idle check; opera_my_devices (derived from last_seen_at)",
       "readers": "every auth path, dashboard, pairing functions",
       "wrongIfConfused": "a revoked device renders as plain 'offline' — the user cannot tell rebooting from revoked, and re-pairing is the only cure, never said on the page; a disabled device can never pair again",
       "decision": "model",
-      "why": "three death paths with one status column; revoke needs a visible state, not a rotated hash",
+      "why": "three death paths with one status column; revoke needs a visible state, not a rotated hash; the status a reader sees is derived at read time from last_seen_at, so the stored column and the displayed status cannot disagree",
       "rank": 1
     },
     {
