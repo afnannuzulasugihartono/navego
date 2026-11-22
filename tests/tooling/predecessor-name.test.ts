@@ -32,6 +32,8 @@ const ALLOWED_FILES: Array<{ path: string; why: string }> = [
   { path: 'tests/helpers/boundary-locks.ts', why: 'the re-pin notes say which name each pin rode' },
   { path: 'extension/lib/self-update.ts', why: 'the accepted manifest names are the one place an install from that era is still recognised' },
   { path: 'extension/lib/endpoints.ts', why: 'the compatibility migration must recognise the predecessor bridge slug stored by devices paired before the rename' },
+  { path: 'site/worker/_worker.ts', why: 'the legacy domain redirect must name the old host so a request to it is sent to the canonical one' },
+  { path: 'tests/billing/invoice-worker.test.ts', why: 'the test proves the legacy host redirects and the canonical host is served as itself' },
   { path: 'tests/release/self-update.test.ts', why: 'the test proves that an install from that era is still recognised' },
   { path: 'tests/tooling/predecessor-name.test.ts', why: 'this gate names the old product to say what it refuses' }
 ];
