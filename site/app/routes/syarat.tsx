@@ -22,7 +22,7 @@ export default function Syarat() {
             <p className="lede">Terakhir diperbarui: 5 Oktober 2026.</p>
           </div>
         </section>
-        <div className="wrap legal" style={{ paddingBlock: 'var(--s-7)' }}>
+        <div className="wrap legal py-7">
           <h2 id="akses">Akses terbuka</h2>
           <p><strong>Pendaftaran terbuka</strong> untuk siapa pun; tidak ada daftar tunggu. Kami dapat menutup pendaftaran kapan pun tanpa kehilangan hak Anda atas data yang sudah ada.</p>
           <h2 id="model">Bawa model sendiri</h2>

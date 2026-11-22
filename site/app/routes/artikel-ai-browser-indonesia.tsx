@@ -28,7 +28,7 @@ export default function AiBrowserIndonesia() {
         <header className="article-hero">
           <div className="wrap">
             <h1>AI yang mengenal browser Anda, dalam bahasa Indonesia.</h1>
-            <p className="lede" style={{ marginTop: 'var(--s-4)', fontSize: 'var(--text-lg)', maxWidth: '56ch', color: 'var(--muted-2)' }}>Asisten AI yang mengambil alih browser bukan hal baru. Yang jarang dibicarakan: di mana asisten itu seharusnya berjalan.</p>
+            <p className="lede lede--article">Asisten AI yang mengambil alih browser bukan hal baru. Yang jarang dibicarakan: di mana asisten itu seharusnya berjalan.</p>
             <p className="article-meta"><span>18 November 2026</span><span>8 menit baca</span><span>Navego</span></p>
           </div>
         </header>
@@ -77,10 +77,10 @@ export default function AiBrowserIndonesia() {
             <p>Navego belum berjalan di Firefox dan Safari — fitur yang dibutuhkan ekstensi tidak tersedia di sana. Extension-nya juga belum ada di Chrome Web Store; pemasangan sementara lewat Load unpacked atau satu klik di Windows lewat berkas kebijakan yang dijelaskan di <Link to="/unduh">halaman Unduh</Link>.</p>
             <p>Ini alat yang sedang tumbuh. Batasannya disebutkan apa adanya, bukan disembunyikan di halaman syarat.</p>
 
-            <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 'var(--s-5)', flexWrap: 'wrap', marginTop: 'var(--s-7)' }}>
+            <div className="card card-cta mt-7">
               <div>
-                <h2 style={{ margin: 0 }}>Coba sendiri.</h2>
-                <p style={{ color: 'var(--muted-2)' }}>Pasang, tunjuk satu tab, tulis satu perintah.</p>
+                <h2 className="m-0">Coba sendiri.</h2>
+                <p className="text-muted-2">Pasang, tunjuk satu tab, tulis satu perintah.</p>
               </div>
               <Link className="btn btn-solid" to="/unduh">Pasang gratis</Link>
             </div>

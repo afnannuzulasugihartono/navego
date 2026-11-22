@@ -61,7 +61,7 @@ export default function Bandingkan() {
                 </tbody>
               </table>
             </div>
-            <p className="section-note" style={{ marginTop: 'var(--s-4)' }}>
+            <p className="section-note mt-4">
               Tabel ini soal kelas pendekatan, bukan klaim. Kami tidak menguji produk orang lain.
               Kalau Anda butuh regresi UI yang identik setiap malam, WebDriver lebih tepat. Kalau Anda butuh asisten yang bisa diajak bicara
               untuk pekerjaan berantakan sehari-hari — formulir, portal, berkas — itu wilayah Navego.
@@ -72,9 +72,9 @@ export default function Bandingkan() {
         <section className="band">
           <div className="wrap">
             <div className="cta-band">
-              <h2 className="section-title" style={{ color: '#ffffff' }}>Sudah tahu yang Anda butuhkan?</h2>
+              <h2 className="section-title text-on-dark">Sudah tahu yang Anda butuhkan?</h2>
               <p>Unduh Navego dan buktikan di halaman nyata Anda — portals, portal HR, dokumen milik Anda.</p>
-              <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
+              <div className="hero-cta mt-2">
                 <Link className="btn btn-solid" to="/unduh">Unduh Navego</Link>
                 <Link className="btn btn-ghost" to="/metodologi">Lihat angkanya</Link>
               </div>

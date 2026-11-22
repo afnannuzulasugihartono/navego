@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { NavegoMark, NavegoWordmark } from './NavegoMark';
 import { readConsent, storeConsent, type ConsentChoice } from '../lib/consent.js';
+import { onSessionChange, sessionAccount } from '../lib/auth';
 
 const VERSION = '1.8.1';
 
@@ -31,6 +32,15 @@ const SUMBER = [
 ];
 
 export function SiteHeader({ current }: { current?: string }) {
+  const [email, setEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    let live = true;
+    void sessionAccount().then((account) => { if (live) setEmail(account); });
+    const stop = onSessionChange((account) => { if (live) setEmail(account); });
+    return () => { live = false; stop(); };
+  }, []);
+
   return (
     <header className="site-header" data-version={VERSION}>
       <div className="site-header-row site-header-bleed header-inner">
@@ -39,8 +49,17 @@ export function SiteHeader({ current }: { current?: string }) {
           <NavegoWordmark size={14} />
         </Link>
         <div className="header-actions">
-          <Link className="btn btn-ghost btn-sm" to="/">Masuk</Link>
-          <Link className="btn btn-solid btn-sm" to="/unduh">Pasang gratis</Link>
+          {email ? (
+            <>
+              <Link className="btn btn-ghost btn-sm" to="/dashboard" aria-label={`Akun ${email}`}>Dashboard</Link>
+              <Link className="btn btn-solid btn-sm" to="/unduh">Pasang gratis</Link>
+            </>
+          ) : (
+            <>
+              <Link className="btn btn-ghost btn-sm" to="/">Masuk</Link>
+              <Link className="btn btn-solid btn-sm" to="/unduh">Pasang gratis</Link>
+            </>
+          )}
         </div>
       </div>
 
@@ -72,7 +91,7 @@ export function SiteHeader({ current }: { current?: string }) {
               <li><Link to="/metodologi" aria-current={current === '/metodologi' ? 'page' : undefined}>Metodologi</Link></li>
               <li><Link to="/bandingkan" aria-current={current === '/bandingkan' ? 'page' : undefined}>Bandingkan</Link></li>
             </ul>
-            <p className="nav-col-heading" style={{ marginTop: 'var(--s-4)' }}>Sumber</p>
+            <p className="nav-col-heading nav-col-heading--spaced">Sumber</p>
             <ul className="nav-col-list">
               <li><Link to="/changelog" aria-current={current === '/changelog' ? 'page' : undefined}>Changelog</Link></li>
               <li><Link to="/faq" aria-current={current === '/faq' ? 'page' : undefined}>FAQ</Link></li>
@@ -133,7 +152,7 @@ export function SiteFooter() {
       <div className="wrap">
         <div className="footer-cols">
           <div>
-            <Link className="brand" to="/beranda" aria-label="Navego — beranda" style={{ color: '#ffffff' }}>
+            <Link className="brand brand--footer" to="/beranda" aria-label="Navego — beranda">
               <NavegoMark size={36} />
               <NavegoWordmark size={16} />
             </Link>

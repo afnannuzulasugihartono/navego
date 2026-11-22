@@ -31,13 +31,13 @@ export default function NotFound() {
             <p className="lede">Alamatnya mungkin salah ketik, atau halaman itu sudah dipindahkan. Lima jalan keluar:</p>
           </div>
         </section>
-        <div className="wrap" style={{ paddingBlock: 'var(--s-7)' }}>
-          <ul style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-3)', maxWidth: '36rem' }}>
+        <div className="wrap py-7">
+          <ul className="list-plain stack-3">
             {EXITS.map(([href, title, body]) => (
               <li key={href}>
-                <Link to={href} className="card" style={{ display: 'grid', gap: 'var(--s-1)', textDecoration: 'none' }}>
-                  <strong style={{ color: 'var(--navy-deep)' }}>{title}</strong>
-                  <span style={{ color: 'var(--muted-2)', fontSize: 'var(--text-sm)' }}>{body}</span>
+                <Link to={href} className="card stack-1">
+                  <strong className="text-navy">{title}</strong>
+                  <span className="text-muted-2 text-sm">{body}</span>
                 </Link>
               </li>
             ))}

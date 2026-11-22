@@ -53,7 +53,7 @@ export default function Docs() {
   };
 
   const copyBlock = (text: string, id: string) => (
-    <button onClick={() => copy(text, id)} className="btn btn-solid btn-sm" type="button" style={{ position: 'absolute', top: 'var(--s-2)', right: 'var(--s-2)' }}>
+    <button onClick={() => copy(text, id)} className="btn btn-solid btn-sm code-block__copy" type="button">
       {copied === id ? 'Tersalin' : 'Salin'}
     </button>
   );
@@ -69,7 +69,7 @@ export default function Docs() {
           </div>
         </section>
 
-        <div className="wrap" style={{ paddingBlock: 'var(--s-6)' }}>
+        <div className="wrap py-6">
           <div className="start-grid">
             {MULAI.map((item, index) => (
               <div className="start-card" key={item.title}>
@@ -83,7 +83,7 @@ export default function Docs() {
 
         <div className="wrap docs-layout">
           <nav className="docs-rail" aria-label="Di halaman ini">
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)', padding: 'var(--s-2) var(--s-3)' }}>Di halaman ini</span>
+            <span className="eyebrow">Di halaman ini</span>
             {SECTIONS.map(([href, label]) => (
               <a key={href} href={href}>{label}</a>
             ))}
@@ -135,8 +135,8 @@ export default function Docs() {
               <p>40 tool dalam empat keluarga — <code>browser_</code>, <code>artifact_</code>, <code>delivery_</code>, <code>wallet_</code> — di atas 36 primitive browser.</p>
               {TOOLS.map(({ group, items }) => (
                 <div key={group}>
-                  <h3 style={{ margin: 'var(--s-5) 0 var(--s-3)' }}>{group}</h3>
-                  <div className="table-wrapper" style={{ maxWidth: '46rem' }}>
+                  <h3 className="docs-group-title">{group}</h3>
+                  <div className="table-wrapper table-wrapper--measure">
                     <table className="table">
                       <caption>{group}</caption>
                       <tbody>
@@ -154,21 +154,21 @@ export default function Docs() {
 
               <h2 id="mcp">Hubungkan AI harness</h2>
               <p>Satu MCP per mesin: driver lokal, jalan di mesin Anda sendiri, tanpa biaya per panggilan. <Link to="/mcp">Pasang driver lokal</Link>.</p>
-              <div style={{ position: 'relative', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)', maxWidth: '40rem', marginBottom: 'var(--s-4)' }}>
-                <code style={{ background: 'transparent', border: 0, padding: 0, color: '#cfe0ff' }}>npx -y navego local</code>
+              <div className="code-block">
+                <code>npx -y navego local</code>
                 {copyBlock('npx -y navego local', 'mcp-url')}
               </div>
               {CONFIGS.map(({ id, title, body }) => (
                 <div key={id}>
-                  <h3 style={{ margin: 'var(--s-4) 0 var(--s-2)' }}>{title}</h3>
-                  <div style={{ position: 'relative', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)', maxWidth: '40rem', marginBottom: 'var(--s-4)' }}>
-                    <pre style={{ color: '#cfe0ff', fontSize: 'var(--text-sm)', overflowX: 'auto', fontFamily: 'var(--font-mono)' }}><code>{body}</code></pre>
+                  <h3 className="docs-group-title--tight">{title}</h3>
+                  <div className="code-block">
+                    <pre><code>{body}</code></pre>
                     {copyBlock(body, id)}
                   </div>
                 </div>
               ))}
               <p>Driver lokalnya sendiri tidak perlu langganan. Kuota paket tetap dihitung di jembatan Navego — sisa kuota bisa dicek dengan <code>navego doctor</code>. Semua jalur dijelaskan di <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-call.md">docs/agent-call.md</a>.</p>
-              <h3 style={{ margin: 'var(--s-5) 0 var(--s-2)' }}>ChatGPT dan harness lain</h3>
+              <h3 className="docs-group-title docs-group-title--tight">ChatGPT dan harness lain</h3>
               <p>MCP harness = aplikasi AI Anda (Claude Desktop, OpenCode, dsb.). Konektor ChatGPT memakai remote-HTTP dan tidak lagi disediakan. Untuk ChatGPT dan harness serupa, gunakan harness lokal (atau Claude Desktop/OpenCode yang menerima MCP stdio).</p>
               <p>Setelah terpasang, alat baru muncul sesudah harness restart — itu perilaku harness, bukan error koneksi.</p>
 
@@ -182,10 +182,10 @@ export default function Docs() {
               <p>Macet? <Link to="/dukungan">Dukungan</Link> punya langkah yang bisa diikuti.</p>
             </section>
 
-            <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 'var(--s-5)', flexWrap: 'wrap', marginTop: 'var(--s-6)' }}>
+            <div className="card card-cta mt-6">
               <div>
-                <h2 style={{ margin: 0 }}>Macet di tengah dokumen?</h2>
-                <p style={{ color: 'var(--muted-2)' }}>Langkah yang bisa diikuti ada di halaman Dukungan.</p>
+                <h2 className="m-0">Macet di tengah dokumen?</h2>
+                <p className="text-muted-2">Langkah yang bisa diikuti ada di halaman Dukungan.</p>
               </div>
               <Link className="btn btn-solid" to="/dukungan">Dukungan</Link>
             </div>

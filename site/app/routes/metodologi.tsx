@@ -114,16 +114,16 @@ export default function Metodologi() {
                 <p>Webhook PayPal terdaftar. Kredensial sandbox diset. Satu pembelian sandbox penuh belum rampung. Modul dan wiring-nya dipin tes. Klaim "otomatis aktif" menunggu bukti itu.</p>
               </details>
             </div>
-            <p className="section-note" style={{ marginTop: 'var(--s-4)' }}>Dan semuanya bergerak: setiap angka di sini diukur pada mesin tertentu di tanggal tertentu. Rerun yang jujur berpindah ratusan milidetik — itu sebabnya halaman ini menyebut kapan diukur.</p>
+            <p className="section-note mt-4">Dan semuanya bergerak: setiap angka di sini diukur pada mesin tertentu di tanggal tertentu. Rerun yang jujur berpindah ratusan milidetik — itu sebabnya halaman ini menyebut kapan diukur.</p>
           </div>
         </section>
 
         <section className="band">
           <div className="wrap">
             <div className="cta-band">
-              <h2 className="section-title" style={{ color: '#ffffff' }}>Lihat hasilnya di browser Anda.</h2>
+              <h2 className="section-title text-on-dark">Lihat hasilnya di browser Anda.</h2>
               <p>Satu perintah, satu berkas — lalu Anda yang menilai, bukan kami.</p>
-              <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
+              <div className="hero-cta mt-2">
                 <Link className="btn btn-solid" to="/unduh">Unduh Navego</Link>
                 <Link className="btn btn-ghost" to="/docs#tugas">Tugas pertama</Link>
               </div>

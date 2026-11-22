@@ -194,7 +194,7 @@ export default function Harga() {
         <li>36 primitive browser</li>
         <li>{plan.premium ? 'Semua fitur (statement, VM, remote drive) + prioritas' : 'Plan dasar'}</li>
       </ul>
-      <button className="btn btn-solid btn-sm" type="button" onClick={() => buy(plan.id)} style={{ width: '100%' }}>Beli dengan PayPal</button>
+      <button className="btn btn-solid btn-sm w-full" type="button" onClick={() => buy(plan.id)}>Beli dengan PayPal</button>
     </section>
   );
 
@@ -210,20 +210,20 @@ export default function Harga() {
         </section>
 
         {detected ? (
-          <section className="band" aria-label="Kawasan harga" style={{ paddingBottom: 0 }}>
+          <section className="band band--flush-bottom" aria-label="Kawasan harga">
             <div className="wrap">
               {country && bandForCountry(country) ? (
-                <p className="section-note" style={{ margin: 0 }}>
+                <p className="section-note section-note--flush">
                   Kawasan ({source === 'device' ? 'perangkat' : source === 'cache' ? 'tersimpan' : 'IP'}): <strong>{regionName(country)}</strong> — plan yang tampil sesuai daya beli kawasan Anda.
                 </p>
               ) : (
-                <p className="section-note" style={{ margin: 0 }}>Kawasan tidak bisa dideteksi dari IP maupun lokasi perangkat; kedua grup ditampilkan.</p>
+                <p className="section-note section-note--flush">Kawasan tidak bisa dideteksi dari IP maupun lokasi perangkat; kedua grup ditampilkan.</p>
               )}
-              <button className="btn btn-ghost btn-sm" type="button" style={{ marginTop: 'var(--s-2)' }} onClick={retryWithDevice} disabled={geoBusy}>
+              <button className="btn btn-ghost btn-sm mt-2" type="button" onClick={retryWithDevice} disabled={geoBusy}>
                 {geoBusy ? 'Mendeteksi lokasi…' : 'Perbarui dengan lokasi saya'}
               </button>
-              {geoError ? <p className="status warn" role="status" style={{ marginTop: 'var(--s-2)' }}>{geoError}</p> : null}
-              <p className="note" style={{ marginTop: 'var(--s-2)' }}>Perangkat dipakai lebih dulu — akurat di balik VPN. Koordinat tidak disimpan. Cookie navego_region tersimpan hanya jika Anda setuju di banner bawah.</p>
+              {geoError ? <p className="status warn mt-2" role="status">{geoError}</p> : null}
+              <p className="note mt-2">Perangkat dipakai lebih dulu — akurat di balik VPN. Koordinat tidak disimpan. Cookie navego_region tersimpan hanya jika Anda setuju di banner bawah.</p>
             </div>
           </section>
         ) : null}
@@ -237,7 +237,7 @@ export default function Harga() {
               </div>
               <p className="section-note">Sekali beli, langsung aktif. Tidak diperpanjang otomatis.</p>
             </div>
-            <div className="plans" role="list" style={{ gridTemplateColumns: grid }}>
+            <div className="plans plans--dense" role="list">
               {ASIA_PLANS.map(PlanCard)}
             </div>
           </div>
@@ -253,26 +253,26 @@ export default function Harga() {
               </div>
               <p className="section-note">Sekali beli, langsung aktif. Tidak diperpanjang otomatis.</p>
             </div>
-            <div className="plans" role="list" style={{ gridTemplateColumns: grid }}>
+            <div className="plans plans--dense" role="list">
               {EUROPE_PLANS.map(PlanCard)}
             </div>
           </div>
         </section>
         ) : null}
 
-        <section className="band" aria-label="Pembayaran" style={{ paddingTop: 0 }}>
+        <section className="band band--flush-top" aria-label="Pembayaran">
           <div className="wrap">
             {signedOut ? (
-              <p className="status" style={{ marginTop: 'var(--s-4)', textAlign: 'center' }}>Pembayaran memakai akun Anda. <Link to="/">Masuk dulu</Link>, lalu kembali ke halaman ini.</p>
+              <p className="status mt-4 center">Pembayaran memakai akun Anda. <Link to="/">Masuk dulu</Link>, lalu kembali ke halaman ini.</p>
             ) : null}
-            {note ? <p className={warn ? 'status warn' : 'status'} role="status" aria-live="polite" style={{ marginTop: 'var(--s-4)', textAlign: 'center' }}>{note}</p> : null}
-            <p className="note" style={{ marginTop: 'var(--s-3)', textAlign: 'center' }}>Bayar dengan <strong>PayPal</strong>. Plan langsung aktif setelah Anda menyelesaikan pembayaran di PayPal.</p>
+            {note ? <p className={`${warn ? 'status warn' : 'status'} mt-4 center`} role="status" aria-live="polite">{note}</p> : null}
+            <p className="note mt-3 center">Bayar dengan <strong>PayPal</strong>. Plan langsung aktif setelah Anda menyelesaikan pembayaran di PayPal.</p>
           </div>
         </section>
 
         <section className="band band-soft" aria-labelledby="qaTitle">
           <div className="wrap">
-            <h2 id="qaTitle" className="section-title" style={{ marginBottom: 'var(--s-5)' }}>Pertanyaan soal plan.</h2>
+            <h2 id="qaTitle" className="section-title mb-5">Pertanyaan soal plan.</h2>
             <div className="faq">
               {QA.map(([id, q, a]) => (
                 <details key={id} id={id} open={id === 'rencana'}>
@@ -287,9 +287,9 @@ export default function Harga() {
         <section className="band">
           <div className="wrap">
             <div className="cta-band">
-              <h2 className="section-title" style={{ color: '#ffffff' }}>Pasang gratis. Putuskan setelah melihat hasilnya.</h2>
+              <h2 className="section-title text-on-dark">Pasang gratis. Putuskan setelah melihat hasilnya.</h2>
               <p>Satu pekerjaan pertama. Berkasnya. Baru putuskan.</p>
-              <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
+              <div className="hero-cta mt-2">
                 <Link className="btn btn-solid" to="/unduh">Pasang gratis</Link>
                 <Link className="btn btn-ghost" to="/docs">Baca docs</Link>
               </div>

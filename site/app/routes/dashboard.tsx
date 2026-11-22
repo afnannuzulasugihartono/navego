@@ -5,7 +5,7 @@ import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { NavegoMark } from '../components/NavegoMark';
-import { AUTH_HOST, clearSession, ensureSession, headersFor } from '../lib/auth';
+import { AUTH_HOST, announceSession, clearSession, ensureSession, headersFor, storeEmail } from '../lib/auth';
 import {
   type Device,
   type PlanAnswer,
@@ -109,6 +109,7 @@ export default function Dashboard() {
   const [runMethod, setRunMethod] = useState('tabs.list');
   const [runStatus, setRunStatus] = useState('');
   const [runPending, setRunPending] = useState(false);
+  const [runResult, setRunResult] = useState<{ method: string; status: string; totalMs?: number; deviceName?: string } | null>(null);
 
   const [wallet, setWallet] = useState<{ balance?: number; available?: number; entries: Array<{ at?: string; kind?: string; amountCents?: number; note?: string | null }>; prices: Array<{ kind: string; amount_cents: number }> | null; status: string }>({ entries: [], prices: null, status: '' });
 
@@ -163,7 +164,12 @@ export default function Dashboard() {
         const response = await fetch(`${AUTH_HOST}/user`, { headers: headersFor(token) });
         if (response.ok) {
           const user = await response.json();
-          setUserEmail(user?.email || '');
+          const account = typeof user?.email === 'string' ? user.email : '';
+          setUserEmail(account);
+          if (account) {
+            storeEmail(account);
+            announceSession(account);
+          }
         }
       } catch { /* the line is a comfort, not the decision */ }
       setReady(true);
@@ -267,6 +273,7 @@ export default function Dashboard() {
     const method = runMethod.trim();
     if (!method) return;
     setRunPending(true);
+    setRunResult(null);
     setRunStatus('Mengirim…');
     const started = await startOnDevice(method);
     if (!started) {
@@ -286,7 +293,8 @@ export default function Dashboard() {
       setRunStatus('Gagal: server tidak memberi command id.');
       return;
     }
-    setRunStatus(`Menunggu ${started.deviceName || 'device'} menjawab…`);
+    const deviceName = started.deviceName || undefined;
+    setRunStatus(`Menunggu ${deviceName || 'device'} menjawab…`);
     const result = await awaitMyCommand(commandId);
     setRunPending(false);
     if (!result) {
@@ -296,7 +304,7 @@ export default function Dashboard() {
     }
     const error = result.error as { code?: string; message?: string } | undefined;
     if (!result.ok) {
-      if (error?.code === 'AWAIT_TIMEOUT' || (result as { status?: string }).status === 'queued') {
+      if (error?.code === 'AWAIT_TIMEOUT' || result.status === 'queued') {
         setRunStatus(`${method} masuk antrean; device mengambilnya dalam hitungan detik. Riwayat di Device akan memperbarui diri.`);
         window.setTimeout(() => void loadDevices(), 4000);
         return;
@@ -304,9 +312,13 @@ export default function Dashboard() {
       setRunStatus(`Gagal: ${say(error?.message || error)}.`);
       return;
     }
-    const timing = (result as { timing?: { totalMs?: number } }).timing;
-    const total = typeof timing?.totalMs === 'number' ? ` (${timing.totalMs} ms)` : '';
-    setRunStatus(`${method} — ${String((result as { status?: string }).status || 'ok')}${total}.`);
+    setRunResult({
+      method,
+      status: String(result.status || 'ok'),
+      totalMs: typeof result.timing?.totalMs === 'number' ? result.timing.totalMs : undefined,
+      deviceName,
+    });
+    setRunStatus(`${method} selesai.`);
     window.setTimeout(() => void loadDevices(), 2000);
   }
 
@@ -364,7 +376,7 @@ export default function Dashboard() {
       <SiteHeader current="/dashboard" />
       <main className="wrap">
         {!ready ? (
-          <p className="empty" style={{ paddingTop: 'var(--s-9)' }}>Memeriksa sesi…</p>
+          <p className="empty empty--tall">Memeriksa sesi…</p>
         ) : (
           <div className="app">
             <nav className="rail" aria-label="Navigasi konsol">
@@ -373,22 +385,28 @@ export default function Dashboard() {
                 <span className="rail__brand-text">Konsol</span>
               </div>
               <p className="rail__group">Operasional</p>
-              {renderNavItem('ringkasan', 'Ringkasan')}
-              {renderNavItem('device', `Device (${total})`)}
-              {renderNavItem('riwayat', 'Riwayat')}
-              {renderNavItem('pairing', 'Pairing')}
-              {renderNavItem('aksi', 'Aksi')}
+              <div className="rail__group-list">
+                {renderNavItem('ringkasan', 'Ringkasan')}
+                {renderNavItem('device', `Device (${total})`)}
+                {renderNavItem('riwayat', 'Riwayat')}
+                {renderNavItem('pairing', 'Pairing')}
+                {renderNavItem('aksi', 'Aksi')}
+              </div>
               <p className="rail__group">Keuangan</p>
-              {renderNavItem('saldo', 'Saldo')}
-              <button className="rail-item" aria-expanded={operatorOpen} aria-controls="operatorGroup" onClick={() => setOperatorOpen(!operatorOpen)}>Operator ▸</button>
-              {operatorOpen ? (
-                <div id="operatorGroup">
-                  {renderNavItem('tabel', 'Tabel')}
-                  {renderNavItem('dengar', 'Sesi dengar')}
-                </div>
-              ) : null}
+              <div className="rail__group-list">
+                {renderNavItem('saldo', 'Saldo')}
+                <button className="rail-item" aria-expanded={operatorOpen} aria-controls="operatorGroup" onClick={() => setOperatorOpen(!operatorOpen)}>Operator ▸</button>
+                {operatorOpen ? (
+                  <div id="operatorGroup" className="rail__group-list">
+                    {renderNavItem('tabel', 'Tabel')}
+                    {renderNavItem('dengar', 'Sesi dengar')}
+                  </div>
+                ) : null}
+              </div>
               <p className="rail__group">Akun</p>
-              {renderNavItem('akun', 'Akun ini')}
+              <div className="rail__group-list">
+                {renderNavItem('akun', 'Akun ini')}
+              </div>
               <p className="who">Perangkat milik {userEmail || '…'}</p>
             </nav>
 
@@ -399,32 +417,30 @@ export default function Dashboard() {
                   <div className="dash-tiles">
                     <div className="tile-metric"><small>Device ter-pairing</small><b>{total}</b></div>
                     <div className="tile-metric"><small>Daring sekarang</small><b>{online}</b></div>
-                    <div className="tile-metric"><small>Perintah selesai</small><b>{doneSum}<span style={{ color: 'var(--muted)', fontSize: 'var(--text-sm)' }}> / {totalSum}</span></b></div>
+                    <div className="tile-metric"><small>Perintah selesai</small><b>{doneSum}<span className="metric-sub"> / {totalSum}</span></b></div>
                     <div className="tile-metric">
                       <small>Kuota hari ini</small><b>{planUnlimited ? '∞' : `${planPercent}%`}</b>
-                      {!planUnlimited ? <div className="usage-bar" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={planPercent} aria-label="Pemakaian kuota hari ini"><i style={{ width: `${planPercent}%` }} /></div> : null}
+                      {!planUnlimited ? <progress className="usage-bar" value={planPercent} max={100} aria-label="Pemakaian kuota hari ini" /> : null}
                     </div>
                   </div>
 
-                  <div className="panel" style={{ background: !planUnlimited && planRemaining <= 0 ? '#f6dcd6' : planPercent >= 80 ? '#fbeab6' : 'var(--panel-2)' }}>
+                  <div className={`panel ${!planUnlimited && planRemaining <= 0 ? 'panel--exhausted' : planPercent >= 80 ? 'panel--warning' : ''}`}>
                     <div className="panel-head">
-                      <h2 style={{ fontSize: 'var(--text-base)' }}>Plan</h2>
+                      <h2 className="panel__title">Plan</h2>
                       <span className={`chip ${plan?.status === 'active' ? 'good' : 'warn'}`}>{plan?.status === 'active' ? 'aktif' : plan ? plan.status || 'tidak diketahui' : 'belum bisa dimuat'}</span>
                     </div>
-                    <p style={{ fontFamily: 'ui-monospace, Consolas, monospace', fontWeight: 800 }}>{plan?.plan || 'belum diketahui'}</p>
-                    {!planUnlimited ? <div className="plan-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={planPercent} aria-label="Pemakaian kuota hari ini">
-                      <div className="plan-fill" style={{ width: `${planPercent}%` }} />
-                    </div> : null}
-                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)' }}>
+                    <p className="plan-value">{plan?.plan || 'belum diketahui'}</p>
+                    {!planUnlimited ? <progress className="plan-track" value={planPercent} max={100} aria-label="Pemakaian kuota hari ini" /> : null}
+                    <p className="panel-note">
                       {planUnlimited
                         ? <><strong>Tanpa batas harian</strong> pada plan ini, {planAllowance.toLocaleString('id-ID')} perintah / sesi.</>
                         : <><strong>{planUsed.toLocaleString('id-ID')}</strong> dari <strong>{(planQuota ?? 0).toLocaleString('id-ID')}</strong> perintah dipakai hari ini, {planAllowance.toLocaleString('id-ID')} / sesi, reset besok 00.00 UTC</>}
                     </p>
-                    {!planUnlimited && planRemaining <= 0 ? <p style={{ marginTop: 'var(--s-2)', fontSize: 'var(--text-xs)', color: 'var(--danger)' }}>Plan habis — reset besok 00.00 UTC. <Link to="/harga">Lihat paket</Link></p> : null}
+                    {!planUnlimited && planRemaining <= 0 ? <p className="plan-empty">Plan habis — reset besok 00.00 UTC. <Link to="/harga">Lihat paket</Link></p> : null}
                   </div>
 
                   <div className="panel">
-                    <div className="panel-head"><h2 style={{ fontSize: 'var(--text-base)' }}>Checklist pemasangan</h2></div>
+                    <div className="panel-head"><h2 className="panel__title">Checklist pemasangan</h2></div>
                     <ol className="setup-checklist">
                       <li className={installState === 'installed' ? 'is-done' : ''}><span className="setup-checklist__mark" aria-hidden="true">{installState === 'installed' ? '✓' : '○'}</span> Pasang extension di browser ini</li>
                       <li className={total > 0 ? 'is-done' : ''}><span className="setup-checklist__mark" aria-hidden="true">{total > 0 ? '✓' : '○'}</span> Pair device</li>
@@ -448,43 +464,43 @@ export default function Dashboard() {
                     ? <div className="empty">
                       <p><strong>Device belum bisa dimuat.</strong></p>
                       <p>Koneksi atau sesi mungkin kedaluwarsa. Muat ulang halaman ini untuk mencoba lagi.</p>
-                      <button className="btn btn-solid btn-sm" type="button" onClick={() => void loadDevices()} style={{ marginTop: 'var(--s-2)' }}>Coba lagi</button>
+                      <button className="btn btn-solid btn-sm mt-2" type="button" onClick={() => void loadDevices()}>Coba lagi</button>
                     </div>
                     : <p className="empty">Memuat…</p>) : null}
                   {devices && devices.length === 0 ? (
                     <div className="empty">
                       <p><strong>Belum ada device.</strong></p>
                       <p>Pasang Navego di browser ini, lalu klik “Pasangkan browser ini”.</p>
-                      <button className="btn btn-solid btn-sm" type="button" onClick={() => go('pairing')} style={{ marginTop: 'var(--s-2)' }}>Pasangkan browser ini</button>
+                      <button className="btn btn-solid btn-sm mt-2" type="button" onClick={() => go('pairing')}>Pasangkan browser ini</button>
                     </div>
                   ) : null}
-                  <div style={{ display: 'grid', gap: 'var(--s-3)' }}>
+                  <div className="device-list">
                     {(devices ?? []).map((device) => (
                       <div key={device.id} className="panel">
                         <div className="panel-head">
-                          <h2 style={{ fontSize: 'var(--text-base)', display: 'flex', alignItems: 'center', gap: 'var(--s-2)' }}>
-                            <span aria-hidden="true" style={{ width: 10, height: 10, borderRadius: '50%', background: isDeviceLive(device) ? 'var(--good)' : 'var(--danger)', display: 'inline-block' }} />
+                          <h2 className="device-card__title">
+                            <span aria-hidden="true" className={`status-dot ${isDeviceLive(device) ? 'status-dot--live' : 'status-dot--offline'}`} />
                             {device.name || 'device'}
                             <span className="chip">{device.extensionVersion || '-'}</span>
                             {device.browserName ? <span className="chip">{device.browserName}</span> : null}
                           </h2>
                         </div>
-                        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 'var(--s-1) var(--s-4)', fontSize: 'var(--text-sm)' }}>
-                          <dt style={{ color: 'var(--muted)' }}>Status</dt><dd>{deviceStatusText(device)}</dd>
-                          <dt style={{ color: 'var(--muted)' }}>Terakhir terlihat</dt><dd>{relativeTime(device.lastSeenAt)}</dd>
-                          <dt style={{ color: 'var(--muted)' }}>Perintah</dt><dd>{device.completedCommands ?? 0} / {device.totalCommands ?? 0}</dd>
-                          <dt style={{ color: 'var(--muted)' }}>ID device</dt><dd><code>{device.id}</code></dd>
+                        <dl className="device-facts">
+                          <dt>Status</dt><dd>{deviceStatusText(device)}</dd>
+                          <dt>Terakhir terlihat</dt><dd>{relativeTime(device.lastSeenAt)}</dd>
+                          <dt>Perintah</dt><dd>{device.completedCommands ?? 0} / {device.totalCommands ?? 0}</dd>
+                          <dt>ID device</dt><dd><code>{device.id}</code></dd>
                         </dl>
                         {device.commands?.length ? (
-                          <ul style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-1)', marginTop: 'var(--s-2)', fontSize: 'var(--text-xs)' }}>
+                          <ul className="device-commands">
                             {device.commands.map((command, index) => (
-                              <li key={index} style={{ display: 'flex', gap: 'var(--s-2)' }}><code>{command.method}</code>{command.provider ? <span className="chip">{command.provider}</span> : null}<span>{command.status}</span></li>
+                              <li key={index}><code>{command.method}</code>{command.provider ? <span className="chip">{command.provider}</span> : null}<span>{command.status}</span></li>
                             ))}
                           </ul>
                         ) : null}
-                        <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
+                        <div className="hero-cta mt-2">
                           <button className="btn btn-ghost btn-sm" type="button" onClick={() => navigator.clipboard?.writeText(device.id || '')}>Salin ID</button>
-                          <button className="btn btn-ghost btn-sm" type="button" style={{ color: 'var(--danger)' }} onClick={async () => {
+                          <button className="btn btn-ghost btn-sm text-danger" type="button" onClick={async () => {
                             if (!window.confirm(`Cabut ${device.name}? Perintah baru berhenti seketika; pairing ulang menghidupkannya lagi.`)) return;
                             const result = await revokeDevice(String(device.id));
                             if (result?.ok) { setStatusLine(`${device.name} dicabut.`); void loadDevices(); }
@@ -508,7 +524,7 @@ export default function Dashboard() {
                       <option value="failed">Gagal</option>
                       <option value="pending">Mengantre</option>
                     </select>
-                    <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>{historyRows.length}/{allCommands.length} perintah</span>
+                    <span className="text-xs text-muted">{historyRows.length}/{allCommands.length} perintah</span>
                   </div>
                   <table className="table">
                     <thead><tr><th>Waktu</th><th>Device</th><th>Metode</th><th>Durasi</th><th>Status</th></tr></thead>
@@ -531,13 +547,13 @@ export default function Dashboard() {
               {view === 'dengar' ? (
                 <>
                   <h1>Sesi dengar</h1>
-                  <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)', marginBottom: 'var(--s-2)' }}>Sesi dengar di akun ini: metadata saja, tidak pernah kata-katanya. Transkrip hanya hidup di hasil tool model.</p>
+                  <p className="text-xs text-muted-2 mb-2">Sesi dengar di akun ini: metadata saja, tidak pernah kata-katanya. Transkrip hanya hidup di hasil tool model.</p>
                   {listens === null ? <p className="empty">Sesi dengar belum bisa dimuat. Coba lagi sebentar.</p> : listens.length === 0 ? <p className="empty">Belum ada sesi dengar. Mulai dari model dengan <code>media_stream_start</code>.</p> : (
-                    <div style={{ display: 'grid', gap: 'var(--s-2)' }}>
+                    <div className="stack-2">
                       {listens.map((session) => (
                         <div key={session.id} className="panel">
-                          <div className="panel-head"><strong style={{ fontSize: 'var(--text-sm)' }}>{session.deviceName || session.id}</strong><span className="chip">{session.status}</span></div>
-                          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted-2)' }}>Mulai {relativeTime(session.startedAt)}, {session.segments ?? 0} segmen tertranskrip</p>
+                          <div className="panel-head"><strong className="text-sm">{session.deviceName || session.id}</strong><span className="chip">{session.status}</span></div>
+                          <p className="panel-note">Mulai {relativeTime(session.startedAt)}, {session.segments ?? 0} segmen tertranskrip</p>
                         </div>
                       ))}
                     </div>
@@ -553,15 +569,15 @@ export default function Dashboard() {
                       <div><dt>Saldo</dt><dd>{wallet.balance !== undefined ? `Rp${(wallet.balance / 100).toLocaleString('id-ID')}` : '–'}</dd></div>
                       <div><dt>Tersedia sekarang</dt><dd>{wallet.available !== undefined ? `Rp${(wallet.available / 100).toLocaleString('id-ID')}` : '–'}</dd></div>
                     </dl>
-                    <div className="hero-cta" style={{ marginTop: 'var(--s-1)' }}>
+                    <div className="hero-cta mt-1">
                       <button className="btn btn-ghost" type="button" onClick={loadWallet}>Muat ulang</button>
                     </div>
-                    <p className="status" role="status" aria-live="polite" style={{ marginTop: 'var(--s-2)' }}>{wallet.status}</p>
+                    <p className="status mt-2" role="status" aria-live="polite">{wallet.status}</p>
                   </div>
 
                   {wallet.prices ? (
                     <div className="panel">
-                      <h2 style={{ fontSize: 'var(--text-base)', marginBottom: 'var(--s-2)' }}>Harga</h2>
+                      <h2 className="panel__title panel__title--spaced">Harga</h2>
                       <table className="table">
                         <tbody>
                           {wallet.prices.map((price) => (
@@ -573,7 +589,7 @@ export default function Dashboard() {
                   ) : null}
 
                   <div className="panel">
-                    <h2 style={{ fontSize: 'var(--text-base)', marginBottom: 'var(--s-2)' }}>Pergerakan</h2>
+                    <h2 className="panel__title panel__title--spaced">Pergerakan</h2>
                     {wallet.entries.length ? (
                       <table className="table">
                         <thead><tr><th>Waktu</th><th>Jenis</th><th className="num">Jumlah</th><th>Catatan</th></tr></thead>
@@ -596,14 +612,14 @@ export default function Dashboard() {
               {view === 'pairing' ? (
                 <>
                   <h1>Pairing</h1>
-                  <div className="panel" style={{ maxWidth: 520 }}>
-                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)' }}>Satu klik saja — kode dibuat di server dan dikirim langsung ke ekstensi di browser ini. Tidak ada yang perlu diketik atau disalin.</p>
-                    <div className="field" style={{ marginTop: 'var(--s-3)' }}>
+                  <div className="panel panel--narrow">
+                    <p className="text-sm text-muted-2">Satu klik saja — kode dibuat di server dan dikirim langsung ke ekstensi di browser ini. Tidak ada yang perlu diketik atau disalin.</p>
+                    <div className="field field--spaced">
                       <label htmlFor="pairName">Nama device</label>
                       <input id="pairName" type="text" autoComplete="off" spellCheck={false} maxLength={64} placeholder="opera" value={pairName} onChange={(event) => setPairName(event.target.value)} />
                     </div>
                     <button className="btn btn-solid" type="button" disabled={pairPending} aria-busy={pairPending} onClick={runPairQuick}>{pairOk ? 'siap Ter-pairing' : pairPending ? 'Memasangkan…' : 'Pasangkan browser ini'}</button>
-                    <p className="status" role="status" aria-live="polite" style={{ marginTop: 'var(--s-2)' }}>{pairStatus}</p>
+                    <p className="status mt-2" role="status" aria-live="polite">{pairStatus}</p>
                   </div>
                 </>
               ) : null}
@@ -611,30 +627,41 @@ export default function Dashboard() {
               {view === 'aksi' ? (
                 <>
                   <h1>Jalankan aksi</h1>
-                  <div className="panel" style={{ maxWidth: 520 }}>
-                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)' }}>Perintah dikirim ke device milik Anda sendiri. Device menolak halaman yang menampilkan password, kode sekali pakai, atau pembayaran.</p>
-                    <div className="field" style={{ marginTop: 'var(--s-3)' }}>
+                  <div className="panel panel--narrow">
+                    <p className="text-sm text-muted-2">Perintah dikirim ke device milik Anda sendiri. Device menolak halaman yang menampilkan password, kode sekali pakai, atau pembayaran.</p>
+                    <div className="field field--spaced">
                       <label htmlFor="runMethod">Primitive</label>
                       <input id="runMethod" type="text" autoComplete="off" spellCheck={false} maxLength={64} value={runMethod} onChange={(event) => setRunMethod(event.target.value)} />
                     </div>
                     <button className="btn btn-solid" type="button" disabled={runPending} onClick={runAction}>Jalankan</button>
-                    <p className="status" role="status" aria-live="polite" style={{ marginTop: 'var(--s-2)' }}>{runStatus}</p>
+                    <p className="status mt-2" role="status" aria-live="polite">{runStatus}</p>
                   </div>
+                  {runResult ? (
+                    <div className="panel run-result">
+                      <p className="eyebrow">Hasil terakhir</p>
+                      <dl className="run-result__facts">
+                        <dt>Primitive</dt><dd><code>{runResult.method}</code></dd>
+                        <dt>Status</dt><dd><span className={`chip ${runResult.status === 'completed' ? 'good' : 'warn'}`}>{runResult.status}</span></dd>
+                        <dt>Durasi</dt><dd>{typeof runResult.totalMs === 'number' ? `${runResult.totalMs} ms` : '–'}</dd>
+                        <dt>Device</dt><dd>{runResult.deviceName || '–'}</dd>
+                      </dl>
+                    </div>
+                  ) : null}
                 </>
               ) : null}
 
               {view === 'akun' ? (
                 <>
                   <h1>Akun ini</h1>
-                  <div className="panel" style={{ maxWidth: 560 }}>
-                    <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 'var(--s-1) var(--s-4)', fontSize: 'var(--text-sm)' }}>
-                      <dt style={{ color: 'var(--muted)' }}>Alamat</dt><dd>{userEmail || '—'}</dd>
-                      <dt style={{ color: 'var(--muted)' }}>Device daring</dt><dd>{online} dari {total}</dd>
+                  <div className="panel panel--account">
+                    <dl className="device-facts">
+                      <dt>Alamat</dt><dd>{userEmail || '—'}</dd>
+                      <dt>Device daring</dt><dd>{online} dari {total}</dd>
                     </dl>
-                    <div className="hero-cta" style={{ marginTop: 'var(--s-3)' }}>
+                    <div className="hero-cta mt-3">
                       <Link className="btn btn-ghost" to="/akun">Kelola akun</Link>
                       <Link className="btn btn-ghost" to="/unduh">Pasang di device lain</Link>
-                      <button className="btn btn-ghost" type="button" style={{ color: 'var(--danger)' }} onClick={async () => { const token = await ensureSession(); try { if (token) await fetch(`${AUTH_HOST}/logout`, { method: 'POST', headers: headersFor(token) }); } catch { /* best effort */ } clearSession(); window.location.replace('/'); }}>Keluar</button>
+                      <button className="btn btn-ghost text-danger" type="button" onClick={async () => { const token = await ensureSession(); try { if (token) await fetch(`${AUTH_HOST}/logout`, { method: 'POST', headers: headersFor(token) }); } catch { /* best effort */ } clearSession(); window.location.replace('/'); }}>Keluar</button>
                     </div>
                   </div>
                 </>
@@ -742,22 +769,22 @@ function KonsolView({ deviceCount }: { deviceCount: number }) {
     <>
       <h1>Tabel</h1>
       <div className="konsol-split">
-        <nav className="panel" style={{ minWidth: 190, display: 'grid', gap: 'var(--s-1)', alignContent: 'start' }} aria-label="Daftar tabel">
-          {!state.ready ? <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Memuat…</span> : state.tables.length === 0 ? <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Konsol data belum bisa dimuat.</span> : state.tables.filter((table) => table.readable !== false).map((table) => (
-            <button key={table.name} className="rail-item" style={{ color: 'var(--ink)', background: state.selected === table.name ? 'var(--panel-2)' : 'transparent', borderRadius: 'var(--radius-sm)', border: 0, padding: 'var(--s-2) var(--s-3)', textAlign: 'left', cursor: 'pointer', fontSize: 'var(--text-sm)' }} onClick={() => openTable(table.name)}>
-              {table.name}{typeof table.total === 'number' ? <span style={{ color: 'var(--muted)' }}> ({table.total.toLocaleString('id-ID')})</span> : null}
+        <nav className="panel konsol-rail" aria-label="Daftar tabel">
+          {!state.ready ? <span className="text-xs text-muted">Memuat…</span> : state.tables.length === 0 ? <span className="text-xs text-muted">Konsol data belum bisa dimuat.</span> : state.tables.filter((table) => table.readable !== false).map((table) => (
+            <button key={table.name} className={`konsol-table-button ${state.selected === table.name ? 'is-selected' : ''}`} onClick={() => openTable(table.name)}>
+              {table.name}{typeof table.total === 'number' ? <span className="konsol-count"> ({table.total.toLocaleString('id-ID')})</span> : null}
             </button>
           ))}
         </nav>
-        <div style={{ flex: 1 }}>
+        <div className="flex-1">
           {state.selected ? (
             <>
               <div className="toolbar">
                 <input className="input-sm" type="search" placeholder="Cari di tabel ini…" value={state.search} onChange={(event) => openTable(selectedTable, 0, event.target.value)} aria-label="Cari baris" />
                 <button className="btn btn-ghost btn-sm" type="button" onClick={exportCsv} title="Unduh hingga 5.000 baris sesuai filter saat ini">Ekspor CSV</button>
-                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>{state.total.toLocaleString('id-ID')} baris</span>
+                <span className="text-xs text-muted">{state.total.toLocaleString('id-ID')} baris</span>
               </div>
-              <table className="table" style={{ fontSize: 'var(--text-xs)' }}>
+              <table className="table konsol-table">
                 <thead><tr>{state.columns.length === 0 ? <th scope="col">Memuat…</th> : state.columns.map((col) => <th key={col.name} scope="col">{col.name}</th>)}</tr></thead>
                 <tbody>
                   {state.rows.map((row, index) => (
@@ -770,14 +797,14 @@ function KonsolView({ deviceCount }: { deviceCount: number }) {
                 </tbody>
               </table>
               {state.rows.length === 0 ? <p className="empty">Tabel ini kosong. Tidak ada baris yang cocok dengan akun dan filter ini.</p> : null}
-              <div className="toolbar" style={{ marginTop: 'var(--s-2)' }}>
+              <div className="toolbar mt-2">
                 <button className="btn btn-ghost btn-sm" type="button" disabled={currentPage <= 1} onClick={() => openTable(selectedTable, Math.max(0, state.offset - pageSize), state.search)}>‹ Sebelumnya</button>
-                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Halaman {currentPage} dari {pages}</span>
+                <span className="text-xs text-muted">Halaman {currentPage} dari {pages}</span>
                 <button className="btn btn-ghost btn-sm" type="button" disabled={currentPage >= pages} onClick={() => openTable(selectedTable, state.offset + pageSize, state.search)}>Berikutnya ›</button>
               </div>
             </>
           ) : <p className="empty">Pilih tabel di kiri. {deviceCount === 0 ? 'Konsol hanya terisi setelah device Anda ter-pairing.' : ''}</p>}
-          {state.status ? <p className="status" role="status" aria-live="polite" style={{ marginTop: 'var(--s-2)' }}>{state.status}</p> : null}
+          {state.status ? <p className="status mt-2" role="status" aria-live="polite">{state.status}</p> : null}
         </div>
       </div>
     </>

@@ -86,8 +86,8 @@ export default function Unduh() {
                 <article key={browser.key} className="tile-xl">
                   <div className="tile-media"><span className="dl-letter">{browser.letter}</span></div>
                   <h3>{browser.name}</h3>
-                  <a className="btn btn-solid btn-sm" style={{ width: '100%' }} href={`${DOWNLOAD}.zip?for=${browser.key}`} download>Unduh .zip</a>
-                  <p style={{ fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>Atau: <a href={`${DOWNLOAD}.crx?for=${browser.key}`} download>.crx</a>, <a href={MANIFEST}>Manifest</a></p>
+                  <a className="btn btn-solid btn-sm w-full" href={`${DOWNLOAD}.zip?for=${browser.key}`} download>Unduh .zip</a>
+                  <p className="dl-note">Atau: <a href={`${DOWNLOAD}.crx?for=${browser.key}`} download>.crx</a>, <a href={MANIFEST}>Manifest</a></p>
                 </article>
               ))}
             </div>
@@ -119,8 +119,8 @@ export default function Unduh() {
             </div>
             <div className="value-grid">
               {PERMISSIONS.map(([name, why]) => (
-                <div className="value-card" key={name} style={{ background: '#16204a' }}>
-                  <code style={{ fontSize: 'var(--text-sm)', color: 'var(--amber-hi)', background: 'transparent', border: 0 }}>{name}</code>
+                <div className="value-card value-card--dark" key={name}>
+                  <code>{name}</code>
                   <p>{why}</p>
                 </div>
               ))}
@@ -136,14 +136,14 @@ export default function Unduh() {
               </div>
               <p className="section-note">Setiap rilis punya SHA-256 sendiri. Keduanya harus sama.</p>
             </div>
-            <div style={{ display: 'grid', gap: 'var(--s-3)', maxWidth: '54rem' }}>
+            <div className="unduh-grid">
               {[
                 ['server', 'Server', CURL],
                 ['local', 'Lokal', LOCAL]
               ].map(([id, label, command]) => (
-                <div key={id} style={{ display: 'flex', gap: 'var(--s-3)', alignItems: 'center', background: 'var(--navy-deep)', borderRadius: 'var(--radius-sm)', padding: 'var(--s-3) var(--s-4)', minInlineSize: 0 }}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--amber-hi)', minInlineSize: '3.25rem', flexShrink: 0, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{label}</span>
-                  <code style={{ background: 'transparent', border: 0, padding: 0, color: '#cfe0ff', fontSize: 'var(--text-xs)', overflowX: 'auto', whiteSpace: 'nowrap', flex: '1 1 0%', minInlineSize: 0 }}>{command}</code>
+                <div key={id} className="command-row">
+                  <span className="command-row__label">{label}</span>
+                  <code className="command-row__code">{command}</code>
                   <button onClick={() => copy(command!, id!)} className="btn btn-solid btn-sm" type="button">
                     {copied === id ? 'Tersalin' : 'Salin'}
                   </button>
@@ -160,7 +160,7 @@ export default function Unduh() {
                 <h2 id="supportTitle" className="section-title">Browser yang didukung.</h2>
               </div>
             </div>
-            <div className="table-wrapper" tabIndex={0} role="region" aria-label="Browser yang didukung" style={{ maxWidth: '40rem' }}>
+            <div className="table-wrapper table-wrapper--compact" tabIndex={0} role="region" aria-label="Browser yang didukung">
               <table className="table">
                 <thead><tr><th scope="col">Browser</th><th scope="col">.zip</th><th scope="col">.crx</th></tr></thead>
                 <tbody>
@@ -170,16 +170,16 @@ export default function Unduh() {
                 </tbody>
               </table>
             </div>
-            <p className="note" style={{ marginTop: 'var(--s-3)' }}>Store masih review. Muat arsipnya dengan tangan.</p>
+            <p className="note note--spaced">Store masih review. Muat arsipnya dengan tangan.</p>
           </div>
         </section>
 
         <section className="band">
           <div className="wrap">
             <div className="cta-band">
-              <h2 className="section-title" style={{ color: '#ffffff' }}>Terpasang? Tunjuk satu tab.</h2>
+              <h2 className="section-title text-on-dark">Terpasang? Tunjuk satu tab.</h2>
               <p>Tulis satu perintah, lihat langkahnya, lalu ambil berkasnya.</p>
-              <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
+              <div className="hero-cta mt-2">
                 <Link className="btn btn-solid" to="/docs">Buka docs</Link>
                 <Link className="btn btn-ghost" to="/harga">Lihat harga</Link>
               </div>

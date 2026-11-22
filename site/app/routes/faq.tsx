@@ -41,7 +41,7 @@ export default function Faq() {
 
         <section className="band" aria-labelledby="faqTitle">
           <div className="wrap">
-            <h2 id="faqTitle" className="section-title" style={{ marginBottom: 'var(--s-5)' }}>Tanya jawab.</h2>
+            <h2 id="faqTitle" className="section-title mb-5">Tanya jawab.</h2>
             <div className="faq">
               {QA.map(([id, q, a]) => (
                 <details key={id} id={id}>
@@ -56,9 +56,9 @@ export default function Faq() {
         <section className="band">
           <div className="wrap">
             <div className="cta-band">
-              <h2 className="section-title" style={{ color: '#ffffff' }}>Masih ada yang kurang jelas?</h2>
+              <h2 className="section-title text-on-dark">Masih ada yang kurang jelas?</h2>
               <p>Baca dokumentasi lengkapnya, atau kirim pertanyaan lewat email dengan langkah yang Anda coba.</p>
-              <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
+              <div className="hero-cta mt-2">
                 <Link className="btn btn-solid" to="/docs">Buka docs</Link>
                 <Link className="btn btn-ghost" to="/dukungan">Dukungan</Link>
               </div>
