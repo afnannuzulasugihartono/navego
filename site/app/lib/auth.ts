@@ -1,6 +1,8 @@
 // Navego's client-side auth + API helpers.
 // No SDK, no secrets: the publishable key is public by design, the session lives in this browser's localStorage, and every call that carries identity goes to the project's Auth or REST host only.
 
+// decisions.json -> site-auth-01, site-session-state-01
+
 export const PUBLISHABLE_KEY = 'sb_publishable_jAbS_QIQsmXQA-Rj8RWPcg_JVeBedJ6';
 export const REST = 'https://nenmkmtvjremqphfqnfw.supabase.co/rest/v1';
 export const AUTH_HOST = 'https://nenmkmtvjremqphfqnfw.supabase.co/auth/v1';
@@ -9,6 +11,8 @@ export const UPDATE_FN = 'https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/
 
 const ACCESS_KEY = 'navego-access-token';
 const REFRESH_KEY = 'navego-refresh-token';
+const EMAIL_KEY = 'navego-session-email';
+const SESSION_EVENT = 'navego:session';
 const RETURNABLE = /^\.\/[A-Za-z0-9._~/?=&%#-]*$/;
 const SAME_SITE_RETURNABLE = /^\/(?!\/)[A-Za-z0-9._~/?=&%#-]*$/;
 
@@ -25,12 +29,18 @@ export function safeReturnPath(asked: string): string | null {
   return null;
 }
 
-// The site runs in a browser, and this module is also read by the Node test project, which has no DOM lib; the cast names the two globals it needs.
+// The site runs in a browser, and this module is also read by the Node test project, which has no DOM lib; the cast names the globals it needs.
 
 type LockManagerLike = { request: (name: string, run: () => Promise<string | null>) => Promise<string | null> };
+type EventTargetLike = {
+  addEventListener: (name: string, run: (event: Event) => void) => void;
+  removeEventListener: (name: string, run: (event: Event) => void) => void;
+};
 const browserGlobals = globalThis as {
   location?: { search?: string };
   navigator?: { locks?: LockManagerLike };
+  window?: EventTargetLike & { dispatchEvent: (event: Event) => boolean };
+  localStorage?: { getItem: (key: string) => string | null; setItem: (key: string, value: string) => void; removeItem: (key: string) => void };
 };
 
 export function getReturnTo(): string {
@@ -40,7 +50,7 @@ export function getReturnTo(): string {
 
 export function getStoredToken(): string | null {
   try {
-    return localStorage.getItem(ACCESS_KEY);
+    return browserGlobals.localStorage?.getItem(ACCESS_KEY) ?? null;
   } catch {
     return null;
   }
@@ -48,15 +58,15 @@ export function getStoredToken(): string | null {
 
 export function storeToken(token: string | null) {
   try {
-    if (token) localStorage.setItem(ACCESS_KEY, token);
-    else localStorage.removeItem(ACCESS_KEY);
+    if (token) browserGlobals.localStorage?.setItem(ACCESS_KEY, token);
+    else browserGlobals.localStorage?.removeItem(ACCESS_KEY);
   } catch {
   }
 }
 
 export function getRefreshToken(): string | null {
   try {
-    return localStorage.getItem(REFRESH_KEY);
+    return browserGlobals.localStorage?.getItem(REFRESH_KEY) ?? null;
   } catch {
     return null;
   }
@@ -64,8 +74,8 @@ export function getRefreshToken(): string | null {
 
 export function storeRefreshToken(token: string | null) {
   try {
-    if (token) localStorage.setItem(REFRESH_KEY, token);
-    else localStorage.removeItem(REFRESH_KEY);
+    if (token) browserGlobals.localStorage?.setItem(REFRESH_KEY, token);
+    else browserGlobals.localStorage?.removeItem(REFRESH_KEY);
   } catch {
   }
 }
@@ -73,6 +83,55 @@ export function storeRefreshToken(token: string | null) {
 export function clearSession() {
   storeToken(null);
   storeRefreshToken(null);
+  storeEmail(null);
+  announceSession(null);
+}
+
+// The email is a comfort, not the authority: the token is proved against the auth host before it counts.
+// A remembered email without a token is a leftover, not a session: the browser that lost the token lost the session with it.
+
+export function getStoredEmail(): string | null {
+  try {
+    if (!browserGlobals.localStorage?.getItem(ACCESS_KEY)) return null;
+    return browserGlobals.localStorage.getItem(EMAIL_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function storeEmail(email: string | null) {
+  try {
+    if (email) browserGlobals.localStorage?.setItem(EMAIL_KEY, email);
+    else browserGlobals.localStorage?.removeItem(EMAIL_KEY);
+  } catch {
+  }
+}
+
+// Every tab learns the change, so a sign-in in one tab flips the header in the others without a reload.
+
+export function announceSession(email: string | null) {
+  try {
+    browserGlobals.window?.dispatchEvent(new CustomEvent(SESSION_EVENT, { detail: email }));
+  } catch {
+  }
+}
+
+export function onSessionChange(run: (email: string | null) => void): () => void {
+  const handler = (event: Event) => {
+    const detail = (event as CustomEvent<string | null>).detail;
+    // A storage event from another tab carries the key that changed, not the account; the stored email answers it.
+    if (typeof detail !== 'string') {
+      run(getStoredEmail());
+      return;
+    }
+    run(detail);
+  };
+  browserGlobals.window?.addEventListener(SESSION_EVENT, handler);
+  browserGlobals.window?.addEventListener('storage', handler);
+  return () => {
+    browserGlobals.window?.removeEventListener(SESSION_EVENT, handler);
+    browserGlobals.window?.removeEventListener('storage', handler);
+  };
 }
 
 export async function proveSession(accessToken: string): Promise<{ email?: string; error?: string | number }> {
@@ -84,6 +143,7 @@ export async function proveSession(accessToken: string): Promise<{ email?: strin
   const refreshed = user?.session?.refresh_token;
   if (typeof refreshed === 'string' && refreshed.length > 0) storeRefreshToken(refreshed);
   if (typeof user?.email !== 'string' || user.email.length === 0) return { error: 'tanpa-email' };
+  storeEmail(user.email);
   return { email: user.email };
 }
 
@@ -94,6 +154,8 @@ export async function proveSession(accessToken: string): Promise<{ email?: strin
 // A refresh token rotates, so two refreshes at once turn the second one into a stolen-token refusal that clears the session.
 
 const REFRESH_LOCK = 'navego-token-refresh';
+
+// The renewal answer carries the account; storing it keeps the header honest without a second round trip.
 
 async function renewOnce(): Promise<string | null> {
   const refreshToken = getRefreshToken();
@@ -113,10 +175,11 @@ async function renewOnce(): Promise<string | null> {
     return null;
   }
   if (!response.ok) return null;
-  const renewed = await response.json().catch(() => null) as { access_token?: unknown; refresh_token?: unknown } | null;
+  const renewed = await response.json().catch(() => null) as { access_token?: unknown; refresh_token?: unknown; user?: { email?: unknown } } | null;
   if (typeof renewed?.access_token !== 'string' || renewed.access_token.length === 0) return null;
   storeToken(renewed.access_token);
   if (typeof renewed.refresh_token === 'string' && renewed.refresh_token.length > 0) storeRefreshToken(renewed.refresh_token);
+  if (typeof renewed.user?.email === 'string' && renewed.user.email.length > 0) storeEmail(renewed.user.email);
   return renewed.access_token;
 }
 
@@ -150,6 +213,22 @@ export async function ensureSession(): Promise<string | null> {
     if (proof && 'email' in proof) return stored;
   }
   return renewAccessToken();
+}
+
+// The account behind the stored session, proved once and then remembered.
+// The header asks this on every page, so it answers from the stored email first and only proves the token when the email is missing.
+
+export async function sessionAccount(): Promise<string | null> {
+  const stored = getStoredToken();
+  if (!stored) return null;
+  const remembered = getStoredEmail();
+  if (remembered) return remembered;
+  const proof = await proveSession(stored).catch(() => ({}));
+  if (proof && 'email' in proof) return proof.email ?? null;
+  const renewed = await renewAccessToken();
+  if (!renewed) return null;
+  const afterRenewal = await proveSession(renewed).catch(() => ({}));
+  return afterRenewal && 'email' in afterRenewal ? afterRenewal.email ?? null : null;
 }
 
 export function headersFor(token: string) {

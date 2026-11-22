@@ -6,7 +6,7 @@ import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { NavegoMark, NavegoWordmark } from '../components/NavegoMark';
 
-import { AUTH_HOST, clearSession, getReturnTo, getRefreshToken, getStoredToken, proveSession, renewAccessToken, storeRefreshToken, storeToken, PUBLISHABLE_KEY } from '../lib/auth';
+import { AUTH_HOST, announceSession, clearSession, getReturnTo, getRefreshToken, getStoredToken, proveSession, renewAccessToken, storeEmail, storeRefreshToken, storeToken, PUBLISHABLE_KEY } from '../lib/auth';
 
 export function meta() {
   return seoMeta({
@@ -47,6 +47,8 @@ export default function Index() {
         if (proof && 'email' in proof) {
           storeToken(accessToken);
           if (refreshToken) storeRefreshToken(refreshToken);
+          storeEmail(proof.email as string);
+          announceSession(proof.email as string);
           window.location.replace(returnTo());
           return;
         }
@@ -72,6 +74,7 @@ export default function Index() {
           setWho(proof.email as string);
           setPhase('signedIn');
           setReturning(true);
+          announceSession(proof.email as string);
         }
       }
     })();

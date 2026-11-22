@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
-import { AUTH_HOST, clearSession, ensureSession, headersFor, REST } from '../lib/auth';
+import { AUTH_HOST, clearSession, ensureSession, headersFor, REST, storeEmail } from '../lib/auth';
 
 export function meta() {
   return seoMeta({
@@ -77,6 +77,7 @@ export default function Akun() {
         return;
       }
       setState((s) => ({ ...s, loading: false, user }));
+      if (typeof user?.email === 'string' && user.email.length > 0) storeEmail(user.email);
       try {
         const response = await fetch(`${REST}/rpc/opera_my_devices`, { method: 'POST', headers: headersFor(token), body: '{}' });
         const data = await response.json();

@@ -695,7 +695,7 @@
     {
       "id": "D76",
       "scope": "web/components",
-      "decision": "The bar carries brand (links home) and two actions, Masuk and Pasang gratis, nothing else - the centered Beranda text link is removed; the chevron and the panel spotlight remain the route home.",
+      "decision": "The bar carries brand (links home) and two actions, nothing else: \"Masuk\" while the browser holds no session, \"Dashboard\" once it does, and the amber \"Pasang gratis\" CTA either way - the centered Beranda text link is removed; the chevron and the panel spotlight remain the route home.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-19: \"fix element beranda yang masih di atas nav bar\" (answer: \"Label Beranda di tengah bar\") - the centered link sits awkwardly against D51: brand left, one amber CTA right, chevron is the sole navigation surface"
@@ -998,6 +998,17 @@
         "ref": "https://owasp.org/www-community/attacks/Open_redirects (an unvalidated redirect target lets an attacker send a person off-site after a trusted login)"
       },
       "file": "site/app/lib/auth.ts"
+    },
+    {
+      "id": "site-session-state-01",
+      "scope": "web/auth",
+      "file": "site/app/lib/auth.ts",
+      "decision": "The session is stored in this browser's localStorage and survives a tab close and a browser restart: the access token, the rotating refresh token, and the account email. The header reads the account from that store, so a visitor sees whether they are signed in on every page, and a sign-in or a sign-out in one tab flips the header in the others without a reload.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-22: 'fix ini supaya kelihatan sudah login atau belum dan bisa menyimpan sesi login'",
+        "also": "site/app/components/Chrome.tsx (the header reads the account)"
+      }
     },
     {
       "id": "site-plan-shape-01",

@@ -5,7 +5,7 @@ import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { NavegoMark } from '../components/NavegoMark';
-import { AUTH_HOST, clearSession, ensureSession, headersFor } from '../lib/auth';
+import { AUTH_HOST, announceSession, clearSession, ensureSession, headersFor, storeEmail } from '../lib/auth';
 import {
   type Device,
   type PlanAnswer,
@@ -164,7 +164,12 @@ export default function Dashboard() {
         const response = await fetch(`${AUTH_HOST}/user`, { headers: headersFor(token) });
         if (response.ok) {
           const user = await response.json();
-          setUserEmail(user?.email || '');
+          const account = typeof user?.email === 'string' ? user.email : '';
+          setUserEmail(account);
+          if (account) {
+            storeEmail(account);
+            announceSession(account);
+          }
         }
       } catch { /* the line is a comfort, not the decision */ }
       setReady(true);

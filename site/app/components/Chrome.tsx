@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { NavegoMark, NavegoWordmark } from './NavegoMark';
 import { readConsent, storeConsent, type ConsentChoice } from '../lib/consent.js';
+import { onSessionChange, sessionAccount } from '../lib/auth';
 
 const VERSION = '1.8.1';
 
@@ -31,6 +32,15 @@ const SUMBER = [
 ];
 
 export function SiteHeader({ current }: { current?: string }) {
+  const [email, setEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    let live = true;
+    void sessionAccount().then((account) => { if (live) setEmail(account); });
+    const stop = onSessionChange((account) => { if (live) setEmail(account); });
+    return () => { live = false; stop(); };
+  }, []);
+
   return (
     <header className="site-header" data-version={VERSION}>
       <div className="site-header-row site-header-bleed header-inner">
@@ -39,8 +49,17 @@ export function SiteHeader({ current }: { current?: string }) {
           <NavegoWordmark size={14} />
         </Link>
         <div className="header-actions">
-          <Link className="btn btn-ghost btn-sm" to="/">Masuk</Link>
-          <Link className="btn btn-solid btn-sm" to="/unduh">Pasang gratis</Link>
+          {email ? (
+            <>
+              <Link className="btn btn-ghost btn-sm" to="/dashboard" aria-label={`Akun ${email}`}>Dashboard</Link>
+              <Link className="btn btn-solid btn-sm" to="/unduh">Pasang gratis</Link>
+            </>
+          ) : (
+            <>
+              <Link className="btn btn-ghost btn-sm" to="/">Masuk</Link>
+              <Link className="btn btn-solid btn-sm" to="/unduh">Pasang gratis</Link>
+            </>
+          )}
         </div>
       </div>
 
