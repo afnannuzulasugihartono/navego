@@ -251,7 +251,7 @@ export function ensureBridgeLink() {
     client = createSocketClient({
       url: found.url,
       token: paired ? String(paired.deviceToken || '') : '',
-      deviceName: paired ? String(paired.deviceName || 'opera') : 'bridge',
+      deviceName: paired ? String(paired.deviceName || 'browser') : 'bridge',
       instanceId: mineId,
       extensionVersion: PRODUCT_VERSION,
       execute,

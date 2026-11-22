@@ -70,7 +70,7 @@ export async function getConfig() {
   }
   return {
     paired: !!cfg.paired,
-    deviceName: String(cfg.deviceName || 'opera'),
+    deviceName: String(cfg.deviceName || 'browser'),
     deviceToken: String(cfg.deviceToken || ''),
     deviceId: String(cfg.deviceId || ''),
     bridgeUrl,

@@ -231,7 +231,8 @@ export default function Dashboard() {
 
   async function runPairQuick() {
     if (pairPending) return;
-    const name = (pairName.trim() || 'opera').slice(0, 64);
+    // The device takes the browser family's name; the server adds the number when a second device of the same family appears.
+    const name = (pairName.trim() || 'browser').slice(0, 64);
     setPairOk(false);
     setPairPending(true);
     setPairStatus('Memasangkan browser ini…');
@@ -616,7 +617,7 @@ export default function Dashboard() {
                     <p className="text-sm text-muted-2">Satu klik saja — kode dibuat di server dan dikirim langsung ke ekstensi di browser ini. Tidak ada yang perlu diketik atau disalin.</p>
                     <div className="field field--spaced">
                       <label htmlFor="pairName">Nama device</label>
-                      <input id="pairName" type="text" autoComplete="off" spellCheck={false} maxLength={64} placeholder="opera" value={pairName} onChange={(event) => setPairName(event.target.value)} />
+                      <input id="pairName" type="text" autoComplete="off" spellCheck={false} maxLength={64} placeholder="browser" value={pairName} onChange={(event) => setPairName(event.target.value)} />
                     </div>
                     <button className="btn btn-solid" type="button" disabled={pairPending} aria-busy={pairPending} onClick={runPairQuick}>{pairOk ? 'siap Ter-pairing' : pairPending ? 'Memasangkan…' : 'Pasangkan browser ini'}</button>
                     <p className="status mt-2" role="status" aria-live="polite">{pairStatus}</p>

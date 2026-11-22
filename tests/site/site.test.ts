@@ -246,3 +246,20 @@ test('the decision register names values the shipping CSS carries', () => {
     assert.ok(css.includes(value), `${id} names ${value}, which the shipping CSS does not carry`);
   }
 });
+
+// The row's children must be allowed to shrink: a fixed gap and a rigid row pushed the last pill past the viewport at 320 px.
+
+test('the bar is never cut off, at any width', () => {
+  const css = fs.readFileSync(path.join(site, 'app/brand.css'), 'utf8');
+  assert.match(css, /\.header-inner > \* \{ min-width: 0; white-space: nowrap; \}/);
+  assert.match(css, /\.brand \{[^}]*flex-shrink: 1;/);
+  assert.match(css, /\.header-actions \{[^}]*flex-shrink: 0;/);
+  assert.match(css, /@media \(max-width: 400px\) \{/);
+});
+
+test('no live surface names the product by the browser it drives', () => {
+  const plugin = fs.readFileSync(path.join(site, 'public/chatgpt-plugin/ai-plugin.json'), 'utf8');
+  assert.equal(/opera browser/i.test(plugin), false, 'the plugin manifest names the product, not one browser');
+  const dashboard = fs.readFileSync(path.join(site, 'app/routes/dashboard.tsx'), 'utf8');
+  assert.equal(/'opera'/.test(dashboard), false, 'a new device takes the browser family name');
+});
