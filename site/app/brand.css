@@ -13,28 +13,28 @@
  * cards - one surface system - lines 224-234.
  * steps - lines 235-264.
  * pricing (harga) - lines 265-293.
- * comparison table (prices) - lines 294-333.
- * FAQ - lines 334-354.
- * download cards (/unduh) - lines 355-370.
- * footer - lines 371-412.
- * docs layout - lines 413-449.
- * dashboard - lines 450-507.
- * auth - lines 508-560.
- * legal - lines 561-568.
- * miscellany - lines 569-581.
- * dashboard utilities - lines 582-606.
- * misc - lines 607-609.
- * command preview (beranda) - lines 610-612.
- * try (beranda) — one product demo, two panels - lines 613-637.
- * visual system: browser window, tiles, article, docs, dashboard - lines 638-731.
- * apple-style page language - lines 732-767.
- * role tabs (fitur) - lines 768-777.
- * akun page split - lines 778-782.
- * reduced motion - lines 783-789.
- * changelog — the release ledger, one row per version - lines 790-801.
- * route components — the classes the routes carry - lines 802-915.
- * utility layer — every value below comes from a token - lines 916-957.
- * consent banner — one first-party cookie, said plainly, fixed to the bottom - lines 958-966.
+ * comparison table (prices) - lines 294-335.
+ * FAQ - lines 336-356.
+ * download cards (/unduh) - lines 357-372.
+ * footer - lines 373-414.
+ * docs layout - lines 415-452.
+ * dashboard - lines 453-510.
+ * auth - lines 511-563.
+ * legal - lines 564-571.
+ * miscellany - lines 572-584.
+ * dashboard utilities - lines 585-609.
+ * misc - lines 610-612.
+ * command preview (beranda) - lines 613-615.
+ * try (beranda) — one product demo, two panels - lines 616-640.
+ * visual system: browser window, tiles, article, docs, dashboard - lines 641-734.
+ * apple-style page language - lines 735-770.
+ * role tabs (fitur) - lines 771-780.
+ * akun page split - lines 781-785.
+ * reduced motion - lines 786-792.
+ * changelog — the release ledger, one row per version - lines 793-804.
+ * route components — the classes the routes carry - lines 805-918.
+ * utility layer — every value below comes from a token - lines 919-960.
+ * consent banner — one first-party cookie, said plainly, fixed to the bottom - lines 961-969.
  */
 
 /* ========== header — brand and CTA; the chevron is the only navigation surface ========== */
@@ -92,7 +92,7 @@
 @starting-style {
   .nav-notch-wrap:hover .nav-strip, .nav-notch-wrap:focus-within .nav-strip, .nav-strip:hover { opacity: 0; translate: 0 -8px; }
 }
-.nav-strip-inner { width: min(1120px, 100% - 2 * var(--gutter)); margin-inline: auto; display: grid; grid-template-columns: 1.15fr 1fr 1fr 1fr; gap: var(--s-7); align-items: start; }
+.nav-strip-inner { width: min(1120px, 100% - 2 * var(--gutter)); margin-inline: auto; display: grid; grid-template-columns: minmax(0, 1.15fr) repeat(3, minmax(0, 1fr)); gap: var(--s-7); align-items: start; }
 .nav-col-heading { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.12em; text-transform: uppercase; color: #8fa8d8; margin-bottom: var(--s-3); }
 .nav-spot { display: grid; align-content: start; gap: var(--s-3); }
 .nav-spot-title { font-family: var(--font-display); font-size: var(--text-2xl); line-height: 1.15; letter-spacing: -0.02em; color: #ffffff; }
@@ -155,7 +155,7 @@
 }
 .hero-grid {
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
   gap: var(--s-8);
   align-items: center;
 }
@@ -266,7 +266,7 @@
 
 .plans {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr));
   gap: var(--s-4);
   align-items: start;
 }
@@ -298,10 +298,12 @@
   border: 1px solid var(--line-dark);
   border-radius: var(--radius);
   background: var(--paper);
+  max-inline-size: 100%;
 }
 .table-wrapper:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
 .table {
   width: 100%;
+  min-inline-size: min-content;
   border-collapse: collapse;
   font-size: var(--text-sm);
 }
@@ -378,7 +380,7 @@
 }
 .footer-cols {
   display: grid;
-  grid-template-columns: 1.4fr repeat(4, 1fr);
+  grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr));
   gap: var(--s-6);
 }
 .footer-tag { color: #8fa8d8; font-size: var(--text-sm); margin-top: var(--s-3); }
@@ -414,7 +416,7 @@
 
 .docs-layout {
   display: grid;
-  grid-template-columns: 15rem minmax(0, 1fr);
+  grid-template-columns: minmax(min(15rem, 100%), 15rem) minmax(0, 1fr);
   gap: var(--s-7);
   align-items: start;
   padding: var(--s-6) 0 var(--s-8);
@@ -424,8 +426,9 @@
   top: 4.75rem;
   display: grid;
   gap: var(--s-1);
-  align-content: start;
   font-size: var(--text-sm);
+  max-inline-size: 100%;
+  min-inline-size: 0;
 }
 .docs-rail a {
   padding: var(--s-2) var(--s-3);
@@ -443,7 +446,7 @@
 
 @media (max-width: 860px) {
   .docs-layout { grid-template-columns: 1fr; gap: var(--s-5); }
-  .docs-rail { position: static; grid-auto-flow: column; overflow-x: auto; padding-bottom: var(--s-2); }
+  .docs-rail { position: static; grid-auto-flow: column; overflow-x: auto; max-inline-size: 100%; min-inline-size: 0; contain: inline-size; padding-bottom: var(--s-2); }
   .docs-rail a { white-space: nowrap; }
 }
 
@@ -451,7 +454,7 @@
 
 .app {
   display: grid;
-  grid-template-columns: 16rem 1fr;
+  grid-template-columns: minmax(min(16rem, 100%), 16rem) minmax(0, 1fr);
   min-height: 60vh;
   border: 1px solid var(--line-dark);
   border-radius: var(--radius);
@@ -612,7 +615,7 @@
 
 /* ========== try (beranda) — one product demo, two panels ========== */
 
-.try-panel { display: grid; grid-template-columns: 1.1fr 1fr; background: var(--navy-deep); border-radius: var(--radius); overflow: hidden; }
+.try-panel { display: grid; grid-template-columns: minmax(min(1.1fr, 100%), 1.1fr) minmax(0, 1fr); background: var(--navy-deep); border-radius: var(--radius); overflow: hidden; }
 .try-command { display: grid; align-content: center; gap: var(--s-4); padding: var(--s-7); color: var(--text-on-dark); }
 .try-trace { display: grid; align-content: center; gap: var(--s-4); padding: var(--s-6); background: var(--paper); color: var(--ink); }
 .try-eyebrow { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber-hi); }
@@ -653,7 +656,7 @@
 .file-chip { display: flex; align-items: center; gap: var(--s-2); min-inline-size: 0; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: var(--s-2) var(--s-3); font-family: var(--font-mono); font-size: var(--text-xs); color: var(--muted-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .file-chip b { color: var(--good); font-size: var(--text-xs); }
 
-.tile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: var(--s-4); }
+.tile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); gap: var(--s-4); }
 .tile { background: var(--paper); border: 1px solid var(--line-dark); border-radius: var(--radius); padding: var(--s-5); display: grid; gap: var(--s-2); align-content: start; }
 .tile h3 { font-weight: 600; }
 .tile svg { width: 26px; height: 26px; color: var(--navy); margin-bottom: var(--s-2); }
@@ -675,8 +678,8 @@
 .article-hero { padding: var(--s-7) 0 var(--s-5); border-bottom: 1px solid var(--line); }
 .article-hero h1 { font-size: var(--text-title); line-height: var(--leading-display); letter-spacing: -0.02em; color: var(--navy-deep); }
 .article-meta { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-4); font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.article-layout { display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: var(--s-8); align-items: start; padding: var(--s-6) 0 var(--s-8); }
-.article-toc { position: sticky; top: 4.75rem; display: grid; gap: 2px; font-size: var(--text-sm); }
+.article-layout { display: grid; grid-template-columns: minmax(min(13rem, 100%), 13rem) minmax(0, 1fr); gap: var(--s-8); align-items: start; padding: var(--s-6) 0 var(--s-8); }
+.article-toc { position: sticky; top: 4.75rem; display: grid; gap: 2px; font-size: var(--text-sm); max-inline-size: 100%; min-inline-size: 0; }
 .article-toc a { color: var(--muted-2); text-decoration: none; padding: var(--s-1) var(--s-2); border-left: 2px solid transparent; }
 .article-toc a:hover { color: var(--navy); border-left-color: var(--line-dark); }
 .article-body { min-inline-size: 0; }
@@ -696,7 +699,7 @@
 
 @media (max-width: 860px) {
   .article-layout { grid-template-columns: 1fr; gap: var(--s-5); }
-  .article-toc { position: static; grid-auto-flow: column; overflow-x: auto; padding-bottom: var(--s-2); }
+  .article-toc { position: static; grid-auto-flow: column; overflow-x: auto; max-inline-size: 100%; min-inline-size: 0; contain: inline-size; padding-bottom: var(--s-2); }
   .article-toc a { white-space: nowrap; border-left: 0; border-bottom: 2px solid transparent; }
   .article-toc a:hover { border-bottom-color: var(--line-dark); }
 }
@@ -712,7 +715,7 @@
 
 /* docs quick start */
 
-.start-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: var(--s-4); margin: var(--s-5) 0; }
+.start-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); gap: var(--s-4); margin: var(--s-5) 0; }
 .start-card { display: grid; gap: var(--s-2); align-content: start; background: var(--paper); border: 1px solid var(--line-dark); border-radius: var(--radius); padding: var(--s-5); }
 .start-card b { font-family: var(--font-display); font-size: var(--text-lg); line-height: 1.2; color: var(--navy-deep); }
 .start-card span { font-size: var(--text-sm); color: var(--muted-2); }
@@ -720,7 +723,7 @@
 
 /* dashboard tiles */
 
-.dash-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: var(--s-3); margin-bottom: var(--s-5); }
+.dash-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); gap: var(--s-3); margin-bottom: var(--s-5); }
 .tile-metric { display: grid; gap: var(--s-1); align-content: start; border: 1px solid var(--line-dark); border-radius: var(--radius-sm); background: var(--panel); padding: var(--s-4); }
 .tile-metric small { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .tile-metric b { font-family: var(--font-display); font-size: var(--text-xl); line-height: 1.1; font-weight: 700; color: var(--navy-deep); font-variant-numeric: tabular-nums; }
@@ -739,7 +742,7 @@
 .page-hero .note { max-width: none; margin-inline: 0; }
 @media (max-width: 860px) { .page-hero { padding: var(--s-7) 0 var(--s-6); } .page-hero h1 { font-size: var(--text-3xl); } }
 
-.band { padding: var(--s-9) 0; }
+.band { padding: var(--s-9) 0; max-inline-size: 100%; overflow-x: clip; }
 .band-soft { background: var(--panel-2); }
 .band-dark { background: var(--navy-deep); color: #eaf0ff; }
 .band-dark h2, .band-dark h3, .band-dark .section-title { color: #ffffff; }
@@ -747,19 +750,19 @@
 .band-dark .section-note { color: #9fb4e8; }
 .band-dark .card { background: #16204a; border-color: #26355f; }
 
-.card-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(16rem, 1fr); gap: var(--s-4); overflow-x: auto; padding-bottom: var(--s-3); scroll-snap-type: x mandatory; }
+.card-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(min(16rem, 100%), 1fr); gap: var(--s-4); overflow-x: auto; padding-bottom: var(--s-3); scroll-snap-type: x mandatory; }
 .card-row > * { scroll-snap-align: start; }
 @media (min-width: 981px) {
-  .card-row { grid-auto-flow: row; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); overflow: visible; }
+  .card-row { grid-auto-flow: row; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); overflow: visible; }
 }
 
-.tile-xl { display: grid; gap: var(--s-3); align-content: start; background: var(--paper); border: 0; border-radius: 18px; padding: var(--s-6); box-shadow: 0 1px 2px rgb(13 19 56 / 0.04); text-decoration: none; color: inherit; }
+.tile-xl { display: grid; gap: var(--s-3); align-content: start; background: var(--paper); border: 0; border-radius: 18px; padding: var(--s-6); box-shadow: 0 1px 2px rgb(13 19 56 / 0.04); text-decoration: none; color: inherit; max-inline-size: 100%; min-inline-size: 0; }
 .tile-xl h3 { font-size: var(--text-xl); font-weight: 600; }
 .tile-xl p { color: var(--muted-2); font-size: var(--text-base); }
 .tile-media { display: grid; place-items: center; block-size: 8.5rem; border-radius: 12px; background: var(--panel-2); color: var(--navy); }
 .tile-media svg { width: 38px; height: 38px; }
 
-.value-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: var(--s-4); }
+.value-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); gap: var(--s-4); }
 .value-card { background: var(--paper); border-radius: 18px; padding: var(--s-6); display: grid; gap: var(--s-2); align-content: start; }
 .value-card b { font-family: var(--font-display); font-size: var(--text-lg); line-height: 1.25; font-weight: 600; color: var(--navy-deep); }
 .value-card p { font-size: var(--text-base); color: var(--muted-2); }
@@ -904,7 +907,7 @@
 .unduh-grid { display: grid; gap: var(--s-3); max-width: 54rem; }
 .dl-note { font-size: var(--text-xs); color: var(--muted); }
 .note--spaced { margin-top: var(--s-3); }
-.plans--dense { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+.plans--dense { grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); }
 .value-grid--single { grid-template-columns: 1fr; }
 .band--flush-top { padding-top: 0; }
 .band--flush-bottom { padding-bottom: 0; }

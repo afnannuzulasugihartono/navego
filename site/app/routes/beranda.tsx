@@ -7,8 +7,8 @@ import { SiteHeader, SiteFooter } from '../components/Chrome';
 
 export function meta() {
   return seoMeta({
-    title: 'Navego — AI untuk browser Anda',
-    description: 'Navego membaca tab yang Anda tunjuk, mengisi kolom, mengklik tombol, lalu menyimpan hasilnya sebagai berkas.',
+    title: 'Navego — AI agent di browser Anda',
+    description: 'Tunjuk satu tab, tulis satu perintah. Navego membaca halaman, mengisi formulir, mengklik, dan menyimpan hasilnya sebagai berkas nyata — tanpa eval, tanpa skrip.',
     path: '/beranda'
   });
 }
@@ -74,9 +74,9 @@ export default function Beranda() {
         <section className="hero" aria-labelledby="judul-beranda">
           <div className="wrap hero-grid">
             <div className="hero-copy">
-              <h1 id="judul-beranda">Kendalikan browser lokal Anda lewat AI agent.</h1>
+              <h1 id="judul-beranda">Tunjuk tab. Tulis perintah. Dapat berkas.</h1>
               <p className="lede">
-                Navego menghubungkan MCP ke browser lokal Anda — Chrome, Edge, Brave, Opera, atau Vivaldi. 40 alat MCP, 36 primitif browser, dan tanpa eval.
+                Navego adalah AI agent yang berjalan di browser Anda sendiri — membaca halaman yang Anda tunjuk, mengisi formulir, mengklik, dan menyimpan hasilnya. Tanpa eval, tanpa skrip.
               </p>
               <div className="hero-cta">
                 <Link className="btn btn-solid" to="/unduh">Mulai gratis</Link>

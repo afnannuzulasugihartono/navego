@@ -141,9 +141,26 @@ function regionFrom(request: Request): string | null {
 // Serving .html inline would hydrate against the pretty route id baked into the file and React error #418 on every page; a 301 keeps the legacy URLs honest without baking a second manifest.
 // the fallback answers 404 with the real page because the Pages asset server answers missing paths with an empty 404 - unknown paths deserve the designed page like every other route.
 
+// THE PREDECESSOR DOMAIN REDIRECTS PERMANENTLY because the old opera-agent.pages.dev host still serves this same Pages project, and a reader who follows an old link must land on the product's name, not on a stale copy of the site under a retired domain.
+// The host check runs before any asset is served, so every path on the old host - including asset paths - moves with the visitor.
+// The redirect keeps the path, the query and the hash, so a deep link to a pairing door (/dashboard.html?pair=1#pairing) survives the move.
+
+const CANONICAL_HOST = 'navego.pages.dev';
+const LEGACY_HOSTS = new Set(['opera-agent.pages.dev']);
+
+function canonicalRedirect(request: Request): Response {
+  const asked = new URL(request.url);
+  return new Response(null, {
+    status: 301,
+    headers: { location: `https://${CANONICAL_HOST}${asked.pathname}${asked.search}${asked.hash}` }
+  });
+}
+
 export default {
   async fetch(request: Request, env: PagesEnv): Promise<Response> {
-    const path = new URL(request.url).pathname;
+    const url = new URL(request.url);
+    if (LEGACY_HOSTS.has(url.hostname)) return canonicalRedirect(request);
+    const path = url.pathname;
     if (path === '/index' || path === '/index.html') return new Response(null, { status: 301, headers: { location: '/' } });
     if (path === '/404.html') return env.ASSETS.fetch(request);
     if (path === REGION_PATH) {

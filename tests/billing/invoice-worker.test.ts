@@ -194,6 +194,28 @@ test('the /api/region door answers null rather than guessing when the edge says 
   assert.deepEqual(await response.json(), { country: null });
 });
 
+// THE PREDECESSOR DOMAIN MUST NOT SERVE A STALE COPY, so the old host answers 301 to the canonical one with the path, query and hash intact.
+
+test('the predecessor domain redirects permanently to the canonical host', async () => {
+  const response = await worker.fetch(new Request('https://opera-agent.pages.dev/beranda'), env);
+  assert.equal(response.status, 301);
+  assert.equal(response.headers.get('location'), 'https://navego.pages.dev/beranda');
+  assert.equal(assetCalls.length, 0, 'no asset is served from the old host');
+});
+
+test('the redirect keeps a pairing deep link intact', async () => {
+  const response = await worker.fetch(new Request('https://opera-agent.pages.dev/dashboard.html?pair=1#pairing'), env);
+  assert.equal(response.status, 301);
+  assert.equal(response.headers.get('location'), 'https://navego.pages.dev/dashboard.html?pair=1#pairing');
+});
+
+test('the canonical host is served as itself, never redirected', async () => {
+  reset(() => new Response('asset'));
+  const response = await worker.fetch(new Request('https://navego.pages.dev/beranda'), env);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('location'), null);
+});
+
 test('the worker carries no secret, because a page worker is public code', () => {
   const source = fs.readFileSync(new URL('../../site/worker/_worker.ts', import.meta.url), 'utf8');
   for (const name of ['SERVICE_ROLE', 'MIDTRANS_SERVER_KEY', 'BILLING_TOKEN', 'BILLING_SECRET', 'Bearer ', 'eyJ']) {
