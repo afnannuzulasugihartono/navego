@@ -53,9 +53,9 @@ What is true now, and what to do next. Cap 150 lines. Spent detail: git history.
 
 | Risk | Evidence | Severity |
 |---|---|---|
-| The dashboard counts a device online by its stored status, and nothing ever writes that status back down when the device stops checking in | 4 of the 5 listed devices carry status=online with last_seen_at between 2026-11-14 and 2026-11-21; the dashboard read "5 daring sekarang"; the register declares an idle-expired state with no writer, because the 7-day idle check only refuses at validation time | high |
+| The dashboard counts a device online by its stored status, and nothing ever writes that status back down when the device stops checking in | measured 2026-11-22: 4 of the 5 listed devices carried status=online with last_seen_at between 2026-11-14 and 2026-11-21 and the dashboard read "5 daring sekarang"; after the owner revoked three of them, opera-9 still reads online with a heartbeat from 2026-11-21 18:38; the register declares an idle-expired state with no writer, because the 7-day idle check only refuses at validation time | high |
 | The device rows keep a status the reader cannot trust, so the online count is a lie | opera_my_devices returns the stored status and the site reads it with a regex on the word online; no function in the live database writes status=offline for a device that went quiet | high |
-| Old commands pile up in the queue | 14383 rows still queued, 3 of them already past their expiry | medium |
+| Old commands pile up in the queue | 14383 rows still queued, 4 of them already past their expiry | medium |
 | The published extension is newer than the build installed in the browser under test | the update service serves 1.8.1 and the installed Brave extension reports 1.8.0 | low |
 | The Cloudflare token is still a break-glass write credential | gh secret list shows CF_TOKEN and CF_ACCOUNT_ID; the scope change is an owner action | medium |
 
