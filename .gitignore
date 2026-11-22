@@ -46,6 +46,7 @@ docs/store/navego-store.zip
 .supabase/
 hosted/.temp/
 supabase/.temp/
+supabase/
 
 # The coding agent's own machine-local configuration: the MCP server list for this checkout, which names this machine's paths and never ships.
 
