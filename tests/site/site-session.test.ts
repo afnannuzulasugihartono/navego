@@ -28,6 +28,11 @@ test('a remembered email without a token is not a session', () => {
   assert.match(auth, /if \(!browserGlobals\.localStorage\?\.getItem\(ACCESS_KEY\)\) return null;/);
 });
 
+test('the bar only claims a session the token can still carry', () => {
+  assert.match(auth, /export async function sessionAccount\(\): Promise<string \| null> \{[\s\S]*?const proof = await proveSession\(stored\)/);
+  assert.doesNotMatch(auth, /export async function sessionAccount\(\): Promise<string \| null> \{[\s\S]*?if \(remembered\) return remembered;/);
+});
+
 test('the header asks the session who the visitor is, and shows the dashboard when it knows', () => {
   assert.match(chrome, /sessionAccount\(\)/);
   assert.match(chrome, /to="\/dashboard"/);

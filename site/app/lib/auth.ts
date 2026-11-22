@@ -144,6 +144,7 @@ export async function proveSession(accessToken: string): Promise<{ email?: strin
   if (typeof refreshed === 'string' && refreshed.length > 0) storeRefreshToken(refreshed);
   if (typeof user?.email !== 'string' || user.email.length === 0) return { error: 'tanpa-email' };
   storeEmail(user.email);
+  announceSession(user.email);
   return { email: user.email };
 }
 
@@ -215,20 +216,20 @@ export async function ensureSession(): Promise<string | null> {
   return renewAccessToken();
 }
 
-// The account behind the stored session, proved once and then remembered.
-// The header asks this on every page, so it answers from the stored email first and only proves the token when the email is missing.
+// The account behind the stored session.
+// The header asks this on every page, so it must answer only for a session that still works: a remembered email with a dead token is not a session, and claiming one would send the visitor to a dashboard that refuses them.
 
 export async function sessionAccount(): Promise<string | null> {
   const stored = getStoredToken();
   if (!stored) return null;
-  const remembered = getStoredEmail();
-  if (remembered) return remembered;
   const proof = await proveSession(stored).catch(() => ({}));
   if (proof && 'email' in proof) return proof.email ?? null;
   const renewed = await renewAccessToken();
   if (!renewed) return null;
   const afterRenewal = await proveSession(renewed).catch(() => ({}));
-  return afterRenewal && 'email' in afterRenewal ? afterRenewal.email ?? null : null;
+  if (afterRenewal && 'email' in afterRenewal) return afterRenewal.email ?? null;
+  storeEmail(null);
+  return null;
 }
 
 export function headersFor(token: string) {

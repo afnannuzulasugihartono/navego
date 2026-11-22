@@ -53,11 +53,16 @@ What is true now, and what to do next. Cap 150 lines. Spent detail: git history.
 
 | Risk | Evidence | Severity |
 |---|---|---|
-| The dashboard counts a device online by its stored status, and nothing ever writes that status back down when the device stops checking in | measured 2026-11-22: 4 of the 5 listed devices carried status=online with last_seen_at between 2026-11-14 and 2026-11-21 and the dashboard read "5 daring sekarang"; after the owner revoked three of them, opera-9 still reads online with a heartbeat from 2026-11-21 18:38; the register declares an idle-expired state with no writer, because the 7-day idle check only refuses at validation time | high |
-| The device rows keep a status the reader cannot trust, so the online count is a lie | opera_my_devices returns the stored status and the site reads it with a regex on the word online; no function in the live database writes status=offline for a device that went quiet | high |
 | Old commands pile up in the queue | 14383 rows still queued, 4 of them already past their expiry | medium |
 | The published extension is newer than the build installed in the browser under test | the update service serves 1.8.1 and the installed Brave extension reports 1.8.0 | low |
 | The Cloudflare token is still a break-glass write credential | gh secret list shows CF_TOKEN and CF_ACCOUNT_ID; the scope change is an owner action | medium |
+
+**Closed on 2026-11-22**
+
+- **The dashboard's online count was false, and is now true.** `opera_my_devices` returned the stored `status` column, which the heartbeat wrote to `online` and nothing wrote back down, so a browser that stopped checking in days ago still answered `online` and the account's own home page counted it as live. Migration `opera_devices_status_from_heartbeat` (applied as `20261122030605`) replaces the function so the status a reader sees is derived from `last_seen_at` at read time, using the same 90-second window the server already uses to verify a device. Measured after the migration: `opera-9` reads **offline** (last seen 10 hours ago), `opera-13` reads **online**, and the dashboard's "Daring sekarang" reads **1**. The stored column keeps its meaning; the register records the reader.
+- **The shipped changelog stopped at 1.7.6 while the product shipped 1.8.1.** `scripts/release/build-changelog.ts` reads every `docs/releases/<version>.md`, sorts by semver, and writes `site/app/data/releases.json`; the page reads that file and the version bump regenerates it in the commit that creates the release note, so a release cannot ship without its row.
+- **The design system was two systems wearing one name, and 202 inline styles bypassed the token file.** `docs/decisions.json` now describes the shipping system, `site/app/tokens.css` names the decisions that govern it, and `site/app/brand.css` opens with a map of its own blocks. Every `style={{…}}` is gone: a gate in `tests/site/site.test.ts` refuses one that comes back.
+- **The bar always said "Masuk", so a signed-in visitor could not tell whether the browser held a session.** The session is one store now - the access token, the rotating refresh token, and the account email - in `localStorage`, so it survives a tab close and a browser restart; the bar reads the account from it on every page and shows **Dashboard** instead of **Masuk**.
 
 ## Still open
 
