@@ -139,56 +139,56 @@ export default function Akun() {
           </div>
         </section>
 
-        <div className="wrap" style={{ paddingBlock: 'var(--s-7)' }}>
-          <div className="akun-split" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 20rem) minmax(0, 1fr)', gap: 'var(--s-5)', alignItems: 'start' }}>
-            <aside style={{ display: 'grid', gap: 'var(--s-4)' }}>
-              <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 'var(--s-4)' }}>
-                <span aria-hidden="true" style={{ width: '3.25rem', height: '3.25rem', borderRadius: '50%', background: 'var(--navy)', color: '#f4f7ff', display: 'grid', placeItems: 'center', fontWeight: 800, letterSpacing: '0.04em' }}>{user ? initialsOf(name, email) : '…'}</span>
-                <span style={{ minWidth: 0 }}>
-                  <span style={{ display: 'block', fontWeight: 800, overflowWrap: 'anywhere' }}>{name}</span>
-                  <span style={{ display: 'block', fontSize: 'var(--text-sm)', color: 'var(--muted-2)', overflowWrap: 'anywhere' }}>{email}</span>
-                  <span style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>{user ? `Masuk lewat ${PROVIDER_LABEL[provider] || provider}` : 'Akun Navego'}</span>
+        <div className="wrap py-7">
+          <div className="akun-split">
+            <aside className="akun-side">
+              <div className="card akun-identity">
+                <span aria-hidden="true" className="akun-avatar">{user ? initialsOf(name, email) : '…'}</span>
+                <span className="akun-identity-text">
+                  <span className="akun-identity-name">{name}</span>
+                  <span className="akun-identity-email">{email}</span>
+                  <span className="akun-identity-provider">{user ? `Masuk lewat ${PROVIDER_LABEL[provider] || provider}` : 'Akun Navego'}</span>
                 </span>
               </div>
-              <nav className="card" aria-label="Bagian akun" style={{ display: 'grid', gap: 'var(--s-2)', fontSize: 'var(--text-sm)' }}>
-                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)' }}>Di halaman ini</p>
+              <nav className="card akun-toc" aria-label="Bagian akun">
+                <p className="eyebrow">Di halaman ini</p>
                 {[['identitas', 'Identitas'], ['penyedia', 'Penyedia'], ['device', 'Device'], ['sesi', 'Sesi']].map(([id, label]) => (
-                  <a key={id} href={`#${id}`} style={{ textDecoration: 'none', color: 'var(--navy)', fontWeight: 700 }}>{label}</a>
+                  <a key={id} href={`#${id}`}>{label}</a>
                 ))}
               </nav>
             </aside>
 
-            <div style={{ display: 'grid', gap: 'var(--s-4)' }}>
+            <div className="akun-main">
               <section className="card" id="identitas">
                 <h2 className="card-title">Identitas akun</h2>
-                <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)', margin: 'var(--s-2) 0 var(--s-3)' }}>Data ini datang dari penyedia yang Anda pakai masuk, bukan dari kami.</p>
+                <p className="akun-note">Data ini datang dari penyedia yang Anda pakai masuk, bukan dari kami.</p>
                 <div className="table-wrapper" tabIndex={0} role="region" aria-label="Identitas akun">
                   <table className="table">
                     <tbody>
                       {[['Alamat', email], ['Penyedia', PROVIDER_LABEL[provider] || provider], ['Masuk terakhir', relativeTime(user?.last_sign_in_at)], ['ID akun', user?.id || '—']].map(([k, v]) => (
                         <tr key={k as string}>
-                          <th scope="row" style={{ width: '40%' }}>{k}</th>
-                          <td style={k === 'ID akun' ? { fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)' } : undefined}>{v}</td>
+                          <th scope="row" className="key-cell">{k}</th>
+                          <td className={k === 'ID akun' ? 'mono-value' : undefined}>{v}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-                <button className="btn btn-ghost btn-sm" type="button" onClick={copyId} style={{ marginTop: 'var(--s-3)' }}>Salin ID akun</button>
+                <button className="btn btn-ghost btn-sm mt-3" type="button" onClick={copyId}>Salin ID akun</button>
               </section>
 
               <section className="card" id="penyedia">
                 <h2 className="card-title">Penyedia tertaut</h2>
-                <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)', margin: 'var(--s-2) 0 var(--s-3)' }}>Akun yang sama dapat masuk lewat lebih dari satu penyedia. Hanya yang tertaut yang bisa mengenali Anda.</p>
-                <ul style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-2)', fontSize: 'var(--text-sm)' }}>
-                  {user ? linkedProviders(user).map((p) => <li key={p}><code>{p}</code> — {PROVIDER_LABEL[p] || p}</li>) : <li style={{ color: 'var(--muted)' }}>Memeriksa…</li>}
+                <p className="akun-note">Akun yang sama dapat masuk lewat lebih dari satu penyedia. Hanya yang tertaut yang bisa mengenali Anda.</p>
+                <ul className="akun-providers">
+                  {user ? linkedProviders(user).map((p) => <li key={p}><code>{p}</code> — {PROVIDER_LABEL[p] || p}</li>) : <li className="text-muted">Memeriksa…</li>}
                 </ul>
               </section>
 
               <section className="card" id="device">
                 <h2 className="card-title">Device Anda</h2>
-                <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)', margin: 'var(--s-2) 0 var(--s-4)' }}>{state.deviceText}</p>
-                <div className="hero-cta" style={{ marginTop: 0 }}>
+                <p className="akun-note--wide">{state.deviceText}</p>
+                <div className="hero-cta mt-0">
                   <Link className="btn btn-solid" to="/dashboard">Buka dashboard</Link>
                   <Link className="btn btn-ghost" to="/unduh">Pasang di device lain</Link>
                 </div>
@@ -196,8 +196,8 @@ export default function Akun() {
 
               <section className="card" id="sesi">
                 <h2 className="card-title">Sesi</h2>
-                <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)', margin: 'var(--s-2) 0 var(--s-4)' }}>Keluar menghapus token dari browser ini. Device yang sudah ter-pairing tetap ter-pairing, dan Anda perlu masuk lagi sebelum bisa menjalankan perintah.</p>
-                <button className="btn btn-ghost" type="button" onClick={signOut} style={{ color: 'var(--danger)' }}>Keluar</button>
+                <p className="akun-note--wide">Keluar menghapus token dari browser ini. Device yang sudah ter-pairing tetap ter-pairing, dan Anda perlu masuk lagi sebelum bisa menjalankan perintah.</p>
+                <button className="btn btn-ghost text-danger" type="button" onClick={signOut}>Keluar</button>
                 <p className="status" role="status" aria-live="polite">{state.status}</p>
               </section>
             </div>

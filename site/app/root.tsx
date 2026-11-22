@@ -31,9 +31,9 @@ export function ErrorBoundary() {
   const error = useRouteError();
   const is404 = isRouteErrorResponse(error) && error.status === 404;
   return (
-    <main className="wrap" style={{ padding: '80px 0' }}>
+    <main className="wrap error-page">
       <p className="section-head"><h2>{is404 ? 'Halaman ini tidak ada.' : 'Terjadi kesalahan.'}</h2></p>
-      <p style={{ color: 'var(--muted)' }}>
+      <p className="text-muted">
         {is404 ? 'Tautan yang Anda ikuti mungkin sudah dipindahkan.' : 'Coba muat ulang halaman ini.'}{' '}
         <a href="/beranda">Kembali ke beranda</a>
       </p>

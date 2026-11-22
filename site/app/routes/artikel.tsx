@@ -35,14 +35,14 @@ export default function Artikel() {
           </div>
         </section>
 
-        <div className="wrap" style={{ paddingBlock: 'var(--s-7)' }}>
-          <div style={{ display: 'grid', gap: 'var(--s-5)', maxWidth: '52rem' }}>
+        <div className="wrap py-7">
+          <div className="artikel-grid">
             {ARTIKEL.map((item) => (
               <Link key={item.slug} to={item.href} className="card artikel-card">
                 <div className="cover" aria-hidden="true" />
                 <div className="card-body">
-                  <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-2xl)', letterSpacing: '-0.02em', color: 'var(--navy-deep)', lineHeight: 1.1 }}>{item.title}</h2>
-                  <p style={{ color: 'var(--muted-2)' }}>{item.dek}</p>
+                  <h2 className="artikel-card__title">{item.title}</h2>
+                  <p className="text-muted-2">{item.dek}</p>
                 </div>
               </Link>
             ))}

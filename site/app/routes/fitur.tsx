@@ -158,8 +158,8 @@ export default function Fitur() {
             </div>
             <div className="value-grid">
               {PERMISSIONS.map(([name, why]) => (
-                <div className="value-card" key={name} style={{ background: '#16204a' }}>
-                  <code style={{ fontSize: 'var(--text-sm)', color: 'var(--amber-hi)', background: 'transparent', border: 0 }}>{name}</code>
+                <div className="value-card value-card--dark" key={name}>
+                  <code>{name}</code>
                   <p>{why}</p>
                 </div>
               ))}
@@ -170,9 +170,9 @@ export default function Fitur() {
         <section className="band">
           <div className="wrap">
             <div className="cta-band">
-              <h2 className="section-title" style={{ color: '#ffffff' }}>Mulai dari satu perintah.</h2>
+              <h2 className="section-title text-on-dark">Mulai dari satu perintah.</h2>
               <p>Buka akun, pair device ini, jalankan satu pekerjaan — hasilnya berkas nyata yang bisa Anda buka sendiri.</p>
-              <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
+              <div className="hero-cta mt-2">
                 <Link className="btn btn-solid" to="/unduh">Unduh navego</Link>
                 <Link className="btn btn-ghost" to="/harga">Lihat harga</Link>
               </div>

@@ -141,14 +141,14 @@ export default function Index() {
                     <label htmlFor="magicEmail">Email</label>
                     <input id="magicEmail" type="email" autoComplete="email" spellCheck={false} maxLength={254} placeholder="anda@perusahaan.id" value={email} onChange={(event) => setEmail(event.target.value)} />
                   </div>
-                  <button type="submit" className="btn btn-solid" style={{ width: '100%' }}>Lanjutkan dengan email</button>
+                  <button type="submit" className="btn btn-solid w-full">Lanjutkan dengan email</button>
                 </form>
                 <p className="status" role="status" aria-live="polite">{status}</p>
 
-                <a className="provider" id="githubButton" href="https://nenmkmtvjremqphfqnfw.supabase.co/auth/v1/authorize?provider=github&redirect_to=https://navego.pages.dev/" style={{ marginTop: 'var(--s-2)' }}><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="#161513" d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.36c-2.24.49-2.71-1.08-2.71-1.08-.37-.93-.9-1.18-.9-1.18-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.5-1.07-1.77-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0z"/></svg><span>Lanjutkan dengan GitHub</span></a>
+                <a className="provider mt-2" id="githubButton" href="https://nenmkmtvjremqphfqnfw.supabase.co/auth/v1/authorize?provider=github&redirect_to=https://navego.pages.dev/"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="#161513" d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.36c-2.24.49-2.71-1.08-2.71-1.08-.37-.93-.9-1.18-.9-1.18-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.5-1.07-1.77-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0z"/></svg><span>Lanjutkan dengan GitHub</span></a>
 
                   <p className="note">Kontrol browser tetap di perangkat Anda. Navego tidak menjalankan eval, dan tidak pernah meminta password.</p>
-                  <p className="note"><Link to="/privasi">Kebijakan privasi</Link> · <Link to="/keamanan">Keamanan</Link></p>
+                  <p className="note"><Link to="/privasi">Kebijakan privasi</Link>, <Link to="/keamanan">Keamanan</Link></p>
                 </div>
             </div>
           ) : (
@@ -157,12 +157,12 @@ export default function Index() {
                 <h1>Masuk atau daftar.</h1>
                 <p className="auth-intro">Masuk sebagai <strong>{who}</strong>.</p>
                 {returning ? (
-                  <div className="hero-cta" style={{ marginTop: 'var(--s-4)' }}>
+                  <div className="hero-cta mt-4">
                     <a className="btn btn-solid" id="continueButton" href={returnTo()}>Lanjutkan ke tujuan</a>
                     <a className="btn btn-ghost" href="/dashboard">Buka dashboard</a>
                   </div>
                 ) : (
-                  <div className="hero-cta" style={{ marginTop: 'var(--s-4)' }}>
+                  <div className="hero-cta mt-4">
                     <a className="btn btn-solid" href="/dashboard">Buka dashboard</a>
                     <button className="btn btn-ghost" type="button" onClick={signOut}>Keluar</button>
                   </div>

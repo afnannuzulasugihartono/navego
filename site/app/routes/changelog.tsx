@@ -59,9 +59,9 @@ export default function Changelog() {
         <section className="band">
           <div className="wrap">
             <div className="cta-band">
-              <h2 className="section-title" style={{ color: '#ffffff' }}>Versi Anda tertinggal?</h2>
+              <h2 className="section-title text-on-dark">Versi Anda tertinggal?</h2>
               <p>Navego memberi tahu sendiri, sekali ditanya. Atau ambil versi terbaru dari halaman Unduh.</p>
-              <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
+              <div className="hero-cta mt-2">
                 <Link className="btn btn-solid" to="/unduh">Unduh versi terbaru</Link>
                 <Link className="btn btn-ghost" to="/dukungan">Tanya dukungan</Link>
               </div>

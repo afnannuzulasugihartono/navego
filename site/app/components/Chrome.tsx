@@ -72,7 +72,7 @@ export function SiteHeader({ current }: { current?: string }) {
               <li><Link to="/metodologi" aria-current={current === '/metodologi' ? 'page' : undefined}>Metodologi</Link></li>
               <li><Link to="/bandingkan" aria-current={current === '/bandingkan' ? 'page' : undefined}>Bandingkan</Link></li>
             </ul>
-            <p className="nav-col-heading" style={{ marginTop: 'var(--s-4)' }}>Sumber</p>
+            <p className="nav-col-heading nav-col-heading--spaced">Sumber</p>
             <ul className="nav-col-list">
               <li><Link to="/changelog" aria-current={current === '/changelog' ? 'page' : undefined}>Changelog</Link></li>
               <li><Link to="/faq" aria-current={current === '/faq' ? 'page' : undefined}>FAQ</Link></li>
@@ -133,7 +133,7 @@ export function SiteFooter() {
       <div className="wrap">
         <div className="footer-cols">
           <div>
-            <Link className="brand" to="/beranda" aria-label="Navego — beranda" style={{ color: '#ffffff' }}>
+            <Link className="brand brand--footer" to="/beranda" aria-label="Navego — beranda">
               <NavegoMark size={36} />
               <NavegoWordmark size={16} />
             </Link>

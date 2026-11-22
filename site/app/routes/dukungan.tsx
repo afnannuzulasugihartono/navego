@@ -65,9 +65,9 @@ export default function Dukungan() {
                 <details key={fix.id} id={fix.id}>
                   <summary>{fix.title}</summary>
                   <p>{fix.body}</p>
-                  {fix.id === 'mcp' ? <p style={{ marginTop: 'var(--s-3)' }}><Link to="/docs#mcp">Ke Docs → Hubungkan AI harness</Link></p> : null}
-                  {fix.id === 'device' ? <p style={{ marginTop: 'var(--s-3)' }}><Link to="/dashboard">Buka Dashboard</Link></p> : null}
-                  {fix.id === 'ext' ? <p style={{ marginTop: 'var(--s-3)' }}><Link to="/unduh">Ke halaman Unduh</Link></p> : null}
+                  {fix.id === 'mcp' ? <p className="mt-3"><Link to="/docs#mcp">Ke Docs → Hubungkan AI harness</Link></p> : null}
+                  {fix.id === 'device' ? <p className="mt-3"><Link to="/dashboard">Buka Dashboard</Link></p> : null}
+                  {fix.id === 'ext' ? <p className="mt-3"><Link to="/unduh">Ke halaman Unduh</Link></p> : null}
                 </details>
               ))}
             </div>
@@ -96,9 +96,9 @@ export default function Dukungan() {
         <section className="band">
           <div className="wrap">
             <div className="cta-band">
-              <h2 className="section-title" style={{ color: '#ffffff' }}>Belum ketemu jawabannya?</h2>
+              <h2 className="section-title text-on-dark">Belum ketemu jawabannya?</h2>
               <p>Mulai dari docs untuk langkah lengkap, atau kirim email dengan tab dan pesan error yang Anda lihat.</p>
-              <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
+              <div className="hero-cta mt-2">
                 <Link className="btn btn-solid" to="/docs">Buka docs</Link>
                 <a className="btn btn-ghost" href="mailto:afnannuzulasugihartono@gmail.com">Kirim email</a>
               </div>

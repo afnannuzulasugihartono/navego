@@ -209,3 +209,40 @@ test('no i18n or legacy machinery files ride along in the site source', () => {
   const banned = files.filter((f) => /i18n|palette\.js|reveal\.js|wayfind\.js/.test(path.basename(f)));
   assert.deepEqual(banned, [], 'no legacy machinery files');
 });
+
+test('no route carries a visual value in an inline style', () => {
+  const appDir = path.join(site, 'app');
+  const walk = (dir: string): string[] => fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => entry.isDirectory() ? walk(path.join(dir, entry.name)) : [path.join(dir, entry.name)]);
+  const offenders: string[] = [];
+  for (const file of walk(appDir)) {
+    if (!/\.(tsx|ts)$/.test(file)) continue;
+    const text = fs.readFileSync(file, 'utf8');
+    if (text.includes('style={{')) offenders.push(path.relative(root, file));
+  }
+  assert.deepEqual(offenders, [], 'every visual value comes from a class in brand.css backed by a token in tokens.css');
+});
+
+test('the decision register names values the shipping CSS carries', () => {
+  const register = JSON.parse(fs.readFileSync(path.join(root, 'docs/decisions.json'), 'utf8'));
+  const css = [
+    fs.readFileSync(path.join(site, 'app/tokens.css'), 'utf8'),
+    fs.readFileSync(path.join(site, 'app/brand.css'), 'utf8'),
+  ].join('\n');
+  const checks: Array<[string, string]> = [
+    ['D02', 'scale in px: 12 xs, 14 ui, 16 body, 18 lead, 20 h4, 24 h3, 28 h2, 32 title, 40 h1, 56 hero, 64 hero-wide'],
+    ['D03', '4rem'],
+    ['D10', '--s-9: 6.5rem'],
+    ['D11', '--gutter: 20px'],
+    ['D14', '#f6f1e7'],
+    ['D16', '--focus-ring: 2px solid var(--navy)'],
+    ['D17', 'min-block-size: 2.75rem'],
+    ['D19', '--radius: 16px'],
+    ['D20', '0 1px 2px rgb(13 19 56 / 0.04)'],
+  ];
+  const byId = new Map<string, { decision: string }>(register.decisions.map((entry: { id: string; decision: string }) => [entry.id, entry]));
+  for (const [id, value] of checks) {
+    const decision = byId.get(id);
+    assert.ok(decision, `${id} is in the register`);
+    assert.ok(css.includes(value), `${id} names ${value}, which the shipping CSS does not carry`);
+  }
+});

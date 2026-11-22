@@ -23,7 +23,7 @@ export default function Privasi() {
             <p className="lede">Terakhir diperbarui: 5 Oktober 2026.</p>
           </div>
         </section>
-        <div className="wrap legal" style={{ paddingBlock: 'var(--s-7)' }}>
+        <div className="wrap legal py-7">
           <section>
             <p><strong>Hanya pergi ke endpoint model milik Anda.</strong> Konten yang Anda setujui dibaca asisten dikirim ke endpoint model yang Anda konfigurasi sendiri. Kami tidak memilihkan model. Kami tidak membaca kontennya.</p>
           </section>

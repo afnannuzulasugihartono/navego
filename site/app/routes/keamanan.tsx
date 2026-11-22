@@ -83,9 +83,9 @@ export default function Keamanan() {
         <section className="band">
           <div className="wrap">
             <div className="cta-band">
-              <h2 className="section-title" style={{ color: '#ffffff' }}>Ingin tahu persis apa yang dikerjakan Navego?</h2>
+              <h2 className="section-title text-on-dark">Ingin tahu persis apa yang dikerjakan Navego?</h2>
               <p>Baca daftar lengkap primitive dan tool di docs, atau lihat posisi Navego dibanding pendekatan lain.</p>
-              <div className="hero-cta" style={{ marginTop: 'var(--s-2)' }}>
+              <div className="hero-cta mt-2">
                 <Link className="btn btn-solid" to="/docs#tools">Lihat tools MCP</Link>
                 <Link className="btn btn-ghost" to="/bandingkan">Bandingkan pendekatan</Link>
               </div>

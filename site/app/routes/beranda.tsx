@@ -122,7 +122,7 @@ export default function Beranda() {
                 </div>
               ))}
             </div>
-            <div className="stat-strip" style={{ marginTop: 'var(--s-6)' }}>
+            <div className="stat-strip mt-6">
               <div className="stat"><b>40</b><span>tool MCP</span></div>
               <div className="stat"><b>36</b><span>primitive browser</span></div>
               <div className="stat"><b>6</b><span>izin, tidak lebih</span></div>

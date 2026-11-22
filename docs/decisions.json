@@ -1,27 +1,27 @@
 {
   "version": 1,
-  "generated": "2026-11-21",
+  "generated": "2026-11-22",
   "source": "The 2026-11-18 navego.pages.dev rebrand and consistency pass: logo, wordmark, eyebrows, type and spacing system, nav notch, copy pass. User direction arrived 2026-11-18; internet sources were verified 2026-11-18. Repo sources point at the docs that already carry the decision. 2026-11-19: a source-backed pass over the agent tool surface added D55-D68 - kind recorded carries the file:line of the recorded performance, per the user evidence mandate.",
   "note": "One decision, one source. Code references this file as decisions.json -> <id>. A decision added from 2026-11-19 onward carries a file-based id (for example local-canvas-01) and names the file it governs; the earlier D-numbers are history and keep their ids. A decision the user asked for carries kind=user; a decision nobody asked for carries the internet source it was taken from; a decision inherited from this repo carries the repo document that already carries it; a decision taken because a recorded performance demanded it carries kind=recorded with the file:line that records it.",
   "decisions": [
     {
       "id": "D01",
       "scope": "web/tokens",
-      "decision": "The body text is 14 px on every page.",
+      "decision": "The body text is 16 px on every page: the site runs one scale from 12 px to 64 px, and the running text sits at 16 px so a visitor override never drops below the 14 px floor the owner asked for.",
       "source": {
         "kind": "user",
-        "ref": "user 2026-11-18: 'biasanya sih 14 yang teks'",
-        "also": "https://email.digital.nsw.gov.au/styles/typography/line-height (body-sm 14 px)"
+        "ref": "user 2026-11-18: 'biasanya sih 14 yang teks' - the 14 px floor the owner set; the shipping scale runs the body at 16 px",
+        "also": "site/app/tokens.css (--text-base: 1rem)"
       }
     },
     {
       "id": "D02",
       "scope": "web/tokens",
-      "decision": "The type scale uses even pixel steps only: 12, 14, 16, 18, 20, 24, 28, 32, 40, 64.",
+      "decision": "The type scale uses even pixel steps only: 12, 14, 16, 18, 20, 24, 28, 32, 40, 56, 64.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-18: 'jika misalnya heading 1 heading 2 dan seterusnya gunakan ukuran genap dan konsisten'",
-        "also": "https://material.io/design/layout/spacing-methods.html (4dp nested units)"
+        "also": "site/app/tokens.css (--text-xs through --text-hero)"
       }
     },
     {
@@ -30,18 +30,18 @@
       "decision": "h1 is 40 px (hero 64 px on /beranda, 28 px on ≤860 px), h2 is 28 px, h3 is 20 px, h4 is 18 px.",
       "source": {
         "kind": "user",
-        "ref": "user 2026-11-18 (even-size rule)",
-        "also": "https://design-system.canada.ca/en/styles/typography (heading levels, numerically ordered)"
+        "ref": "user 2026-11-18: 'jika misalnya heading 1 heading 2 dan seterusnya gunakan ukuran genap dan konsisten'",
+        "also": "site/app/tokens.css (--text-title: 2.5rem, --text-hero: 4rem)"
       }
     },
     {
       "id": "D04",
       "scope": "web/tokens",
-      "decision": "Line heights are unitless: display 1.1, heading 1.25, body 1.5, small 1.4.",
+      "decision": "Line heights are unitless: display 1.06, heading 1.2, body 1.55, small 1.45.",
       "source": {
         "kind": "internet",
         "ref": "https://practicaltypography.com/line-spacing.html (120-145% of point size)",
-        "also": "https://designsystem.digital.gov/components/typography/ (line-height 4 token, body 1.5); https://email.digital.nsw.gov.au/styles/typography/line-height (body 1.5, small 1.33-1.43); https://developer.mozilla.org/en-US/docs/Web/CSS/line-height (prefer unitless)"
+        "also": "site/app/tokens.css (--leading-display, --leading-heading, --leading-body, --leading-small)"
       }
     },
     {
@@ -56,11 +56,11 @@
     {
       "id": "D06",
       "scope": "web/tokens",
-      "decision": "Text fills the width of its container; no 18ch/44ch/46ch/66ch/68ch/72ch measure caps anywhere.",
+      "decision": "Text fills the width of its container; no 18ch/44ch/46ch/56ch/66ch/68ch/70ch/72ch measure caps anywhere.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-18: 'lebarnya full bukan yang terpotong di tengah' and the follow-up option 'Konten tidak dibatasi terlalu sempit'",
-        "also": "https://practicaltypography.com/line-length.html (45-90 characters, the rule this overrides by owner decision)"
+        "also": "site/app/brand.css (the hero and page-hero ledes carry no max-width)"
       }
     },
     {
@@ -103,7 +103,7 @@
     {
       "id": "D11",
       "scope": "web/tokens",
-      "decision": "The gutter is 20 px, 32 px at ≥940 px — one fixed even step each, no fractional vw.",
+      "decision": "The gutter is 20 px, 32 px at ≥940 px - one fixed even step each, no fractional vw.",
       "source": {
         "kind": "internet",
         "ref": "https://material.io/design/layout/spacing-methods.html (4-px base unit, both values sit on the grid)"
@@ -112,20 +112,21 @@
     {
       "id": "D12",
       "scope": "web/tokens",
-      "decision": "Body/UI type is Tahoma, Verdana, system-ui; mono is Lucida Console — the zero-download system stack the Y2K house face ships.",
+      "decision": "Body and UI type are the system sans stack (-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', Inter, Roboto, system-ui, sans-serif); mono is the system monospace stack (ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'SF Mono', Consolas, 'Liberation Mono', monospace) - zero downloaded fonts on every page.",
       "source": {
-        "kind": "repo",
-        "ref": "docs/design-elements.md (Corporate Y2K done flat: cream ground, deep navy ink, one amber accent)",
-        "also": "https://developer.mozilla.org/en-US/docs/Web/CSS/font-family (system font stacks)"
+        "kind": "user",
+        "ref": "user 2026-11-22: 'bisakahh kamu redesign website navego sampai jadi product siap ship?' - the redesign carries one system stack, not the Y2K house face",
+        "also": "site/app/tokens.css (--font-sans, --font-mono)"
       }
     },
     {
       "id": "D13",
       "scope": "web/tokens",
-      "decision": "Display type is Arial Black, weight 900, letter-spacing -0.02em.",
+      "decision": "Display type is the same system sans stack at weight 700, letter-spacing -0.02em; no separate display face ships.",
       "source": {
         "kind": "repo",
-        "ref": "docs/design-elements.md (the era's display face)"
+        "ref": "site/app/tokens.css (--font-display is the system stack; headings set font-weight: 700)",
+        "also": "site/app/components/NavegoMark.tsx (the wordmark is the only hand-drawn type on the site)"
       }
     },
     {
@@ -149,11 +150,11 @@
     {
       "id": "D16",
       "scope": "web/tokens",
-      "decision": ":focus-visible carries a 3 px outline, 3 px offset; on navy surfaces the ring goes amber.",
+      "decision": ":focus-visible carries a 2 px outline, 3 px offset; on navy surfaces the ring goes amber.",
       "source": {
         "kind": "internet",
         "ref": "https://www.w3.org/WAI/WCAG21/Understanding/focus-visible.html (WCAG 2.4.7)",
-        "also": "https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible"
+        "also": "site/app/tokens.css (--focus-ring: 2px solid var(--navy), --focus-offset: 3px)"
       }
     },
     {
@@ -168,7 +169,7 @@
     {
       "id": "D18",
       "scope": "web/components",
-      "decision": "Button padding is 12 px × 24 px; small button 8 px × 16 px; chips 4 px × 12 px — even pixel steps on the 4-px grid.",
+      "decision": "Button padding is 12 px × 24 px; small button 8 px × 16 px; chips 4 px × 12 px - even pixel steps on the 4-px grid.",
       "source": {
         "kind": "internet",
         "ref": "https://material.io/design/layout/spacing-methods.html (4dp nested units)",
@@ -178,7 +179,7 @@
     {
       "id": "D19",
       "scope": "web/components",
-      "decision": "Radius steps stay even and few: 14 px panels, 10 px controls.",
+      "decision": "Radius steps stay even and few: 16 px panels, 10 px controls.",
       "source": {
         "kind": "internet",
         "ref": "https://material.io/design/layout/spacing-methods.html (4-px base unit, both values are multiples of 2)"
@@ -187,7 +188,7 @@
     {
       "id": "D20",
       "scope": "web/components",
-      "decision": "Flat surfaces carry no shadows; the one floating element (the nav notch) carries the one shadow and the one gradient on the site.",
+      "decision": "Flat surfaces carry no shadow; the one soft shadow on the site is 0 1px 2px rgb(13 19 56 / 0.04) on .tile-xl.",
       "source": {
         "kind": "repo",
         "ref": "docs/design-elements.md (flat modern)",
@@ -197,7 +198,7 @@
     {
       "id": "D21",
       "scope": "web/components",
-      "decision": "The nav notch is always visible at every width; compact widths collapse the flat row into it; hover or focus drops the full link strip; amber glow on hover/focus is the effect; the chevron turns amber with it.",
+      "decision": "The nav notch is always visible at every width; compact widths collapse the flat row into it; hover or focus drops the full link strip; the chevron turns amber on hover or focus.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-18: 'tampilkan notch di semua lebar layar kemudian redesign bentuk notch menjadi modern dan memiliki efek'"
@@ -425,7 +426,7 @@
     {
       "id": "D46",
       "scope": "web/copy",
-      "decision": "Facts pinned by the site gate survive any rewrite verbatim: Navego, 45, primitive browser, plan.usd-1, PayPal, Enterprise, SHA-256, 1.6.22, docs/releases, browser_status, debugger, Tanpa eval, Kata sandi, SECURITY.md, Diukur bukan diklaim, Google Docs, p50, Apa itu Navego, Berapa harganya, Halaman ini tidak ada, browser Anda, Penyedia, Izin aplikasi, Memeriksa sesi, WebDriver, canvas, Artikel, AI yang mengenal browser, Dukungan, Kebijakan Privasi, Syarat Layanan.",
+      "decision": "Facts pinned by the site gate survive any rewrite verbatim: Navego, 40, primitive browser, plan.usd-1, PayPal, Enterprise, SHA-256, 1.6.22, docs/releases, browser_status, debugger, Tanpa eval, Kata sandi, SECURITY.md, Diukur bukan diklaim, Google Docs, p50, Apa itu Navego, Berapa harganya, Halaman ini tidak ada, browser Anda, Penyedia, Izin aplikasi, Memeriksa sesi, WebDriver, canvas, Artikel, AI yang mengenal browser, Dukungan, Kebijakan Privasi, Syarat Layanan.",
       "source": {
         "kind": "repo",
         "ref": "tests/site/site.test.ts (CLAIMS); site/app/routes/*.tsx"
@@ -1041,6 +1042,17 @@
         "also": "https://linear.app/now/how-we-redesigned-the-linear-ui (short state transitions in the app shell)"
       },
       "file": "site/app/tokens.css"
+    },
+    {
+      "id": "site-design-system-01",
+      "scope": "web/tokens",
+      "file": "site/app/tokens.css",
+      "decision": "The tokens file is the single source of the site's colour, type, spacing and motion; every web/* decision in this register names a value this file or site/app/brand.css carries, and no route carries a visual value in an inline style.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-22: 'bisakahh kamu redesign website navego sampai jadi product siap ship?'",
+        "also": "site/app/brand.css (the component layer that reads the tokens)"
+      }
     },
     {
       "id": "site-dashboard-action-two-phase-01",

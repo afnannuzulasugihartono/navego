@@ -159,14 +159,14 @@ export default function Consent() {
             <h1>Izin aplikasi.</h1>
           </div>
         </section>
-        <div className="wrap" style={{ maxWidth: '46rem', paddingBlock: 'var(--s-6)' }}>
-          <p className={warn ? 'status warn' : 'status'} role="status" aria-live="polite" style={{ fontSize: 'var(--text-sm)' }}>{status}</p>
+        <div className="wrap consent-layout">
+          <p className={warn ? 'status warn' : 'status'} role="status" aria-live="polite" text-sm>{status}</p>
 
         {details ? (
-          <section className="card" style={{ marginTop: 'var(--s-4)' }} aria-labelledby="clientName">
-            <h2 id="clientName" style={{ fontSize: 'var(--text-xl)', color: 'var(--navy-deep)' }}>{clientName}</h2>
-            <p className="note" style={{ marginTop: 'var(--s-2)' }}>Tinjau hal-hal ini sebelum memberi izin. Nama aplikasi diberikan oleh aplikasi itu sendiri; yang bisa diverifikasi adalah alamat kode dikirim ke.</p>
-            <div className="table-wrapper" style={{ marginTop: 'var(--s-4)' }}>
+          <section className="card mt-4" aria-labelledby="clientName">
+            <h2 id="clientName" className="consent-client">{clientName}</h2>
+            <p className="note mt-2">Tinjau hal-hal ini sebelum memberi izin. Nama aplikasi diberikan oleh aplikasi itu sendiri; yang bisa diverifikasi adalah alamat kode dikirim ke.</p>
+            <div className="table-wrapper mt-4">
               <table className="table">
                 <tbody>
                   {[
@@ -175,16 +175,16 @@ export default function Consent() {
                     ['Akun Anda', account]
                   ].map(([k, v]) => (
                     <tr key={k as string}>
-                      <th scope="row" style={{ width: '40%' }}>{k}</th>
-                      <td style={k === 'Kode dikirim ke' ? { fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)' } : undefined}>{v}</td>
+                      <th scope="row" className="key-cell">{k}</th>
+                      <td className={k === 'Kode dikirim ke' ? 'mono-value' : undefined}>{v}</td>
                     </tr>
                   ))}
                   <tr>
                     <th scope="row">Yang diminta</th>
                     <td>
-                      <ul style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-2)' }}>
+                      <ul className="consent-scope-list">
                         {scopes.length ? scopes.map((scope) => (
-                          <li key={scope} style={scope === 'offline_access' ? { color: 'var(--danger)' } : undefined}>
+                          <li key={scope} className={scope === 'offline_access' ? 'consent-scope-danger' : undefined}>
                             <strong>{scope}</strong> — {SCOPE_TEXT[scope] || 'Izin tambahan yang diminta aplikasi.'}
                           </li>
                         )) : <li>Tidak ada izin tambahan yang diminta.</li>}
@@ -194,25 +194,25 @@ export default function Consent() {
                 </tbody>
               </table>
             </div>
-            {redirectHost ? <p className="note" style={{ marginTop: 'var(--s-3)' }}>Kode hanya dikirim ke {redirectHost}.</p> : null}
-            <p className="note" style={{ marginTop: 'var(--s-2)' }}>Navego tetap memblokir password, kode sekali pakai, data pembayaran, tab pribadi, dan unggah file. Izin ini hanya mengizinkan aplikasi itu meminta tindakan lewat Navego.</p>
-            <div className="hero-cta" style={{ marginTop: 'var(--s-4)' }}>
+            {redirectHost ? <p className="note note--spaced">Kode hanya dikirim ke {redirectHost}.</p> : null}
+            <p className="note mt-2">Navego tetap memblokir password, kode sekali pakai, data pembayaran, tab pribadi, dan unggah file. Izin ini hanya mengizinkan aplikasi itu meminta tindakan lewat Navego.</p>
+            <div className="hero-cta mt-4">
               <button className="btn btn-solid" type="button" disabled={busy} onClick={() => decide('approve')}>Izinkan</button>
-              <button className="btn btn-ghost" type="button" disabled={busy} onClick={() => decide('deny')} style={{ color: 'var(--danger)' }}>Tolak</button>
+              <button className="btn btn-ghost text-danger" type="button" disabled={busy} onClick={() => decide('deny')}>Tolak</button>
             </div>
           </section>
         ) : null}
 
         {consents.length ? (
-          <section className="card" style={{ marginTop: 'var(--s-4)' }} aria-labelledby="consentsTitle">
+          <section className="card mt-4" aria-labelledby="consentsTitle">
             <h2 id="consentsTitle" className="card-title">Aplikasi yang sudah Anda izinkan</h2>
-            <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)', margin: 'var(--s-2) 0 var(--s-3)' }}>Mencabut menghentikan aplikasi itu seketika: sesinya dihapus dan tokennya dimatikan.</p>
-            <ul style={{ listStyle: 'none', display: 'grid', gap: 'var(--s-3)' }}>
+            <p className="akun-note">Mencabut menghentikan aplikasi itu seketika: sesinya dihapus dan tokennya dimatikan.</p>
+            <ul className="list-plain stack-3">
               {consents.map((consent) => (
-                <li key={consent.clientId} style={{ display: 'flex', alignItems: 'center', gap: 'var(--s-3)', background: 'var(--panel)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)', padding: 'var(--s-3) var(--s-4)', fontSize: 'var(--text-sm)' }}>
-                  <span style={{ fontWeight: 700 }}>{consent.clientName || 'Aplikasi tidak dikenal'}</span>
-                  <span style={{ color: 'var(--muted)', fontSize: 'var(--text-xs)' }}>{consent.scopes || ''}, sejak {String(consent.grantedAt || '').slice(0, 10)}</span>
-                  <button className="btn btn-ghost btn-sm" type="button" onClick={() => revoke(consent)} style={{ marginLeft: 'auto', color: 'var(--danger)' }}>Cabut</button>
+                <li key={consent.clientId} className="consent-granted">
+                  <span className="consent-granted__name">{consent.clientName || 'Aplikasi tidak dikenal'}</span>
+                  <span className="consent-granted__meta">{consent.scopes || ''}, sejak {String(consent.grantedAt || '').slice(0, 10)}</span>
+                  <button className="btn btn-ghost btn-sm consent-granted__revoke" type="button" onClick={() => revoke(consent)}>Cabut</button>
                 </li>
               ))}
             </ul>
@@ -220,10 +220,10 @@ export default function Consent() {
         ) : null}
 
         {!getStoredTokenSafe() && !details ? (
-          <div className="card" style={{ marginTop: 'var(--s-4)' }}>
+          <div className="card mt-4">
             <h2 className="card-title">Masuk dulu</h2>
-            <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted-2)', margin: 'var(--s-2) 0 var(--s-4)' }}>Layar izin hanya bekerja untuk akun yang sudah masuk, karena persetujuan ini terikat pada akun Anda.</p>
-            <div className="hero-cta" style={{ marginTop: 0 }}>
+            <p className="akun-note--wide">Layar izin hanya bekerja untuk akun yang sudah masuk, karena persetujuan ini terikat pada akun Anda.</p>
+            <div className="hero-cta mt-0">
               <Link className="btn btn-solid" to={`/${authId ? `?next=${encodeURIComponent(`/oauth/consent?authorization_id=${authId}`)}` : ''}`}>Masuk</Link>
             </div>
           </div>
