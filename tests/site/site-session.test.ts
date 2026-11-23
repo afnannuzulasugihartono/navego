@@ -50,3 +50,9 @@ test('a sign-in stores the account before it redirects', () => {
   assert.match(login, /storeEmail\(proof\.email as string\);/);
   assert.match(login, /announceSession\(proof\.email as string\);/);
 });
+
+test('the navbar never slides out of the viewport', () => {
+  const css = fs.readFileSync(path.join(root, 'site/app/brand.css'), 'utf8');
+  assert.doesNotMatch(css, /\.site-header \{ transform: translateY\(-100%\); \}/, 'the bar was caught half hidden, with the brand and the action pills cut by the hero');
+  assert.doesNotMatch(css, /@container scroll-state\(\(scrolled: bottom\) and \(scrollable: top\)\)/, 'scroll position no longer controls whether the visitor can reach the header');
+});

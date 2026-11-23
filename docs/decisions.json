@@ -1118,6 +1118,28 @@
         "ref": "user 2026-11-23: 'redesign restyle seluruh website navego cari referensi website browser agent dan hapus website opera agent migrasi semua ke navego'",
         "also": "https://browser-use.com/ (the task-first browser demo and public proof story); https://www.browserbase.com/ (the capability grid and production narrative); https://www.skyvern.com/ (workflow examples, explainable runs and developer paths); tests/site/restyle.test.ts (the shared visual contract)"
       }
+    },
+    {
+      "id": "site-header-sticky-01",
+      "scope": "web/components",
+      "file": "site/app/brand.css",
+      "decision": "The header stays sticky at the top at every scroll position; scroll-state never translates it out of the viewport, because a hide-on-scroll transition can leave the brand and the Masuk/Pasang gratis pills half covered by the hero.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-23: 'fix navbar yang terpotong logo navego tombol masuk dan pasang gratis terpotong blok biru' - the live screenshot showed the bar half hidden under the hero",
+        "also": "tests/site/site-session.test.ts (the no-slide regression gate)"
+      }
+    },
+    {
+      "id": "site-session-csp-01",
+      "scope": "web/security",
+      "file": "site/public/_headers",
+      "decision": "Every route may call only the Supabase Auth host to prove and renew the stored session: connect-src is https://*.supabase.co, while script-src stays self and no other network origin is opened. Session storage and renewal cannot be blocked by the page's own CSP.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-23: 'simpan sesi login supaya tidak masuk berulang ulang ketika reload halaman' - Chrome reported /auth/v1/user and /auth/v1/token?grant_type=refresh_token refused because connect-src was none even though both tokens were stored",
+        "also": "tests/site/site-session.test.ts (every route's CSP must admit Supabase Auth and keep scripts on self)"
+      }
     }
   ]
 }

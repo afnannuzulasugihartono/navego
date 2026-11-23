@@ -176,6 +176,18 @@ test('_headers covers every route, forbids inline scripts, denies framing everyw
   }
 });
 
+test('every page that carries the header may prove and renew the session', () => {
+  buildSite();
+  for (const rule of siteRules()) {
+    const policy = rule.headers['Content-Security-Policy'] || '';
+    if (!policy) continue;
+    assert.ok(policy.includes('connect-src'), `${rule.paths[0]} declares connect-src`);
+    assert.match(policy, /connect-src[^;]*https:\/\/\*\.supabase\.co/, `${rule.paths[0]} blocks the session proof and the refresh call`);
+    assert.match(policy, /script-src 'self'(?=[ ;])/, `${rule.paths[0]} keeps scripts on this origin`);
+    assert.equal(policy.includes("script-src 'self' 'unsafe-inline'"), false, `${rule.paths[0]} keeps inline scripts out`);
+  }
+});
+
 // the shape changed: the .html and pretty duals of one page used to be two routes with distinct ids, and serving the prerendered .html file under the pretty URL hydrated against the wrong id — React error #418 on every visit.
 // The flat .html file still exists for Pages to serve, but the worker answers the .html URL with a 301 to the pretty path, so the client router only knows the pretty routes and the two can never split again.
 
