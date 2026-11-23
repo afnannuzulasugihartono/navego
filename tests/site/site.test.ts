@@ -271,17 +271,17 @@ test('the bar is never cut off, at any width', () => {
   assert.match(css, /@media \(max-width: 400px\) \{/);
 });
 
-// The open panel is taller than a phone screen, and the fixed consent banner paints over its last row: the panel must scroll inside the viewport, and the bar must sit above the banner.
+// The open menu is taller than a phone screen, and the fixed consent banner paints over its last row: the menu must scroll inside the viewport, and the bar must sit above the banner.
 
-test('the chevron panel is never cut off by the viewport or the consent banner', () => {
+test('the small-screen menu is never cut off by the viewport or the consent banner', () => {
   const css = fs.readFileSync(path.join(site, 'app/brand.css'), 'utf8');
-  assert.match(css, /\.nav-strip \{[^}]*max-block-size: calc\(100svh - 3\.25rem\);/);
-  assert.match(css, /\.nav-strip \{[^}]*overflow-y: auto;/);
-  assert.match(css, /\.nav-strip \{[^}]*overscroll-behavior: contain;/);
+  assert.match(css, /\.nav-links \{[^}]*max-block-size: calc\(100dvh - 3\.25rem\);/);
+  assert.match(css, /\.nav-links \{[^}]*overflow-y: auto;/);
+  assert.match(css, /\.nav-links \{[^}]*overscroll-behavior: contain;/);
   const header = css.match(/\.site-header \{[^}]*z-index: (\d+);/);
   const banner = css.match(/\.consent-banner \{[^}]*z-index: (\d+);/);
   assert.ok(header?.[1] && banner?.[1], 'the header and the consent banner both declare a stacking order');
-  assert.ok(Number(header[1]) > Number(banner[1]), 'the open panel paints above the consent banner');
+  assert.ok(Number(header[1]) > Number(banner[1]), 'the open menu paints above the consent banner');
 });
 
 test('no live surface names the product by the browser it drives', () => {

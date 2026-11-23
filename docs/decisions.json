@@ -1140,6 +1140,17 @@
         "ref": "user 2026-11-23: 'simpan sesi login supaya tidak masuk berulang ulang ketika reload halaman' - Chrome reported /auth/v1/user and /auth/v1/token?grant_type=refresh_token refused because connect-src was none even though both tokens were stored",
         "also": "tests/site/site-session.test.ts (every route's CSP must admit Supabase Auth and keep scripts on self)"
       }
+    },
+    {
+      "id": "site-nav-inline-01",
+      "scope": "web/components",
+      "file": "site/app/components/Chrome.tsx",
+      "decision": "The chevron and mega-panel are replaced by one ordinary navigation tree: Fitur, Harga, Docs, Pasang MCP and Artikel stay inline on wide screens, while a Menu button with aria-expanded opens the same list plus a few secondary links on small screens. Unduh remains the amber action, and Masuk/Dashboard remains on the right.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-23: 'yang chevron hapus aja ganti biasa research juga yang harus ada di navbar cari referensi di internet dari website agent browser serupa'",
+        "also": "https://www.skyvern.com/ (Products, Use Cases, Developers, Pricing, Resources, Login, Book a Demo); https://www.hyperbrowser.ai/ (Products, Pricing, Blog, Documentation, App); https://browser-use.com/ (product categories, Pricing, Docs, Dashboard, Start for free); https://www.browserbase.com/ (Platform, Solutions, Pricing, Developers, Docs, API-key CTA); tests/site/navbar.test.ts (the no-chevron and small-screen state contract)"
+      }
     }
   ]
 }

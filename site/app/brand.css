@@ -3,43 +3,43 @@
  * 2026 product system: a dark task demo, fluid type, elevated shared surfaces.
  * decisions.json -> site-restyle-01.
  * Flat modern: cream ground, deep navy, one amber accent.
- * The header carries the brand and one amber CTA; the chevron is the only navigation surface.
+ * The header carries the brand, ordinary product links and one amber CTA; Menu opens the same list on a small screen.
  * Alignment: left everywhere; center only for symmetric fixed-box icons and figures.
  *
  *
  * Section map of the blocks below, in order.
- * header — brand and CTA; the chevron is the only navigation surface - lines 42-118.
- * buttons - one voice - lines 119-149.
- * hero - one voice everywhere - lines 150-221.
- * shared section chrome - lines 222-250.
- * cards - one surface system - lines 251-267.
- * steps - lines 268-297.
- * pricing (harga) - lines 298-329.
- * comparison table (prices) - lines 330-372.
- * FAQ - lines 373-396.
- * download cards (/unduh) - lines 397-412.
- * footer - lines 413-454.
- * docs layout - lines 455-498.
- * dashboard - lines 499-557.
- * auth - lines 558-610.
- * legal - lines 611-618.
- * miscellany - lines 619-635.
- * dashboard utilities - lines 636-660.
- * misc - lines 661-663.
- * command preview (beranda) - lines 664-666.
- * try (beranda) — one product demo, two panels - lines 667-691.
- * visual system: browser window, tiles, article, docs, dashboard - lines 692-787.
- * apple-style page language - lines 788-823.
- * role tabs (fitur) - lines 824-833.
- * akun page split - lines 834-838.
- * reduced motion - lines 839-845.
- * changelog — the release ledger, one row per version - lines 846-857.
- * route components — the classes the routes carry - lines 858-971.
- * utility layer — every value below comes from a token - lines 972-1013.
- * consent banner — one first-party cookie, said plainly, fixed to the bottom - lines 1014-1022.
+ * header — brand, product links and CTA; Menu opens the same list on a small screen - lines 42-113.
+ * buttons - one voice - lines 114-144.
+ * hero - one voice everywhere - lines 145-216.
+ * shared section chrome - lines 217-245.
+ * cards - one surface system - lines 246-262.
+ * steps - lines 263-292.
+ * pricing (harga) - lines 293-324.
+ * comparison table (prices) - lines 325-367.
+ * FAQ - lines 368-391.
+ * download cards (/unduh) - lines 392-407.
+ * footer - lines 408-449.
+ * docs layout - lines 450-493.
+ * dashboard - lines 494-552.
+ * auth - lines 553-605.
+ * legal - lines 606-613.
+ * miscellany - lines 614-630.
+ * dashboard utilities - lines 631-655.
+ * misc - lines 656-658.
+ * command preview (beranda) - lines 659-661.
+ * try (beranda) — one product demo, two panels - lines 662-686.
+ * visual system: browser window, tiles, article, docs, dashboard - lines 687-782.
+ * apple-style page language - lines 783-818.
+ * role tabs (fitur) - lines 819-828.
+ * akun page split - lines 829-833.
+ * reduced motion - lines 834-840.
+ * changelog — the release ledger, one row per version - lines 841-852.
+ * route components — the classes the routes carry - lines 853-966.
+ * utility layer — every value below comes from a token - lines 967-1008.
+ * consent banner — one first-party cookie, said plainly, fixed to the bottom - lines 1009-1017.
  */
 
-/* ========== header — brand and CTA; the chevron is the only navigation surface ========== */
+/* ========== header - brand, product links and CTA; Menu opens the same list on a small screen ========== */
 
 .site-header {
   position: sticky;
@@ -77,36 +77,31 @@
   .site-header-row { gap: var(--s-2); }
 }
 
-/* the header carries the brand and one CTA; the chevron is the only navigation surface, and the header paints above the consent banner so the open panel is never covered */
+/* the header carries the brand, ordinary product links and one CTA, and it paints above the consent banner so the open menu is never covered */
 
-/*
- * the notch: one chevron hanging from the bottom center edge of the bar.
- * No box, no border, no background, no lines.
- */
+/* one navigation tree: inline links on wide screens, a Menu button and a scrollable list on small screens - decisions.json -> site-nav-inline-01 */
 
-.nav-notch-wrap { display: flex; position: absolute; inset-inline: 0; bottom: -1px; z-index: 45; justify-content: center; background: var(--navy-deep); }
-.nav-notch { display: flex; align-items: center; justify-content: center; inline-size: 72px; block-size: 20px; background: var(--navy-deep); border: 0; cursor: pointer; color: #cdd8f3; }
-.nav-notch:hover, .nav-notch:focus-visible { color: #ffffff; }
-.nav-notch:hover svg, .nav-notch:focus-visible svg { color: var(--amber-hi); }
-.nav-notch-wrap:hover .nav-notch svg, .nav-notch-wrap:focus-within .nav-notch svg { transform: rotate(180deg); }
-.nav-strip { display: block; position: absolute; inset-inline: 0; top: 100%; margin-top: -1px; background: var(--navy-deep); border-bottom: 1px solid #26355f; box-shadow: var(--shadow-lg); padding: var(--s-7) 0; max-block-size: calc(100svh - 3.25rem); overflow-y: auto; overscroll-behavior: contain; opacity: 0; translate: 0 -8px; visibility: hidden; transition: opacity var(--motion-slow) var(--ease-out), translate var(--motion-slow) var(--ease-out), visibility var(--motion-slow) var(--ease-out); transition-behavior: allow-discrete; } /* the panel scrolls inside the viewport instead of running past it - decisions.json -> site-nav-scroll-01 */
-.nav-notch-wrap:hover .nav-strip, .nav-notch-wrap:focus-within .nav-strip, .nav-strip:hover { opacity: 1; translate: 0 0; visibility: visible; }
+.nav-toggle { display: none; }
+.nav-links { display: flex; align-items: center; gap: var(--s-1); margin-inline: var(--s-4) 0; }
+.nav-links a { color: #cdd8f3; text-decoration: none; font-size: var(--text-sm); font-weight: 600; padding: var(--s-2) var(--s-3); border-radius: 999px; transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard); }
+.nav-links a:hover, .nav-links a:focus-visible { color: #ffffff; background: #16204a; }
+.nav-links a[aria-current='page'] { color: #ffffff; box-shadow: inset 0 -2px 0 var(--amber); }
+.nav-extra { display: none; }
 
-@starting-style {
-  .nav-notch-wrap:hover .nav-strip, .nav-notch-wrap:focus-within .nav-strip, .nav-strip:hover { opacity: 0; translate: 0 -8px; }
+@media (max-width: 1000px) {
+  .nav-toggle { display: inline-flex; align-items: center; gap: var(--s-2); background: transparent; border: 1px solid #34477e; border-radius: 999px; color: #eaf0ff; padding: var(--s-2) var(--s-3); min-block-size: 2.5rem; font-size: var(--text-sm); font-weight: 600; cursor: pointer; }
+  .nav-toggle svg { inline-size: 18px; block-size: 18px; }
+  .nav-toggle:hover, .nav-toggle:focus-visible { border-color: var(--amber-hi); color: #ffffff; }
+  .nav-links { display: none; position: absolute; inset-inline: 0; top: 100%; flex-direction: column; align-items: stretch; gap: var(--s-1); margin: 0; padding: var(--s-4) var(--gutter) var(--s-5); background: var(--navy-deep); border-bottom: 1px solid #26355f; box-shadow: var(--shadow-lg); max-block-size: calc(100dvh - 3.25rem); overflow-y: auto; overscroll-behavior: contain; }
+  .site-header.nav-open .nav-links { display: flex; }
+  .nav-links a { padding: var(--s-3) var(--s-4); }
+  .nav-extra { display: grid; gap: var(--s-1); border-top: 1px solid #26355f; margin-top: var(--s-3); padding-top: var(--s-3); }
+  .nav-extra-heading { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.12em; text-transform: uppercase; color: #8fa8d8; padding-inline: var(--s-4); }
 }
-.nav-strip-inner { width: min(1120px, 100% - 2 * var(--gutter)); margin-inline: auto; display: grid; grid-template-columns: minmax(0, 1.15fr) repeat(3, minmax(0, 1fr)); gap: var(--s-7); align-items: start; }
-.nav-col-heading { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.12em; text-transform: uppercase; color: #8fa8d8; margin-bottom: var(--s-3); }
-.nav-spot { display: grid; align-content: start; gap: var(--s-3); }
-.nav-spot-title { font-family: var(--font-display); font-size: var(--text-2xl); line-height: 1.15; letter-spacing: -0.02em; color: #ffffff; }
-.nav-spot-cta { justify-self: start; font-family: var(--font-sans); font-weight: 700; color: var(--amber-hi); text-decoration: none; padding: var(--s-2) var(--s-4); border: 1px solid #26355f; border-radius: 999px; margin-top: var(--s-2); }
-.nav-spot-cta:hover, .nav-spot-cta:focus-visible { border-color: var(--amber); color: #ffffff; }
-.nav-col-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-2); }
-.nav-col-list a { display: block; color: #cdd8f3; text-decoration: none; font-size: var(--text-sm); font-weight: 600; padding: var(--s-2) var(--s-3); border-radius: var(--radius-sm); transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard); }
-.nav-col-list a:hover, .nav-col-list a:focus-visible { color: #ffffff; background: #16204a; }
-.nav-col-list a[aria-current='page'] { color: #ffffff; box-shadow: inset 0 -2px 0 var(--amber); width: fit-content; }
-@media (max-width: 860px) { .nav-strip-inner { grid-template-columns: 1fr 1fr; } .nav-spot { grid-column: 1 / -1; } }
-@media (max-width: 560px) { .nav-strip-inner { grid-template-columns: 1fr; } }
+
+@media (max-width: 360px) {
+  .brand svg:last-child { display: none; }
+}
 
 /* the bar stays put while reading: the brand and the action pills never slide under the hero */
 

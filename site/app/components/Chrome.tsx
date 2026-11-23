@@ -6,7 +6,8 @@ import { onSessionChange, sessionAccount } from '../lib/auth';
 
 const VERSION = '1.8.1';
 
-// one navigation surface: a slim dark bar with the brand and one CTA, and a chevron that drops the whole menu as a panel.
+// one navigation surface: a slim dark bar with product links and one CTA; a Menu button opens the same list on a small screen.
+// decisions.json -> site-nav-inline-01
 
 const PRODUK = [
   { href: '/fitur', label: 'Fitur' },
@@ -31,8 +32,19 @@ const SUMBER = [
   { href: '/bandingkan', label: 'Bandingkan' }
 ];
 
+// Unduh stays the amber action on the right; these are the ordinary first-level links, and the small-screen extras.
+
+const NAV_LINKS = PRODUK.filter((item) => item.href !== '/unduh');
+const NAV_EXTRA = [
+  { href: '/bandingkan', label: 'Bandingkan' },
+  { href: '/changelog', label: 'Changelog' },
+  { href: '/faq', label: 'FAQ' },
+  { href: '/dukungan', label: 'Dukungan' }
+];
+
 export function SiteHeader({ current }: { current?: string }) {
   const [email, setEmail] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     let live = true;
@@ -41,13 +53,42 @@ export function SiteHeader({ current }: { current?: string }) {
     return () => { live = false; stop(); };
   }, []);
 
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') setMenuOpen(false); };
+    const wide = window.matchMedia('(min-width: 1001px)');
+    const onWide = () => { if (wide.matches) setMenuOpen(false); };
+    document.addEventListener('keydown', onKey);
+    wide.addEventListener('change', onWide);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      wide.removeEventListener('change', onWide);
+    };
+  }, []);
+
   return (
-    <header className="site-header" data-version={VERSION}>
+    <header className={menuOpen ? 'site-header nav-open' : 'site-header'} data-version={VERSION}>
       <div className="site-header-row site-header-bleed header-inner">
         <Link className="brand" to="/beranda" aria-label="Navego — beranda">
           <NavegoMark size={24} />
           <NavegoWordmark size={14} />
         </Link>
+        <button className="nav-toggle" type="button" aria-expanded={menuOpen} aria-controls="site-nav" onClick={() => setMenuOpen((open) => !open)}>
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" focusable="false">
+            <path d="M2 4h14M2 9h14M2 14h14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          <span>Menu</span>
+        </button>
+        <nav id="site-nav" className="nav-links" aria-label="Navigasi utama">
+          {NAV_LINKS.map((item) => (
+            <Link key={item.href} to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link>
+          ))}
+          <div className="nav-extra">
+            <p className="nav-extra-heading">Lainnya</p>
+            {NAV_EXTRA.map((item) => (
+              <Link key={item.href} to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link>
+            ))}
+          </div>
+        </nav>
         <div className="header-actions">
           {email ? (
             <>
@@ -61,52 +102,6 @@ export function SiteHeader({ current }: { current?: string }) {
             </>
           )}
         </div>
-      </div>
-
-      <div className="nav-notch-wrap">
-        <button className="nav-notch" type="button" aria-label="Tampilkan menu lengkap" aria-controls="nav-strip">
-          <svg width="18" height="10" viewBox="0 0 18 10" aria-hidden="true" focusable="false">
-            <path d="M1 1.5l8 7 8-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-      <div className="nav-strip" id="nav-strip" role="region" aria-label="Menu lengkap">
-        <div className="nav-strip-inner">
-          <div className="nav-spot">
-            <p className="nav-col-heading">Beranda</p>
-            <h2 className="nav-spot-title">Satu perintah.<br />Browser Anda bekerja.</h2>
-            <Link className="nav-spot-cta" to="/beranda">Buka beranda <span aria-hidden="true">→</span></Link>
-          </div>
-          <nav className="nav-col" aria-label="Produk">
-            <p className="nav-col-heading">Produk</p>
-            <ul className="nav-col-list">
-              {PRODUK.map((item) => (
-                <li key={item.href}><Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link></li>
-              ))}
-            </ul>
-          </nav>
-          <nav className="nav-col" aria-label="Kepercayaan dan sumber">
-            <p className="nav-col-heading">Kepercayaan</p>
-            <ul className="nav-col-list">
-              <li><Link to="/keamanan" aria-current={current === '/keamanan' ? 'page' : undefined}>Keamanan</Link></li>
-              <li><Link to="/metodologi" aria-current={current === '/metodologi' ? 'page' : undefined}>Metodologi</Link></li>
-              <li><Link to="/bandingkan" aria-current={current === '/bandingkan' ? 'page' : undefined}>Bandingkan</Link></li>
-            </ul>
-            <p className="nav-col-heading nav-col-heading--spaced">Sumber</p>
-            <ul className="nav-col-list">
-              <li><Link to="/changelog" aria-current={current === '/changelog' ? 'page' : undefined}>Changelog</Link></li>
-              <li><Link to="/faq" aria-current={current === '/faq' ? 'page' : undefined}>FAQ</Link></li>
-            </ul>
-          </nav>
-          <nav className="nav-col" aria-label="Bantuan">
-            <p className="nav-col-heading">Bantuan</p>
-            <ul className="nav-col-list">
-              {BANTUAN.map((item) => (
-                <li key={item.href}><Link to={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</Link></li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-      </div>
       </div>
     </header>
   );
