@@ -2,6 +2,7 @@
 /*
  * Navego — design tokens.
  * The single source of truth for color, space, type, layout and motion.
+ * decisions.json -> site-restyle-01.
  * One family, one accent, even pixel steps: cream ground, deep navy ink, one amber action color.
  * Every web/* decision in docs/decisions.json names a value this file or site/app/brand.css carries.
  * @last-edited: 2026-11-22 UTC+7.
@@ -11,9 +12,9 @@
 
 :root {
   --ground: #f6f1e7;
-  --paper: #ffffff;
-  --panel: #fbfaf5;
-  --panel-2: #f2ede0;
+  --paper: #fffefb;
+  --panel: #f8f5ed;
+  --panel-2: #eee8da;
 
   --ink: #141a2e;
   --ink-2: #1e2742;
@@ -30,13 +31,12 @@
   --amber-hi: #e9ab58;
   --amber-deep: #b8742a;
   --good: #1f7a2e;
+  --good-hi: #7ce3b1;
   --good-bg: #e7f6e3;
   --warn-bg: #fdf0b8;
   --danger: #c0123f;
   --danger-bg: #f6dcd6;
 
-  --surface-dark: #10173c;
-  --surface-dark-soft: #1a2450;
   --text-on-dark: #eef2ff;
   --text-on-dark-muted: #a9bce8;
 }
@@ -103,6 +103,10 @@
   --gutter: 20px;
   --radius: 16px;
   --radius-sm: 10px;
+  --radius-lg: 24px;
+  --shadow-sm: 0 1px 2px rgb(13 19 56 / 0.04), 0 10px 30px rgb(13 19 56 / 0.05);
+  --shadow-lg: 0 28px 72px rgb(4 8 30 / 0.30), 0 6px 20px rgb(4 8 30 / 0.18);
+  --text-hero-fluid: clamp(2.75rem, 1.8rem + 3.4vw, 4.5rem);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --motion-fast: 120ms;
@@ -150,11 +154,15 @@ p, li, blockquote, dd { text-wrap: pretty; }
 
 body {
   background: var(--ground);
+  background-image: radial-gradient(52rem 30rem at 100% 0%, rgb(216 146 63 / 0.07), transparent 62%), radial-gradient(42rem 26rem at 0% 18%, rgb(22 32 90 / 0.045), transparent 65%);
   color: var(--ink);
   font-size: var(--text-base);
   line-height: var(--leading-body);
   -webkit-font-smoothing: antialiased;
 }
+
+a { color: var(--navy); text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+a:hover { color: var(--navy-deep); }
 
 ::selection { background: var(--amber-hi); color: #231200; }
 

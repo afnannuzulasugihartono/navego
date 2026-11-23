@@ -183,8 +183,6 @@ export default function Harga() {
     }
   }
 
-  const grid = 'repeat(auto-fit, minmax(13rem, 1fr))';
-
   const PlanCard = (plan: { id: string; price: string; name: string; quota: string; premium: boolean }) => (
     <section className="card plan" role="listitem" key={plan.id} aria-labelledby={`usd-${plan.id}`}>
       <p className="plan-name">{plan.name}</p>

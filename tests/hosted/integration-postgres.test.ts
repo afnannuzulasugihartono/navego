@@ -41,6 +41,18 @@ test('the migrations produce opera_commands with its full lifecycle and RLS on t
     for (const status of COMMAND_STATUSES) {
       assert.ok(definition.includes(status), `the opera_commands status check must carry '${status}'`);
     }
+
+    const first = (await client.query("select public.opera_create_pairing_code('chrome-integration') as answer")).rows[0].answer;
+    const second = (await client.query("select public.opera_create_pairing_code('chrome-integration') as answer")).rows[0].answer;
+    assert.equal(first.ok, true, `the first pairing code must be issued: ${JSON.stringify(first)}`);
+    assert.equal(second.ok, true, `the second code for the same browser must not collide: ${JSON.stringify(second)}`);
+    assert.notEqual(first.code, second.code, 'two pairing codes are random, not the device name');
+    const stored = await client.query("select code_hash from public.opera_pairing_codes where device_name = 'chrome-integration'");
+    const expected = new Set<string>();
+    for (const answer of [first, second]) {
+      expected.add((await client.query('select public.opera_sha256($1) as hash', [answer.code])).rows[0].hash);
+    }
+    assert.deepEqual(new Set(stored.rows.map((row: any) => row.code_hash)), expected, 'the stored hashes are the hashes of the issued codes, so opera_pair_device can redeem them');
   } finally {
     await client.end();
   }

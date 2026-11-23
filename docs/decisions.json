@@ -1096,6 +1096,28 @@
         "ref": "user 2026-11-23: 'fix navbar navego yang terpotong lihat di web' - the open panel measured 1067 px tall on a 390x844 phone and 770 px at 768x600, so the last links fell below the fold and could not be scrolled to",
         "also": "site/app/brand.css (the capped, scrollable panel and the header's stacking order)"
       }
+    },
+    {
+      "id": "hosted-pairing-code-01",
+      "scope": "database/pairing",
+      "file": "hosted/migrations/20261123140000_opera_pairing_code_random_hash.sql",
+      "decision": "A pairing code is random and code_hash stores opera_sha256(v_code); the issuer-first rate limit and the ownership fence stay. The browser-name migration must not replace those rules while changing the default device name to browser.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-23: 'sama fix ini gagal memasangkan di chrome' - the live Chrome pairing attempt returned HTTP 409 duplicate key value violates unique constraint opera_pairing_codes_code_hash_key because 20261122160000 stored the hash of the device name",
+        "also": "tests/hosted/pairing-code-hash.test.ts (the static gate); tests/hosted/integration-postgres.test.ts (two codes for one browser, verified against the disposable database)"
+      }
+    },
+    {
+      "id": "site-restyle-01",
+      "scope": "web/components",
+      "file": "site/app/brand.css",
+      "decision": "The whole site moves to one 2026 product system: a dark, fluid-type task demo on Beranda; quiet gradient heroes on inner pages; larger shared card radii, shadows and hover lift; and the same elevated surfaces in docs, auth, account and dashboard. Navego keeps its own cream, deep navy and amber identity rather than copying a reference site's palette, and every animation collapses under reduced motion.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-23: 'redesign restyle seluruh website navego cari referensi website browser agent dan hapus website opera agent migrasi semua ke navego'",
+        "also": "https://browser-use.com/ (the task-first browser demo and public proof story); https://www.browserbase.com/ (the capability grid and production narrative); https://www.skyvern.com/ (workflow examples, explainable runs and developer paths); tests/site/restyle.test.ts (the shared visual contract)"
+      }
     }
   ]
 }

@@ -82,6 +82,11 @@ export default function Beranda() {
                 <Link className="btn btn-solid" to="/unduh">Mulai gratis</Link>
                 <Link className="btn btn-ghost" to="/docs">Lihat dokumentasi</Link>
               </div>
+              <div className="hero-proof" aria-label="Bukti produk">
+                <span>Browser lokal</span>
+                <span>40 tool MCP</span>
+                <span>SHA-256 tiap berkas</span>
+              </div>
               <p className="microcopy">Ekstensi dan driver lokal. Bisa Anda periksa dan cabut sendiri.</p>
             </div>
             <div className="demo-window" aria-hidden="true">
