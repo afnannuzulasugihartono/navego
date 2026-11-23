@@ -7,6 +7,7 @@ import { index, route, type RouteConfig } from '@react-router/dev/routes';
 
 const PAGES: Array<[path: string, file: string, id: string]> = [
   ['beranda', './routes/beranda.tsx', 'beranda'],
+  ['en', './routes/en.tsx', 'en'],
   ['fitur', './routes/fitur.tsx', 'fitur'],
   ['harga', './routes/harga.tsx', 'harga'],
   ['unduh', './routes/unduh.tsx', 'unduh'],

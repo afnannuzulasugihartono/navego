@@ -169,7 +169,7 @@ async function runCommand(command: Record<string, unknown>) {
   if (method === 'tabs.open') {
     const url = safeUrl(params.url);
     if (url === null) throw new Error('bridge: tabs.open needs an http(s) url');
-    const created = await chrome.tabs.create({ url, active: params.active === true });
+    const created = await chrome.tabs.create({ url, active: params.background === false ? params.active === true : false });
     return publicBridgeTab(created);
   }
   if (method === 'tabs.get') {

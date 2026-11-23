@@ -14,15 +14,15 @@ export function meta() {
 }
 
 const BLOCKS = [
-  { id: 'install', title: 'Pasang paketnya', body: 'npm install -g navego', note: 'Satu perintah. Paket ini memakai browser yang sudah Anda gunakan; tidak ada proses tambahan yang perlu dijaga.' },
-  { id: 'doctor', title: 'Periksa yang terhubung', body: 'navego doctor', note: 'Cetakan menyatakan nama device, paket plan, dan sisa kuota hari ini. Kalau tidak ada yang terhubung, paket mencetak langkah perbaikan yang paling mungkin.' },
-  { id: 'pair', title: 'Pair sekali per peramban', body: 'navego local', note: 'Peramban baru memasang ekstensi dulu (lihat Unduh), lalu Dashboard → Pasangkan browser ini. Setelah itu driver lokal mengambil alih otomatis.' }
+  { id: 'pair', title: 'Pair browser ini', body: 'Dashboard → Pasangkan browser ini', note: 'Pasang ekstensi dari Unduh, masuk, lalu klik sekali. Tidak ada kode yang diketik.' },
+  { id: 'local', title: 'Jalankan driver lokal', body: 'npx -y navego local', note: 'Biarkan proses ini hidup. Stdio di mesin Anda. Tidak perlu install global, tidak ada biaya per panggilan.' },
+  { id: 'doctor', title: 'Buktikan koneksinya', body: 'npx -y navego doctor', note: 'Di terminal kedua, selagi local berjalan: doctor membaca device, plan, dan sisa kuota. Kalau gagal, pesannya menyebut langkah perbaikan.' }
 ];
 
 const HARNESS: Array<{ id: string; title: string; body: string }> = [
-  { id: 'cfg-opencode', title: 'OpenCode — opencode.json atau ~/.config/opencode/opencode.json', body: '{\n  "mcp": {\n    "navego": {\n      "type": "local",\n      "command": "navego",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-kilo', title: 'Kilo Code — MCP settings (JSON)', body: '{\n  "mcpServers": {\n    "navego": {\n      "command": "navego",\n      "args": ["local"]\n    }\n  }\n}' },
-  { id: 'cfg-claude', title: 'Claude Desktop — konfigurasi MCP lokal', body: 'command: npx\nargs: ["-y", "navego", "local"]' }
+  { id: 'cfg-opencode', title: 'OpenCode — opencode.json atau ~/.config/opencode/opencode.json', body: '{\n  "mcp": {\n    "navego": {\n      "type": "local",\n      "command": "npx",\n      "args": ["-y", "navego", "local"]\n    }\n  }\n}' },
+  { id: 'cfg-kilo', title: 'Kilo Code — MCP settings (JSON)', body: '{\n  "mcpServers": {\n    "navego": {\n      "command": "npx",\n      "args": ["-y", "navego", "local"]\n    }\n  }\n}' },
+  { id: 'cfg-claude', title: 'Claude Desktop — konfigurasi MCP lokal', body: '{\n  "mcpServers": {\n    "navego": {\n      "command": "npx",\n      "args": ["-y", "navego", "local"]\n    }\n  }\n}' }
 ];
 
 export default function Mcp() {
@@ -49,8 +49,8 @@ export default function Mcp() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <h1>Driver lokal, di mesin Anda.</h1>
-            <p className="lede">Stdio, tanpa biaya per panggilan. Yang dibutuhkan hanya browser yang masuk akun dan ekstensi terpasang.</p>
+            <h1>Dari npx ke tab pertama.</h1>
+            <p className="lede">Butuh Node.js 22 atau lebih baru. Pair sekali, jalankan <code>npx -y navego local</code>, lalu AI Anda memakai browser yang sama. Tanpa install global, tanpa biaya per panggilan.</p>
           </div>
         </section>
 
@@ -120,7 +120,7 @@ export default function Mcp() {
           <div className="wrap">
             <div className="cta-band">
               <h2 className="section-title text-on-dark">Satu perintah untuk mulai.</h2>
-              <p>Pasang paketnya, jalankan <code>navego doctor</code>, lihat device Anda di Dashboard.</p>
+              <p>Jalankan <code>npx -y navego doctor</code>, lihat device Anda di Dashboard.</p>
               <div className="hero-cta mt-2">
                 <Link className="btn btn-solid" to="/docs">Baca docs lengkap</Link>
                 <Link className="btn btn-ghost" to="/unduh">Pasang extension</Link>

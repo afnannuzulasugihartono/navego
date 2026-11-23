@@ -161,7 +161,7 @@ scripts/verify/scope.ts be9814cb16f92be323822d99c1182a88c94a68696e30ebbfd3f3fedc
 scripts/verify/scope-check.ts 446f0471915b9ecb99caa3809eee2c44ae14ae8b23a0f907abeecb86e4397815
 
 # --- the pins themselves: editing these is how a drift goes unnoticed ---
-tests/helpers/boundary-locks.ts f742a30682ed671cff82768c393b15a6b9c260c3ed776331b800a981e3df5c11
+tests/helpers/boundary-locks.ts 61f4974a3c9ab88fae4c98a9b54cc0e5de3a4eaf0928861d1e442cd2dcf51fe3
 tests/helpers/canonical-source-hash.ts f156e8ebaa77f91cfb2199b40990b58a73ae70b80eeff625028426dcde01d614
 tests/helpers/comment-format.ts 1edb82d5a06669a056a9632a5d294aa22875f6b703b836dded31bbb855f7dd67
 tests/docs/comment-format.test.ts 1cd8037c4b51001900dfc54a7a63a2dadabda27fd5bd5fff9d6e7e773cd205f6

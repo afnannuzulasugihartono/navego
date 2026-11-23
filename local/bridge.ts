@@ -236,8 +236,8 @@ export async function listBridgeTargets({ timeoutMs }: { timeoutMs?: number | un
   return Array.isArray(tabs) ? tabs as Array<Record<string, unknown>> : [];
 }
 
-export async function openBridgeTarget(url: string): Promise<{ id: unknown; url: string; title: string }> {
-  const tab = await request('tabs.open', { url, active: false });
+export async function openBridgeTarget(url: string, { active = false }: { active?: boolean } = {}): Promise<{ id: unknown; url: string; title: string }> {
+  const tab = await request('tabs.open', { url, active });
   return { id: tab.id, url: String(tab.url ?? ''), title: String(tab.title ?? '') } as { id: unknown; url: string; title: string };
 }
 

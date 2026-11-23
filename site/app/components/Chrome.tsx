@@ -34,7 +34,7 @@ const SUMBER = [
 
 // Unduh stays the amber action on the right; these are the ordinary first-level links, and the small-screen extras.
 
-const NAV_LINKS = PRODUK.filter((item) => item.href !== '/unduh');
+const NAV_LINKS = [...PRODUK.filter((item) => item.href !== '/unduh'), { href: '/en', label: 'EN' }];
 const NAV_EXTRA = [
   { href: '/bandingkan', label: 'Bandingkan' },
   { href: '/changelog', label: 'Changelog' },
@@ -130,7 +130,7 @@ function CookieConsent() {
   return (
     <div className="consent-banner" role="region" aria-label="Persetujuan cookie">
       <div className="wrap consent-inner">
-        <p>Navego memakai dua cookie first-party: <code>navego_consent</code> (mengingat pilihan ini) dan <code>navego_region</code> (mengingat kawasan harga Anda). Tidak ada analytics, iklan, atau pelacakan. <Link to="/privasi#cookie">Detail di Kebijakan Privasi</Link></p>
+        <p>Navego memakai tiga cookie first-party: <code>navego_consent</code> (mengingat pilihan ini), <code>navego_region</code> (mengingat kawasan harga Anda), dan <code>oa_device_id</code> (mengingat instance browser untuk pairing). Tidak ada analytics, iklan, atau pelacakan. <Link to="/privasi#cookie">Detail di Kebijakan Privasi</Link></p>
         <div className="hero-cta">
           <button className="btn btn-solid btn-sm" type="button" onClick={() => decide('granted')}>Accept cookies</button>
           <button className="btn btn-ghost btn-sm" type="button" onClick={() => decide('denied')}>Tolak</button>

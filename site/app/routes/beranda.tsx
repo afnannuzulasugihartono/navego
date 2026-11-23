@@ -8,7 +8,7 @@ import { SiteHeader, SiteFooter } from '../components/Chrome';
 export function meta() {
   return seoMeta({
     title: 'Navego — AI agent di browser Anda',
-    description: 'Tunjuk satu tab, tulis satu perintah. Navego membaca halaman, mengisi formulir, mengklik, dan menyimpan hasilnya sebagai berkas nyata — tanpa eval, tanpa skrip.',
+    description: 'Situs tanpa API. Perintah jadi berkas. Navego membuka portal, mengisi formulir, mengunduh data, dan menyimpan Excel, Word, atau PowerPoint di browser Anda — tanpa eval, tanpa skrip.',
     path: '/beranda'
   });
 }
@@ -28,10 +28,18 @@ const KEMAMPUAN = [
   { title: 'Verifikasi', body: 'Setiap berkas membawa SHA-256.' }
 ];
 
+const BUKTI = [
+  { title: 'Laporan keuangan (.xlsx)', body: 'Buku kerja hasil ekstraksi tabel portal — siap dibuka dan diperiksa.', href: '/contoh/laporan-keuangan-2026-09.xlsx' },
+  { title: 'Rencana pemasaran (.docx)', body: 'Dokumen Word hasil perintah, bukan tempelan HTML.', href: '/contoh/rencana-pemasaran-2027.docx' },
+  { title: 'Rencana strategis (.pptx)', body: 'Deck PowerPoint dari ringkasan riset dan angka yang bisa ditelusuri.', href: '/contoh/rencana-strategis-2027.pptx' }
+];
+
 const FAQ = [
   { q: 'Apakah Navego membaca semua tab saya?', a: 'Tidak. Tab yang Anda tunjuk saja.' },
   { q: 'Apakah kata sandi boleh diketik agen?', a: 'Tidak pernah. Kolom itu selalu ditolak.' },
-  { q: 'Ke mana data halaman saya pergi?', a: 'Tidak ke mana pun. Dibaca di mesin Anda.' },
+  { q: 'Ke mana data halaman saya pergi?', a: 'Dibaca di mesin Anda. Supabase menyimpan akun, device, perintah, dan hasilnya. Model pilihan Anda menerima tujuan dan potongan halaman yang diperlukan saja.' },
+  { q: 'Bagaimana kalau pekerjaan gagal di tengah?', a: 'OTP, captcha, dan login berhenti untuk handoff manusia. continueOnError menyimpan langkah yang berhasil dan daftar kegagalannya — tidak ada retry loop.' },
+  { q: 'Apa biaya di luar plan?', a: 'Navego tidak menambah markup token atau biaya proxy. Provider AI Anda menagih sesuai tarif mereka sendiri.' },
   { q: 'Apa yang dipasang di komputer saya?', a: 'Ekstensi dan driver lokal. Keduanya bisa Anda periksa dan cabut.' }
 ];
 
@@ -44,7 +52,6 @@ const JSON_LD = {
   description: 'Asisten AI yang menjalankan browser Anda dari satu perintah teks.',
   url: 'https://navego.pages.dev/beranda',
   downloadUrl: 'https://navego.pages.dev/unduh',
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'IDR' },
   inLanguage: 'id'
 };
 
@@ -74,9 +81,9 @@ export default function Beranda() {
         <section className="hero" aria-labelledby="judul-beranda">
           <div className="wrap hero-grid">
             <div className="hero-copy">
-              <h1 id="judul-beranda">Tunjuk tab. Tulis perintah. Dapat berkas.</h1>
+              <h1 id="judul-beranda">Situs tanpa API. Perintah jadi berkas.</h1>
               <p className="lede">
-                Navego adalah AI agent yang berjalan di browser Anda sendiri — membaca halaman yang Anda tunjuk, mengisi formulir, mengklik, dan menyimpan hasilnya. Tanpa eval, tanpa skrip.
+                Navego adalah AI agent di browser Anda: membuka portal, mengisi formulir, mengunduh data, lalu menyimpannya sebagai Excel, Word, atau PowerPoint. Lokal, tanpa skrip, tanpa eval.
               </p>
               <div className="hero-cta">
                 <Link className="btn btn-solid" to="/unduh">Mulai gratis</Link>
@@ -155,6 +162,26 @@ export default function Beranda() {
           </div>
         </section>
 
+        <section className="section" aria-labelledby="judul-bukti">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <h2 id="judul-bukti" className="section-title">Bukan screenshot. Berkas yang bisa Anda buka.</h2>
+              </div>
+              <p className="section-note">Unduh contohnya. Periksa isinya. Baru nilai sendiri.</p>
+            </div>
+            <div className="tile-grid">
+              {BUKTI.map((item) => (
+                <article className="tile" key={item.href}>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                  <p><a href={item.href} download>Unduh berkas contoh →</a></p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="section section-dark" aria-labelledby="judul-coba">
           <div className="wrap">
             <div className="section-head">
@@ -171,9 +198,9 @@ export default function Beranda() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <h2 id="judul-harga" className="section-title">Satu dolar sebulan.</h2>
+                <h2 id="judul-harga" className="section-title">Coba dulu. Bayar kalau cocok.</h2>
               </div>
-              <p className="section-note"><Link to="/harga">Lihat semua paket →</Link></p>
+              <p className="section-note">Mulai $1. Tanpa langganan. <Link to="/harga">Lihat semua paket →</Link></p>
             </div>
             <div className="plans">
               <div className="card plan">

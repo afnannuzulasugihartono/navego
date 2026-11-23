@@ -1151,6 +1151,105 @@
         "ref": "user 2026-11-23: 'yang chevron hapus aja ganti biasa research juga yang harus ada di navbar cari referensi di internet dari website agent browser serupa'",
         "also": "https://www.skyvern.com/ (Products, Use Cases, Developers, Pricing, Resources, Login, Book a Demo); https://www.hyperbrowser.ai/ (Products, Pricing, Blog, Documentation, App); https://browser-use.com/ (product categories, Pricing, Docs, Dashboard, Start for free); https://www.browserbase.com/ (Platform, Solutions, Pricing, Developers, Docs, API-key CTA); tests/site/navbar.test.ts (the no-chevron and small-screen state contract)"
       }
+    },
+    {
+      "id": "site-conversion-01",
+      "scope": "web/components",
+      "file": "site/app/routes/beranda.tsx",
+      "decision": "The page sells a verifiable outcome instead of a tool count: sites without APIs become real files. Visitors can download the actual xlsx/docx/pptx evidence, start with npx instead of a global install, read exact one-time plan periods and no-markup cost boundaries, and choose an English landing page for global reach. No testimonials, customer counts or unmeasured success claims are invented.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: 'research mendalam masalah yang membuat navego tidak diminati atau belum ada pelanggan yang membeli ... list semua hal yang membuat orang tidak membeli ... rencanakan langkah solusi ... implementasi'",
+        "also": "https://agentatlas.dev/guides/browser-automation-mcp-servers-compared/ (free local Playwright MCP and Chrome DevTools MCP set the adoption baseline); https://www.g2.com/products/browser-use/reviews (users praise quick setup but report reliability and free-tier limits); https://anchorbrowser.io/blog/best-browser-agent-platforms-reliable-low-cost-automation-2026 (buyers should measure verified completed workflows and total cost, not headline price); https://browser-use.com/llms-full.txt (free credit, no subscription and transparent usage pricing); tests/site/conversion.test.ts (the conversion contract)"
+      }
+    },
+    {
+      "id": "local-burst-handoff-01",
+      "scope": "agent/tools",
+      "file": "local/burst.ts",
+      "decision": "A burst never retries a failed step in a loop: the default stops at the first failure, continueOnError keeps successful steps with an errors list, and an OTP, captcha or login failure returns needsHuman with the gate and a resume instruction, even when continueOnError is on.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: users need a graceful 'Jeda & Ambil Alih' handoff and honest partial results instead of compounding errors and retry loops",
+        "also": "https://www.g2.com/products/browser-use/reviews (retry loops and unverified outcomes frustrate users); tests/local/adoption-features.test.ts (partial results and OTP handoff are driven)"
+      }
+    },
+    {
+      "id": "extension-open-background-01",
+      "scope": "agent/tools",
+      "file": "extension/background.ts",
+      "decision": "browser_open_url opens new tabs in the background by default on both the extension and bridge roads, so an agent can work in the user's real browser profile without taking over the visible window; background: false opts into focusing the new tab.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: the agent must use the real browser session without stealing the user's window or forcing a fresh login",
+        "also": "tests/local/adoption-features.test.ts (both open paths carry the background flag)"
+      }
+    },
+    {
+      "id": "local-read-untrusted-01",
+      "scope": "agent/tools",
+      "file": "local/browser-actions.ts",
+      "decision": "Every browser_read_page answer carries untrustedContent: true and a note that page text is data, never an instruction, so embedded instructions are not treated as commands by the agent.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: prompt injection is a buying concern for signed-in browser sessions",
+        "also": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool (webpage prompt injection calls for untrusted-content handling and human confirmation); tests/local/adoption-features.test.ts (the read result is marked)"
+      }
+    },
+    {
+      "id": "hosted-paypal-capture-01",
+      "scope": "hosted/functions",
+      "file": "hosted/functions/navego-billing/index.ts",
+      "decision": "The PayPal path is order → owner check → capture → activation. readPaypalOrder supplies custom_id, capture is a POST to /capture, and a failed activation returns an error instead of ok. The webhook checks activation.error too, so a paid order can never silently become an unactivated success.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: production checkout returned 502 paypal credentials are not set and the audit found no capture or reliable activation",
+        "also": "tests/billing/paypal.test.ts (capture is POST and order read carries custom_id); tests/billing/paypal-wiring.test.ts (owner verification and activation failure)"
+      }
+    },
+    {
+      "id": "site-checkout-intent-01",
+      "scope": "web/components",
+      "file": "site/app/routes/harga.tsx",
+      "decision": "Purchase intent survives login and popup blocking: a signed-out buyer returns to /harga, order creation is disabled while pending, a blocked popup gets a manual PayPal link, and checkout=success captures and activates the stored order instead of claiming success before activation returns.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: the checkout audit found lost purchase intent, ignored popup blocking and no return status",
+        "also": "site/app/routes/harga.tsx (finishCheckout, buyPending and the stored order); tests/billing/paypal-wiring.test.ts (the capture action)"
+      }
+    },
+    {
+      "id": "site-privacy-truth-01",
+      "scope": "web/security",
+      "file": "site/app/routes/privasi.tsx",
+      "decision": "Privacy copy names the actual data flow instead of saying data goes nowhere: local page reads, Supabase for accounts/devices/commands/results/plans/invoices, the chosen model for the goal and a capped excerpt, api.bigdatacloud.net for optional regional detection, and three first-party cookies including oa_device_id.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: the privacy audit found absolute copy contradicted by the implementation",
+        "also": "site/app/routes/beranda.tsx and site/app/routes/en.tsx (the short public answer matches the long policy)"
+      }
+    },
+    {
+      "id": "site-mcp-npx-01",
+      "scope": "web/components",
+      "file": "site/app/routes/mcp.tsx",
+      "decision": "The quickstart and every harness snippet use npx -y navego local, then npx -y navego doctor in a second terminal, so the no-global-install instruction is executable as written and declares Node.js 22 or newer.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: the no-global quickstart must not fall back to a binary that was never installed",
+        "also": "tests/site/conversion.test.ts (npx onboarding is a gate)"
+      }
+    },
+    {
+      "id": "site-geolocation-01",
+      "scope": "web/security",
+      "file": "site/public/_headers",
+      "decision": "Permissions-Policy allows geolocation=(self) only on /harga and /harga.html, so device-first regional pricing works there; every other route keeps geolocation blocked.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: the pricing page asks for device location but its own Permissions-Policy refused it, leaving only IP fallback",
+        "also": "tests/site/conversion.test.ts (the pricing-origin permission is gated)"
+      }
     }
   ]
 }

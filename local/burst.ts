@@ -1,7 +1,7 @@
 // @last-edited: 2026-10-22 UTC+7.
 // @title: burst — dependent steps on one tab, with one page look at the end.
 // @state: the action vocabulary, a checked step list, and a stop-on-failure runner.
-// @dependencies: none.
+// @dependencies: ./gates.js.
 
 // THIS FILE EXISTS
 
@@ -13,6 +13,8 @@
 // The cloud burst can switch tabs and carry a reference to a row created by an earlier action.
 // This one stays on the tab the tool was given, because a local drive that silently moves to another tab is how a batch lands in the wrong document.
 // It still carries a handle from an earlier find step, which is the part that removes the stale-coordinate problem.
+
+import { detectGate } from './gates.js';
 
 export const BURST_MAX_STEPS = 8;
 export const BURST_MAX_TIMEOUT_MS = 12000;
@@ -248,7 +250,7 @@ type BurstResult = Record<string, unknown> & { action: string };
 
 function refAt(step: BurstStep, results: BurstResult[]): BurstResult | null {
   if (step.refFromStep === undefined) return null;
-  const found = results[Number(step.refFromStep)];
+  const found = results.find((entry) => entry.index === Number(step.refFromStep));
   if (!found) throw new Error(`refFromStep ${step.refFromStep} has no completed step behind it`);
   return found;
 }
@@ -350,7 +352,22 @@ function waitForRowStep(driver: JsonRecord, step: BurstStep, absent: boolean, op
   });
 }
 
-export async function runLocalBurst({ driver, steps, timeoutMs = BURST_MAX_TIMEOUT_MS, now = Date.now }: { driver: JsonRecord; steps: BurstStep[]; timeoutMs?: number; now?: () => number }) {
+export interface BurstOutcome {
+  ok: boolean;
+  partial?: boolean;
+  timedOut?: boolean;
+  completedSteps: number;
+  failedAt?: number;
+  failedAction?: string;
+  error?: { message: string };
+  errors?: Array<{ index: number; action: string; message: string }>;
+  results: BurstResult[];
+  timingMs: number;
+  settled?: boolean;
+  needsHuman?: { gate: string; why: string; url: string; title: string; resume: string };
+}
+
+export async function runLocalBurst({ driver, steps, timeoutMs = BURST_MAX_TIMEOUT_MS, now = Date.now, continueOnError = false }: { driver: JsonRecord; steps: BurstStep[]; timeoutMs?: number; now?: () => number; continueOnError?: boolean }): Promise<BurstOutcome> {
   const clock = typeof now === 'function' ? now : Date.now;
   const started = clock();
   const deadline = started + timeoutMs;
@@ -367,13 +384,45 @@ export async function runLocalBurst({ driver, steps, timeoutMs = BURST_MAX_TIMEO
     timingMs: Math.max(0, clock() - started)
   });
 
+  const errors: Array<{ index: number; action: string; message: string }> = [];
+  let timedOut = false;
+
+  const needsHuman = async (step: BurstStep, index: number, error: unknown) => {
+    try {
+      const gate = await detectGate({
+        evaluate: (expression: string) => driver.evaluate(expression),
+        click: (x: number, y: number) => driver.click(x, y),
+        type: (text: string) => driver.type(text)
+      });
+      if (gate.gate === 'none') return null;
+      return {
+        ...failure(index, step, error),
+        needsHuman: {
+          gate: gate.gate,
+          why: gate.why,
+          url: gate.url,
+          title: gate.title,
+          resume: 'Finish the gate in your own browser, then run the remaining steps again; the agent never answers an OTP or a captcha for you.'
+        }
+      };
+    } catch {
+      return null;
+    }
+  };
+
+  // A failed step is recorded once, never retried in a loop: the caller gets the work that did finish and the exact step that failed.
+
   for (let index = 0; index < steps.length; index += 1) {
     // THE CAST IS SAFE HERE.
     // the array is a local snapshot; nothing in this loop resizes it.
     const step = steps[index] as BurstStep;
     const remaining = deadline - clock();
     if (remaining < 50) {
-      return failure(index, step, new Error(`run ran out of its ${timeoutMs} ms budget before step ${index}`), true);
+      const failureOut = failure(index, step, new Error(`run ran out of its ${timeoutMs} ms budget before step ${index}`), true);
+      if (!continueOnError) return failureOut;
+      timedOut = true;
+      errors.push({ index, action: step.action, message: failureOut.error.message });
+      break;
     }
     const stepStarted = clock();
     // THE STEP'S OWN ANSWER IS NOT BOXED IN ANOTHER BOX.
@@ -382,7 +431,10 @@ export async function runLocalBurst({ driver, steps, timeoutMs = BURST_MAX_TIMEO
       const result = await runStep(driver, step, results, remaining);
       results.push({ ...(result && typeof result === 'object' ? result : { value: result }), index, action: step.action, ok: true, timingMs: Math.max(0, clock() - stepStarted) });
     } catch (error: unknown) {
-      return failure(index, step, error);
+      const handoff = await needsHuman(step, index, error);
+      if (handoff) return handoff;
+      if (!continueOnError) return failure(index, step, error);
+      errors.push({ index, action: step.action, message: error instanceof Error ? error.message : String(error) });
     }
   }
 
@@ -390,6 +442,24 @@ export async function runLocalBurst({ driver, steps, timeoutMs = BURST_MAX_TIMEO
   // A wait step ends on a settled page, and a chord-only stream returns a verdict that it watched the page go quiet.
   // The look after the burst would settle the same page again, which is one round trip billed twice, so the burst passes the verdict it already has.
   const settledStep = results.some((entry) => entry.action === 'browser_wait_until' || (entry.action === 'stream' && entry.settled === true));
+
+  if (errors.length) {
+    const first = errors[0];
+    if (!first) throw new Error('unreachable: an error was recorded without a step');
+    return {
+      ok: false,
+      partial: results.length > 0,
+      completedSteps: results.length,
+      failedAt: first.index,
+      failedAction: first.action,
+      error: { message: first.message },
+      ...(timedOut ? { timedOut: true } : {}),
+      errors,
+      results,
+      timingMs: Math.max(0, clock() - started),
+      ...(settledStep ? { settled: true } : {})
+    };
+  }
 
   return { ok: true, completedSteps: results.length, results, timingMs: Math.max(0, clock() - started), ...(settledStep ? { settled: true } : {}) };
 }

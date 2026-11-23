@@ -80,7 +80,11 @@ export async function createPaypalOrder(env: PaypalEnvironment, input: PaypalOrd
         description: input.description,
         custom_id: input.customId
       }],
-      application_context: { brand_name: 'Navego' }
+      application_context: {
+        brand_name: 'Navego',
+        return_url: 'https://navego.pages.dev/harga?checkout=success',
+        cancel_url: 'https://navego.pages.dev/harga?checkout=cancelled'
+      }
     })
   });
   const body = await response.json() as Record<string, unknown>;
@@ -137,7 +141,7 @@ export interface PaypalCaptureEvent {
   resource?: { supplementary_data?: { related_ids?: { order_id?: string } } };
 }
 
-export async function capturePaypalOrder(env: PaypalEnvironment, orderId: string): Promise<Record<string, unknown>> {
+export async function readPaypalOrder(env: PaypalEnvironment, orderId: string): Promise<Record<string, unknown>> {
   const token = await paypalAccessToken(env);
   const response = await fetch(`${env.base}/v2/checkout/orders/${encodeURIComponent(orderId)}`, {
     method: 'GET',
@@ -145,6 +149,20 @@ export async function capturePaypalOrder(env: PaypalEnvironment, orderId: string
   });
   if (!response.ok) throw new Error(`paypal order refused: ${response.status}`);
   return await response.json() as Record<string, unknown>;
+}
+
+// A capture is a POST, never a GET for order details: an approved order that is never captured is not a sale, and the activation that follows it must not be claimed either.
+
+export async function capturePaypalOrder(env: PaypalEnvironment, orderId: string): Promise<Record<string, unknown>> {
+  const token = await paypalAccessToken(env);
+  const response = await fetch(`${env.base}/v2/checkout/orders/${encodeURIComponent(orderId)}/capture`, {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    body: '{}'
+  });
+  const body = await response.json().catch(() => ({})) as Record<string, unknown>;
+  if (!response.ok) throw new Error(`paypal capture refused: ${response.status} ${JSON.stringify(body).slice(0, 400)}`);
+  return body;
 }
 
 export function planFromCustomId(customId: string | null | undefined): { plan: string; owner: string } | null {

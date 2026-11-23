@@ -17,7 +17,7 @@ const site = path.join(root, 'site');
 const client = path.join(site, 'build', 'client');
 
 const ROUTES = [
-  '/', '/beranda.html', '/fitur.html', '/harga.html', '/unduh.html', '/docs.html',
+  '/', '/beranda.html', '/en.html', '/fitur.html', '/harga.html', '/unduh.html', '/docs.html',
   '/mcp.html', '/dukungan.html', '/privasi.html',
   '/syarat.html', '/akun.html', '/404.html', '/oauth/consent.html', '/dashboard.html',
   '/artikel.html', '/artikel/ai-browser-indonesia.html',
@@ -110,6 +110,7 @@ test('every inline script is covered by the CSP hashes in build/client/_headers'
 
 const CLAIMS = {
   '/beranda.html': ['Navego', '40', 'primitive browser', 'tanpa eval'],
+  '/en.html': ['real browser', 'Commands into files', 'xlsx'],
   '/fitur.html': ['40', 'primitive', 'debugger'],
   '/harga.html': ['plan.usd-1', 'PayPal', 'Enterprise'],
   '/unduh.html': ['navego-update', 'chrome', 'SHA-256'],
@@ -210,7 +211,7 @@ test('the sitemap names exactly the routes the build carries (404 and unknowns a
   buildSite();
   const sitemap = fs.readFileSync(path.join(client, 'sitemap.xml'), 'utf8');
   const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => String(m[1]).replace('https://navego.pages.dev', ''));
-  const expected = ['/beranda', '/fitur', '/harga', '/unduh', '/docs', '/mcp', '/dukungan', '/bandingkan', '/changelog', '/faq', '/keamanan', '/metodologi', '/privasi', '/syarat', '/akun', '/dashboard', '/artikel', '/artikel/ai-browser-indonesia', '/oauth/consent', '/'];
+  const expected = ['/beranda', '/en', '/fitur', '/harga', '/unduh', '/docs', '/mcp', '/dukungan', '/bandingkan', '/changelog', '/faq', '/keamanan', '/metodologi', '/privasi', '/syarat', '/akun', '/dashboard', '/artikel', '/artikel/ai-browser-indonesia', '/oauth/consent', '/'];
   assert.deepEqual([...locs].sort(), [...expected].sort());
 });
 

@@ -63,13 +63,13 @@ export default function Unduh() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <h1>Pasang dalam satu klik.</h1>
-            <p className="lede">Satu build, lima browser.</p>
+            <h1>Mulai dari Chrome Anda.</h1>
+            <p className="lede">Unduh ekstensinya, pair sekali, jalankan perintah pertama. Tidak perlu kartu kredit untuk mencoba.</p>
             <div className="hero-cta">
-              <a className="btn btn-solid" href="/download/forceinstall.reg" download="navego-forceinstall.reg">Unduh .reg — satu klik</a>
-              <a className="btn btn-ghost" href="/download/forceinstall-remove.reg" download="navego-forceinstall-remove.reg">Hapus kebijakannya</a>
+              <a className="btn btn-solid" href={`${DOWNLOAD}.zip?for=chrome`} download>Unduh untuk Chrome</a>
+              <a className="btn btn-ghost" href="/download/forceinstall.reg" download="navego-forceinstall.reg">Pakai .reg di Windows</a>
             </div>
-            <p className="note">Windows saja. HKCU, tanpa admin. <code>ExtensionInstallForcelist</code>. Browser ini ikut rilis terbaru.</p>
+            <p className="note">Build yang sama untuk Edge, Brave, Opera, dan Vivaldi. .reg memakai HKCU, tanpa admin; .zip untuk Load unpacked.</p>
           </div>
         </section>
 
@@ -102,9 +102,9 @@ export default function Unduh() {
               </div>
             </div>
             <div className="value-grid">
-              <div className="value-card"><span className="start-num">1</span><b>Ekstrak</b><p>Buka <code>chrome://extensions</code>. Aktifkan Developer mode. Load unpacked.</p></div>
-              <div className="value-card"><span className="start-num">2</span><b>Masuk</b><p>Masuk dengan magic link atau OAuth.</p></div>
-              <div className="value-card"><span className="start-num">3</span><b>Pair</b><p>Dashboard → Pairing → Pasangkan browser ini. Satu klik.</p></div>
+              <div className="value-card"><span className="start-num">1</span><b>Load unpacked</b><p>Buka <code>chrome://extensions</code>. Aktifkan Developer mode. Pilih folder hasil ekstrak .zip.</p></div>
+              <div className="value-card"><span className="start-num">2</span><b>Masuk</b><p>Masuk dengan Google, GitHub, atau magic link email. Sesi tersimpan setelah reload.</p></div>
+              <div className="value-card"><span className="start-num">3</span><b>Pair & buktikan</b><p>Dashboard → Pairing → Pasangkan browser ini. Device harus online; jalankan <code>tabs.list</code> dari Aksi.</p></div>
             </div>
           </div>
         </section>
@@ -170,7 +170,7 @@ export default function Unduh() {
                 </tbody>
               </table>
             </div>
-            <p className="note note--spaced">Store masih review. Muat arsipnya dengan tangan.</p>
+            <p className="note note--spaced">Store masih review. Muat arsipnya dengan tangan. Pairing gagal? Buka <Link to="/docs#pairing">panduan pairing</Link> atau <Link to="/dukungan">Dukungan</Link>.</p>
           </div>
         </section>
 

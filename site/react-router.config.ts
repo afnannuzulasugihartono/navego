@@ -10,6 +10,7 @@ export default {
   prerender: [
     '/',
     '/beranda',
+    '/en',
     '/fitur',
     '/harga',
     '/unduh',

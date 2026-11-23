@@ -35,6 +35,13 @@ const KEMAMPUAN = [
   ['verifikasi', 'Verifikasi hasil', 'Setiap berkas membawa SHA-256.']
 ] as const;
 
+const KENDALI = [
+  ['Tab latar, sesi asli', 'Tab baru terbuka di background dengan profil dan cookies yang sudah ada. Anda tidak login ulang dan layar tidak direbut.'],
+  ['Jeda & ambil alih', 'OTP, captcha, dan login berhenti sebagai needsHuman dengan alasan dan instruksi resume — bukan retry sampai token habis.'],
+  ['Hasil parsial yang jujur', 'continueOnError menyimpan langkah yang berhasil dan daftar kegagalannya, tanpa mencoba ulang langkah yang sama.'],
+  ['Konten bukan perintah', 'Setiap bacaan halaman diberi untrustedContent: teks adalah data, bukan instruksi. Tidak ada eval dan tidak ada skrip dari halaman.']
+] as const;
+
 const PERMISSIONS = [
   ['tabs', 'Buka dan navigasi tab yang Anda tunjuk.'],
   ['scripting', 'Skrip tetap hidup selama bekerja.'],
@@ -145,6 +152,25 @@ export default function Fitur() {
               <p className="section-note">Operator, analis, pengembang — primitive yang sama.</p>
             </div>
             <RoleTabs />
+          </div>
+        </section>
+
+        <section className="band" aria-labelledby="kendaliTitle">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <h2 id="kendaliTitle" className="section-title">Saat pekerjaan tidak mulus.</h2>
+              </div>
+              <p className="section-note">Kegagalan dibaca, dihentikan, dan diserahkan kembali dengan bukti.</p>
+            </div>
+            <div className="value-grid">
+              {KENDALI.map(([title, body]) => (
+                <div className="value-card" key={title}>
+                  <b>{title}</b>
+                  <p>{body}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 

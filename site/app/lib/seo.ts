@@ -11,15 +11,16 @@ interface SeoInput {
   title: string;
   description: string;
   path: string;
+  locale?: string;
 }
 
-export function seoMeta({ title, description, path }: SeoInput) {
+export function seoMeta({ title, description, path, locale = 'id_ID' }: SeoInput) {
   const url = `${SITE}${path}`;
   return [
     { title },
     { name: 'description', content: description },
     { property: 'og:site_name', content: 'Navego' },
-    { property: 'og:locale', content: 'id_ID' },
+    { property: 'og:locale', content: locale },
     { property: 'og:type', content: 'website' },
     { property: 'og:title', content: title },
     { property: 'og:description', content: description },

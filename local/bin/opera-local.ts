@@ -58,9 +58,9 @@ const driver = {
     return (await listPageWebSockets(PORT)).map(({ id, url, title }) => ({ id, url, title }));
   },
 
-  async open(url: string) {
+  async open(url: string, options: { background?: boolean } = {}) {
     if (await bridged()) {
-      const tab = await openBridgeTarget(url);
+      const tab = await openBridgeTarget(url, { active: options.background === false });
       return { url, id: tab.id, port: bridgePort() };
     }
     const tab = await openTab(PORT, url);

@@ -32,11 +32,11 @@ const EUROPE_PLANS = [
 ] as const;
 
 const QA = [
-  ['rencana', 'Plan, bukan langganan', 'Sekali beli, langsung aktif. Kawasan terdeteksi otomatis. Jika gagal, kedua grup ditampilkan.'],
+  ['rencana', 'Plan, bukan langganan', 'Sekali beli, langsung aktif. Starter, Basic, Plus, Pro, dan Advanced berlaku satu bulan; Business enam bulan; Enterprise satu tahun. Tidak ada perpanjangan otomatis.'],
   ['kuota', 'Kuota harian', 'Kuota hari ini habis hari ini. Tidak diakumulasikan.'],
   ['fitur', 'Semua fitur, bukan tier yang dikebiri', 'Asia/Arab/Afrika: lima plan dasar. Eropa/AS: Starter, Pro, Business, Enterprise — dua terakhir dengan prioritas dukungan.'],
   ['paypal', 'Bayar dengan PayPal', 'Selesaikan di PayPal. Plan aktif setelahnya.'],
-  ['pekerjaan', 'Kuota harian, bukan meteran per tugas', 'Pekerjaan gagal tidak memotong kuota secara proporsional.'],
+  ['biaya', 'Biaya di luar plan', 'Navego tidak menambah markup token atau biaya proxy. Model AI yang sudah Anda pakai ditagih oleh provider Anda sendiri, sesuai tarif mereka.'],
   ['gagal', 'Pekerjaan gagal, Anda tidak dirugikan', 'Kuota terpakai tetap terpakai. Itu perhitungan harian.']
 ] as const;
 
@@ -50,6 +50,8 @@ export default function Harga() {
   const [source, setSource] = useState<'ip' | 'device' | 'cache' | null>(null);
   const [geoBusy, setGeoBusy] = useState(false);
   const [geoError, setGeoError] = useState('');
+  const [buyPending, setBuyPending] = useState<string | null>(null);
+  const [checkoutNote, setCheckoutNote] = useState('');
 
   const countryRef = useRef<string | null>(null);
 
@@ -107,6 +109,11 @@ export default function Harga() {
   }
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const checkout = params.get('checkout');
+    if (checkout === 'success') setCheckoutNote('PayPal selesai. Aktivasi plan sedang dikonfirmasi; halaman ini akan menunjukkan hasilnya.');
+    if (checkout === 'cancelled') setCheckoutNote('Checkout dibatalkan. Plan belum dibeli.');
+    if (checkout === 'success') void finishCheckout();
     setSignedOut(!getStoredToken());
     // The cookie a consented visitor carries pre-fills the correct group instantly; the mandatory detection still runs and corrects it if the device moved.
     if (readConsent() === 'granted') {
@@ -152,7 +159,41 @@ export default function Harga() {
     }
   };
 
+  async function finishCheckout() {
+    const orderId = window.sessionStorage.getItem('navego-paypal-order');
+    if (!orderId) {
+      setWarn(true);
+      setNote('Order PayPal tidak ditemukan di tab ini. Plan belum dapat dikonfirmasi — hubungi dukungan dengan transaction ID Anda.');
+      return;
+    }
+    try {
+      const token = await ensureSession();
+      if (!token) {
+        setSignedOut(true);
+        return;
+      }
+      const response = await fetch(BILLING, {
+        method: 'POST',
+        headers: headersFor(token),
+        body: JSON.stringify({ action: 'paypal-capture', orderId })
+      });
+      const answer = await response.json().catch(() => null);
+      if (answer?.ok) {
+        setWarn(false);
+        setNote(`Plan ${answer.plan} aktif. Selamat bekerja!`);
+        window.sessionStorage.removeItem('navego-paypal-order');
+        return;
+      }
+      setWarn(true);
+      setNote(`Aktivasi belum selesai: ${answer?.error || `HTTP ${response.status}`}. Hubungi dukungan dengan order ID ${orderId}.`);
+    } catch (error) {
+      setWarn(true);
+      setNote(`Aktivasi belum selesai: ${error instanceof Error ? error.message : 'jaringan'}. Hubungi dukungan dengan order ID ${orderId}.`);
+    }
+  }
+
   async function buy(planKind: string) {
+    if (buyPending) return;
     const current = await ensureSession();
     if (!current) {
       setSignedOut(true);
@@ -161,6 +202,7 @@ export default function Harga() {
     }
     setSignedOut(false);
     setWarn(false);
+    setBuyPending(planKind);
     setNote('Menyiapkan halaman PayPal...');
     try {
       const response = await fetch(BILLING, {
@@ -171,7 +213,13 @@ export default function Harga() {
       const answer = await response.json().catch(() => null);
       const url = answer?.url || answer?.approvalUrl;
       if (answer?.ok && url) {
-        window.open(url, '_blank', 'noopener,noreferrer');
+        const orderId = String(answer.orderId || '');
+        if (orderId) window.sessionStorage.setItem('navego-paypal-order', orderId);
+        const popup = window.open(url, '_blank', 'noopener,noreferrer');
+        if (!popup) {
+          setNote('Popup diblokir browser. Buka PayPal lewat tombol di bawah ini, lalu kembali ke halaman ini.');
+          return;
+        }
         setNote('Halaman PayPal terbuka di tab baru. Selesaikan pembayaran di sana; plan aktif setelah pembayaran dikonfirmasi.');
         return;
       }
@@ -180,6 +228,8 @@ export default function Harga() {
     } catch (error) {
       setWarn(true);
       setNote(`PayPal tidak bisa dibuka: ${error instanceof Error ? error.message : 'jaringan'}.`);
+    } finally {
+      setBuyPending(null);
     }
   }
 
@@ -192,7 +242,7 @@ export default function Harga() {
         <li>36 primitive browser</li>
         <li>{plan.premium ? 'Semua fitur (statement, VM, remote drive) + prioritas' : 'Plan dasar'}</li>
       </ul>
-      <button className="btn btn-solid btn-sm w-full" type="button" onClick={() => buy(plan.id)}>Beli dengan PayPal</button>
+      <button className="btn btn-solid btn-sm w-full" type="button" disabled={buyPending !== null} onClick={() => buy(plan.id)}>{buyPending === plan.id ? 'Menyiapkan…' : 'Beli dengan PayPal'}</button>
     </section>
   );
 
@@ -202,8 +252,8 @@ export default function Harga() {
       <main>
         <section className="page-hero">
           <div className="wrap">
-            <h1>Sekali bayar. Setahun penuh.</h1>
-            <p className="lede">Plan USD. PayPal. Kuota harian yang jelas.</p>
+            <h1>Harga yang bisa Anda hitung.</h1>
+            <p className="lede">Mulai $1. Bayar sekali. Tidak ada perpanjangan otomatis, tidak ada tagihan tersembunyi.</p>
           </div>
         </section>
 
@@ -231,9 +281,9 @@ export default function Harga() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <h2 id="asiaTitle" className="section-title">Daya beli kawasan: plan lebih terjangkau.</h2>
+                <h2 id="asiaTitle" className="section-title">Asia, Arab, Afrika.</h2>
               </div>
-              <p className="section-note">Sekali beli, langsung aktif. Tidak diperpanjang otomatis.</p>
+              <p className="section-note">Sekali beli, langsung aktif. Tidak ada perpanjangan otomatis.</p>
             </div>
             <div className="plans plans--dense" role="list">
               {ASIA_PLANS.map(PlanCard)}
@@ -247,9 +297,9 @@ export default function Harga() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <h2 id="europeTitle" className="section-title">Daya beli kawasan: nada akselerasi.</h2>
+                <h2 id="europeTitle" className="section-title">Eropa dan Amerika Serikat.</h2>
               </div>
-              <p className="section-note">Sekali beli, langsung aktif. Tidak diperpanjang otomatis.</p>
+              <p className="section-note">Sekali beli, langsung aktif. Tidak ada perpanjangan otomatis.</p>
             </div>
             <div className="plans plans--dense" role="list">
               {EUROPE_PLANS.map(PlanCard)}
@@ -261,10 +311,11 @@ export default function Harga() {
         <section className="band band--flush-top" aria-label="Pembayaran">
           <div className="wrap">
             {signedOut ? (
-              <p className="status mt-4 center">Pembayaran memakai akun Anda. <Link to="/">Masuk dulu</Link>, lalu kembali ke halaman ini.</p>
+              <p className="status mt-4 center">Pembayaran memakai akun Anda. <Link to="/?next=/harga">Masuk dulu</Link>, lalu kembali ke halaman ini.</p>
             ) : null}
+            {checkoutNote ? <p className="status mt-4 center" role="status">{checkoutNote}</p> : null}
             {note ? <p className={`${warn ? 'status warn' : 'status'} mt-4 center`} role="status" aria-live="polite">{note}</p> : null}
-            <p className="note mt-3 center">Bayar dengan <strong>PayPal</strong>. Plan langsung aktif setelah Anda menyelesaikan pembayaran di PayPal.</p>
+            <p className="note mt-3 center">Bayar dengan <strong>PayPal</strong>. Plan langsung aktif setelah pembayaran dikonfirmasi.</p>
           </div>
         </section>
 

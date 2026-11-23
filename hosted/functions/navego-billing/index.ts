@@ -68,7 +68,7 @@ import { DEPOSIT_KIND } from "../_shared/wallet.ts";
 import { handleWalletAction, isWalletAction, type ReserveOutcome, type SettleOutcome } from "../_shared/wallet-api.ts";
 import { toDynamicQris } from "../_shared/qris.ts";
 import { FEED_URL, TOKEN_URL, detectorPlan, feedHeaders, feedQuery, matchOpenInvoices, parseFeed, refreshBody, sessionHeaders } from "../_shared/qris-detector.ts";
-import { paypalEnvironment, createPaypalOrder, verifyPaypalWebhook } from "../_shared/paypal.ts";
+import { paypalEnvironment, createPaypalOrder, verifyPaypalWebhook, readPaypalOrder, capturePaypalOrder, planFromCustomId } from "../_shared/paypal.ts";
 import { readJsonObject } from "../_shared/request-body.ts";
 
 type PriceRow = { kind: string; unit: string; amount_cents: number; currency: string; active: boolean };
@@ -1080,14 +1080,15 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
         if (type === "PAYMENT.CAPTURE.COMPLETED" || type === "PAYMENT.SALE.COMPLETED") {
           const event = eventBody as { resource?: { supplementary_data?: { related_ids?: { order_id?: string } }; id?: string } };
           const related = event.resource?.supplementary_data?.related_ids?.order_id || event.resource?.id;
-          const { capturePaypalOrder } = await import("../_shared/paypal.ts");
-          const order = related ? await capturePaypalOrder(env, String(related)) : null;
+          const { readPaypalOrder } = await import("../_shared/paypal.ts");
+          const order = related ? await readPaypalOrder(env, String(related)) : null;
           const units = (order as { purchase_units?: Array<{ custom_id?: string }> } | null)?.purchase_units ?? [];
           const customId = String(units[0]?.custom_id ?? "");
           const [plan, owner] = customId.split(":") as [string, string];
           if (plan && owner && USD_PLANS.includes(plan)) {
             const supabase = await db();
-            await supabase.rpc("opera_plan_activate_purchase", { p_owner: owner, p_kind: plan });
+            const activation = await supabase.rpc("opera_plan_activate_purchase", { p_owner: owner, p_kind: plan });
+            if (activation.error) return json({ error: `plan activation failed: ${activation.error.message}` }, 502, cors);
           }
         }
         return json({ ok: true }, 200, cors);
@@ -1127,6 +1128,29 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
       // THE WALLET ANSWERS BEFORE THE REFRESH FORM.
       // A wallet action is recognised by its own name, and the refresh form is recognised by its token, so the two cannot be confused.
       // Putting the wallet first keeps every money answer in one shape: a status that says whether the caller may try again, and a body that says why not.
+
+      if (body.action === "paypal-capture") {
+        const owner = await sessionOrNull(req);
+        if (!owner) return json({ error: "masuk dulu untuk menyelesaikan pembayaran" }, 401, cors);
+        const orderId = String(body.orderId || "").trim();
+        if (!orderId) return json({ error: "order id is required" }, 400, cors);
+        const env = paypalEnvironment();
+        try {
+          const order = await readPaypalOrder(env, orderId);
+          const units = (order as { purchase_units?: Array<{ custom_id?: string }> }).purchase_units ?? [];
+          const parsed = planFromCustomId(String(units[0]?.custom_id ?? ""));
+          if (!parsed || parsed.owner !== owner) return json({ error: "this PayPal order belongs to another account" }, 403, cors);
+          if (!USD_PLANS.includes(parsed.plan)) return json({ error: "plan USD tidak dikenal" }, 400, cors);
+          const alreadyCompleted = String((order as { status?: string }).status ?? "").toUpperCase() === "COMPLETED";
+          if (!alreadyCompleted) await capturePaypalOrder(env, orderId);
+          const supabase = await db();
+          const activation = await supabase.rpc("opera_plan_activate_purchase", { p_owner: owner, p_kind: parsed.plan });
+          if (activation.error) return json({ error: `plan activation failed: ${activation.error.message}` }, 502, cors);
+          return json({ ok: true, plan: parsed.plan, status: "active" }, 200, cors);
+        } catch (error) {
+          return json({ error: error instanceof Error ? error.message : String(error) }, 502, cors);
+        }
+      }
 
       if (body.action === "paypal-buy") {
         const owner = await sessionOrNull(req);

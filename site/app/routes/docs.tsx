@@ -167,7 +167,7 @@ export default function Docs() {
                   </div>
                 </div>
               ))}
-              <p>Driver lokalnya sendiri tidak perlu langganan. Kuota paket tetap dihitung di jembatan Navego — sisa kuota bisa dicek dengan <code>navego doctor</code>. Semua jalur dijelaskan di <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-call.md">docs/agent-call.md</a>.</p>
+              <p>Driver lokalnya sendiri tidak perlu langganan. Kuota paket tetap dihitung di jembatan Navego — sisa kuota bisa dicek dengan <code>npx -y navego doctor</code>. Semua jalur dijelaskan di <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-call.md">docs/agent-call.md</a>.</p>
               <h3 className="docs-group-title docs-group-title--tight">ChatGPT dan harness lain</h3>
               <p>MCP harness = aplikasi AI Anda (Claude Desktop, OpenCode, dsb.). Konektor ChatGPT memakai remote-HTTP dan tidak lagi disediakan. Untuk ChatGPT dan harness serupa, gunakan harness lokal (atau Claude Desktop/OpenCode yang menerima MCP stdio).</p>
               <p>Setelah terpasang, alat baru muncul sesudah harness restart — itu perilaku harness, bukan error koneksi.</p>

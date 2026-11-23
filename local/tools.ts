@@ -65,8 +65,8 @@ export const TOOLS = Object.freeze([
   },
   {
     name: 'browser_open_url',
-    description: 'Open a url in its own tab and return its id. Never navigates a tab that is already open.',
-    inputSchema: { type: 'object', properties: { url: stringArg('absolute url to open'), tabId: { type: ['string', 'number'], description: 'accepted for compatibility and ignored: open always makes a new tab, never navigates the one this names' } }, required: ['url'] }
+    description: 'Open a url in its own tab and return its id. Never navigates a tab that is already open. background: true opens it in the background (default true), so the agent does not take over the user\'s window.',
+    inputSchema: { type: 'object', properties: { url: stringArg('absolute url to open'), tabId: { type: ['string', 'number'], description: 'accepted for compatibility and ignored: open always makes a new tab, never navigates the one this names' }, background: { type: 'boolean', description: 'open the new tab in the background (default true); set false to bring it forward' } }, required: ['url'] }
   },
   {
     name: 'browser_close_tab',
@@ -159,12 +159,13 @@ export const TOOLS = Object.freeze([
   },
   {
     name: 'browser_run_steps',
-    description: 'Run 1-8 dependent steps in one call (click, hover, press, type, scroll, stream, wait). First failure stops the burst; the page is settled and read once at the end.',
+    description: 'Run 1-8 dependent steps in one call (click, hover, press, type, scroll, stream, wait). First failure stops the burst; continueOnError: true keeps successful steps and returns errors instead of retrying. OTP, captcha and login failures stop for a human handoff with resume instructions.',
     inputSchema: {
       type: 'object',
       properties: {
         tabId: tabArg,
         timeoutMs: { type: 'integer', minimum: 500, maximum: 12000, description: 'budget for the whole burst, default 12000, capped at 12000' },
+        continueOnError: { type: 'boolean', description: 'keep successful steps and record failed steps once instead of retrying them; default false (first failure stops). OTP, captcha and login gates always stop for a human' },
         steps: {
           type: 'array',
           minItems: 1,

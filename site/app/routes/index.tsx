@@ -124,6 +124,12 @@ export default function Index() {
     <>
       <SiteHeader current="/" />
       <main className="auth-stage" aria-label="Masuk ke Navego">
+        <section className="page-hero" aria-labelledby="value-title">
+          <div className="wrap">
+            <h1 id="value-title">Situs tanpa API. Perintah jadi berkas.</h1>
+            <p className="lede">Navego membuka portal, mengisi formulir, mengunduh data, dan menyimpan Excel, Word, atau PowerPoint di browser Anda. <Link to="/beranda">Lihat produknya dulu →</Link></p>
+          </div>
+        </section>
         <div className="auth-pane">
           {phase === 'form' ? (
             <div className="auth-card">
@@ -132,7 +138,7 @@ export default function Index() {
                 <NavegoWordmark size={17} />
               </div>
               <div className="card">
-                  <h1>Masuk atau daftar.</h1>
+                  <h2>Masuk atau daftar.</h2>
                 <p className="auth-intro">Akun ini yang dipakai device, kuota, dan saldo Anda.</p>
 
                 <a className="provider" id="googleButton" href="https://nenmkmtvjremqphfqnfw.supabase.co/auth/v1/authorize?provider=google&redirect_to=https://navego.pages.dev/"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="#4285F4" d="M15.5 8.2c0-.55-.05-1.08-.14-1.6H8v3.03h4.2a3.6 3.6 0 0 1-1.56 2.36v1.96h2.53c1.48-1.36 2.33-3.37 2.33-5.75z"/><path fill="#34A853" d="M8 16c2.1 0 3.87-.7 5.16-1.89l-2.53-1.96c-.7.47-1.6.75-2.63.75-2.02 0-3.73-1.36-4.34-3.2H1.08v2.03A8 8 0 0 0 8 16z"/><path fill="#FBBC05" d="M3.66 9.7a4.8 4.8 0 0 1 0-3.4V4.27H1.08a8 8 0 0 0 0 7.46l2.58-2.03z"/><path fill="#EA4335" d="M8 3.1c1.14 0 2.17.4 2.98 1.17l2.24-2.24A8 8 0 0 0 1.08 4.27l2.58 2.03C4.27 4.46 5.98 3.1 8 3.1z"/></svg><span>Lanjutkan dengan Google</span></a>
@@ -157,7 +163,7 @@ export default function Index() {
           ) : (
             <div className="auth-card">
               <div className="card">
-                <h1>Masuk atau daftar.</h1>
+                <h2>Masuk atau daftar.</h2>
                 <p className="auth-intro">Masuk sebagai <strong>{who}</strong>.</p>
                 {returning ? (
                   <div className="hero-cta mt-4">

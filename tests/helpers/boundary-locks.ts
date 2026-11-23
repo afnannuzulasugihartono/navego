@@ -192,6 +192,8 @@
 // The runtime surface, the dispatch tables and the primitives are unchanged; only the brand strings moved.
 // WHY background.ts was re-pinned on 2026-11-18: the product-wide rename retired Opera Agent/Kemudi/legacy tokens including type-only internal global names (example: `__operaAgentContentV1`, `__operaAgentCursorIdle`); the runtime dispatch table and wire contract are unchanged; the change set is the rename sweep itself.
 
+// WHY background.ts was re-pinned on 2026-11-24: browser_open_url now opens tabs in the background by default on both extension and bridge roads, so an agent can use the user's real session without taking over the visible window; the owner asked for that behavior directly.
+
 // WHY these three were re-pinned on 2026-11-19: the 1.7.7 release rode them.
 // The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
 
@@ -203,7 +205,7 @@
 
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
   ['../extension/content.ts', '4d9cf6aec864f5c75f318aed43969ffbc37681ab71b19401985349d69d2a60fe'],
-  ['../extension/background.ts', '67b1744d986e6efa095a0bc6d9f02a029f9df42a1223acb502c5c7ea21bf40e0'],
+  ['../extension/background.ts', 'dd34ee4b22603475fa626dc75577db6722e3628109262a3154456f18296b7750'],
   ['../extension/manifest.json', '5868652b9db07baaa9d1c4975820c2e0e144460e7ae3937f6aaced70699e5063'],
 ]);
 

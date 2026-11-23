@@ -10,6 +10,8 @@ import {
   paypalEnvironment,
   paypalAccessToken,
   createPaypalOrder,
+  readPaypalOrder,
+  capturePaypalOrder,
   verifyPaypalWebhook,
   planFromCustomId,
   type PaypalEnvironment
@@ -115,6 +117,28 @@ test('an order refused by PayPal throws instead of minting a broken approval url
   });
   try {
     await assert.rejects(createPaypalOrder(envOf(), { amountCents: 100, currency: 'USD', description: 'x', customId: 'plan.usd-1:o' }), /paypal order refused/);
+  } finally {
+    unrestore();
+  }
+});
+
+test('capture posts to the order capture endpoint, while read fetches the order for its owner custom id', async () => {
+  const seen: Array<{ url: string; method?: string }> = [];
+  const unrestore = stubFetch((url, init) => {
+    seen.push({ url, method: init.method ?? '' });
+    if (url.endsWith('/v1/oauth2/token')) return jsonResponse({ access_token: 'tok-1' });
+    if (url.endsWith('/v2/checkout/orders/ORDER-1/capture')) return jsonResponse({ id: 'ORDER-1', status: 'COMPLETED' });
+    if (url.endsWith('/v2/checkout/orders/ORDER-1')) return jsonResponse({ id: 'ORDER-1', purchase_units: [{ custom_id: 'plan.usd-1:owner-1' }] });
+    return jsonResponse({}, 404);
+  });
+  try {
+    const read = await readPaypalOrder(envOf(), 'ORDER-1');
+    const captured = await capturePaypalOrder(envOf(), 'ORDER-1');
+    const units = read.purchase_units as Array<{ custom_id?: string }>;
+    assert.equal(units[0]?.custom_id, 'plan.usd-1:owner-1');
+    assert.equal(captured.status, 'COMPLETED');
+    assert.equal(seen.find((call) => call.url.endsWith('/capture'))?.method, 'POST');
+    assert.equal(seen.find((call) => call.url.endsWith('/v2/checkout/orders/ORDER-1'))?.method, 'GET');
   } finally {
     unrestore();
   }

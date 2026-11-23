@@ -37,6 +37,15 @@ test('a webhook that fails verification is refused before any plan is activated'
   assert.match(fn, /the paypal webhook signature was not recognised/, 'a forged webhook is refused by name');
 });
 
+test('checkout capture verifies the owner and does not pretend a failed activation worked', () => {
+  assert.match(fn, /body.action === "paypal-capture"/);
+  assert.match(fn, /readPaypalOrder/);
+  assert.match(fn, /capturePaypalOrder/);
+  assert.match(fn, /const owner = await sessionOrNull\(req\)/);
+  assert.match(fn, /parsed\.owner !== owner/);
+  assert.match(fn, /activation failed|plan activation failed/);
+});
+
 test('the USD plan names in the function match the seven tiers', () => {
   for (const plan of ['plan.usd-1', 'plan.usd-3', 'plan.usd-5', 'plan.usd-7', 'plan.usd-9', 'plan.usd-17', 'plan.usd-33']) {
     assert.match(fn, new RegExp(plan.replace(/\./g, '\\.')), `${plan} is in the function's allowlist`);
