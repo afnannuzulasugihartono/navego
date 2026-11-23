@@ -42,7 +42,7 @@
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: 80;
   background: color-mix(in srgb, var(--navy-deep) 88%, transparent);
   backdrop-filter: saturate(160%) blur(20px);
   -webkit-backdrop-filter: saturate(160%) blur(20px);
@@ -74,7 +74,7 @@
   .site-header-row { gap: var(--s-2); }
 }
 
-/* the header carries the brand and one CTA; the chevron is the only navigation surface */
+/* the header carries the brand and one CTA; the chevron is the only navigation surface, and the header paints above the consent banner so the open panel is never covered */
 
 /*
  * the notch: one chevron hanging from the bottom center edge of the bar.
@@ -86,7 +86,7 @@
 .nav-notch:hover, .nav-notch:focus-visible { color: #ffffff; }
 .nav-notch:hover svg, .nav-notch:focus-visible svg { color: var(--amber-hi); }
 .nav-notch-wrap:hover .nav-notch svg, .nav-notch-wrap:focus-within .nav-notch svg { transform: rotate(180deg); }
-.nav-strip { display: block; position: absolute; inset-inline: 0; top: 100%; margin-top: -1px; background: var(--navy-deep); padding: var(--s-7) 0; opacity: 0; translate: 0 -8px; visibility: hidden; transition: opacity var(--motion-slow) var(--ease-out), translate var(--motion-slow) var(--ease-out), visibility var(--motion-slow) var(--ease-out); transition-behavior: allow-discrete; }
+.nav-strip { display: block; position: absolute; inset-inline: 0; top: 100%; margin-top: -1px; background: var(--navy-deep); padding: var(--s-7) 0; max-block-size: calc(100svh - 3.25rem); overflow-y: auto; overscroll-behavior: contain; opacity: 0; translate: 0 -8px; visibility: hidden; transition: opacity var(--motion-slow) var(--ease-out), translate var(--motion-slow) var(--ease-out), visibility var(--motion-slow) var(--ease-out); transition-behavior: allow-discrete; } /* the panel scrolls inside the viewport instead of running past it - decisions.json -> site-nav-scroll-01 */
 .nav-notch-wrap:hover .nav-strip, .nav-notch-wrap:focus-within .nav-strip, .nav-strip:hover { opacity: 1; translate: 0 0; visibility: visible; }
 
 @starting-style {

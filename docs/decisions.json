@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated": "2026-11-22",
+  "generated": "2026-11-23",
   "source": "The 2026-11-18 navego.pages.dev rebrand and consistency pass: logo, wordmark, eyebrows, type and spacing system, nav notch, copy pass. User direction arrived 2026-11-18; internet sources were verified 2026-11-18. Repo sources point at the docs that already carry the decision. 2026-11-19: a source-backed pass over the agent tool surface added D55-D68 - kind recorded carries the file:line of the recorded performance, per the user evidence mandate.",
   "note": "One decision, one source. Code references this file as decisions.json -> <id>. A decision added from 2026-11-19 onward carries a file-based id (for example local-canvas-01) and names the file it governs; the earlier D-numbers are history and keep their ids. A decision the user asked for carries kind=user; a decision nobody asked for carries the internet source it was taken from; a decision inherited from this repo carries the repo document that already carries it; a decision taken because a recorded performance demanded it carries kind=recorded with the file:line that records it.",
   "decisions": [
@@ -1084,6 +1084,17 @@
         "kind": "user",
         "ref": "user 2026-11-22: 'hapus juga project opera agent ganti full menjadi navego'",
         "also": "extension/lib/browser-id.ts (the family the browser publishes); hosted/migrations/20261122160000_opera_devices_browser_names.sql (the server's fallback and the rename)"
+      }
+    },
+    {
+      "id": "site-nav-scroll-01",
+      "scope": "web/components",
+      "file": "site/app/brand.css",
+      "decision": "The chevron panel never runs past the viewport: it is capped at the space below the 3.25rem bar, scrolls inside that space with overscroll contained, and the header paints above the consent banner so the last link stays reachable on a phone and on a short laptop screen.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-23: 'fix navbar navego yang terpotong lihat di web' - the open panel measured 1067 px tall on a 390x844 phone and 770 px at 768x600, so the last links fell below the fold and could not be scrolled to",
+        "also": "site/app/brand.css (the capped, scrollable panel and the header's stacking order)"
       }
     }
   ]
