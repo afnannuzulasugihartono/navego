@@ -207,6 +207,14 @@ test('the client router answers every pretty URL, and the .html aliases are edge
   assert.ok(worker.includes("endsWith('.html')") || worker.includes('endsWith(".html")'), 'the worker answers every .html path with a 301');
 });
 
+test('every CSP header value stays below Cloudflare\'s 2000-byte ceiling', () => {
+  buildSite();
+  const raw = fs.readFileSync(path.join(client, '_headers'), 'utf8');
+  const values = [...raw.matchAll(/Content-Security-Policy: ([^\n]+)/g)].map((match) => match[1]);
+  assert.ok(values.length > 0, 'the build emits CSP headers');
+  for (const value of values) assert.ok(value.length <= 1900, `one CSP header is ${value.length} bytes, too long for Cloudflare`);
+});
+
 test('the sitemap names exactly the routes the build carries (404 and unknowns are not in it)', () => {
   buildSite();
   const sitemap = fs.readFileSync(path.join(client, 'sitemap.xml'), 'utf8');

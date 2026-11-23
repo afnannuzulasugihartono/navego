@@ -26,9 +26,16 @@ if (hashes.size === 0) {
   console.error('inline-script-hashes: no inline scripts found — is this a prerendered build?');
   process.exit(1);
 }
-const hashList = [...hashes].map((hash) => `'sha256-${hash}'`).join(' ');
+const hashList = [...hashes].map((hash) => `'sha256-${hash}'`);
 const headersPath = join(client, '_headers');
 const headers = readFileSync(headersPath, 'utf8');
-const rewritten = headers.replace(/script-src 'self'(?=[;\n])/g, `script-src 'self' ${hashList}`);
+
+// Cloudflare drops an overlong Content-Security-Policy header instead of serving it, so the hashes are chunked across several complete headers rather than weakened into unsafe-inline.
+
+const chunks: string[][] = [];
+for (let index = 0; index < hashList.length; index += 16) chunks.push(hashList.slice(index, index + 16));
+const first = headers.replace(/script-src 'self'(?=[;\n])/g, `script-src 'self' ${chunks[0]?.join(' ') ?? ''}`);
+const extra = chunks.slice(1).map((chunk) => `  Content-Security-Policy: default-src 'none'; script-src 'self' ${chunk.join(' ')};`).join('\n');
+const rewritten = extra ? first.replace(/\n\/robots\.txt/, `\n${extra}\n/robots.txt`) : first;
 writeFileSync(headersPath, rewritten);
-console.log(`inline-script-hashes: ${hashes.size} inline script hashes injected into build/client/_headers`);
+console.log(`inline-script-hashes: ${hashes.size} inline script hashes injected into build/client/_headers in ${chunks.length} CSP header(s)`);

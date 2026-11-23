@@ -28,7 +28,9 @@ export function siteRules(): SiteRule[] {
     }
     if (!current) throw new Error('a header rule appeared before any path line in the _headers file');
     const at = line.indexOf(':');
-    current.headers[line.slice(0, at).trim()] = line.slice(at + 1).trim();
+    const name = line.slice(0, at).trim();
+    const value = line.slice(at + 1).trim();
+    current.headers[name] = current.headers[name] ? `${current.headers[name]}; ${value}` : value;
   }
   return rules;
 }
