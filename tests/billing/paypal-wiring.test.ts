@@ -1,6 +1,6 @@
-// @last-edited: 2026-11-18 UTC+7.
+// @last-edited: 2026-11-24 UTC+7.
 // @title: paypal-wiring — the PayPal checkout is session-gated, reads only active USD prices, and activates only after PayPal itself answers SUCCESS.
-// @state: the buy action refuses without a session and without a known plan, the webhook refuses without a verified signature, and activation names exactly the USD plans.
+// @state: the buy action refuses without a session and without a known plan, the webhook refuses without a verified signature, activation names exactly the USD plans, and the returning tab can still name the order it was sent back with.
 // @dependencies: node:test, strict, node:fs.
 
 // THE WIRING IS PINNED AS TEXT.
@@ -13,6 +13,7 @@ import fs from 'node:fs';
 
 const root = new URL('../../', import.meta.url);
 const fn = fs.readFileSync(new URL('hosted/functions/navego-billing/index.ts', root), 'utf8');
+const harga = fs.readFileSync(new URL('site/app/routes/harga.tsx', root), 'utf8');
 
 test('the buy action demands a signed-in owner before any plan is named', () => {
   const buy = fn.slice(fn.indexOf('body.action === "paypal-buy"'));
@@ -44,6 +45,14 @@ test('checkout capture verifies the owner and does not pretend a failed activati
   assert.match(fn, /const owner = await sessionOrNull\(req\)/);
   assert.match(fn, /parsed\.owner !== owner/);
   assert.match(fn, /activation failed|plan activation failed/);
+});
+
+test('the tab PayPal returns to can name the order it was sent back with', () => {
+  const finish = harga.slice(harga.indexOf('async function finishCheckout'));
+  assert.match(finish, /get\('token'\)/, 'the order id PayPal appends to return_url is read');
+  assert.match(harga, /localStorage\.setItem\('navego-paypal-order'/, 'the order id survives into the tab PayPal opens');
+  assert.doesNotMatch(harga, /sessionStorage\.\w+Item\('navego-paypal-order'/, 'a per-tab store cannot hold the order for the returning tab');
+  assert.doesNotMatch(harga, /Popup diblokir browser/, 'a tab opened with noopener is not a blocked popup');
 });
 
 test('the USD plan names in the function match the seven tiers', () => {

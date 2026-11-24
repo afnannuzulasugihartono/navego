@@ -160,7 +160,10 @@ export default function Harga() {
   };
 
   async function finishCheckout() {
-    const orderId = window.sessionStorage.getItem('navego-paypal-order');
+    // PAYPAL RETURNS TO THE TAB IT OPENED, AND THAT TAB HAS NO sessionStorage COPY.
+    // The approval page is opened with `noopener`, so on return it is a browsing context without the opener's sessionStorage: the order id saved at buy time is not there, and the capture call never happened because of it.
+    // PayPal appends `token=<order id>` to return_url, which is the order id the capture needs; localStorage is the fallback for a return that arrives without it.
+    const orderId = new URLSearchParams(window.location.search).get('token') || window.localStorage.getItem('navego-paypal-order');
     if (!orderId) {
       setWarn(true);
       setNote('Order PayPal tidak ditemukan di tab ini. Plan belum dapat dikonfirmasi — hubungi dukungan dengan transaction ID Anda.');
@@ -181,7 +184,7 @@ export default function Harga() {
       if (answer?.ok) {
         setWarn(false);
         setNote(`Plan ${answer.plan} aktif. Selamat bekerja!`);
-        window.sessionStorage.removeItem('navego-paypal-order');
+        window.localStorage.removeItem('navego-paypal-order');
         return;
       }
       setWarn(true);
@@ -214,13 +217,12 @@ export default function Harga() {
       const url = answer?.url || answer?.approvalUrl;
       if (answer?.ok && url) {
         const orderId = String(answer.orderId || '');
-        if (orderId) window.sessionStorage.setItem('navego-paypal-order', orderId);
-        const popup = window.open(url, '_blank', 'noopener,noreferrer');
-        if (!popup) {
-          setNote('Popup diblokir browser. Buka PayPal lewat tombol di bawah ini, lalu kembali ke halaman ini.');
-          return;
-        }
-        setNote('Halaman PayPal terbuka di tab baru. Selesaikan pembayaran di sana; plan aktif setelah pembayaran dikonfirmasi.');
+        if (orderId) window.localStorage.setItem('navego-paypal-order', orderId);
+        // A WINDOW OPENED WITH `noopener` IS NOT RETURNED, EVEN WHEN IT OPENED.
+        // The null this call gives back was read as a blocked popup, so a visitor whose PayPal tab did open was told it did not, and no wording could tell the two apart.
+        // The tab carries the order id in localStorage and PayPal hands the order back as `token`, so the purchase completes whether this tab watches it or not.
+        window.open(url, '_blank', 'noopener,noreferrer');
+        setNote('Halaman PayPal terbuka di tab baru. Selesaikan pembayaran di sana; plan aktif setelah pembayaran dikonfirmasi. Jika tabnya tidak terbuka, izinkan popup untuk situs ini lalu klik beli lagi.');
         return;
       }
       setWarn(true);
