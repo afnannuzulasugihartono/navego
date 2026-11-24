@@ -1,0 +1,14 @@
+{
+  "updated_at": "2026-11-24",
+  "mission": "Navego pays for itself and for the agent that keeps it alive: real customers, real charges, every cost named with a payer.",
+  "revenue": {
+    "settled_orders": 0,
+    "settled_usd": 0,
+    "last_settled_at": null,
+    "verified_by": "opera_price_orders = 0 rows; opera_notification_log holds Midtrans sandbox rows only; no PayPal settlement has ever been recorded (checked 2026-11-24)."
+  },
+  "costs": [],
+  "monthly_gap_usd": null,
+  "next_action": "Prove one live charge end to end: a real card or PayPal payment, a signed settlement in opera_notification_log, and a plan active with source 'purchase' instead of 'grant'.",
+  "gate": "AGENTS.md#survival"
+}
