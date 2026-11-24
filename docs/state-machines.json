@@ -377,6 +377,24 @@
       "rank": 2
     },
     {
+      "id": "economy-loop-lifecycle",
+      "kind": "local",
+      "where": "local/economy-cli.ts:92",
+      "states": [
+        "no-revenue",
+        "earning",
+        "spendable",
+        "reserved",
+        "upgraded"
+      ],
+      "writers": "navego economy record, navego economy spend, navego economy subscription",
+      "readers": "navego economy status, the agent's next decision",
+      "wrongIfConfused": "a decision that spent money without earning any is counted as neutral instead of minus, and the loop spends the reserve on a subscription that raised no revenue",
+      "decision": "model",
+      "why": "cash, points, and the reserve are one state machine; the score, the spend gate, and the upgrade choice read the same events, so a split reading would let two states disagree about what the money can afford",
+      "rank": 2
+    },
+    {
       "id": "invoice-payment-lifecycle",
       "kind": "billing",
       "where": "hosted/migrations/20261015090000_opera_billing.sql:23",

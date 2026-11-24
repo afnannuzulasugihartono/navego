@@ -17,6 +17,7 @@ const USAGE = `navego <mode>
   doctor     print what is connected, the plan, and what the plan allows (--json for scripts)
   failures   print what broke on this machine: counts by tool and code, plus the agent's feedback notes (--tool=name, --limit=N, --json)
   feedback   record what the agent saw while driving, e.g. navego feedback browser_read_page "canvas editors block every docs drive"
+  economy    read the money ledger, score decisions, keep the knowledge library, and ask whether a spend keeps the reserve
   install    detect this machine's browsers, register the extension, keep a verified CRX backup
   uninstall  remove the extension's policy entries, the Navego folder, and this package; prints what it cannot remove
 
@@ -30,6 +31,8 @@ if (mode === 'help' || process.argv.includes('--help')) {
   process.stdout.write(USAGE);
   process.exit(0);
 }
+
+// Each mode loads its own module on demand: a static import for every mode would pull the browser stack into `navego doctor` and `navego economy`, and the modes do not share one runtime.
 
 if (mode === 'doctor') {
   const { doctor } = await import('../doctor.js');
@@ -55,6 +58,9 @@ if (mode === 'doctor') {
 } else if (mode === 'feedback') {
   const { feedback: runFeedback } = await import('../failures.js');
   process.exitCode = await runFeedback({ args: process.argv.slice(3) });
+} else if (mode === 'economy') {
+  const { economy: runEconomy } = await import('../economy-cli.js');
+  process.exitCode = await runEconomy({ args: process.argv.slice(3) });
 } else if (mode === 'install') {
   const { installFromCli } = await import('../install.js');
   process.exitCode = await installFromCli();

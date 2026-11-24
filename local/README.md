@@ -14,6 +14,7 @@ npm i -g navego
 | `navego doctor` | print what is connected and what the plan allows | nothing but this install |
 | `navego failures` | print what broke on this machine: counts by tool and code, plus the agent's feedback notes | nothing but this install |
 | `navego feedback` | record what the agent saw while driving — `navego feedback <tool> <note>` | nothing but this install |
+| `navego economy` | read the money ledger, score decisions, keep the knowledge library, and ask whether a spend keeps the reserve | the repository, or `~/.navego/economy` |
 
 `npx -y navego` is the published form of the package.
 
@@ -124,6 +125,23 @@ watched instead of an armed one, because `chrome.debugger` refuses browser-level
 commands there. The last two tools are the statement job: a
 card that names the file before the drive, and a delivery that verifies it and adds the
 client-month to a manifest. See the statement job in the price list migration under `hosted/migrations/`.
+
+## The economy loop
+
+`navego economy` is the money side of the agent: an append-only ledger, a knowledge library, and the rule that decides whether money may be spent.
+
+```bash
+navego economy status --days=30 --currency=USD
+navego economy record --kind=revenue --amount=500000 --currency=IDR --decision=delivery-cv-melati --source=https://navego.pages.dev/harga
+navego economy note --id=pricing-2026-11 --title="AI prices" --kind=pricing --source=https://www.anthropic.com/pricing --observed=2026-11-24 --body="Claude Pro is $20 a month"
+navego economy knowledge
+navego economy spend --amount=200000 --currency=IDR
+navego economy subscription --current=free --currency=USD --capability=50 --capacity=50 --option='[{"id":"pro","label":"Pro $20","monthlyMinor":2000,"currency":"USD","capabilityScore":90,"capacityUnits":100,"source":"https://www.anthropic.com/pricing"}]'
+```
+
+The rules are plain. Cash is the sum of the events. A decision that brought money scores **+10**; a decision that brought none scores **−1**. Money may be spent only out of revenue that arrived, and only while half the cash stays in reserve. An upgrade needs a source for its price and a source for its capability.
+
+The command decides and records. It never buys anything: a payment stays with the owner until the owner authorizes it. The records live in `docs/economy/` beside the code, or in `~/.navego/economy` on a machine with no repository.
 
 ## When a tool breaks
 

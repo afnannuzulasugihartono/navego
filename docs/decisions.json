@@ -1272,6 +1272,36 @@
         "ref": "tests/browser_extension_test.py:4435 assert baseline['activeTabId'] == user_tab['id'], reproduced locally 2026-11-24 under xvfb after the fix landed in commit 3b581ca; CI runs 45340623620, 45342267156, 45343411812 all failed on it",
         "also": "tests/local/adoption-features.test.ts (background opens stay in the background on both browser roads) re-pinned to the corrected expression"
       }
+    },
+    {
+      "id": "local-economy-core-01",
+      "scope": "agent/economy",
+      "file": "local/economy-core.ts",
+      "decision": "The economy ledger is append-only: cash is the sum of the events per currency, a decision that left money in the account scores plus, a decision that brought none back scores minus, and a spend is allowed only out of revenue that arrived while the reserve holds.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: \"lanjutkan repo navego self sustain no stop tujuannya menjalankan ekonomi mandiri untuk agent menjual navego ... aturannya setiap keputusan jika membawa uang maka mendapat poin jika tidak membawa maka minus\" - the score follows the money, the ledger is never edited, and the reserve keeps the loop alive for the next month"
+      }
+    },
+    {
+      "id": "local-economy-store-01",
+      "scope": "agent/economy",
+      "file": "local/economy-store.ts",
+      "decision": "The money ledger, the knowledge library, and the current subscription state live in docs/economy/ inside the repository, so the record that justifies a decision travels with the code; a machine with no repository keeps them in its own home folder.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: \"bisa gunakan penyimpanan di repo untuk mennyimpan ilmu pengetahuan semacam lib objective nya\" - the knowledge belongs in the repository beside the code that uses it"
+      }
+    },
+    {
+      "id": "local-economy-cli-01",
+      "scope": "agent/economy",
+      "file": "local/economy-cli.ts",
+      "decision": "The agent reads and writes the economy through one command, navego economy: status, record, note, knowledge, spend, and subscription. The command decides and records, but it never spends on its own; a subscription purchase stays outside the agent until the owner authorizes it.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: \"bukan kamu sebagai agent handle repo navego sampai menjadi suatu sistem ekonomi\" - the agent runs the loop, and the money movement it cannot undo stays with the owner"
+      }
     }
   ]
 }
