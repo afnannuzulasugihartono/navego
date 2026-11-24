@@ -16,7 +16,7 @@ const root = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.ur
 const modulePath = pathToFileURL(path.join(root, 'site', 'app', 'lib', 'copy-command.ts')).href;
 const routeSource = fs.readFileSync(path.join(root, 'site', 'app', 'routes', 'unduh.tsx'), 'utf8');
 
-type Feedback = { message: string; failed: boolean } | null;
+type Feedback = { message: string; failed: boolean; attempt: number } | null;
 type CopyController = {
   copy: () => Promise<void>;
   dispose: () => void;
@@ -75,26 +75,67 @@ test('a rejected clipboard keeps the failure visible and never records install i
   controller.dispose();
 });
 
-test('identical retries remain different announcements and disposal clears pending cleanup', async () => {
+test('identical retries replace the live-region content and disposal clears pending cleanup', async () => {
   const { createCopyCommand } = await controllerModule();
-  const messages: string[] = [];
+  const attempts: number[] = [];
   const cancelled: number[] = [];
   const controller = createCopyCommand({
     text: 'command',
     successMessage: 'Disalin.',
     failureMessage: 'Gagal menyalin.',
     clipboard: { writeText: async () => undefined },
-    onFeedback: (feedback: Feedback) => { if (feedback) messages.push(feedback.message); },
+    onFeedback: (feedback: Feedback) => { if (feedback) attempts.push(feedback.attempt); },
     schedule: () => 9,
     cancel: (handle: number) => { cancelled.push(handle); }
   });
 
   await controller.copy();
   await controller.copy();
-  assert.notEqual(messages[0], messages[1]);
-  assert.match(messages[1]!, /\u00a0$/);
+  assert.notEqual(attempts[0], attempts[1], 'every retry changes the DOM key of the live region');
+  assert.match(routeSource, /key=\{feedback\.attempt\}/);
   controller.dispose();
   assert.deepEqual(cancelled, [9, 9], 'the retry replaces the first timer and disposal clears the last');
+});
+
+test('disposal invalidates a clipboard promise that resolves later', async () => {
+  const { createCopyCommand } = await controllerModule();
+  let resolveWrite!: () => void;
+  const feedback: Feedback[] = [];
+  let scheduled = false;
+  const controller = createCopyCommand({
+    text: 'command',
+    successMessage: 'Disalin.',
+    failureMessage: 'Gagal menyalin.',
+    clipboard: { writeText: async () => { await new Promise<void>((resolve) => { resolveWrite = resolve; }); } },
+    onFeedback: (value: Feedback) => { feedback.push(value); },
+    schedule: () => { scheduled = true; return 3; },
+    cancel: () => { scheduled = false; }
+  });
+
+  const copying = controller.copy();
+  controller.dispose();
+  resolveWrite();
+  await copying;
+  assert.deepEqual(feedback, [], 'a disposed component receives no late feedback');
+  assert.equal(scheduled, false, 'a disposed component schedules no late cleanup');
+});
+
+test('a later attempt can replace a disposed development effect', async () => {
+  const { createCopyCommand } = await controllerModule();
+  const feedback: Feedback[] = [];
+  const controller = createCopyCommand({
+    text: 'command',
+    successMessage: 'Disalin.',
+    failureMessage: 'Gagal menyalin.',
+    clipboard: { writeText: async () => undefined },
+    onFeedback: (value: Feedback) => { feedback.push(value); },
+    schedule: () => 5,
+    cancel: () => undefined
+  });
+
+  controller.dispose();
+  await controller.copy();
+  assert.equal(feedback.length, 1, 'React development cleanup does not leave the next user attempt dead');
 });
 
 test('the copy button never disables itself or moves focus', () => {

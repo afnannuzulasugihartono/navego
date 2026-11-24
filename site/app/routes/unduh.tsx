@@ -76,7 +76,9 @@ function CopyCommand({ id, label, command, buttonLabel = 'Salin', successMessage
         <code className="command-row__code" id={`${id}-command`}>{command}</code>
         <button onClick={() => void controller.copy()} className="btn btn-solid btn-sm" type="button">{buttonLabel}</button>
       </div>
-      <p className="copy-feedback" role="status" aria-live="polite" aria-atomic="true">{feedback?.message ?? ''}</p>
+      <p className="copy-feedback" role="status" aria-live="polite" aria-atomic="true">
+        {feedback ? <span key={feedback.attempt}>{feedback.message}</span> : null}
+      </p>
     </>
   );
 }
