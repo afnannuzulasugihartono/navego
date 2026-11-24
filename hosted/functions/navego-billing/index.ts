@@ -68,7 +68,7 @@ import { DEPOSIT_KIND } from "../_shared/wallet.ts";
 import { handleWalletAction, isWalletAction, type ReserveOutcome, type SettleOutcome } from "../_shared/wallet-api.ts";
 import { toDynamicQris } from "../_shared/qris.ts";
 import { FEED_URL, TOKEN_URL, detectorPlan, feedHeaders, feedQuery, matchOpenInvoices, parseFeed, refreshBody, sessionHeaders } from "../_shared/qris-detector.ts";
-import { paypalEnvironment, createPaypalOrder, verifyPaypalWebhook, readPaypalOrder, capturePaypalOrder, planFromCustomId } from "../_shared/paypal.ts";
+import { paypalEnvironment, createPaypalOrder, verifyPaypalWebhook, readPaypalOrder, capturePaypalOrder, planFromCustomId, settlementFromPaypalOrder, type PaypalEnvironment } from "../_shared/paypal.ts";
 import { readJsonObject } from "../_shared/request-body.ts";
 
 type PriceRow = { kind: string; unit: string; amount_cents: number; currency: string; active: boolean };
@@ -570,6 +570,29 @@ async function noteNotification(
   } catch {
     return;
   }
+}
+
+// A PAID PAYPAL ORDER MUST SURVIVE THE RESPONSE THAT ACTIVATES IT.
+// The plan and the money are separate facts: activation says what the person may use, while the settlement row says what actually arrived.
+// The row is written before activation, so a database failure cannot turn a real capture into an invisible sale.
+// decisions.json -> hosted-paypal-revenue-01
+
+async function recordPaypalSettlement(env: PaypalEnvironment, orderId: string, order: Record<string, unknown>, source: string): Promise<void> {
+  const settlement = settlementFromPaypalOrder(orderId, order);
+  if (!settlement) throw new Error('PayPal order is not a completed USD sale');
+  const supabase = await db();
+  const { error } = await supabase.from("opera_notification_log").insert({
+    order_id: settlement.orderId,
+    transaction_status: 'paid',
+    status_code: '200',
+    gross_amount: (settlement.amountCents / 100).toFixed(2),
+    signature_field: source,
+    accepted: true,
+    why: `PayPal ${env.environment} settlement for ${settlement.plan} owner ${settlement.owner}`,
+    environment: `paypal-${env.environment}`,
+    user_agent: 'navego-billing/paypal'
+  });
+  if (error) throw new Error(`PayPal settlement was not recorded: ${error.message}`);
 }
 
 // A REFUSED SIGNATURE BECOMES A QUESTION TO THE PROVIDER.
@@ -1082,10 +1105,12 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
           const related = event.resource?.supplementary_data?.related_ids?.order_id || event.resource?.id;
           const { readPaypalOrder } = await import("../_shared/paypal.ts");
           const order = related ? await readPaypalOrder(env, String(related)) : null;
-          const units = (order as { purchase_units?: Array<{ custom_id?: string }> } | null)?.purchase_units ?? [];
+          if (!order) return json({ ok: false, error: 'the PayPal order could not be read' }, 400, cors);
+          const units = (order as { purchase_units?: Array<{ custom_id?: string }> }).purchase_units ?? [];
           const customId = String(units[0]?.custom_id ?? "");
           const [plan, owner] = customId.split(":") as [string, string];
           if (plan && owner && USD_PLANS.includes(plan)) {
+            await recordPaypalSettlement(env, String(related), order, 'paypal-verified-webhook');
             const supabase = await db();
             const activation = await supabase.rpc("opera_plan_activate_purchase", { p_owner: owner, p_kind: plan });
             if (activation.error) return json({ error: `plan activation failed: ${activation.error.message}` }, 502, cors);
@@ -1142,7 +1167,11 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
           if (!parsed || parsed.owner !== owner) return json({ error: "this PayPal order belongs to another account" }, 403, cors);
           if (!USD_PLANS.includes(parsed.plan)) return json({ error: "plan USD tidak dikenal" }, 400, cors);
           const alreadyCompleted = String((order as { status?: string }).status ?? "").toUpperCase() === "COMPLETED";
-          if (!alreadyCompleted) await capturePaypalOrder(env, orderId);
+          const completed = alreadyCompleted ? order : await capturePaypalOrder(env, orderId);
+          const settledOrder = Array.isArray((completed as { purchase_units?: unknown }).purchase_units)
+            ? completed
+            : { ...order, ...completed, purchase_units: (order as { purchase_units?: unknown }).purchase_units };
+          await recordPaypalSettlement(env, orderId, settledOrder, 'paypal-api-capture');
           const supabase = await db();
           const activation = await supabase.rpc("opera_plan_activate_purchase", { p_owner: owner, p_kind: parsed.plan });
           if (activation.error) return json({ error: `plan activation failed: ${activation.error.message}` }, 502, cors);

@@ -1,19 +1,24 @@
 {
-  "updated_at": "2026-11-24",
+  "updated_at": "2026-11-25",
   "mission": "Navego pays for itself and for the agent that keeps it alive: real customers, real charges, every cost named with a payer.",
   "revenue": {
     "settled_orders": 0,
     "settled_usd": 0,
     "last_settled_at": null,
-    "verified_by": "opera_price_orders = 0 rows; opera_notification_log holds Midtrans sandbox rows only; no PayPal settlement has ever been recorded (checked 2026-11-24)."
+    "verified_by": "opera_price_orders = 0 rows; opera_notification_log accepted rows are Midtrans sandbox events only; no PayPal live settlement has been recorded (checked 2026-11-25)."
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "One owner one-click still unblocks distribution: open https://github.com/punkpeye/awesome-mcp-servers/compare/main...afnannuzulasugihartono:awesome-mcp-servers:add-navego-listing?expand=1 and click Create pull request (the Vault token cannot open PRs on repos it does not own). The pairing funnel is now drivable end-to-end: the consent-page 400 (leak_found_2) is fixed in production, so a new user can pair without the console workaround.",
+  "next_action": "Land and deploy the PayPal settlement recorder so one completed live PayPal order writes a paypal-live settlement row before plan activation, then prove that row against the production order id.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
     "fix": "CI workflow .github/workflows/auth-config.yml (PRs #436, #437, #438, #439) patched production: site_url=https://navego.pages.dev and uri_allow_list gained https://navego.pages.dev/*, verified from run 45376655642 log; pinned by decisions.json -> hosted-consent-origin-01."
+  },
+  "paypal_revenue_gap": {
+    "what": "A completed PayPal order activated a Navego plan but wrote no settled sale, so a real payment could leave the economy ledger and the automation score unchanged.",
+    "proof": "live production query 2026-11-24: opera_price_orders held 0 rows, opera_notification_log held only Midtrans sandbox events, and opera_plan_activate_purchase changed plans without recording a PayPal order.",
+    "fix": "hosted/functions/_shared/paypal.ts and hosted/functions/navego-billing/index.ts record the completed USD order in opera_notification_log before activation; pinned by decisions.json -> hosted-paypal-revenue-01."
   },
   "leak_found": {
     "what": "wallet.deposit has no active row in opera_price_list on the live project, so openTopUp invoices price 'not charged: no price for this kind' (Rp 0) \u2014 a buyer cannot pay even after clicking buy.",
@@ -21,12 +26,12 @@
     "fix": "hosted/migrations/20261124100000_opera_price_wallet_deposit_restore.sql, pinned by tests/hosted/price-rows.test.ts."
   },
   "distribution": {
-    "npm_downloads_last_month": 1330,
-    "checked_at": "2026-11-24",
-    "source": "api.npmjs.org/downloads/point/last-month/navego",
-    "funnel_last_30d": "33 page views / 15 pair views / 1 install view / 1 buy click / 0 settled orders (opera_funnel_summary, checked 2026-11-24)",
-    "listing": "navego entry committed to fork afnannuzulasugihartono/awesome-mcp-servers branch add-navego-listing, commit e701f35bfcf1dfe8b3da0f73ff8386955e1c4862, awaiting one-click PR by owner",
-    "rail": "paypal (live): PAYPAL_CLIENT_ID, PAYPAL_SECRET, PAYPAL_WEBHOOK_ID, PAYPAL_ENV=live are set on project nenmkmtvjremqphfqnfw; live paypal-buy answered 200 with an approval URL (handoff 2026-11-24). A real paid capture is still unproven \u2014 no payment made yet.",
+    "npm_downloads_last_month": 1383,
+    "checked_at": "2026-11-25",
+    "source": "api.npmjs.org/downloads/point/last-month/navego (2026-10-25 through 2026-11-23)",
+    "funnel_last_30d": "80 page views / 33 pair views / 2 install views / 1 pair.ok / 4 plan views / 2 buy clicks / 0 settled orders (opera_funnel_events and opera_price_orders, checked 2026-11-25)",
+    "listing": "Navego was added to punkpeye/awesome-mcp-servers through public PR #20598 on 2026-11-25; the fork commit is e701f35bfcf1dfe8b3da0f73ff8386955e1c4862.",
+    "rail": "paypal (live): PAYPAL_CLIENT_ID, PAYPAL_SECRET, PAYPAL_WEBHOOK_ID, PAYPAL_ENV=live are set on project nenmkmtvjremqphfqnfw; live paypal-buy answered 200 with an approval URL (handoff 2026-11-24). A real paid capture is still unproven \u2014 no payment made yet, and the settlement recorder in this branch is not deployed yet.",
     "midtrans_leftover": "createInvoice still defaults rail=midtrans and BILLING_RAIL defaults to midtrans; MIDTRANS_SERVER_KEY is not among the repo deploy secrets, so the rupiah/QRIS rails are dormant without credentials. Not deleted: wallet top-up and task invoicing ride it until the wallet moves to PayPal."
   },
   "gate": "AGENTS.md#always + docs/agent-survival-prompt.md"

@@ -1282,6 +1282,17 @@
     "kind": "recorded",
     "ref": "owner console capture 2026-11-24: the Supabase oauth consent screen answered 400 unauthorized request origin for the live domain; CI read run 45373897531 printed site_url=https://opera-agent.pages.dev; patch runs 45373987185 and 45376655642 moved it to https://navego.pages.dev and added https://navego.pages.dev/* to uri_allow_list (verified in run logs)"
    }
+  },
+  {
+   "id": "hosted-paypal-revenue-01",
+   "scope": "hosted/functions",
+   "file": "hosted/functions/navego-billing/index.ts",
+   "decision": "A completed PayPal order is recorded as a settled sale in opera_notification_log before the plan is activated. The capture path and the verified webhook use the same PayPal order id, so one order stays one sale even when both arrive; an APPROVED order is not revenue.",
+   "source": {
+    "kind": "user",
+    "ref": "user 2026-11-24: 'setiap ada kenaikan saldo adalah kemenangan naik point ... setiap saldo naik 1 dollar dihitung satu point' - real settled revenue must be visible before the agent scores a balance or a paid plan",
+    "also": "live production query 2026-11-24: opera_price_orders held 0 rows, opera_notification_log held only Midtrans sandbox events, and opera_plan_activate_purchase changed plans without recording a PayPal settlement; tests/billing/paypal.test.ts and tests/billing/paypal-wiring.test.ts"
+   }
   }
  ]
 }

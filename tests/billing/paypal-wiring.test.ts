@@ -47,6 +47,24 @@ test('checkout capture verifies the owner and does not pretend a failed activati
   assert.match(fn, /activation failed|plan activation failed/);
 });
 
+test('a completed PayPal sale is recorded before the plan is activated', () => {
+  const capture = fn.slice(fn.indexOf('body.action === "paypal-capture"'), fn.indexOf('body.action === "paypal-buy"'));
+  const captureRecord = capture.indexOf('recordPaypalSettlement');
+  const captureActivation = capture.indexOf('opera_plan_activate_purchase');
+  assert.ok(captureRecord > 0, 'the capture path records the settlement');
+  assert.ok(captureActivation > captureRecord, 'the settlement is durable before activation claims success');
+
+  const webhook = fn.slice(fn.indexOf('looksLikePaypalWebhook'), fn.indexOf('looksLikeNotification'));
+  const webhookRecord = webhook.indexOf('recordPaypalSettlement');
+  const webhookActivation = webhook.indexOf('opera_plan_activate_purchase');
+  assert.ok(webhookRecord > 0, 'the verified webhook records the same settlement');
+  assert.ok(webhookActivation > webhookRecord, 'the webhook records the settlement before activation');
+  const missingOrder = webhook.indexOf('if (!order)');
+  assert.ok(missingOrder > 0, 'the webhook refuses an order it could not read');
+  assert.match(fn, /environment: `paypal-\$\{env\.environment\}`/);
+  assert.match(fn, /transaction_status: 'paid'/);
+});
+
 test('the tab PayPal returns to can name the order it was sent back with', () => {
   const finish = harga.slice(harga.indexOf('async function finishCheckout'));
   assert.match(finish, /get\('token'\)/, 'the order id PayPal appends to return_url is read');

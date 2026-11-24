@@ -149,6 +149,23 @@
       "rank": 1
     },
     {
+      "id": "paypal-order-lifecycle",
+      "kind": "billing",
+      "where": "hosted/functions/_shared/paypal.ts (settlementFromPaypalOrder)",
+      "states": [
+        "created",
+        "approved",
+        "completed",
+        "failed"
+      ],
+      "writers": "createPaypalOrder, the buyer's approval, capturePaypalOrder, the verified PayPal webhook",
+      "readers": "the pricing page return, the billing capture action, the settlement ledger",
+      "wrongIfConfused": "an approved order counted as money; capture and webhook counted one order twice; a completed order activated a plan without a settlement record",
+      "decision": "model",
+      "why": "PayPal owns the order state while Navego owns activation and revenue evidence; only COMPLETED is money and the PayPal order id is the one-sale key",
+      "rank": 1
+    },
+    {
       "id": "pending-completion-slot",
       "kind": "extension",
       "where": "extension/worker/execute-pull.ts:155",

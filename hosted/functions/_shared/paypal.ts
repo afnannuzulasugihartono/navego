@@ -165,6 +165,36 @@ export async function capturePaypalOrder(env: PaypalEnvironment, orderId: string
   return body;
 }
 
+export interface PaypalSettlement {
+  orderId: string;
+  plan: string;
+  owner: string;
+  amountCents: number;
+  currency: string;
+}
+
+// A COMPLETED ORDER IS THE SALE.
+// An approved order is a promise to pay, and a capture response without a price is not money either.
+// decisions.json -> hosted-paypal-revenue-01
+
+export function settlementFromPaypalOrder(orderId: string, order: Record<string, unknown>): PaypalSettlement | null {
+  if (!orderId || String(order.status ?? '').toUpperCase() !== 'COMPLETED') return null;
+  const units = Array.isArray(order.purchase_units) ? order.purchase_units as Array<Record<string, unknown>> : [];
+  const unit = units[0];
+  if (!unit) return null;
+  const amount = unit.amount && typeof unit.amount === 'object' ? unit.amount as Record<string, unknown> : null;
+  if (!amount) return null;
+  const currency = String(amount.currency_code ?? '').toUpperCase();
+  if (currency !== 'USD') return null;
+  const match = /^(\d+)(?:\.(\d{1,2}))?$/.exec(String(amount.value ?? ''));
+  if (!match) return null;
+  const cents = Number(match[1]) * 100 + Number((match[2] ?? '').padEnd(2, '0'));
+  if (!Number.isSafeInteger(cents) || cents <= 0) return null;
+  const parsed = planFromCustomId(String(unit.custom_id ?? ''));
+  if (!parsed) return null;
+  return { orderId, plan: parsed.plan, owner: parsed.owner, amountCents: cents, currency };
+}
+
 export function planFromCustomId(customId: string | null | undefined): { plan: string; owner: string } | null {
   if (!customId) return null;
   const parts = customId.split(':');
