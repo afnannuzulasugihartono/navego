@@ -21,8 +21,8 @@ No failure-rate statistic is invented here. These are product and market facts p
 
 | # | Barrier | Evidence | Action and status |
 |---|---|---|---|
-| 1 | **Checkout cannot run in production** | Live `paypal-buy` returned 502 because credentials were absent. | `readPaypalOrder`, POST `/capture`, owner verification, `paypal-capture` and activation errors are implemented. **Owner still must set `PAYPAL_CLIENT_ID`, `PAYPAL_SECRET`, `PAYPAL_ENV=live` and `PAYPAL_WEBHOOK_ID` in Supabase Secrets.** |
-| 2 | **Payment does not reliably activate a plan** | The old code had no capture and ignored activation failure. | Capture and activation now fail loudly. The webhook also returns activation errors instead of `ok:true`. |
+| 1 | **Checkout cannot run in production** | Live `paypal-buy` returned 502 because credentials were absent. | A Live REST app (`Navego Billing`) and a payment webhook now exist, `PAYPAL_CLIENT_ID`, `PAYPAL_SECRET`, `PAYPAL_WEBHOOK_ID` and `PAYPAL_ENV=live` are set on project `nenmkmtvjremqphfqnfw`, and live `paypal-buy` answers 200 with an approval URL. A real paid capture and webhook activation remain unproven. |
+| 2 | **Payment does not reliably activate a plan** | The old code had no capture and ignored activation failure. | Capture and activation now fail loudly. The webhook also returns activation errors instead of `ok:true`. The live capture path still needs one real paid order to be proven. |
 | 3 | **The first real task is missing from the normal UI** | Dashboard accepts only a primitive name, not a natural-language goal or artifact. | Not solved. Next milestone: one natural-language task runner with the model configured, a result and a downloadable artifact. Do not ship a fake prompt field. |
 | 4 | **Install requires trust in a sideloaded extension** | Store is still in review; Load unpacked and force policy remain the path. | Not solved. Highest install priority: store listing or a conventional signed installer, with clean-install and complete-uninstall proof. |
 | 5 | **No-global quickstart could not run as written** | Snippets called `navego` although no global binary was installed, and doctor ran before the driver. | Every harness now uses `npx -y navego local`, then `npx -y navego doctor` in a second terminal, with Node.js 22 or newer. |
@@ -48,7 +48,7 @@ No failure-rate statistic is invented here. These are product and market facts p
 
 ## Remaining decisions that cannot be made by code alone
 
-1. Set the PayPal production secrets and run one real purchase → capture → activation test.
+1. Run one real purchase → capture → activation test. The four PayPal secrets are set and live order creation answers 200, but no real payment has been made yet.
 2. Approve the store listing or signed installer and prove uninstall leaves no forced policy.
 3. Choose the free evaluation shape: real Starter, a limited trial, or no trial; align the plan reader and the public offer.
 4. Build the actual natural-language first task with model configuration and a downloadable result.
