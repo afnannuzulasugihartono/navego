@@ -28,7 +28,7 @@ type CopyCommandOptions = {
 export function createCopyCommand(options: CopyCommandOptions) {
   let timer: number | null = null;
   let attempt = 0;
-  let generation = 0;
+  let lifecycle = 0;
   let disposed = false;
 
   const schedule = options.schedule ?? ((run: () => void, delay: number) => window.setTimeout(run, delay));
@@ -48,7 +48,7 @@ export function createCopyCommand(options: CopyCommandOptions) {
   return {
     async copy() {
       disposed = false;
-      const current = ++generation;
+      const currentLifecycle = lifecycle;
       const clipboard = options.clipboard ?? (globalThis.navigator as Navigator | undefined)?.clipboard;
       if (!clipboard) {
         announce(options.failureMessage, true);
@@ -57,17 +57,17 @@ export function createCopyCommand(options: CopyCommandOptions) {
       try {
         await clipboard.writeText(options.text);
       } catch {
-        if (disposed || current !== generation) return;
+        if (disposed || currentLifecycle !== lifecycle) return;
         announce(options.failureMessage, true);
         return;
       }
-      if (disposed || current !== generation) return;
+      if (disposed || currentLifecycle !== lifecycle) return;
       announce(options.successMessage, false);
       options.onCopied?.();
     },
     dispose() {
       disposed = true;
-      generation += 1;
+      lifecycle += 1;
       if (timer !== null) {
         cancel(timer);
         timer = null;

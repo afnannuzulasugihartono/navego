@@ -1320,11 +1320,11 @@
    "id": "site-install-cta-01",
    "scope": "site/components",
    "file": "site/app/routes/unduh.tsx",
-   "decision": "The download hero leads with the Windows one-command install and keeps manual zip and reg installs as secondary paths. A successful command copy records install intent, while copy failure is visible and announced; the copy control stays enabled and every command owns one polite status region.",
+   "decision": "The download hero leads with the Windows one-command install and keeps manual zip and reg installs as secondary paths. A successful command copy records install intent, while copy failure is visible and announced; the copy control stays enabled, every command owns one polite status region, and the copy controller invalidates work that resolves after disposal.",
    "source": {
     "kind": "recorded",
     "ref": "docs/agent-survival-prompt.md:61 (fix the earliest real funnel drop-off, which may be the install path); live production funnel 2026-11-25 had 109 page views, 49 pair views, 2 install views, 0 install clicks, and 0 settled orders",
-    "also": "tests/site/install-cta.test.ts"
+    "also": "tests/site/install-cta.test.ts, tests/site/copy-command.test.ts, and the independent 320px browser review on 2026-11-25"
    }
   }
  ]
