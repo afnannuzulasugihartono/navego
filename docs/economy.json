@@ -9,6 +9,12 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "Prove one live charge end to end: a real card or PayPal payment, a signed settlement in opera_notification_log, and a plan active with source 'purchase' instead of 'grant'.",
+  "next_action": "Owner clears the blocked listing PR in one move: open the compare URL https://github.com/punkpeye/awesome-mcp-servers/compare/main...afnannuzulasugihartono:awesome-mcp-servers:add-navego-listing?expand=1 and click Create pull request (the Vault token cannot open PRs on repos it does not own).",
+  "distribution": {
+    "npm_downloads_last_month": 1330,
+    "checked_at": "2026-11-24",
+    "source": "api.npmjs.org/downloads/point/last-month/navego",
+    "listing": "navego entry committed to fork afnannuzulasugihartono/awesome-mcp-servers branch add-navego-listing, commit e701f35bfcf1dfe8b3da0f73ff8386955e1c4862, awaiting one-click PR by owner"
+  },
   "gate": "AGENTS.md#always + docs/agent-survival-prompt.md"
 }
