@@ -172,7 +172,7 @@ tests/tooling/hygiene.test.ts 2ae4fbe7663729b5f1defc3864150e15c1598db799be140dad
 tests/tooling/structure-gates.test.ts b2b1e588082f1c03a8c9b8306ef1393aaf88f8784c140f0d2c972d62154c0895
 tests/tooling/boundary-locks.test.ts bf7ec1c77b9e60603d8e602d9a3d37de942b02af00d7318bd39fbfadb58b4711
 # The survival ledger is an acceptance criterion: a session that stops moving money fails here rather than passing quietly.
-tests/tooling/survival-economy.test.ts e8b9e338f16720809206a64fbbc2d4cf21d19db09560e38f2d2d3c752b9315a3
+tests/tooling/survival-economy.test.ts 62b8b1abb2b3d9cb592ec57542ae26f76d6619ae793ebf0474225ea91f215e34
 
 # --- controls that decide what the product accepts at runtime ---
 extension/lib/protocol.ts 5367e71dd0396b20331cbd19526ac5d335cba8841317fb98a4b9c836e06d79e1

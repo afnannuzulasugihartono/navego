@@ -14,6 +14,10 @@
 -- An insert policy on the table would let any visitor read every other row back; a security definer function that only inserts lets the page report a step and read nothing.
 -- The summary is a second function, and it answers only the operator account, because a funnel is the one number that must not be public.
 
+-- TWO GUARDS LIVE INSIDE THE WRITE.
+-- The name is a closed list, so a typo in the site cannot fill the table with rows nobody can group.
+-- One browser cannot report the same step twice in five seconds: a re-render is not a second visitor.
+
 create table if not exists public.opera_funnel_events (
   id bigserial primary key,
   created_at timestamptz not null default now(),
@@ -33,6 +37,7 @@ create index if not exists opera_funnel_events_anon on public.opera_funnel_event
 alter table public.opera_funnel_events enable row level security;
 
 -- No select, insert or update policy: the table is reachable only through the two functions below.
+
 revoke all on public.opera_funnel_events from anon, authenticated;
 revoke all on sequence public.opera_funnel_events_id_seq from anon, authenticated;
 
@@ -48,7 +53,6 @@ as $$
 declare v_name text; v_path text; v_anon text;
 begin
   v_name := lower(trim(coalesce(p_name, '')));
-  -- A closed list of steps, so a typo in the site cannot fill the table with rows nobody can group.
   if v_name not in (
     'page.view', 'install.view', 'install.click', 'plan.view', 'buy.click',
     'signin.start', 'signin.ok', 'pair.view', 'pair.start', 'pair.ok', 'pair.fail',
@@ -58,7 +62,6 @@ begin
   end if;
   v_path := left(nullif(trim(coalesce(p_path, '')), ''), 200);
   v_anon := left(nullif(trim(coalesce(p_anon, '')), ''), 64);
-  -- One browser cannot report the same step twice in five seconds: a re-render is not a second visitor.
   if exists (
     select 1 from public.opera_funnel_events
     where name = v_name and anon_id is not distinct from v_anon and path is not distinct from v_path
@@ -76,6 +79,8 @@ grant execute on function public.opera_funnel_record(text, text, text, jsonb) to
 
 -- The funnel is read as counts per step per day, plus how many distinct browsers reached each step.
 -- Distinct browsers is the number that matters at the top: a thousand pageviews from one machine is not a thousand people.
+-- The window is clamped to a year, so a caller cannot ask for a range that scans the whole table.
+
 create or replace function public.opera_funnel_summary(p_days integer default 30)
 returns jsonb
 language plpgsql security definer set search_path = public

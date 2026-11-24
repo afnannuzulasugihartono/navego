@@ -17,6 +17,7 @@
 // THE ENDPOINT IS WRITTEN HERE AND PINNED BY A TEST.
 // Importing auth.ts would drag the whole session machinery into a tracker that must never be able to throw, and this module is also read by a Node test that resolves files literally.
 // So the two literals live here and funnel.test.ts asserts they still equal PUBLISHABLE_KEY and `${REST}/rpc/opera_funnel_record`.
+
 export const FUNNEL_ENDPOINT = 'https://nenmkmtvjremqphfqnfw.supabase.co/rest/v1/rpc/opera_funnel_record';
 export const FUNNEL_KEY = 'sb_publishable_jAbS_QIQsmXQA-Rj8RWPcg_JVeBedJ6';
 
@@ -42,6 +43,7 @@ type StoreLike = {
 };
 
 // The site runs in a browser and this module is also read by the Node test project, which has no DOM lib.
+
 const globals = globalThis as {
   crypto?: { randomUUID?: () => string };
   localStorage?: StoreLike;
@@ -72,7 +74,7 @@ function writeJson(key: string, value: Record<string, unknown>) {
   try {
     store()?.setItem(key, JSON.stringify(value));
   } catch {
-    // A full or blocked storage means no measurement, never a broken page.
+    return;
   }
 }
 
@@ -120,11 +122,12 @@ export function track(name: FunnelStep, meta: Record<string, unknown> = {}, path
       keepalive: true
     }).catch(() => null);
   } catch {
-    // Never in the way of the page.
+    return;
   }
 }
 
 // A pageview is counted once per path per browser session: a reload is the same visit, and a scroll is not a visit at all.
+
 export function trackView(path = currentPath()): void {
   const views = readJson(VIEW_KEY);
   const last = Number(views[path] ?? 0);

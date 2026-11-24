@@ -55,7 +55,8 @@ test('the ledger carries one next money action, not a plan', () => {
 });
 
 test('AGENTS.md still carries the rule that makes this file load-bearing', () => {
-  assert.match(agents, /^## Survival$/m, 'the survival section survives');
   assert.match(agents, /docs\/economy\.json/, 'the rule names the ledger');
   assert.match(agents, /A sale is a settled, signed payment and nothing else/, 'revenue is defined as a settlement');
+  assert.match(agents, /Earn enough to keep the agent alive/, 'the mission binds every session');
+  assert.match(agents, /Pay the bills from the product/, 'the product pays, not the owner');
 });

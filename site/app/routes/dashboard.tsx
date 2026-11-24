@@ -39,6 +39,7 @@ type View = 'ringkasan' | 'device' | 'riwayat' | 'tabel' | 'dengar' | 'saldo' | 
 const OPERATOR_VIEWS: View[] = ['tabel', 'dengar'];
 
 // The funnel reads top to bottom, so the labels are listed in the order a stranger walks them.
+
 const FUNNEL_STEPS: Array<[string, string]> = [
   ['page.view', 'Halaman dilihat'],
   ['install.view', 'Halaman unduh dilihat'],
@@ -303,7 +304,6 @@ export default function Dashboard() {
       return;
     }
     if (delivered.reason === 'no-extension' || delivered.reason === 'no-runtime') {
-      // The largest leak in the funnel: the visitor reached pairing without the extension installed in the browser they are holding.
       track('pair.fail', { reason: 'no-extension' });
       setPairStatus('Ekstensi belum terpasang atau nonaktif di browser ini. Pasang dari Unduh, lalu klik lagi.');
       return;

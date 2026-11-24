@@ -19,7 +19,9 @@ const sent: Array<{ url: string; body: Record<string, unknown> }> = [];
 
 (globalThis as Record<string, unknown>).localStorage = store;
 (globalThis as Record<string, unknown>).location = { pathname: '/harga' };
+
 // Node's crypto is a getter-only global, so the deterministic id is defined over it rather than assigned.
+
 Object.defineProperty(globalThis, 'crypto', { value: { randomUUID: () => 'browser-1' }, configurable: true });
 (globalThis as Record<string, unknown>).fetch = async (url: string, init?: { body?: string }) => {
   sent.push({ url, body: JSON.parse(String(init?.body ?? '{}')) });

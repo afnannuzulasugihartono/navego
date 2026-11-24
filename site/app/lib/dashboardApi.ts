@@ -41,6 +41,7 @@ export interface AwaitAnswer {
 }
 
 // The funnel is the operator's map of where strangers stop: counts per step, and how many distinct browsers reached each one.
+
 export interface FunnelTotal {
   name?: string;
   events?: number;
