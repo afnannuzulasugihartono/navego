@@ -10,5 +10,5 @@
   "costs": [],
   "monthly_gap_usd": null,
   "next_action": "Prove one live charge end to end: a real card or PayPal payment, a signed settlement in opera_notification_log, and a plan active with source 'purchase' instead of 'grant'.",
-  "gate": "AGENTS.md#survival"
+  "gate": "AGENTS.md#always + docs/agent-survival-prompt.md"
 }

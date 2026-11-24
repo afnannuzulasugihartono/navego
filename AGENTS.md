@@ -40,6 +40,7 @@ These ride with every job. Read them before acting, not once per session.
 - A sale is a settled, signed payment and nothing else. A granted plan, a sandbox settlement, an invoice somebody opened, a click on a buy button: none of them is revenue. Read it from `opera_notification_log` and `opera_price_orders`, never from a promise.
 - A recurring cost has a payer and a due date in `docs/economy.json`, and a session that adds a paid dependency adds its price, its payer and its due date in the same commit. The gate is `tests/tooling/survival-economy.test.ts`.
 - `docs/economy.json` holds settled revenue, known costs, the monthly gap and the single next action, and it is updated whenever either side of that subtraction moves. A stale ledger is a false claim, not a stale file.
+- Every session starts by reading `docs/agent-survival-prompt.md`: it is the standing order that makes income the session's first move, and it says what counts as proof before the work begins.
 - A charge must survive the person who paid it: real prices, a refund that arrives, a cancel that cancels, no invented testimonial, no scarcity that is not real, no store listing described as under review when it was never submitted.
 
 ## Goals

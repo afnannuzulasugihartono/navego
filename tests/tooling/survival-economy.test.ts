@@ -1,7 +1,7 @@
 // @last-edited: 2026-11-24 UTC+7.
 // @title: survival-economy - the ledger of what Navego earns and what it costs, held to the shape the rules promise.
-// @state: the file parses, a sale is only a settled sale, every cost names its payer and its source, and AGENTS.md still carries the rule that points here.
-// @dependencies: node:test, strict, fs, ../../docs/economy.json, ../../AGENTS.md.
+// @state: the file parses, a sale is only a settled sale, every cost names its payer and its source, AGENTS.md still carries the rule that points here, and the injected standing order still orders a session around money.
+// @dependencies: node:test, strict, fs, ../../docs/economy.json, ../../docs/agent-survival-prompt.md, ../../AGENTS.md.
 
 // THE DEFECT THIS FILE LOCKS.
 // The product had one active plan and zero settled orders, and nothing in the tree said so: a session could spend a month on polish while the thing that keeps the agent alive never moved.
@@ -59,4 +59,14 @@ test('AGENTS.md still carries the rule that makes this file load-bearing', () =>
   assert.match(agents, /A sale is a settled, signed payment and nothing else/, 'revenue is defined as a settlement');
   assert.match(agents, /Earn enough to keep the agent alive/, 'the mission binds every session');
   assert.match(agents, /Pay the bills from the product/, 'the product pays, not the owner');
+});
+
+test('the injected standing order exists and still orders the session around money', () => {
+  const prompt = readFileSync(new URL('docs/agent-survival-prompt.md', root), 'utf8');
+  assert.match(agents, /docs\/agent-survival-prompt\.md/, 'AGENTS.md points every session at the injection');
+  assert.match(prompt, /```text[\s\S]+```/, 'the order is a pasteable block, not prose about one');
+  assert.match(prompt, /A sale is a settled, signed payment and nothing else/, 'money is a settlement here too');
+  assert.match(prompt, /You never type a password/, 'the refusal that makes the product sellable is in the order');
+  assert.match(prompt, /Do not stop at a plan while the next action is executable/, 'the order forbids stopping at a plan');
+  assert.match(prompt, /docs\/economy\.json/, 'the order sends the session to the ledger');
 });
