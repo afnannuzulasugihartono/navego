@@ -67,7 +67,7 @@ test('one PayPal order settles once and activates the plan once', { skip: DATABA
     await client.query('delete from public.opera_notification_log where order_id = $1', [orderId]);
     await client.query('delete from public.opera_paypal_orders where environment = $1 and order_id = $2', ['sandbox', orderId]);
     await client.query('delete from public.opera_account_plans where user_id = $1', [owner]);
-    await client.query("insert into auth.users (id, instance_id, aud, role, email, raw_app_meta_data, raw_user_meta_data, created_at, updated_at) values ($1, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'paypal-integration@example.invalid', '{}'::jsonb, '{}'::jsonb, now(), now()) on conflict (id) do nothing", [owner]);
+    await client.query('insert into auth.users (id) values ($1) on conflict (id) do nothing', [owner]);
 
     const created = (await client.query("select public.opera_paypal_create_order('sandbox', $1, $2, 'plan.usd-1', 100, 'USD') as answer", [orderId, owner])).rows[0].answer;
     assert.equal(created.ok, true, `the quote must be stored: ${JSON.stringify(created)}`);
@@ -111,5 +111,80 @@ test('one PayPal order settles once and activates the plan once', { skip: DATABA
     await client.query('delete from public.opera_account_plans where user_id = $1', [owner]);
     await client.query('delete from auth.users where id = $1', [owner]);
     await client.end();
+  }
+});
+
+test('malformed and mismatched PayPal orders stay visible without activating a plan', { skip: DATABASE_URL === undefined }, async () => {
+  const client = new Client({ connectionString: DATABASE_URL });
+  await client.connect();
+  const malformedId = 'ORDER-PAYPAL-MALFORMED';
+  const mismatchId = 'ORDER-PAYPAL-MISMATCH';
+  const owner = '00000000-0000-4000-8000-000000000002';
+  try {
+    const malformed = (await client.query("select public.opera_paypal_settle_order('sandbox', $1, 'not-a-uuid', 'plan.unknown', 200, 'USD', 'integration') as answer", [malformedId])).rows[0].answer;
+    const malformedRevenue = (await client.query("select count(*)::int as count from public.opera_notification_log where environment = 'paypal-sandbox' and order_id = $1", [malformedId])).rows[0].count;
+    const malformedRow = (await client.query('select owner_id, plan, actual_owner_id, actual_plan from public.opera_paypal_orders where environment = $1 and order_id = $2', ['sandbox', malformedId])).rows[0];
+    assert.equal(malformed.status, 'review');
+    assert.equal(malformedRevenue, 1, 'a malformed real payment still enters the revenue ledger');
+    assert.equal(malformedRow.owner_id, null);
+    assert.equal(malformedRow.plan, null);
+    assert.equal(malformedRow.actual_owner_id, 'not-a-uuid');
+    assert.equal(malformedRow.actual_plan, 'plan.unknown');
+
+    const quoted = (await client.query("select public.opera_paypal_create_order('sandbox', $1, $2, 'plan.usd-1', 100, 'USD') as answer", [mismatchId, owner])).rows[0].answer;
+    assert.equal(quoted.ok, true);
+    const mismatch = (await client.query("select public.opera_paypal_settle_order('sandbox', $1, $2, 'plan.usd-1', 200, 'USD', 'integration') as answer", [mismatchId, owner])).rows[0].answer;
+    const mismatchRevenue = (await client.query("select count(*)::int as count from public.opera_notification_log where environment = 'paypal-sandbox' and order_id = $1", [mismatchId])).rows[0].count;
+    const activation = (await client.query("select public.opera_paypal_activate_order('sandbox', $1) as answer", [mismatchId])).rows[0].answer;
+    assert.equal(mismatch.status, 'review');
+    assert.equal(mismatchRevenue, 1);
+    assert.equal(activation.ok, false, 'a mismatched quote cannot activate a plan');
+  } finally {
+    for (const id of [malformedId, mismatchId]) {
+      await client.query('delete from public.opera_notification_log where order_id = $1', [id]);
+      await client.query('delete from public.opera_paypal_orders where environment = $1 and order_id = $2', ['sandbox', id]);
+    }
+    await client.end();
+  }
+});
+
+test('equivalent PayPal keys and an activation retry leave one order and one sale', { skip: DATABASE_URL === undefined }, async () => {
+  const first = new Client({ connectionString: DATABASE_URL });
+  const second = new Client({ connectionString: DATABASE_URL });
+  await first.connect();
+  await second.connect();
+  const orderId = 'ORDER-PAYPAL-EQUIVALENT';
+  const failureId = 'ORDER-PAYPAL-FAILURE';
+  const owner = '00000000-0000-4000-8000-000000000003';
+  try {
+    const answers = await Promise.all([
+      first.query("select public.opera_paypal_settle_order('sandbox', $1, $2, 'plan.usd-1', 100, 'USD', 'integration') as answer", [orderId, owner]),
+      second.query("select public.opera_paypal_settle_order(' sandbox ', $1, $2, 'plan.usd-1', 100, 'USD', 'integration') as answer", [orderId, owner])
+    ]);
+    assert.equal(answers[0].rows[0].answer.status, 'review');
+    assert.equal(answers[1].rows[0].answer.status, 'review');
+    const revenueRows = (await first.query("select count(*)::int as count from public.opera_notification_log where environment = 'paypal-sandbox' and order_id = $1", [orderId])).rows[0].count;
+    assert.equal(revenueRows, 1, 'equivalent environment spellings write one revenue event');
+
+    const quoted = (await first.query("select public.opera_paypal_create_order('sandbox', $1, $2, 'plan.usd-1', 100, 'USD') as answer", [failureId, owner])).rows[0].answer;
+    assert.equal(quoted.ok, true);
+    const settled = (await first.query("select public.opera_paypal_settle_order('sandbox', $1, $2, 'plan.usd-1', 100, 'USD', 'integration') as answer", [failureId, owner])).rows[0].answer;
+    assert.equal(settled.status, 'settled');
+    const failed = await first.query("select public.opera_paypal_activate_order('sandbox', $1) as answer", [failureId]).then(() => null, (error: unknown) => error);
+    assert.ok(failed, 'activation fails while the owner is absent');
+    const stillSettled = (await first.query('select status from public.opera_paypal_orders where environment = $1 and order_id = $2', ['sandbox', failureId])).rows[0].status;
+    assert.equal(stillSettled, 'settled', 'a failed activation leaves the order retryable');
+    await first.query('insert into auth.users (id) values ($1) on conflict (id) do nothing', [owner]);
+    const activated = (await first.query("select public.opera_paypal_activate_order('sandbox', $1) as answer", [failureId])).rows[0].answer;
+    assert.equal(activated.status, 'activated');
+  } finally {
+    for (const id of [orderId, failureId]) {
+      await first.query('delete from public.opera_notification_log where order_id = $1', [id]);
+      await first.query('delete from public.opera_paypal_orders where environment = $1 and order_id = $2', ['sandbox', id]);
+    }
+    await first.query('delete from public.opera_account_plans where user_id = $1', [owner]);
+    await first.query('delete from auth.users where id = $1', [owner]);
+    await first.end();
+    await second.end();
   }
 });

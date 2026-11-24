@@ -86,6 +86,7 @@ test('the files applied outside the ledger are the ones the database proves', ()
     '20261118090000_opera_usd_plans.sql',
     '20261118090100_opera_usd_plan_readers.sql',
     '20261122120000_opera_run_on_my_device_prefers_live.sql',
-    '20261124120000_opera_funnel_events.sql'
-  ], 'opera_funnel_events, its write RPC and its summary RPC exist in the live database and no ledger row carries that SQL; opera_invoices and opera_price_list exist, opera_account_plans and opera_device_plan exist, the device identity column exists, the session meter exists, the revoked state and the browser name on the beat exist, the relay method list is seeded from the contract, the USD plan readers (v2, v3 and the usd-only fix) carry the USD SQL, the live-device ordering for the dashboard action is applied, and no ledger row carries that SQL');
+    '20261124120000_opera_funnel_events.sql',
+    '20261125000000_opera_paypal_orders.sql'
+  ], 'opera_funnel_events, its write RPC and its summary RPC exist in the live database and no ledger row carries that SQL; opera_invoices and opera_price_list exist, opera_account_plans and opera_device_plan exist, the device identity column exists, the session meter exists, the revoked state and the browser name on the beat exist, the relay method list is seeded from the contract, the USD plan readers (v2, v3 and the usd-only fix) carry the USD SQL, the live-device ordering for the dashboard action is applied, the PayPal order lifecycle is applied, and no ledger row carries that SQL');
 });

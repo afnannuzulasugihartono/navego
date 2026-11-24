@@ -151,7 +151,7 @@
     {
       "id": "paypal-order-lifecycle",
       "kind": "billing",
-      "where": "hosted/migrations/20261125000000_opera_paypal_orders.sql",
+      "where": "hosted/migrations/20261125010000_opera_paypal_orders_hardening.sql",
       "states": [
         "created",
         "approved",
@@ -163,9 +163,9 @@
       ],
       "writers": "createPaypalOrder, opera_paypal_create_order, the buyer's approval, capturePaypalOrder, opera_paypal_settle_order, opera_paypal_activate_order, the verified PayPal webhook",
       "readers": "the pricing page return, the billing capture action, the settlement ledger, the plan reader",
-      "wrongIfConfused": "an approved order counted as money; capture and webhook counted one order twice; a completed order extended the plan twice; a mismatched amount activated a plan",
+      "wrongIfConfused": "an approved order counted as money; capture and webhook counted one order twice; a completed order extended the plan twice; a mismatched amount activated a plan; a malformed actual owner hid a real payment; equivalent environment spellings raced into two sales",
       "decision": "model",
-      "why": "PayPal owns approval and completion while the database owns the quote, one-sale claim, and one activation; only a completed order that matches its quote can activate a plan",
+      "why": "PayPal owns approval and completion while the database owns the quote, actual evidence, one-sale claim, and one activation; only a completed order that matches its quote can activate a plan",
       "rank": 1
     },
     {

@@ -69,6 +69,7 @@ import { handleWalletAction, isWalletAction, type ReserveOutcome, type SettleOut
 import { toDynamicQris } from "../_shared/qris.ts";
 import { FEED_URL, TOKEN_URL, detectorPlan, feedHeaders, feedQuery, matchOpenInvoices, parseFeed, refreshBody, sessionHeaders } from "../_shared/qris-detector.ts";
 import { paypalEnvironment, createPaypalOrder, verifyPaypalWebhook, readPaypalOrder, capturePaypalOrder, planFromCustomId, settlementFromPaypalOrder } from "../_shared/paypal.ts";
+import { planPriceCents } from "../_shared/plans.ts";
 import { readJsonObject } from "../_shared/request-body.ts";
 
 type PriceRow = { kind: string; unit: string; amount_cents: number; currency: string; active: boolean };
@@ -1205,10 +1206,14 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
           .eq("active", true)
           .maybeSingle();
         if (priceError || !row) return json({ error: "harga plan USD belum ada di daftar" }, 500, cors);
+        const expectedAmount = planPriceCents(plan);
+        if (Number(row.amount_cents) !== expectedAmount || String(row.currency).toUpperCase() !== 'USD') {
+          return json({ error: "harga plan USD tidak cocok dengan harga resmi" }, 500, cors);
+        }
         const env = paypalEnvironment();
         try {
           const order = await createPaypalOrder(env, {
-            amountCents: Number(row.amount_cents),
+            amountCents: expectedAmount,
             currency: String(row.currency),
             description: `Navego ${plan}`,
             customId: `${plan}:${owner}`
@@ -1218,8 +1223,8 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
             p_order_id: order.id,
             p_owner_id: owner,
             p_plan: plan,
-            p_amount_cents: Number(row.amount_cents),
-            p_currency: String(row.currency)
+            p_amount_cents: expectedAmount,
+            p_currency: 'USD'
           });
           if (quote.error) return json({ error: `PayPal quote was not stored: ${quote.error.message}` }, 502, cors);
           const quoteState = quote.data as { ok?: boolean; error?: string } | null;

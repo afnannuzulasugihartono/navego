@@ -74,6 +74,11 @@ test('the environment defaults to sandbox, and PAYPAL_ENV=live selects the live 
     assert.equal(env.environment, 'live');
     assert.equal(env.base, 'https://api-m.paypal.com');
   });
+  withEnv({ PAYPAL_ENV: ' LIVE ', PAYPAL_CLIENT_ID: 'id', PAYPAL_SECRET: 'sec', PAYPAL_WEBHOOK_ID: 'wid' }, () => {
+    const env = paypalEnvironment();
+    assert.equal(env.environment, 'live', 'the API host and ledger environment must come from the same normalized value');
+    assert.equal(env.base, 'https://api-m.paypal.com');
+  });
 });
 
 test('the token door refuses to open without credentials, and names PayPal refusing', async () => {
