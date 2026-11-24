@@ -1,0 +1,84 @@
+# @last-edited: 2026-11-24 UTC+7.
+# @title: auth-config - reads or patches the deployed Supabase Auth config, on dispatch.
+# @state: read prints the safe fields (site_url, redirect lists); patch sets site_url and appends one redirect origin, then prints the result.
+# @state: decisions.json -> consent-origin-01 (the consent endpoints reject every origin the deployed config does not list, and the deployed config is read and fixed from here, not from the owner's dashboard).
+# @dependencies: SUPABASE_ACCESS_TOKEN secret (same one deploy-functions.yml uses).
+
+name: Auth config
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "read or patch."
+        required: true
+        type: string
+      site_url:
+        description: "patch only: the site_url to set (empty: leave unchanged)."
+        required: false
+        type: string
+      add_redirect_url:
+        description: "patch only: one origin to append to additional_redirect_urls (empty: append nothing)."
+        required: false
+        type: string
+      reason:
+        description: What is being read or fixed and why, for the run log.
+        required: false
+        type: string
+
+concurrency:
+  group: auth-config
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  auth-config:
+    name: Read or patch the auth config
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: production
+    steps:
+      - name: Read or patch
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          PROJECT_REF: nenmkmtvjremqphfqnfw
+          MODE: ${{ inputs.mode }}
+          SITE_URL: ${{ inputs.site_url }}
+          ADD_REDIRECT_URL: ${{ inputs.add_redirect_url }}
+        shell: bash
+        run: |
+          API="https://api.supabase.com/v1/projects/$PROJECT_REF/config/auth"
+          AUTH="Authorization: Bearer $SUPABASE_ACCESS_TOKEN"
+          # Only non-secret fields are ever printed: the full config response carries mail credentials that must not reach a log.
+          SAFE='{site_url: .site_url, additional_redirect_urls: .additional_redirect_urls, uri_allow_list: .uri_allow_list}'
+
+          read_config() {
+            curl --fail --silent --show-error -H "$AUTH" "$API" | jq "$SAFE"
+          }
+
+          case "$(echo "$MODE" | tr '[:upper:]' '[:lower:]')" in
+            read)
+              echo "::group::deployed auth config (safe fields)"
+              read_config
+              echo "::endgroup::"
+              ;;
+            patch)
+              MERGED=$(read_config | jq -c --arg add "$ADD_REDIRECT_URL" '
+                .additional_redirect_urls as $urls
+                | if $add == "" then ($urls // [])
+                  else (($urls // []) + [$add] | unique) end')
+              BODY=$(jq -cn --arg site "$SITE_URL" --argjson urls "$MERGED" '
+                (if $site == "" then {} else {site_url: $site} end)
+                + {additional_redirect_urls: $urls}')
+              echo "patching with: $BODY"
+              curl --fail --silent --show-error -X PATCH -H "$AUTH" -H "content-type: application/json" \
+                -d "$BODY" "$API" > /dev/null
+              echo "::group::deployed auth config after patch (safe fields)"
+              read_config
+              echo "::endgroup::"
+              ;;
+            *)
+              echo "::error::mode must be read or patch, got: $MODE"; exit 1 ;;
+          esac
