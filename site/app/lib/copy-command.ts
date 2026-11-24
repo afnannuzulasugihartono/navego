@@ -30,12 +30,14 @@ export function createCopyCommand(options: CopyCommandOptions) {
   let attempt = 0;
   let lifecycle = 0;
   let disposed = false;
+  let succeeded = false;
 
   const schedule = options.schedule ?? ((run: () => void, delay: number) => window.setTimeout(run, delay));
   const cancel = options.cancel ?? ((handle: number) => window.clearTimeout(handle));
 
   const announce = (message: string, failed: boolean) => {
-    if (disposed) return;
+    if (disposed || (failed && succeeded)) return;
+    if (!failed) succeeded = true;
     attempt += 1;
     options.onFeedback({ message, failed, attempt });
     if (timer !== null) {
