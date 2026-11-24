@@ -1315,6 +1315,17 @@
     "ref": "docs/handoff.md:40 (the plan sale is USD-only: $1, $3, $5, $7, $9, $17 for six months, and $33 for one year); the live opera_price_list rows read the same seven amounts on 2026-11-25",
     "also": "tests/billing/plans.test.ts and tests/billing/paypal-wiring.test.ts"
    }
+  },
+  {
+   "id": "site-install-cta-01",
+   "scope": "site/components",
+   "file": "site/app/routes/unduh.tsx",
+   "decision": "The download hero leads with the Windows one-command install and keeps manual zip and reg installs as secondary paths. A successful command copy records install intent, while copy failure is visible and announced; the copy control stays enabled and every command owns one polite status region.",
+   "source": {
+    "kind": "recorded",
+    "ref": "docs/agent-survival-prompt.md:61 (fix the earliest real funnel drop-off, which may be the install path); live production funnel 2026-11-25 had 109 page views, 49 pair views, 2 install views, 0 install clicks, and 0 settled orders",
+    "also": "tests/site/install-cta.test.ts"
+   }
   }
  ]
 }

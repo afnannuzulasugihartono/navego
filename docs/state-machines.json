@@ -397,6 +397,22 @@
       "rank": 2
     },
     {
+      "id": "install-copy-feedback",
+      "kind": "site",
+      "where": "site/app/routes/unduh.tsx (CopyCommand)",
+      "states": [
+        "idle",
+        "copied",
+        "failed"
+      ],
+      "writers": "the clipboard write, the feedback timeout, and the successful-copy install event",
+      "readers": "the copy button, the polite status region, and the install funnel",
+      "wrongIfConfused": "a failed copy looks idle; a successful copy disables the button and drops focus; repeated clicks stack cleanup timers",
+      "decision": "model",
+      "why": "one command owns one visible and announced result, the button remains retryable, and only a completed copy records install intent",
+      "rank": 2
+    },
+    {
       "id": "invoice-payment-lifecycle",
       "kind": "billing",
       "where": "hosted/migrations/20261015090000_opera_billing.sql:23",

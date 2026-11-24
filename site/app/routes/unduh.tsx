@@ -1,6 +1,6 @@
-// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots)
+// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots) decisions.json -> site-install-cta-01
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import { track } from '../lib/funnel';
 import { Link } from 'react-router';
@@ -9,7 +9,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 export function meta() {
   return seoMeta({
     title: 'Unduh — Navego',
-    description: 'Unduh build Navego untuk Chrome, Edge, Brave, Opera, dan Vivaldi. Satu klik di Windows lewat berkas .reg, atau developer mode. Masuk, lalu pair device dari dashboard.',
+    description: 'Pasang Navego di Windows dengan satu perintah PowerShell tanpa Node atau Chrome Web Store. macOS dan Linux memakai arsip .zip; masuk, lalu pair device dari dashboard.',
     path: '/unduh'
   });
 }
@@ -47,18 +47,55 @@ const ONE_LINER = 'irm https://navego.pages.dev/install.ps1 | iex';
 const CURL = 'curl.exe -sI https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/download/navego.zip | findstr /i x-opera-sha256';
 const LOCAL = 'Get-FileHash .\\navego-*.zip -Algorithm SHA256';
 
-export default function Unduh() {
-  const [copied, setCopied] = useState<string | null>(null);
-  const copy = async (text: string, id: string) => {
+type CopyCommandProps = {
+  id: string;
+  label: string;
+  command: string;
+  buttonLabel?: string;
+  successMessage?: string;
+  onCopied?: () => void;
+};
+
+function CopyCommand({ id, label, command, buttonLabel = 'Salin', successMessage = 'Disalin.', onCopied }: CopyCommandProps) {
+  const [feedback, setFeedback] = useState('');
+  const timer = useRef<number | null>(null);
+  const lastMessage = useRef('');
+
+  useEffect(() => () => {
+    if (timer.current !== null) window.clearTimeout(timer.current);
+  }, []);
+
+  const announce = (message: string) => {
+    const spoken = message === lastMessage.current ? `${message}\u00a0` : message;
+    lastMessage.current = message;
+    setFeedback(spoken);
+    if (timer.current !== null) window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setFeedback(''), 2000);
+  };
+
+  const copy = async () => {
     try {
-      await navigator.clipboard.writeText(text);
-      setCopied(id);
-      window.setTimeout(() => setCopied(null), 1400);
+      await navigator.clipboard.writeText(command);
+      announce(successMessage);
+      onCopied?.();
     } catch {
-      setCopied(null);
+      announce('Gagal menyalin. Salin manual dari kode.');
     }
   };
 
+  return (
+    <>
+      <div className="command-row">
+        <span className="command-row__label">{label}</span>
+        <code className="command-row__code" id={`${id}-command`}>{command}</code>
+        <button onClick={() => void copy()} className="btn btn-solid btn-sm" type="button">{buttonLabel}</button>
+      </div>
+      <p className="copy-feedback" role="status" aria-live="polite" aria-atomic="true">{feedback}</p>
+    </>
+  );
+}
+
+export default function Unduh() {
   return (
     <>
       <SiteHeader current="/unduh" />
@@ -66,31 +103,20 @@ export default function Unduh() {
         <section className="page-hero">
           <div className="wrap">
             <h1>Mulai dari Chrome Anda.</h1>
-            <p className="lede">Unduh ekstensinya, pair sekali, jalankan perintah pertama. Tidak perlu kartu kredit untuk mencoba.</p>
+            <p className="lede">Di Windows, satu perintah memasang extension tanpa Node dan tanpa Chrome Web Store. Di macOS dan Linux, satu unduhan. Tidak perlu kartu kredit untuk mencoba.</p>
+            <CopyCommand
+              id="install"
+              label="PowerShell"
+              command={ONE_LINER}
+              buttonLabel="Salin perintah"
+              successMessage="Perintah disalin. Jalankan di PowerShell."
+              onCopied={() => track('install.click', { browser: 'windows', artifact: 'powershell' })}
+            />
             <div className="hero-cta">
-              <a className="btn btn-solid" href={`${DOWNLOAD}.zip?for=chrome`} download onClick={() => track('install.click', { browser: 'chrome', artifact: 'zip' })}>Unduh untuk Chrome</a>
-              <a className="btn btn-ghost" href="/download/forceinstall.reg" download="navego-forceinstall.reg" onClick={() => track('install.click', { browser: 'windows', artifact: 'reg' })}>Pakai .reg di Windows</a>
+              <a className="btn btn-ghost" href={`${DOWNLOAD}.zip?for=chrome`} download onClick={() => track('install.click', { browser: 'chrome', artifact: 'zip' })}>Pasang manual (.zip)</a>
+              <a className="btn btn-ghost" href="/download/forceinstall.reg" download="navego-forceinstall.reg" onClick={() => track('install.click', { browser: 'windows', artifact: 'reg' })}>Windows .reg</a>
             </div>
-            <p className="note">Build yang sama untuk Edge, Brave, Opera, dan Vivaldi. .reg memakai HKCU, tanpa admin; .zip untuk Load unpacked.</p>
-          </div>
-        </section>
-
-        <section className="band band-soft" aria-labelledby="oneLineTitle">
-          <div className="wrap">
-            <div className="section-head">
-              <div>
-                <h2 id="oneLineTitle" className="section-title">Satu perintah. Tanpa Node, tanpa store.</h2>
-              </div>
-              <p className="section-note">Jalankan di PowerShell. Skripnya menulis satu policy per browser di akun Anda, dan browser yang mengunduh CRX bertanda tangannya sendiri.</p>
-            </div>
-            <div className="command-row">
-              <span className="command-row__label">PowerShell</span>
-              <code className="command-row__code">{ONE_LINER}</code>
-              <button onClick={() => copy(ONE_LINER, 'oneliner')} className="btn btn-solid btn-sm" type="button">
-                {copied === 'oneliner' ? 'Tersalin' : 'Salin'}
-              </button>
-            </div>
-            <p className="note note--spaced">Harganya jujur: browser lalu melaporkan dirinya sebagai dikelola organisasi (registry Anda sendiri), dan ekstensinya tidak bisa dicabut selama policy itu ada. Di mesin yang dikelola admin sekolah atau kantor, policy admin tetap menang.</p>
+            <p className="note">macOS dan Linux: ekstrak .zip, lalu pilih Load unpacked. Di Windows, perintah ini menulis policy HKCU; browser yang dikelola admin sekolah atau kantor tetap menang.</p>
           </div>
         </section>
 
@@ -123,7 +149,7 @@ export default function Unduh() {
               </div>
             </div>
             <div className="value-grid">
-              <div className="value-card"><span className="start-num">1</span><b>Load unpacked</b><p>Buka <code>chrome://extensions</code>. Aktifkan Developer mode. Pilih folder hasil ekstrak .zip.</p></div>
+              <div className="value-card"><span className="start-num">1</span><b>Pasang extension</b><p>Windows: jalankan perintah PowerShell di atas. macOS dan Linux: ekstrak .zip, buka <code>chrome://extensions</code>, aktifkan Developer mode, lalu pilih Load unpacked.</p></div>
               <div className="value-card"><span className="start-num">2</span><b>Masuk</b><p>Masuk dengan Google, GitHub, atau magic link email. Sesi tersimpan setelah reload.</p></div>
               <div className="value-card"><span className="start-num">3</span><b>Pair & buktikan</b><p>Dashboard → Pairing → Pasangkan browser ini. Device harus online; jalankan <code>tabs.list</code> dari Aksi.</p></div>
             </div>
@@ -162,13 +188,7 @@ export default function Unduh() {
                 ['server', 'Server', CURL],
                 ['local', 'Lokal', LOCAL]
               ].map(([id, label, command]) => (
-                <div key={id} className="command-row">
-                  <span className="command-row__label">{label}</span>
-                  <code className="command-row__code">{command}</code>
-                  <button onClick={() => copy(command!, id!)} className="btn btn-solid btn-sm" type="button">
-                    {copied === id ? 'Tersalin' : 'Salin'}
-                  </button>
-                </div>
+                <CopyCommand key={id!} id={id!} label={label!} command={command!} successMessage={`${label!} disalin.`} />
               ))}
             </div>
           </div>
@@ -191,7 +211,7 @@ export default function Unduh() {
                 </tbody>
               </table>
             </div>
-            <p className="note note--spaced">Belum ada di Chrome Web Store: arsipnya dimuat dengan tangan. Pairing gagal? Buka <Link to="/docs#pairing">panduan pairing</Link> atau <Link to="/dukungan">Dukungan</Link>.</p>
+            <p className="note note--spaced">Belum ada di Chrome Web Store. Windows memakai perintah di atas; macOS dan Linux memakai .zip. Pairing gagal? Buka <Link to="/docs#pairing">panduan pairing</Link> atau <Link to="/dukungan">Dukungan</Link>.</p>
           </div>
         </section>
 
