@@ -68,7 +68,7 @@ import { DEPOSIT_KIND } from "../_shared/wallet.ts";
 import { handleWalletAction, isWalletAction, type ReserveOutcome, type SettleOutcome } from "../_shared/wallet-api.ts";
 import { toDynamicQris } from "../_shared/qris.ts";
 import { FEED_URL, TOKEN_URL, detectorPlan, feedHeaders, feedQuery, matchOpenInvoices, parseFeed, refreshBody, sessionHeaders } from "../_shared/qris-detector.ts";
-import { paypalEnvironment, createPaypalOrder, verifyPaypalWebhook, readPaypalOrder, capturePaypalOrder, planFromCustomId } from "../_shared/paypal.ts";
+import { paypalEnvironment, createPaypalOrder, verifyPaypalWebhook, readPaypalOrder, capturePaypalOrder, planFromCustomId, settlementFromPaypalOrder } from "../_shared/paypal.ts";
 import { readJsonObject } from "../_shared/request-body.ts";
 
 type PriceRow = { kind: string; unit: string; amount_cents: number; currency: string; active: boolean };
@@ -1008,6 +1008,10 @@ async function runQrisDetect(): Promise<Record<string, unknown>> {
   return { ok: true, mode: "dry", wouldClose: plan.wouldClose, transactions: transactions.length, seen: seen.length, spent: spent.size };
 }
 
+// A PAYPAL ORDER IS CLAIMED IN THE DATABASE.
+// The quote is stored before the buyer sees PayPal, the completed order is compared with that quote, and the database records the sale and activates the plan once.
+// decisions.json -> hosted-paypal-revenue-01
+
 // THE TOKEN IS PUBLISHED ON EVERY COLD START.
 // The cron reads the operator token from vault, and the function is the only party that holds it, so one request from anywhere is enough to arm the schedule.
 
@@ -1080,16 +1084,32 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
         if (type === "PAYMENT.CAPTURE.COMPLETED" || type === "PAYMENT.SALE.COMPLETED") {
           const event = eventBody as { resource?: { supplementary_data?: { related_ids?: { order_id?: string } }; id?: string } };
           const related = event.resource?.supplementary_data?.related_ids?.order_id || event.resource?.id;
-          const { readPaypalOrder } = await import("../_shared/paypal.ts");
-          const order = related ? await readPaypalOrder(env, String(related)) : null;
-          const units = (order as { purchase_units?: Array<{ custom_id?: string }> } | null)?.purchase_units ?? [];
-          const customId = String(units[0]?.custom_id ?? "");
-          const [plan, owner] = customId.split(":") as [string, string];
-          if (plan && owner && USD_PLANS.includes(plan)) {
-            const supabase = await db();
-            const activation = await supabase.rpc("opera_plan_activate_purchase", { p_owner: owner, p_kind: plan });
-            if (activation.error) return json({ error: `plan activation failed: ${activation.error.message}` }, 502, cors);
-          }
+          const orderId = String(related || "");
+          const order = orderId ? await readPaypalOrder(env, orderId) : null;
+          if (!order) return json({ ok: false, error: 'the PayPal order could not be read' }, 400, cors);
+          const settlement = settlementFromPaypalOrder(orderId, order);
+          if (!settlement) return json({ ok: false, error: 'the PayPal order is not a completed USD sale' }, 422, cors);
+          const supabase = await db();
+          const settled = await supabase.rpc("opera_paypal_settle_order", {
+            p_environment: env.environment,
+            p_order_id: settlement.orderId,
+            p_actual_owner_id: settlement.owner,
+            p_actual_plan: settlement.plan,
+            p_actual_amount_cents: settlement.amountCents,
+            p_actual_currency: settlement.currency,
+            p_source: 'paypal-verified-webhook'
+          });
+          if (settled.error) return json({ error: `PayPal settlement failed: ${settled.error.message}` }, 502, cors);
+          const state = settled.data as { ok?: boolean; status?: string; reason?: string; error?: string } | null;
+          if (!state?.ok) return json({ error: state?.error || 'PayPal settlement was refused' }, 502, cors);
+          if (state.status === 'review') return json({ ok: true, status: 'review', orderId, error: state.reason || 'the PayPal order needs review' }, 200, cors);
+          if (state.status === 'activated') return json({ ok: true, status: 'activated', orderId }, 200, cors);
+          if (state.status !== 'settled') return json({ error: `PayPal settlement is ${state.status || 'unreadable'}` }, 502, cors);
+          const activation = await supabase.rpc("opera_paypal_activate_order", { p_environment: env.environment, p_order_id: orderId });
+          if (activation.error) return json({ error: `plan activation failed: ${activation.error.message}` }, 502, cors);
+          const activationState = activation.data as { ok?: boolean; status?: string; error?: string } | null;
+          if (!activationState?.ok) return json({ error: activationState?.error || 'plan activation failed' }, 502, cors);
+          return json({ ok: true, status: 'activated', orderId }, 200, cors);
         }
         return json({ ok: true }, 200, cors);
       }
@@ -1143,10 +1163,31 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
           if (!USD_PLANS.includes(parsed.plan)) return json({ error: "plan USD tidak dikenal" }, 400, cors);
           const alreadyCompleted = String((order as { status?: string }).status ?? "").toUpperCase() === "COMPLETED";
           if (!alreadyCompleted) await capturePaypalOrder(env, orderId);
+          const completedOrder = await readPaypalOrder(env, orderId);
+          const settlement = settlementFromPaypalOrder(orderId, completedOrder);
+          if (!settlement) throw new Error('the completed PayPal order could not be read as a USD sale');
+          if (settlement.owner !== owner || settlement.plan !== parsed.plan) throw new Error('the completed PayPal order does not belong to this purchase');
           const supabase = await db();
-          const activation = await supabase.rpc("opera_plan_activate_purchase", { p_owner: owner, p_kind: parsed.plan });
+          const settled = await supabase.rpc("opera_paypal_settle_order", {
+            p_environment: env.environment,
+            p_order_id: settlement.orderId,
+            p_actual_owner_id: settlement.owner,
+            p_actual_plan: settlement.plan,
+            p_actual_amount_cents: settlement.amountCents,
+            p_actual_currency: settlement.currency,
+            p_source: 'paypal-api-capture'
+          });
+          if (settled.error) return json({ error: `PayPal settlement failed: ${settled.error.message}` }, 502, cors);
+          const state = settled.data as { ok?: boolean; status?: string; reason?: string; error?: string } | null;
+          if (!state?.ok) return json({ error: state?.error || 'PayPal settlement was refused' }, 502, cors);
+          if (state.status === 'review') return json({ error: state.reason || 'the PayPal order needs review', orderId, status: 'review' }, 409, cors);
+          if (state.status === 'activated') return json({ ok: true, plan: parsed.plan, status: "active", orderId }, 200, cors);
+          if (state.status !== 'settled') return json({ error: `PayPal settlement is ${state.status || 'unreadable'}` }, 502, cors);
+          const activation = await supabase.rpc("opera_paypal_activate_order", { p_environment: env.environment, p_order_id: orderId });
           if (activation.error) return json({ error: `plan activation failed: ${activation.error.message}` }, 502, cors);
-          return json({ ok: true, plan: parsed.plan, status: "active" }, 200, cors);
+          const activationState = activation.data as { ok?: boolean; status?: string; error?: string } | null;
+          if (!activationState?.ok) return json({ error: activationState?.error || 'plan activation failed' }, 502, cors);
+          return json({ ok: true, plan: parsed.plan, status: "active", orderId }, 200, cors);
         } catch (error) {
           return json({ error: error instanceof Error ? error.message : String(error) }, 502, cors);
         }
@@ -1172,6 +1213,17 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
             description: `Navego ${plan}`,
             customId: `${plan}:${owner}`
           });
+          const quote = await supabase.rpc("opera_paypal_create_order", {
+            p_environment: env.environment,
+            p_order_id: order.id,
+            p_owner_id: owner,
+            p_plan: plan,
+            p_amount_cents: Number(row.amount_cents),
+            p_currency: String(row.currency)
+          });
+          if (quote.error) return json({ error: `PayPal quote was not stored: ${quote.error.message}` }, 502, cors);
+          const quoteState = quote.data as { ok?: boolean; error?: string } | null;
+          if (!quoteState?.ok) return json({ error: quoteState?.error || 'PayPal quote was refused' }, 502, cors);
           return json({ ok: true, plan, orderId: order.id, approvalUrl: order.approvalUrl }, 200, cors);
         } catch (err) {
           return json({ error: err instanceof Error ? err.message : String(err) }, 502, cors);

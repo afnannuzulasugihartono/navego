@@ -144,6 +144,34 @@ test('capture posts to the order capture endpoint, while read fetches the order 
   }
 });
 
+test('a completed USD order becomes one exact settlement, while an approved order is not money', async () => {
+  const module = await import('../../hosted/functions/_shared/paypal.ts') as unknown as Record<string, unknown>;
+  const extract = module.settlementFromPaypalOrder;
+  assert.equal(typeof extract, 'function');
+  const settlementOf = extract as (orderId: string, order: unknown) => unknown;
+  const completed = {
+    id: 'ORDER-1',
+    status: 'COMPLETED',
+    purchase_units: [{ custom_id: 'plan.usd-17:owner-1', amount: { value: '17.00', currency_code: 'USD' } }]
+  };
+  assert.deepEqual(settlementOf('ORDER-1', completed), {
+    orderId: 'ORDER-1',
+    plan: 'plan.usd-17',
+    owner: 'owner-1',
+    amountCents: 1700,
+    currency: 'USD'
+  });
+  assert.equal(settlementOf('ORDER-1', { ...completed, status: 'APPROVED' }), null);
+  assert.equal(settlementOf('ORDER-1', { ...completed, purchase_units: [{ custom_id: 'plan.usd-17:owner-1', amount: { value: '17.00', currency_code: 'EUR' } }] }), null);
+  assert.deepEqual(settlementOf('ORDER-1', { ...completed, purchase_units: [{ custom_id: 'garbage', amount: { value: '17.00', currency_code: 'USD' } }] }), {
+    orderId: 'ORDER-1',
+    plan: null,
+    owner: null,
+    amountCents: 1700,
+    currency: 'USD'
+  });
+});
+
 test('a webhook is trusted only when PayPal answers SUCCESS on the verify call', async () => {
   const headers = {
     'paypal-transmission-id': 'tx',

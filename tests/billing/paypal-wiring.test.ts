@@ -32,7 +32,7 @@ test('the buy action sells exactly the USD plans and only active price rows', ()
 test('a webhook that fails verification is refused before any plan is activated', () => {
   const webhook = fn.indexOf('looksLikePaypalWebhook');
   const verify = fn.indexOf('verifyPaypalWebhook', webhook);
-  const activate = fn.indexOf('opera_plan_activate_purchase', webhook);
+  const activate = fn.indexOf('opera_paypal_activate_order', webhook);
   assert.ok(webhook > 0 && verify > webhook, 'the signature is checked inside the webhook branch');
   assert.ok(activate > verify, 'activation happens only after verification returned true');
   assert.match(fn, /the paypal webhook signature was not recognised/, 'a forged webhook is refused by name');
@@ -44,7 +44,28 @@ test('checkout capture verifies the owner and does not pretend a failed activati
   assert.match(fn, /capturePaypalOrder/);
   assert.match(fn, /const owner = await sessionOrNull\(req\)/);
   assert.match(fn, /parsed\.owner !== owner/);
-  assert.match(fn, /activation failed|plan activation failed/);
+  assert.match(fn, /opera_paypal_activate_order/);
+});
+
+test('one PayPal order is settled once and activated once', () => {
+  const capture = fn.slice(fn.indexOf('body.action === "paypal-capture"'), fn.indexOf('body.action === "paypal-buy"'));
+  const captureSettle = capture.indexOf('opera_paypal_settle_order');
+  const captureActivation = capture.indexOf('opera_paypal_activate_order');
+  assert.ok(captureSettle > 0, 'the capture path settles the order');
+  assert.ok(captureActivation > captureSettle, 'the settlement is durable before activation claims success');
+  assert.ok((capture.match(/readPaypalOrder/g) || []).length >= 2, 'capture re-reads the completed order before it trusts the amount');
+
+  const webhook = fn.slice(fn.indexOf('looksLikePaypalWebhook'), fn.indexOf('looksLikeNotification'));
+  const webhookSettle = webhook.indexOf('opera_paypal_settle_order');
+  const webhookActivation = webhook.indexOf('opera_paypal_activate_order');
+  assert.ok(webhookSettle > 0, 'the verified webhook settles the same order');
+  assert.ok(webhookActivation > webhookSettle, 'the webhook settles the order before activation');
+  const missingOrder = webhook.indexOf('if (!order)');
+  assert.ok(missingOrder > 0, 'the webhook refuses an order it could not read');
+
+  const buy = fn.slice(fn.indexOf('body.action === "paypal-buy"'));
+  assert.match(buy, /opera_paypal_create_order/);
+  assert.doesNotMatch(fn, /recordPaypalSettlement/);
 });
 
 test('the tab PayPal returns to can name the order it was sent back with', () => {
