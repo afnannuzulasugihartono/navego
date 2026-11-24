@@ -1,4 +1,4 @@
-# @last-edited: 2026-10-05 19:45 UTC+7.
+# @last-edited: 2026-11-24 13:50 UTC+7.
 # @title: .gitleaks — path-scoped allow exceptions for known synthetic fixtures.
 # @state: every allowlisted path exists; the dashboard app carries a publishable key, which is public by design.
 # @dependencies: none stated.
@@ -58,6 +58,16 @@ id = "generic-api-key"
   regexTarget = "line"
   regexes = [
     '''PUBLISHABLE_KEY\s*=\s*.sb_publishable_''',
+  ]
+
+  [[rules.allowlists]]
+
+  description = "The same publishable key as the tracker's own literal: funnel.ts copies it on purpose so the beacon never imports the session machinery, and it is public by design - the browser sends it in a request header on every page view. The secret key and the management token are not in the tree."
+  condition = "AND"
+  paths = ['''^site/app/lib/funnel\.ts$''']
+  regexTarget = "line"
+  regexes = [
+    '''FUNNEL_KEY\\s*=\\s*.sb_publishable_''',
   ]
 
   [[rules.allowlists]]
