@@ -55,7 +55,7 @@ extension version, the plan, the quota, and the fix when something is degraded �
 `ready` when everything is wired. `NAVEGO_BRIDGE_PORT` (default `9451`) names
 the loopback port; `NAVEGO_HOME` names the paired device file's folder.
 A dedicated, separate test profile with the extension pre-loaded is
-`local\bin\opera-chrome.cmd` — on macOS and Linux the equivalent is one
+`local\bin\navego-chrome.cmd` — on macOS and Linux the equivalent is one
 Chrome invocation with `--load-extension`.
 
 ## The meter

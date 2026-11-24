@@ -69,7 +69,7 @@ it can still dominate everything below.
 
 ```
 MCP client (stdio)
-  -> local/bin/opera-local.ts
+  -> local/bin/navego-local.ts
      -> createMcpServer(context)
         -> tools/call
            -> resolvedTab()          // fallback.tabs(): one tab listing

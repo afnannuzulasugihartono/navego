@@ -9,12 +9,20 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "Owner clears the blocked listing PR in one move: open the compare URL https://github.com/punkpeye/awesome-mcp-servers/compare/main...afnannuzulasugihartono:awesome-mcp-servers:add-navego-listing?expand=1 and click Create pull request (the Vault token cannot open PRs on repos it does not own).",
+  "next_action": "Two owner one-clicks unblock the money: (1) apply hosted/migrations/20261124100000_opera_price_wallet_deposit_restore.sql (or push this branch \u2014 CI/CD applies migrations), so a wallet top-up stops pricing Rp 0 and the 2026-11-24 buy click can actually pay; (2) open https://github.com/punkpeye/awesome-mcp-servers/compare/main...afnannuzulasugihartono:awesome-mcp-servers:add-navego-listing?expand=1 and click Create pull request (the Vault token cannot open PRs on repos it does not own).",
+  "leak_found": {
+    "what": "wallet.deposit has no active row in opera_price_list on the live project, so openTopUp invoices price 'not charged: no price for this kind' (Rp 0) \u2014 a buyer cannot pay even after clicking buy.",
+    "proof": "live invoice 1ec02bc3-7c1b-45a2-b864-837e95ba3b24:wallet-mwuhd3km created 2026-11-24 rendered 'not charged: no price for this kind'; public price list at functions/v1/navego-billing?prices=1 lists only task.* kinds; wallet migration 20261104120000 carries the row (1,000,000 sen IDR) but it was never applied to the live price table.",
+    "fix": "hosted/migrations/20261124100000_opera_price_wallet_deposit_restore.sql, pinned by tests/hosted/price-rows.test.ts."
+  },
   "distribution": {
     "npm_downloads_last_month": 1330,
     "checked_at": "2026-11-24",
     "source": "api.npmjs.org/downloads/point/last-month/navego",
-    "listing": "navego entry committed to fork afnannuzulasugihartono/awesome-mcp-servers branch add-navego-listing, commit e701f35bfcf1dfe8b3da0f73ff8386955e1c4862, awaiting one-click PR by owner"
+    "funnel_last_30d": "33 page views / 15 pair views / 1 install view / 1 buy click / 0 settled orders (opera_funnel_summary, checked 2026-11-24)",
+    "listing": "navego entry committed to fork afnannuzulasugihartono/awesome-mcp-servers branch add-navego-listing, commit e701f35bfcf1dfe8b3da0f73ff8386955e1c4862, awaiting one-click PR by owner",
+    "rail": "paypal (live): PAYPAL_CLIENT_ID, PAYPAL_SECRET, PAYPAL_WEBHOOK_ID, PAYPAL_ENV=live are set on project nenmkmtvjremqphfqnfw; live paypal-buy answered 200 with an approval URL (handoff 2026-11-24). A real paid capture is still unproven \u2014 no payment made yet.",
+    "midtrans_leftover": "createInvoice still defaults rail=midtrans and BILLING_RAIL defaults to midtrans; MIDTRANS_SERVER_KEY is not among the repo deploy secrets, so the rupiah/QRIS rails are dormant without credentials. Not deleted: wallet top-up and task invoicing ride it until the wallet moves to PayPal."
   },
   "gate": "AGENTS.md#always + docs/agent-survival-prompt.md"
 }

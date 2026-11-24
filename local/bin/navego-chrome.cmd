@@ -1,7 +1,7 @@
 @echo off
 
 REM @last-edited: 2026-10-21 UTC+7.
-REM @title: opera-chrome — the dedicated Chrome this product drives, with the extension always loaded.
+REM @title: navego-chrome — the dedicated Chrome this product drives, with the extension always loaded.
 REM @state: the profile, the debugging port and the extension path, and nothing else.
 REM @dependencies: none.
 REM Navego dedicated Chrome: persistent profile, debugging port, extension always loaded.

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 // @last-edited: 2026-10-21 UTC+7.
-// @title: opera-local-dev — the development front door for the local MCP server.
+// @title: navego-local-dev — the development front door for the local MCP server.
 // @state: the watched files, the supervisor behind the pipe, and the reload it performs on a save.
 // @dependencies: none.
 
-// Same tools as opera-local.js, reached through the dev shim: edit a watched file, save, and the worker behind the pipe rebuilds itself within a second, without a toggle.
-// Production spawns opera-local.js directly.
+// Same tools as navego-local.js, reached through the dev shim: edit a watched file, save, and the worker behind the pipe rebuilds itself within a second, without a toggle.
+// Production spawns navego-local.js directly.
 
 import { stdin, stdout, stderr, exit, execPath } from 'node:process';
 import { spawn } from 'node:child_process';
@@ -25,11 +25,11 @@ const WATCHED = [
   join(root, 'extension', 'lib', 'socket-protocol.js')
 ];
 
-const log = (message: unknown) => stderr.write(`[opera-local-dev] ${String(message)}\n`);
+const log = (message: unknown) => stderr.write(`[navego-local-dev] ${String(message)}\n`);
 
 const supervisor = createSupervisor({
   // THE CAST: the spawn is declared with stdio pipes, so stdin and stdout are the streams the supervisor reads; Node types them as nullable, the supervisor asks for a non-null pair, and the cast names that contract.
-  spawnWorker: () => spawn(execPath, [join(here, 'opera-local.js')], {
+  spawnWorker: () => spawn(execPath, [join(here, 'navego-local.js')], {
     stdio: ['pipe', 'pipe', 'inherit'],
     cwd: join(root, 'local')
   }) as unknown as SupervisorWorker,

@@ -6,7 +6,7 @@
 // THIS FILE EXISTS
 
 // The driver runs in a process with no stdio contract, which makes it unusable by anything that speaks MCP.
-// This file is that contract, and it is the difference between "works on the machine it was written on" and "npx opera-local".
+// This file is that contract, and it is the difference between "works on the machine it was written on" and "npx navego-local".
 
 // the server is built around a plain function.
 // A stdio server that only runs as a process cannot be tested without spawning one, and a test that spawns a real browser is a test that fails on someone else's machine.

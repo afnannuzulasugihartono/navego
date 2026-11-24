@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // @last-edited: 2026-10-13 UTC+7.
-// @title: opera-local — the installed entry point: a local CDP driver behind an MCP stdio server.
+// @title: navego-local — the installed entry point: a local CDP driver behind an MCP stdio server.
 // @state: binds the protocol to a real browser and to the environment it was given.
 // @dependencies: ../mcp-server.js, ../driver.js, ../sessions.js, ../transport.js.
 

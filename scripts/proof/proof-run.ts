@@ -225,7 +225,7 @@ const parseAnswer = (text: string) => {
 };
 
 export function speakMcp({ port, cwd = process.cwd(), env = process.env, bridgePort = null }: { port: number; cwd?: string; env?: NodeJS.ProcessEnv; bridgePort?: number | null }) {
-  const child = spawn(process.execPath, [path.join(cwd, 'local', 'bin', 'opera-local.js')], {
+  const child = spawn(process.execPath, [path.join(cwd, 'local', 'bin', 'navego-local.js')], {
     cwd,
     env: { ...env, NAVEGO_BRIDGE_PORT: String(bridgePort ?? port ?? env.NAVEGO_BRIDGE_PORT ?? 9451) },
     stdio: ['pipe', 'pipe', 'inherit']
