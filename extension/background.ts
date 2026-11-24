@@ -221,7 +221,8 @@ export async function dispatch(method: string, params: DispatchParams = {}, cont
     case 'tabs.open': {
       const url = safeUrl(params.url || 'https://www.google.com/');
       if (!url) throw new Error('Only http/https URLs are allowed.');
-      const tab = await mutateTabs(() => chrome.tabs.create({ url, active: params.background === false ? params.active !== false : false }));
+      // decisions.json -> extension-tabs-open-contract-01
+      const tab = await mutateTabs(() => chrome.tabs.create({ url, active: params.background === true ? false : params.active !== false }));
       const ready = params.wait === false ? publicTab(tab) : await waitTabReady(requireTabId(tab.id), waitTimeoutMsOf(params.waitTimeoutMs));
       return { ok: true, tab: ready };
     }

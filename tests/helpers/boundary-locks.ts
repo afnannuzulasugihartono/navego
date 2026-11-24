@@ -203,9 +203,13 @@
 // WHY these three were re-pinned on 2026-11-21: the 1.8.1 release rode them.
 // The version constants moved (manifest.json version, index.ts SERVER_VERSION); nothing about the public contract moved with them.
 
+// background.ts was re-pinned on 2026-11-24 (second pin today): tabs.open honors active again (decisions.json -> extension-tabs-open-contract-01).
+// The owner's background-default request named browser_open_url, not tabs.open; the acceptance harness pins tabs.open {active:true} as foreground, so the tab-open lines in background.ts moved back and the pin follows them.
+// The wire contract and the 42-tool MCP list are unchanged.
+
 export const PUBLIC_SURFACE_LOCKS = Object.freeze([
   ['../extension/content.ts', '4d9cf6aec864f5c75f318aed43969ffbc37681ab71b19401985349d69d2a60fe'],
-  ['../extension/background.ts', 'dd34ee4b22603475fa626dc75577db6722e3628109262a3154456f18296b7750'],
+  ['../extension/background.ts', 'c6788e638322750213090f471ffda3a19b5dbc8d9b321fefce4bbc2d53fa962b'],
   ['../extension/manifest.json', '5868652b9db07baaa9d1c4975820c2e0e144460e7ae3937f6aaced70699e5063'],
 ]);
 

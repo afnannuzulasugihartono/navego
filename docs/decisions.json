@@ -1261,6 +1261,17 @@
         "ref": "user 2026-11-24: signing in with Google returned to the sign-in form instead of the dashboard",
         "also": "tests/site/site.test.ts (each block is matched against the page it serves; one CSP per path; every value under 1900 bytes); the live console reported the blocked hydration boot for https://navego.pages.dev/"
       }
+    },
+    {
+      "id": "extension-tabs-open-contract-01",
+      "scope": "extension/tabs",
+      "file": "extension/background.ts",
+      "decision": "tabs.open keeps the foreground contract: active is honored exactly as passed (active:true opens the tab in front, active:false leaves it behind), and background:true is sugar that forces a background tab. The 3b581ca variant that made every open background unless background===false was passed broke the pinned acceptance test (tests/browser_extension_test.py asserts active:true leaves the new tab active) and turned CI red on main for three runs.",
+      "source": {
+        "kind": "recorded",
+        "ref": "tests/browser_extension_test.py:4435 assert baseline['activeTabId'] == user_tab['id'], reproduced locally 2026-11-24 under xvfb after the fix landed in commit 3b581ca; CI runs 45340623620, 45342267156, 45343411812 all failed on it",
+        "also": "tests/local/adoption-features.test.ts (background opens stay in the background on both browser roads) re-pinned to the corrected expression"
+      }
     }
   ]
 }

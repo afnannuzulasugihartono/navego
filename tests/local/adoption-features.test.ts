@@ -76,8 +76,8 @@ test('an OTP gate stops the burst for a person even when continueOnError is on',
 test('background opens stay in the background on both browser roads', () => {
   const extension = fs.readFileSync(path.join(root, 'extension/background.ts'), 'utf8');
   const bridge = fs.readFileSync(path.join(root, 'extension/worker/bridge-link.ts'), 'utf8');
-  assert.match(extension, /active: params\.background === false \? params\.active !== false : false/);
-  assert.match(bridge, /active: params\.background === false \? params\.active === true : false/);
+  assert.match(extension, /active: params\.background === true \? false : params\.active !== false/);
+  assert.match(bridge, /active: params\.background === true \? false : params\.active === true/);
 });
 
 test('a page read is marked as untrusted data, never as instructions to follow', async () => {
