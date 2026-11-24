@@ -19,7 +19,7 @@ on:
         required: false
         type: string
       add_redirect_url:
-        description: "patch only: one origin to append to additional_redirect_urls (empty: append nothing)."
+        description: "patch only: one origin to append to redirect_urls (empty: append nothing)."
         required: false
         type: string
       reason:
@@ -52,7 +52,7 @@ jobs:
         run: |
           API="https://api.supabase.com/v1/projects/$PROJECT_REF/config/auth"
           AUTH="Authorization: Bearer $SUPABASE_ACCESS_TOKEN"
-          SAFE='{site_url: .site_url, additional_redirect_urls: .additional_redirect_urls, uri_allow_list: .uri_allow_list}'
+          SAFE='{site_url: .site_url, redirect_urls: .redirect_urls, uri_allow_list: .uri_allow_list}'
 
           read_config() {
             curl --fail --silent --show-error -H "$AUTH" "$API" | jq "$SAFE"
@@ -66,12 +66,12 @@ jobs:
               ;;
             patch)
               MERGED=$(read_config | jq -c --arg add "$ADD_REDIRECT_URL" '
-                .additional_redirect_urls as $urls
+                .redirect_urls as $urls
                 | if $add == "" then ($urls // [])
                   else (($urls // []) + [$add] | unique) end')
               BODY=$(jq -cn --arg site "$SITE_URL" --argjson urls "$MERGED" '
                 (if $site == "" then {} else {site_url: $site} end)
-                + {additional_redirect_urls: $urls}')
+                + {redirect_urls: $urls}')
               echo "patching with: $BODY"
               curl --fail --silent --show-error -X PATCH -H "$AUTH" -H "content-type: application/json" \
                 -d "$BODY" "$API" > /dev/null
