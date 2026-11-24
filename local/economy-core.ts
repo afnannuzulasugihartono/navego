@@ -273,7 +273,8 @@ export function summarizeEconomy(
   const windowMs = request.windowDays * 24 * 60 * 60 * 1000;
   const from = asOf - windowMs;
   const cash = cashByCurrency(events);
-  const currency = (request.currency ?? Object.keys(cash).sort()[0] ?? 'USD').toUpperCase();
+  const currencies = Object.keys(cash).sort((left, right) => left.localeCompare(right));
+  const currency = (request.currency ?? currencies[0] ?? 'USD').toUpperCase();
   let windowRevenueMinor = 0;
   let windowCostMinor = 0;
   for (const event of events) {
