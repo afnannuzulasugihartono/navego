@@ -22,6 +22,10 @@ on:
         description: "patch only: one origin to append to redirect_urls (empty: append nothing)."
         required: false
         type: string
+      add_allow_list_entry:
+        description: "patch only: one URL to append to the comma-separated uri_allow_list (empty: append nothing)."
+        required: false
+        type: string
       reason:
         description: What is being read or fixed and why, for the run log.
         required: false
@@ -48,6 +52,7 @@ jobs:
           MODE: ${{ inputs.mode }}
           SITE_URL: ${{ inputs.site_url }}
           ADD_REDIRECT_URL: ${{ inputs.add_redirect_url }}
+          ADD_ALLOW_LIST_ENTRY: ${{ inputs.add_allow_list_entry }}
         shell: bash
         run: |
           API="https://api.supabase.com/v1/projects/$PROJECT_REF/config/auth"
@@ -69,8 +74,10 @@ jobs:
                 .redirect_urls as $urls
                 | if $add == "" then ($urls // [])
                   else (($urls // []) + [$add] | unique) end')
-              BODY=$(jq -cn --arg site "$SITE_URL" --argjson urls "$MERGED" '
+              ALLOW=$(read_config | jq -r '.uri_allow_list // ""' | jq -rn --arg add "$ADD_ALLOW_LIST_ENTRY" 'split(",") | (if $add == "" then . else (. + [$add] | unique) end) | join(",")')
+              BODY=$(jq -cn --arg site "$SITE_URL" --argjson urls "$MERGED" --arg allow "$ALLOW" '
                 (if $site == "" then {} else {site_url: $site} end)
+                + (if $allow == "" then {} else {uri_allow_list: $allow} end)
                 + {redirect_urls: $urls}')
               echo "patching with: $BODY"
               curl --fail --silent --show-error -X PATCH -H "$AUTH" -H "content-type: application/json" \
