@@ -9,7 +9,7 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "Land and deploy the PayPal settlement recorder so one completed live PayPal order writes a paypal-live settlement row before plan activation, then prove that row against the production order id.",
+  "next_action": "Land and deploy PR #442 so one completed live PayPal order writes a paypal-live settlement row before plan activation, then prove that row against the production order id.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
