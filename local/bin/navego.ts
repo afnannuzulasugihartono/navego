@@ -3,7 +3,7 @@
 // @last-edited: 2026-11-08 UTC+7.
 // @title: navego - the installed entry point: one command, two modes.
 // @state: the mode comes from the first argument; each mode starts the server it names.
-// @dependencies: ./opera-local.js for the local mode.
+// @dependencies: ./navego-local.js for the local mode.
 
 // THE MODE IS AN ARGUMENT AND NOT A FLAG.
 // A caller that has to remember a flag has two ways to get it wrong; a caller that names the mode cannot.
@@ -36,7 +36,7 @@ if (mode === 'doctor') {
   const args = process.argv.slice(2).filter(a => a.startsWith('--'));
   process.exitCode = await doctor({ args });
 } else if (mode === 'local') {
-  await import('./opera-local.js');
+  await import('./navego-local.js');
 } else if (mode === 'cloud') {
   const { serveCloud } = await import('../cloud.js');
   process.exitCode = await serveCloud();

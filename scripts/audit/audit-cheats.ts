@@ -23,8 +23,8 @@ const SOURCE_EXTENSIONS = ['.ts', '.tsx', '.mts', '.cts'];
 const SANCTIONED = new Map([
   ['shared/delta-first-observation.ts', { count: 1, reason: 'the frozen delta-first VM hands back an untyped result for the caller - every field is validated above the cast by construction; the cast restores the named type once.' }],
   ['shared/reactive-vm-control-flow.ts', { count: 2, reason: 'the frozen VM validator hands back the already-validated program typed as untyped on purpose; the casts re-enter the typed world once each.' }],
-  ['local/bin/opera-local-dev.ts', { count: 1, reason: 'the SupervisorWorker view of the worker is constructively known to the child_process spawn; the cast names the shape the spawn returned.' }],
-  ['local/bin/opera-local.ts', { count: 1, reason: 'the Driver interface in bin/opera-local.ts takes the concrete driver created above as its transport; both answer the same verbs over different pairs.' }],
+  ['local/bin/navego-local-dev.ts', { count: 1, reason: 'the SupervisorWorker view of the worker is constructively known to the child_process spawn; the cast names the shape the spawn returned.' }],
+  ['local/bin/navego-local.ts', { count: 1, reason: 'the Driver interface in bin/navego-local.ts takes the concrete driver created above as its transport; both answer the same verbs over different pairs.' }],
   ['local/bridge-ws.ts', { count: 1, reason: 'a ws.destroy() pair exists on net.Socket but not on WebSocket.type, so the dead-socket sweep destroys the underlying handle rather than the wrapper.' }],
   ['local/dev-shim.ts', { count: 1, reason: 'the child stdin piped in is a net.Socket with setEncoding but types it only as a Closeable; the cast names the shape the pipe actually provides.' }],
   ['local/browser-actions.ts', { count: 4, reason: 'gates.js answers the same verb set as the local Driver surface, typed narrowly for its own use; the cast widens the narrow gate-driver back to the Driver the browser-actions cases call.' }],

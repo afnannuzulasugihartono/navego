@@ -4,7 +4,7 @@
 // @dependencies: node:test, strict, ../local/package.json.
 
 // THIS FILE EXISTS.
-// The package published seven modules and imported sixteen: the `files` list had never been touched since the first modules, so `npx opera-local` would have installed a package that dies on its first import with ERR_MODULE_NOT_FOUND.
+// The package published seven modules and imported sixteen: the `files` list had never been touched since the first modules, so `npx navego-local` would have installed a package that dies on its first import with ERR_MODULE_NOT_FOUND.
 // A release that ships that is worse than no release, because the error names a file the user never heard of.
 // So the list is derived from the imports and compared here.
 
@@ -57,8 +57,8 @@ const reachable = (entry: any) => {
 // THE ENTRY POINT IS EXEMPT FROM THE MODULE LIST.
 // npm ships a bin through the `bin` directory, not as a module anyone imports, so the entry point is covered by that name and every module below it is checked as a module.
 
-// EVERY FILE IN bin/ IS WALKED AND NOT ONLY opera-local.js.
-// Measured: dev-shim.js sat on disk, was imported by bin/opera-local-dev.js, and was absent from the files list, so the dev binary shipped and died on its first import with ERR_MODULE_NOT_FOUND while this test passed.
+// EVERY FILE IN bin/ IS WALKED AND NOT ONLY navego-local.js.
+// Measured: dev-shim.js sat on disk, was imported by bin/navego-local-dev.js, and was absent from the files list, so the dev binary shipped and died on its first import with ERR_MODULE_NOT_FOUND while this test passed.
 // The list was only ever walked from one entry point, and a second entry point in the same directory is exactly the shape that hides.
 
 test('every relative import stays inside the package, so an installed copy can boot', () => {
@@ -76,7 +76,7 @@ test('every module the bin can reach is inside the published files', () => {
 
   // An entry point is carried by the "bin" directory itself rather than by a module name, so a file sitting directly in bin/ is exempt and nothing under it is.
   const missing = needed.filter((name) => !shipped.includes(name) && !(name.startsWith('bin/') && shipped.includes('bin')));
-  assert.deepEqual(missing, [], `npx opera-local would install a package that dies on import: ${missing.join(', ')}`);
+  assert.deepEqual(missing, [], `npx navego-local would install a package that dies on import: ${missing.join(', ')}`);
 });
 
 // THE LIST IS COMPARED AGAINST THE DISK AND NOT AGAINST MEMORY.

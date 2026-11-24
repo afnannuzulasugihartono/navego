@@ -1,5 +1,6 @@
 # @last-edited: 2026-11-12 UTC+7.
 # @title: deploy-functions - deploys the edge functions in hosted/functions/, on dispatch.
+# @state: the dispatch names the functions, the open doors, and any migrations to apply first; the database is always ahead of the code that reads it.
 # @state: what is being deployed, by whom, against which project, is decided here; the run answers with the exact project and function it touched.
 # @dependencies: SUPABASE_ACCESS_TOKEN secret, supabase/setup-cli.
 
@@ -28,6 +29,11 @@ on:
         type: string
       no_verify_jwt:
         description: "Functions deployed with an open door (no JWT), comma-separated. The pilot page's form posts without an account, so its function is one."
+        required: false
+        default: ''
+        type: string
+      migrations:
+        description: "Migration files under hosted/migrations/ to apply before the deploy, comma-separated (empty: apply none)."
         required: false
         default: ''
         type: string
@@ -75,6 +81,23 @@ jobs:
           fi
 
       - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13
+
+      - name: Apply the requested migrations
+        if: ${{ inputs.migrations != '' }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          MIGRATION_INPUTS: ${{ inputs.migrations }}
+        shell: bash
+        run: |
+          IFS=',' read -ra FILES <<< "$MIGRATION_INPUTS"
+          LIST=""
+          for f in "${FILES[@]}"; do
+            f="$(echo "$f" | xargs)"
+            test -f "hosted/migrations/$f" || { echo "::error::no such migration file: hosted/migrations/$f"; exit 1; }
+            LIST="$LIST hosted/migrations/$f"
+            echo "applying hosted/migrations/$f"
+          done
+          node scripts/release/apply-migrations.ts $LIST
 
 # WHY ONE FLAG PER FUNCTION.
 # A door the visitor may walk through without an account must be open, and a door the product calls with its own key must stay shut.
