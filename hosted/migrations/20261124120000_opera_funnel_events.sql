@@ -1,7 +1,7 @@
 -- Six steps decide whether Navego has a product or a museum piece, and nothing measured them.
 -- decisions.json -> opera-funnel-01
 
--- WHY A TABLE AND NOT AN ANALYTICS SCRIPT.
+-- A TABLE, NOT AN ANALYTICS SCRIPT.
 -- The question is not "how many people visited" but "at which step did the ones who visited stop": the download click, the sign-in, the pairing, the first command, the first payment.
 -- A pageview script answers the first and none of the others, and it lives in somebody else's dashboard where it cannot be joined to a device row.
 -- So the site writes the step itself, next to the account and the device it belongs to, and the dashboard reads it back.

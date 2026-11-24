@@ -9,12 +9,12 @@
     "ledger-names-the-file": 2,
     "no-ledger-row": 6,
     "part-of-combined": 13,
-    "applied-outside-ledger": 15,
+    "applied-outside-ledger": 16,
     "applied-then-recorded": 2
   },
-  "treeFiles": 136,
+  "treeFiles": 137,
   "resolved": 115,
-  "unapplied": 21,
+  "unapplied": 22,
   "map": [
     {
       "file": "20260907204146_navego_1_0_0_core.sql",
@@ -830,6 +830,12 @@
       "file": "20261123140000_opera_pairing_code_random_hash.sql",
       "remote": "20261123132623",
       "evidence": "name",
+      "cover": null
+    },
+    {
+      "file": "20261124120000_opera_funnel_events.sql",
+      "remote": null,
+      "evidence": "applied-outside-ledger",
       "cover": null
     }
   ]

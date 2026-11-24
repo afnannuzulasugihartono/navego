@@ -3,12 +3,12 @@
 // @state: one random browser id, one whitelisted step name, and a fire-and-forget write that never blocks the page.
 // @dependencies: none at runtime; the endpoint and the publishable key mirror auth.ts, and funnel.test.ts fails when the two drift apart.
 
-// WHY THE BROWSER REPORTS ITS OWN STEPS.
+// THE BROWSER REPORTS ITS OWN STEPS, because a pageview script cannot.
 // The site cannot tell a download click from a pageview, and the dashboard cannot tell a pairing attempt from a pairing that worked.
 // So each surface names the step it just reached, and the row lands beside the account and the device it belongs to.
 
-// WHY NOTHING HERE THROWS.
-// A measurement that breaks the page it measures is worse than no measurement: every call is caught, capped and silent.
+// NOTHING HERE THROWS, because a measurement that breaks the page it measures is worse than no measurement.
+// Every call is caught, capped and silent.
 
 // THE ID IS RANDOM AND LOCAL.
 // It lives in localStorage, names one browser, and carries nothing else: no email, no IP, no fingerprint.
