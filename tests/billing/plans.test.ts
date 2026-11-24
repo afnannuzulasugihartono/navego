@@ -74,6 +74,27 @@ test('the usd-17 and usd-33 tiers carry the firm features, the rest do not, and 
   }
 });
 
+test('one plan-price map states the cents charged and shown for every tier', async () => {
+  const module = await import('../../hosted/functions/_shared/plans.ts') as unknown as Record<string, unknown>;
+  const priceOf = module.planPriceCents;
+  assert.equal(typeof priceOf, 'function');
+  const price = priceOf as (name: string) => unknown;
+  const expected: Record<string, number> = {
+    'plan.usd-1': 100,
+    'plan.usd-3': 300,
+    'plan.usd-5': 500,
+    'plan.usd-7': 700,
+    'plan.usd-9': 900,
+    'plan.usd-17': 1700,
+    'plan.usd-33': 3300
+  };
+  for (const [name, cents] of Object.entries(expected)) assert.equal(price(name), cents, `${name} price`);
+  const site = fs.readFileSync(path.join(root, 'site', 'app', 'routes', 'harga.tsx'), 'utf8');
+  for (const [name, cents] of Object.entries(expected)) {
+    assert.match(site, new RegExp(`id: '${name.replace('.', '\\.')}', price: '\\$${cents / 100}'`), `${name} display price`);
+  }
+});
+
 test('an unknown plan falls back to the safe default', () => {
   assert.equal(DEFAULT_PLAN, 'plan.usd-1');
   assert.deepEqual(planFor('plan.unknown'), PLANS['plan.usd-1']);

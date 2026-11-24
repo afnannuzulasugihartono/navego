@@ -1293,6 +1293,28 @@
     "ref": "user 2026-11-24: 'setiap ada kenaikan saldo adalah kemenangan naik point ... setiap saldo naik 1 dollar dihitung satu point' - real settled revenue must be visible before the agent scores a balance or a paid plan",
     "also": "live production query 2026-11-24: opera_price_orders held 0 rows, opera_notification_log held only Midtrans sandbox events, and opera_plan_activate_purchase changed plans without recording a PayPal settlement; tests/hosted/paypal-settlement.test.ts, tests/hosted/integration-postgres.test.ts, tests/billing/paypal.test.ts, and tests/billing/paypal-wiring.test.ts"
    }
+  },
+  {
+   "id": "hosted-paypal-revenue-02",
+   "scope": "hosted/functions",
+   "file": "hosted/migrations/20261125010000_opera_paypal_orders_hardening.sql",
+   "decision": "A PayPal settlement keeps quoted and actual owner/plan values apart, normalizes the environment and order id before taking its lock, derives an unknown order from the insert result, and permits one accepted PayPal revenue event per environment and order id. Malformed actual values therefore enter review without breaking the revenue record, and equivalent keys cannot race into two sales.",
+   "source": {
+    "kind": "user",
+    "ref": "user 2026-11-24: 'setiap ada kenaikan saldo adalah kemenangan naik point ... turun saldo setiap 1 dollar dihitung - 1 poin' - a real payment must remain visible and count once even when the buyer return and the provider webhook arrive together",
+    "also": "independent review 2026-11-25 after PR #442 found that raw advisory-lock keys and constrained actual values could hide or duplicate a malformed payment; tests/hosted/paypal-settlement-hardening.test.ts and tests/hosted/integration-postgres.test.ts"
+   }
+  },
+  {
+   "id": "hosted-paypal-price-01",
+   "scope": "hosted/functions",
+   "file": "hosted/functions/_shared/plans.ts",
+   "decision": "Every USD plan carries one canonical price in cents. The billing function refuses an active price row that differs from that map before PayPal is asked for money, and the site-price test keeps the displayed price aligned with the same number.",
+   "source": {
+    "kind": "recorded",
+    "ref": "docs/handoff.md:40 (the plan sale is USD-only: $1, $3, $5, $7, $9, $17 for six months, and $33 for one year); the live opera_price_list rows read the same seven amounts on 2026-11-25",
+    "also": "tests/billing/plans.test.ts and tests/billing/paypal-wiring.test.ts"
+   }
   }
  ]
 }

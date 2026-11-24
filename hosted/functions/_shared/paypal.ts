@@ -31,7 +31,7 @@ function readEnv(key: string): string {
 }
 
 export function paypalEnvironment(): PaypalEnvironment {
-  const environment = readEnv('PAYPAL_ENV') || 'sandbox';
+  const environment = readEnv('PAYPAL_ENV').trim().toLowerCase() === 'live' ? 'live' : 'sandbox';
   const base = environment === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
   return {
     base,

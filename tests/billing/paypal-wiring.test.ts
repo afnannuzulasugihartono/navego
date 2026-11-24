@@ -27,6 +27,9 @@ test('the buy action sells exactly the USD plans and only active price rows', ()
   const buy = fn.slice(fn.indexOf('body.action === "paypal-buy"'));
   assert.match(buy, /\.eq\("active", true\)/, 'a retired plan is not sellable');
   assert.match(buy, /if \(!USD_PLANS\.includes\(plan\)\)/, 'an unknown plan is refused by name');
+  const canonicalPrice = buy.indexOf('planPriceCents');
+  const orderCreation = buy.indexOf('createPaypalOrder');
+  assert.ok(canonicalPrice > 0 && orderCreation > canonicalPrice, 'the active database row must match the canonical plan price before PayPal is asked for money');
 });
 
 test('a webhook that fails verification is refused before any plan is activated', () => {
