@@ -71,7 +71,7 @@ export const TOOLS = Object.freeze([
   {
     name: 'browser_close_tab',
     description: 'Close one tab by id and drop its cached session, so abandoned drives do not pile tabs in the browser and stale input cannot answer the next one.',
-    inputSchema: { type: 'object', properties: { tabId: stringArg('which tab to close, from tabs') }, required: ['tabId'] }
+    inputSchema: { type: 'object', properties: { tabId: tabArg }, required: ['tabId'] }
   },
   // decisions.json -> local-tools-bounds-01
   {

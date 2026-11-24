@@ -789,6 +789,19 @@ test('closing a tab drives the browser and drops the cached session', async () =
   assert.deepEqual(c.driver.calls[0], ['close', 't9']);
 });
 
+test('closing a tab accepts the numeric id that opening one returned', async () => {
+  const c = ctx();
+  const server = createMcpServer(c);
+  const res = await server.handle({
+    jsonrpc: '2.0', id: 15, method: 'tools/call',
+    params: { name: 'browser_close_tab', arguments: { tabId: 4242 } }
+  });
+
+  assert.equal(unwrap(res)?.isError ?? false, false, failureOf(res));
+  assert.equal(c.driver.calls[0]?.[0], 'close');
+  assert.equal(String(c.driver.calls[0]?.[1]), '4242');
+});
+
 test('an unknown tool is an error, not a crash, because a model will ask for one', async () => {
   const server = createMcpServer(ctx());
   const res = await server.handle({
