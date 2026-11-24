@@ -14,6 +14,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
 const source = fs.readFileSync(path.join(root, 'site', 'app', 'routes', 'unduh.tsx'), 'utf8');
+const css = fs.readFileSync(path.join(root, 'site', 'app', 'brand.css'), 'utf8');
 
 test('the hero carries the one-command Windows install before the manual download', () => {
   const heroStart = source.indexOf('<section className="page-hero">');
@@ -30,4 +31,12 @@ test('a successful command copy records install intent and a failed copy is anno
   assert.match(source, /role="status"/);
   assert.match(source, /aria-live="polite"/);
   assert.match(source, /Gagal menyalin/);
+});
+
+test('the primary command stays inside a narrow mobile hero and states its real cost', () => {
+  assert.match(css, /\.page-hero \.command-row \{ inline-size: 100%;/);
+  assert.match(css, /@media \(max-width: 640px\)[\s\S]*\.page-hero \.command-row \{ display: grid;/);
+  assert.match(css, /grid-template-columns: 1fr/);
+  assert.match(source, /tidak bisa dicabut/);
+  assert.match(source, /Tutup lalu buka browser/);
 });
