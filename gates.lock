@@ -184,6 +184,6 @@ hosted/functions/_shared/cors.ts 73571947a10d95eddf4eb3625509b5568b7ceee9e60740f
 # --- surfaces an owner, not an agent, should have to look at ---
 # The merge took main's Kemudi manifest for the file and this branch's .gitleaks.toml bytes; both pins match what the merged tree actually holds.
 extension/manifest.json 5868652b9db07baaa9d1c4975820c2e0e144460e7ae3937f6aaced70699e5063
-.gitleaks.toml 49d7c947ab6eddbe4b37de24f07c7811ea33ec87c423c627c7aefc5cde1d4f25
+.gitleaks.toml a1a63a7aa7cb8caf6a08af334fdaaf8585d9b8f8872824d75b4e91ddbfed2fbe
 .github/CODEOWNERS 3cb57783d6bc4c8feb45b0a0651b8e84144ab11cc2d1677f4b8e5894e32b4dca
 .github/workflows/ci.yml af42f7a5881891d1d6c543387f49806b4726833c1b56c34daf3fbb9a27c79f28

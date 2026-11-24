@@ -67,7 +67,7 @@ id = "generic-api-key"
   paths = ['''^site/app/lib/funnel\.ts$''']
   regexTarget = "line"
   regexes = [
-    '''FUNNEL_KEY\\s*=\\s*.sb_publishable_''',
+    '''FUNNEL_KEY\s*=\s*.sb_publishable_''',
   ]
 
   [[rules.allowlists]]
