@@ -7,14 +7,14 @@
     "name": 29,
     "content": 20,
     "ledger-names-the-file": 2,
-    "no-ledger-row": 8,
+    "no-ledger-row": 7,
     "part-of-combined": 13,
-    "applied-outside-ledger": 17,
+    "applied-outside-ledger": 18,
     "applied-then-recorded": 2
   },
   "treeFiles": 140,
   "resolved": 115,
-  "unapplied": 24,
+  "unapplied": 23,
   "map": [
     {
       "file": "20260907204146_navego_1_0_0_core.sql",
@@ -853,7 +853,7 @@
     {
       "file": "20261125010000_opera_paypal_orders_hardening.sql",
       "remote": null,
-      "evidence": "no-ledger-row",
+      "evidence": "applied-outside-ledger",
       "cover": null
     }
   ]
