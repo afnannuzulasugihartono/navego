@@ -57,7 +57,7 @@ jobs:
 # The v4.1.2 release is the closest tag to this SHA; bump it deliberately, not by editing without a release commit.
 
       - name: Install cosign
-        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
+        uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532
 
       - name: Download and verify mcp-publisher
         run: |
