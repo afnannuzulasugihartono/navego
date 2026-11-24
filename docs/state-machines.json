@@ -407,9 +407,9 @@
       ],
       "writers": "the clipboard write, the feedback timeout, and the successful-copy install event",
       "readers": "the copy button, the polite status region, and the install funnel",
-      "wrongIfConfused": "a failed copy looks idle; a successful copy disables the button and drops focus; repeated clicks stack cleanup timers",
+      "wrongIfConfused": "a failed copy looks idle; a successful copy disables the button and drops focus; repeated clicks stack cleanup timers; an overlapping success is hidden by a later failure; a late write updates an unmounted component",
       "decision": "model",
-      "why": "one command owns one visible and announced result, the button remains retryable, and only a completed copy records install intent",
+      "why": "one command owns one visible and announced result, every completed copy records install intent, disposal invalidates late work, and the button remains retryable",
       "rank": 2
     },
     {

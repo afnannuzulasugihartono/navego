@@ -75,6 +75,37 @@ test('a rejected clipboard keeps the failure visible and never records install i
   controller.dispose();
 });
 
+test('an overlapping success is recorded even when a later attempt fails', async () => {
+  const { createCopyCommand } = await controllerModule();
+  let releaseFirst!: () => void;
+  const firstWrite = new Promise<void>((resolve) => { releaseFirst = resolve; });
+  const feedback: Feedback[] = [];
+  let copied = false;
+  let writes = 0;
+  const controller = createCopyCommand({
+    text: 'command',
+    successMessage: 'Disalin.',
+    failureMessage: 'Gagal menyalin.',
+    clipboard: { writeText: async () => {
+      writes += 1;
+      if (writes === 1) await firstWrite;
+      else throw new Error('denied');
+    } },
+    onFeedback: (value: Feedback) => { feedback.push(value); },
+    onCopied: () => { copied = true; },
+    schedule: () => 11,
+    cancel: () => undefined
+  });
+
+  const first = controller.copy();
+  await controller.copy();
+  assert.equal(feedback[0]?.failed, true);
+  releaseFirst();
+  await first;
+  assert.equal(feedback[1]?.failed, false, 'the earlier successful write is not hidden by the later failure');
+  assert.equal(copied, true, 'every successful write records install intent');
+});
+
 test('identical retries replace the live-region content and disposal clears pending cleanup', async () => {
   const { createCopyCommand } = await controllerModule();
   const attempts: number[] = [];

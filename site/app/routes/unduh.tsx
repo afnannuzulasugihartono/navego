@@ -1,6 +1,6 @@
 // decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots) decisions.json -> site-install-cta-01
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import { track } from '../lib/funnel';
 import { Link } from 'react-router';
@@ -59,13 +59,15 @@ type CopyCommandProps = {
 
 function CopyCommand({ id, label, command, buttonLabel = 'Salin', successMessage = 'Disalin.', onCopied }: CopyCommandProps) {
   const [feedback, setFeedback] = useState<CopyFeedback | null>(null);
+  const onCopiedRef = useRef(onCopied);
+  useEffect(() => { onCopiedRef.current = onCopied; }, [onCopied]);
   const controller = useMemo(() => createCopyCommand({
     text: command,
     successMessage,
     failureMessage: 'Gagal menyalin. Salin manual dari kode.',
     onFeedback: setFeedback,
-    onCopied
-  }), [command, successMessage, onCopied]);
+    onCopied: () => onCopiedRef.current?.()
+  }), [command, successMessage]);
 
   useEffect(() => () => controller.dispose(), [controller]);
 
