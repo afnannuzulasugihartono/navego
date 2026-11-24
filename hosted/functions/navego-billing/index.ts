@@ -1008,6 +1008,10 @@ async function runQrisDetect(): Promise<Record<string, unknown>> {
   return { ok: true, mode: "dry", wouldClose: plan.wouldClose, transactions: transactions.length, seen: seen.length, spent: spent.size };
 }
 
+// A PAYPAL ORDER IS CLAIMED IN THE DATABASE.
+// The quote is stored before the buyer sees PayPal, the completed order is compared with that quote, and the database records the sale and activates the plan once.
+// decisions.json -> hosted-paypal-revenue-01
+
 // THE TOKEN IS PUBLISHED ON EVERY COLD START.
 // The cron reads the operator token from vault, and the function is the only party that holds it, so one request from anywhere is enough to arm the schedule.
 
@@ -1062,10 +1066,6 @@ const cors = {
       // Recognition used to demand a signature field, so a provider payload whose signature arrived under a different name fell through to "unknown action" and left no trace anywhere.
       // What makes a body a notification is what the provider says happened; whether it is believed is a separate question, answered by the signature.
       const USD_PLANS = ["plan.usd-1", "plan.usd-3", "plan.usd-5", "plan.usd-7", "plan.usd-9", "plan.usd-17", "plan.usd-33"];
-
-      // A PAYPAL ORDER IS CLAIMED IN THE DATABASE.
-      // The quote is stored before the buyer sees PayPal, the completed order is compared with that quote, and the database records the sale and activates the plan once.
-      // decisions.json -> hosted-paypal-revenue-01
 
 const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type === "string" && Boolean(req.headers.get("paypal-transmission-id"));
       if (looksLikePaypalWebhook) {

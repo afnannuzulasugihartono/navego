@@ -67,6 +67,7 @@ test('one PayPal order settles once and activates the plan once', { skip: DATABA
     await client.query('delete from public.opera_notification_log where order_id = $1', [orderId]);
     await client.query('delete from public.opera_paypal_orders where environment = $1 and order_id = $2', ['sandbox', orderId]);
     await client.query('delete from public.opera_account_plans where user_id = $1', [owner]);
+    await client.query("insert into auth.users (id, instance_id, aud, role, email, raw_app_meta_data, raw_user_meta_data, created_at, updated_at) values ($1, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'paypal-integration@example.invalid', '{}'::jsonb, '{}'::jsonb, now(), now()) on conflict (id) do nothing", [owner]);
 
     const created = (await client.query("select public.opera_paypal_create_order('sandbox', $1, $2, 'plan.usd-1', 100, 'USD') as answer", [orderId, owner])).rows[0].answer;
     assert.equal(created.ok, true, `the quote must be stored: ${JSON.stringify(created)}`);
@@ -108,6 +109,7 @@ test('one PayPal order settles once and activates the plan once', { skip: DATABA
     await client.query('delete from public.opera_notification_log where order_id = $1', [orderId]);
     await client.query('delete from public.opera_paypal_orders where environment = $1 and order_id = $2', ['sandbox', orderId]);
     await client.query('delete from public.opera_account_plans where user_id = $1', [owner]);
+    await client.query('delete from auth.users where id = $1', [owner]);
     await client.end();
   }
 });
