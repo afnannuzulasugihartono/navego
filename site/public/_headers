@@ -4,7 +4,8 @@
 # @dependencies: none.
 
 # WHY this file exists: Cloudflare Pages configures headers with this file, one block per path. One path per block: a comma-joined path line matches nothing on Cloudflare.
-# WHY the hashes are not in this file: the prerendered pages ship React Router's inline hydration boot, and those hashes are a function of the build bytes — the build rewrites the deployed copy (site/scripts/inline-script-hashes.ts) so this file stays stable while the policy stays closed: script-src 'self' plus exactly the hashes this build emitted, never 'unsafe-inline'.
+# WHY the hashes are not in this file: the prerendered pages ship React Router's inline hydration boot, and those hashes are a function of each page's own build bytes — the build rewrites the deployed copy (site/scripts/inline-script-hashes.ts) with one hash list per page, so this file stays stable while the policy stays closed: script-src 'self' plus exactly the hashes that page emitted, never 'unsafe-inline'.
+# WHY per page and never one list for the site: CSP headers are enforced as an intersection, so a second header can only block more, and one union list outgrew Cloudflare's header ceiling — an overlong policy is dropped entirely, which is how the boot script got blocked and every page was left as static HTML.
 # tests/site parses the build and fails on drift.
 
 /

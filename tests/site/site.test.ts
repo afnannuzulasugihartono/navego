@@ -89,23 +89,30 @@ test('no i18n machinery ships in the build', () => {
   }
 });
 
-test('every inline script is covered by the CSP hashes in build/client/_headers', () => {
+// THE HASH LIST IS PER PAGE.
+// A CSP is enforced as an intersection, so a page must carry its own boot hashes: a union list either outgrows Cloudflare's header ceiling (and is dropped, which leaves the page as static HTML) or hands one page's hashes to another where they allow nothing.
+// This test reads the build the way the browser does: the block for a path, matched against the page that path serves.
+
+test('every inline script is allowed by the CSP of the page it ships in', () => {
   buildSite();
-  const headers = fs.readFileSync(path.join(client, '_headers'), 'utf8');
-  const covered = new Set([...headers.matchAll(/'sha256-([^']+)'/g)].map((m) => m[1]));
-  assert.ok(covered.size > 0, 'the build injects the boot hashes');
   let checked = 0;
-  for (const route of ROUTES) {
-    const html = readBuilt(route);
-    for (const match of html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)) {
+  for (const rule of siteRules()) {
+    const policy = rule.headers['Content-Security-Policy'] || '';
+    if (!policy) continue;
+    const first = rule.paths[0];
+    assert.ok(first, 'every CSP block names one path');
+    const file = path.join(client, first === '/' ? 'index.html' : first.replace(/^\//, '').replace(/\.html$/, '') + '.html');
+    assert.ok(fs.existsSync(file), `_headers names ${first} but ${path.basename(file)} was not built`);
+    const allowed = new Set([...policy.matchAll(/'sha256-([^']+)'/g)].map((match) => match[1]));
+    for (const match of fs.readFileSync(file, 'utf8').matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)) {
       const script = match[1];
       if (script === undefined) continue;
       const hash = createHash('sha256').update(script, 'utf8').digest('base64');
-      assert.ok(covered.has(hash), `${route} carries an inline script the CSP does not allow`);
+      assert.ok(allowed.has(hash), `${first} carries an inline script its own CSP does not allow`);
       checked += 1;
     }
   }
-  assert.ok(checked >= 16, `verified ${checked} inline scripts against the CSP`);
+  assert.ok(checked >= 16, `verified ${checked} inline scripts against their page CSP`);
 });
 
 const CLAIMS = {
@@ -207,12 +214,20 @@ test('the client router answers every pretty URL, and the .html aliases are edge
   assert.ok(worker.includes("endsWith('.html')") || worker.includes('endsWith(".html")'), 'the worker answers every .html path with a 301');
 });
 
-test('every CSP header value stays below Cloudflare\'s 2000-byte ceiling', () => {
+test('every CSP header value stays below Cloudflare\'s 2000-byte ceiling, one policy per path', () => {
   buildSite();
   const raw = fs.readFileSync(path.join(client, '_headers'), 'utf8');
   const values = [...raw.matchAll(/Content-Security-Policy: ([^\n]+)/g)].map((match) => match[1] ?? '');
   assert.ok(values.length > 0, 'the build emits CSP headers');
   for (const value of values) assert.ok(value.length <= 1900, `one CSP header is ${value.length} bytes, too long for Cloudflare`);
+  // A second policy for one path is not an addition, it is an intersection: it can only block more.
+  let block = '';
+  const seen = new Map<string, number>();
+  for (const line of raw.split('\n')) {
+    if (line.startsWith('/')) block = line.trim();
+    if (line.trimStart().startsWith('Content-Security-Policy:')) seen.set(block, (seen.get(block) ?? 0) + 1);
+  }
+  for (const [pathname, count] of seen) assert.equal(count, 1, `${pathname} carries ${count} CSP headers`);
 });
 
 test('the sitemap names exactly the routes the build carries (404 and unknowns are not in it)', () => {

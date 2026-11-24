@@ -1250,6 +1250,17 @@
         "ref": "user 2026-11-24: the pricing page asks for device location but its own Permissions-Policy refused it, leaving only IP fallback",
         "also": "tests/site/conversion.test.ts (the pricing-origin permission is gated)"
       }
+    },
+    {
+      "id": "site-csp-per-page-01",
+      "scope": "web/security",
+      "file": "site/scripts/inline-script-hashes.ts",
+      "decision": "Each prerendered page carries only its own inline-script hashes in its own CSP block, one policy per path. Hashes are never pooled site-wide and never split across several CSP headers, because policies intersect rather than add, and an overlong policy is dropped whole by Cloudflare.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: signing in with Google returned to the sign-in form instead of the dashboard",
+        "also": "tests/site/site.test.ts (each block is matched against the page it serves; one CSP per path; every value under 1900 bytes); the live console reported the blocked hydration boot for https://navego.pages.dev/"
+      }
     }
   ]
 }

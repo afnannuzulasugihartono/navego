@@ -30,7 +30,7 @@ export function siteRules(): SiteRule[] {
     const at = line.indexOf(':');
     const name = line.slice(0, at).trim();
     const value = line.slice(at + 1).trim();
-    current.headers[name] = current.headers[name] ? `${current.headers[name]}; ${value}` : value;
+    current.headers[name] = value;
   }
   return rules;
 }
