@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react';
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useRouteError } from 'react-router';
+import { useEffect, type ReactNode } from 'react';
+import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation, useRouteError } from 'react-router';
+import { trackView } from './lib/funnel';
 import './tokens.css';
 import './brand.css';
 
@@ -24,6 +25,11 @@ export function Layout({ children }: { children: ReactNode }) {
 }
 
 export default function Root() {
+  // Every route reports the page it opened, once per session: the funnel starts where the visitor arrived.
+  const location = useLocation();
+  useEffect(() => {
+    trackView(location.pathname);
+  }, [location.pathname]);
   return <Outlet />;
 }
 

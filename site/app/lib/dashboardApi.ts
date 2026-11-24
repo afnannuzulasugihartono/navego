@@ -40,6 +40,22 @@ export interface AwaitAnswer {
   timing?: { queuedMs?: number; totalMs?: number };
 }
 
+// The funnel is the operator's map of where strangers stop: counts per step, and how many distinct browsers reached each one.
+export interface FunnelTotal {
+  name?: string;
+  events?: number;
+  browsers?: number;
+  accounts?: number;
+}
+export interface FunnelSummary {
+  ok?: boolean;
+  days?: number;
+  totals?: FunnelTotal[];
+  error?: unknown;
+  first?: string | null;
+  last?: string | null;
+}
+
 export interface KonsolColumn { name: string; type: string; }
 export interface KonsolTableAnswer {
   ok?: boolean;
@@ -94,6 +110,7 @@ async function billing<T = Record<string, unknown>>(action: string, body: Record
 }
 
 export const fetchPlan = () => rpc<PlanAnswer>('opera_my_plan');
+export const fetchFunnel = (days = 30) => rpc<FunnelSummary>('opera_funnel_summary', { p_days: days });
 export const fetchDevices = () => rpc<{ devices?: Device[] }>('opera_my_devices');
 export const fetchListen = () => rpc<{ sessions?: Array<{ id?: string; deviceName?: string; status?: string; startedAt?: string; segments?: number }> }>('opera_my_listen');
 export const revokeDevice = (deviceId: string) => rpc('opera_revoke_my_device', { p_device_id: deviceId });

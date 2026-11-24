@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
+import { track } from '../lib/funnel';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 
@@ -66,8 +67,8 @@ export default function Unduh() {
             <h1>Mulai dari Chrome Anda.</h1>
             <p className="lede">Unduh ekstensinya, pair sekali, jalankan perintah pertama. Tidak perlu kartu kredit untuk mencoba.</p>
             <div className="hero-cta">
-              <a className="btn btn-solid" href={`${DOWNLOAD}.zip?for=chrome`} download>Unduh untuk Chrome</a>
-              <a className="btn btn-ghost" href="/download/forceinstall.reg" download="navego-forceinstall.reg">Pakai .reg di Windows</a>
+              <a className="btn btn-solid" href={`${DOWNLOAD}.zip?for=chrome`} download onClick={() => track('install.click', { browser: 'chrome', artifact: 'zip' })}>Unduh untuk Chrome</a>
+              <a className="btn btn-ghost" href="/download/forceinstall.reg" download="navego-forceinstall.reg" onClick={() => track('install.click', { browser: 'windows', artifact: 'reg' })}>Pakai .reg di Windows</a>
             </div>
             <p className="note">Build yang sama untuk Edge, Brave, Opera, dan Vivaldi. .reg memakai HKCU, tanpa admin; .zip untuk Load unpacked.</p>
           </div>
@@ -86,8 +87,8 @@ export default function Unduh() {
                 <article key={browser.key} className="tile-xl">
                   <div className="tile-media"><span className="dl-letter">{browser.letter}</span></div>
                   <h3>{browser.name}</h3>
-                  <a className="btn btn-solid btn-sm w-full" href={`${DOWNLOAD}.zip?for=${browser.key}`} download>Unduh .zip</a>
-                  <p className="dl-note">Atau: <a href={`${DOWNLOAD}.crx?for=${browser.key}`} download>.crx</a>, <a href={MANIFEST}>Manifest</a></p>
+                  <a className="btn btn-solid btn-sm w-full" href={`${DOWNLOAD}.zip?for=${browser.key}`} download onClick={() => track('install.click', { browser: browser.key, artifact: 'zip' })}>Unduh .zip</a>
+                  <p className="dl-note">Atau: <a href={`${DOWNLOAD}.crx?for=${browser.key}`} download onClick={() => track('install.click', { browser: browser.key, artifact: 'crx' })}>.crx</a>, <a href={MANIFEST}>Manifest</a></p>
                 </article>
               ))}
             </div>

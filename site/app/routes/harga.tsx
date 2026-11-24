@@ -6,6 +6,7 @@ import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { BILLING, ensureSession, getStoredToken, headersFor } from '../lib/auth';
+import { track } from '../lib/funnel';
 import { bandForCountry, type PricingBand } from '../lib/region.js';
 
 export function meta() {
@@ -197,6 +198,7 @@ export default function Harga() {
 
   async function buy(planKind: string) {
     if (buyPending) return;
+    track('buy.click', { plan: planKind, rail: 'paypal' });
     const current = await ensureSession();
     if (!current) {
       setSignedOut(true);

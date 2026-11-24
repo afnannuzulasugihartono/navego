@@ -6,13 +6,16 @@ import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { NavegoMark } from '../components/NavegoMark';
 import { AUTH_HOST, announceSession, clearSession, ensureSession, headersFor, storeEmail } from '../lib/auth';
+import { track } from '../lib/funnel';
 import {
   type Device,
+  type FunnelSummary,
   type PlanAnswer,
   awaitMyCommand,
   createPairingCode,
   fetchDevices,
   fetchListen,
+  fetchFunnel,
   fetchPlan,
   konsolTable,
   konsolTables,
@@ -34,6 +37,22 @@ export function meta() {
 
 type View = 'ringkasan' | 'device' | 'riwayat' | 'tabel' | 'dengar' | 'saldo' | 'pairing' | 'aksi' | 'akun';
 const OPERATOR_VIEWS: View[] = ['tabel', 'dengar'];
+
+// The funnel reads top to bottom, so the labels are listed in the order a stranger walks them.
+const FUNNEL_STEPS: Array<[string, string]> = [
+  ['page.view', 'Halaman dilihat'],
+  ['install.view', 'Halaman unduh dilihat'],
+  ['install.click', 'Klik unduhan'],
+  ['plan.view', 'Halaman harga dilihat'],
+  ['buy.click', 'Klik beli'],
+  ['pair.view', 'Halaman pairing dibuka'],
+  ['pair.start', 'Pairing dimulai'],
+  ['pair.ok', 'Pairing berhasil'],
+  ['pair.fail', 'Pairing gagal'],
+  ['signin.start', 'Mulai masuk'],
+  ['signin.ok', 'Masuk berhasil'],
+  ['command.first', 'Perintah pertama']
+];
 
 const VIEW_TITLES: Record<View, string> = {
   ringkasan: 'Ringkasan', device: 'Device', riwayat: 'Riwayat', tabel: 'Tabel',
@@ -97,6 +116,7 @@ export default function Dashboard() {
   const [devices, setDevices] = useState<Device[] | null>(null);
   const [devicesFailed, setDevicesFailed] = useState(false);
   const [plan, setPlan] = useState<PlanAnswer | null>(null);
+  const [funnel, setFunnel] = useState<FunnelSummary | null>(null);
   const [historyFilter, setHistoryFilter] = useState<'' | 'completed' | 'failed' | 'pending'>('');
   const [historyQuery, setHistoryQuery] = useState('');
   const [listens, setListens] = useState<Array<{ id?: string; deviceName?: string; status?: string; startedAt?: string; segments?: number }> | null>(null);
@@ -216,6 +236,22 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
+    if (view === 'pairing') track('pair.view');
+  }, [view]);
+
+  // The funnel spans every account, so it is loaded only once the operator group is open.
+  useEffect(() => {
+    if (!ready || !operatorOpen || funnel) return;
+    let dropped = false;
+    void fetchFunnel(30).then((answer) => {
+      if (!dropped) setFunnel(answer ?? null);
+    });
+    return () => {
+      dropped = true;
+    };
+  }, [ready, operatorOpen, funnel]);
+
+  useEffect(() => {
     if (!ready) return;
     const params = new URLSearchParams(window.location.search);
     if (!params.has('pair')) return;
@@ -233,12 +269,14 @@ export default function Dashboard() {
     if (pairPending) return;
     // The device takes the browser family's name; the server adds the number when a second device of the same family appears.
     const name = (pairName.trim() || 'browser').slice(0, 64);
+    track('pair.start', { name });
     setPairOk(false);
     setPairPending(true);
     setPairStatus('Memasangkan browser ini…');
     const created = await createPairingCode(name);
     if (!created?.ok || !created.code) {
       setPairPending(false);
+      track('pair.fail', { reason: String(created?.error ?? 'server-menolak') });
       setPairStatus(`Gagal memasangkan: ${say(created?.error ?? 'server menolak')}`);
       return;
     }
@@ -258,15 +296,19 @@ export default function Dashboard() {
     });
     setPairPending(false);
     if (delivered.ok) {
+      track('pair.ok', { name: delivered.deviceName || created.deviceName || name });
       setPairStatus(`Browser ini ter-pairing: ${delivered.deviceName || created.deviceName || name}.`);
       setPairOk(true);
       void loadDevices();
       return;
     }
     if (delivered.reason === 'no-extension' || delivered.reason === 'no-runtime') {
+      // The largest leak in the funnel: the visitor reached pairing without the extension installed in the browser they are holding.
+      track('pair.fail', { reason: 'no-extension' });
       setPairStatus('Ekstensi belum terpasang atau nonaktif di browser ini. Pasang dari Unduh, lalu klik lagi.');
       return;
     }
+    track('pair.fail', { reason: delivered.reason || 'unknown' });
     setPairStatus(`Gagal memasangkan: ${delivered.message || delivered.reason || 'tidak diketahui'}`);
   }
 
@@ -439,6 +481,34 @@ export default function Dashboard() {
                     </p>
                     {!planUnlimited && planRemaining <= 0 ? <p className="plan-empty">Plan habis — reset besok 00.00 UTC. <Link to="/harga">Lihat paket</Link></p> : null}
                   </div>
+
+                  {funnel?.ok ? (
+                    <div className="panel">
+                      <div className="panel-head">
+                        <h2 className="panel__title">Funnel {funnel.days ?? 30} hari</h2>
+                        <span className="chip">{funnel.last ? `terakhir ${new Date(funnel.last).toLocaleDateString('id-ID')}` : 'belum ada data'}</span>
+                      </div>
+                      <div className="table-wrapper table-wrapper--compact" tabIndex={0} role="region" aria-label="Funnel">
+                        <table className="table">
+                          <thead><tr><th scope="col">Langkah</th><th scope="col">Kejadian</th><th scope="col">Browser</th><th scope="col">Akun</th></tr></thead>
+                          <tbody>
+                            {FUNNEL_STEPS.map(([name, label]) => {
+                              const row = (funnel.totals ?? []).find((entry) => entry.name === name);
+                              return (
+                                <tr key={name}>
+                                  <td>{label}</td>
+                                  <td>{(row?.events ?? 0).toLocaleString('id-ID')}</td>
+                                  <td>{(row?.browsers ?? 0).toLocaleString('id-ID')}</td>
+                                  <td>{(row?.accounts ?? 0).toLocaleString('id-ID')}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                      <p className="panel-note">Dihitung per browser pengunjung, bukan per akun: satu baris di kolom Browser adalah satu pengunjung yang berbeda, dan langkah yang kosong adalah tempat orang berhenti.</p>
+                    </div>
+                  ) : null}
 
                   <div className="panel">
                     <div className="panel-head"><h2 className="panel__title">Checklist pemasangan</h2></div>
