@@ -9,7 +9,12 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "Two owner one-clicks unblock the money: (1) apply hosted/migrations/20261124100000_opera_price_wallet_deposit_restore.sql (or push this branch \u2014 CI/CD applies migrations), so a wallet top-up stops pricing Rp 0 and the 2026-11-24 buy click can actually pay; (2) open https://github.com/punkpeye/awesome-mcp-servers/compare/main...afnannuzulasugihartono:awesome-mcp-servers:add-navego-listing?expand=1 and click Create pull request (the Vault token cannot open PRs on repos it does not own).",
+  "next_action": "One owner one-click still unblocks distribution: open https://github.com/punkpeye/awesome-mcp-servers/compare/main...afnannuzulasugihartono:awesome-mcp-servers:add-navego-listing?expand=1 and click Create pull request (the Vault token cannot open PRs on repos it does not own). The pairing funnel is now drivable end-to-end: the consent-page 400 (leak_found_2) is fixed in production, so a new user can pair without the console workaround.",
+  "leak_found_2": {
+    "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url=https://opera-agent.pages.dev, uri_allow_list=opera-agent.vercel.app/*), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
+    "proof": "owner console capture 2026-11-24 (POST /oauth/authorizations/.../consent -> 400 unauthorized request origin); CI read run 45373897531 printed site_url=https://opera-agent.pages.dev, uri_allow_list without navego.pages.dev.",
+    "fix": "CI workflow .github/workflows/auth-config.yml (PRs #436, #437, #438, #439) patched production: site_url=https://navego.pages.dev and uri_allow_list gained https://navego.pages.dev/*, verified from run 45376655642 log; pinned by decisions.json -> hosted-consent-origin-01."
+  },
   "leak_found": {
     "what": "wallet.deposit has no active row in opera_price_list on the live project, so openTopUp invoices price 'not charged: no price for this kind' (Rp 0) \u2014 a buyer cannot pay even after clicking buy.",
     "proof": "live invoice 1ec02bc3-7c1b-45a2-b864-837e95ba3b24:wallet-mwuhd3km created 2026-11-24 rendered 'not charged: no price for this kind'; public price list at functions/v1/navego-billing?prices=1 lists only task.* kinds; wallet migration 20261104120000 carries the row (1,000,000 sen IDR) but it was never applied to the live price table.",
