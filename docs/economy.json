@@ -11,8 +11,8 @@
   "monthly_gap_usd": null,
   "next_action": "One owner one-click still unblocks distribution: open https://github.com/punkpeye/awesome-mcp-servers/compare/main...afnannuzulasugihartono:awesome-mcp-servers:add-navego-listing?expand=1 and click Create pull request (the Vault token cannot open PRs on repos it does not own). The pairing funnel is now drivable end-to-end: the consent-page 400 (leak_found_2) is fixed in production, so a new user can pair without the console workaround.",
   "leak_found_2": {
-    "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url=https://opera-agent.pages.dev, uri_allow_list=opera-agent.vercel.app/*), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
-    "proof": "owner console capture 2026-11-24 (POST /oauth/authorizations/.../consent -> 400 unauthorized request origin); CI read run 45373897531 printed site_url=https://opera-agent.pages.dev, uri_allow_list without navego.pages.dev.",
+    "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
+    "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
     "fix": "CI workflow .github/workflows/auth-config.yml (PRs #436, #437, #438, #439) patched production: site_url=https://navego.pages.dev and uri_allow_list gained https://navego.pages.dev/*, verified from run 45376655642 log; pinned by decisions.json -> hosted-consent-origin-01."
   },
   "leak_found": {
