@@ -1,6 +1,6 @@
 // @last-edited: 2026-11-25 UTC+7.
 // @title: copy-command.test - a copy result is visible, retryable, and recorded only after the clipboard resolves.
-// @state: resolve reports success, reject persists failure, identical retries differ, and disposal clears feedback cleanup.
+// @state: one clipboard result, one announcement, and one cleanup timer per command.
 // @dependencies: node:test, strict, node:fs, node:url.
 
 // The copy button owns a promise and a timer, so the behavior that matters is not its markup.
