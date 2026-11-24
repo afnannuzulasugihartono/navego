@@ -10,8 +10,8 @@ import { AUTH_HOST, announceSession, clearSession, getReturnTo, getRefreshToken,
 
 export function meta() {
   return seoMeta({
-    title: 'Masuk dashboard — Navego',
-    description: 'Akun Navego dipakai hanya untuk dashboard: mengelola device, plan, dan pemakaian Anda. Masuk dengan Google, GitHub, atau magic link email — tanpa password.',
+    title: 'Navego — AI agent di browser Anda sendiri',
+    description: 'Asisten AI yang membuka portal, mengisi formulir, dan menyimpan Excel, Word, atau PowerPoint di browser Anda sendiri. Mulai gratis; masuk dengan Google, GitHub, atau magic link email.',
     path: '/'
   });
 }
@@ -128,6 +128,10 @@ export default function Index() {
           <div className="wrap">
             <h1 id="value-title">Situs tanpa API. Perintah jadi berkas.</h1>
             <p className="lede">Navego membuka portal, mengisi formulir, mengunduh data, dan menyimpan Excel, Word, atau PowerPoint di browser Anda. <Link to="/beranda">Lihat produknya dulu →</Link></p>
+            <div className="hero-cta">
+              <Link className="btn btn-solid" to="/unduh">Pasang gratis</Link>
+              <Link className="btn btn-ghost" to="/harga">Lihat harga</Link>
+            </div>
           </div>
         </section>
         <div className="auth-pane">

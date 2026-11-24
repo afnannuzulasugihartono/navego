@@ -171,7 +171,7 @@ export default function Unduh() {
                 </tbody>
               </table>
             </div>
-            <p className="note note--spaced">Store masih review. Muat arsipnya dengan tangan. Pairing gagal? Buka <Link to="/docs#pairing">panduan pairing</Link> atau <Link to="/dukungan">Dukungan</Link>.</p>
+            <p className="note note--spaced">Belum ada di Chrome Web Store: arsipnya dimuat dengan tangan. Pairing gagal? Buka <Link to="/docs#pairing">panduan pairing</Link> atau <Link to="/dukungan">Dukungan</Link>.</p>
           </div>
         </section>
 
