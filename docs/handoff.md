@@ -112,22 +112,13 @@ What is true now, and what to do next. Cap 150 lines. Spent detail: git history.
 - Six gates on `ubuntu-24.04`, Node pinned to `22.20.0`: unit, site, deno-hosted, secret-scan, browser (headed under `xvfb-run`), postgres (the migration history against a disposable Supabase-baseline Postgres); a newer push cancels the in-flight run. Every pull request runs them here, and `main` requires all six.
 - [`.gitleaks.toml`](../.gitleaks.toml) re-point the allowlist when a file is renamed; never edit the fixture to dodge the scanner.
 
-## 2026-11-16 - the website is rebuilt (Corbin), and the merge carries both truths
+## 2026-11-16 - the website is rebuilt, and the site identity is the hand-drawn N
 
-- The public site is rebuilt in `site/`: React Router v7 framework mode, TypeScript strict, all 16 routes prerendered to flat `.html` paths (`/beranda.html` …), Indonesia-only copy, brand **Corbin** (the C monogram, `site/app/components/CorbinMark.tsx`; paper `#f4f1e9` / ink `#16161a` / amber `#d8923f`). It is built and gated: `tests/site/site.test.ts` builds the site, type-checks it, then parses `build/client` and asserts one `h1` per page, no i18n machinery, per-page claims (including 40 tool), the sitemap set and the `_headers` policy.
-- The live pages were deployed from the rebuilt branch (`/beranda.html`, `/index.html`, `/unduh.html`, `/docs.html` serve the Corbin build).
+- The public site is rebuilt in `site/`: React Router v7 framework mode, TypeScript strict, all 16 routes prerendered to flat `.html` paths (`/beranda.html` …), Indonesia-only copy, and the hand-drawn N mark (PR #393): one natural human-stroke N on a navy disc with one symmetric amber underline, wordmark in single-stroke glyphs with no tittle over the g. `components/NavegoMark.tsx`, `public/icon.svg`, `public/navego-mark.svg`, `public/assets/badge-88x31.svg`, `public/og-cover.png`. The Corbin and Kemudi names are history, kept in docs/releases and this log; `Raven.tsx` and its image are deleted.
 - `landing/` and `tests/landing/` are deleted (the React site replaces them); `site/public/` carries `_headers` (per-path CSP: static pages reach nothing, app pages reach `https://*.supabase.co` only, `script-src 'self'`), `robots.txt`, `sitemap.xml` and `icon.svg`.
-- The 2026-11-16 merge (owner call) keeps the Corbin site and the 40-tool `browser_*` MCP surface; the Kemudi rebrand stays in the extension surfaces, the npm package name (`kemudi`, alias `navego-mcp`), the store listing and the update manifest until its own dispatch.
-- The Corbin site has no `/pilot` route: the static pilot door from the Kemudi rebrand is not part of the rebuilt React site; if the pilot offer still needs that page, port it or leave it out deliberately.
-
-## 2026-11-18 - the site identity is the hand-drawn N; the names Corbin and Kemudi are history
-
-- One mark everywhere now, drawn by hand (PR #393): one natural human-stroke N (Latin orientation, bowed stems, an arcing diagonal) on a navy disc with one symmetric amber underline; the wordmark is handwritten single-stroke glyphs with no tittle over the g. `components/NavegoMark.tsx`, `public/icon.svg`, `public/navego-mark.svg`, `public/assets/badge-88x31.svg` (mark + wordmark, no tagline), `public/og-cover.png` (regenerated from `site/scripts/og-cover.svg`).
-- The 2026-11-16 entry above names `site/app/components/CorbinMark.tsx`; no such file exists in this tree and never did at any point of it - the intermediate brand name is history, kept in docs/releases and this log. The current identity point is `components/NavegoMark.tsx` and the cream ground / navy / one amber palette in `tokens.css` and `brand.css`.
-- `site/app/components/Raven.tsx` (dead, unreferenced) and `site/public/assets/raven-1874.jpg` (unreferenced) are deleted; the historical docs that describe them stay as the record of the old pass, marked Historical/superseded.
-- Huginn & Muninn is gone from code and copy: the login panel opens on the logo lockup, the footer tagline reads "Navego — Browser Anda, atas perintah Anda."
-- Every decision now cites its source in `docs/decisions.json` (user request or verified internet link) and code points back (`decisions.json -> D<n>`); the gate is `tests/tooling/decisions.test.ts`; the WHY-prefix is banned repo-wide with the acceptance surface named as the exception.
-- No eyebrows anywhere; every page leads with h1 → h2 → body; type sizes are even pixels; line heights 1.1 / 1.25 / 1.5 / 1.4 (display / heading / body / small); paragraph spacing 1 em; heading 32 px above, 12 px below; flush-left alignment; text fills its container; the nav notch is always visible.
+- It is built and gated: `tests/site/site.test.ts` builds the site, type-checks it, then parses `build/client` and asserts one `h1` per page, no i18n machinery, per-page claims, the sitemap set and the `_headers` policy.
+- Every decision cites its source in `docs/decisions.json` (user request or verified internet link) and code points back; the gate is `tests/tooling/decisions.test.ts`; the WHY-prefix is banned repo-wide with the acceptance surface named as the exception.
+- No eyebrows anywhere; every page leads with h1 → h2 → body; type sizes are even pixels; flush-left alignment; text fills its container; the nav notch is always visible.
 
 ## Blocked, needs the owner at the machine
 
