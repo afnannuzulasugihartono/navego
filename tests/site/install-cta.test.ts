@@ -33,9 +33,10 @@ test('a successful command copy records install intent and a failed copy is anno
   assert.match(source, /Gagal menyalin/);
 });
 
-test('the primary command stays inside a narrow mobile hero and states its real cost', () => {
-  assert.match(css, /\.page-hero \.command-row \{ inline-size: 100%;/);
-  assert.match(css, /@media \(max-width: 640px\)[\s\S]*\.page-hero \.command-row \{ display: grid;/);
+test('every command stays inside a narrow screen and the primary states its real cost', () => {
+  assert.match(css, /(^|\n)\.command-row \{ inline-size: 100%;/);
+  assert.doesNotMatch(css, /\.page-hero \.command-row/);
+  assert.match(css, /@media \(max-width: 640px\)[\s\S]*\.command-row \{ display: grid;/);
   assert.match(css, /grid-template-columns: 1fr/);
   assert.match(source, /tidak bisa dicabut/);
   assert.match(source, /Tutup lalu buka browser/);

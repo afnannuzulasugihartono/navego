@@ -7,6 +7,7 @@
 export type CopyFeedback = {
   message: string;
   failed: boolean;
+  attempt: number;
 };
 
 type ClipboardWriter = {
@@ -26,15 +27,17 @@ type CopyCommandOptions = {
 
 export function createCopyCommand(options: CopyCommandOptions) {
   let timer: number | null = null;
-  let lastSpoken = '';
+  let attempt = 0;
+  let generation = 0;
+  let disposed = false;
 
   const schedule = options.schedule ?? ((run: () => void, delay: number) => window.setTimeout(run, delay));
   const cancel = options.cancel ?? ((handle: number) => window.clearTimeout(handle));
 
   const announce = (message: string, failed: boolean) => {
-    const spoken = message === lastSpoken ? `${message}\u00a0` : message;
-    lastSpoken = spoken;
-    options.onFeedback({ message: spoken, failed });
+    if (disposed) return;
+    attempt += 1;
+    options.onFeedback({ message, failed, attempt });
     if (timer !== null) {
       cancel(timer);
       timer = null;
@@ -44,6 +47,8 @@ export function createCopyCommand(options: CopyCommandOptions) {
 
   return {
     async copy() {
+      disposed = false;
+      const current = ++generation;
       const clipboard = options.clipboard ?? (globalThis.navigator as Navigator | undefined)?.clipboard;
       if (!clipboard) {
         announce(options.failureMessage, true);
@@ -52,13 +57,17 @@ export function createCopyCommand(options: CopyCommandOptions) {
       try {
         await clipboard.writeText(options.text);
       } catch {
+        if (disposed || current !== generation) return;
         announce(options.failureMessage, true);
         return;
       }
+      if (disposed || current !== generation) return;
       announce(options.successMessage, false);
       options.onCopied?.();
     },
     dispose() {
+      disposed = true;
+      generation += 1;
       if (timer !== null) {
         cancel(timer);
         timer = null;
