@@ -167,8 +167,8 @@ export async function capturePaypalOrder(env: PaypalEnvironment, orderId: string
 
 export interface PaypalSettlement {
   orderId: string;
-  plan: string;
-  owner: string;
+  plan: string | null;
+  owner: string | null;
   amountCents: number;
   currency: string;
 }
@@ -191,8 +191,7 @@ export function settlementFromPaypalOrder(orderId: string, order: Record<string,
   const cents = Number(match[1]) * 100 + Number((match[2] ?? '').padEnd(2, '0'));
   if (!Number.isSafeInteger(cents) || cents <= 0) return null;
   const parsed = planFromCustomId(String(unit.custom_id ?? ''));
-  if (!parsed) return null;
-  return { orderId, plan: parsed.plan, owner: parsed.owner, amountCents: cents, currency };
+  return { orderId, plan: parsed?.plan ?? null, owner: parsed?.owner ?? null, amountCents: cents, currency };
 }
 
 export function planFromCustomId(customId: string | null | undefined): { plan: string; owner: string } | null {

@@ -163,6 +163,13 @@ test('a completed USD order becomes one exact settlement, while an approved orde
   });
   assert.equal(settlementOf('ORDER-1', { ...completed, status: 'APPROVED' }), null);
   assert.equal(settlementOf('ORDER-1', { ...completed, purchase_units: [{ custom_id: 'plan.usd-17:owner-1', amount: { value: '17.00', currency_code: 'EUR' } }] }), null);
+  assert.deepEqual(settlementOf('ORDER-1', { ...completed, purchase_units: [{ custom_id: 'garbage', amount: { value: '17.00', currency_code: 'USD' } }] }), {
+    orderId: 'ORDER-1',
+    plan: null,
+    owner: null,
+    amountCents: 1700,
+    currency: 'USD'
+  });
 });
 
 test('a webhook is trusted only when PayPal answers SUCCESS on the verify call', async () => {

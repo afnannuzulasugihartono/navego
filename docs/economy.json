@@ -9,7 +9,7 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "Land and deploy PR #442 so one completed live PayPal order writes a paypal-live settlement row before plan activation, then prove that row against the production order id.",
+  "next_action": "Land and deploy PR #442, including opera_paypal_orders, so one completed live PayPal order writes one paypal-live settlement row and activates its plan once, then prove both rows against the production order id.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
@@ -18,7 +18,7 @@
   "paypal_revenue_gap": {
     "what": "A completed PayPal order activated a Navego plan but wrote no settled sale, so a real payment could leave the economy ledger and the automation score unchanged.",
     "proof": "live production query 2026-11-24: opera_price_orders held 0 rows, opera_notification_log held only Midtrans sandbox events, and opera_plan_activate_purchase changed plans without recording a PayPal order.",
-    "fix": "hosted/functions/_shared/paypal.ts and hosted/functions/navego-billing/index.ts record the completed USD order in opera_notification_log before activation; pinned by decisions.json -> hosted-paypal-revenue-01."
+    "fix": "hosted/migrations/20261125000000_opera_paypal_orders.sql owns the quote, one-sale claim, and one activation; hosted/functions/navego-billing/index.ts stores the quote and sends the completed order through those RPCs. Pinned by decisions.json -> hosted-paypal-revenue-01."
   },
   "leak_found": {
     "what": "wallet.deposit has no active row in opera_price_list on the live project, so openTopUp invoices price 'not charged: no price for this kind' (Rp 0) \u2014 a buyer cannot pay even after clicking buy.",
