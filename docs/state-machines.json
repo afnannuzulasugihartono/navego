@@ -399,7 +399,7 @@
     {
       "id": "install-copy-feedback",
       "kind": "site",
-      "where": "site/app/routes/unduh.tsx (CopyCommand)",
+      "where": "site/app/lib/copy-command.ts (createCopyCommand)",
       "states": [
         "idle",
         "copied",

@@ -1,10 +1,11 @@
 // decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots) decisions.json -> site-install-cta-01
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
 import { track } from '../lib/funnel';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
+import { createCopyCommand, type CopyFeedback } from '../lib/copy-command.js';
 
 export function meta() {
   return seoMeta({
@@ -57,40 +58,25 @@ type CopyCommandProps = {
 };
 
 function CopyCommand({ id, label, command, buttonLabel = 'Salin', successMessage = 'Disalin.', onCopied }: CopyCommandProps) {
-  const [feedback, setFeedback] = useState('');
-  const timer = useRef<number | null>(null);
-  const lastMessage = useRef('');
+  const [feedback, setFeedback] = useState<CopyFeedback | null>(null);
+  const controller = useMemo(() => createCopyCommand({
+    text: command,
+    successMessage,
+    failureMessage: 'Gagal menyalin. Salin manual dari kode.',
+    onFeedback: setFeedback,
+    onCopied
+  }), [command, successMessage, onCopied]);
 
-  useEffect(() => () => {
-    if (timer.current !== null) window.clearTimeout(timer.current);
-  }, []);
-
-  const announce = (message: string) => {
-    const spoken = message === lastMessage.current ? `${message}\u00a0` : message;
-    lastMessage.current = message;
-    setFeedback(spoken);
-    if (timer.current !== null) window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => setFeedback(''), 2000);
-  };
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(command);
-      announce(successMessage);
-      onCopied?.();
-    } catch {
-      announce('Gagal menyalin. Salin manual dari kode.');
-    }
-  };
+  useEffect(() => () => controller.dispose(), [controller]);
 
   return (
     <>
       <div className="command-row">
         <span className="command-row__label">{label}</span>
         <code className="command-row__code" id={`${id}-command`}>{command}</code>
-        <button onClick={() => void copy()} className="btn btn-solid btn-sm" type="button">{buttonLabel}</button>
+        <button onClick={() => void controller.copy()} className="btn btn-solid btn-sm" type="button">{buttonLabel}</button>
       </div>
-      <p className="copy-feedback" role="status" aria-live="polite" aria-atomic="true">{feedback}</p>
+      <p className="copy-feedback" role="status" aria-live="polite" aria-atomic="true">{feedback?.message ?? ''}</p>
     </>
   );
 }
@@ -116,7 +102,7 @@ export default function Unduh() {
               <a className="btn btn-ghost" href={`${DOWNLOAD}.zip?for=chrome`} download onClick={() => track('install.click', { browser: 'chrome', artifact: 'zip' })}>Pasang manual (.zip)</a>
               <a className="btn btn-ghost" href="/download/forceinstall.reg" download="navego-forceinstall.reg" onClick={() => track('install.click', { browser: 'windows', artifact: 'reg' })}>Windows .reg</a>
             </div>
-            <p className="note">macOS dan Linux: ekstrak .zip, lalu pilih Load unpacked. Di Windows, perintah ini menulis policy HKCU; browser yang dikelola admin sekolah atau kantor tetap menang.</p>
+            <p className="note">macOS dan Linux: ekstrak .zip, lalu pilih Load unpacked. Di Windows, perintah ini menulis policy HKCU: browser lalu melaporkan dirinya dikelola, extension terpasang paksa dan tidak bisa dicabut selama policy itu ada. Tutup lalu buka browser sebelum masuk dan pair. Di mesin yang dikelola admin sekolah atau kantor, policy admin tetap menang.</p>
           </div>
         </section>
 

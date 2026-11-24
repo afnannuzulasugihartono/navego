@@ -863,6 +863,12 @@
 .command-row__label { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 700; color: var(--amber-hi); min-inline-size: 3.25rem; flex-shrink: 0; letter-spacing: 0.08em; text-transform: uppercase; }
 .command-row__code { background: transparent; border: 0; padding: 0; color: var(--text-on-dark); font-size: var(--text-xs); overflow-x: auto; white-space: nowrap; flex: 1 1 0%; min-inline-size: 0; }
 .copy-feedback { min-block-size: var(--text-xs); margin: var(--s-2) 0 0; color: var(--muted); font-size: var(--text-xs); line-height: var(--leading-small); }
+.page-hero .command-row { inline-size: 100%; max-inline-size: 100%; }
+@media (max-width: 640px) {
+  .page-hero .command-row { display: grid; grid-template-columns: 1fr; align-items: stretch; }
+  .page-hero .command-row__label, .page-hero .command-row__code, .page-hero .command-row .btn { min-inline-size: 0; inline-size: 100%; }
+  .page-hero .command-row__code { white-space: normal; overflow-wrap: anywhere; }
+}
 
 /* the plan panel and the account rail: the state is a class, the colour is a token */
 
