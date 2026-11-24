@@ -106,6 +106,41 @@ test('an overlapping success is recorded even when a later attempt fails', async
   assert.equal(copied, true, 'every successful write records install intent');
 });
 
+test('a successful copy stays successful when an older failure resolves later', async () => {
+  const { createCopyCommand } = await controllerModule();
+  let releaseSuccess!: () => void;
+  let rejectFailure!: (error: Error) => void;
+  const success = new Promise<void>((resolve) => { releaseSuccess = resolve; });
+  const failure = new Promise<void>((_, reject) => { rejectFailure = reject; });
+  const feedback: Feedback[] = [];
+  let copied = false;
+  let writes = 0;
+  const controller = createCopyCommand({
+    text: 'command',
+    successMessage: 'Disalin.',
+    failureMessage: 'Gagal menyalin.',
+    clipboard: { writeText: async () => {
+      writes += 1;
+      if (writes === 1) await success;
+      else await failure;
+    } },
+    onFeedback: (value: Feedback) => { feedback.push(value); },
+    onCopied: () => { copied = true; },
+    schedule: () => 13,
+    cancel: () => undefined
+  });
+
+  const first = controller.copy();
+  const second = controller.copy();
+  releaseSuccess();
+  await first;
+  rejectFailure(new Error('denied'));
+  await second;
+  assert.equal(feedback.length, 1);
+  assert.equal(feedback[0]?.failed, false, 'a later failure cannot hide the copied command');
+  assert.equal(copied, true);
+});
+
 test('identical retries replace the live-region content and disposal clears pending cleanup', async () => {
   const { createCopyCommand } = await controllerModule();
   const attempts: number[] = [];
