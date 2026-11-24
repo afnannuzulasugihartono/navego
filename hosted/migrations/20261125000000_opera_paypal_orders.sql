@@ -1,6 +1,7 @@
 -- One PayPal order is one quote, one settlement, and one plan activation.
 -- The quote is stored when PayPal creates the order, the settlement compares the completed order with that quote, and the database claims the order before a plan changes.
 -- The buyer can return from PayPal while the verified webhook arrives; both paths must still leave one sale and one activation.
+-- decisions.json -> hosted-paypal-revenue-01
 
 create table if not exists public.opera_paypal_orders (
   id bigint generated always as identity primary key,

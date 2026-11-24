@@ -1063,6 +1063,10 @@ const cors = {
       // What makes a body a notification is what the provider says happened; whether it is believed is a separate question, answered by the signature.
       const USD_PLANS = ["plan.usd-1", "plan.usd-3", "plan.usd-5", "plan.usd-7", "plan.usd-9", "plan.usd-17", "plan.usd-33"];
 
+      // A PAYPAL ORDER IS CLAIMED IN THE DATABASE.
+      // The quote is stored before the buyer sees PayPal, the completed order is compared with that quote, and the database records the sale and activates the plan once.
+      // decisions.json -> hosted-paypal-revenue-01
+
 const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type === "string" && Boolean(req.headers.get("paypal-transmission-id"));
       if (looksLikePaypalWebhook) {
         const headers = {
