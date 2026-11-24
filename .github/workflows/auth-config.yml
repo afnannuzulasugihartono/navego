@@ -74,7 +74,8 @@ jobs:
                 .redirect_urls as $urls
                 | if $add == "" then ($urls // [])
                   else (($urls // []) + [$add] | unique) end')
-              ALLOW=$(read_config | jq -r '.uri_allow_list // ""' | jq -rn --arg add "$ADD_ALLOW_LIST_ENTRY" 'split(",") | (if $add == "" then . else (. + [$add] | unique) end) | join(",")')
+              RAW_ALLOW=$(read_config | jq -r '.uri_allow_list // ""')
+              ALLOW=$(jq -rn --arg raw "$RAW_ALLOW" --arg add "$ADD_ALLOW_LIST_ENTRY" '($raw + (if $add == "" then "" else (if $raw == "" then "" else "," end) + $add end) | split(",") | map(select(length>0)) | unique | join(","))')
               BODY=$(jq -cn --arg site "$SITE_URL" --argjson urls "$MERGED" --arg allow "$ALLOW" '
                 (if $site == "" then {} else {site_url: $site} end)
                 + (if $allow == "" then {} else {uri_allow_list: $allow} end)
