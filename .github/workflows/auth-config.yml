@@ -2,6 +2,7 @@
 # @title: auth-config - reads or patches the deployed Supabase Auth config, on dispatch.
 # @state: read prints the safe fields (site_url, redirect lists); patch sets site_url and appends one redirect origin, then prints the result.
 # @state: decisions.json -> consent-origin-01 (the consent endpoints reject every origin the deployed config does not list, and the deployed config is read and fixed from here, not from the owner's dashboard).
+# @state: only non-secret config fields are ever printed: the full auth config response carries mail credentials that must not reach a log.
 # @dependencies: SUPABASE_ACCESS_TOKEN secret (same one deploy-functions.yml uses).
 
 name: Auth config
@@ -51,7 +52,6 @@ jobs:
         run: |
           API="https://api.supabase.com/v1/projects/$PROJECT_REF/config/auth"
           AUTH="Authorization: Bearer $SUPABASE_ACCESS_TOKEN"
-          # Only non-secret fields are ever printed: the full config response carries mail credentials that must not reach a log.
           SAFE='{site_url: .site_url, additional_redirect_urls: .additional_redirect_urls, uri_allow_list: .uri_allow_list}'
 
           read_config() {
