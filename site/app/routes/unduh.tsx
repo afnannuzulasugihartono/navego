@@ -43,6 +43,7 @@ const BROWSER_SUPPORT: Array<[string, string, string]> = [
   ['Firefox', 'ditolak — tidak ada izin debugger', 'ditolak']
 ];
 
+const ONE_LINER = 'irm https://navego.pages.dev/install.ps1 | iex';
 const CURL = 'curl.exe -sI https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/download/navego.zip | findstr /i x-opera-sha256';
 const LOCAL = 'Get-FileHash .\\navego-*.zip -Algorithm SHA256';
 
@@ -71,6 +72,25 @@ export default function Unduh() {
               <a className="btn btn-ghost" href="/download/forceinstall.reg" download="navego-forceinstall.reg" onClick={() => track('install.click', { browser: 'windows', artifact: 'reg' })}>Pakai .reg di Windows</a>
             </div>
             <p className="note">Build yang sama untuk Edge, Brave, Opera, dan Vivaldi. .reg memakai HKCU, tanpa admin; .zip untuk Load unpacked.</p>
+          </div>
+        </section>
+
+        <section className="band band-soft" aria-labelledby="oneLineTitle">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <h2 id="oneLineTitle" className="section-title">Satu perintah. Tanpa Node, tanpa store.</h2>
+              </div>
+              <p className="section-note">Jalankan di PowerShell. Skripnya menulis satu policy per browser di akun Anda, dan browser yang mengunduh CRX bertanda tangannya sendiri.</p>
+            </div>
+            <div className="command-row">
+              <span className="command-row__label">PowerShell</span>
+              <code className="command-row__code">{ONE_LINER}</code>
+              <button onClick={() => copy(ONE_LINER, 'oneliner')} className="btn btn-solid btn-sm" type="button">
+                {copied === 'oneliner' ? 'Tersalin' : 'Salin'}
+              </button>
+            </div>
+            <p className="note note--spaced">Harganya jujur: browser lalu melaporkan dirinya sebagai dikelola organisasi (registry Anda sendiri), dan ekstensinya tidak bisa dicabut selama policy itu ada. Di mesin yang dikelola admin sekolah atau kantor, policy admin tetap menang.</p>
           </div>
         </section>
 
