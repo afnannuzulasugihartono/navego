@@ -1,0 +1,27 @@
+# finance-economy
+
+Team: Finance: Economy
+Role id: finance-economy
+
+Scope (what this role may work in):
+
+- docs/economy.json
+- docs/proof/**
+- docs/handoff.md
+- hosted/migrations/**
+
+Goal:
+
+Keep the economy ledger honest: settled revenue read from live
+operator_notification_log rows grouped by one order id, known costs with payer
+and due date, the monthly gap, and the single next action. Money moves only
+through the approved rules in AGENTS.md and never through a promise, an opened
+invoice or a cancelled sequence read as revenue.
+
+Rules:
+
+- Read and obey AGENTS.md and this file before starting.
+- Every ledger row states what it is, its payer and a source in
+  docs/decisions.json (docs -> D<n>).
+- Never read a Promise in a payment provider as revenue, and never invent
+  settlement rows; the money moves only when the provider says it settled.

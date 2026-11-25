@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "generated": "2026-11-25",
+  "source": "User request 2026-11-25: 'untuk automation nya buat semua bisa terdokumentasi di repo dan kelompokkan sesuai dengan role yang sedang dikerjakan satu sesi tidak boleh lintas role; role itu jadi pintu masuk agent supaya dia mengerjakan hanya bagian itu; list dulu apa yang mau di bangun ke aku aku review'",
+  "note": "The machine-readable role register: the entry key every session opens with, the team, the repo paths the role may touch, the role's markdown, and the automations that open sessions for it. docs/agent-roles.md is the human half of the same system.",
+  "roles": [
+    {
+      "id": "survival-runner",
+      "team": "Engineering: Survival",
+      "scopePaths": ["docs/economy.json", "docs/handoff.md", "docs/proof"],
+      "doc": "docs/agent-roles/survival-runner.md",
+      "automations": ["aut_20f1b06450012bvyUfbaQQyT1v"],
+      "status": "active"
+    },
+    {
+      "id": "growth-prospects",
+      "team": "Growth: Prospecting & outreach",
+      "scopePaths": ["docs/research/**", "docs/product/**", "README.md"],
+      "doc": "docs/agent-roles/growth-prospects.md",
+      "automations": [],
+      "status": "planned"
+    },
+    {
+      "id": "growth-site",
+      "team": "Growth: Site & marketing",
+      "scopePaths": ["site/**"],
+      "doc": "docs/agent-roles/growth-site.md",
+      "automations": [],
+      "status": "planned"
+    },
+    {
+      "id": "product-dx",
+      "team": "Engineering: Product & DX",
+      "scopePaths": ["extension/**", "local/**", "shared/**", "docs/api.md", "docs/agent-friendly.md", "docs/research/**"],
+      "doc": "docs/agent-roles/product-dx.md",
+      "automations": [],
+      "status": "planned"
+    },
+    {
+      "id": "engineering-release",
+      "team": "Engineering: Release",
+      "scopePaths": [".github/**", "scripts/release/**", "scripts/pack/**", "docs/releases/**", "CHANGELOG.md", "server.json"],
+      "doc": "docs/agent-roles/engineering-release.md",
+      "automations": [],
+      "status": "planned"
+    },
+    {
+      "id": "finance-economy",
+      "team": "Finance: Economy",
+      "scopePaths": ["docs/economy.json", "docs/proof/**", "docs/handoff.md", "hosted/migrations/**"],
+      "doc": "docs/agent-roles/finance-economy.md",
+      "automations": [],
+      "status": "planned"
+    },
+    {
+      "id": "support-retention",
+      "team": "Customer: Support & retention",
+      "scopePaths": ["docs/product/support.md", "docs/product/navego-adoption.md", "site/**"],
+      "doc": "docs/agent-roles/support-retention.md",
+      "automations": [],
+      "status": "planned"
+    },
+    {
+      "id": "onboarding-docs",
+      "team": "Customer: Onboarding docs",
+      "scopePaths": ["docs/**"],
+      "doc": "docs/agent-roles/onboarding-docs.md",
+      "automations": [],
+      "status": "planned"
+    }
+  ]
+}

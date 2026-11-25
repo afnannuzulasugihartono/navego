@@ -1,1353 +1,1373 @@
 {
- "version": 1,
- "generated": "2026-11-23",
- "source": "The 2026-11-18 navego.pages.dev rebrand and consistency pass: logo, wordmark, eyebrows, type and spacing system, nav notch, copy pass. User direction arrived 2026-11-18; internet sources were verified 2026-11-18. Repo sources point at the docs that already carry the decision. 2026-11-19: a source-backed pass over the agent tool surface added D55-D68 - kind recorded carries the file:line of the recorded performance, per the user evidence mandate.",
- "note": "One decision, one source. Code references this file as decisions.json -> <id>. A decision added from 2026-11-19 onward carries a file-based id (for example local-canvas-01) and names the file it governs; the earlier D-numbers are history and keep their ids. A decision the user asked for carries kind=user; a decision nobody asked for carries the internet source it was taken from; a decision inherited from this repo carries the repo document that already carries it; a decision taken because a recorded performance demanded it carries kind=recorded with the file:line that records it.",
- "decisions": [
-  {
-   "id": "D01",
-   "scope": "web/tokens",
-   "decision": "The body text is 16 px on every page: the site runs one scale from 12 px to 64 px, and the running text sits at 16 px so a visitor override never drops below the 14 px floor the owner asked for.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: 'biasanya sih 14 yang teks' - the 14 px floor the owner set; the shipping scale runs the body at 16 px",
-    "also": "site/app/tokens.css (--text-base: 1rem)"
-   }
-  },
-  {
-   "id": "D02",
-   "scope": "web/tokens",
-   "decision": "The type scale uses even pixel steps only: 12, 14, 16, 18, 20, 24, 28, 32, 40, 56, 64.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: 'jika misalnya heading 1 heading 2 dan seterusnya gunakan ukuran genap dan konsisten'",
-    "also": "site/app/tokens.css (--text-xs through --text-hero)"
-   }
-  },
-  {
-   "id": "D03",
-   "scope": "web/tokens",
-   "decision": "h1 is 40 px (hero 64 px on /beranda, 28 px on \u2264860 px), h2 is 28 px, h3 is 20 px, h4 is 18 px.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: 'jika misalnya heading 1 heading 2 dan seterusnya gunakan ukuran genap dan konsisten'",
-    "also": "site/app/tokens.css (--text-title: 2.5rem, --text-hero: 4rem)"
-   }
-  },
-  {
-   "id": "D04",
-   "scope": "web/tokens",
-   "decision": "Line heights are unitless: display 1.06, heading 1.2, body 1.55, small 1.45.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://practicaltypography.com/line-spacing.html (120-145% of point size)",
-    "also": "site/app/tokens.css (--leading-display, --leading-heading, --leading-body, --leading-small)"
-   }
-  },
-  {
-   "id": "D05",
-   "scope": "web/tokens",
-   "decision": "Running text meets the 1.5 line-height floor so it survives visitor overrides.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html (criterion 1.4.12, AA)"
-   }
-  },
-  {
-   "id": "D06",
-   "scope": "web/tokens",
-   "decision": "Text fills the width of its container; no 18ch/44ch/46ch/56ch/66ch/68ch/70ch/72ch measure caps anywhere.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: 'lebarnya full bukan yang terpotong di tengah' and the follow-up option 'Konten tidak dibatasi terlalu sempit'",
-    "also": "site/app/brand.css (the hero and page-hero ledes carry no max-width)"
-   }
-  },
-  {
-   "id": "D07",
-   "scope": "web/tokens",
-   "decision": "Text is flush left; horizontal centering is kept only for symmetric fixed-box icons and figures.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: 'alignment mana yang harus alignment kiri mana yang harus tengah semua harus konsisten'",
-    "also": "https://designsystem.digital.gov/components/typography/ ('Set type flush left')"
-   }
-  },
-  {
-   "id": "D08",
-   "scope": "web/tokens",
-   "decision": "Paragraph \u2192 paragraph spacing is 1 em.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://practicaltypography.com/space-between-paragraphs.html (50-100% of the point size)"
-   }
-  },
-  {
-   "id": "D09",
-   "scope": "web/tokens",
-   "decision": "A heading gets more space above (32 px, larger than paragraph spacing, so it stands out) and less below (12 px, smaller than paragraph spacing, so it bonds to its text).",
-   "source": {
-    "kind": "internet",
-    "ref": "https://practicaltypography.com/space-above-and-below.html"
-   }
-  },
-  {
-   "id": "D10",
-   "scope": "web/tokens",
-   "decision": "The spacing scale is multiples of 4 px: 4, 8, 12, 16, 24, 32, 48, 72, 104.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://material.io/design/layout/spacing-methods.html (8dp grid, 4dp nested units, 4dp type baseline)"
-   }
-  },
-  {
-   "id": "D11",
-   "scope": "web/tokens",
-   "decision": "The gutter is 20 px, 32 px at \u2265940 px - one fixed even step each, no fractional vw.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://material.io/design/layout/spacing-methods.html (4-px base unit, both values sit on the grid)"
-   }
-  },
-  {
-   "id": "D12",
-   "scope": "web/tokens",
-   "decision": "Body and UI type are the system sans stack (-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', Inter, Roboto, system-ui, sans-serif); mono is the system monospace stack (ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'SF Mono', Consolas, 'Liberation Mono', monospace) - zero downloaded fonts on every page.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-22: 'bisakahh kamu redesign website navego sampai jadi product siap ship?' - the redesign carries one system stack, not the Y2K house face",
-    "also": "site/app/tokens.css (--font-sans, --font-mono)"
-   }
-  },
-  {
-   "id": "D13",
-   "scope": "web/tokens",
-   "decision": "Display type is the same system sans stack at weight 700, letter-spacing -0.02em; no separate display face ships.",
-   "source": {
-    "kind": "repo",
-    "ref": "site/app/tokens.css (--font-display is the system stack; headings set font-weight: 700)",
-    "also": "site/app/components/NavegoMark.tsx (the wordmark is the only hand-drawn type on the site)"
-   }
-  },
-  {
-   "id": "D14",
-   "scope": "web/tokens",
-   "decision": "Ground is cream #f6f1e7, ink is navy-deep #0d1338, the one warm accent is amber #d8923f.",
-   "source": {
-    "kind": "repo",
-    "ref": "docs/design-elements.md (Corporate Y2K done flat)"
-   }
-  },
-  {
-   "id": "D15",
-   "scope": "web/tokens",
-   "decision": "Amber is the single warm accent; everything else stays in the navy/cream system.",
-   "source": {
-    "kind": "repo",
-    "ref": "docs/design-elements.md (one amber accent)"
-   }
-  },
-  {
-   "id": "D16",
-   "scope": "web/tokens",
-   "decision": ":focus-visible carries a 2 px outline, 3 px offset; on navy surfaces the ring goes amber.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://www.w3.org/WAI/WCAG21/Understanding/focus-visible.html (WCAG 2.4.7)",
-    "also": "site/app/tokens.css (--focus-ring: 2px solid var(--navy), --focus-offset: 3px)"
-   }
-  },
-  {
-   "id": "D17",
-   "scope": "web/components",
-   "decision": "Buttons hold a 44 px minimum block size.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://developer.apple.com/design/human-interface-guidelines/buttons (at least 44x44 pt hit region)"
-   }
-  },
-  {
-   "id": "D18",
-   "scope": "web/components",
-   "decision": "Button padding is 12 px \u00d7 24 px; small button 8 px \u00d7 16 px; chips 4 px \u00d7 12 px - even pixel steps on the 4-px grid.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://material.io/design/layout/spacing-methods.html (4dp nested units)",
-    "also": "user 2026-11-18 (even-pixel rule)"
-   }
-  },
-  {
-   "id": "D19",
-   "scope": "web/components",
-   "decision": "Radius steps stay even and few: 16 px panels, 10 px controls.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://material.io/design/layout/spacing-methods.html (4-px base unit, both values are multiples of 2)"
-   }
-  },
-  {
-   "id": "D20",
-   "scope": "web/components",
-   "decision": "Flat surfaces carry no shadow; the one soft shadow on the site is 0 1px 2px rgb(13 19 56 / 0.04) on .tile-xl.",
-   "source": {
-    "kind": "repo",
-    "ref": "docs/design-elements.md (flat modern)",
-    "also": "user 2026-11-18 (the notch redesign with its effect)"
-   }
-  },
-  {
-   "id": "D21",
-   "scope": "web/components",
-   "decision": "The nav notch is always visible at every width; compact widths collapse the flat row into it; hover or focus drops the full link strip; the chevron turns amber on hover or focus.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: 'tampilkan notch di semua lebar layar kemudian redesign bentuk notch menjadi modern dan memiliki efek'"
-   }
-  },
-  {
-   "id": "D22",
-   "scope": "web/components",
-   "decision": "The sticky header hides while scrolling down and returns on the way up; it stays put while focused.",
-   "source": {
-    "kind": "repo",
-    "ref": "site/app/brand.css (site-header scroll-state, pre-existing behaviour)"
-   }
-  },
-  {
-   "id": "D23",
-   "scope": "web/components",
-   "decision": "Numbers in tables align right and use tabular figures; body text stays left.",
-   "source": {
-    "kind": "repo",
-    "ref": "site/app/brand.css (.num, tabular-nums)"
-   }
-  },
-  {
-   "id": "D24",
-   "scope": "web/components",
-   "decision": "prefers-reduced-motion disables smooth scrolling and transitions.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion",
-    "also": "https://www.w3.org/WAI/WCAG21/Understanding/animation-from-interactions.html (WCAG 2.3.3)"
-   }
-  },
-  {
-   "id": "D25",
-   "scope": "web/components",
-   "decision": "text-wrap: balance on headings, pretty on prose.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://developer.mozilla.org/en-US/docs/Web/CSS/text-wrap"
-   }
-  },
-  {
-   "id": "D26",
-   "scope": "web/components",
-   "decision": "The footer hands out an 88x31 badge; the size is the early-web link-back convention.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://en.wikipedia.org/wiki/Web_badge (88x31 web badges)"
-   }
-  },
-  {
-   "id": "D27",
-   "scope": "web/components",
-   "decision": "The header hides via a container scroll-state query so it does not depend on JS.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_conditional_rules/Container_scroll-state_queries (Using container scroll-state queries - the @container scroll-state() at-rule and the queries it answers)"
-   }
-  },
-  {
-   "id": "D28",
-   "scope": "web/identity",
-   "decision": "The mark is one hand-drawn stroke: left stem, the diagonal (top-left to bottom-right), right stem, each with a slight human bow \u2014 never ruler-straight.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: pick D, fix the reversed stroke direction, then 'buat huruf N pada logo lebih natural seperti coretan manusia'"
-   }
-  },
-  {
-   "id": "D29",
-   "scope": "web/identity",
-   "decision": "The amber underline below the N is one symmetric arc, centred on 120.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: 'betulkan juga garis stroke di bawahnya agar simetris'"
-   }
-  },
-  {
-   "id": "D30",
-   "scope": "web/identity",
-   "decision": "The wordmark is the same hand: single-stroke round-capped letters, one motion per glyph, no tittle over the g.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: 'kata navego buat jadi tulisan tangan'; 'di atas huruf g tidak perlu ada titik'; 'tulisan tangan navego buat konsisten untuk stylenya'"
-   }
-  },
-  {
-   "id": "D31",
-   "scope": "web/identity",
-   "decision": "The letters a and e are drawn to read unmistakably (closed bowl plus stem for a; loop plus crossbar for e) \u2014 a wordmark nobody can read is decoration, not a wordmark.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: 'huruf a dan e masih belum bisa terbaca'"
-   }
-  },
-  {
-   "id": "D32",
-   "scope": "web/identity",
-   "decision": "One mark everywhere: components, favicon (icon.svg), standalone mark (navego-mark.svg), 88x31 badge, og-cover.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: 'satu mark di semua tempat'"
-   }
-  },
-  {
-   "id": "D33",
-   "scope": "web/identity",
-   "decision": "The mark palette is fixed: disc #233259, stroke #f4f1e9, accent #d8923f (badge uses the reversed navy-on-cream form).",
-   "source": {
-    "kind": "repo",
-    "ref": "docs/design-elements.md (navy disc, chrome, amber accent); site/app/components/NavegoMark.tsx (current art)"
-   }
-  },
-  {
-   "id": "D34",
-   "scope": "web/identity",
-   "decision": "No Huginn & Muninn anywhere; the footer line is 'Navego \u2014 Browser Anda, atas perintah Anda.' and the auth panel carries the logo lockup, not a myth label.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: 'ganti huginn & muninn dengan navego dan logonya'"
-   }
-  },
-  {
-   "id": "D35",
-   "scope": "web/copy",
-   "decision": "No eyebrows, kickers or crumbs above headings, anywhere \u2014 the heading is the first thing on the page.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18 (beranda screenshot, then 'hapus semua eyebrows no eyebrows')",
-    "also": "docs/design-elements.md (decision 14: every eyebrow label deleted)"
-   }
-  },
-  {
-   "id": "D36",
-   "scope": "web/copy",
-   "decision": "The document outline runs h1 \u2192 h2 \u2192 body; nothing sits above the h1.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: 'agentik browser lokal ada di atas heading satu yang mana itu tidak urut'",
-    "also": "https://design-system.canada.ca/en/styles/typography (heading levels numerically ordered, no skipped levels)"
-   }
-  },
-  {
-   "id": "D37",
-   "scope": "web/copy",
-   "decision": "The middle dot is never used as a separator \u2014 commas, dashes or parentheses instead.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: 'pemisah tidak boleh menggunakan titik tengah'"
-   }
-  },
-  {
-   "id": "D38",
-   "scope": "web/copy",
-   "decision": "The login panel opens with the logo lockup, not a label; the h1 stays 'Masuk atau daftar.' in the same place on both phases of the form.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18 (the navego.pages.dev screenshot)"
-   }
-  },
-  {
-   "id": "D39",
-   "scope": "repo",
-   "decision": "Every decision in code cites docs/decisions.json as `decisions.json -> D<n>`, or it does not ship; the gate is tests/tooling/decisions.test.ts.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: every decision in code carries a source; the register is one file the code refers back to - \"wajib ada link untuk referensi\"; enforced repo-wide after the website"
-   }
-  },
-  {
-   "id": "D40",
-   "scope": "repo",
-   "decision": "A reason is written as a reason: no comment opens with a WHY prefix; the reason is written directly.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: \"langsung kasih reason tanpa why\""
-   }
-  },
-  {
-   "id": "D41",
-   "scope": "repo",
-   "decision": "The acceptance surface is not swept and not judged: gates.lock, .gitleaks.toml, .github, the frozen public contract in tests/helpers/boundary-locks.ts, and hosted/migrations; the exclusions are named in tests/tooling/decisions.test.ts and in AGENTS.md, each with its reason.",
-   "source": {
-    "kind": "repo",
-    "ref": "AGENTS.md scope rules 2-4 (a gate that must move is re-pinned in the same commit, with the reason); user 2026-11-18: enforce the rule across the repo without touching the acceptance surface"
-   }
-  },
-  {
-   "id": "D42",
-   "scope": "web/copy",
-   "decision": "Notich and drop-down strip are flat rectangles, square corners, no curves and no gradient; hover or focus tint and one chevron are the whole effect.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: \"notchnya masih belum betul aku mau buat jadi minimalis tanpa lekukan\""
-   }
-  },
-  {
-   "id": "D43",
-   "scope": "web/copy",
-   "decision": "One idea per tile, headline of 2-6 words; the supporting line is one sentence; nothing advertises more than one benefit at a time.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://www.apple.com (product tiles: one idea per headline); https://developer.apple.com/app-store/product-page/ (concise informative paragraph); https://marketingexamined.com/blog/how-to-write-copy-like-apple (one big idea per headline; inverted pyramid)"
-   }
-  },
-  {
-   "id": "D44",
-   "scope": "web/copy",
-   "decision": "Sentences stay short and carry one idea each; paragraphs stay short enough to scan, written for a reader who skims before reading.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://marketingexamined.com/blog/how-to-write-copy-like-apple (Apple copy uses short paragraphs, short sentences and simple words; write for scanners)"
-   }
-  },
-  {
-   "id": "D45",
-   "scope": "web/copy",
-   "decision": "Address the reader in the second person, in the present tense, with verbs that are things the product literally does (read, fill, click, save); no adjectives praising the product, no exclamation marks.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://help.apple.com/pdf/applestyleguide/en_US/apple-style-guide.pdf (Apple style guide: sentence-style headings, second person, active voice); https://developer.apple.com/videos/play/wwdc2022/10037/ (write like a person, one idea at a time)"
-   }
-  },
-  {
-   "id": "D46",
-   "scope": "web/copy",
-   "decision": "Facts pinned by the site gate survive any rewrite verbatim: Navego, 40, primitive browser, plan.usd-1, PayPal, Enterprise, SHA-256, 1.6.22, docs/releases, browser_status, debugger, Tanpa eval, Kata sandi, SECURITY.md, Diukur bukan diklaim, Google Docs, p50, Apa itu Navego, Berapa harganya, Halaman ini tidak ada, browser Anda, Penyedia, Izin aplikasi, Memeriksa sesi, WebDriver, canvas, Artikel, AI yang mengenal browser, Dukungan, Kebijakan Privasi, Syarat Layanan.",
-   "source": {
-    "kind": "repo",
-    "ref": "tests/site/site.test.ts (CLAIMS); site/app/routes/*.tsx"
-   }
-  },
-  {
-   "id": "D47",
-   "scope": "web/copy",
-   "decision": "The site is written in Indonesian, like the UI it describes; technical terms the product itself uses (browser, MCP, extension, plan, PayPal) stay in English only when the interface shows them in English.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: redesign the site content with internet research for sentence style; product language stayed Indonesian (lang=\"id\" across every route, site.test.ts)"
-   }
-  },
-  {
-   "id": "D48",
-   "scope": "web/copy",
-   "decision": "Inverted pyramid in every section: the claim first, the strongest proof second, the rest last - readers who stop after one line still leave with the right idea.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://marketingexamined.com/blog/how-to-write-copy-like-apple (big headlines showcase one idea, inverted-pyramid paragraphs: biggest benefit to smallest); https://linear.app (claim, then proof, then link)"
-   }
-  },
-  {
-   "id": "D49",
-   "scope": "web/components",
-   "decision": "The coba section ships the product UI itself: a navy command panel (prompt, typed text, caret, preset chips) and a paper trace panel (numbered primitive steps, always visible) - no submit button hiding the interesting half; the interaction lives in the choice of preset, not in a form submit.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://www.apple.com (product demos ship the interface as the marketing); https://linear.app (the product UI as the marketing); https://www.raycast.com/ (typewriter prompt panel as the hero)"
-   }
-  },
-  {
-   "id": "D50",
-   "scope": "web/components",
-   "decision": "The chevron panel never repeats what the bar already shows: above 940px it lists only the secondary links (Keamanan, Changelog, FAQ, Metodologi, Bandingkan, Privasi, Syarat); at or below 940px, where the primary row is hidden, it lists every link, five per column in menu order.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: \"ini masih dobel kenapa yak\" - the panel repeated the eight links already visible in the bar; user wants no duplicate"
-   }
-  },
-  {
-   "id": "D51",
-   "scope": "web/components",
-   "decision": "The header carries only the brand and one amber CTA; the flat nav row and the mega panel are deleted; the chevron is the only navigation surface, opening the full fifteen-link panel at every width.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18: \"Hilangkan bar nav atas\" - the flat Beranda..Dukungan row was still displayed on top, duplicating what the chevron panel already carries"
-   }
-  },
-  {
-   "id": "D52",
-   "scope": "web/components",
-   "decision": "The chevron panel is a full-width dark mega panel in four columns - Beranda spotlight, Produk, Kepercayaan then Sumber, Bantuan - the Apple Shop-menu pattern the owner sent, so a visitor knows the site structure from the dropdown alone; the header row is full-bleed edge-to-edge, not capped to the 1120px content measure.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-18 screenshot of apple.com Shop dropdown; user instruction: \"punya headernya efek memanjang terus full dari pojok ke pojok kemudian redesign lagi kontn panel drop yang beranda dan seterusnya supaya orang tidak bingung lihatnya\""
-   }
-  },
-  {
-   "id": "D53",
-   "scope": "web/components",
-   "decision": "No divider between the bar and the mega panel - one continuous dark surface; the panel fades and rises slowly (450ms opacity / 500ms rise) over the ease-out, instant during reduced motion; the stuck-state shadow under the bar is removed so the bar reads as one surface with the panel, not a floating plane above it. The seam the shadow left behind is closed twice: the full-width chevron wrapper carries the bar's navy-deep background so the cream ground never shows through at the bottom edge, and the open strip overlaps the seam by 1px (margin-top: -1px).",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"buat animasinya lebih slow dan hilangkan garis strip yang ada di bawah chevron buat supaya nav bar seperti ke bawah memanjang\" - the shadow was the 1px line passing below the chevron"
-   }
-  },
-  {
-   "id": "D54",
-   "scope": "web/components",
-   "decision": "The bar carries the brand on the left, \"Beranda\" as a plain text link beside it, and two actions on the right: \"Masuk\" (ghost, links to the sign-in page) and \"Pasang gratis\" (solid amber CTA) - the owner reported both missing.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"tombol login dan beranda belum ada\""
-   }
-  },
-  {
-   "id": "D55",
-   "scope": "agent/tools",
-   "decision": "browser_read_page gains a bound on how much it returns (maxChars, and a selector scope or a view-style brief/map split in the implementation); an agent is expected to read a bounded page, never an unbounded one.",
-   "source": {
-    "kind": "recorded",
-    "ref": "docs/releases/1.6.47.md:8-19 - view brief (default, one viewport at a time) vs view map (the whole document) existed; read_page_map was folded into read_page and the tool count was asserted in CI as a frozen inventory",
-    "also": "https://www.anthropic.com/research/writing-tools-for-agents - pagination, range selection, filtering and truncation for tool responses; the 25,000-token default; redundant tool calls suggest rightsizing pagination or token limits"
-   }
-  },
-  {
-   "id": "D56",
-   "scope": "agent/tools",
-   "decision": "The tool lists in local/README.md and docs/agent-call.md are regenerated from the catalog instead of handwritten; the tool count is asserted in CI the way 1.6.47 and 1.6.48 asserted it; every recipe in browser_get_guide resolves to a live tool name.",
-   "source": {
-    "kind": "recorded",
-    "ref": "docs/agent-call.md:59 claims 56 tools; local/README.md:79-93 lists the generation-1 agent-native names; 1.6.52.md:12, 1.6.53.md:16, 1.6.54.md:16 say 56 unchanged; 1.6.57.md is a 0-byte file; live catalog 2026-11-19 has 45 browser_-prefixed tools; npm registry opera-agent-mcp 1.7.5 (modified 2026-11-17) vs package.json 1.6.54; docs/proof/extension-run.jsonl recorded toolCount 54 on 2026-11-06"
-   }
-  },
-  {
-   "id": "D57",
-   "scope": "agent/tools",
-   "decision": "artifact_build_workbook and artifact_build_report ship as one tool with a format parameter (word or xlsx); the signed parameters are identical (client, title, period, periodColumn, groupBy, valueColumn, out) and both run the same plan recheck before the file exists.",
-   "source": {
-    "kind": "recorded",
-    "ref": "catalog signatures of 2026-11-19, verbatim: both tools carry client, title, period, periodColumn?, groupBy, valueColumn, out? and refuse the same wrong figure twice",
-    "also": "https://www.anthropic.com/research/writing-tools-for-agents - too many or overlapping tools distract agents from efficient strategies; consolidate functionality into tools with a clear, distinct purpose"
-   }
-  },
-  {
-   "id": "D58",
-   "scope": "agent/tools",
-   "decision": "browser_find_text folds into browser_find_element as mode text: one locate tool, two modalities - role+name resolves a centred anti-stale handle; a plain text resolves viewport rects in the same space a screenshot uses; the handle is the only click currency.",
-   "source": {
-    "kind": "recorded",
-    "ref": "catalog descriptions of 2026-11-19: find_element returns the handle and box, measured from the node at the click; find_text returns each match with a viewport rect in the same space a screenshot uses - one page, two lookups, overlapping purpose",
-    "also": "https://www.anthropic.com/research/writing-tools-for-agents - tools should have a clear, distinct purpose; overlapping tools distract"
-   }
-  },
-  {
-   "id": "D59",
-   "scope": "agent/tools",
-   "decision": "Tool names are not renamed; the documentation is fixed to resolve to the live names - the guide and the README carry two generations of names today, and every unrecorded rename widens that gap.",
-   "source": {
-    "kind": "recorded",
-    "ref": "browser_get_guide output of 2026-11-19: recipes say portal, front, captcha, click; its own sideEffects block names browser_check_gate, browser_focus_window, wallet_hold_price; 1.6.52.md:12 records the #312 rename that produced generation-2 without rewriting the guide or README"
-   }
-  },
-  {
-   "id": "D60",
-   "scope": "agent/tools",
-   "decision": "Every tool description reads at two sentences plus a pointer to the guide topic that carries the detail; refusal semantics, input contracts and side effects stay verbatim; the current catalog measures 3,877 words (about 5,293 description tokens), browser_read_page at 248 words.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://www.anthropic.com/research/writing-tools-for-agents - tool descriptions are loaded into the agent context and steer tool-calling behaviour; context is limited, so every description competes with the task for the same window",
-    "also": "catalog measurement 2026-11-19 (45 tools): descriptions sum to 3,877 words, 21,159 characters"
-   }
-  },
-  {
-   "id": "D61",
-   "scope": "agent/tools",
-   "decision": "browser_get_guide gains a topic bukti teks vs gambar - when a measured text read is enough proof and when a picture is mandatory - and every recipe names exact catalog tools with no short aliases.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"screenshot masih sering digunakan? read page kenapa jarang digunakan?\" - the guide pairs recipe Prove it worked (browser_screenshot plus browser_read_page) with refusals that say a tool that reports success is not proof, so image proof is the only proof the server prescribes today"
-   }
-  },
-  {
-   "id": "D62",
-   "scope": "agent/tools",
-   "decision": "browser_intercept_picker restores the native picker by itself (TTL or end of the drive); a suppressed picker never survives an abandoned drive, and the next call names how long the picker has been suppressed.",
-   "source": {
-    "kind": "recorded",
-    "ref": "catalog description of 2026-11-19: forgetting to disable leaves later Upload clicks silent; guide sideEffects: changes whether the native file picker appears on this tab - a documented silent-failure mode, not a measured incident count"
-   }
-  },
-  {
-   "id": "D63",
-   "scope": "agent/tools",
-   "decision": "browser_console is not added until one recorded incident exists that it would have solved; an empty slot in the catalog is not filled by an honest guess.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"harus ada bukti atau source yang valid bisa dari internet bisa dari user atau performa yang tercatat\" - no JS-error-blind incident is recorded anywhere in the repo; the candidate does not pass the evidence gate"
-   }
-  },
-  {
-   "id": "D64",
-   "scope": "agent/tools",
-   "decision": "browser_screenshot does not gain a clip parameter until one recorded verification failure or slowness trace exists over a full-viewport shot; precision is already documented (viewport 1144x714 to 1186x670, scale 1.25), clipping is not demanded anywhere.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"harus ada bukti atau source yang valid bisa dari internet bisa dari user atau performa yang tercatat\" - no such recording exists; the only recorded screenshot measurements are scale conversions"
-   }
-  },
-  {
-   "id": "D65",
-   "scope": "agent/tools",
-   "decision": "browser_open_url stays counts-only (url, title, textChars, rows, focus); it does not gain an excerpt - the guide recipe for page content is browser_read_page, and open_url is the navigation primitive, not the reading primitive.",
-   "source": {
-    "kind": "recorded",
-    "ref": "browser_get_guide output of 2026-11-19 verbatim: task See what is on the page maps to browser_read_page; open_url is not on that road; no usage record demanding an excerpt exists",
-    "also": "user 2026-11-19: the evidence rule - no valid source, no decision"
-   }
-  },
-  {
-   "id": "D66",
-   "scope": "agent/tools",
-   "decision": "wallet_get_price and wallet_hold_price stay two tools, quote then reserve; the plan shape (artifact page or document, or list with an item count) is defined once in the implementation; no catalog-visible change.",
-   "source": {
-    "kind": "recorded",
-    "ref": "catalog descriptions of 2026-11-19 verbatim: get_price carries the plan shape and the show-the-person-first contract; hold_price carries the steps-over-cap refusal - the two halves of one quote and reserve flow, not two schemas written twice"
-   }
-  },
-  {
-   "id": "D67",
-   "scope": "agent/tools",
-   "decision": "docs/decisions.json accepts source kind recorded (file:line of the performance that records the decision) beside user, internet and repo; tests/tooling/decisions.test.ts carries the new kind and names what a recorded source points at.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"harus ada bukti atau source yang valid bisa dari internet bisa dari user atau performa yang tercatat\" - the mandate extends the register vocabulary, and the gate follows it"
-   }
-  },
-  {
-   "id": "D68",
-   "scope": "agent/tools",
-   "decision": "No tool is split: browser_read_page is not divided into peek/full and browser_run_steps stays one burst primitive - a split would double the catalog this mandate was just told to shrink, while scoping parameters do the work inside one tool.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://www.anthropic.com/research/writing-tools-for-agents - tools can consolidate functionality, and overlapping tools distract agents",
-    "also": "docs/releases/1.6.47.md:8-19 - read_page_map was folded into read_page rather than split from it"
-   }
-  },
-  {
-   "id": "D69",
-   "scope": "agent/tools",
-   "decision": "Every tool call that throws at the dispatch point is recorded append-only in $NAVEGO_AGENT_HOME/tool-failures.jsonl with the tool, the error code, the message and the time; the record never throws into the caller and is capped at 2 MB by keeping the newest 1000 lines.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"buat ini ya log untuk tools yang error atau buggy sama feedback juga\" - a failure that the answer cannot carry into the next session survives on the machine instead of vanishing"
-   }
-  },
-  {
-   "id": "D70",
-   "scope": "agent/tools",
-   "decision": "The log is read with navego failures (counts by tool and code, the recent failures, every note) and never leaves the machine; the owner machine is the sink, not a server; deleting the file is always safe - it is an observation channel, not a ledger.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"log untuk tools yang error atau buggy\" - the observation stays local and deletable; nothing is uploaded anywhere"
-   }
-  },
-  {
-   "id": "D71",
-   "scope": "agent/tools",
-   "decision": "The calling agent leaves the suggestion behind with navego feedback <tool> <note> - one append-only line tied to the tool, surfaced beside the failure counts; that is how an agent that uses a tool and sees it break leaves the fix idea where the maintainer will find it without a server round trip.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"supaya ai bisa kasih saran perbaikan saat menggunakan tools\" - the feedback path ships as a CLI command an agent shell can append; the catalog is not touched"
-   }
-  },
-  {
-   "id": "D72",
-   "scope": "agent/tools",
-   "decision": "No new MCP catalog tool is introduced for feedback reporting; the feedback channel is the CLI (navego feedback), not a 46th tool - the frozen tool surface stays as it is, and a catalog tool awaits the same recorded-evidence gate as any addition, the rule applied to browser_console in D63.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"buat ini\" - the mandate authorises the capability, and D63 applies to its shape: no catalog slot without a recorded need that only the catalog can serve"
-   }
-  },
-  {
-   "id": "D73",
-   "scope": "agent/tools",
-   "decision": "browser_focus_window is deleted; no tool in the catalog can move any window to the foreground. The drive runs in the background; window state is answered by browser_status (which names the browser in front), and the only remaining front path is the session-level guard in local/focus-guard.ts - it restores the session own window when the page cannot hear input, is not agent-callable, and fires only on the session word of minimized.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"iya hapus aja yng focus window buat semua bisa berjalan di latar belakang\" - the tool existed only to bring a window to the front; the owner wants the drive invisible",
-    "also": "recorded: local/focus-guard.ts documents the session-level restore the agent cannot reach"
-   }
-  },
-  {
-   "id": "D74",
-   "scope": "agent/tools",
-   "decision": "browser_screenshot always answers: when the compositor has no frame for the tab (a locked screen, a minimized window, a hidden tab), the driver retries with captureBeyondViewport clipped to the current viewport top, and the answer names the road - compositor or beyondviewport. Nothing is ever brought to the foreground (D73).",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"yang screenshot fix supaya bisa screenshot di latar belakang\" - the live drive hit \"Unable to capture screenshot\" on a backgrounded tab",
-    "also": "recorded: local/observe.ts capture() - compositor road first, captureBeyondViewport fallback, scope D73 forbids the foreground path"
-   }
-  },
-  {
-   "id": "D76",
-   "scope": "web/components",
-   "decision": "The bar carries brand (links home) and two actions, nothing else: \"Masuk\" while the browser holds no session, \"Dashboard\" once it does, and the amber \"Pasang gratis\" CTA either way - the centered Beranda text link is removed; the chevron and the panel spotlight remain the route home.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"fix element beranda yang masih di atas nav bar\" (answer: \"Label Beranda di tengah bar\") - the centered link sits awkwardly against D51: brand left, one amber CTA right, chevron is the sole navigation surface"
-   }
-  },
-  {
-   "id": "D77",
-   "scope": "web/components",
-   "decision": "html and body carry overflow-x: clip; the page never forces itself wider than the viewport, so the sticky header regains its real width and the brand and the two action pills cannot be pushed past the screen edge.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"fix log navego element masuk dan element pasang gratis yang terpotong\" - the header honours body width; a body pushed wider by an unbreakable element clips the actions on the right and crowds the brand on the left"
-   }
-  },
-  {
-   "id": "D78",
-   "scope": "agent/tools",
-   "decision": "artifact_build_report, artifact_build_slides and artifact_build_document merge into one artifact_build tool with a target parameter (word, xlsx, pptx, docx); the user asked for the merge in the audit conversation.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: audit of the local MCP surface recommended merging the three artifact tools into artifact_build; user: \"kerjakan rekomendasimu\" - the merge runs"
-   }
-  },
-  {
-   "id": "local-surface-profile-01",
-   "scope": "agent/read",
-   "decision": "An iframe that holds focus counts as an editable host when a canvas covers the viewport; the probe reports editorFrame with its own evidence, so a canvas document (Google Docs) reaches the selection-copy step instead of being read as a toolbar-only AX page.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"implementasi selection copy dan ocr kemudian buat read page otomatis ya jangan buat agent menebak nebak\" - measured on a real Google Doc: surface-profile answered editable:false with \"no editable host\" while the document iframe held focus"
-   },
-   "file": "local/surface-profile.ts"
-  },
-  {
-   "id": "hosted-navego-ocr-01",
-   "scope": "hosted/functions",
-   "decision": "The vision step of browser_read_page calls the navego-ocr edge, which authenticates with the paired device token (x-navego-token, sha256 token_hash) or a user Bearer and answers only the text of the picture; it is the last step of the read ladder, after the selection mirror, ax and dom, the screenshot is capped and never stored, the OCR model is named by GROQ_OCR_MODEL with a vision default, and a machine without the pairing file is told so by name instead of being handed an empty picture.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"implementasi selection copy dan ocr\" - OCR could not run locally (no tesseract binary, no dependency allowed in the stock-Node driver) and the product already proxies a model through an edge with a server-held key (navego-listen / GROQ_API_KEY)"
-   },
-   "file": "hosted/functions/navego-ocr/index.ts"
-  },
-  {
-   "id": "docs-security-01",
-   "scope": "extension/security",
-   "decision": "The extension is Manifest V3 and carries no arbitrary eval or remote code; every browser action is a known, validated primitive.",
-   "source": {
-    "kind": "repo",
-    "ref": "docs/security.md:10-11 (no arbitrary eval or remote code; browser actions use known, validated primitives); extension/manifest.json:2 (manifest_version 3)"
-   },
-   "file": "docs/security.md"
-  },
-  {
-   "id": "docs-security-02",
-   "scope": "extension/isolation",
-   "decision": "The content script runs in the page's ISOLATED world and reads only the DOM the extension rendered or the bounded accessibility summary; no reader is registered in the MAIN world.",
-   "source": {
-    "kind": "repo",
-    "ref": "docs/security.md:12-18 (ISOLATED world, bounded accessibility summary from extension/lib/ax-summary.ts, no registered reader in the MAIN world)"
-   },
-   "file": "docs/security.md"
-  },
-  {
-   "id": "hosted-migrations-core-01",
-   "scope": "database/rls",
-   "decision": "The core opera tables enable row level security in the migration that creates them, and anon and authenticated lose every grant; access is decided by policy on the server, never by a client-held table grant.",
-   "source": {
-    "kind": "repo",
-    "ref": "hosted/migrations/20260907204146_navego_1_0_0_core.sql:83-90 (alter table ... enable row level security; revoke all on ... from anon,authenticated)"
-   },
-   "file": "hosted/migrations/20260907204146_navego_1_0_0_core.sql"
-  },
-  {
-   "id": "docs-concurrent-agents-01",
-   "scope": "database/migrations",
-   "decision": "Applied migrations are history: new SQL is appended in timestamp order, never rewritten, and two sessions never apply migrations at the same time.",
-   "source": {
-    "kind": "repo",
-    "ref": "docs/concurrent-agents.md:51 (applied one at a time - two sessions reorder them and the reorder is a production incident); tests/tooling/decisions.test.ts:108 (the applied past is not rewritten)"
-   },
-   "file": "docs/concurrent-agents.md"
-  },
-  {
-   "id": "hosted-migrations-wallet-01",
-   "scope": "database/wallet",
-   "decision": "The wallet ledger is append-only money movement; a correction is a new adjust row carrying its reason, never an update or a delete, and the balance is the sum of amount_cents.",
-   "source": {
-    "kind": "repo",
-    "ref": "hosted/migrations/20261104120000_opera_wallet.sql:51-67 (opera_ledger table and its append-only comment); docs/superpowers/specs/2026-11-04-prabayar-tugas-selesai-design.md:57 (all ledger writes append-only; settle and refund idempotent by unique reservation_id)"
-   },
-   "file": "hosted/migrations/20261104120000_opera_wallet.sql"
-  },
-  {
-   "id": "local-bridge-01",
-   "scope": "mcp/transport",
-   "decision": "The local driver reaches the everyday browser over the loopback bridge, port 9451 by default; a second driver adopts the running bridge as a client of the winner instead of failing or falling back to a debugging port nobody is signed into.",
-   "source": {
-    "kind": "repo",
-    "ref": "local/bridge.ts:54-57 (a second driver becomes a client of the winner); local/README.md:55-56 (NAVEGO_BRIDGE_PORT defaults to 9451)"
-   },
-   "file": "local/bridge.ts"
-  },
-  {
-   "id": "docs-security-03",
-   "scope": "mcp/auth",
-   "decision": "Device tokens travel in x-navego-token, Authorization: Bearer, or body.apiKey only; no gateway route reads a token from the query string.",
-   "source": {
-    "kind": "repo",
-    "ref": "docs/security.md:33-36 (the three carriers, and no route reads the query string)"
-   },
-   "file": "docs/security.md"
-  },
-  {
-   "id": "local-read-strategy-01",
-   "scope": "agent/read",
-   "decision": "On a canvas surface with an editable editor, the selection mirror leads the read ladder; DOM, accessibility and OCR follow. A canvas without an editor keeps the accessibility tree first.",
-   "source": {
-    "kind": "recorded",
-    "ref": "measured on a real Google Doc, 2026-11-19: the accessibility tree answered a canvas document in 19-30ms but only 56 characters of toolbar, while the document body held thousands behind the selection; tests/local/read-strategy.test.ts:28 proves the mirror leads on a canvas editor"
-   },
-   "file": "local/read-strategy.ts"
-  },
-  {
-   "id": "local-canvas-01",
-   "scope": "agent/read",
-   "decision": "A canvas document that mirrors no selection in the DOM is read by copying: Ctrl+A, then Ctrl+C, then the clipboard text, and the answer carries clipboardUsed; the DOM selection is asked first so a page that answers there never pays the copy.",
-   "source": {
-    "kind": "recorded",
-    "ref": "measured on a real Google Doc, 2026-11-19: Ctrl+A left every frame's getSelection empty and Ctrl+C put 8,750 characters of the document on the clipboard; tests/surface/surface-drive.test.ts:180 proves the clipboard fallback"
-   },
-   "file": "local/canvas.ts"
-  },
-  {
-   "id": "local-canvas-02",
-   "scope": "agent/read",
-   "file": "local/canvas.ts",
-   "decision": "A clipboard copy is accepted only when the page has focus and the clipboard changed from a sentinel written before Ctrl+C; the previous text clipboard is restored afterwards, and a stale clipboard is refused by name instead of returned as the page.",
-   "source": {
-    "kind": "recorded",
-    "ref": "measured 2026-11-19: an unfocused tab refused writeText with NotAllowedError and left the previous clipboard readable, which a copy that never ran would have returned as this page; tests/surface/surface-drive.test.ts:194 proves the stale clipboard is refused"
-   }
-  },
-  {
-   "id": "local-canvas-03",
-   "scope": "agent/read",
-   "file": "local/canvas.ts",
-   "decision": "The OCR fallback runs only when the caller passes allowVision: true on that call; without it the vision step is declined by name, because the screenshot leaves the machine and the product promise is that pages never leave without consent.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19: \"implementasi selection copy dan ocr kemudian buat read page otomatis\" - the caret consent covered a local selection, not a screenshot uploaded to the hosted edge"
-   }
-  },
-  {
-   "id": "local-surface-profile-02",
-   "scope": "agent/read",
-   "file": "local/surface-profile.ts",
-   "decision": "A document region counts as accessibility-rich at ten or more text boxes; below that the DOM leads, because a toolbar reads as menu labels rather than a document.",
-   "source": {
-    "kind": "recorded",
-    "ref": "measured on a real Google Doc, 2026-11-19: the document region carried 155 text boxes and the chrome around it carried 60, so the ten-box bar separates them by an order of magnitude; tests/surface/surface-profile.test.ts:133 proves a toolbar alone does not lead"
-   }
-  },
-  {
-   "id": "local-tool-schema-01",
-   "scope": "mcp/validation",
-   "file": "local/tool-schema.ts",
-   "decision": "Every tool call is validated at runtime against the same inputSchema the client reads, so a hand-written call cannot skip a required field, type, bound, enum or nested shape the advertised contract declares.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19 review: \"gunakan satu validator runtime yang menjadi sumber validasi setiap tool ... jangan sampai ada dua kontrak yang berkembang secara terpisah\""
-   }
-  },
-  {
-   "id": "local-tool-failures-01",
-   "scope": "mcp/diagnostics",
-   "file": "local/tool-failures.ts",
-   "decision": "The failure log redacts secrets before it writes a byte and names each redaction, and the file and its directory are private to the user; a raw upstream error is never stored.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19 review: \"Redaksi rahasia sebelum menyimpan pesan ... Simpan error code terstruktur, bukan raw error ... Tambahkan test dengan token/password sintetis\""
-   }
-  },
-  {
-   "id": "local-gates-01",
-   "scope": "agent/login",
-   "file": "local/gates.ts",
-   "decision": "A credentials file is accepted only when every account carries a non-empty domain, username and password, and subdomains (when present) is boolean; a malformed account is refused by name before a key is pressed.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19 review: \"perlu memvalidasi domain ... username ... password wajib string dan tidak kosong ... subdomains wajib boolean ... Tambahkan test untuk password hilang, null, angka, dan string kosong\""
-   }
-  },
-  {
-   "id": "site-auth-01",
-   "scope": "web/auth",
-   "file": "site/app/lib/auth.ts",
-   "decision": "A refresh token rotates once per document and once per origin: concurrent callers share one in-flight refresh, and the Web Locks name serialises tabs, so a second tab serves the token the first one stored instead of spending the refresh token again.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-19 review: \"Pada fungsi renewAccessToken() tidak terlihat mekanisme single-flight atau lock ... Buat test multi-tab dan request concurrent\""
-   }
-  },
-  {
-   "id": "docs-branch-protection-01",
-   "scope": "ci/main",
-   "decision": "Main requires all five CI jobs as required checks with strict status verification, enforce_admins is on, force pushes and deletions are refused, dismiss-stale-approvals is on, and every pull request needs an approving review with code-owner sign-off on the gatekeeper surface (tests/, scripts/, gates.lock and the rest of .github/).",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - the audit (its remaining gap) asked for the review on the gatekeeper paths"
-   },
-   "file": "docs/product/backend-language-evaluation.md"
-  },
-  {
-   "id": "tests-hosted-integration-postgres-01",
-   "scope": "ci/testing",
-   "decision": "PostgreSQL integration tests run in CI against a disposable Postgres: every migration applies under ON_ERROR_STOP, and the test asserts opera_commands carries its full lifecycle check and RLS is on the billing tables - the real proof for the migration contract.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - backend-language-evaluation.md item 5 left this open"
-   },
-   "file": "tests/hosted/integration-postgres.test.ts"
-  },
-  {
-   "id": "tests-tooling-swallowed-errors-01",
-   "scope": "tooling/gates",
-   "decision": "Every failure the product catches and ignores is listed in tests/tooling/swallowed-errors.lock with the reason it may be ignored, and the gate refuses a failure that is not listed and a line that names a failure the tree no longer has; the list can only shrink.",
-   "source": {
-    "kind": "repo",
-    "ref": "docs/product/backend-language-evaluation.md: item 4 of 'What we will do (in order)' - 'Silently swallowing errors' was the part of the stub sweep that was still open"
-   },
-   "file": "tests/tooling/swallowed-errors.test.ts"
-  },
-  {
-   "id": "tests-tooling-predecessor-name-01",
-   "scope": "tooling/gates",
-   "decision": "The predecessor product's name survives only where a reason says it must: the applied migration history, the dated records, the cited decisions, the one compatibility list that still recognises an install from that era, and the files that document the cleanup. The gate refuses it in every other file, so the tree cannot drift back into two names.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-20: 'bersihkan juga repo opera agent supaya tidak membingungkan supaya repo tetap navego' - a name that lingers in a live surface is a name a reader cannot tell apart from the product"
-   },
-   "file": "tests/tooling/predecessor-name.test.ts"
-  },
-  {
-   "id": "docs-branch-protection-02",
-   "scope": "ci/main",
-   "decision": "The owner may merge without the required review on main, because GitHub refuses an approving review from a pull request's own author and this repository has one account; every other rule stays: one approving review with code-owner sign-off, the five CI checks with strict verification, no force pushes, no deletions, and resolved conversations before a merge.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-20: 'oke approve apply publish rotasi tunda dulu' - the owner asked for the approval and for the release; the API refused to put the owner on the bypass list, so enforce-admins was turned off, which is the same permission in a repository with one admin"
-   },
-   "file": "docs/product/backend-language-evaluation.md"
-  },
-  {
-   "id": "hosted-request-body-01",
-   "scope": "hosted/functions",
-   "decision": "Every hosted edge function reads its JSON request body through one shared rule: a body must be a plain object, and a body that is malformed JSON, null, an array or a primitive is refused with that function's own 400 envelope before typed action code sees it. A malformed body and valid JSON that is not an object stay two different refusals.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - the enterprise audit left hosted-function input validation open; docs/product/backend-language-evaluation.md item 2 names it"
-   },
-   "file": "hosted/functions/_shared/request-body.ts"
-  },
-  {
-   "id": "local-tools-bounds-01",
-   "scope": "mcp/validation",
-   "decision": "A cap the tool description advertises is declared in the same inputSchema the client reads, so the runtime validator enforces the number the prose promises: maxChars at most 100000, the search budget at most 30000, the row limit at most 500, the burst budget at most 12000, and the wait budget at most 60000.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - the enterprise audit found advertised caps the schema did not declare; docs/product/backend-language-evaluation.md item 2 names the boundary"
-   },
-   "file": "local/tools.ts"
-  },
-  {
-   "id": "extension-bridge-url-migration-01",
-   "scope": "extension/endpoints",
-   "decision": "A device paired before the bridge function was renamed stores the predecessor bridge slug, which now resolves to a stale deployment; the extension rewrites that stored URL to the current slug and persists it, so the device leaves the old deployment once and stays on the deployed one.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-20: 'lanjutkan navego jadi enterprise ready' - the enterprise pass left the update and quota defects found on the live machine"
-   },
-   "file": "extension/lib/endpoints.ts"
-  },
-  {
-   "id": "hosted-plan-quota-01",
-   "scope": "hosted/functions",
-   "decision": "The daily quota comes from the account profile the bridge reads, and the bundled plan table is only the fallback for a profile that carries no quota; a build whose table predates the current sale can no longer charge an account a quota it never bought.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-20: 'lanjutkan navego jadi enterprise ready' - the enterprise pass left the hosted plan gate measured against a stale deployment"
-   },
-   "file": "hosted/functions/navego-bridge/plan-gate.ts"
-  },
-  {
-   "id": "site-auth-return-path-01",
-   "scope": "web/auth",
-   "decision": "A return path after sign-in keeps its intent when it stays on this site: a relative path such as ./dashboard or a root-relative path such as /dashboard?pair=1#pairing. A scheme-relative or absolute path to another origin is refused, so an attacker cannot turn the login page into an open redirect.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://owasp.org/www-community/attacks/Open_redirects (an unvalidated redirect target lets an attacker send a person off-site after a trusted login)"
-   },
-   "file": "site/app/lib/auth.ts"
-  },
-  {
-   "id": "site-session-state-01",
-   "scope": "web/auth",
-   "file": "site/app/lib/auth.ts",
-   "decision": "The session is stored in this browser's localStorage and survives a tab close and a browser restart: the access token, the rotating refresh token, and the account email. The header reads the account from that store, so a visitor sees whether they are signed in on every page, and a sign-in or a sign-out in one tab flips the header in the others without a reload.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-22: 'fix ini supaya kelihatan sudah login atau belum dan bisa menyimpan sesi login'",
-    "also": "site/app/components/Chrome.tsx (the header reads the account)"
-   }
-  },
-  {
-   "id": "site-plan-shape-01",
-   "scope": "web/dashboard",
-   "decision": "The dashboard reads the plan fields the server actually sends: dailyQuota, usedToday, sessionAllowance and status. A null dailyQuota means no daily cap, and a failed read is reported as a failure with a retry rather than as an empty plan, because a zero quota told every account its plan was exhausted.",
-   "source": {
-    "kind": "repo",
-    "ref": "hosted/migrations/20261118090100_opera_usd_plan_readers.sql:23-49 (opera_my_plan returns dailyQuota, usedToday, sessionAllowance and rpm; a null dailyQuota is an unlimited tier)",
-    "also": "site/app/lib/dashboardApi.ts:26-34 (the typed plan contract the dashboard reads)"
-   },
-   "file": "site/app/lib/dashboardApi.ts"
-  },
-  {
-   "id": "site-console-shape-01",
-   "scope": "web/dashboard",
-   "decision": "The operator console reads the table fields the server sends: name, scope, readable and total. A table the account may not read is not listed at all, so the console never offers a row the server would refuse.",
-   "source": {
-    "kind": "repo",
-    "ref": "hosted/migrations/20261010090000_navego_konsol_tables.sql:53-76 (opera_konsol_tables returns name, scope, readable and total)",
-    "also": "site/app/lib/dashboardApi.ts:98 (the typed console contract)"
-   },
-   "file": "site/app/lib/dashboardApi.ts"
-  },
-  {
-   "id": "site-type-01",
-   "scope": "web/tokens",
-   "decision": "The site uses one sans family for text and display, a monospace family for code and command output, and a small even-pixel scale: 12, 14, 16, 18, 20, 24, 28, 32, 40, 56, 64. Weight carries hierarchy: 400 body, 500 controls, 600 headings, 700 hero. Arial Black is gone, because one heavy display face for every heading removes the subhead level and makes the documentation and operator surfaces unreadable.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://developer.apple.com/design/human-interface-guidelines/typography (Apple uses one family across sizes and advises Regular, Medium, Semibold and Bold rather than decorative weights)",
-    "also": "https://linear.app/now/how-we-redesigned-the-linear-ui (Inter for body copy, Inter Display only for expressive headings, denser app UI)"
-   },
-   "file": "site/app/tokens.css"
-  },
-  {
-   "id": "site-motion-01",
-   "scope": "web/motion",
-   "decision": "Motion is short and purposeful: 120 ms for hover and state feedback, 180 ms for menus and tab changes, 320 ms for a panel opening. Two curves carry it: cubic-bezier(0.4, 0, 0.2, 1) for standard transitions and cubic-bezier(0.22, 1, 0.36, 1) for entrances. Under prefers-reduced-motion the durations collapse and every state stays readable through text and colour.",
-   "source": {
-    "kind": "internet",
-    "ref": "https://developer.apple.com/design/human-interface-guidelines/motion (motion should be brief and precise, and must be optional)",
-    "also": "https://linear.app/now/how-we-redesigned-the-linear-ui (short state transitions in the app shell)"
-   },
-   "file": "site/app/tokens.css"
-  },
-  {
-   "id": "site-design-system-01",
-   "scope": "web/tokens",
-   "file": "site/app/tokens.css",
-   "decision": "The tokens file is the single source of the site's colour, type, spacing and motion; every web/* decision in this register names a value this file or site/app/brand.css carries, and no route carries a visual value in an inline style.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-22: 'bisakahh kamu redesign website navego sampai jadi product siap ship?'",
-    "also": "site/app/brand.css (the component layer that reads the tokens)"
-   }
-  },
-  {
-   "id": "site-dashboard-action-two-phase-01",
-   "scope": "web/dashboard",
-   "decision": "The dashboard's run button asks the server for the command first and waits for the answer in a second call, because a SQL function that enqueues and waits holds both in one transaction and the paired device cannot see the row until the wait has already timed out.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-21: 'upgrade website navego menjadi enterprise ready ... test end to end mulai dari login daftar/masuk dashboard pair dan seterusnya sampai navego dapat digunakan' - the end-to-end drive found the dashboard action timing out on an awake browser"
-   },
-   "file": "site/app/lib/dashboardApi.ts"
-  },
-  {
-   "id": "site-device-name-01",
-   "scope": "web/dashboard",
-   "file": "site/app/routes/dashboard.tsx",
-   "decision": "A device takes the name of the browser it is, not the name of the product that made it: the extension derives the browser family from what the browser publishes, and the server falls back to that family rather than to a product name, so the account's device list says which browser each row is.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-22: 'hapus juga project opera agent ganti full menjadi navego'",
-    "also": "extension/lib/browser-id.ts (the family the browser publishes); hosted/migrations/20261122160000_opera_devices_browser_names.sql (the server's fallback and the rename)"
-   }
-  },
-  {
-   "id": "site-nav-scroll-01",
-   "scope": "web/components",
-   "file": "site/app/brand.css",
-   "decision": "The chevron panel never runs past the viewport: it is capped at the space below the 3.25rem bar, scrolls inside that space with overscroll contained, and the header paints above the consent banner so the last link stays reachable on a phone and on a short laptop screen.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-23: 'fix navbar navego yang terpotong lihat di web' - the open panel measured 1067 px tall on a 390x844 phone and 770 px at 768x600, so the last links fell below the fold and could not be scrolled to",
-    "also": "site/app/brand.css (the capped, scrollable panel and the header's stacking order)"
-   }
-  },
-  {
-   "id": "hosted-pairing-code-01",
-   "scope": "database/pairing",
-   "file": "hosted/migrations/20261123140000_opera_pairing_code_random_hash.sql",
-   "decision": "A pairing code is random and code_hash stores opera_sha256(v_code); the issuer-first rate limit and the ownership fence stay. The browser-name migration must not replace those rules while changing the default device name to browser.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-23: 'sama fix ini gagal memasangkan di chrome' - the live Chrome pairing attempt returned HTTP 409 duplicate key value violates unique constraint opera_pairing_codes_code_hash_key because 20261122160000 stored the hash of the device name",
-    "also": "tests/hosted/pairing-code-hash.test.ts (the static gate); tests/hosted/integration-postgres.test.ts (two codes for one browser, verified against the disposable database)"
-   }
-  },
-  {
-   "id": "site-restyle-01",
-   "scope": "web/components",
-   "file": "site/app/brand.css",
-   "decision": "The whole site moves to one 2026 product system: a dark, fluid-type task demo on Beranda; quiet gradient heroes on inner pages; larger shared card radii, shadows and hover lift; and the same elevated surfaces in docs, auth, account and dashboard. Navego keeps its own cream, deep navy and amber identity rather than copying a reference site's palette, and every animation collapses under reduced motion.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-23: 'redesign restyle seluruh website navego cari referensi website browser agent dan hapus website opera agent migrasi semua ke navego'",
-    "also": "https://browser-use.com/ (the task-first browser demo and public proof story); https://www.browserbase.com/ (the capability grid and production narrative); https://www.skyvern.com/ (workflow examples, explainable runs and developer paths); tests/site/restyle.test.ts (the shared visual contract)"
-   }
-  },
-  {
-   "id": "site-header-sticky-01",
-   "scope": "web/components",
-   "file": "site/app/brand.css",
-   "decision": "The header stays sticky at the top at every scroll position; scroll-state never translates it out of the viewport, because a hide-on-scroll transition can leave the brand and the Masuk/Pasang gratis pills half covered by the hero.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-23: 'fix navbar yang terpotong logo navego tombol masuk dan pasang gratis terpotong blok biru' - the live screenshot showed the bar half hidden under the hero",
-    "also": "tests/site/site-session.test.ts (the no-slide regression gate)"
-   }
-  },
-  {
-   "id": "site-session-csp-01",
-   "scope": "web/security",
-   "file": "site/public/_headers",
-   "decision": "Every route may call only the Supabase Auth host to prove and renew the stored session: connect-src is https://*.supabase.co, while script-src stays self and no other network origin is opened. Session storage and renewal cannot be blocked by the page's own CSP.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-23: 'simpan sesi login supaya tidak masuk berulang ulang ketika reload halaman' - Chrome reported /auth/v1/user and /auth/v1/token?grant_type=refresh_token refused because connect-src was none even though both tokens were stored",
-    "also": "tests/site/site-session.test.ts (every route's CSP must admit Supabase Auth and keep scripts on self)"
-   }
-  },
-  {
-   "id": "site-nav-inline-01",
-   "scope": "web/components",
-   "file": "site/app/components/Chrome.tsx",
-   "decision": "The chevron and mega-panel are replaced by one ordinary navigation tree: Fitur, Harga, Docs, Pasang MCP and Artikel stay inline on wide screens, while a Menu button with aria-expanded opens the same list plus a few secondary links on small screens. Unduh remains the amber action, and Masuk/Dashboard remains on the right.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-23: 'yang chevron hapus aja ganti biasa research juga yang harus ada di navbar cari referensi di internet dari website agent browser serupa'",
-    "also": "https://www.skyvern.com/ (Products, Use Cases, Developers, Pricing, Resources, Login, Book a Demo); https://www.hyperbrowser.ai/ (Products, Pricing, Blog, Documentation, App); https://browser-use.com/ (product categories, Pricing, Docs, Dashboard, Start for free); https://www.browserbase.com/ (Platform, Solutions, Pricing, Developers, Docs, API-key CTA); tests/site/navbar.test.ts (the no-chevron and small-screen state contract)"
-   }
-  },
-  {
-   "id": "site-conversion-01",
-   "scope": "web/components",
-   "file": "site/app/routes/beranda.tsx",
-   "decision": "The page sells a verifiable outcome instead of a tool count: sites without APIs become real files. Visitors can download the actual xlsx/docx/pptx evidence, start with npx instead of a global install, read exact one-time plan periods and no-markup cost boundaries, and choose an English landing page for global reach. No testimonials, customer counts or unmeasured success claims are invented.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-24: 'research mendalam masalah yang membuat navego tidak diminati atau belum ada pelanggan yang membeli ... list semua hal yang membuat orang tidak membeli ... rencanakan langkah solusi ... implementasi'",
-    "also": "https://agentatlas.dev/guides/browser-automation-mcp-servers-compared/ (free local Playwright MCP and Chrome DevTools MCP set the adoption baseline); https://www.g2.com/products/browser-use/reviews (users praise quick setup but report reliability and free-tier limits); https://anchorbrowser.io/blog/best-browser-agent-platforms-reliable-low-cost-automation-2026 (buyers should measure verified completed workflows and total cost, not headline price); https://browser-use.com/llms-full.txt (free credit, no subscription and transparent usage pricing); tests/site/conversion.test.ts (the conversion contract)"
-   }
-  },
-  {
-   "id": "local-burst-handoff-01",
-   "scope": "agent/tools",
-   "file": "local/burst.ts",
-   "decision": "A burst never retries a failed step in a loop: the default stops at the first failure, continueOnError keeps successful steps with an errors list, and an OTP, captcha or login failure returns needsHuman with the gate and a resume instruction, even when continueOnError is on.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-24: users need a graceful 'Jeda & Ambil Alih' handoff and honest partial results instead of compounding errors and retry loops",
-    "also": "https://www.g2.com/products/browser-use/reviews (retry loops and unverified outcomes frustrate users); tests/local/adoption-features.test.ts (partial results and OTP handoff are driven)"
-   }
-  },
-  {
-   "id": "extension-open-background-01",
-   "scope": "agent/tools",
-   "file": "extension/background.ts",
-   "decision": "browser_open_url opens new tabs in the background by default on both the extension and bridge roads, so an agent can work in the user's real browser profile without taking over the visible window; background: false opts into focusing the new tab.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-24: the agent must use the real browser session without stealing the user's window or forcing a fresh login",
-    "also": "tests/local/adoption-features.test.ts (both open paths carry the background flag)"
-   }
-  },
-  {
-   "id": "local-read-untrusted-01",
-   "scope": "agent/tools",
-   "file": "local/browser-actions.ts",
-   "decision": "Every browser_read_page answer carries untrustedContent: true and a note that page text is data, never an instruction, so embedded instructions are not treated as commands by the agent.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-24: prompt injection is a buying concern for signed-in browser sessions",
-    "also": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool (webpage prompt injection calls for untrusted-content handling and human confirmation); tests/local/adoption-features.test.ts (the read result is marked)"
-   }
-  },
-  {
-   "id": "hosted-paypal-capture-01",
-   "scope": "hosted/functions",
-   "file": "hosted/functions/navego-billing/index.ts",
-   "decision": "The PayPal path is order \u2192 owner check \u2192 capture \u2192 activation. readPaypalOrder supplies custom_id, capture is a POST to /capture, and a failed activation returns an error instead of ok. The webhook checks activation.error too, so a paid order can never silently become an unactivated success.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-24: production checkout returned 502 paypal credentials are not set and the audit found no capture or reliable activation",
-    "also": "tests/billing/paypal.test.ts (capture is POST and order read carries custom_id); tests/billing/paypal-wiring.test.ts (owner verification and activation failure)"
-   }
-  },
-  {
-   "id": "site-checkout-intent-01",
-   "scope": "web/components",
-   "file": "site/app/routes/harga.tsx",
-   "decision": "Purchase intent survives login and popup blocking: a signed-out buyer returns to /harga, order creation is disabled while pending, a blocked popup gets a manual PayPal link, and checkout=success captures and activates the stored order instead of claiming success before activation returns.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-24: the checkout audit found lost purchase intent, ignored popup blocking and no return status",
-    "also": "site/app/routes/harga.tsx (finishCheckout, buyPending and the stored order); tests/billing/paypal-wiring.test.ts (the capture action)"
-   }
-  },
-  {
-   "id": "site-checkout-feedback-02",
-   "scope": "site/components",
-   "file": "site/app/lib/checkout-feedback.ts",
-   "decision": "A plan click answers under the plan that was clicked: sign-in, pending, warning and ordinary result messages render in that plan card, one always-mounted polite region announces the current message, and the page-level status remains the fallback for PayPal return, non-plan events, and a clicked card removed by a region change.",
-   "source": {
-    "kind": "recorded",
-    "ref": "hourly survival-and-growth run #6 on 2026-11-25: a real browser drive of the live pricing page clicked Starter, created a PayPal order, and showed the only status paragraph after every plan grid instead of beside the clicked control; a signed-out buy click likewise had no message in the buyer's viewport",
-    "also": "tests/site/checkout-feedback.test.ts and the 320px production browser proof on 2026-11-25"
-   }
-  },
-  {
-   "id": "site-privacy-truth-01",
-   "scope": "web/security",
-   "file": "site/app/routes/privasi.tsx",
-   "decision": "Privacy copy names the actual data flow instead of saying data goes nowhere: local page reads, Supabase for accounts/devices/commands/results/plans/invoices, the chosen model for the goal and a capped excerpt, api.bigdatacloud.net for optional regional detection, and three first-party cookies including oa_device_id.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-24: the privacy audit found absolute copy contradicted by the implementation",
-    "also": "site/app/routes/beranda.tsx and site/app/routes/en.tsx (the short public answer matches the long policy)"
-   }
-  },
-  {
-   "id": "site-mcp-npx-01",
-   "scope": "web/components",
-   "file": "site/app/routes/mcp.tsx",
-   "decision": "The quickstart and every harness snippet use npx -y navego local, then npx -y navego doctor in a second terminal, so the no-global-install instruction is executable as written and declares Node.js 22 or newer.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-24: the no-global quickstart must not fall back to a binary that was never installed",
-    "also": "tests/site/conversion.test.ts (npx onboarding is a gate)"
-   }
-  },
-  {
-   "id": "site-geolocation-01",
-   "scope": "web/security",
-   "file": "site/public/_headers",
-   "decision": "Permissions-Policy allows geolocation=(self) only on /harga and /harga.html, so device-first regional pricing works there; every other route keeps geolocation blocked.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-24: the pricing page asks for device location but its own Permissions-Policy refused it, leaving only IP fallback",
-    "also": "tests/site/conversion.test.ts (the pricing-origin permission is gated)"
-   }
-  },
-  {
-   "id": "site-csp-per-page-01",
-   "scope": "web/security",
-   "file": "site/scripts/inline-script-hashes.ts",
-   "decision": "Each prerendered page carries only its own inline-script hashes in its own CSP block, one policy per path. Hashes are never pooled site-wide and never split across several CSP headers, because policies intersect rather than add, and an overlong policy is dropped whole by Cloudflare.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-24: signing in with Google returned to the sign-in form instead of the dashboard",
-    "also": "tests/site/site.test.ts (each block is matched against the page it serves; one CSP per path; every value under 1900 bytes); the live console reported the blocked hydration boot for https://navego.pages.dev/"
-   }
-  },
-  {
-   "id": "extension-tabs-open-contract-01",
-   "scope": "extension/tabs",
-   "file": "extension/background.ts",
-   "decision": "tabs.open keeps the foreground contract: active is honored exactly as passed (active:true opens the tab in front, active:false leaves it behind), and background:true is sugar that forces a background tab. The 3b581ca variant that made every open background unless background===false was passed broke the pinned acceptance test (tests/browser_extension_test.py asserts active:true leaves the new tab active) and turned CI red on main for three runs.",
-   "source": {
-    "kind": "recorded",
-    "ref": "tests/browser_extension_test.py:4435 assert baseline['activeTabId'] == user_tab['id'], reproduced locally 2026-11-24 under xvfb after the fix landed in commit 3b581ca; CI runs 45340623620, 45342267156, 45343411812 all failed on it",
-    "also": "tests/local/adoption-features.test.ts (background opens stay in the background on both browser roads) re-pinned to the corrected expression"
-   }
-  },
-  {
-   "id": "hosted-consent-origin-01",
-   "scope": "hosted/auth",
-   "file": "hosted/config.toml",
-   "decision": "The deployed Supabase Auth origin config is hosted/config.toml (site_url https://navego.pages.dev, that host in redirect_urls), read and patched through the dispatch-only auth-config workflow, not through the owner's dashboard: read prints only non-secret fields (site_url, redirect_urls, uri_allow_list), patch sets site_url and appends one URL additively per dispatch. The consent page rejected the live domain with 400 unauthorized request origin because the deployed config named only dead predecessor hosts; the fix is applied from CI with the existing SUPABASE_ACCESS_TOKEN secret, which the agent can drive without ever seeing the token.",
-   "source": {
-    "kind": "recorded",
-    "ref": "owner console capture 2026-11-24: the Supabase oauth consent screen answered 400 unauthorized request origin for the live domain; CI read run 45373897531 printed site_url=https://opera-agent.pages.dev; patch runs 45373987185 and 45376655642 moved it to https://navego.pages.dev and added https://navego.pages.dev/* to uri_allow_list (verified in run logs)"
-   }
-  },
-  {
-   "id": "hosted-paypal-revenue-01",
-   "scope": "hosted/functions",
-   "file": "hosted/migrations/20261125000000_opera_paypal_orders.sql",
-   "decision": "The database owns the PayPal order lifecycle: the quote is stored when PayPal creates the order, the completed order is compared with that quote, one environment and order id can write one revenue event, and only the activation RPC can change the plan. The capture path and the verified webhook therefore leave one sale and one activation even when both arrive; an APPROVED order is not revenue.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-24: 'setiap ada kenaikan saldo adalah kemenangan naik point ... setiap saldo naik 1 dollar dihitung satu point' - real settled revenue must be visible before the agent scores a balance or a paid plan",
-    "also": "live production query 2026-11-24: opera_price_orders held 0 rows, opera_notification_log held only Midtrans sandbox events, and opera_plan_activate_purchase changed plans without recording a PayPal settlement; tests/hosted/paypal-settlement.test.ts, tests/hosted/integration-postgres.test.ts, tests/billing/paypal.test.ts, and tests/billing/paypal-wiring.test.ts"
-   }
-  },
-  {
-   "id": "hosted-paypal-revenue-02",
-   "scope": "hosted/functions",
-   "file": "hosted/migrations/20261125010000_opera_paypal_orders_hardening.sql",
-   "decision": "A PayPal settlement keeps quoted and actual owner/plan values apart, normalizes the environment and order id before taking its lock, derives an unknown order from the insert result, and permits one accepted PayPal revenue event per environment and order id. Malformed actual values therefore enter review without breaking the revenue record, and equivalent keys cannot race into two sales.",
-   "source": {
-    "kind": "user",
-    "ref": "user 2026-11-24: 'setiap ada kenaikan saldo adalah kemenangan naik point ... turun saldo setiap 1 dollar dihitung - 1 poin' - a real payment must remain visible and count once even when the buyer return and the provider webhook arrive together",
-    "also": "independent review 2026-11-25 after PR #442 found that raw advisory-lock keys and constrained actual values could hide or duplicate a malformed payment; tests/hosted/paypal-settlement-hardening.test.ts and tests/hosted/integration-postgres.test.ts"
-   }
-  },
-  {
-   "id": "hosted-paypal-price-01",
-   "scope": "hosted/functions",
-   "file": "hosted/functions/_shared/plans.ts",
-   "decision": "Every USD plan carries one canonical price in cents. The billing function refuses an active price row that differs from that map before PayPal is asked for money, and the site-price test keeps the displayed price aligned with the same number.",
-   "source": {
-    "kind": "recorded",
-    "ref": "docs/handoff.md:40 (the plan sale is USD-only: $1, $3, $5, $7, $9, $17 for six months, and $33 for one year); the live opera_price_list rows read the same seven amounts on 2026-11-25",
-    "also": "tests/billing/plans.test.ts and tests/billing/paypal-wiring.test.ts"
-   }
-  },
-  {
-   "id": "site-install-cta-01",
-   "scope": "site/components",
-   "file": "site/app/routes/unduh.tsx",
-   "decision": "The download hero leads with the Windows one-command install and keeps manual zip and reg installs as secondary paths. A successful command copy invokes the install tracker, while copy failure is visible and announced; the copy control stays enabled, every command owns one polite status region, a successful result is not hidden by a later failure, and the copy controller invalidates work that resolves after disposal.",
-   "source": {
-    "kind": "recorded",
-    "ref": "docs/agent-survival-prompt.md:61 (fix the earliest real funnel drop-off, which may be the install path); live production funnel 2026-11-25 had 109 page views, 49 pair views, 2 install views, 0 install clicks, and 0 settled orders",
-    "also": "tests/site/install-cta.test.ts, tests/site/copy-command.test.ts, and the independent 320px browser review on 2026-11-25"
-   }
-  },
-  {
-   "id": "site-install-cta-02",
-   "scope": "site/components",
-   "file": "site/app/routes/index.tsx",
-   "decision": "The anonymous landing hero carries the same exact Windows one-command install as the download page, so a visitor can start installation without a second page. The force-install cost and undo path appear before the control; the copy remains retryable and announced; the landing surface records its own view and successful-copy intent with surface=landing, while manual macOS and Linux installation stays linked.",
-   "source": {
-    "kind": "recorded",
-    "ref": "hourly survival-and-growth run #5 on 2026-11-25: live production had 62 landing-page views from 60 browsers but only 5 download-page views from 2 browsers and 0 install clicks; fix the earliest measured arrival-to-install gap without weakening the checkout or payment path",
-    "also": "tests/site/install-command.test.ts, tests/site/install-cta.test.ts, and the 320px built-site browser proof on 2026-11-25"
-   }
-  }
- ]
+  "version": 1,
+  "generated": "2026-11-25",
+  "source": "The 2026-11-18 navego.pages.dev rebrand and consistency pass: logo, wordmark, eyebrows, type and spacing system, nav notch, copy pass. User direction arrived 2026-11-18; internet sources were verified 2026-11-18. Repo sources point at the docs that already carry the decision. 2026-11-19: a source-backed pass over the agent tool surface added D55-D68 - kind recorded carries the file:line of the recorded performance, per the user evidence mandate.",
+  "note": "One decision, one source. Code references this file as decisions.json -> <id>. A decision added from 2026-11-19 onward carries a file-based id (for example local-canvas-01) and names the file it governs; the earlier D-numbers are history and keep their ids. A decision the user asked for carries kind=user; a decision nobody asked for carries the internet source it was taken from; a decision inherited from this repo carries the repo document that already carries it; a decision taken because a recorded performance demanded it carries kind=recorded with the file:line that records it.",
+  "decisions": [
+    {
+      "id": "D01",
+      "scope": "web/tokens",
+      "decision": "The body text is 16 px on every page: the site runs one scale from 12 px to 64 px, and the running text sits at 16 px so a visitor override never drops below the 14 px floor the owner asked for.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'biasanya sih 14 yang teks' - the 14 px floor the owner set; the shipping scale runs the body at 16 px",
+        "also": "site/app/tokens.css (--text-base: 1rem)"
+      }
+    },
+    {
+      "id": "D02",
+      "scope": "web/tokens",
+      "decision": "The type scale uses even pixel steps only: 12, 14, 16, 18, 20, 24, 28, 32, 40, 56, 64.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'jika misalnya heading 1 heading 2 dan seterusnya gunakan ukuran genap dan konsisten'",
+        "also": "site/app/tokens.css (--text-xs through --text-hero)"
+      }
+    },
+    {
+      "id": "D03",
+      "scope": "web/tokens",
+      "decision": "h1 is 40 px (hero 64 px on /beranda, 28 px on ≤860 px), h2 is 28 px, h3 is 20 px, h4 is 18 px.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'jika misalnya heading 1 heading 2 dan seterusnya gunakan ukuran genap dan konsisten'",
+        "also": "site/app/tokens.css (--text-title: 2.5rem, --text-hero: 4rem)"
+      }
+    },
+    {
+      "id": "D04",
+      "scope": "web/tokens",
+      "decision": "Line heights are unitless: display 1.06, heading 1.2, body 1.55, small 1.45.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://practicaltypography.com/line-spacing.html (120-145% of point size)",
+        "also": "site/app/tokens.css (--leading-display, --leading-heading, --leading-body, --leading-small)"
+      }
+    },
+    {
+      "id": "D05",
+      "scope": "web/tokens",
+      "decision": "Running text meets the 1.5 line-height floor so it survives visitor overrides.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html (criterion 1.4.12, AA)"
+      }
+    },
+    {
+      "id": "D06",
+      "scope": "web/tokens",
+      "decision": "Text fills the width of its container; no 18ch/44ch/46ch/56ch/66ch/68ch/70ch/72ch measure caps anywhere.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'lebarnya full bukan yang terpotong di tengah' and the follow-up option 'Konten tidak dibatasi terlalu sempit'",
+        "also": "site/app/brand.css (the hero and page-hero ledes carry no max-width)"
+      }
+    },
+    {
+      "id": "D07",
+      "scope": "web/tokens",
+      "decision": "Text is flush left; horizontal centering is kept only for symmetric fixed-box icons and figures.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'alignment mana yang harus alignment kiri mana yang harus tengah semua harus konsisten'",
+        "also": "https://designsystem.digital.gov/components/typography/ ('Set type flush left')"
+      }
+    },
+    {
+      "id": "D08",
+      "scope": "web/tokens",
+      "decision": "Paragraph → paragraph spacing is 1 em.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://practicaltypography.com/space-between-paragraphs.html (50-100% of the point size)"
+      }
+    },
+    {
+      "id": "D09",
+      "scope": "web/tokens",
+      "decision": "A heading gets more space above (32 px, larger than paragraph spacing, so it stands out) and less below (12 px, smaller than paragraph spacing, so it bonds to its text).",
+      "source": {
+        "kind": "internet",
+        "ref": "https://practicaltypography.com/space-above-and-below.html"
+      }
+    },
+    {
+      "id": "D10",
+      "scope": "web/tokens",
+      "decision": "The spacing scale is multiples of 4 px: 4, 8, 12, 16, 24, 32, 48, 72, 104.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://material.io/design/layout/spacing-methods.html (8dp grid, 4dp nested units, 4dp type baseline)"
+      }
+    },
+    {
+      "id": "D11",
+      "scope": "web/tokens",
+      "decision": "The gutter is 20 px, 32 px at ≥940 px - one fixed even step each, no fractional vw.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://material.io/design/layout/spacing-methods.html (4-px base unit, both values sit on the grid)"
+      }
+    },
+    {
+      "id": "D12",
+      "scope": "web/tokens",
+      "decision": "Body and UI type are the system sans stack (-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', Inter, Roboto, system-ui, sans-serif); mono is the system monospace stack (ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'SF Mono', Consolas, 'Liberation Mono', monospace) - zero downloaded fonts on every page.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-22: 'bisakahh kamu redesign website navego sampai jadi product siap ship?' - the redesign carries one system stack, not the Y2K house face",
+        "also": "site/app/tokens.css (--font-sans, --font-mono)"
+      }
+    },
+    {
+      "id": "D13",
+      "scope": "web/tokens",
+      "decision": "Display type is the same system sans stack at weight 700, letter-spacing -0.02em; no separate display face ships.",
+      "source": {
+        "kind": "repo",
+        "ref": "site/app/tokens.css (--font-display is the system stack; headings set font-weight: 700)",
+        "also": "site/app/components/NavegoMark.tsx (the wordmark is the only hand-drawn type on the site)"
+      }
+    },
+    {
+      "id": "D14",
+      "scope": "web/tokens",
+      "decision": "Ground is cream #f6f1e7, ink is navy-deep #0d1338, the one warm accent is amber #d8923f.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/design-elements.md (Corporate Y2K done flat)"
+      }
+    },
+    {
+      "id": "D15",
+      "scope": "web/tokens",
+      "decision": "Amber is the single warm accent; everything else stays in the navy/cream system.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/design-elements.md (one amber accent)"
+      }
+    },
+    {
+      "id": "D16",
+      "scope": "web/tokens",
+      "decision": ":focus-visible carries a 2 px outline, 3 px offset; on navy surfaces the ring goes amber.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://www.w3.org/WAI/WCAG21/Understanding/focus-visible.html (WCAG 2.4.7)",
+        "also": "site/app/tokens.css (--focus-ring: 2px solid var(--navy), --focus-offset: 3px)"
+      }
+    },
+    {
+      "id": "D17",
+      "scope": "web/components",
+      "decision": "Buttons hold a 44 px minimum block size.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://developer.apple.com/design/human-interface-guidelines/buttons (at least 44x44 pt hit region)"
+      }
+    },
+    {
+      "id": "D18",
+      "scope": "web/components",
+      "decision": "Button padding is 12 px × 24 px; small button 8 px × 16 px; chips 4 px × 12 px - even pixel steps on the 4-px grid.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://material.io/design/layout/spacing-methods.html (4dp nested units)",
+        "also": "user 2026-11-18 (even-pixel rule)"
+      }
+    },
+    {
+      "id": "D19",
+      "scope": "web/components",
+      "decision": "Radius steps stay even and few: 16 px panels, 10 px controls.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://material.io/design/layout/spacing-methods.html (4-px base unit, both values are multiples of 2)"
+      }
+    },
+    {
+      "id": "D20",
+      "scope": "web/components",
+      "decision": "Flat surfaces carry no shadow; the one soft shadow on the site is 0 1px 2px rgb(13 19 56 / 0.04) on .tile-xl.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/design-elements.md (flat modern)",
+        "also": "user 2026-11-18 (the notch redesign with its effect)"
+      }
+    },
+    {
+      "id": "D21",
+      "scope": "web/components",
+      "decision": "The nav notch is always visible at every width; compact widths collapse the flat row into it; hover or focus drops the full link strip; the chevron turns amber on hover or focus.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'tampilkan notch di semua lebar layar kemudian redesign bentuk notch menjadi modern dan memiliki efek'"
+      }
+    },
+    {
+      "id": "D22",
+      "scope": "web/components",
+      "decision": "The sticky header hides while scrolling down and returns on the way up; it stays put while focused.",
+      "source": {
+        "kind": "repo",
+        "ref": "site/app/brand.css (site-header scroll-state, pre-existing behaviour)"
+      }
+    },
+    {
+      "id": "D23",
+      "scope": "web/components",
+      "decision": "Numbers in tables align right and use tabular figures; body text stays left.",
+      "source": {
+        "kind": "repo",
+        "ref": "site/app/brand.css (.num, tabular-nums)"
+      }
+    },
+    {
+      "id": "D24",
+      "scope": "web/components",
+      "decision": "prefers-reduced-motion disables smooth scrolling and transitions.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion",
+        "also": "https://www.w3.org/WAI/WCAG21/Understanding/animation-from-interactions.html (WCAG 2.3.3)"
+      }
+    },
+    {
+      "id": "D25",
+      "scope": "web/components",
+      "decision": "text-wrap: balance on headings, pretty on prose.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://developer.mozilla.org/en-US/docs/Web/CSS/text-wrap"
+      }
+    },
+    {
+      "id": "D26",
+      "scope": "web/components",
+      "decision": "The footer hands out an 88x31 badge; the size is the early-web link-back convention.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://en.wikipedia.org/wiki/Web_badge (88x31 web badges)"
+      }
+    },
+    {
+      "id": "D27",
+      "scope": "web/components",
+      "decision": "The header hides via a container scroll-state query so it does not depend on JS.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_conditional_rules/Container_scroll-state_queries (Using container scroll-state queries - the @container scroll-state() at-rule and the queries it answers)"
+      }
+    },
+    {
+      "id": "D28",
+      "scope": "web/identity",
+      "decision": "The mark is one hand-drawn stroke: left stem, the diagonal (top-left to bottom-right), right stem, each with a slight human bow — never ruler-straight.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: pick D, fix the reversed stroke direction, then 'buat huruf N pada logo lebih natural seperti coretan manusia'"
+      }
+    },
+    {
+      "id": "D29",
+      "scope": "web/identity",
+      "decision": "The amber underline below the N is one symmetric arc, centred on 120.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'betulkan juga garis stroke di bawahnya agar simetris'"
+      }
+    },
+    {
+      "id": "D30",
+      "scope": "web/identity",
+      "decision": "The wordmark is the same hand: single-stroke round-capped letters, one motion per glyph, no tittle over the g.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'kata navego buat jadi tulisan tangan'; 'di atas huruf g tidak perlu ada titik'; 'tulisan tangan navego buat konsisten untuk stylenya'"
+      }
+    },
+    {
+      "id": "D31",
+      "scope": "web/identity",
+      "decision": "The letters a and e are drawn to read unmistakably (closed bowl plus stem for a; loop plus crossbar for e) — a wordmark nobody can read is decoration, not a wordmark.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'huruf a dan e masih belum bisa terbaca'"
+      }
+    },
+    {
+      "id": "D32",
+      "scope": "web/identity",
+      "decision": "One mark everywhere: components, favicon (icon.svg), standalone mark (navego-mark.svg), 88x31 badge, og-cover.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'satu mark di semua tempat'"
+      }
+    },
+    {
+      "id": "D33",
+      "scope": "web/identity",
+      "decision": "The mark palette is fixed: disc #233259, stroke #f4f1e9, accent #d8923f (badge uses the reversed navy-on-cream form).",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/design-elements.md (navy disc, chrome, amber accent); site/app/components/NavegoMark.tsx (current art)"
+      }
+    },
+    {
+      "id": "D34",
+      "scope": "web/identity",
+      "decision": "No Huginn & Muninn anywhere; the footer line is 'Navego — Browser Anda, atas perintah Anda.' and the auth panel carries the logo lockup, not a myth label.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'ganti huginn & muninn dengan navego dan logonya'"
+      }
+    },
+    {
+      "id": "D35",
+      "scope": "web/copy",
+      "decision": "No eyebrows, kickers or crumbs above headings, anywhere — the heading is the first thing on the page.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18 (beranda screenshot, then 'hapus semua eyebrows no eyebrows')",
+        "also": "docs/design-elements.md (decision 14: every eyebrow label deleted)"
+      }
+    },
+    {
+      "id": "D36",
+      "scope": "web/copy",
+      "decision": "The document outline runs h1 → h2 → body; nothing sits above the h1.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'agentik browser lokal ada di atas heading satu yang mana itu tidak urut'",
+        "also": "https://design-system.canada.ca/en/styles/typography (heading levels numerically ordered, no skipped levels)"
+      }
+    },
+    {
+      "id": "D37",
+      "scope": "web/copy",
+      "decision": "The middle dot is never used as a separator — commas, dashes or parentheses instead.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: 'pemisah tidak boleh menggunakan titik tengah'"
+      }
+    },
+    {
+      "id": "D38",
+      "scope": "web/copy",
+      "decision": "The login panel opens with the logo lockup, not a label; the h1 stays 'Masuk atau daftar.' in the same place on both phases of the form.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18 (the navego.pages.dev screenshot)"
+      }
+    },
+    {
+      "id": "D39",
+      "scope": "repo",
+      "decision": "Every decision in code cites docs/decisions.json as `decisions.json -> D<n>`, or it does not ship; the gate is tests/tooling/decisions.test.ts.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: every decision in code carries a source; the register is one file the code refers back to - \"wajib ada link untuk referensi\"; enforced repo-wide after the website"
+      }
+    },
+    {
+      "id": "D40",
+      "scope": "repo",
+      "decision": "A reason is written as a reason: no comment opens with a WHY prefix; the reason is written directly.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: \"langsung kasih reason tanpa why\""
+      }
+    },
+    {
+      "id": "D41",
+      "scope": "repo",
+      "decision": "The acceptance surface is not swept and not judged: gates.lock, .gitleaks.toml, .github, the frozen public contract in tests/helpers/boundary-locks.ts, and hosted/migrations; the exclusions are named in tests/tooling/decisions.test.ts and in AGENTS.md, each with its reason.",
+      "source": {
+        "kind": "repo",
+        "ref": "AGENTS.md scope rules 2-4 (a gate that must move is re-pinned in the same commit, with the reason); user 2026-11-18: enforce the rule across the repo without touching the acceptance surface"
+      }
+    },
+    {
+      "id": "D42",
+      "scope": "web/copy",
+      "decision": "Notich and drop-down strip are flat rectangles, square corners, no curves and no gradient; hover or focus tint and one chevron are the whole effect.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: \"notchnya masih belum betul aku mau buat jadi minimalis tanpa lekukan\""
+      }
+    },
+    {
+      "id": "D43",
+      "scope": "web/copy",
+      "decision": "One idea per tile, headline of 2-6 words; the supporting line is one sentence; nothing advertises more than one benefit at a time.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://www.apple.com (product tiles: one idea per headline); https://developer.apple.com/app-store/product-page/ (concise informative paragraph); https://marketingexamined.com/blog/how-to-write-copy-like-apple (one big idea per headline; inverted pyramid)"
+      }
+    },
+    {
+      "id": "D44",
+      "scope": "web/copy",
+      "decision": "Sentences stay short and carry one idea each; paragraphs stay short enough to scan, written for a reader who skims before reading.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://marketingexamined.com/blog/how-to-write-copy-like-apple (Apple copy uses short paragraphs, short sentences and simple words; write for scanners)"
+      }
+    },
+    {
+      "id": "D45",
+      "scope": "web/copy",
+      "decision": "Address the reader in the second person, in the present tense, with verbs that are things the product literally does (read, fill, click, save); no adjectives praising the product, no exclamation marks.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://help.apple.com/pdf/applestyleguide/en_US/apple-style-guide.pdf (Apple style guide: sentence-style headings, second person, active voice); https://developer.apple.com/videos/play/wwdc2022/10037/ (write like a person, one idea at a time)"
+      }
+    },
+    {
+      "id": "D46",
+      "scope": "web/copy",
+      "decision": "Facts pinned by the site gate survive any rewrite verbatim: Navego, 40, primitive browser, plan.usd-1, PayPal, Enterprise, SHA-256, 1.6.22, docs/releases, browser_status, debugger, Tanpa eval, Kata sandi, SECURITY.md, Diukur bukan diklaim, Google Docs, p50, Apa itu Navego, Berapa harganya, Halaman ini tidak ada, browser Anda, Penyedia, Izin aplikasi, Memeriksa sesi, WebDriver, canvas, Artikel, AI yang mengenal browser, Dukungan, Kebijakan Privasi, Syarat Layanan.",
+      "source": {
+        "kind": "repo",
+        "ref": "tests/site/site.test.ts (CLAIMS); site/app/routes/*.tsx"
+      }
+    },
+    {
+      "id": "D47",
+      "scope": "web/copy",
+      "decision": "The site is written in Indonesian, like the UI it describes; technical terms the product itself uses (browser, MCP, extension, plan, PayPal) stay in English only when the interface shows them in English.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: redesign the site content with internet research for sentence style; product language stayed Indonesian (lang=\"id\" across every route, site.test.ts)"
+      }
+    },
+    {
+      "id": "D48",
+      "scope": "web/copy",
+      "decision": "Inverted pyramid in every section: the claim first, the strongest proof second, the rest last - readers who stop after one line still leave with the right idea.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://marketingexamined.com/blog/how-to-write-copy-like-apple (big headlines showcase one idea, inverted-pyramid paragraphs: biggest benefit to smallest); https://linear.app (claim, then proof, then link)"
+      }
+    },
+    {
+      "id": "D49",
+      "scope": "web/components",
+      "decision": "The coba section ships the product UI itself: a navy command panel (prompt, typed text, caret, preset chips) and a paper trace panel (numbered primitive steps, always visible) - no submit button hiding the interesting half; the interaction lives in the choice of preset, not in a form submit.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://www.apple.com (product demos ship the interface as the marketing); https://linear.app (the product UI as the marketing); https://www.raycast.com/ (typewriter prompt panel as the hero)"
+      }
+    },
+    {
+      "id": "D50",
+      "scope": "web/components",
+      "decision": "The chevron panel never repeats what the bar already shows: above 940px it lists only the secondary links (Keamanan, Changelog, FAQ, Metodologi, Bandingkan, Privasi, Syarat); at or below 940px, where the primary row is hidden, it lists every link, five per column in menu order.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: \"ini masih dobel kenapa yak\" - the panel repeated the eight links already visible in the bar; user wants no duplicate"
+      }
+    },
+    {
+      "id": "D51",
+      "scope": "web/components",
+      "decision": "The header carries only the brand and one amber CTA; the flat nav row and the mega panel are deleted; the chevron is the only navigation surface, opening the full fifteen-link panel at every width.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18: \"Hilangkan bar nav atas\" - the flat Beranda..Dukungan row was still displayed on top, duplicating what the chevron panel already carries"
+      }
+    },
+    {
+      "id": "D52",
+      "scope": "web/components",
+      "decision": "The chevron panel is a full-width dark mega panel in four columns - Beranda spotlight, Produk, Kepercayaan then Sumber, Bantuan - the Apple Shop-menu pattern the owner sent, so a visitor knows the site structure from the dropdown alone; the header row is full-bleed edge-to-edge, not capped to the 1120px content measure.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-18 screenshot of apple.com Shop dropdown; user instruction: \"punya headernya efek memanjang terus full dari pojok ke pojok kemudian redesign lagi kontn panel drop yang beranda dan seterusnya supaya orang tidak bingung lihatnya\""
+      }
+    },
+    {
+      "id": "D53",
+      "scope": "web/components",
+      "decision": "No divider between the bar and the mega panel - one continuous dark surface; the panel fades and rises slowly (450ms opacity / 500ms rise) over the ease-out, instant during reduced motion; the stuck-state shadow under the bar is removed so the bar reads as one surface with the panel, not a floating plane above it. The seam the shadow left behind is closed twice: the full-width chevron wrapper carries the bar's navy-deep background so the cream ground never shows through at the bottom edge, and the open strip overlaps the seam by 1px (margin-top: -1px).",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"buat animasinya lebih slow dan hilangkan garis strip yang ada di bawah chevron buat supaya nav bar seperti ke bawah memanjang\" - the shadow was the 1px line passing below the chevron"
+      }
+    },
+    {
+      "id": "D54",
+      "scope": "web/components",
+      "decision": "The bar carries the brand on the left, \"Beranda\" as a plain text link beside it, and two actions on the right: \"Masuk\" (ghost, links to the sign-in page) and \"Pasang gratis\" (solid amber CTA) - the owner reported both missing.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"tombol login dan beranda belum ada\""
+      }
+    },
+    {
+      "id": "D55",
+      "scope": "agent/tools",
+      "decision": "browser_read_page gains a bound on how much it returns (maxChars, and a selector scope or a view-style brief/map split in the implementation); an agent is expected to read a bounded page, never an unbounded one.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/releases/1.6.47.md:8-19 - view brief (default, one viewport at a time) vs view map (the whole document) existed; read_page_map was folded into read_page and the tool count was asserted in CI as a frozen inventory",
+        "also": "https://www.anthropic.com/research/writing-tools-for-agents - pagination, range selection, filtering and truncation for tool responses; the 25,000-token default; redundant tool calls suggest rightsizing pagination or token limits"
+      }
+    },
+    {
+      "id": "D56",
+      "scope": "agent/tools",
+      "decision": "The tool lists in local/README.md and docs/agent-call.md are regenerated from the catalog instead of handwritten; the tool count is asserted in CI the way 1.6.47 and 1.6.48 asserted it; every recipe in browser_get_guide resolves to a live tool name.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/agent-call.md:59 claims 56 tools; local/README.md:79-93 lists the generation-1 agent-native names; 1.6.52.md:12, 1.6.53.md:16, 1.6.54.md:16 say 56 unchanged; 1.6.57.md is a 0-byte file; live catalog 2026-11-19 has 45 browser_-prefixed tools; npm registry opera-agent-mcp 1.7.5 (modified 2026-11-17) vs package.json 1.6.54; docs/proof/extension-run.jsonl recorded toolCount 54 on 2026-11-06"
+      }
+    },
+    {
+      "id": "D57",
+      "scope": "agent/tools",
+      "decision": "artifact_build_workbook and artifact_build_report ship as one tool with a format parameter (word or xlsx); the signed parameters are identical (client, title, period, periodColumn, groupBy, valueColumn, out) and both run the same plan recheck before the file exists.",
+      "source": {
+        "kind": "recorded",
+        "ref": "catalog signatures of 2026-11-19, verbatim: both tools carry client, title, period, periodColumn?, groupBy, valueColumn, out? and refuse the same wrong figure twice",
+        "also": "https://www.anthropic.com/research/writing-tools-for-agents - too many or overlapping tools distract agents from efficient strategies; consolidate functionality into tools with a clear, distinct purpose"
+      }
+    },
+    {
+      "id": "D58",
+      "scope": "agent/tools",
+      "decision": "browser_find_text folds into browser_find_element as mode text: one locate tool, two modalities - role+name resolves a centred anti-stale handle; a plain text resolves viewport rects in the same space a screenshot uses; the handle is the only click currency.",
+      "source": {
+        "kind": "recorded",
+        "ref": "catalog descriptions of 2026-11-19: find_element returns the handle and box, measured from the node at the click; find_text returns each match with a viewport rect in the same space a screenshot uses - one page, two lookups, overlapping purpose",
+        "also": "https://www.anthropic.com/research/writing-tools-for-agents - tools should have a clear, distinct purpose; overlapping tools distract"
+      }
+    },
+    {
+      "id": "D59",
+      "scope": "agent/tools",
+      "decision": "Tool names are not renamed; the documentation is fixed to resolve to the live names - the guide and the README carry two generations of names today, and every unrecorded rename widens that gap.",
+      "source": {
+        "kind": "recorded",
+        "ref": "browser_get_guide output of 2026-11-19: recipes say portal, front, captcha, click; its own sideEffects block names browser_check_gate, browser_focus_window, wallet_hold_price; 1.6.52.md:12 records the #312 rename that produced generation-2 without rewriting the guide or README"
+      }
+    },
+    {
+      "id": "D60",
+      "scope": "agent/tools",
+      "decision": "Every tool description reads at two sentences plus a pointer to the guide topic that carries the detail; refusal semantics, input contracts and side effects stay verbatim; the current catalog measures 3,877 words (about 5,293 description tokens), browser_read_page at 248 words.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://www.anthropic.com/research/writing-tools-for-agents - tool descriptions are loaded into the agent context and steer tool-calling behaviour; context is limited, so every description competes with the task for the same window",
+        "also": "catalog measurement 2026-11-19 (45 tools): descriptions sum to 3,877 words, 21,159 characters"
+      }
+    },
+    {
+      "id": "D61",
+      "scope": "agent/tools",
+      "decision": "browser_get_guide gains a topic bukti teks vs gambar - when a measured text read is enough proof and when a picture is mandatory - and every recipe names exact catalog tools with no short aliases.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"screenshot masih sering digunakan? read page kenapa jarang digunakan?\" - the guide pairs recipe Prove it worked (browser_screenshot plus browser_read_page) with refusals that say a tool that reports success is not proof, so image proof is the only proof the server prescribes today"
+      }
+    },
+    {
+      "id": "D62",
+      "scope": "agent/tools",
+      "decision": "browser_intercept_picker restores the native picker by itself (TTL or end of the drive); a suppressed picker never survives an abandoned drive, and the next call names how long the picker has been suppressed.",
+      "source": {
+        "kind": "recorded",
+        "ref": "catalog description of 2026-11-19: forgetting to disable leaves later Upload clicks silent; guide sideEffects: changes whether the native file picker appears on this tab - a documented silent-failure mode, not a measured incident count"
+      }
+    },
+    {
+      "id": "D63",
+      "scope": "agent/tools",
+      "decision": "browser_console is not added until one recorded incident exists that it would have solved; an empty slot in the catalog is not filled by an honest guess.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"harus ada bukti atau source yang valid bisa dari internet bisa dari user atau performa yang tercatat\" - no JS-error-blind incident is recorded anywhere in the repo; the candidate does not pass the evidence gate"
+      }
+    },
+    {
+      "id": "D64",
+      "scope": "agent/tools",
+      "decision": "browser_screenshot does not gain a clip parameter until one recorded verification failure or slowness trace exists over a full-viewport shot; precision is already documented (viewport 1144x714 to 1186x670, scale 1.25), clipping is not demanded anywhere.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"harus ada bukti atau source yang valid bisa dari internet bisa dari user atau performa yang tercatat\" - no such recording exists; the only recorded screenshot measurements are scale conversions"
+      }
+    },
+    {
+      "id": "D65",
+      "scope": "agent/tools",
+      "decision": "browser_open_url stays counts-only (url, title, textChars, rows, focus); it does not gain an excerpt - the guide recipe for page content is browser_read_page, and open_url is the navigation primitive, not the reading primitive.",
+      "source": {
+        "kind": "recorded",
+        "ref": "browser_get_guide output of 2026-11-19 verbatim: task See what is on the page maps to browser_read_page; open_url is not on that road; no usage record demanding an excerpt exists",
+        "also": "user 2026-11-19: the evidence rule - no valid source, no decision"
+      }
+    },
+    {
+      "id": "D66",
+      "scope": "agent/tools",
+      "decision": "wallet_get_price and wallet_hold_price stay two tools, quote then reserve; the plan shape (artifact page or document, or list with an item count) is defined once in the implementation; no catalog-visible change.",
+      "source": {
+        "kind": "recorded",
+        "ref": "catalog descriptions of 2026-11-19 verbatim: get_price carries the plan shape and the show-the-person-first contract; hold_price carries the steps-over-cap refusal - the two halves of one quote and reserve flow, not two schemas written twice"
+      }
+    },
+    {
+      "id": "D67",
+      "scope": "agent/tools",
+      "decision": "docs/decisions.json accepts source kind recorded (file:line of the performance that records the decision) beside user, internet and repo; tests/tooling/decisions.test.ts carries the new kind and names what a recorded source points at.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"harus ada bukti atau source yang valid bisa dari internet bisa dari user atau performa yang tercatat\" - the mandate extends the register vocabulary, and the gate follows it"
+      }
+    },
+    {
+      "id": "D68",
+      "scope": "agent/tools",
+      "decision": "No tool is split: browser_read_page is not divided into peek/full and browser_run_steps stays one burst primitive - a split would double the catalog this mandate was just told to shrink, while scoping parameters do the work inside one tool.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://www.anthropic.com/research/writing-tools-for-agents - tools can consolidate functionality, and overlapping tools distract agents",
+        "also": "docs/releases/1.6.47.md:8-19 - read_page_map was folded into read_page rather than split from it"
+      }
+    },
+    {
+      "id": "D69",
+      "scope": "agent/tools",
+      "decision": "Every tool call that throws at the dispatch point is recorded append-only in $NAVEGO_AGENT_HOME/tool-failures.jsonl with the tool, the error code, the message and the time; the record never throws into the caller and is capped at 2 MB by keeping the newest 1000 lines.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"buat ini ya log untuk tools yang error atau buggy sama feedback juga\" - a failure that the answer cannot carry into the next session survives on the machine instead of vanishing"
+      }
+    },
+    {
+      "id": "D70",
+      "scope": "agent/tools",
+      "decision": "The log is read with navego failures (counts by tool and code, the recent failures, every note) and never leaves the machine; the owner machine is the sink, not a server; deleting the file is always safe - it is an observation channel, not a ledger.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"log untuk tools yang error atau buggy\" - the observation stays local and deletable; nothing is uploaded anywhere"
+      }
+    },
+    {
+      "id": "D71",
+      "scope": "agent/tools",
+      "decision": "The calling agent leaves the suggestion behind with navego feedback <tool> <note> - one append-only line tied to the tool, surfaced beside the failure counts; that is how an agent that uses a tool and sees it break leaves the fix idea where the maintainer will find it without a server round trip.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"supaya ai bisa kasih saran perbaikan saat menggunakan tools\" - the feedback path ships as a CLI command an agent shell can append; the catalog is not touched"
+      }
+    },
+    {
+      "id": "D72",
+      "scope": "agent/tools",
+      "decision": "No new MCP catalog tool is introduced for feedback reporting; the feedback channel is the CLI (navego feedback), not a 46th tool - the frozen tool surface stays as it is, and a catalog tool awaits the same recorded-evidence gate as any addition, the rule applied to browser_console in D63.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"buat ini\" - the mandate authorises the capability, and D63 applies to its shape: no catalog slot without a recorded need that only the catalog can serve"
+      }
+    },
+    {
+      "id": "D73",
+      "scope": "agent/tools",
+      "decision": "browser_focus_window is deleted; no tool in the catalog can move any window to the foreground. The drive runs in the background; window state is answered by browser_status (which names the browser in front), and the only remaining front path is the session-level guard in local/focus-guard.ts - it restores the session own window when the page cannot hear input, is not agent-callable, and fires only on the session word of minimized.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"iya hapus aja yng focus window buat semua bisa berjalan di latar belakang\" - the tool existed only to bring a window to the front; the owner wants the drive invisible",
+        "also": "recorded: local/focus-guard.ts documents the session-level restore the agent cannot reach"
+      }
+    },
+    {
+      "id": "D74",
+      "scope": "agent/tools",
+      "decision": "browser_screenshot always answers: when the compositor has no frame for the tab (a locked screen, a minimized window, a hidden tab), the driver retries with captureBeyondViewport clipped to the current viewport top, and the answer names the road - compositor or beyondviewport. Nothing is ever brought to the foreground (D73).",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"yang screenshot fix supaya bisa screenshot di latar belakang\" - the live drive hit \"Unable to capture screenshot\" on a backgrounded tab",
+        "also": "recorded: local/observe.ts capture() - compositor road first, captureBeyondViewport fallback, scope D73 forbids the foreground path"
+      }
+    },
+    {
+      "id": "D76",
+      "scope": "web/components",
+      "decision": "The bar carries brand (links home) and two actions, nothing else: \"Masuk\" while the browser holds no session, \"Dashboard\" once it does, and the amber \"Pasang gratis\" CTA either way - the centered Beranda text link is removed; the chevron and the panel spotlight remain the route home.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"fix element beranda yang masih di atas nav bar\" (answer: \"Label Beranda di tengah bar\") - the centered link sits awkwardly against D51: brand left, one amber CTA right, chevron is the sole navigation surface"
+      }
+    },
+    {
+      "id": "D77",
+      "scope": "web/components",
+      "decision": "html and body carry overflow-x: clip; the page never forces itself wider than the viewport, so the sticky header regains its real width and the brand and the two action pills cannot be pushed past the screen edge.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"fix log navego element masuk dan element pasang gratis yang terpotong\" - the header honours body width; a body pushed wider by an unbreakable element clips the actions on the right and crowds the brand on the left"
+      }
+    },
+    {
+      "id": "D78",
+      "scope": "agent/tools",
+      "decision": "artifact_build_report, artifact_build_slides and artifact_build_document merge into one artifact_build tool with a target parameter (word, xlsx, pptx, docx); the user asked for the merge in the audit conversation.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: audit of the local MCP surface recommended merging the three artifact tools into artifact_build; user: \"kerjakan rekomendasimu\" - the merge runs"
+      }
+    },
+    {
+      "id": "local-surface-profile-01",
+      "scope": "agent/read",
+      "decision": "An iframe that holds focus counts as an editable host when a canvas covers the viewport; the probe reports editorFrame with its own evidence, so a canvas document (Google Docs) reaches the selection-copy step instead of being read as a toolbar-only AX page.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"implementasi selection copy dan ocr kemudian buat read page otomatis ya jangan buat agent menebak nebak\" - measured on a real Google Doc: surface-profile answered editable:false with \"no editable host\" while the document iframe held focus"
+      },
+      "file": "local/surface-profile.ts"
+    },
+    {
+      "id": "hosted-navego-ocr-01",
+      "scope": "hosted/functions",
+      "decision": "The vision step of browser_read_page calls the navego-ocr edge, which authenticates with the paired device token (x-navego-token, sha256 token_hash) or a user Bearer and answers only the text of the picture; it is the last step of the read ladder, after the selection mirror, ax and dom, the screenshot is capped and never stored, the OCR model is named by GROQ_OCR_MODEL with a vision default, and a machine without the pairing file is told so by name instead of being handed an empty picture.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"implementasi selection copy dan ocr\" - OCR could not run locally (no tesseract binary, no dependency allowed in the stock-Node driver) and the product already proxies a model through an edge with a server-held key (navego-listen / GROQ_API_KEY)"
+      },
+      "file": "hosted/functions/navego-ocr/index.ts"
+    },
+    {
+      "id": "docs-security-01",
+      "scope": "extension/security",
+      "decision": "The extension is Manifest V3 and carries no arbitrary eval or remote code; every browser action is a known, validated primitive.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/security.md:10-11 (no arbitrary eval or remote code; browser actions use known, validated primitives); extension/manifest.json:2 (manifest_version 3)"
+      },
+      "file": "docs/security.md"
+    },
+    {
+      "id": "docs-security-02",
+      "scope": "extension/isolation",
+      "decision": "The content script runs in the page's ISOLATED world and reads only the DOM the extension rendered or the bounded accessibility summary; no reader is registered in the MAIN world.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/security.md:12-18 (ISOLATED world, bounded accessibility summary from extension/lib/ax-summary.ts, no registered reader in the MAIN world)"
+      },
+      "file": "docs/security.md"
+    },
+    {
+      "id": "hosted-migrations-core-01",
+      "scope": "database/rls",
+      "decision": "The core opera tables enable row level security in the migration that creates them, and anon and authenticated lose every grant; access is decided by policy on the server, never by a client-held table grant.",
+      "source": {
+        "kind": "repo",
+        "ref": "hosted/migrations/20260907204146_navego_1_0_0_core.sql:83-90 (alter table ... enable row level security; revoke all on ... from anon,authenticated)"
+      },
+      "file": "hosted/migrations/20260907204146_navego_1_0_0_core.sql"
+    },
+    {
+      "id": "docs-concurrent-agents-01",
+      "scope": "database/migrations",
+      "decision": "Applied migrations are history: new SQL is appended in timestamp order, never rewritten, and two sessions never apply migrations at the same time.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/concurrent-agents.md:51 (applied one at a time - two sessions reorder them and the reorder is a production incident); tests/tooling/decisions.test.ts:108 (the applied past is not rewritten)"
+      },
+      "file": "docs/concurrent-agents.md"
+    },
+    {
+      "id": "hosted-migrations-wallet-01",
+      "scope": "database/wallet",
+      "decision": "The wallet ledger is append-only money movement; a correction is a new adjust row carrying its reason, never an update or a delete, and the balance is the sum of amount_cents.",
+      "source": {
+        "kind": "repo",
+        "ref": "hosted/migrations/20261104120000_opera_wallet.sql:51-67 (opera_ledger table and its append-only comment); docs/superpowers/specs/2026-11-04-prabayar-tugas-selesai-design.md:57 (all ledger writes append-only; settle and refund idempotent by unique reservation_id)"
+      },
+      "file": "hosted/migrations/20261104120000_opera_wallet.sql"
+    },
+    {
+      "id": "local-bridge-01",
+      "scope": "mcp/transport",
+      "decision": "The local driver reaches the everyday browser over the loopback bridge, port 9451 by default; a second driver adopts the running bridge as a client of the winner instead of failing or falling back to a debugging port nobody is signed into.",
+      "source": {
+        "kind": "repo",
+        "ref": "local/bridge.ts:54-57 (a second driver becomes a client of the winner); local/README.md:55-56 (NAVEGO_BRIDGE_PORT defaults to 9451)"
+      },
+      "file": "local/bridge.ts"
+    },
+    {
+      "id": "docs-security-03",
+      "scope": "mcp/auth",
+      "decision": "Device tokens travel in x-navego-token, Authorization: Bearer, or body.apiKey only; no gateway route reads a token from the query string.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/security.md:33-36 (the three carriers, and no route reads the query string)"
+      },
+      "file": "docs/security.md"
+    },
+    {
+      "id": "local-read-strategy-01",
+      "scope": "agent/read",
+      "decision": "On a canvas surface with an editable editor, the selection mirror leads the read ladder; DOM, accessibility and OCR follow. A canvas without an editor keeps the accessibility tree first.",
+      "source": {
+        "kind": "recorded",
+        "ref": "measured on a real Google Doc, 2026-11-19: the accessibility tree answered a canvas document in 19-30ms but only 56 characters of toolbar, while the document body held thousands behind the selection; tests/local/read-strategy.test.ts:28 proves the mirror leads on a canvas editor"
+      },
+      "file": "local/read-strategy.ts"
+    },
+    {
+      "id": "local-canvas-01",
+      "scope": "agent/read",
+      "decision": "A canvas document that mirrors no selection in the DOM is read by copying: Ctrl+A, then Ctrl+C, then the clipboard text, and the answer carries clipboardUsed; the DOM selection is asked first so a page that answers there never pays the copy.",
+      "source": {
+        "kind": "recorded",
+        "ref": "measured on a real Google Doc, 2026-11-19: Ctrl+A left every frame's getSelection empty and Ctrl+C put 8,750 characters of the document on the clipboard; tests/surface/surface-drive.test.ts:180 proves the clipboard fallback"
+      },
+      "file": "local/canvas.ts"
+    },
+    {
+      "id": "local-canvas-02",
+      "scope": "agent/read",
+      "file": "local/canvas.ts",
+      "decision": "A clipboard copy is accepted only when the page has focus and the clipboard changed from a sentinel written before Ctrl+C; the previous text clipboard is restored afterwards, and a stale clipboard is refused by name instead of returned as the page.",
+      "source": {
+        "kind": "recorded",
+        "ref": "measured 2026-11-19: an unfocused tab refused writeText with NotAllowedError and left the previous clipboard readable, which a copy that never ran would have returned as this page; tests/surface/surface-drive.test.ts:194 proves the stale clipboard is refused"
+      }
+    },
+    {
+      "id": "local-canvas-03",
+      "scope": "agent/read",
+      "file": "local/canvas.ts",
+      "decision": "The OCR fallback runs only when the caller passes allowVision: true on that call; without it the vision step is declined by name, because the screenshot leaves the machine and the product promise is that pages never leave without consent.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19: \"implementasi selection copy dan ocr kemudian buat read page otomatis\" - the caret consent covered a local selection, not a screenshot uploaded to the hosted edge"
+      }
+    },
+    {
+      "id": "local-surface-profile-02",
+      "scope": "agent/read",
+      "file": "local/surface-profile.ts",
+      "decision": "A document region counts as accessibility-rich at ten or more text boxes; below that the DOM leads, because a toolbar reads as menu labels rather than a document.",
+      "source": {
+        "kind": "recorded",
+        "ref": "measured on a real Google Doc, 2026-11-19: the document region carried 155 text boxes and the chrome around it carried 60, so the ten-box bar separates them by an order of magnitude; tests/surface/surface-profile.test.ts:133 proves a toolbar alone does not lead"
+      }
+    },
+    {
+      "id": "local-tool-schema-01",
+      "scope": "mcp/validation",
+      "file": "local/tool-schema.ts",
+      "decision": "Every tool call is validated at runtime against the same inputSchema the client reads, so a hand-written call cannot skip a required field, type, bound, enum or nested shape the advertised contract declares.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19 review: \"gunakan satu validator runtime yang menjadi sumber validasi setiap tool ... jangan sampai ada dua kontrak yang berkembang secara terpisah\""
+      }
+    },
+    {
+      "id": "local-tool-failures-01",
+      "scope": "mcp/diagnostics",
+      "file": "local/tool-failures.ts",
+      "decision": "The failure log redacts secrets before it writes a byte and names each redaction, and the file and its directory are private to the user; a raw upstream error is never stored.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19 review: \"Redaksi rahasia sebelum menyimpan pesan ... Simpan error code terstruktur, bukan raw error ... Tambahkan test dengan token/password sintetis\""
+      }
+    },
+    {
+      "id": "local-gates-01",
+      "scope": "agent/login",
+      "file": "local/gates.ts",
+      "decision": "A credentials file is accepted only when every account carries a non-empty domain, username and password, and subdomains (when present) is boolean; a malformed account is refused by name before a key is pressed.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19 review: \"perlu memvalidasi domain ... username ... password wajib string dan tidak kosong ... subdomains wajib boolean ... Tambahkan test untuk password hilang, null, angka, dan string kosong\""
+      }
+    },
+    {
+      "id": "site-auth-01",
+      "scope": "web/auth",
+      "file": "site/app/lib/auth.ts",
+      "decision": "A refresh token rotates once per document and once per origin: concurrent callers share one in-flight refresh, and the Web Locks name serialises tabs, so a second tab serves the token the first one stored instead of spending the refresh token again.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-19 review: \"Pada fungsi renewAccessToken() tidak terlihat mekanisme single-flight atau lock ... Buat test multi-tab dan request concurrent\""
+      }
+    },
+    {
+      "id": "docs-branch-protection-01",
+      "scope": "ci/main",
+      "decision": "Main requires all five CI jobs as required checks with strict status verification, enforce_admins is on, force pushes and deletions are refused, dismiss-stale-approvals is on, and every pull request needs an approving review with code-owner sign-off on the gatekeeper surface (tests/, scripts/, gates.lock and the rest of .github/).",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - the audit (its remaining gap) asked for the review on the gatekeeper paths"
+      },
+      "file": "docs/product/backend-language-evaluation.md"
+    },
+    {
+      "id": "tests-hosted-integration-postgres-01",
+      "scope": "ci/testing",
+      "decision": "PostgreSQL integration tests run in CI against a disposable Postgres: every migration applies under ON_ERROR_STOP, and the test asserts opera_commands carries its full lifecycle check and RLS is on the billing tables - the real proof for the migration contract.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - backend-language-evaluation.md item 5 left this open"
+      },
+      "file": "tests/hosted/integration-postgres.test.ts"
+    },
+    {
+      "id": "tests-tooling-swallowed-errors-01",
+      "scope": "tooling/gates",
+      "decision": "Every failure the product catches and ignores is listed in tests/tooling/swallowed-errors.lock with the reason it may be ignored, and the gate refuses a failure that is not listed and a line that names a failure the tree no longer has; the list can only shrink.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/product/backend-language-evaluation.md: item 4 of 'What we will do (in order)' - 'Silently swallowing errors' was the part of the stub sweep that was still open"
+      },
+      "file": "tests/tooling/swallowed-errors.test.ts"
+    },
+    {
+      "id": "tests-tooling-predecessor-name-01",
+      "scope": "tooling/gates",
+      "decision": "The predecessor product's name survives only where a reason says it must: the applied migration history, the dated records, the cited decisions, the one compatibility list that still recognises an install from that era, and the files that document the cleanup. The gate refuses it in every other file, so the tree cannot drift back into two names.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'bersihkan juga repo opera agent supaya tidak membingungkan supaya repo tetap navego' - a name that lingers in a live surface is a name a reader cannot tell apart from the product"
+      },
+      "file": "tests/tooling/predecessor-name.test.ts"
+    },
+    {
+      "id": "docs-branch-protection-02",
+      "scope": "ci/main",
+      "decision": "The owner may merge without the required review on main, because GitHub refuses an approving review from a pull request's own author and this repository has one account; every other rule stays: one approving review with code-owner sign-off, the five CI checks with strict verification, no force pushes, no deletions, and resolved conversations before a merge.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'oke approve apply publish rotasi tunda dulu' - the owner asked for the approval and for the release; the API refused to put the owner on the bypass list, so enforce-admins was turned off, which is the same permission in a repository with one admin"
+      },
+      "file": "docs/product/backend-language-evaluation.md"
+    },
+    {
+      "id": "hosted-request-body-01",
+      "scope": "hosted/functions",
+      "decision": "Every hosted edge function reads its JSON request body through one shared rule: a body must be a plain object, and a body that is malformed JSON, null, an array or a primitive is refused with that function's own 400 envelope before typed action code sees it. A malformed body and valid JSON that is not an object stay two different refusals.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - the enterprise audit left hosted-function input validation open; docs/product/backend-language-evaluation.md item 2 names it"
+      },
+      "file": "hosted/functions/_shared/request-body.ts"
+    },
+    {
+      "id": "local-tools-bounds-01",
+      "scope": "mcp/validation",
+      "decision": "A cap the tool description advertises is declared in the same inputSchema the client reads, so the runtime validator enforces the number the prose promises: maxChars at most 100000, the search budget at most 30000, the row limit at most 500, the burst budget at most 12000, and the wait budget at most 60000.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'tugasnya buat navego jadi repo enterprise' - the enterprise audit found advertised caps the schema did not declare; docs/product/backend-language-evaluation.md item 2 names the boundary"
+      },
+      "file": "local/tools.ts"
+    },
+    {
+      "id": "extension-bridge-url-migration-01",
+      "scope": "extension/endpoints",
+      "decision": "A device paired before the bridge function was renamed stores the predecessor bridge slug, which now resolves to a stale deployment; the extension rewrites that stored URL to the current slug and persists it, so the device leaves the old deployment once and stays on the deployed one.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'lanjutkan navego jadi enterprise ready' - the enterprise pass left the update and quota defects found on the live machine"
+      },
+      "file": "extension/lib/endpoints.ts"
+    },
+    {
+      "id": "hosted-plan-quota-01",
+      "scope": "hosted/functions",
+      "decision": "The daily quota comes from the account profile the bridge reads, and the bundled plan table is only the fallback for a profile that carries no quota; a build whose table predates the current sale can no longer charge an account a quota it never bought.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-20: 'lanjutkan navego jadi enterprise ready' - the enterprise pass left the hosted plan gate measured against a stale deployment"
+      },
+      "file": "hosted/functions/navego-bridge/plan-gate.ts"
+    },
+    {
+      "id": "site-auth-return-path-01",
+      "scope": "web/auth",
+      "decision": "A return path after sign-in keeps its intent when it stays on this site: a relative path such as ./dashboard or a root-relative path such as /dashboard?pair=1#pairing. A scheme-relative or absolute path to another origin is refused, so an attacker cannot turn the login page into an open redirect.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://owasp.org/www-community/attacks/Open_redirects (an unvalidated redirect target lets an attacker send a person off-site after a trusted login)"
+      },
+      "file": "site/app/lib/auth.ts"
+    },
+    {
+      "id": "site-session-state-01",
+      "scope": "web/auth",
+      "file": "site/app/lib/auth.ts",
+      "decision": "The session is stored in this browser's localStorage and survives a tab close and a browser restart: the access token, the rotating refresh token, and the account email. The header reads the account from that store, so a visitor sees whether they are signed in on every page, and a sign-in or a sign-out in one tab flips the header in the others without a reload.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-22: 'fix ini supaya kelihatan sudah login atau belum dan bisa menyimpan sesi login'",
+        "also": "site/app/components/Chrome.tsx (the header reads the account)"
+      }
+    },
+    {
+      "id": "site-plan-shape-01",
+      "scope": "web/dashboard",
+      "decision": "The dashboard reads the plan fields the server actually sends: dailyQuota, usedToday, sessionAllowance and status. A null dailyQuota means no daily cap, and a failed read is reported as a failure with a retry rather than as an empty plan, because a zero quota told every account its plan was exhausted.",
+      "source": {
+        "kind": "repo",
+        "ref": "hosted/migrations/20261118090100_opera_usd_plan_readers.sql:23-49 (opera_my_plan returns dailyQuota, usedToday, sessionAllowance and rpm; a null dailyQuota is an unlimited tier)",
+        "also": "site/app/lib/dashboardApi.ts:26-34 (the typed plan contract the dashboard reads)"
+      },
+      "file": "site/app/lib/dashboardApi.ts"
+    },
+    {
+      "id": "site-console-shape-01",
+      "scope": "web/dashboard",
+      "decision": "The operator console reads the table fields the server sends: name, scope, readable and total. A table the account may not read is not listed at all, so the console never offers a row the server would refuse.",
+      "source": {
+        "kind": "repo",
+        "ref": "hosted/migrations/20261010090000_navego_konsol_tables.sql:53-76 (opera_konsol_tables returns name, scope, readable and total)",
+        "also": "site/app/lib/dashboardApi.ts:98 (the typed console contract)"
+      },
+      "file": "site/app/lib/dashboardApi.ts"
+    },
+    {
+      "id": "site-type-01",
+      "scope": "web/tokens",
+      "decision": "The site uses one sans family for text and display, a monospace family for code and command output, and a small even-pixel scale: 12, 14, 16, 18, 20, 24, 28, 32, 40, 56, 64. Weight carries hierarchy: 400 body, 500 controls, 600 headings, 700 hero. Arial Black is gone, because one heavy display face for every heading removes the subhead level and makes the documentation and operator surfaces unreadable.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://developer.apple.com/design/human-interface-guidelines/typography (Apple uses one family across sizes and advises Regular, Medium, Semibold and Bold rather than decorative weights)",
+        "also": "https://linear.app/now/how-we-redesigned-the-linear-ui (Inter for body copy, Inter Display only for expressive headings, denser app UI)"
+      },
+      "file": "site/app/tokens.css"
+    },
+    {
+      "id": "site-motion-01",
+      "scope": "web/motion",
+      "decision": "Motion is short and purposeful: 120 ms for hover and state feedback, 180 ms for menus and tab changes, 320 ms for a panel opening. Two curves carry it: cubic-bezier(0.4, 0, 0.2, 1) for standard transitions and cubic-bezier(0.22, 1, 0.36, 1) for entrances. Under prefers-reduced-motion the durations collapse and every state stays readable through text and colour.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://developer.apple.com/design/human-interface-guidelines/motion (motion should be brief and precise, and must be optional)",
+        "also": "https://linear.app/now/how-we-redesigned-the-linear-ui (short state transitions in the app shell)"
+      },
+      "file": "site/app/tokens.css"
+    },
+    {
+      "id": "site-design-system-01",
+      "scope": "web/tokens",
+      "file": "site/app/tokens.css",
+      "decision": "The tokens file is the single source of the site's colour, type, spacing and motion; every web/* decision in this register names a value this file or site/app/brand.css carries, and no route carries a visual value in an inline style.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-22: 'bisakahh kamu redesign website navego sampai jadi product siap ship?'",
+        "also": "site/app/brand.css (the component layer that reads the tokens)"
+      }
+    },
+    {
+      "id": "site-dashboard-action-two-phase-01",
+      "scope": "web/dashboard",
+      "decision": "The dashboard's run button asks the server for the command first and waits for the answer in a second call, because a SQL function that enqueues and waits holds both in one transaction and the paired device cannot see the row until the wait has already timed out.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-21: 'upgrade website navego menjadi enterprise ready ... test end to end mulai dari login daftar/masuk dashboard pair dan seterusnya sampai navego dapat digunakan' - the end-to-end drive found the dashboard action timing out on an awake browser"
+      },
+      "file": "site/app/lib/dashboardApi.ts"
+    },
+    {
+      "id": "site-device-name-01",
+      "scope": "web/dashboard",
+      "file": "site/app/routes/dashboard.tsx",
+      "decision": "A device takes the name of the browser it is, not the name of the product that made it: the extension derives the browser family from what the browser publishes, and the server falls back to that family rather than to a product name, so the account's device list says which browser each row is.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-22: 'hapus juga project opera agent ganti full menjadi navego'",
+        "also": "extension/lib/browser-id.ts (the family the browser publishes); hosted/migrations/20261122160000_opera_devices_browser_names.sql (the server's fallback and the rename)"
+      }
+    },
+    {
+      "id": "site-nav-scroll-01",
+      "scope": "web/components",
+      "file": "site/app/brand.css",
+      "decision": "The chevron panel never runs past the viewport: it is capped at the space below the 3.25rem bar, scrolls inside that space with overscroll contained, and the header paints above the consent banner so the last link stays reachable on a phone and on a short laptop screen.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-23: 'fix navbar navego yang terpotong lihat di web' - the open panel measured 1067 px tall on a 390x844 phone and 770 px at 768x600, so the last links fell below the fold and could not be scrolled to",
+        "also": "site/app/brand.css (the capped, scrollable panel and the header's stacking order)"
+      }
+    },
+    {
+      "id": "hosted-pairing-code-01",
+      "scope": "database/pairing",
+      "file": "hosted/migrations/20261123140000_opera_pairing_code_random_hash.sql",
+      "decision": "A pairing code is random and code_hash stores opera_sha256(v_code); the issuer-first rate limit and the ownership fence stay. The browser-name migration must not replace those rules while changing the default device name to browser.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-23: 'sama fix ini gagal memasangkan di chrome' - the live Chrome pairing attempt returned HTTP 409 duplicate key value violates unique constraint opera_pairing_codes_code_hash_key because 20261122160000 stored the hash of the device name",
+        "also": "tests/hosted/pairing-code-hash.test.ts (the static gate); tests/hosted/integration-postgres.test.ts (two codes for one browser, verified against the disposable database)"
+      }
+    },
+    {
+      "id": "site-restyle-01",
+      "scope": "web/components",
+      "file": "site/app/brand.css",
+      "decision": "The whole site moves to one 2026 product system: a dark, fluid-type task demo on Beranda; quiet gradient heroes on inner pages; larger shared card radii, shadows and hover lift; and the same elevated surfaces in docs, auth, account and dashboard. Navego keeps its own cream, deep navy and amber identity rather than copying a reference site's palette, and every animation collapses under reduced motion.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-23: 'redesign restyle seluruh website navego cari referensi website browser agent dan hapus website opera agent migrasi semua ke navego'",
+        "also": "https://browser-use.com/ (the task-first browser demo and public proof story); https://www.browserbase.com/ (the capability grid and production narrative); https://www.skyvern.com/ (workflow examples, explainable runs and developer paths); tests/site/restyle.test.ts (the shared visual contract)"
+      }
+    },
+    {
+      "id": "site-header-sticky-01",
+      "scope": "web/components",
+      "file": "site/app/brand.css",
+      "decision": "The header stays sticky at the top at every scroll position; scroll-state never translates it out of the viewport, because a hide-on-scroll transition can leave the brand and the Masuk/Pasang gratis pills half covered by the hero.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-23: 'fix navbar yang terpotong logo navego tombol masuk dan pasang gratis terpotong blok biru' - the live screenshot showed the bar half hidden under the hero",
+        "also": "tests/site/site-session.test.ts (the no-slide regression gate)"
+      }
+    },
+    {
+      "id": "site-session-csp-01",
+      "scope": "web/security",
+      "file": "site/public/_headers",
+      "decision": "Every route may call only the Supabase Auth host to prove and renew the stored session: connect-src is https://*.supabase.co, while script-src stays self and no other network origin is opened. Session storage and renewal cannot be blocked by the page's own CSP.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-23: 'simpan sesi login supaya tidak masuk berulang ulang ketika reload halaman' - Chrome reported /auth/v1/user and /auth/v1/token?grant_type=refresh_token refused because connect-src was none even though both tokens were stored",
+        "also": "tests/site/site-session.test.ts (every route's CSP must admit Supabase Auth and keep scripts on self)"
+      }
+    },
+    {
+      "id": "site-nav-inline-01",
+      "scope": "web/components",
+      "file": "site/app/components/Chrome.tsx",
+      "decision": "The chevron and mega-panel are replaced by one ordinary navigation tree: Fitur, Harga, Docs, Pasang MCP and Artikel stay inline on wide screens, while a Menu button with aria-expanded opens the same list plus a few secondary links on small screens. Unduh remains the amber action, and Masuk/Dashboard remains on the right.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-23: 'yang chevron hapus aja ganti biasa research juga yang harus ada di navbar cari referensi di internet dari website agent browser serupa'",
+        "also": "https://www.skyvern.com/ (Products, Use Cases, Developers, Pricing, Resources, Login, Book a Demo); https://www.hyperbrowser.ai/ (Products, Pricing, Blog, Documentation, App); https://browser-use.com/ (product categories, Pricing, Docs, Dashboard, Start for free); https://www.browserbase.com/ (Platform, Solutions, Pricing, Developers, Docs, API-key CTA); tests/site/navbar.test.ts (the no-chevron and small-screen state contract)"
+      }
+    },
+    {
+      "id": "site-conversion-01",
+      "scope": "web/components",
+      "file": "site/app/routes/beranda.tsx",
+      "decision": "The page sells a verifiable outcome instead of a tool count: sites without APIs become real files. Visitors can download the actual xlsx/docx/pptx evidence, start with npx instead of a global install, read exact one-time plan periods and no-markup cost boundaries, and choose an English landing page for global reach. No testimonials, customer counts or unmeasured success claims are invented.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: 'research mendalam masalah yang membuat navego tidak diminati atau belum ada pelanggan yang membeli ... list semua hal yang membuat orang tidak membeli ... rencanakan langkah solusi ... implementasi'",
+        "also": "https://agentatlas.dev/guides/browser-automation-mcp-servers-compared/ (free local Playwright MCP and Chrome DevTools MCP set the adoption baseline); https://www.g2.com/products/browser-use/reviews (users praise quick setup but report reliability and free-tier limits); https://anchorbrowser.io/blog/best-browser-agent-platforms-reliable-low-cost-automation-2026 (buyers should measure verified completed workflows and total cost, not headline price); https://browser-use.com/llms-full.txt (free credit, no subscription and transparent usage pricing); tests/site/conversion.test.ts (the conversion contract)"
+      }
+    },
+    {
+      "id": "local-burst-handoff-01",
+      "scope": "agent/tools",
+      "file": "local/burst.ts",
+      "decision": "A burst never retries a failed step in a loop: the default stops at the first failure, continueOnError keeps successful steps with an errors list, and an OTP, captcha or login failure returns needsHuman with the gate and a resume instruction, even when continueOnError is on.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: users need a graceful 'Jeda & Ambil Alih' handoff and honest partial results instead of compounding errors and retry loops",
+        "also": "https://www.g2.com/products/browser-use/reviews (retry loops and unverified outcomes frustrate users); tests/local/adoption-features.test.ts (partial results and OTP handoff are driven)"
+      }
+    },
+    {
+      "id": "extension-open-background-01",
+      "scope": "agent/tools",
+      "file": "extension/background.ts",
+      "decision": "browser_open_url opens new tabs in the background by default on both the extension and bridge roads, so an agent can work in the user's real browser profile without taking over the visible window; background: false opts into focusing the new tab.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: the agent must use the real browser session without stealing the user's window or forcing a fresh login",
+        "also": "tests/local/adoption-features.test.ts (both open paths carry the background flag)"
+      }
+    },
+    {
+      "id": "local-read-untrusted-01",
+      "scope": "agent/tools",
+      "file": "local/browser-actions.ts",
+      "decision": "Every browser_read_page answer carries untrustedContent: true and a note that page text is data, never an instruction, so embedded instructions are not treated as commands by the agent.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: prompt injection is a buying concern for signed-in browser sessions",
+        "also": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool (webpage prompt injection calls for untrusted-content handling and human confirmation); tests/local/adoption-features.test.ts (the read result is marked)"
+      }
+    },
+    {
+      "id": "hosted-paypal-capture-01",
+      "scope": "hosted/functions",
+      "file": "hosted/functions/navego-billing/index.ts",
+      "decision": "The PayPal path is order → owner check → capture → activation. readPaypalOrder supplies custom_id, capture is a POST to /capture, and a failed activation returns an error instead of ok. The webhook checks activation.error too, so a paid order can never silently become an unactivated success.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: production checkout returned 502 paypal credentials are not set and the audit found no capture or reliable activation",
+        "also": "tests/billing/paypal.test.ts (capture is POST and order read carries custom_id); tests/billing/paypal-wiring.test.ts (owner verification and activation failure)"
+      }
+    },
+    {
+      "id": "site-checkout-intent-01",
+      "scope": "web/components",
+      "file": "site/app/routes/harga.tsx",
+      "decision": "Purchase intent survives login and popup blocking: a signed-out buyer returns to /harga, order creation is disabled while pending, a blocked popup gets a manual PayPal link, and checkout=success captures and activates the stored order instead of claiming success before activation returns.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: the checkout audit found lost purchase intent, ignored popup blocking and no return status",
+        "also": "site/app/routes/harga.tsx (finishCheckout, buyPending and the stored order); tests/billing/paypal-wiring.test.ts (the capture action)"
+      }
+    },
+    {
+      "id": "site-checkout-feedback-02",
+      "scope": "site/components",
+      "file": "site/app/lib/checkout-feedback.ts",
+      "decision": "A plan click answers under the plan that was clicked: sign-in, pending, warning and ordinary result messages render in that plan card, one always-mounted polite region announces the current message, and the page-level status remains the fallback for PayPal return, non-plan events, and a clicked card removed by a region change.",
+      "source": {
+        "kind": "recorded",
+        "ref": "hourly survival-and-growth run #6 on 2026-11-25: a real browser drive of the live pricing page clicked Starter, created a PayPal order, and showed the only status paragraph after every plan grid instead of beside the clicked control; a signed-out buy click likewise had no message in the buyer's viewport",
+        "also": "tests/site/checkout-feedback.test.ts and the 320px production browser proof on 2026-11-25"
+      }
+    },
+    {
+      "id": "site-privacy-truth-01",
+      "scope": "web/security",
+      "file": "site/app/routes/privasi.tsx",
+      "decision": "Privacy copy names the actual data flow instead of saying data goes nowhere: local page reads, Supabase for accounts/devices/commands/results/plans/invoices, the chosen model for the goal and a capped excerpt, api.bigdatacloud.net for optional regional detection, and three first-party cookies including oa_device_id.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: the privacy audit found absolute copy contradicted by the implementation",
+        "also": "site/app/routes/beranda.tsx and site/app/routes/en.tsx (the short public answer matches the long policy)"
+      }
+    },
+    {
+      "id": "site-mcp-npx-01",
+      "scope": "web/components",
+      "file": "site/app/routes/mcp.tsx",
+      "decision": "The quickstart and every harness snippet use npx -y navego local, then npx -y navego doctor in a second terminal, so the no-global-install instruction is executable as written and declares Node.js 22 or newer.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: the no-global quickstart must not fall back to a binary that was never installed",
+        "also": "tests/site/conversion.test.ts (npx onboarding is a gate)"
+      }
+    },
+    {
+      "id": "site-geolocation-01",
+      "scope": "web/security",
+      "file": "site/public/_headers",
+      "decision": "Permissions-Policy allows geolocation=(self) only on /harga and /harga.html, so device-first regional pricing works there; every other route keeps geolocation blocked.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: the pricing page asks for device location but its own Permissions-Policy refused it, leaving only IP fallback",
+        "also": "tests/site/conversion.test.ts (the pricing-origin permission is gated)"
+      }
+    },
+    {
+      "id": "site-csp-per-page-01",
+      "scope": "web/security",
+      "file": "site/scripts/inline-script-hashes.ts",
+      "decision": "Each prerendered page carries only its own inline-script hashes in its own CSP block, one policy per path. Hashes are never pooled site-wide and never split across several CSP headers, because policies intersect rather than add, and an overlong policy is dropped whole by Cloudflare.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: signing in with Google returned to the sign-in form instead of the dashboard",
+        "also": "tests/site/site.test.ts (each block is matched against the page it serves; one CSP per path; every value under 1900 bytes); the live console reported the blocked hydration boot for https://navego.pages.dev/"
+      }
+    },
+    {
+      "id": "extension-tabs-open-contract-01",
+      "scope": "extension/tabs",
+      "file": "extension/background.ts",
+      "decision": "tabs.open keeps the foreground contract: active is honored exactly as passed (active:true opens the tab in front, active:false leaves it behind), and background:true is sugar that forces a background tab. The 3b581ca variant that made every open background unless background===false was passed broke the pinned acceptance test (tests/browser_extension_test.py asserts active:true leaves the new tab active) and turned CI red on main for three runs.",
+      "source": {
+        "kind": "recorded",
+        "ref": "tests/browser_extension_test.py:4435 assert baseline['activeTabId'] == user_tab['id'], reproduced locally 2026-11-24 under xvfb after the fix landed in commit 3b581ca; CI runs 45340623620, 45342267156, 45343411812 all failed on it",
+        "also": "tests/local/adoption-features.test.ts (background opens stay in the background on both browser roads) re-pinned to the corrected expression"
+      }
+    },
+    {
+      "id": "hosted-consent-origin-01",
+      "scope": "hosted/auth",
+      "file": "hosted/config.toml",
+      "decision": "The deployed Supabase Auth origin config is hosted/config.toml (site_url https://navego.pages.dev, that host in redirect_urls), read and patched through the dispatch-only auth-config workflow, not through the owner's dashboard: read prints only non-secret fields (site_url, redirect_urls, uri_allow_list), patch sets site_url and appends one URL additively per dispatch. The consent page rejected the live domain with 400 unauthorized request origin because the deployed config named only dead predecessor hosts; the fix is applied from CI with the existing SUPABASE_ACCESS_TOKEN secret, which the agent can drive without ever seeing the token.",
+      "source": {
+        "kind": "recorded",
+        "ref": "owner console capture 2026-11-24: the Supabase oauth consent screen answered 400 unauthorized request origin for the live domain; CI read run 45373897531 printed site_url=https://opera-agent.pages.dev; patch runs 45373987185 and 45376655642 moved it to https://navego.pages.dev and added https://navego.pages.dev/* to uri_allow_list (verified in run logs)"
+      }
+    },
+    {
+      "id": "hosted-paypal-revenue-01",
+      "scope": "hosted/functions",
+      "file": "hosted/migrations/20261125000000_opera_paypal_orders.sql",
+      "decision": "The database owns the PayPal order lifecycle: the quote is stored when PayPal creates the order, the completed order is compared with that quote, one environment and order id can write one revenue event, and only the activation RPC can change the plan. The capture path and the verified webhook therefore leave one sale and one activation even when both arrive; an APPROVED order is not revenue.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: 'setiap ada kenaikan saldo adalah kemenangan naik point ... setiap saldo naik 1 dollar dihitung satu point' - real settled revenue must be visible before the agent scores a balance or a paid plan",
+        "also": "live production query 2026-11-24: opera_price_orders held 0 rows, opera_notification_log held only Midtrans sandbox events, and opera_plan_activate_purchase changed plans without recording a PayPal settlement; tests/hosted/paypal-settlement.test.ts, tests/hosted/integration-postgres.test.ts, tests/billing/paypal.test.ts, and tests/billing/paypal-wiring.test.ts"
+      }
+    },
+    {
+      "id": "hosted-paypal-revenue-02",
+      "scope": "hosted/functions",
+      "file": "hosted/migrations/20261125010000_opera_paypal_orders_hardening.sql",
+      "decision": "A PayPal settlement keeps quoted and actual owner/plan values apart, normalizes the environment and order id before taking its lock, derives an unknown order from the insert result, and permits one accepted PayPal revenue event per environment and order id. Malformed actual values therefore enter review without breaking the revenue record, and equivalent keys cannot race into two sales.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-24: 'setiap ada kenaikan saldo adalah kemenangan naik point ... turun saldo setiap 1 dollar dihitung - 1 poin' - a real payment must remain visible and count once even when the buyer return and the provider webhook arrive together",
+        "also": "independent review 2026-11-25 after PR #442 found that raw advisory-lock keys and constrained actual values could hide or duplicate a malformed payment; tests/hosted/paypal-settlement-hardening.test.ts and tests/hosted/integration-postgres.test.ts"
+      }
+    },
+    {
+      "id": "hosted-paypal-price-01",
+      "scope": "hosted/functions",
+      "file": "hosted/functions/_shared/plans.ts",
+      "decision": "Every USD plan carries one canonical price in cents. The billing function refuses an active price row that differs from that map before PayPal is asked for money, and the site-price test keeps the displayed price aligned with the same number.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/handoff.md:40 (the plan sale is USD-only: $1, $3, $5, $7, $9, $17 for six months, and $33 for one year); the live opera_price_list rows read the same seven amounts on 2026-11-25",
+        "also": "tests/billing/plans.test.ts and tests/billing/paypal-wiring.test.ts"
+      }
+    },
+    {
+      "id": "site-install-cta-01",
+      "scope": "site/components",
+      "file": "site/app/routes/unduh.tsx",
+      "decision": "The download hero leads with the Windows one-command install and keeps manual zip and reg installs as secondary paths. A successful command copy invokes the install tracker, while copy failure is visible and announced; the copy control stays enabled, every command owns one polite status region, a successful result is not hidden by a later failure, and the copy controller invalidates work that resolves after disposal.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/agent-survival-prompt.md:61 (fix the earliest real funnel drop-off, which may be the install path); live production funnel 2026-11-25 had 109 page views, 49 pair views, 2 install views, 0 install clicks, and 0 settled orders",
+        "also": "tests/site/install-cta.test.ts, tests/site/copy-command.test.ts, and the independent 320px browser review on 2026-11-25"
+      }
+    },
+    {
+      "id": "site-install-cta-02",
+      "scope": "site/components",
+      "file": "site/app/routes/index.tsx",
+      "decision": "The anonymous landing hero carries the same exact Windows one-command install as the download page, so a visitor can start installation without a second page. The force-install cost and undo path appear before the control; the copy remains retryable and announced; the landing surface records its own view and successful-copy intent with surface=landing, while manual macOS and Linux installation stays linked.",
+      "source": {
+        "kind": "recorded",
+        "ref": "hourly survival-and-growth run #5 on 2026-11-25: live production had 62 landing-page views from 60 browsers but only 5 download-page views from 2 browsers and 0 install clicks; fix the earliest measured arrival-to-install gap without weakening the checkout or payment path",
+        "also": "tests/site/install-command.test.ts, tests/site/install-cta.test.ts, and the 320px built-site browser proof on 2026-11-25"
+      }
+    },
+    {
+      "id": "docs-agent-roles-01",
+      "scope": "agent/",
+      "file": "docs/agent-roles.md",
+      "decision": "Every automation-opened session opens inside a named role: roles are lanes of one division, one session may not work in two roles, the role doc is the session entry point, and the role names the repo paths it may touch — the registry is docs/agent-roles/registry.json.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-25: 'untuk automation nya buat semua bisa terdokumentasi di repo dan kelompokkan sesuai dengan role yang sedang dikerjakan satu sesi tidak boleh lintas role; role itu jadi pintu masuk agent supaya dia mengerjakan hanya bagian itu; list dulu apa yang mau di bangun ke aku aku review'"
+      }
+    },
+    {
+      "id": "docs-agent-roles-02",
+      "scope": "agent/",
+      "file": "docs/agent-roles/registry.json",
+      "decision": "The roles the owner asked to build: survival-runner (Engineering: Survival, the active hourly automation), growth-prospects (Growth: Prospecting & outreach), growth-site (Growth: Site & marketing), product-dx (Engineering: Product & DX), engineering-release (Engineering: Release), finance-economy (Finance: Economy), support-retention (Customer: Support & retention) and onboarding-docs (Customer: Onboarding docs) — this list is for review, one decision per division.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-25: 'list dulu apa yang mau di bangun ke aku aku review'"
+      }
+    }
+  ]
 }
