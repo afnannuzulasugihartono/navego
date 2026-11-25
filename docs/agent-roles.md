@@ -30,7 +30,8 @@ happens in that role's own session, not borrowed.
 | role id | team | scope (repo paths) | status |
 |---|---|---|---|
 | survival-runner | Engineering: Survival | docs/economy.json, docs/handoff.md, docs/proof | active |
-| growth-prospects | Growth: Prospecting & outreach | docs/research, docs/product, README.md | planned |
+| growth-research | Growth: Research — divisioning for AI agents & large companies | docs/research, docs/product, README.md | planned |
+| growth-prospects | Growth: Prospecting & outreach | README.md, docs/research/prospects.md, docs/product | planned |
 | growth-site | Growth: Site & marketing | site/** | planned |
 | product-dx | Engineering: Product & DX | extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md | planned |
 | engineering-release | Engineering: Release | .github/**, scripts/release/**, scripts/pack/**, docs/releases, CHANGELOG.md, server.json | planned |
@@ -53,6 +54,8 @@ assembled from many sessions without drifting:
    (money out only via revenue or cost rows; a gap named in `monthly_gap_usd`).
 3. **Product state.** `docs/handoff.md` is the rolling "what is true now, next
    step" record; a division writes its last state there when it ships.
+
+**One communication container** — `docs/agent-roles/status.md`. It is the shared line-per-role board every division reads: what is missing for a division, what can be upgraded, and the open upgrades. A session opens it, refreshes its own line, and proposes upgrades in the queue artifact below when it sees a gap it owns; nothing stays secret because it lived in a chat, since the status is a file.
 
 Handoff between divisions is one artifact per ticket, in
 `docs/agent-roles/queue/`, named `<from-role>-to-<to-role>-<yyyymmdd>.md`, with

@@ -13,9 +13,17 @@
       "status": "active"
     },
     {
+      "id": "growth-research",
+      "team": "Growth: Research — divisioning for AI agents & large companies",
+      "scopePaths": ["docs/research/**", "docs/product/**", "README.md"],
+      "doc": "docs/agent-roles/growth-research.md",
+      "automations": [],
+      "status": "planned"
+    },
+    {
       "id": "growth-prospects",
       "team": "Growth: Prospecting & outreach",
-      "scopePaths": ["docs/research/**", "docs/product/**", "README.md"],
+      "scopePaths": ["README.md", "docs/research/prospects.md", "docs/product/**"],
       "doc": "docs/agent-roles/growth-prospects.md",
       "automations": [],
       "status": "planned"

@@ -5,9 +5,12 @@ Role id: growth-prospects
 
 Scope (what this role may work in):
 
-- docs/research/**
-- docs/product/** (prospects pipeline files there)
-- README.md
+- README.md (the prospect pipeline)
+- docs/research/prospects.md
+- docs/product/**
+
+Research feeds from the growth-research role; the prospect pipeline lives in
+the lanes named above.
 
 Goal:
 

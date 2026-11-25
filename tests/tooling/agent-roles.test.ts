@@ -78,6 +78,15 @@ test('the human half of the system lists every registry role', () => {
   }
 });
 
+test('the one communication container lists every role and says what is missing', () => {
+  const { roles } = load();
+  const status = docText('docs/agent-roles/status.md');
+  assert.ok(status.includes('# Agent roles status'), 'status.md opens with the container title');
+  for (const role of roles) {
+    assert.ok(status.includes(role.id), `status.md has no line for role ${role.id} - the container must name every division so it can see what is missing`);
+  }
+});
+
 test('the decisions register carries the roles decision', () => {
   const decisions = read('docs/decisions.json') as { decisions: Array<{ id: string }> };
   const ids = new Set(decisions.decisions.map((d) => d.id));
