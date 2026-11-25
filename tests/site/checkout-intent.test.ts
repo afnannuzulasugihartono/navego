@@ -1,6 +1,6 @@
 // @last-edited: 2026-11-25 UTC+7.
 // @title: checkout-intent.test - a chosen plan and its order survive sign-in and expire only after activation.
-// @state: tab storage keeps the chosen card and order, preserves the full return path, and clears only the order that activated.
+// @state: browser-local intent keeps the chosen card and order together, preserves the full return path, and clears only the order that activated.
 // @dependencies: node:test, strict, ../../site/app/lib/checkout-intent.ts.
 
 import test from 'node:test';
@@ -51,7 +51,11 @@ test('a pending plan and order clear only after the matching order activates', a
   assert.equal(readPendingPlan(storage), 'asia:plan.usd-1');
   assert.equal(completePendingOrder('ORDER-OTHER', storage), false, 'a different activation must not clear the pending plan');
   assert.equal(readPendingPlan(storage), 'asia:plan.usd-1');
-  assert.equal(completePendingOrder('ORDER-1', storage), true);
+  rememberPendingPlan('asia:plan.usd-9', storage);
+  assert.equal(completePendingOrder('ORDER-1', storage), false, 'a newly chosen plan must not inherit the old order');
+  assert.equal(readPendingPlan(storage), 'asia:plan.usd-9');
+  rememberPendingOrder('ORDER-2', storage);
+  assert.equal(completePendingOrder('ORDER-2', storage), true);
   assert.equal(readPendingPlan(storage), null);
 });
 

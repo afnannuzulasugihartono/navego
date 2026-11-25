@@ -358,11 +358,11 @@
         "activated",
         "fallback"
       ],
-      "writers": "the plan click, tab session storage, ensureSession, the billing answer, the region detection, and the PayPal return query",
+      "writers": "the plan click, browser-local intent storage, ensureSession, the billing answer, the region detection, and the PayPal return query",
       "readers": "the clicked plan card, the always-mounted plan announcer, and the page-level payment status",
       "wrongIfConfused": "two identical plan ids light up together; a pending id flips the wrong card; a sign-in round trip loses the chosen plan or its order token; a popup clears intent before activation; a late region change unmounts the card and hides the message; a live region mounts with its text and is never announced",
       "decision": "model",
-      "why": "one current plan owns one visible and announced message, the chosen plan and full return URL survive sign-in in the tab, only the order that activated clears intent, the announcer exists before its text changes, and a removed card hands the message back to the page-level region",
+      "why": "one current plan owns one visible and announced message, the chosen plan and full return URL survive sign-in in the browser, one atomic intent prevents a new plan from inheriting an old order, only the order that activated clears intent, the announcer exists before its text changes, and a removed card hands the message back to the page-level region",
       "rank": 2
     },
     {

@@ -278,7 +278,7 @@ export default function Harga() {
         <li>36 primitive browser</li>
         <li>{plan.premium ? 'Semua fitur (statement, VM, remote drive) + prioritas' : 'Plan dasar'}</li>
       </ul>
-      <button aria-label={`Beli dengan PayPal ${plan.name}`} className="btn btn-solid btn-sm w-full" type="button" disabled={buyPending !== null} onClick={() => buy(plan.id, planKey)}>{buyPending === planKey ? 'Menyiapkan…' : 'Beli dengan PayPal'}</button>
+      <button aria-label={buyPending === planKey ? `Menyiapkan ${plan.name}` : `Beli dengan PayPal ${plan.name}`} className="btn btn-solid btn-sm w-full" type="button" disabled={buyPending !== null} onClick={() => buy(plan.id, planKey)}>{buyPending === planKey ? 'Menyiapkan…' : 'Beli dengan PayPal'}</button>
       {feedback ? (
         <p className={`status plan-status${feedback.tone === 'warn' ? ' warn' : ''}`}>
           {feedback.tone === 'signin'

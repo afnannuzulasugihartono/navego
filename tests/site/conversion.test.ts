@@ -40,7 +40,8 @@ test('a chosen plan survives the sign-in round trip in this tab', () => {
   assert.match(harga, /completePendingOrder\(orderId\)/);
   assert.match(harga, /signInPath\(window\.location\)/);
   assert.match(harga, /Lanjutkan \$\{pendingName\}\. Klik Beli dengan PayPal/);
-  assert.match(harga, /aria-label=\{`Beli dengan PayPal \$\{plan\.name\}`\}/);
+  assert.match(harga, /Menyiapkan \$\{plan\.name\}/);
+  assert.match(harga, /Beli dengan PayPal \$\{plan\.name\}/);
 });
 
 test('the homepage offers real artifacts instead of only a scripted demo', () => {

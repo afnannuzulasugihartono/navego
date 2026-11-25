@@ -6,53 +6,61 @@ type StorageLike = {
   removeItem: (key: string) => void;
 };
 
-const PENDING_PLAN_KEY = 'navego-checkout-plan';
-const PENDING_ORDER_KEY = 'navego-checkout-order';
+type PendingIntent = {
+  planKey: string | null;
+  orderId: string | null;
+};
 
-function tabStorage(): StorageLike | null {
+const PENDING_INTENT_KEY = 'navego-checkout-intent';
+
+function intentStorage(): StorageLike | null {
   try {
-    return typeof sessionStorage === 'undefined' ? null : sessionStorage;
+    return typeof localStorage === 'undefined' ? null : localStorage;
   } catch {
     return null;
   }
 }
 
-export function rememberPendingPlan(planKey: string, storage: StorageLike | null = tabStorage()): void {
+function readIntent(storage: StorageLike | null): PendingIntent | null {
   try {
-    storage?.setItem(PENDING_PLAN_KEY, planKey);
-  } catch {
-  }
-}
-
-export function readPendingPlan(storage: StorageLike | null = tabStorage()): string | null {
-  try {
-    return storage?.getItem(PENDING_PLAN_KEY) || null;
+    const raw = storage?.getItem(PENDING_INTENT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed as PendingIntent : null;
   } catch {
     return null;
   }
 }
 
-export function rememberPendingOrder(orderId: string, storage: StorageLike | null = tabStorage()): void {
+function writeIntent(intent: PendingIntent, storage: StorageLike | null): void {
+  try {
+    storage?.setItem(PENDING_INTENT_KEY, JSON.stringify(intent));
+  } catch {
+  }
+}
+
+export function rememberPendingPlan(planKey: string, storage: StorageLike | null = intentStorage()): void {
+  writeIntent({ planKey, orderId: null }, storage);
+}
+
+export function rememberPendingOrder(orderId: string, storage: StorageLike | null = intentStorage()): void {
   if (!orderId) return;
-  try {
-    storage?.setItem(PENDING_ORDER_KEY, orderId);
-  } catch {
-  }
+  const current = readIntent(storage) ?? { planKey: null, orderId: null };
+  writeIntent({ ...current, orderId }, storage);
 }
 
-export function readPendingOrderId(storage: StorageLike | null = tabStorage()): string | null {
-  try {
-    return storage?.getItem(PENDING_ORDER_KEY) || null;
-  } catch {
-    return null;
-  }
+export function readPendingPlan(storage: StorageLike | null = intentStorage()): string | null {
+  return readIntent(storage)?.planKey ?? null;
 }
 
-export function completePendingOrder(orderId: string, storage: StorageLike | null = tabStorage()): boolean {
+export function readPendingOrderId(storage: StorageLike | null = intentStorage()): string | null {
+  return readIntent(storage)?.orderId ?? null;
+}
+
+export function completePendingOrder(orderId: string, storage: StorageLike | null = intentStorage()): boolean {
   if (!orderId || readPendingOrderId(storage) !== orderId) return false;
   try {
-    storage?.removeItem(PENDING_ORDER_KEY);
-    storage?.removeItem(PENDING_PLAN_KEY);
+    storage?.removeItem(PENDING_INTENT_KEY);
     return true;
   } catch {
     return false;
