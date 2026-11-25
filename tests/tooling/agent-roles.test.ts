@@ -38,7 +38,11 @@ const load = (): { register: Register; roles: Role[] } => {
 const resolves = (p: string): boolean => {
   const full = path.join(root, p);
   if (fs.existsSync(full)) return true;
-  if (p.endsWith('/**') && fs.existsSync(path.dirname(full))) return true;
+  if (p.includes('*')) {
+    // every wildcard resolves when the directory chain up to it exists
+    const chain = p.split('*')[0] ?? '';
+    return fs.existsSync(path.join(root, chain.replace(/\/[^/]*$/, '')));
+  }
   return false;
 };
 

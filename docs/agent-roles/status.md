@@ -14,6 +14,8 @@ division that owns it refreshes its own line.
 
 - survival-runner: state = score -10, $0.00 settled; next = one real $1 paypal-live settle. Divisioning signal: none yet (no agent buyers).
 - growth-prospects: research from growth-research landed; next = prepare outreach. Divisioning signal: find one buyer agent operator.
+- growth-research: divisioned map started (AI agent division, secondary division, gap); next = enumerate AI-agent operators with dated lists and charge/reach. Divisioning signal: a division appears in the map, who builds it, what they sell, what is missing locally.
+- ceo: owner decisions pile up in docs/economy.json (settled $0.00) and status.md lines; next = one decision: scope-vs-scope review of the roles + first revenue target. Divisioning signal: none beyond the register.
 - growth-site: nothing shipped yet. Divisioning signal: none.
 - product-dx: nothing shipped yet. Divisioning signal: none.
 - engineering-release: nothing shipped yet. Divisioning signal: none.
@@ -23,4 +25,4 @@ division that owns it refreshes its own line.
 
 ## Open upgrades (role, what, why, who decides)
 
-- growth-research: divisioning map started; next = research ai-agent + large-company builders with a dated list. Divisioning signal: who lists them, what they charge, what lacks privacy.
+

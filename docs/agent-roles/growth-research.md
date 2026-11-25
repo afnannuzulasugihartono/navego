@@ -1,6 +1,6 @@
 # growth-research
 
-Team: Growth: Research — divisioning for AI agents & large companies
+Team: R&D (Research & Development) — divisioning for AI agents & large companies
 Role id: growth-research
 
 Scope (what this role may work in):

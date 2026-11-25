@@ -30,7 +30,8 @@ happens in that role's own session, not borrowed.
 | role id | team | scope (repo paths) | status |
 |---|---|---|---|
 | survival-runner | Engineering: Survival | docs/economy.json, docs/handoff.md, docs/proof | active |
-| growth-research | Growth: Research — divisioning for AI agents & large companies | docs/research, docs/product, README.md | planned |
+| growth-research | R&D (Research & Development) | docs/research, docs/product, README.md | planned |
+| ceo | C-suite: CEO | docs/agent-roles.md, docs/agent-roles/registry.json, docs/agent-roles/status.md, docs/agent-roles/queue, docs/economy.json, docs/handoff.md | planned |
 | growth-prospects | Growth: Prospecting & outreach | README.md, docs/research/prospects.md, docs/product | planned |
 | growth-site | Growth: Site & marketing | site/** | planned |
 | product-dx | Engineering: Product & DX | extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md | planned |

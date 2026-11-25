@@ -14,9 +14,17 @@
     },
     {
       "id": "growth-research",
-      "team": "Growth: Research — divisioning for AI agents & large companies",
+      "team": "R&D (Research & Development)",
       "scopePaths": ["docs/research/**", "docs/product/**", "README.md"],
       "doc": "docs/agent-roles/growth-research.md",
+      "automations": [],
+      "status": "planned"
+    },
+    {
+      "id": "ceo",
+      "team": "C-suite: CEO",
+      "scopePaths": ["docs/agent-roles.md", "docs/agent-roles/registry.json", "docs/agent-roles/status.md", "docs/agent-roles/queue/**", "docs/agent-roles/*.md", "docs/economy.json", "docs/handoff.md"],
+      "doc": "docs/agent-roles/ceo.md",
       "automations": [],
       "status": "planned"
     },
@@ -30,7 +38,7 @@
     },
     {
       "id": "growth-site",
-      "team": "Growth: Site & marketing",
+      "team": "Marketing (site & public surface)",
       "scopePaths": ["site/**"],
       "doc": "docs/agent-roles/growth-site.md",
       "automations": [],

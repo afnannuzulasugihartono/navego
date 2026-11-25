@@ -1,6 +1,6 @@
 # growth-site
 
-Team: Growth: Site & marketing
+Team: Marketing (site & public surface)
 Role id: growth-site
 
 Scope (what this role may work in):
