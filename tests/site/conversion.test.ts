@@ -33,6 +33,14 @@ test('a plan click answers under the clicked plan, not at the bottom of the page
   assert.match(harga, /!activePlanPresent && note/);
 });
 
+test('a chosen plan survives the sign-in round trip in this tab', () => {
+  const harga = read('app/routes/harga.tsx');
+  assert.match(harga, /rememberPendingPlan\(planKey\)/);
+  assert.match(harga, /readPendingPlan\(\)/);
+  assert.match(harga, /forgetPendingPlan\(\)/);
+  assert.match(harga, /Lanjutkan plan pilihan Anda\. Klik Beli dengan PayPal/);
+});
+
 test('the homepage offers real artifacts instead of only a scripted demo', () => {
   const beranda = read('app/routes/beranda.tsx');
   assert.match(beranda, /Situs tanpa API\. Perintah jadi berkas\./);
