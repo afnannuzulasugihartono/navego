@@ -9,7 +9,7 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "The hourly operator run is live again (aut_213a07660001wHhAZDmMjXb7o3) and reads the settlement every hour. The next money step: one real customer completes one $1 plan.usd-1 PayPal purchase in a real browser, so the next run reads the paypal-live settlement row and proves the plan activation without counting an owner payment as revenue; in parallel the researcher role maps the first division with dated public sources and the sales role sends at most one bounded message a day under docs/autonomy.md.",
+  "next_action": "The hourly operator run (aut_213de24a6001yQ4Vxlmzt0ebLC) reads the settlement and the funnel every hour; run #8 charged 13 flat hours while the runner was down, so the score reads -23 against $0.00 settled and 0 orders. The next money step: one real customer completes one $1 plan.usd-1 PayPal purchase in a real browser, so the next run reads the paypal-live settlement row and proves the plan activation without counting an owner payment as revenue; in parallel the engineer lane picks up docs/agent-roles/queue/operator-to-engineer-20261125.md, because the funnel row named \"install click\" counts a copy, and until that row is split the funnel cannot name the real wall.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
@@ -46,5 +46,5 @@
     "midtrans_leftover": "createInvoice still defaults rail=midtrans and BILLING_RAIL defaults to midtrans; MIDTRANS_SERVER_KEY is not among the repo deploy secrets, so the rupiah/QRIS rails are dormant without credentials. Not deleted: wallet top-up and task invoicing ride it until the wallet moves to PayPal."
   },
   "gate": "AGENTS.md#always + docs/agent-survival-prompt.md",
-  "verification_note": "The Supabase settlement read was proven on 2026-11-25 with a one-shot automation probe: both tools[\"supabase\"].execute_sql and tools.supabase.execute_sql answered, and the live paypal-live settlement read 0 orders and $0.00."
+  "verification_note": "The settlement and funnel reads were both proven from an automation context on 2026-11-25 with one-shot probes: the live paypal-live settlement read 0 orders / $0.00, and the funnel read returned page.view 109 events / 40 browsers, pair.view 49 / 38, install.view 12 / 10, plan.view 8 / 1, buy.click 3 / 1 for the last 24 hours. The earlier runner failed on an unconnected Supabase MCP, and run #8 failed on its own funnel query, which mixed a text column with a uuid one; both defects are fixed and the proof is in docs/proof/2026-11-25-survival-run-8.md."
 }
