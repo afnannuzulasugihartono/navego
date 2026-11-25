@@ -1,10 +1,13 @@
-// decisions.json -> D32, D34, D35, D36, D38 (one mark, no eyebrows, h1 first, the lockup panel)
+// decisions.json -> D32, D34, D35, D36, D38 (one mark, no eyebrows, h1 first, the lockup panel) decisions.json -> site-install-cta-02
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
+import { CopyCommand } from '../components/CopyCommand';
 import { NavegoMark, NavegoWordmark } from '../components/NavegoMark';
+import { recordInstallCopy } from '../lib/funnel';
+import { WINDOWS_INSTALL_COMMAND } from '../lib/install-command';
 
 import { AUTH_HOST, announceSession, clearSession, getReturnTo, getRefreshToken, getStoredToken, proveSession, renewAccessToken, storeEmail, storeRefreshToken, storeToken, PUBLISHABLE_KEY } from '../lib/auth';
 
@@ -123,15 +126,29 @@ export default function Index() {
   return (
     <>
       <SiteHeader current="/" />
-      <main className="auth-stage" aria-label="Masuk ke Navego">
+      <main className="auth-stage">
         <section className="page-hero" aria-labelledby="value-title">
           <div className="wrap">
             <h1 id="value-title">Situs tanpa API. Perintah jadi berkas.</h1>
-            <p className="lede">Navego membuka portal, mengisi formulir, mengunduh data, dan menyimpan Excel, Word, atau PowerPoint di browser Anda. <Link to="/beranda">Lihat produknya dulu →</Link></p>
+            <p className="lede">Navego membuka portal, mengisi formulir, dan menyimpan hasilnya sebagai Excel, Word, atau PowerPoint di browser Anda. <Link to="/beranda">Lihat produknya dulu →</Link></p>
+            {phase === 'form' ? (
+              <>
+                <p className="note">Di Windows, perintah ini menulis policy HKCU: browser dikelola dan extension tidak bisa dicabut sampai policy dihapus. Hapus nilai policy yang ditampilkan perintah untuk uninstall.</p>
+                <CopyCommand
+                  id="landing-install"
+                  label="Windows"
+                  command={WINDOWS_INSTALL_COMMAND}
+                  buttonLabel="Salin perintah"
+                  successMessage="Perintah disalin. Jalankan di PowerShell."
+                  onCopied={() => recordInstallCopy('landing')}
+                />
+              </>
+            ) : null}
             <div className="hero-cta">
-              <Link className="btn btn-solid" to="/unduh">Pasang gratis</Link>
+              <Link className="btn btn-ghost" to="/unduh">Semua cara memasang</Link>
               <Link className="btn btn-ghost" to="/harga">Lihat harga</Link>
             </div>
+            <p className="note">macOS dan Linux: <Link to="/unduh">unduh .zip</Link> dari halaman Unduh.</p>
           </div>
         </section>
         <div className="auth-pane">

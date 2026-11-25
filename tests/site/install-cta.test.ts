@@ -14,6 +14,10 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
 const source = fs.readFileSync(path.join(root, 'site', 'app', 'routes', 'unduh.tsx'), 'utf8');
+const landing = fs.readFileSync(path.join(root, 'site', 'app', 'routes', 'index.tsx'), 'utf8');
+const copySource = fs.readFileSync(path.join(root, 'site', 'app', 'components', 'CopyCommand.tsx'), 'utf8');
+const funnelSource = fs.readFileSync(path.join(root, 'site', 'app', 'lib', 'funnel.ts'), 'utf8');
+const dashboardSource = fs.readFileSync(path.join(root, 'site', 'app', 'routes', 'dashboard.tsx'), 'utf8');
 const css = fs.readFileSync(path.join(root, 'site', 'app', 'brand.css'), 'utf8');
 
 test('the hero carries the one-command Windows install before the manual download', () => {
@@ -21,16 +25,40 @@ test('the hero carries the one-command Windows install before the manual downloa
   const heroEnd = source.indexOf('</section>', heroStart);
   assert.ok(heroStart >= 0 && heroEnd > heroStart, 'the download page must have a readable hero');
   const hero = source.slice(heroStart, heroEnd);
-  assert.match(hero, /ONE_LINER/);
-  assert.ok(hero.indexOf('ONE_LINER') < hero.indexOf('DOWNLOAD'), 'the command comes before the manual zip');
+  assert.match(hero, /WINDOWS_INSTALL_COMMAND/);
+  assert.ok(hero.indexOf('WINDOWS_INSTALL_COMMAND') < hero.indexOf('DOWNLOAD'), 'the command comes before the manual zip');
   assert.match(hero, /Salin perintah/);
 });
 
+test('the landing hero can copy the Windows install without another page', () => {
+  assert.match(landing, /WINDOWS_INSTALL_COMMAND/);
+  assert.doesNotMatch(landing, /recordInstallView\('landing'\)/);
+  assert.match(funnelSource, /recordInstallView\('landing', path\)/);
+  assert.match(landing, /recordInstallCopy\('landing'\)/);
+  assert.match(landing, /Salin perintah/);
+  assert.doesNotMatch(landing, /aria-label="Masuk ke Navego"/);
+  assert.match(landing, /tidak bisa dicabut/);
+  assert.match(landing, /hapus nilai policy/i);
+  const branchStart = landing.indexOf("{phase === 'form' ? (");
+  const branchEnd = landing.indexOf(') : null}', branchStart);
+  const disclosure = landing.indexOf('Di Windows, perintah ini');
+  const copy = landing.indexOf('<CopyCommand');
+  assert.ok(branchStart >= 0 && branchEnd > branchStart, 'the anonymous phase branch must exist');
+  assert.ok(disclosure > branchStart && copy > disclosure && copy < branchEnd, 'the disclosure and command belong to the anonymous phase only');
+});
+
+test('the operator funnel names the install steps by what they measure', () => {
+  assert.match(dashboardSource, /\['install\.view', 'Tampilan install'\]/);
+  assert.match(dashboardSource, /\['install\.click', 'Klik install'\]/);
+  assert.doesNotMatch(dashboardSource, /Halaman unduh dilihat/);
+  assert.doesNotMatch(dashboardSource, /Klik unduhan/);
+});
+
 test('a successful command copy records install intent and a failed copy is announced', () => {
-  assert.match(source, /track\('install\.click', \{ browser: 'windows', artifact: 'powershell' \}\)/);
-  assert.match(source, /role="status"/);
-  assert.match(source, /aria-live="polite"/);
-  assert.match(source, /Gagal menyalin/);
+  assert.match(source, /recordInstallCopy\('download'\)/);
+  assert.match(copySource, /role="status"/);
+  assert.match(copySource, /aria-live="polite"/);
+  assert.match(copySource, /Gagal menyalin/);
 });
 
 test('every command stays inside a narrow screen and the primary states its real cost', () => {

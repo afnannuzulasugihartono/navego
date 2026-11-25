@@ -1,5 +1,6 @@
-// @last-edited: 2026-11-24 UTC+7.
+// @last-edited: 2026-11-25 UTC+7.
 // @title: funnel — the steps a stranger takes, written where the operator can read them.
+// decisions.json -> site-install-cta-01, site-install-cta-02
 // @state: one random browser id, one whitelisted step name, and a fire-and-forget write that never blocks the page.
 // @dependencies: none at runtime; the endpoint and the publishable key mirror auth.ts, and funnel.test.ts fails when the two drift apart.
 
@@ -103,6 +104,16 @@ export function currentPath(): string {
   return pathname || '/';
 }
 
+export type InstallSurface = 'landing' | 'download';
+
+export function recordInstallView(surface: InstallSurface, path = currentPath()): void {
+  track('install.view', { surface }, path);
+}
+
+export function recordInstallCopy(surface: InstallSurface): void {
+  track('install.click', { browser: 'windows', artifact: 'powershell', surface });
+}
+
 export function track(name: FunnelStep, meta: Record<string, unknown> = {}, path = currentPath()): void {
   try {
     const fetchFn = globals.fetch;
@@ -135,6 +146,7 @@ export function trackView(path = currentPath()): void {
   if (Number.isFinite(last) && now - last < 30 * 60 * 1000) return;
   writeJson(VIEW_KEY, { ...views, [path]: now });
   track('page.view', { path }, path);
-  if (path === '/unduh') track('install.view', {}, path);
+  if (path === '/') recordInstallView('landing', path);
+  if (path === '/unduh') recordInstallView('download', path);
   if (path === '/harga') track('plan.view', {}, path);
 }

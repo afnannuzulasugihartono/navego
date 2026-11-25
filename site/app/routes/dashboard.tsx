@@ -42,8 +42,8 @@ const OPERATOR_VIEWS: View[] = ['tabel', 'dengar'];
 
 const FUNNEL_STEPS: Array<[string, string]> = [
   ['page.view', 'Halaman dilihat'],
-  ['install.view', 'Halaman unduh dilihat'],
-  ['install.click', 'Klik unduhan'],
+  ['install.view', 'Tampilan install'],
+  ['install.click', 'Klik install'],
   ['plan.view', 'Halaman harga dilihat'],
   ['buy.click', 'Klik beli'],
   ['pair.view', 'Halaman pairing dibuka'],
