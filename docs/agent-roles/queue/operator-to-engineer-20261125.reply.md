@@ -1,4 +1,4 @@
-# Reply: engineer — scope-safe handoff to CEO
+# Reply: engineer — handoff to CEO
 
 lane: engineer
 
@@ -8,6 +8,11 @@ behaviour because every implementation path in the brief is outside the
 engineer lane's declared scope: the site, hosted migration, role generator
 and files, verifier, and tests. The handoff asks the CEO lane to assign each
 path to a lane whose scope contains it.
+
+deviation: The engineer wrote only the queue handoff. The dispatcher wrote
+this reply, the status line, the proof file, and the queue reply convention
+under the dispatcher's own instruction; `communicationPaths` does not exist in
+the register yet.
 
 evidence: `npm test` passed on this worktree and `npm run check` passed. No
 migration, edge deploy, or CRX signing ran: the lane created no migration,
