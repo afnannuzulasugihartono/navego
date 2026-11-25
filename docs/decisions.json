@@ -1399,6 +1399,46 @@
         "kind": "internet",
         "ref": "https://en.wikipedia.org/wiki/Organizational_structure (a company is divided by function - marketing, sales, finance, operations, IT, human resources - and the executive layer is CEO, COO, CFO, CMO, CBO, CHRO, CIO, CPO, CSO) and https://en.wikipedia.org/wiki/Chief_executive_officer (the CEO is accountable for the decisions in operations, marketing, business development, finance and human resources) and https://opencode.ai/docs/agents and https://code.claude.com/docs/en/sub-agents (the agent ecosystems name their agents after the work: reviewer, explainer, code-reviewer, code-improver, debugger); read on 2026-11-25"
       }
+    },
+    {
+      "id": "docs-autonomy-01",
+      "scope": "agent/sales",
+      "file": "docs/autonomy.md",
+      "decision": "The sales lane may send one outreach message a day on its own: only to a business contact listed publicly by that business, never bulk, never to a scraped personal address, stating what Navego is, the real price and one concrete use case, with no invented testimonial or fake scarcity; two negative replies stop that recipient and a third refusal of the same kind stops the lane, and every send is recorded the same day in docs/proof/outreach/.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-25, answered 'Boleh, dengan batas': the agent may send outreach without the owner checking each message first, under the bounded rules the answer spelled out"
+      }
+    },
+    {
+      "id": "docs-autonomy-02",
+      "scope": "agent/merge",
+      "file": "docs/autonomy.md",
+      "decision": "A pull request merges without a person when CI is green on the exact head, the reviewer agent reports no finding, and no owner-only path moved (gates.lock, tests/helpers/boundary-locks.ts, .github/CODEOWNERS, .github/workflows/); the tag, release, signed CRX, npm publish, edge deploy and site deploy follow automatically, and any failing condition stops the lane with the reason written into docs/proof/.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-25, answered 'Auto-merge by gate': CI green, a reviewer agent with no finding, and no owner-only file touched are the conditions for an automatic merge"
+      }
+    },
+    {
+      "id": "docs-autonomy-03",
+      "scope": "agent/production",
+      "file": "docs/autonomy.md",
+      "decision": "Migrations, edge function deploys and CRX signing stay one at a time from the main checkout, and the queue is automatic: an operation claims the production lock, runs, writes its evidence to docs/proof/ and releases the lock, so a waiting lane polls the lock instead of asking which operation goes first.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-25, answered 'Antre + lock': one production operation at a time, queued automatically, with the proof written per operation"
+      }
+    },
+    {
+      "id": "docs-autonomy-04",
+      "scope": "agent/support",
+      "file": "docs/autonomy.md",
+      "decision": "The support inbox is the feedback form on the live site (hosted/functions/feedback): the support lane reads it, answers the person, and records the answer fact in docs/product/support.md with the decision id that backs it, while GitHub issues stay a public record rather than the inbox.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-25, answered 'Formulir feedback situs': the live feedback form is the channel the support lane works from"
+      }
     }
   ]
 }

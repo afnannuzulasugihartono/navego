@@ -9,7 +9,7 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "Have a real customer complete one $1 plan.usd-1 PayPal purchase in a real browser; then the next run reads the paypal-live settlement row and proves the plan activation without counting an owner payment as revenue.",
+  "next_action": "The hourly operator run is live again (aut_213a07660001wHhAZDmMjXb7o3) and reads the settlement every hour. The next money step: one real customer completes one $1 plan.usd-1 PayPal purchase in a real browser, so the next run reads the paypal-live settlement row and proves the plan activation without counting an owner payment as revenue; in parallel the researcher role maps the first division with dated public sources and the sales role sends at most one bounded message a day under docs/autonomy.md.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
@@ -31,7 +31,7 @@
     "fix": "site/app/lib/checkout-feedback.ts selects sign-in, pending, warning, and ordinary feedback and keys it to the clicked card; site/app/routes/harga.tsx renders it under that card, one always-mounted plan announcer, and a page-level fallback when a region change removes the card. PR #455 was deployed in run 45541631054. Pinned by decisions.json -> site-checkout-feedback-02 and state-machines.json -> checkout-plan-feedback."
   },
   "leak_found": {
-    "what": "wallet.deposit has no active row in opera_price_list on the live project, so openTopUp invoices price 'not charged: no price for this kind' (Rp 0) \u2014 a buyer cannot pay even after clicking buy.",
+    "what": "wallet.deposit has no active row in opera_price_list on the live project, so openTopUp invoices price 'not charged: no price for this kind' (Rp 0) — a buyer cannot pay even after clicking buy.",
     "proof": "live invoice 1ec02bc3-7c1b-45a2-b864-837e95ba3b24:wallet-mwuhd3km created 2026-11-24 rendered 'not charged: no price for this kind'; public price list at functions/v1/navego-billing?prices=1 lists only task.* kinds; wallet migration 20261104120000 carries the row (1,000,000 sen IDR) but it was never applied to the live price table.",
     "fix": "hosted/migrations/20261124100000_opera_price_wallet_deposit_restore.sql, pinned by tests/hosted/price-rows.test.ts."
   },
@@ -45,5 +45,6 @@
     "rail": "paypal (live): PAYPAL_CLIENT_ID, PAYPAL_SECRET, PAYPAL_WEBHOOK_ID, PAYPAL_ENV=live are set on project nenmkmtvjremqphfqnfw. The quote, settlement, and one-activation path is deployed in navego-billing. A live browser drive on 2026-11-25 clicked Starter, the billing action returned an approval URL, and PayPal opened in a new tab; no card was entered and no payment was made, so a real paid capture remains unproven.",
     "midtrans_leftover": "createInvoice still defaults rail=midtrans and BILLING_RAIL defaults to midtrans; MIDTRANS_SERVER_KEY is not among the repo deploy secrets, so the rupiah/QRIS rails are dormant without credentials. Not deleted: wallet top-up and task invoicing ride it until the wallet moves to PayPal."
   },
-  "gate": "AGENTS.md#always + docs/agent-survival-prompt.md"
+  "gate": "AGENTS.md#always + docs/agent-survival-prompt.md",
+  "verification_note": "The Supabase settlement read was proven on 2026-11-25 with a one-shot automation probe: both tools[\"supabase\"].execute_sql and tools.supabase.execute_sql answered, and the live paypal-live settlement read 0 orders and $0.00."
 }

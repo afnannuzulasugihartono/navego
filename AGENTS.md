@@ -42,6 +42,7 @@ These ride with every job. Read them before acting, not once per session.
 - `docs/economy.json` holds settled revenue, known costs, the monthly gap and the single next action, and it is updated whenever either side of that subtraction moves. A stale ledger is a false claim, not a stale file.
 - Every session starts by reading `docs/agent-survival-prompt.md`: it is the standing order that makes income the session's first move, and it says what counts as proof before the work begins.
 - A charge must survive the person who paid it: real prices, a refund that arrives, a cancel that cancels, no invented testimonial, no scarcity that is not real, no store listing described as under review when it was never submitted.
+- The owner's autonomy rules live in [`docs/autonomy.md`](docs/autonomy.md): one bounded outreach a day, merge by gate, one production operation at a time behind a lock, and the site feedback form as the support channel. A role reads that file before it acts.
 
 ## Goals
 
