@@ -1219,6 +1219,17 @@
    }
   },
   {
+   "id": "site-checkout-feedback-02",
+   "scope": "site/components",
+   "file": "site/app/lib/checkout-feedback.ts",
+   "decision": "A plan click answers under the plan that was clicked: sign-in, pending, warning and ordinary result messages render in that plan card, one always-mounted polite region announces the current message, and the page-level status remains the fallback for PayPal return, non-plan events, and a clicked card removed by a region change.",
+   "source": {
+    "kind": "recorded",
+    "ref": "hourly survival-and-growth run #6 on 2026-11-25: a real browser drive of the live pricing page clicked Starter, created a PayPal order, and showed the only status paragraph after every plan grid instead of beside the clicked control; a signed-out buy click likewise had no message in the buyer's viewport",
+    "also": "tests/site/checkout-feedback.test.ts and the 320px production browser proof on 2026-11-25"
+   }
+  },
+  {
    "id": "site-privacy-truth-01",
    "scope": "web/security",
    "file": "site/app/routes/privasi.tsx",

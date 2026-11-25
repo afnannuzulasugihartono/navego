@@ -7,6 +7,7 @@ import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { BILLING, ensureSession, getStoredToken, headersFor } from '../lib/auth';
 import { track } from '../lib/funnel';
+import { planFeedback } from '../lib/checkout-feedback';
 import { bandForCountry, type PricingBand } from '../lib/region.js';
 
 export function meta() {
@@ -52,6 +53,7 @@ export default function Harga() {
   const [geoBusy, setGeoBusy] = useState(false);
   const [geoError, setGeoError] = useState('');
   const [buyPending, setBuyPending] = useState<string | null>(null);
+  const [lastPlan, setLastPlan] = useState<string | null>(null);
   const [checkoutNote, setCheckoutNote] = useState('');
 
   const countryRef = useRef<string | null>(null);
@@ -196,8 +198,9 @@ export default function Harga() {
     }
   }
 
-  async function buy(planKind: string) {
+  async function buy(planKind: string, planKey: string) {
     if (buyPending) return;
+    setLastPlan(planKey);
     track('buy.click', { plan: planKind, rail: 'paypal' });
     const current = await ensureSession();
     if (!current) {
@@ -207,7 +210,7 @@ export default function Harga() {
     }
     setSignedOut(false);
     setWarn(false);
-    setBuyPending(planKind);
+    setBuyPending(planKey);
     setNote('Menyiapkan halaman PayPal...');
     try {
       const response = await fetch(BILLING, {
@@ -237,23 +240,47 @@ export default function Harga() {
     }
   }
 
-  const PlanCard = (plan: { id: string; price: string; name: string; quota: string; premium: boolean }) => (
-    <section className="card plan" role="listitem" key={plan.id} aria-labelledby={`usd-${plan.id}`}>
+  const visiblePlanKeys = new Set<string>();
+  if (band !== 'premium') for (const plan of ASIA_PLANS) visiblePlanKeys.add(`asia:${plan.id}`);
+  if (band !== 'affordable') for (const plan of EUROPE_PLANS) visiblePlanKeys.add(`europe:${plan.id}`);
+  const { present: activePlanPresent, feedback: activeFeedback } = planFeedback({ lastPlan, visiblePlanKeys, pendingKey: buyPending, signedOut, note, warn });
+  const announcement = activeFeedback
+    ? activeFeedback.tone === 'signin'
+      ? `${activeFeedback.message} Masuk dulu, lalu kembali ke halaman ini.`
+      : activeFeedback.message
+    : checkoutNote
+      || (!activePlanPresent && signedOut ? 'Pembayaran memakai akun Anda. Masuk dulu, lalu kembali ke halaman ini.' : '')
+      || (!activePlanPresent && note ? note : '');
+
+  const PlanCard = (plan: { id: string; price: string; name: string; quota: string; premium: boolean }, slot: 'asia' | 'europe') => {
+    const planKey = `${slot}:${plan.id}`;
+    const feedback = lastPlan === planKey ? activeFeedback : null;
+    return (
+    <section className="card plan" role="listitem" key={plan.id} aria-labelledby={`usd-${slot}-${plan.id}`}>
       <p className="plan-name">{plan.name}</p>
-      <h2 id={`usd-${plan.id}`} className="plan-price">{plan.price}<small> / {plan.id === 'plan.usd-17' ? '6 bulan' : plan.id === 'plan.usd-33' ? 'tahun' : 'bulan'}</small></h2>
+      <h2 id={`usd-${slot}-${plan.id}`} className="plan-price">{plan.price}<small> / {plan.id === 'plan.usd-17' ? '6 bulan' : plan.id === 'plan.usd-33' ? 'tahun' : 'bulan'}</small></h2>
       <ul>
         <li>{plan.quota}</li>
         <li>36 primitive browser</li>
         <li>{plan.premium ? 'Semua fitur (statement, VM, remote drive) + prioritas' : 'Plan dasar'}</li>
       </ul>
-      <button className="btn btn-solid btn-sm w-full" type="button" disabled={buyPending !== null} onClick={() => buy(plan.id)}>{buyPending === plan.id ? 'Menyiapkan…' : 'Beli dengan PayPal'}</button>
+      <button className="btn btn-solid btn-sm w-full" type="button" disabled={buyPending !== null} onClick={() => buy(plan.id, planKey)}>{buyPending === planKey ? 'Menyiapkan…' : 'Beli dengan PayPal'}</button>
+      {feedback ? (
+        <p className={`status plan-status${feedback.tone === 'warn' ? ' warn' : ''}`}>
+          {feedback.tone === 'signin'
+            ? <>{feedback.message} <Link to="/?next=/harga">Masuk dulu</Link>, lalu kembali ke halaman ini.</>
+            : feedback.message}
+        </p>
+      ) : null}
     </section>
-  );
+    );
+  };
 
   return (
     <>
       <SiteHeader current="/harga" />
       <main>
+        <p className="plan-announcer" role="status">{announcement}</p>
         <section className="page-hero">
           <div className="wrap">
             <h1>Harga yang bisa Anda hitung.</h1>
@@ -290,7 +317,7 @@ export default function Harga() {
               <p className="section-note">Sekali beli, langsung aktif. Tidak ada perpanjangan otomatis.</p>
             </div>
             <div className="plans plans--dense" role="list">
-              {ASIA_PLANS.map(PlanCard)}
+              {ASIA_PLANS.map((plan) => PlanCard(plan, 'asia'))}
             </div>
           </div>
         </section>
@@ -306,7 +333,7 @@ export default function Harga() {
               <p className="section-note">Sekali beli, langsung aktif. Tidak ada perpanjangan otomatis.</p>
             </div>
             <div className="plans plans--dense" role="list">
-              {EUROPE_PLANS.map(PlanCard)}
+              {EUROPE_PLANS.map((plan) => PlanCard(plan, 'europe'))}
             </div>
           </div>
         </section>
@@ -314,11 +341,11 @@ export default function Harga() {
 
         <section className="band band--flush-top" aria-label="Pembayaran">
           <div className="wrap">
-            {signedOut ? (
+            {!activePlanPresent && signedOut ? (
               <p className="status mt-4 center">Pembayaran memakai akun Anda. <Link to="/?next=/harga">Masuk dulu</Link>, lalu kembali ke halaman ini.</p>
             ) : null}
-            {checkoutNote ? <p className="status mt-4 center" role="status">{checkoutNote}</p> : null}
-            {note ? <p className={`${warn ? 'status warn' : 'status'} mt-4 center`} role="status" aria-live="polite">{note}</p> : null}
+            {checkoutNote ? <p className="status mt-4 center">{checkoutNote}</p> : null}
+            {!activePlanPresent && note ? <p className={`${warn ? 'status warn' : 'status'} mt-4 center`}>{note}</p> : null}
             <p className="note mt-3 center">Bayar dengan <strong>PayPal</strong>. Plan langsung aktif setelah pembayaran dikonfirmasi.</p>
           </div>
         </section>
