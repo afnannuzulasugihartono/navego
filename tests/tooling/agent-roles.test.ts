@@ -4,8 +4,7 @@
 // @dependencies: node:test, strict, node:fs, node:path, node:url.
 
 // Roles are the door an automation-opened session walks through (docs/agent-roles.md).
-// A role without a doc, a scope, or a scope that points at nothing is a session
-// that cannot tell what it owns, so the register refuses to ship it.
+// A role without a doc, a scope, or a scope that points at nothing is a session that cannot tell what it owns, so the register refuses to ship it.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
