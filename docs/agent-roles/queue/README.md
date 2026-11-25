@@ -8,3 +8,7 @@ Fields: `intent`, `why`, `scopeRequested` (what the other role must do),
 The convention lives in docs/agent-roles.md ("Cross-division conventions"); the
 one communication container for status, upgrades and missing pieces is
 docs/agent-roles/status.md.
+
+A reply artifact uses `<ticket-file>.reply.md` and sits beside its ticket. It
+is the answer to that ticket, not another ticket; the dispatcher skips
+`.reply.md` files when choosing work.
