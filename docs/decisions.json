@@ -1368,6 +1368,26 @@
         "kind": "user",
         "ref": "user 2026-11-25: 'list dulu apa yang mau di bangun ke aku aku review'"
       }
+    },
+    {
+      "id": "scripts-generate-agent-roles-01",
+      "scope": "agent/",
+      "file": "scripts/dev/generate-agent-roles.ts",
+      "decision": "The role register is the one source for who the roles are and what they may touch, and the harness agent files are rendered from it: .opencode/agents/<role>.md carries the role body with edit denied on everything and allowed only on the role scope paths, .claude/agents/<role>.md carries the same body for Claude Code, and the gate refuses any file that drifted from the register.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://opencode.ai/docs/agents (project agents live in .opencode/agents, the frontmatter carries description, mode and permissions, and the last matching permission rule wins) and https://code.claude.com/docs/en/sub-agents (project subagents live in .claude/agents with name, description, tools and permission fields) and https://code.claude.com/docs/en/agent-teams (a team is a lead plus teammates over a shared task list and per-agent mailboxes) and https://agents.md/ (the nearest instruction file wins, read on 2026-11-25)"
+      }
+    },
+    {
+      "id": "docs-research-agent-roles-01",
+      "scope": "agent/",
+      "file": "docs/research/agent-roles.md",
+      "decision": "The role set is taken from the harness documentation rather than from taste: a role is one file with scoped permissions, the shared board and the handoff queue stand in for the shared task list and the mailboxes, the repository gates stand in for the completion hook, and every claim in the research file carries the URL it came from.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://opencode.ai/docs/agents and https://code.claude.com/docs/en/sub-agents and https://code.claude.com/docs/en/agent-teams and https://code.claude.com/docs/en/cross-session-messaging and https://agents.md/ (read on 2026-11-25; each source says what it says, and the roles Navego does not have yet carry the reason they are absent)"
+      }
     }
   ]
 }

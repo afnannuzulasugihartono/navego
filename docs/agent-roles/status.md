@@ -7,14 +7,14 @@ division that owns it refreshes its own line.
 
 ## Division map (for AI-agent / large-company divisioning)
 
-- growth-research: divisioned map in docs/research/ (AI agent division, secondary division, gap).
-- growth-prospects: prospect pipeline — check the agent activity log (see docs/research/).
+- growth-research: no map yet — the research that fills it lands in docs/research/ with dated sources.
+- growth-prospects: pipeline empty — docs/research/prospects.md holds the rules, not prospects.
 
 ## Lines by role
 
 - survival-runner: state = score -10, $0.00 settled; next = one real $1 paypal-live settle. Divisioning signal: none yet (no agent buyers).
-- growth-prospects: research from growth-research landed; next = prepare outreach. Divisioning signal: find one buyer agent operator.
-- growth-research: divisioned map started (AI agent division, secondary division, gap); next = enumerate AI-agent operators with dated lists and charge/reach. Divisioning signal: a division appears in the map, who builds it, what they sell, what is missing locally.
+- growth-prospects: pipeline empty, no prospect prepared, no outreach sent. Divisioning signal: find one buyer agent operator.
+- growth-research: no divisioning map yet. Next = research the ai-agent division and the large-company division from dated public sources. Divisioning signal: a division appears in the map, who builds it, what they sell, what is missing locally.
 - ceo: owner decisions pile up in docs/economy.json (settled $0.00) and status.md lines; next = one decision: scope-vs-scope review of the roles + first revenue target. Divisioning signal: none beyond the register.
 - growth-site: nothing shipped yet. Divisioning signal: none.
 - product-dx: nothing shipped yet. Divisioning signal: none.

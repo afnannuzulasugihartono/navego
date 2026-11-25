@@ -11,6 +11,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { editResource, renderAgentFiles } from '../../scripts/dev/generate-agent-roles.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const read = (name: string): unknown => JSON.parse(fs.readFileSync(path.join(root, name), 'utf8')) as unknown;
@@ -88,6 +89,39 @@ test('the one communication container lists every role and says what is missing'
   assert.ok(status.includes('# Agent roles status'), 'status.md opens with the container title');
   for (const role of roles) {
     assert.ok(status.includes(role.id), `status.md has no line for role ${role.id} - the container must name every division so it can see what is missing`);
+  }
+});
+
+test('every role is a real agent file the harness reads, and the files match the register', async () => {
+  const { register } = load();
+  const rendered = new Map(renderAgentFiles(register).map((file) => [file.path, file.content]));
+  for (const role of register.roles) {
+    for (const expected of [`.opencode/agents/${role.id}.md`, `.claude/agents/${role.id}.md`]) {
+      const content = rendered.get(expected);
+      assert.ok(content, `the generator does not render ${expected}`);
+      const onDisk = fs.readFileSync(path.join(root, expected), 'utf8');
+      assert.equal(onDisk, content, `${expected} drifted from docs/agent-roles/registry.json - run: node scripts/dev/generate-agent-roles.ts`);
+    }
+  }
+});
+
+test('the agent file denies editing outside the role scope and allows the scope', () => {
+  const { register } = load();
+  for (const role of register.roles) {
+    const text = fs.readFileSync(path.join(root, `.opencode/agents/${role.id}.md`), 'utf8');
+    assert.ok(text.startsWith('---\n'), `${role.id} opens with frontmatter`);
+    assert.match(text, /- action: edit\n\s+resource: "\*"\n\s+effect: deny/, `${role.id} does not deny editing everything first`);
+    for (const scopePath of role.scopePaths) {
+      const resource = editResource(scopePath);
+      assert.ok(text.includes(`resource: "${resource}"\n    effect: allow`), `${role.id} does not allow editing its scope path ${scopePath}`);
+    }
+  }
+});
+
+test('the research that shaped the roles is in the tree with its sources', () => {
+  const research = docText('docs/research/agent-roles.md');
+  for (const source of ['https://opencode.ai/docs/agents', 'https://code.claude.com/docs/en/sub-agents', 'https://code.claude.com/docs/en/agent-teams', 'https://agents.md/']) {
+    assert.ok(research.includes(source), `docs/research/agent-roles.md does not cite ${source} - a role claim without its source is a guess`);
   }
 });
 

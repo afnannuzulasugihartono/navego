@@ -43,6 +43,27 @@ happens in that role's own session, not borrowed.
 `support-retention` and `onboarding-docs` both hold `docs/product`; a written
 handoff between them, not inheritance, moves work across.
 
+## The agent files (the entry point a harness reads)
+
+A role is not only a document. Every role is an agent file the coding harness
+reads at session start:
+
+- `.opencode/agents/<role>.md` — the OpenCode project agent: the role body as
+  the system prompt, and permissions that deny editing everything and allow
+  editing only the role's scope paths. The scope is enforced by the harness,
+  not by good intentions.
+- `.claude/agents/<role>.md` — the same role for Claude Code.
+
+Both are rendered from `docs/agent-roles/registry.json` by
+`scripts/dev/generate-agent-roles.ts` (`npm run roles`, `npm run roles:check`),
+so the register stays the one source and a hand-written copy cannot drift. The
+gate `tests/tooling/agent-roles.test.ts` refuses a file that no longer matches
+the register, and refuses a role whose permissions do not carry its scope.
+
+The research that shaped this (what the harnesses document, and which part
+backs which mechanism) is in
+[`docs/research/agent-roles.md`](research/agent-roles.md), with its sources.
+
 ## Cross-division conventions (the one shared rule set)
 
 Every division reads and writes the same three ledgers, so the product can be
