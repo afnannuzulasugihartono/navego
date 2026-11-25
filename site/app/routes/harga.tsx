@@ -8,7 +8,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { BILLING, ensureSession, getStoredToken, headersFor } from '../lib/auth';
 import { track } from '../lib/funnel';
 import { planFeedback } from '../lib/checkout-feedback';
-import { forgetPendingPlan, readPendingPlan, rememberPendingPlan } from '../lib/checkout-intent';
+import { completePendingOrder, readPendingPlan, rememberPendingOrder, rememberPendingPlan, signInPath } from '../lib/checkout-intent';
 import { bandForCountry, type PricingBand } from '../lib/region.js';
 
 export function meta() {
@@ -122,7 +122,10 @@ export default function Harga() {
     const pending = readPendingPlan();
     if (pending) {
       setLastPlan(pending);
-      if (getStoredToken()) setNote('Lanjutkan plan pilihan Anda. Klik Beli dengan PayPal.');
+      if (getStoredToken()) {
+        const pendingName = [...ASIA_PLANS, ...EUROPE_PLANS].find((plan) => plan.id === pending.split(':').slice(1).join(':'))?.name ?? 'plan pilihan Anda';
+        setNote(`Lanjutkan ${pendingName}. Klik Beli dengan PayPal.`);
+      }
     }
     // The cookie a consented visitor carries pre-fills the correct group instantly; the mandatory detection still runs and corrects it if the device moved.
     if (readConsent() === 'granted') {
@@ -194,7 +197,7 @@ export default function Harga() {
         setWarn(false);
         setNote(`Plan ${answer.plan} aktif. Selamat bekerja!`);
         window.localStorage.removeItem('navego-paypal-order');
-        forgetPendingPlan();
+        completePendingOrder(orderId);
         return;
       }
       setWarn(true);
@@ -235,7 +238,7 @@ export default function Harga() {
         // The null this call gives back was read as a blocked popup, so a visitor whose PayPal tab did open was told it did not, and no wording could tell the two apart.
         // The tab carries the order id in localStorage and PayPal hands the order back as `token`, so the purchase completes whether this tab watches it or not.
         window.open(url, '_blank', 'noopener,noreferrer');
-        forgetPendingPlan();
+        rememberPendingOrder(orderId);
         setNote('Halaman PayPal terbuka di tab baru. Selesaikan pembayaran di sana; plan aktif setelah pembayaran dikonfirmasi. Jika tabnya tidak terbuka, izinkan popup untuk situs ini lalu klik beli lagi.');
         return;
       }
@@ -261,6 +264,8 @@ export default function Harga() {
       || (!activePlanPresent && signedOut ? 'Pembayaran memakai akun Anda. Masuk dulu, lalu kembali ke halaman ini.' : '')
       || (!activePlanPresent && note ? note : '');
 
+  const signInTarget = typeof window === 'undefined' ? '/?next=/harga' : signInPath(window.location);
+
   const PlanCard = (plan: { id: string; price: string; name: string; quota: string; premium: boolean }, slot: 'asia' | 'europe') => {
     const planKey = `${slot}:${plan.id}`;
     const feedback = lastPlan === planKey ? activeFeedback : null;
@@ -273,11 +278,11 @@ export default function Harga() {
         <li>36 primitive browser</li>
         <li>{plan.premium ? 'Semua fitur (statement, VM, remote drive) + prioritas' : 'Plan dasar'}</li>
       </ul>
-      <button className="btn btn-solid btn-sm w-full" type="button" disabled={buyPending !== null} onClick={() => buy(plan.id, planKey)}>{buyPending === planKey ? 'Menyiapkan…' : 'Beli dengan PayPal'}</button>
+      <button aria-label={`Beli dengan PayPal ${plan.name}`} className="btn btn-solid btn-sm w-full" type="button" disabled={buyPending !== null} onClick={() => buy(plan.id, planKey)}>{buyPending === planKey ? 'Menyiapkan…' : 'Beli dengan PayPal'}</button>
       {feedback ? (
         <p className={`status plan-status${feedback.tone === 'warn' ? ' warn' : ''}`}>
           {feedback.tone === 'signin'
-            ? <>{feedback.message} <Link to="/?next=/harga">Masuk dulu</Link>, lalu kembali ke halaman ini.</>
+            ? <>{feedback.message} <Link to={signInTarget}>Masuk dulu</Link>, lalu kembali ke halaman ini.</>
             : feedback.message}
         </p>
       ) : null}
@@ -351,7 +356,7 @@ export default function Harga() {
         <section className="band band--flush-top" aria-label="Pembayaran">
           <div className="wrap">
             {!activePlanPresent && signedOut ? (
-              <p className="status mt-4 center">Pembayaran memakai akun Anda. <Link to="/?next=/harga">Masuk dulu</Link>, lalu kembali ke halaman ini.</p>
+              <p className="status mt-4 center">Pembayaran memakai akun Anda. <Link to={signInTarget}>Masuk dulu</Link>, lalu kembali ke halaman ini.</p>
             ) : null}
             {checkoutNote ? <p className="status mt-4 center">{checkoutNote}</p> : null}
             {!activePlanPresent && note ? <p className={`${warn ? 'status warn' : 'status'} mt-4 center`}>{note}</p> : null}

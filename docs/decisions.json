@@ -1233,7 +1233,7 @@
    "id": "site-checkout-intent-03",
    "scope": "site/components",
    "file": "site/app/lib/checkout-intent.ts",
-   "decision": "The exact plan a buyer chose survives the sign-in round trip in this tab: remember its slot and id when clicked, resume that card on return, and clear it only after PayPal opens or activation succeeds. Blocked session storage is ignored rather than breaking checkout.",
+   "decision": "The exact plan and order a buyer chose survive the sign-in round trip in this tab: remember its slot and id, preserve the full checkout return URL including the order token, and clear the pending pair only when that same order activates. Blocked session storage is ignored rather than breaking checkout.",
    "source": {
     "kind": "recorded",
     "ref": "hourly survival-and-growth run #7 on 2026-11-25: the new inline sign-in prompt told a signed-out buyer to sign in but carried no plan identity, so a returning buyer had to choose a plan again; preserve the chosen card rather than opening PayPal automatically because an unattended popup would be blocked",

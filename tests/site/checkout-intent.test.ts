@@ -1,6 +1,6 @@
 // @last-edited: 2026-11-25 UTC+7.
-// @title: checkout-intent.test - a chosen plan survives the sign-in round trip in this tab.
-// @state: one pending plan key is remembered, read once the session returns, and cleared after an order opens.
+// @title: checkout-intent.test - a chosen plan and its order survive sign-in and expire only after activation.
+// @state: tab storage keeps the chosen card and order, preserves the full return path, and clears only the order that activated.
 // @dependencies: node:test, strict, ../../site/app/lib/checkout-intent.ts.
 
 import test from 'node:test';
@@ -20,7 +20,10 @@ type StorageLike = {
 type IntentModule = {
   rememberPendingPlan: (planKey: string, storage?: StorageLike) => void;
   readPendingPlan: (storage?: StorageLike) => string | null;
-  forgetPendingPlan: (storage?: StorageLike) => void;
+  rememberPendingOrder: (orderId: string, storage?: StorageLike) => void;
+  readPendingOrderId: (storage?: StorageLike) => string | null;
+  completePendingOrder: (orderId: string, storage?: StorageLike) => boolean;
+  signInPath: (location: { pathname: string; search: string }) => string;
 };
 
 async function intentModule(): Promise<IntentModule> {
@@ -40,23 +43,36 @@ function memoryStore(): StorageLike {
   };
 }
 
-test('a pending plan is remembered and cleared after the order opens', async () => {
-  const { rememberPendingPlan, readPendingPlan, forgetPendingPlan } = await intentModule();
+test('a pending plan and order clear only after the matching order activates', async () => {
+  const { rememberPendingPlan, readPendingPlan, rememberPendingOrder, completePendingOrder } = await intentModule();
   const storage = memoryStore();
   rememberPendingPlan('asia:plan.usd-1', storage);
+  rememberPendingOrder('ORDER-1', storage);
   assert.equal(readPendingPlan(storage), 'asia:plan.usd-1');
-  forgetPendingPlan(storage);
+  assert.equal(completePendingOrder('ORDER-OTHER', storage), false, 'a different activation must not clear the pending plan');
+  assert.equal(readPendingPlan(storage), 'asia:plan.usd-1');
+  assert.equal(completePendingOrder('ORDER-1', storage), true);
   assert.equal(readPendingPlan(storage), null);
 });
 
 test('blocked tab storage never breaks the pricing page', async () => {
-  const { rememberPendingPlan, readPendingPlan, forgetPendingPlan } = await intentModule();
+  const { rememberPendingPlan, readPendingPlan, rememberPendingOrder, completePendingOrder } = await intentModule();
   const blocked: StorageLike = {
     getItem: () => { throw new Error('blocked'); },
     setItem: () => { throw new Error('blocked'); },
     removeItem: () => { throw new Error('blocked'); }
   };
   assert.doesNotThrow(() => rememberPendingPlan('asia:plan.usd-1', blocked));
+  assert.doesNotThrow(() => rememberPendingOrder('ORDER-1', blocked));
   assert.equal(readPendingPlan(blocked), null);
-  assert.doesNotThrow(() => forgetPendingPlan(blocked));
+  assert.equal(completePendingOrder('ORDER-1', blocked), false);
+});
+
+test('the sign-in path preserves the complete checkout return, including the order token', async () => {
+  const { signInPath } = await intentModule();
+  assert.equal(signInPath({ pathname: '/harga', search: '' }), '/?next=%2Fharga');
+  assert.equal(
+    signInPath({ pathname: '/harga', search: '?checkout=success&token=ORDER-1' }),
+    '/?next=%2Fharga%3Fcheckout%3Dsuccess%26token%3DORDER-1'
+  );
 });

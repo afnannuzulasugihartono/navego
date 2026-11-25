@@ -36,9 +36,11 @@ test('a plan click answers under the clicked plan, not at the bottom of the page
 test('a chosen plan survives the sign-in round trip in this tab', () => {
   const harga = read('app/routes/harga.tsx');
   assert.match(harga, /rememberPendingPlan\(planKey\)/);
-  assert.match(harga, /readPendingPlan\(\)/);
-  assert.match(harga, /forgetPendingPlan\(\)/);
-  assert.match(harga, /Lanjutkan plan pilihan Anda\. Klik Beli dengan PayPal/);
+  assert.match(harga, /rememberPendingOrder\(orderId\)/);
+  assert.match(harga, /completePendingOrder\(orderId\)/);
+  assert.match(harga, /signInPath\(window\.location\)/);
+  assert.match(harga, /Lanjutkan \$\{pendingName\}\. Klik Beli dengan PayPal/);
+  assert.match(harga, /aria-label=\{`Beli dengan PayPal \$\{plan\.name\}`\}/);
 });
 
 test('the homepage offers real artifacts instead of only a scripted demo', () => {
