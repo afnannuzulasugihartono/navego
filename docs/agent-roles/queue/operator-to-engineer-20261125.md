@@ -33,6 +33,25 @@ scopeRequested:
    `meta` is free-form jsonb), and the funnel records where a visitor came
    from (the referrer or the link that sent them), so a navigation to
    `/dashboard` can be attributed instead of guessed at.
+5. Give every lane a shared communication surface, so a lane can answer
+   without stepping outside its work scope. The role register
+   (`docs/agent-roles/registry.json`) and the generator
+   (`scripts/dev/generate-agent-roles.ts`) should carry a `communicationPaths`
+   list beside `scopePaths` — the queue (`docs/agent-roles/queue/**`), the
+   board (`docs/agent-roles/status.md`) and the proof folder
+   (`docs/proof/**`) — and the generated agent files should allow editing both
+   its scope paths and its communication paths. The gate
+   (`tests/tooling/agent-roles.test.ts`) should refuse a register without that
+   list, so a lane that cannot write its own reply is a lane that cannot
+   report.
+6. Make the scope rule machine-checked, because today it is only a sentence in
+   a prompt. A script beside `scripts/verify/scope-check.ts` (call it
+   role-scope.ts) should take a role id and the changed paths and refuse any
+   path outside that role's `scopePaths` (its own `communicationPaths`
+   excepted), and the dispatcher and the lane sessions should run it before a
+   merge. The one sentence the owner asked for — one session, one role, no
+   editing everything — becomes a gate that fails the build instead of a rule
+   nobody can check.
 
 acceptance:
 
