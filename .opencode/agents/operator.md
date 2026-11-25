@@ -68,7 +68,7 @@ Rules:
 
 Automations:
 
-- aut_213de24a6001yQ4Vxlmzt0ebLC (the hourly survival-and-growth run, Asia/Jakarta).
+- aut_21421fd5c001SHZTGFdHocNTwY (the hourly survival-and-growth run, Asia/Jakarta).
   It was recreated on 2026-11-25 after the previous automation
   (aut_20f1b06450012bvyUfbaQQyT1v) failed its reads with "Unknown Code Mode
   tool: supabase.execute_sql" - the Supabase MCP was not connected for that
@@ -76,8 +76,11 @@ Automations:
   that passed while the runner was down are charged by the rule. The run's
   first action is the settlement read; if that read fails again the run
   preserves the score and says so rather than inventing a movement.
-  It was recreated once more the same day after run #8 found the funnel query
-  of its own brief mixing a text column with a uuid one, which left the
-  funnel unreadable for that hour; the proof of that hour is
-  docs/proof/2026-11-25-survival-run-8.md, and a one-shot probe proved the
-  corrected read works from an automation context.
+  It was recreated twice more the same day: run #8 found the funnel query of
+  its own brief mixing a text column with a uuid one, and run #9 found that a
+  step which started counting late reads as a wall when it is compared with a
+  step that counted all day, so the read now carries each step's first-seen
+  moment and the browser shape. The proofs are
+  docs/proof/2026-11-25-survival-run-8.md and
+  docs/proof/2026-11-25-survival-run-9.md, and a one-shot probe proved the
+  reads work from an automation context.

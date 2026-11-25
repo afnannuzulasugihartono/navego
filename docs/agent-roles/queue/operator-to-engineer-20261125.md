@@ -23,6 +23,16 @@ scopeRequested:
    which (the dashboard funnel list is `site/app/routes/dashboard.tsx`).
 3. Keep the same rule the rest of the funnel uses: one browser reports one
    step once, a re-render is not a second visitor.
+4. Make the funnel able to tell automated traffic from people. In the last 24
+   hours 32 of the 35 anonymous browsers touched exactly two paths (`/` then
+   `/dashboard`) and arrived in bursts of four to six per hour, while one
+   browser walked eleven paths; the rows carry no way to tell a crawler from
+   a visitor, and the agent's own drives land in the same table as anyone
+   else. Ask for two things: the site marks its own test drives (a probe flag
+   on the URL that lands in the funnel's `meta`, no migration needed because
+   `meta` is free-form jsonb), and the funnel records where a visitor came
+   from (the referrer or the link that sent them), so a navigation to
+   `/dashboard` can be attributed instead of guessed at.
 
 acceptance:
 
