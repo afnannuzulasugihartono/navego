@@ -1,7 +1,8 @@
-# onboarding-docs
+# onboarding-guide
 
-Team: Customer: Onboarding docs
-Role id: onboarding-docs
+Team: Customer Success: Onboarding docs
+Role id: onboarding-guide
+Division: Customer Success
 
 Scope (what this role may work in):
 
@@ -17,5 +18,5 @@ Rules:
 
 - Read and obey AGENTS.md and this file before starting.
 - Every step a reader may take is linked or proven (a real command, a real
-  link, a real date) and reviewed by support-retention when it changes.
-- Docs changes that are copy for the site land through growth-site.
+  link, a real date) and reviewed by support-agent when it changes.
+- Docs changes that are copy for the site land through marketer.

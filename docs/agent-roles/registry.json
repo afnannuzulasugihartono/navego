@@ -5,84 +5,143 @@
   "note": "The machine-readable role register: the entry key every session opens with, the team, the repo paths the role may touch, the role's markdown, and the automations that open sessions for it. docs/agent-roles.md is the human half of the same system.",
   "roles": [
     {
-      "id": "survival-runner",
-      "team": "Engineering: Survival",
-      "scopePaths": ["docs/economy.json", "docs/handoff.md", "docs/proof"],
-      "doc": "docs/agent-roles/survival-runner.md",
-      "automations": ["aut_20f1b06450012bvyUfbaQQyT1v"],
-      "status": "active"
+      "id": "operator",
+      "team": "Operations: Survival & Growth runner",
+      "scopePaths": [
+        "docs/economy.json",
+        "docs/handoff.md",
+        "docs/proof"
+      ],
+      "doc": "docs/agent-roles/operator.md",
+      "automations": [
+        "aut_20f1b06450012bvyUfbaQQyT1v"
+      ],
+      "status": "active",
+      "division": "Operations"
     },
     {
-      "id": "growth-research",
-      "team": "R&D (Research & Development)",
-      "scopePaths": ["docs/research/**", "docs/product/**", "README.md"],
-      "doc": "docs/agent-roles/growth-research.md",
+      "id": "researcher",
+      "team": "R&D: Research & Development",
+      "scopePaths": [
+        "docs/research/**",
+        "docs/product/**",
+        "README.md"
+      ],
+      "doc": "docs/agent-roles/researcher.md",
       "automations": [],
-      "status": "planned"
+      "status": "planned",
+      "division": "Research & Development"
     },
     {
       "id": "ceo",
-      "team": "C-suite: CEO",
-      "scopePaths": ["docs/agent-roles.md", "docs/agent-roles/registry.json", "docs/agent-roles/status.md", "docs/agent-roles/queue/**", "docs/agent-roles/*.md", "docs/economy.json", "docs/handoff.md"],
+      "team": "Executive: CEO",
+      "scopePaths": [
+        "docs/agent-roles.md",
+        "docs/agent-roles/registry.json",
+        "docs/agent-roles/status.md",
+        "docs/agent-roles/queue/**",
+        "docs/agent-roles/*.md",
+        "docs/economy.json",
+        "docs/handoff.md"
+      ],
       "doc": "docs/agent-roles/ceo.md",
       "automations": [],
-      "status": "planned"
+      "status": "planned",
+      "division": "Executive"
     },
     {
-      "id": "growth-prospects",
-      "team": "Growth: Prospecting & outreach",
-      "scopePaths": ["README.md", "docs/research/prospects.md", "docs/product/**"],
-      "doc": "docs/agent-roles/growth-prospects.md",
+      "id": "sales-rep",
+      "team": "Sales: Prospecting & outreach",
+      "scopePaths": [
+        "README.md",
+        "docs/research/prospects.md",
+        "docs/product/**"
+      ],
+      "doc": "docs/agent-roles/sales-rep.md",
       "automations": [],
-      "status": "planned"
+      "status": "planned",
+      "division": "Sales"
     },
     {
-      "id": "growth-site",
-      "team": "Marketing (site & public surface)",
-      "scopePaths": ["site/**"],
-      "doc": "docs/agent-roles/growth-site.md",
+      "id": "marketer",
+      "team": "Marketing: Site & public surface",
+      "scopePaths": [
+        "site/**"
+      ],
+      "doc": "docs/agent-roles/marketer.md",
       "automations": [],
-      "status": "planned"
+      "status": "planned",
+      "division": "Marketing"
     },
     {
-      "id": "product-dx",
+      "id": "engineer",
       "team": "Engineering: Product & DX",
-      "scopePaths": ["extension/**", "local/**", "shared/**", "docs/api.md", "docs/agent-friendly.md", "docs/research/**"],
-      "doc": "docs/agent-roles/product-dx.md",
+      "scopePaths": [
+        "extension/**",
+        "local/**",
+        "shared/**",
+        "docs/api.md",
+        "docs/agent-friendly.md",
+        "docs/research/**"
+      ],
+      "doc": "docs/agent-roles/engineer.md",
       "automations": [],
-      "status": "planned"
+      "status": "planned",
+      "division": "Engineering"
     },
     {
-      "id": "engineering-release",
+      "id": "release-engineer",
       "team": "Engineering: Release",
-      "scopePaths": [".github/**", "scripts/release/**", "scripts/pack/**", "docs/releases/**", "CHANGELOG.md", "server.json"],
-      "doc": "docs/agent-roles/engineering-release.md",
+      "scopePaths": [
+        ".github/**",
+        "scripts/release/**",
+        "scripts/pack/**",
+        "docs/releases/**",
+        "CHANGELOG.md",
+        "server.json"
+      ],
+      "doc": "docs/agent-roles/release-engineer.md",
       "automations": [],
-      "status": "planned"
+      "status": "planned",
+      "division": "Engineering"
     },
     {
-      "id": "finance-economy",
+      "id": "finance-analyst",
       "team": "Finance: Economy",
-      "scopePaths": ["docs/economy.json", "docs/proof/**", "docs/handoff.md", "hosted/migrations/**"],
-      "doc": "docs/agent-roles/finance-economy.md",
+      "scopePaths": [
+        "docs/economy.json",
+        "docs/proof/**",
+        "docs/handoff.md",
+        "hosted/migrations/**"
+      ],
+      "doc": "docs/agent-roles/finance-analyst.md",
       "automations": [],
-      "status": "planned"
+      "status": "planned",
+      "division": "Finance"
     },
     {
-      "id": "support-retention",
-      "team": "Customer: Support & retention",
-      "scopePaths": ["docs/product/support.md", "docs/product/navego-adoption.md", "site/**"],
-      "doc": "docs/agent-roles/support-retention.md",
+      "id": "support-agent",
+      "team": "Customer Support: Support & retention",
+      "scopePaths": [
+        "docs/product/support.md",
+        "docs/product/navego-adoption.md",
+        "site/**"
+      ],
+      "doc": "docs/agent-roles/support-agent.md",
       "automations": [],
-      "status": "planned"
+      "status": "planned",
+      "division": "Customer Support"
     },
     {
-      "id": "onboarding-docs",
-      "team": "Customer: Onboarding docs",
-      "scopePaths": ["docs/**"],
-      "doc": "docs/agent-roles/onboarding-docs.md",
+      "id": "onboarding-guide",
+      "team": "Customer Success: Onboarding docs",
+      "scopePaths": [
+        "docs/**"
+      ],
+      "doc": "docs/agent-roles/onboarding-guide.md",
       "automations": [],
-      "status": "planned"
+      "status": "planned",
+      "division": "Customer Success"
     }
   ]
 }

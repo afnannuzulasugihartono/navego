@@ -15,6 +15,7 @@ const root = fileURLToPath(new URL('../../', import.meta.url));
 interface Role {
   id: string;
   team: string;
+  division: string;
   scopePaths: string[];
   doc: string;
   automations: string[];
@@ -66,7 +67,7 @@ export const renderAgentFiles = (register: Register): Array<{ path: string; cont
     const docBody = fs.readFileSync(path.join(root, role.doc), 'utf8').trimEnd();
     const goal = goalLine(role.doc);
     const firstSentence = goal.split(/(?<=\.)\s/)[0] ?? goal;
-    const description = `${role.id} - ${role.team}. ${firstSentence}`.slice(0, 200);
+    const description = `${role.id} - ${role.division}. ${firstSentence}`.slice(0, 200);
     const permissions = [
       '  - action: read',
       '    resource: "*"',
@@ -78,6 +79,7 @@ export const renderAgentFiles = (register: Register): Array<{ path: string; cont
     ].join('\n');
     const body = [
       `Role id: ${role.id}`,
+      `Division: ${role.division}`,
       `Team: ${role.team}`,
       '',
       `You work only inside this role's scope: ${role.scopePaths.join(', ')}.`,
@@ -116,6 +118,22 @@ const main = (): void => {
     fs.mkdirSync(path.dirname(full), { recursive: true });
     fs.writeFileSync(full, file.content);
     console.log(`wrote ${file.path}`);
+  }
+  // A renamed role leaves an agent file behind that no role owns, and an agent file nobody owns is a lane an agent can still enter, so the stale file goes.
+  const rendered = new Set(files.map((file) => file.path));
+  for (const folder of ['.opencode/agents', '.claude/agents']) {
+    const full = path.join(root, folder);
+    if (!fs.existsSync(full)) continue;
+    for (const name of fs.readdirSync(full)) {
+      const relative = `${folder}/${name}`;
+      if (rendered.has(relative)) continue;
+      if (check) {
+        drifted.push(relative);
+        continue;
+      }
+      fs.rmSync(path.join(full, name));
+      console.log(`removed stale ${relative}`);
+    }
   }
   if (check && drifted.length > 0) {
     console.error(`role agent files drifted from the register: ${drifted.join(', ')}`);

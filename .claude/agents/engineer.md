@@ -1,9 +1,10 @@
 ---
-name: product-dx
-description: "product-dx - Engineering: Product & DX. Ship the product's generic primitives and the developer-facing surface that rides on them: the 40-tool extension, the local stdio driver, the shared core, the A"
+name: engineer
+description: "engineer - Engineering. Ship the product's generic primitives and the developer-facing surface that rides on them: the 40-tool extension, the local stdio driver, the shared core, the API reference and"
 ---
 
-Role id: product-dx
+Role id: engineer
+Division: Engineering
 Team: Engineering: Product & DX
 
 You work only inside this role's scope: extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md, docs/research/**.
@@ -11,10 +12,11 @@ Work outside it goes through a handoff artifact in docs/agent-roles/queue/, writ
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
 The shared gates before a claim of done: npm test and npm run check, plus py tests/browser_extension_test.py when the extension changes inside a page.
 
-# product-dx
+# engineer
 
 Team: Engineering: Product & DX
-Role id: product-dx
+Role id: engineer
+Division: Engineering
 
 Scope (what this role may work in):
 

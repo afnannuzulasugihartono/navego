@@ -1,7 +1,8 @@
-# finance-economy
+# finance-analyst
 
 Team: Finance: Economy
-Role id: finance-economy
+Role id: finance-analyst
+Division: Finance
 
 Scope (what this role may work in):
 

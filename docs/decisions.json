@@ -1363,10 +1363,11 @@
       "id": "docs-agent-roles-02",
       "scope": "agent/",
       "file": "docs/agent-roles/registry.json",
-      "decision": "The roles the owner asked to build: survival-runner (Engineering: Survival, the active hourly automation), growth-prospects (Growth: Prospecting & outreach), growth-site (Growth: Site & marketing), product-dx (Engineering: Product & DX), engineering-release (Engineering: Release), finance-economy (Finance: Economy), support-retention (Customer: Support & retention) and onboarding-docs (Customer: Onboarding docs) — this list is for review, one decision per division.",
+      "decision": "The roles the owner asked to build, one per division, each with a scope, a doc and an agent id: operator (Operations), researcher (R&D), sales-rep (Sales), marketer (Marketing), engineer and release-engineer (Engineering), finance-analyst (Finance), support-agent (Customer Support), onboarding-guide (Customer Success) and ceo (Executive). The ids were renamed by docs-agent-roles-04; the set of divisions is the one the owner reviewed.",
       "source": {
         "kind": "user",
-        "ref": "user 2026-11-25: 'list dulu apa yang mau di bangun ke aku aku review'"
+        "ref": "user 2026-11-25: 'list dulu apa yang mau di bangun ke aku aku review'",
+        "also": "docs-agent-roles-04 (the naming: a company division plus an agent-native id)"
       }
     },
     {
@@ -1387,6 +1388,16 @@
       "source": {
         "kind": "internet",
         "ref": "https://opencode.ai/docs/agents and https://code.claude.com/docs/en/sub-agents and https://code.claude.com/docs/en/agent-teams and https://code.claude.com/docs/en/cross-session-messaging and https://agents.md/ (read on 2026-11-25; each source says what it says, and the roles Navego does not have yet carry the reason they are absent)"
+      }
+    },
+    {
+      "id": "docs-agent-roles-04",
+      "scope": "agent/",
+      "file": "docs/agent-roles/registry.json",
+      "decision": "Every role carries a division a company really runs and an agent id the harness can call: the division names the function that owns the work (Executive, Operations, Research & Development, Sales, Marketing, Engineering, Finance, Customer Support, Customer Success), and the id names the kind of worker the session is (operator, researcher, sales-rep, marketer, engineer, release-engineer, finance-analyst, support-agent, onboarding-guide, ceo) - an id that mixes a division with a project noun tells an agent neither.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://en.wikipedia.org/wiki/Organizational_structure (a company is divided by function - marketing, sales, finance, operations, IT, human resources - and the executive layer is CEO, COO, CFO, CMO, CBO, CHRO, CIO, CPO, CSO) and https://en.wikipedia.org/wiki/Chief_executive_officer (the CEO is accountable for the decisions in operations, marketing, business development, finance and human resources) and https://opencode.ai/docs/agents and https://code.claude.com/docs/en/sub-agents (the agent ecosystems name their agents after the work: reviewer, explainer, code-reviewer, code-improver, debugger); read on 2026-11-25"
       }
     }
   ]

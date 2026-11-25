@@ -1,7 +1,8 @@
-# survival-runner
+# operator
 
-Team: Engineering: Survival
-Role id: survival-runner
+Team: Operations: Survival & Growth runner
+Role id: operator
+Division: Operations
 
 Scope (what this role may work in):
 

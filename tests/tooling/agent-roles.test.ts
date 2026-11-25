@@ -19,6 +19,7 @@ const read = (name: string): unknown => JSON.parse(fs.readFileSync(path.join(roo
 interface Role {
   id: string;
   team: string;
+  division: string;
   scopePaths: string[];
   doc: string;
   automations: string[];
@@ -49,6 +50,25 @@ const resolves = (p: string): boolean => {
 
 const docText = (p: string): string => fs.readFileSync(path.join(root, p), 'utf8');
 
+// The divisions a company actually runs, read from the corporate titles and the functional structure (Wikipedia, Organizational structure and Chief executive officer, read 2026-11-25).
+// A role that names no real division is a project label, and a project label is not a lane an agent can enter.
+
+const COMPANY_DIVISIONS = [
+  'Executive',
+  'Operations',
+  'Research & Development',
+  'Sales',
+  'Marketing',
+  'Engineering',
+  'Finance',
+  'Customer Support',
+  'Customer Success',
+  'Product',
+  'Legal & Compliance',
+  'People',
+  'Data & Analytics',
+];
+
 test('the register parses and names where it came from', () => {
   const { register } = load();
   assert.equal(register.version, 1, 'the schema version is pinned so the gate can read the registry');
@@ -65,6 +85,8 @@ test('every role is complete enough for a session to open with', () => {
     assert.ok(!seen.has(role.id), `role id ${role.id} appears twice`);
     seen.add(role.id);
     assert.ok(typeof role.team === 'string' && role.team.length >= 4, `${role.id} names its team`);
+    assert.ok(COMPANY_DIVISIONS.includes(role.division), `${role.id} names the division ${role.division}, which is not a company division`);
+    assert.ok(docText(role.doc).includes(`Division: ${role.division}`), `${role.id}'s doc does not name its division`);
     assert.ok(role.scopePaths.length >= 1, `${role.id} has at least one scope path`);
     assert.ok(role.scopePaths.every((p) => typeof p === 'string' && resolves(p)), `${role.id} scopes ${role.scopePaths.filter((p) => !resolves(p))} that do not exist - a role that may not touch real paths cannot be the entry point`);
     assert.ok(typeof role.doc === 'string' && resolves(role.doc), `${role.id} points at ${role.doc}, which does not exist`);
@@ -122,6 +144,18 @@ test('the research that shaped the roles is in the tree with its sources', () =>
   const research = docText('docs/research/agent-roles.md');
   for (const source of ['https://opencode.ai/docs/agents', 'https://code.claude.com/docs/en/sub-agents', 'https://code.claude.com/docs/en/agent-teams', 'https://agents.md/']) {
     assert.ok(research.includes(source), `docs/research/agent-roles.md does not cite ${source} - a role claim without its source is a guess`);
+  }
+});
+
+test('no agent file is left behind by a renamed role', () => {
+  const { roles } = load();
+  const owned = new Set(roles.flatMap((role) => [`${role.id}.md`]));
+  for (const folder of ['.opencode/agents', '.claude/agents']) {
+    const full = path.join(root, folder);
+    if (!fs.existsSync(full)) continue;
+    for (const name of fs.readdirSync(full)) {
+      assert.ok(owned.has(name), `${folder}/${name} is an agent file no role owns - a lane an agent can still enter`);
+    }
   }
 });
 

@@ -1,7 +1,8 @@
 # ceo
 
-Team: C-suite: CEO
+Team: Executive: CEO
 Role id: ceo
+Division: Executive
 
 Scope (what this role may work in):
 

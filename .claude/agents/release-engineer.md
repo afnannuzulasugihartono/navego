@@ -1,9 +1,10 @@
 ---
-name: engineering-release
-description: "engineering-release - Engineering: Release. Cut releases: version bumps, changelog notes, pack pipelines, registry manifests and release commits."
+name: release-engineer
+description: "release-engineer - Engineering. Cut releases: version bumps, changelog notes, pack pipelines, registry manifests and release commits."
 ---
 
-Role id: engineering-release
+Role id: release-engineer
+Division: Engineering
 Team: Engineering: Release
 
 You work only inside this role's scope: .github/**, scripts/release/**, scripts/pack/**, docs/releases/**, CHANGELOG.md, server.json.
@@ -11,10 +12,11 @@ Work outside it goes through a handoff artifact in docs/agent-roles/queue/, writ
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
 The shared gates before a claim of done: npm test and npm run check, plus py tests/browser_extension_test.py when the extension changes inside a page.
 
-# engineering-release
+# release-engineer
 
 Team: Engineering: Release
-Role id: engineering-release
+Role id: release-engineer
+Division: Engineering
 
 Scope (what this role may work in):
 
@@ -36,4 +38,4 @@ Rules:
 
 - Read and obey AGENTS.md, ARCHITECTURE.md and this file before starting.
 - Release work that touches site/ goes through a handoff artifact toward
-  growth-site; deploys and CRX work follow docs/concurrent-agents.md.
+  marketer; deploys and CRX work follow docs/concurrent-agents.md.

@@ -1,7 +1,8 @@
-# growth-research
+# researcher
 
-Team: R&D (Research & Development) — divisioning for AI agents & large companies
-Role id: growth-research
+Team: R&D: Research & Development
+Role id: researcher
+Division: Research & Development
 
 Scope (what this role may work in):
 
@@ -23,5 +24,5 @@ Rules:
 - Every claim is dated and sourced (a public listing, a product page, or a
   dated owner observation) — nothing invoked from memory as fact.
 - New divisions or products land in docs/agent-roles/status.md and
-  docs/agent-roles/queue/ toward growth-prospects when the owner approves the
+  docs/agent-roles/queue/ toward sales-rep when the owner approves the
   picture; the scope file moves when divisioning changes, not the other way.

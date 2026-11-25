@@ -21,27 +21,34 @@ has:
 
 The scope rule is the gate's job, and its source is this doc: a role's allowed
 paths are what its `doc` lists, and nothing else. A session that begins in role
-X may not edit `site/` if X is `growth-prospects`; when another division's work
+X may not edit `site/` if X is `sales-rep`; when another division's work
 is needed, a handoff artifact (see conventions) carries the brief, and the work
 happens in that role's own session, not borrowed.
 
 ## Roles (the team list to review)
 
-| role id | team | scope (repo paths) | status |
-|---|---|---|---|
-| survival-runner | Engineering: Survival | docs/economy.json, docs/handoff.md, docs/proof | active |
-| growth-research | R&D (Research & Development) | docs/research, docs/product, README.md | planned |
-| ceo | C-suite: CEO | docs/agent-roles.md, docs/agent-roles/registry.json, docs/agent-roles/status.md, docs/agent-roles/queue, docs/economy.json, docs/handoff.md | planned |
-| growth-prospects | Growth: Prospecting & outreach | README.md, docs/research/prospects.md, docs/product | planned |
-| growth-site | Growth: Site & marketing | site/** | planned |
-| product-dx | Engineering: Product & DX | extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md | planned |
-| engineering-release | Engineering: Release | .github/**, scripts/release/**, scripts/pack/**, docs/releases, CHANGELOG.md, server.json | planned |
-| finance-economy | Finance: Economy | docs/economy.json, docs/proof/**, hosted/migrations, docs/handoff.md | planned |
-| support-retention | Customer: Support & retention | docs/product/support.md, docs/product/navego-adoption.md, site/** (docs surface) | planned |
-| onboarding-docs | Customer: Onboarding docs | docs/** (prose and definitions) | planned |
+Each role carries two names: the **division** it belongs to (a function a
+company really runs) and the **agent id** the harness knows it by (a short
+task-shaped name, the way the agent ecosystems name their agents). The id is
+the entry key; the division says where the work belongs.
 
-`support-retention` and `onboarding-docs` both hold `docs/product`; a written
-handoff between them, not inheritance, moves work across.
+| agent id | division | scope (repo paths) | status |
+|---|---|---|---|
+| operator | Operations | docs/economy.json, docs/handoff.md, docs/proof | active |
+| researcher | Research & Development | docs/research, docs/product, README.md | planned |
+| sales-rep | Sales | README.md, docs/research/prospects.md, docs/product | planned |
+| marketer | Marketing | site/** | planned |
+| engineer | Engineering | extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md | planned |
+| release-engineer | Engineering | .github/**, scripts/release/**, scripts/pack/**, docs/releases, CHANGELOG.md, server.json | planned |
+| finance-analyst | Finance | docs/economy.json, docs/proof/**, hosted/migrations, docs/handoff.md | planned |
+| support-agent | Customer Support | docs/product/support.md, docs/product/navego-adoption.md, site/** (docs surface) | planned |
+| onboarding-guide | Customer Success | docs/** (prose and definitions) | planned |
+| ceo | Executive | docs/agent-roles.md, docs/agent-roles/registry.json, docs/agent-roles/status.md, docs/agent-roles/queue, docs/economy.json, docs/handoff.md | planned |
+
+`support-agent` and `onboarding-guide` both hold `docs/product`; a written
+handoff between them, not inheritance, moves work across. The divisions and
+the naming are grounded in
+[`docs/research/agent-roles.md`](research/agent-roles.md).
 
 ## The agent files (the entry point a harness reads)
 

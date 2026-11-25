@@ -1,7 +1,8 @@
-# engineering-release
+# release-engineer
 
 Team: Engineering: Release
-Role id: engineering-release
+Role id: release-engineer
+Division: Engineering
 
 Scope (what this role may work in):
 
@@ -23,4 +24,4 @@ Rules:
 
 - Read and obey AGENTS.md, ARCHITECTURE.md and this file before starting.
 - Release work that touches site/ goes through a handoff artifact toward
-  growth-site; deploys and CRX work follow docs/concurrent-agents.md.
+  marketer; deploys and CRX work follow docs/concurrent-agents.md.

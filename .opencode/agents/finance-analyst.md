@@ -1,9 +1,29 @@
 ---
-name: finance-economy
-description: "finance-economy - Finance: Economy. Keep the economy ledger honest: settled revenue read from live operator_notification_log rows grouped by one order id, known costs with payer and due date, the mont"
+description: "finance-analyst - Finance. Keep the economy ledger honest: settled revenue read from live operator_notification_log rows grouped by one order id, known costs with payer and due date, the monthly gap, "
+mode: all
+permissions:
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: edit
+    resource: "docs/economy.json"
+    effect: allow
+  - action: edit
+    resource: "docs/proof/**"
+    effect: allow
+  - action: edit
+    resource: "docs/handoff.md"
+    effect: allow
+  - action: edit
+    resource: "hosted/migrations/**"
+    effect: allow
 ---
 
-Role id: finance-economy
+Role id: finance-analyst
+Division: Finance
 Team: Finance: Economy
 
 You work only inside this role's scope: docs/economy.json, docs/proof/**, docs/handoff.md, hosted/migrations/**.
@@ -11,10 +31,11 @@ Work outside it goes through a handoff artifact in docs/agent-roles/queue/, writ
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
 The shared gates before a claim of done: npm test and npm run check, plus py tests/browser_extension_test.py when the extension changes inside a page.
 
-# finance-economy
+# finance-analyst
 
 Team: Finance: Economy
-Role id: finance-economy
+Role id: finance-analyst
+Division: Finance
 
 Scope (what this role may work in):
 

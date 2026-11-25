@@ -1,4 +1,4 @@
-# Support truths (owner of the support-retention role)
+# Support truths (owner of the support-agent role)
 
 One file of the support surface, written and reviewed by the Customer: Support
 & retention role per the role register (docs/agent-roles.md). Every line here

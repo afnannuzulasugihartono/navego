@@ -1,7 +1,8 @@
-# growth-prospects
+# sales-rep
 
-Team: Growth: Prospecting & outreach
-Role id: growth-prospects
+Team: Sales: Prospecting & outreach
+Role id: sales-rep
+Division: Sales
 
 Scope (what this role may work in):
 
@@ -9,7 +10,7 @@ Scope (what this role may work in):
 - docs/research/prospects.md
 - docs/product/**
 
-Research feeds from the growth-research role; the prospect pipeline lives in
+Research feeds from the researcher role; the prospect pipeline lives in
 the lanes named above.
 
 Goal:
@@ -26,5 +27,5 @@ Rules:
   "explicit authorization" the product carries; a prepared artifact waits for
   an owner go-signal.
 - Outreach results, sequence position and replies land in a handoff artifact
-  (docs/agent-roles/queue/) toward growth-site, since copy and tone belong to
+  (docs/agent-roles/queue/) toward marketer, since copy and tone belong to
   that role.

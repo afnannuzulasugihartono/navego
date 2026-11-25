@@ -94,18 +94,49 @@ Source: https://agents.md/
 | One session never crosses a division: a session works its own scope and moves work through a handoff artifact | Cross-session messaging (a message never grants consent; the receiver's permissions still apply) |
 | The role's own doc is read first, so the nearest file carries the rule | AGENTS.md (nearest AGENTS.md wins) |
 
+## The naming: a company division, and an id an agent can be called by
+
+Sources: https://en.wikipedia.org/wiki/Organizational_structure and
+https://en.wikipedia.org/wiki/Chief_executive_officer (read 2026-11-25).
+
+- A company is divided by function: the functional structure splits work into
+  departments such as marketing, sales, finance, operations, information
+  technology and human resources, and the divisional structure splits it by
+  product or region. The same page lists the executive layer: chief executive
+  officer, chief operating officer, chief financial officer, chief marketing
+  officer, chief business officer, chief human resources officer, chief
+  information officer, chief product officer, chief strategy officer.
+- The CEO page says the same division names from the top down: the CEO is
+  accountable for the decisions in operations, marketing, business development,
+  finance and human resources, and the subordinate executives (COO, CFO, CSO,
+  CMO, CBO) each carry a functional area.
+
+So a role in this repository carries a **division** from that list, and the
+**agent id** is the name a harness can call: the harness ecosystems name their
+agents after the work (`reviewer`, `explainer`, `code-reviewer`,
+`code-improver`, `debugger` in the documentation above), never after a
+project. A Navego id that mixes a division with a project noun
+(`growth-site`, `finance-economy`) is neither: it tells an agent neither which
+division owns the work nor what kind of worker it is. Hence `marketer`
+(Marketing), `finance-analyst` (Finance), `researcher` (R&D), `sales-rep`
+(Sales), `support-agent` (Customer Support), `onboarding-guide` (Customer
+Success), `engineer` and `release-engineer` (Engineering), `operator`
+(Operations), `ceo` (Executive).
+
 ## Roles Navego keeps, and the roles it does not have yet
 
-Kept (each with a scope and a doc): `survival-runner`, `growth-research`
-(R&D), `growth-prospects`, `growth-site` (Marketing), `product-dx`,
-`engineering-release`, `finance-economy`, `support-retention`,
-`onboarding-docs`, `ceo`.
+Kept (each with a division, a scope and a doc): `operator` (Operations),
+`researcher` (Research & Development), `sales-rep` (Sales), `marketer`
+(Marketing), `engineer` (Engineering), `release-engineer` (Engineering),
+`finance-analyst` (Finance), `support-agent` (Customer Support),
+`onboarding-guide` (Customer Success), `ceo` (Executive).
 
-Not created yet, with the reason: no separate Legal/Compliance role (the owner
-holds the consent and pricing decisions until there is a second party to
-review), no separate Sales role (prospecting and outreach are one lane today),
-no Analytics role (the funnel read and the settlement read are part of
-survival-runner and finance-economy), no separate Design role (the site's
-visual system is one file, `site/app/tokens.css`, with the Marketing lane
-owning it). A role is added when a division has work the current lanes cannot
+Not created yet, with the reason: no separate Legal & Compliance role (the
+owner holds the consent and pricing decisions until there is a second party to
+review), no separate People role (there is no hiring in this company yet), no
+Data & Analytics role (the funnel read and the settlement read are part of
+operator and finance-analyst), no separate Product role (the product decision
+is the CEO's, the product work is the engineer's), no separate Design role
+(the site's visual system is one file, `site/app/tokens.css`, with the
+Marketing lane owning it). A role is added when a division has work the current lanes cannot
 hold, and the CEO role (or the owner) re-scopes then.

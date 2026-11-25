@@ -1,7 +1,8 @@
-# growth-site
+# marketer
 
-Team: Marketing (site & public surface)
-Role id: growth-site
+Team: Marketing: Site & public surface
+Role id: marketer
+Division: Marketing
 
 Scope (what this role may work in):
 
@@ -20,4 +21,4 @@ Rules:
 - Every claim on the site is a number read from a live source; the register of
   sourced claims stays in docs/decisions.json.
 - A technical claim routed to the Engineering: Product & DX role goes through
-  a handoff artifact toward product-dx.
+  a handoff artifact toward engineer.

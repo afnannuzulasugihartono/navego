@@ -1,7 +1,7 @@
 # Prospects (Growth: Prospecting & outreach)
 
-The prospect pipeline of the growth-prospects role. It is empty on purpose
-until the research role (docs/agent-roles/growth-research.md) brings dated
+The prospect pipeline of the sales-rep role. It is empty on purpose
+until the research role (docs/agent-roles/researcher.md) brings dated
 evidence; nothing here is a promise of a customer.
 
 - Pipeline state on 2026-11-25: empty. No prospect has been prepared and no
