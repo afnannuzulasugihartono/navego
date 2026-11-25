@@ -21,6 +21,18 @@ test('the pricing page names one-time plans and their real periods without the y
   assert.match(harga, /Eropa dan Amerika Serikat/);
 });
 
+test('a plan click answers under the clicked plan, not at the bottom of the page', () => {
+  const harga = read('app/routes/harga.tsx');
+  assert.match(harga, /setLastPlan\(planKey\)/);
+  assert.match(harga, /lastPlan === planKey/);
+  assert.match(harga, /planFeedback\(/);
+  assert.match(harga, /buyPending === planKey/);
+  assert.match(harga, /usd-\$\{slot\}-\$\{plan\.id\}/);
+  assert.match(harga, /plan-announcer/);
+  assert.match(harga, /!activePlanPresent && signedOut/);
+  assert.match(harga, /!activePlanPresent && note/);
+});
+
 test('the homepage offers real artifacts instead of only a scripted demo', () => {
   const beranda = read('app/routes/beranda.tsx');
   assert.match(beranda, /Situs tanpa API\. Perintah jadi berkas\./);

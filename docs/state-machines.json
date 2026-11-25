@@ -344,6 +344,25 @@
       "rank": 2
     },
     {
+      "id": "checkout-plan-feedback",
+      "kind": "site",
+      "where": "site/app/lib/checkout-feedback.ts",
+      "states": [
+        "idle",
+        "signin",
+        "pending",
+        "warn",
+        "info",
+        "fallback"
+      ],
+      "writers": "the plan click, ensureSession, the billing answer, the region detection, and the PayPal return query",
+      "readers": "the clicked plan card, the always-mounted plan announcer, and the page-level payment status",
+      "wrongIfConfused": "two identical plan ids light up together; a pending id flips the wrong card; a late region change unmounts the card and hides the message; a live region mounts with its text and is never announced",
+      "decision": "model",
+      "why": "one current plan owns one visible and announced message, the announcer exists before its text changes, and a removed card hands the message back to the page-level region",
+      "rank": 2
+    },
+    {
       "id": "content-ref-lifecycle",
       "kind": "extension",
       "where": "extension/content.ts:245",
