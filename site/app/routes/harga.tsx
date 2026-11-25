@@ -8,6 +8,7 @@ import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { BILLING, ensureSession, getStoredToken, headersFor } from '../lib/auth';
 import { track } from '../lib/funnel';
 import { planFeedback } from '../lib/checkout-feedback';
+import { forgetPendingPlan, readPendingPlan, rememberPendingPlan } from '../lib/checkout-intent';
 import { bandForCountry, type PricingBand } from '../lib/region.js';
 
 export function meta() {
@@ -118,6 +119,11 @@ export default function Harga() {
     if (checkout === 'cancelled') setCheckoutNote('Checkout dibatalkan. Plan belum dibeli.');
     if (checkout === 'success') void finishCheckout();
     setSignedOut(!getStoredToken());
+    const pending = readPendingPlan();
+    if (pending) {
+      setLastPlan(pending);
+      if (getStoredToken()) setNote('Lanjutkan plan pilihan Anda. Klik Beli dengan PayPal.');
+    }
     // The cookie a consented visitor carries pre-fills the correct group instantly; the mandatory detection still runs and corrects it if the device moved.
     if (readConsent() === 'granted') {
       const cached = readRegionCookie();
@@ -188,6 +194,7 @@ export default function Harga() {
         setWarn(false);
         setNote(`Plan ${answer.plan} aktif. Selamat bekerja!`);
         window.localStorage.removeItem('navego-paypal-order');
+        forgetPendingPlan();
         return;
       }
       setWarn(true);
@@ -201,6 +208,7 @@ export default function Harga() {
   async function buy(planKind: string, planKey: string) {
     if (buyPending) return;
     setLastPlan(planKey);
+    rememberPendingPlan(planKey);
     track('buy.click', { plan: planKind, rail: 'paypal' });
     const current = await ensureSession();
     if (!current) {
@@ -227,6 +235,7 @@ export default function Harga() {
         // The null this call gives back was read as a blocked popup, so a visitor whose PayPal tab did open was told it did not, and no wording could tell the two apart.
         // The tab carries the order id in localStorage and PayPal hands the order back as `token`, so the purchase completes whether this tab watches it or not.
         window.open(url, '_blank', 'noopener,noreferrer');
+        forgetPendingPlan();
         setNote('Halaman PayPal terbuka di tab baru. Selesaikan pembayaran di sana; plan aktif setelah pembayaran dikonfirmasi. Jika tabnya tidak terbuka, izinkan popup untuk situs ini lalu klik beli lagi.');
         return;
       }
