@@ -7,8 +7,10 @@ the oldest ready ticket, and a ticket that moves money (a brief naming a
 buyer, an outreach or a payment) goes before one that only sharpens
 measurement, because AGENTS.md puts income above polish.
 
-Fields: `intent`, `why`, `scopeRequested` (what the other role must do),
-`acceptance` (the shared gates that count as done), `deadline` (optional).
+Fields: `class` (`money` for a brief that finds a buyer, an outreach or a payment;
+`measurement` for a brief that only sharpens how the product is read), `intent`,
+`why`, `scopeRequested` (what the other role must do), `acceptance` (the shared
+gates that count as done), `deadline` (optional).
 
 One ticket is one bounded piece of work: a brief that carries two unrelated
 jobs is two tickets, because a lane that takes one job at a time is a lane

@@ -1,6 +1,7 @@
 ---
 description: "researcher - Research & Development. Research the landscape for Navego as a product: who already builds agents (ai-agent division), who buys private-data browsers (large companies, compliance-driven),"
 mode: all
+steps: 60
 permissions:
   - action: read
     resource: "*"

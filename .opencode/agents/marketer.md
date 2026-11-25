@@ -1,6 +1,7 @@
 ---
 description: "marketer - Marketing. Ship public-facing site content and copy that fits the product story without inventing a business, a waitlist or a feature that is not live."
 mode: all
+steps: 60
 permissions:
   - action: read
     resource: "*"

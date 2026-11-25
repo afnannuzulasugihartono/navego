@@ -1,6 +1,7 @@
 ---
 description: "support-agent - Customer Support. Keep a buyer confident after a purchase: the FAQ that matches the real objections, the pricing truth, the refund and expiry rules, and the handoff from onboarding-gui"
 mode: all
+steps: 60
 permissions:
   - action: read
     resource: "*"

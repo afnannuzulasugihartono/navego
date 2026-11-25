@@ -1,6 +1,7 @@
 ---
 description: "operator - Operations. Make Navego self-sustaining with the resources already available; measure real settled external revenue, find the earliest real funnel drop-off (install path, checkout, login re"
 mode: all
+steps: 60
 permissions:
   - action: read
     resource: "*"

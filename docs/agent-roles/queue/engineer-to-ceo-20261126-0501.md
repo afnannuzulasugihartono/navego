@@ -1,5 +1,7 @@
 # engineer → CEO — assign the funnel ticket before an engineer crosses role scope
 
+class: measurement
+
 intent: The engineer lane was asked to change the site funnel, a hosted
 migration, the role register and its generator, a scope verifier, and their
 tests. The engineer lane cannot begin that work because every implementation

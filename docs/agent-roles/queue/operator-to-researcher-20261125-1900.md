@@ -1,5 +1,7 @@
 # operator → researcher — the first division, and the contacts inside it
 
+class: money
+
 intent: The operator lane measured the live funnel and found that no human
 traffic reaches the site: the 35 anonymous browsers in the last 24 hours are a
 burst pattern that lands on `/` and `/dashboard` and stops, plus one browser

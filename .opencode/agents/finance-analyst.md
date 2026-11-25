@@ -1,6 +1,7 @@
 ---
 description: "finance-analyst - Finance. Keep the economy ledger honest: settled revenue read from live operator_notification_log rows grouped by one order id, known costs with payer and due date, the monthly gap, "
 mode: all
+steps: 60
 permissions:
   - action: read
     resource: "*"

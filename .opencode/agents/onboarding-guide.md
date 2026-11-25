@@ -1,6 +1,7 @@
 ---
 description: "onboarding-guide - Customer Success. Make every new person reach the first shipped artifact quickly and honestly: the install path, the first run, the extension install, the paid checkout, the reporti"
 mode: all
+steps: 60
 permissions:
   - action: read
     resource: "*"

@@ -92,7 +92,7 @@ export const renderAgentFiles = (register: Register): Array<{ path: string; cont
 
     files.push({
       path: `.opencode/agents/${role.id}.md`,
-      content: `---\ndescription: ${JSON.stringify(description)}\nmode: all\npermissions:\n${permissions}\n---\n\n${body}\n`,
+      content: `---\ndescription: ${JSON.stringify(description)}\nmode: all\nsteps: 60\npermissions:\n${permissions}\n---\n\n${body}\n`,
     });
     files.push({
       path: `.claude/agents/${role.id}.md`,

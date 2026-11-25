@@ -52,13 +52,23 @@ the naming are grounded in
 
 ## The key roster (capacity split by credential)
 
-`docs/agent-roles/keys.json` names every NVIDIA key the company runs on: the
-provider, the model a worker uses, where the credential lives (an environment
-variable or a file outside this repository), and the lanes that slot serves.
-The roster never holds a key. One key serves one worker process, so two keys
-run two lanes at the same time; a third key is one provider entry, one roster
-row and one more dispatcher. Two keys from one NVIDIA account are not two
-accounts: each key's own quota and the provider's terms apply.
+`docs/agent-roles/keys.json` names every NVIDIA route the company runs on: the
+personal/console one and each ordinary account. Each row carries the provider,
+the model a worker uses, where the credential lives (the signed-in console
+session, an environment variable, or a file outside this repository), the
+session that slot owns, and the lanes it serves. The roster never holds a key.
+
+One credential serves one worker process **and one session**: two accounts run
+two lanes at the same time, each in its own worktree and its own session. **A
+lane worker never runs inside the operator conversation** — that route spends
+the conversation's own request budget, and NVIDIA answers at 40 requests per
+minute, so the conversation keeps the console route and the workers take the
+ordinary accounts, each with a bounded step limit. No two slots may run on the
+same credential: the worker hashes each credential locally and refuses a slot
+whose digest already belongs to another slot, so the proof shows two distinct
+credentials without anyone holding one. Adding an account is one provider
+entry, one roster row and one more worker. Two ordinary accounts are not two
+credits: each account's own quota and the provider's terms apply.
 
 ## The agent files (the entry point a harness reads)
 

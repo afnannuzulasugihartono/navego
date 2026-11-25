@@ -1,5 +1,7 @@
 # operator → engineer — give every lane a shared communication surface, and make the scope rule a gate
 
+class: measurement
+
 intent: The lane dispatcher now starts lanes on their own, so each lane must be
 able to answer without leaving its own work scope, and the rule "one session,
 one role" must be checked by a machine instead of trusted to a prompt.

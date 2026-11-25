@@ -1,6 +1,7 @@
 ---
 description: "engineer - Engineering. Ship the product's generic primitives and the developer-facing surface that rides on them: the 40-tool extension, the local stdio driver, the shared core, the API reference and"
 mode: all
+steps: 60
 permissions:
   - action: read
     resource: "*"

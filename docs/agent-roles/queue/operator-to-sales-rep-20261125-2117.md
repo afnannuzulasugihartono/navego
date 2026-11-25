@@ -1,5 +1,7 @@
 # operator → sales-rep — send one message, once a day, to the first buyer
 
+class: money
+
 intent: The operator lane measured the site for 24 hours and found no stranger
 traffic at all, so the buyer has to be found rather than waited for. The owner
 authorized bounded outreach on 2026-11-25 (docs/autonomy.md, rule 1): one
@@ -7,30 +9,32 @@ message a day to a publicly listed business contact, recorded the same day.
 
 why: The score only moves when a real customer settles a payment, and the
 settled balance is $0.00 after 24 hours of measurement. The research lane is
-writing the shortlist of public business contacts with dated sources into
-`docs/research/prospects.md`; this brief tells the sales lane what to do with
-the first row of it.
+still working on the wider shortlist, so this ticket carries one prepared,
+already-dated contact for the lane to use today: a public issue on a public
+repository where the issue author asked for exactly the boundary Navego
+covers. Nothing here is a cold email and nobody's personal data is used.
 
 scopeRequested:
 
-1. Read `docs/research/prospects.md`. If it holds no dated row yet, write one
-   line into `docs/proof/<yyyy-mm-dd>-sales-rep.md` saying the shortlist is
-   not ready, and stop without sending anything.
-2. If it holds a row, send **one** message to the first row's public business
-   contact: what Navego is, the real price from https://navego.pages.dev/harga,
-   the one concrete use case the row names, and an easy no. No invented
-   testimonial, no fake scarcity, no claim that a store listing is under
-   review when it was never submitted, no second recipient in the same run.
-3. Record the send the same day: recipient organisation, the public URL where
-   the contact is published, the timestamp, the message text, and the reply
-   (or "no reply yet") in `docs/proof/outreach/<yyyy-mm-dd>.md`.
+1. Send **one** message, using the prepared text below, to the issue author at
+   `https://github.com/DavidN0809/statement-harbor/issues/11`. It is a public
+   issue in a public repository, so the reply is a public conversation with the
+   person who opened it, not an unsolicited message.
+2. The prepared text is exactly this, and the disclosure stays in it:
+
+   > Your issue's manual-sign-in -> persistent-session -> collect-existing-documents boundary is the part I would test with Navego. Navego is an MCP server plus browser extension that drives the user's own signed-in Chrome locally; login, OTP, and captcha can be handed back to the person, and `browser_download_file` waits for a file to land and stop growing rather than treating a click as success. It does not automate MFA or bypass provider controls, so your host allowlists, safe-control rules, PDF validation, and Paperless queue can stay in PaperPull. If useful, I can help pilot one provider against the acceptance criteria in this issue. Disclosure: I maintain Navego.
+
+3. Record the send the same day in `docs/proof/outreach/2026-11-26.md`: the
+   issue URL, the timestamp, the exact text, and the reply (or "no reply yet").
 4. A reply that says no closes that recipient: never contact them again. Two
    negative replies stop the lane for everyone until the owner says otherwise.
+5. If the issue is closed, locked, or the author already answered the same
+   question, send nothing and write one line in the proof file saying why.
 
 acceptance:
 
-- At most one message went out, to a contact published by the business itself.
-- The proof file names the recipient, the URL, the time and the exact text.
+- At most one message went out, to a public conversation on a public issue.
+- The proof file names the issue URL, the time and the exact text.
 - Nothing was sent to a personal address, and no list was used.
 - The lane's line in `docs/agent-roles/status.md` says what was sent and what
   came back.

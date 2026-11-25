@@ -1,30 +1,47 @@
 {
   "version": 1,
   "generated": "2026-11-25",
-  "source": "Owner instruction 2026-11-25: two NVIDIA keys today, more later; one key serves one worker, and a session that handled several roles can be split into two.",
-  "note": "The key roster. It names where each credential lives and which model a worker runs on; it never holds a key. The credential is read by the provider configuration from a file or an environment variable outside this repository, so no agent ever sees the secret.",
+  "source": "Owner instruction 2026-11-25: the personal/console NVIDIA route plus two ordinary NVIDIA accounts (nvidia and nvidia2); one session handling several roles must be splittable, every route gets its own session, the credentials in use must differ, and more accounts can be added later. The owner then added the reason the split exists: a subagent dispatched inside the operator conversation spends that conversation's request budget, and NVIDIA answers at 40 requests per minute.",
+  "note": "The credential roster. It names where each route lives, which model a worker runs on, and which session that route owns; it never holds a key. The personal route is the signed-in console session and stays with the operator conversation, so a lane worker never competes with the conversation for its requests. The two ordinary accounts are read by their provider configuration from an environment variable or a file outside this repository, so no agent ever sees a secret.",
   "slots": [
     {
-      "id": "key-a",
+      "id": "console",
+      "provider": "console-nvidia",
+      "model": "console-nvidia/minimaxai/minimax-m3.1-flash",
+      "credential": "console session (signed-in)",
+      "session": "slot-console",
+      "status": "ready",
+      "serves": ["operator", "this conversation"],
+      "runsLaneWorkers": false
+    },
+    {
+      "id": "nvidia-1",
       "provider": "nvidia",
       "model": "nvidia/minimaxai/minimax-m3.1-flash",
       "credential": "env:NVIDIA_API_KEY",
+      "session": "slot-nvidia-1",
       "status": "ready",
-      "serves": ["operator", "dispatcher-1"]
+      "serves": ["lane worker 1"],
+      "runsLaneWorkers": true
     },
     {
-      "id": "key-b",
-      "provider": "nvidia-b",
-      "model": "nvidia-b/minimaxai/minimax-m3.1-flash",
-      "credential": "file:~/.config/opencode/nvidia-api-key-b",
+      "id": "nvidia-2",
+      "provider": "nvidia2",
+      "model": "nvidia2/minimaxai/minimax-m3.1-flash",
+      "credential": "file:~/.config/opencode/nvidia-api-key-2",
+      "session": "slot-nvidia-2",
       "status": "pending",
-      "serves": ["dispatcher-2"]
+      "serves": ["lane worker 2"],
+      "runsLaneWorkers": true
     }
   ],
   "rules": [
-    "One key serves one worker process: the worker is started with the slot's model, so two workers can run at the same time on two keys.",
-    "Adding a key means adding one provider entry, one slot row, and one more dispatcher; no lane code changes.",
+    "One credential serves one worker process and one session: the worker starts with the slot's model in a new session of its own, so two accounts run two lanes at the same time.",
+    "A lane worker never runs inside the operator conversation. A subagent dispatched in that conversation spends the conversation's own request budget, and the provider answers at 40 requests per minute, so the conversation keeps the console route and the workers take the ordinary accounts.",
+    "Each worker's request budget is bounded: the generated role files carry a step limit, so one lane run cannot spend a key's whole minute in a burst.",
+    "No two slots may run on the same credential. The worker hashes each available credential locally (SHA-256), compares the digests before starting, and refuses a slot whose digest already belongs to another running slot; the digest's first eight characters may be logged, the credential itself never is.",
+    "Adding an account means adding one provider entry, one slot row, and one more worker; no lane code changes.",
     "The owner places the key file; no agent reads, prints, copies, or asks for the secret.",
-    "Two keys from one NVIDIA account are not two accounts: each key's own quota and the provider's terms apply, so a slot stays inside its key's documented limit."
+    "Two accounts are not two credits: each account's own quota and the provider's terms apply, so a slot stays inside its credential's documented limit and no slot is used to sidestep another one's limit."
   ]
 }

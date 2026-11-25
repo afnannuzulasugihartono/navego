@@ -1,5 +1,7 @@
 # operator → engineer — make the funnel tell the truth about the install step and about who is walking
 
+class: measurement
+
 intent: The operator lane reads the funnel every hour to decide where the next
 change goes, and two of the funnel's rows cannot carry that decision: the row
 named "install click" counts a copy, and the rows cannot tell a crawler from

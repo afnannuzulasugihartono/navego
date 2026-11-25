@@ -159,6 +159,35 @@ test('no agent file is left behind by a renamed role', () => {
   }
 });
 
+test('the credential roster gives every slot its own credential and its own session', () => {
+  const roster = read('docs/agent-roles/keys.json') as {
+    version: number;
+    slots: Array<{ id: string; provider: string; model: string; credential: string; session: string; serves: string[]; status: string; runsLaneWorkers: boolean }>;
+  };
+  assert.equal(roster.version, 1, 'the roster schema version is pinned');
+  assert.ok(roster.slots.length >= 2, 'the roster carries at least two credential slots');
+  const credentials = new Set<string>();
+  const sessions = new Set<string>();
+  let workerSlots = 0;
+  for (const slot of roster.slots) {
+    assert.ok(slot.id.length > 0, 'a slot names itself');
+    assert.ok(slot.provider.length > 0, `${slot.id} names its provider`);
+    assert.match(slot.model, /^[a-z0-9-]+\//, `${slot.id} names its model as provider/model`);
+    assert.ok(slot.credential.length > 0, `${slot.id} says where its credential lives`);
+    assert.ok(slot.session.length > 0, `${slot.id} names the session it owns`);
+    assert.ok(Array.isArray(slot.serves) && slot.serves.length > 0, `${slot.id} names the lanes it serves`);
+    assert.ok(['ready', 'pending'].includes(slot.status), `${slot.id} has a status in ready or pending`);
+    assert.ok(!credentials.has(slot.credential), `${slot.id} shares its credential source with another slot - two slots must never run on the same credential`);
+    assert.ok(!sessions.has(slot.session), `${slot.id} shares its session with another slot - one credential serves one session`);
+    if (slot.runsLaneWorkers) workerSlots += 1;
+    credentials.add(slot.credential);
+    sessions.add(slot.session);
+  }
+  assert.ok(workerSlots >= 1, 'at least one slot runs lane workers');
+  const text = fs.readFileSync(path.join(root, 'docs/agent-roles/keys.json'), 'utf8');
+  assert.ok(!/nvapi-[A-Za-z0-9_-]{20,}/.test(text), 'the roster must not hold a credential value');
+});
+
 test('the decisions register carries the roles decision', () => {
   const decisions = read('docs/decisions.json') as { decisions: Array<{ id: string }> };
   const ids = new Set(decisions.decisions.map((d) => d.id));

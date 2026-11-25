@@ -1,6 +1,7 @@
 ---
 description: "release-engineer - Engineering. Cut releases: version bumps, changelog notes, pack pipelines, registry manifests and release commits."
 mode: all
+steps: 60
 permissions:
   - action: read
     resource: "*"

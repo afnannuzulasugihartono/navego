@@ -1,6 +1,7 @@
 ---
 description: "ceo - Executive. Make Navego self-sustaining by owning the decisions no other role may make on the owner's behalf: who is the customer, what the product sells and for what price, what counts as revenu"
 mode: all
+steps: 60
 permissions:
   - action: read
     resource: "*"

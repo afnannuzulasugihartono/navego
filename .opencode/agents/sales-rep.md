@@ -1,6 +1,7 @@
 ---
 description: "sales-rep - Sales. Find real public prospects with a concrete Navego use case, validate the need, and prepare truthful, consent-following outreach artifacts."
 mode: all
+steps: 60
 permissions:
   - action: read
     resource: "*"
