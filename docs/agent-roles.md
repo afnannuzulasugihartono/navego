@@ -50,6 +50,16 @@ handoff between them, not inheritance, moves work across. The divisions and
 the naming are grounded in
 [`docs/research/agent-roles.md`](research/agent-roles.md).
 
+## The key roster (capacity split by credential)
+
+`docs/agent-roles/keys.json` names every NVIDIA key the company runs on: the
+provider, the model a worker uses, where the credential lives (an environment
+variable or a file outside this repository), and the lanes that slot serves.
+The roster never holds a key. One key serves one worker process, so two keys
+run two lanes at the same time; a third key is one provider entry, one roster
+row and one more dispatcher. Two keys from one NVIDIA account are not two
+accounts: each key's own quota and the provider's terms apply.
+
 ## The agent files (the entry point a harness reads)
 
 A role is not only a document. Every role is an agent file the coding harness

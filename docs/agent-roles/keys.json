@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "generated": "2026-11-25",
+  "source": "Owner instruction 2026-11-25: two NVIDIA keys today, more later; one key serves one worker, and a session that handled several roles can be split into two.",
+  "note": "The key roster. It names where each credential lives and which model a worker runs on; it never holds a key. The credential is read by the provider configuration from a file or an environment variable outside this repository, so no agent ever sees the secret.",
+  "slots": [
+    {
+      "id": "key-a",
+      "provider": "nvidia",
+      "model": "nvidia/minimaxai/minimax-m3.1-flash",
+      "credential": "env:NVIDIA_API_KEY",
+      "status": "ready",
+      "serves": ["operator", "dispatcher-1"]
+    },
+    {
+      "id": "key-b",
+      "provider": "nvidia-b",
+      "model": "nvidia-b/minimaxai/minimax-m3.1-flash",
+      "credential": "file:~/.config/opencode/nvidia-api-key-b",
+      "status": "pending",
+      "serves": ["dispatcher-2"]
+    }
+  ],
+  "rules": [
+    "One key serves one worker process: the worker is started with the slot's model, so two workers can run at the same time on two keys.",
+    "Adding a key means adding one provider entry, one slot row, and one more dispatcher; no lane code changes.",
+    "The owner places the key file; no agent reads, prints, copies, or asks for the secret.",
+    "Two keys from one NVIDIA account are not two accounts: each key's own quota and the provider's terms apply, so a slot stays inside its key's documented limit."
+  ]
+}

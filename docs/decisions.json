@@ -1450,6 +1450,16 @@
         "kind": "user",
         "ref": "user 2026-11-25, answered 'Formulir feedback situs': the live feedback form is the channel the support lane works from"
       }
+    },
+    {
+      "id": "docs-agent-roles-05",
+      "scope": "agent/keys",
+      "file": "docs/agent-roles/keys.json",
+      "decision": "Capacity is split by credential, not by session: each NVIDIA key serves one worker process that runs one lane on its own model, so two keys run two lanes at the same time and a third key needs one provider entry, one roster row and one more dispatcher. The roster names the provider, the model, where the credential lives and the lanes a slot serves, and it never holds a key - the credential is read by the provider configuration from an environment variable or a file outside the repository, which no agent reads, prints, or asks for.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://opencode.ai/docs/providers (a provider is keyed by id and reads its credential from env or from a file with {file:path}; a model reference is provider/model) and https://opencode.ai/docs/agents (an agent may pin its own model) and https://opencode.ai/docs/config (variable and file substitution in configuration) and the opencode run flags --model, --agent and --worktree (read on 2026-11-25); the owner instruction of the same day: two NVIDIA keys today, more later, and one session handling several roles must be splittable into two"
+      }
     }
   ]
 }
