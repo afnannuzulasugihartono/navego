@@ -14,7 +14,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
 const modulePath = pathToFileURL(path.join(root, 'site', 'app', 'lib', 'copy-command.ts')).href;
-const routeSource = fs.readFileSync(path.join(root, 'site', 'app', 'routes', 'unduh.tsx'), 'utf8');
+const componentSource = fs.readFileSync(path.join(root, 'site', 'app', 'components', 'CopyCommand.tsx'), 'utf8');
 
 type Feedback = { message: string; failed: boolean; attempt: number } | null;
 type CopyController = {
@@ -158,7 +158,7 @@ test('identical retries replace the live-region content and disposal clears pend
   await controller.copy();
   await controller.copy();
   assert.notEqual(attempts[0], attempts[1], 'every retry changes the DOM key of the live region');
-  assert.match(routeSource, /key=\{feedback\.attempt\}/);
+  assert.match(componentSource, /key=\{feedback\.attempt\}/);
   controller.dispose();
   assert.deepEqual(cancelled, [9, 9], 'the retry replaces the first timer and disposal clears the last');
 });
@@ -205,6 +205,7 @@ test('a later attempt can replace a disposed development effect', async () => {
 });
 
 test('the copy button never disables itself or moves focus', () => {
-  assert.doesNotMatch(routeSource, /\.focus\(/);
-  assert.doesNotMatch(routeSource, /<button[^>]*disabled/);
+  assert.doesNotMatch(componentSource, /\.focus\(/);
+  assert.doesNotMatch(componentSource, /<button[^>]*disabled/);
+  assert.match(componentSource, /aria-label=\{`\$\{buttonLabel\} \$\{label\}`\}/);
 });

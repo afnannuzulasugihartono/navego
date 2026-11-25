@@ -1,11 +1,11 @@
-// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots) decisions.json -> site-install-cta-01
+// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots) decisions.json -> site-install-cta-01, site-install-cta-02
 
-import { useEffect, useMemo, useRef, useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
-import { track } from '../lib/funnel';
+import { recordInstallCopy, track } from '../lib/funnel';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
-import { createCopyCommand, type CopyFeedback } from '../lib/copy-command.js';
+import { CopyCommand } from '../components/CopyCommand';
+import { WINDOWS_INSTALL_COMMAND } from '../lib/install-command';
 
 export function meta() {
   return seoMeta({
@@ -44,46 +44,8 @@ const BROWSER_SUPPORT: Array<[string, string, string]> = [
   ['Firefox', 'ditolak — tidak ada izin debugger', 'ditolak']
 ];
 
-const ONE_LINER = 'irm https://navego.pages.dev/install.ps1 | iex';
 const CURL = 'curl.exe -sI https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/download/navego.zip | findstr /i x-opera-sha256';
 const LOCAL = 'Get-FileHash .\\navego-*.zip -Algorithm SHA256';
-
-type CopyCommandProps = {
-  id: string;
-  label: string;
-  command: string;
-  buttonLabel?: string;
-  successMessage?: string;
-  onCopied?: () => void;
-};
-
-function CopyCommand({ id, label, command, buttonLabel = 'Salin', successMessage = 'Disalin.', onCopied }: CopyCommandProps) {
-  const [feedback, setFeedback] = useState<CopyFeedback | null>(null);
-  const onCopiedRef = useRef(onCopied);
-  useEffect(() => { onCopiedRef.current = onCopied; }, [onCopied]);
-  const controller = useMemo(() => createCopyCommand({
-    text: command,
-    successMessage,
-    failureMessage: 'Gagal menyalin. Salin manual dari kode.',
-    onFeedback: setFeedback,
-    onCopied: () => onCopiedRef.current?.()
-  }), [command, successMessage]);
-
-  useEffect(() => () => controller.dispose(), [controller]);
-
-  return (
-    <>
-      <div className="command-row">
-        <span className="command-row__label">{label}</span>
-        <code className="command-row__code" id={`${id}-command`}>{command}</code>
-        <button onClick={() => void controller.copy()} className="btn btn-solid btn-sm" type="button">{buttonLabel}</button>
-      </div>
-      <p className="copy-feedback" role="status" aria-live="polite" aria-atomic="true">
-        {feedback ? <span key={feedback.attempt}>{feedback.message}</span> : null}
-      </p>
-    </>
-  );
-}
 
 export default function Unduh() {
   return (
@@ -97,10 +59,10 @@ export default function Unduh() {
             <CopyCommand
               id="install"
               label="PowerShell"
-              command={ONE_LINER}
+              command={WINDOWS_INSTALL_COMMAND}
               buttonLabel="Salin perintah"
               successMessage="Perintah disalin. Jalankan di PowerShell."
-              onCopied={() => track('install.click', { browser: 'windows', artifact: 'powershell' })}
+              onCopied={() => recordInstallCopy('download')}
             />
             <div className="hero-cta">
               <a className="btn btn-ghost" href={`${DOWNLOAD}.zip?for=chrome`} download onClick={() => track('install.click', { browser: 'chrome', artifact: 'zip' })}>Pasang manual (.zip)</a>

@@ -15,6 +15,17 @@ const store = {
   }
 };
 
+const VIEW_KEY = 'navego-funnel-views';
+const SENT_KEY = 'navego-funnel-sent';
+
+function readStore(key: string): Record<string, number> {
+  return JSON.parse(memory.get(key) ?? '{}') as Record<string, number>;
+}
+
+function writeStore(key: string, value: Record<string, number>) {
+  memory.set(key, JSON.stringify(value));
+}
+
 const sent: Array<{ url: string; body: Record<string, unknown> }> = [];
 
 (globalThis as Record<string, unknown>).localStorage = store;
@@ -47,6 +58,49 @@ test('a pageview is written once per path per session, and a reload is not a sec
   assert.equal(write!.body.p_name, 'page.view');
   assert.equal(write!.body.p_path, '/faq');
   assert.equal(write!.body.p_anon, 'browser-1');
+});
+
+test('the landing page reports one page view and one gated install view', () => {
+  memory.clear();
+  sent.length = 0;
+  trackView('/');
+  trackView('/');
+  assert.deepEqual(
+    sent.map((write) => write.body.p_name),
+    ['page.view', 'install.view']
+  );
+  assert.equal(sent[1]?.body.p_path, '/');
+  assert.deepEqual(sent[1]?.body.p_meta, { surface: 'landing' });
+});
+
+test('the landing install view keeps the same thirty-minute gate as its page view', () => {
+  memory.clear();
+  sent.length = 0;
+  trackView('/');
+  sent.length = 0;
+  const fourSecondsAgo = Date.now() - 4_000;
+  const viewsInsideGate = readStore(VIEW_KEY);
+  viewsInsideGate['/'] = Date.now() - 4 * 60_000;
+  writeStore(VIEW_KEY, viewsInsideGate);
+  const sentInsideGate = readStore(SENT_KEY);
+  sentInsideGate['page.view:/'] = fourSecondsAgo;
+  sentInsideGate['install.view:/'] = fourSecondsAgo;
+  writeStore(SENT_KEY, sentInsideGate);
+  trackView('/');
+  assert.equal(sent.length, 0, 'a landing reload inside thirty minutes is not a new install view');
+  const thirtyOneMinutesAgo = Date.now() - 31 * 60_000;
+  const viewsOutsideGate = readStore(VIEW_KEY);
+  viewsOutsideGate['/'] = thirtyOneMinutesAgo;
+  writeStore(VIEW_KEY, viewsOutsideGate);
+  const sentOutsideGate = readStore(SENT_KEY);
+  sentOutsideGate['page.view:/'] = thirtyOneMinutesAgo;
+  sentOutsideGate['install.view:/'] = thirtyOneMinutesAgo;
+  writeStore(SENT_KEY, sentOutsideGate);
+  trackView('/');
+  assert.deepEqual(
+    sent.map((write) => write.body.p_name),
+    ['page.view', 'install.view']
+  );
 });
 
 test('the download page reports both its view and the install step', () => {

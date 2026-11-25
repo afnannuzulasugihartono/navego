@@ -1326,6 +1326,17 @@
     "ref": "docs/agent-survival-prompt.md:61 (fix the earliest real funnel drop-off, which may be the install path); live production funnel 2026-11-25 had 109 page views, 49 pair views, 2 install views, 0 install clicks, and 0 settled orders",
     "also": "tests/site/install-cta.test.ts, tests/site/copy-command.test.ts, and the independent 320px browser review on 2026-11-25"
    }
+  },
+  {
+   "id": "site-install-cta-02",
+   "scope": "site/components",
+   "file": "site/app/routes/index.tsx",
+   "decision": "The anonymous landing hero carries the same exact Windows one-command install as the download page, so a visitor can start installation without a second page. The force-install cost and undo path appear before the control; the copy remains retryable and announced; the landing surface records its own view and successful-copy intent with surface=landing, while manual macOS and Linux installation stays linked.",
+   "source": {
+    "kind": "recorded",
+    "ref": "hourly survival-and-growth run #5 on 2026-11-25: live production had 62 landing-page views from 60 browsers but only 5 download-page views from 2 browsers and 0 install clicks; fix the earliest measured arrival-to-install gap without weakening the checkout or payment path",
+    "also": "tests/site/install-command.test.ts, tests/site/install-cta.test.ts, and the 320px built-site browser proof on 2026-11-25"
+   }
   }
  ]
 }
