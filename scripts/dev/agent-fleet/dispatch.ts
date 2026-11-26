@@ -147,14 +147,15 @@ export const stampOf = (now: number): string => {
   return `${iso.slice(0, 4)}${iso.slice(5, 7)}${iso.slice(8, 10)}-${iso.slice(11, 13)}${iso.slice(14, 16)}`;
 };
 
+export const opencodeCandidates = (): string[] => (process.platform === 'win32'
+  ? [
+    path.join(process.env.APPDATA ?? '', 'npm', 'node_modules', '@opencode', 'cli', 'bin', 'opencode.exe'),
+    'C:\\Program Files\\nodejs\\node_modules\\@opencode\\cli\\bin\\opencode.exe',
+  ]
+  : ['/usr/local/bin/opencode', '/usr/bin/opencode']);
+
 export const opencodeExecutable = (): string | null => {
-  const candidates = process.platform === 'win32'
-    ? [
-      path.join(process.env.APPDATA ?? '', 'npm', 'node_modules', '@opencode', 'cli', 'bin', 'opencode.exe'),
-      'C:\\Program Files\\nodejs\\node_modules\\@opencode\\cli\\bin\\opencode.exe',
-    ]
-    : ['/usr/local/bin/opencode', '/usr/bin/opencode'];
-  for (const candidate of candidates) if (candidate && fs.existsSync(candidate)) return candidate;
+  for (const candidate of opencodeCandidates()) if (candidate && fs.existsSync(candidate)) return candidate;
   return null;
 };
 
@@ -232,7 +233,8 @@ export const dispatch = async (options: {
   if (slotBusy(slot, evidence, now)) return null;
   const ticket = selectTicket(snapshot, now, DEFAULT_MARKER_MINUTES, evidence);
   if (!ticket) return null;
-  const cli = opencodeExecutable();
+  // The dry run describes the command it would run, so it prints the plan even where the CLI is not installed; a real dispatch needs the binary.
+  const cli = dryRun ? (opencodeCandidates()[0] ?? 'opencode') : opencodeExecutable();
   if (!cli) return null;
   const stamp = stampOf(now);
   const plan = planDispatch(slot, ticket, stamp, digestPrefix, cli);
