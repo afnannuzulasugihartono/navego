@@ -57,3 +57,84 @@ reply artifact, the researcher status line, and this record's final state.
 No message was sent, no customer payment settled, and no revenue is claimed.
 The ledger remains at $0.00 settled; the next money step is the sales lane's
 one bounded send from a dated row.
+
+## Follow-up — the reviewer findings that still stood on PR #460
+
+Time: 2026-11-26 20:43 +07:00
+Ticket: `operator-to-researcher-20261126-0845.md`
+Pull request: https://github.com/afnannuzulasugihartono/navego/pull/460
+Branch: `agent/researcher-20261126-1325/shortlist-fixes`
+
+### What changed
+
+The corrected shortlist is `docs/research/prospects.md`. All eight requested
+findings are answered there:
+
+1. The pipeline state now says **four published business addresses and one
+   sales form**, which is what the five rows contain.
+2. The Navego listing is described as **a local MCP server plus an MV3
+   extension**, not a production browser server.
+3. The gap is now **a local MCP server with 40 tools over 36 browser
+   primitives**, not one generic local execution primitive.
+4. The Skyvern source is the live product page, which publishes self-hosted
+   deployment and an E2E Encrypted Vault. The dead repository URL is gone from
+   the source list.
+5. Skyvern's retained work is now **document extraction and routing**, not
+   document validation.
+6. Browserbase is now **a cloud runtime for agent deployments, no on-prem**,
+   with its enterprise page cited.
+7. CrewAI's deployment claim is cited to its published platform page.
+8. The sales handoff now requires both records for every send: the same-day
+   outreach proof and a queue handoff toward `marketer` carrying sequence
+   position and the reply.
+
+### Scope and path ownership
+
+The ticket was written before the path register changed. On `main` at
+`0ad6aa69`, `docs/prospects.md` belongs to `sales-rep`; the researcher role may
+write `docs/research/**` only. The lane therefore left the sales-owned
+`docs/prospects.md` unchanged and placed the dated research shortlist in
+`docs/research/prospects.md`, which is inside its machine-checked work scope.
+The shortlist names the sales-owned pipeline it feeds.
+
+### Evidence
+
+- `npm ci` installed the clean worktree's pinned development dependencies;
+  the first `npm test` attempt stopped before tests because `biome` was not
+  installed.
+- `npm test` — exit 0 after `npm ci`. The first final-content run found the lane
+  records quoting the current release version; the version clock does not belong
+  in lane records, so the literal was removed and the test reran green.
+- `npm run check` — exit 0: `type-debt: 0 errors — at baseline 0` and `check
+  ok: 36 allowlisted browser primitives, 319 runtime safety files`.
+- `npm run scope:role -- researcher --base origin/main --head HEAD` — exit 0:
+  the named roles may change all 4 paths in the pull request diff.
+- Public sources — all 20 URLs cited by the corrected shortlist returned HTTP
+  200 on 2026-11-26.
+- Capability evidence — `ARCHITECTURE.md` and `local/README.md` carry 40
+  tools, the protocol gate reports 36 allowlisted browser primitives, and the
+  live docs page publishes the same pair.
+- Browser extension harness — not run; the extension did not change.
+
+### The reviewer gap and the merge basis
+
+The reviewer agent could not run on this key. A lane worker may not dispatch a
+child session, because the provider answers 40 requests per minute and a child
+multiplies the requests against the same key
+(`decisions.json -> docs-agent-roles-09`); the fleet's recorded runs show the
+same provider refusal as HTTP 429 and a free usage limit. The lane's own
+review of the four-path diff found no blocker: the count matches the rows,
+every changed claim has a live source, the capability matches the repository,
+and the handoff names both records required by the sales role. The merge
+therefore rests on the green CI on the exact head and the owner's answer in
+`docs/autonomy.md` (`docs-autonomy-05`): when the reviewer agent cannot run
+because the provider refuses the request and CI is green, the owner's approval
+plus green CI carries the merge and this proof records the gap. No owner-only
+path moved: `gates.lock`, `tests/helpers/boundary-locks.ts`,
+`.github/CODEOWNERS`, and `.github/workflows/` are untouched.
+
+### Money
+
+No outreach was sent by this lane and no payment settled. No revenue is
+claimed. The measurable step is the corrected, source-checked shortlist now
+available to the sales lane's one bounded daily send.
