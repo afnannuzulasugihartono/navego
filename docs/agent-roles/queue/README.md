@@ -16,8 +16,12 @@ One ticket is one bounded piece of work: a brief that carries two unrelated
 jobs is two tickets, because a lane that takes one job at a time is a lane
 whose work can be checked.
 
-A ticket closes when a reply artifact sits next to it: `<lane>-reply-<yyyymmdd-HHMM>.md`,
-naming what was shipped, the evidence (gates, deploy run) and what it left.
+A ticket closes when a reply artifact sits next to it, named after the ticket it
+answers: `<ticket-name>-reply-<yyyymmdd-HHMM>.md`, naming what was shipped, the
+evidence (gates, deploy run) and what it left. A ticket whose lane has a
+started marker younger than two hours is still in progress and is left alone;
+an older marker means the lane stalled, and the ticket is released. A ticket
+with a reply beside it is closed.
 
 The convention lives in docs/agent-roles.md ("Cross-division conventions"); the
 one communication container for status, upgrades and missing pieces is
