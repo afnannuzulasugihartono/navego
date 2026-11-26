@@ -23,6 +23,7 @@ export interface TicketFile {
   from: string;
   lane: string;
   stamp: string;
+  class: string;
   blocked: boolean;
 }
 
@@ -121,7 +122,15 @@ export const readQueue = (queueDir: string): QueueSnapshot => {
       }
       const ticket = TICKET.exec(entry.name);
       if (ticket) {
-        tickets.push({ file: entry.name, from: ticket[1] ?? '', lane: ticket[2] ?? '', stamp: ticket[3] ?? '', blocked });
+        const classLine = text.match(/^class:\s*(\w+)/m);
+        tickets.push({
+          file: entry.name,
+          from: ticket[1] ?? '',
+          lane: ticket[2] ?? '',
+          stamp: ticket[3] ?? '',
+          class: classLine ? (classLine[1] ?? 'measurement') : 'measurement',
+          blocked,
+        });
         continue;
       }
       const marker = MARKER.exec(entry.name);

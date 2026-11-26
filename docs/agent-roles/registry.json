@@ -15,7 +15,8 @@
         "docs/automations.md",
         "scripts/dev/agent-fleet/**",
         "scripts/dev/agent-worktree.ts",
-        "tests/tooling/agent-loop.test.ts"
+        "tests/tooling/agent-loop.test.ts",
+        "tests/tooling/agent-dispatch.test.ts"
       ],
       "doc": "docs/agent-roles/operator.md",
       "automations": [

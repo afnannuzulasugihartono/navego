@@ -14,6 +14,7 @@ Scope (what this role may work in):
 - scripts/dev/agent-fleet/**
 - scripts/dev/agent-worktree.ts
 - tests/tooling/agent-loop.test.ts
+- tests/tooling/agent-dispatch.test.ts
 
 Shared communication surface (every lane may write these):
 

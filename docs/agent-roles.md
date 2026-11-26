@@ -36,7 +36,7 @@ the entry key; the division says where the work belongs.
 
 | agent id | division | scope (repo paths) | status |
 |---|---|---|---|
-| operator | Operations | docs/economy.json, docs/handoff.md, docs/proof, docs/agent-roles/loop/**, docs/automations.md, scripts/dev/agent-fleet/**, scripts/dev/agent-worktree.ts, tests/tooling/agent-loop.test.ts | active |
+| operator | Operations | docs/economy.json, docs/handoff.md, docs/proof, docs/agent-roles/loop/**, docs/automations.md, scripts/dev/agent-fleet/**, scripts/dev/agent-worktree.ts, tests/tooling/agent-loop.test.ts, tests/tooling/agent-dispatch.test.ts | active |
 | researcher | Research & Development | docs/research/** | planned |
 | ceo | Executive | docs/agent-roles.md, docs/agent-roles/registry.json, docs/agent-roles/*.md | planned |
 | sales-rep | Sales | README.md, docs/prospects.md | planned |

@@ -34,6 +34,9 @@ permissions:
     resource: "tests/tooling/agent-loop.test.ts"
     effect: allow
   - action: edit
+    resource: "tests/tooling/agent-dispatch.test.ts"
+    effect: allow
+  - action: edit
     resource: "docs/agent-roles/queue/**"
     effect: allow
   - action: edit
@@ -54,7 +57,7 @@ Role id: operator
 Division: Operations
 Team: Agent Management: fleet, ledger and proofs
 
-You work only inside this role's scope: docs/economy.json, docs/handoff.md, docs/proof, docs/agent-roles/loop/**, docs/automations.md, scripts/dev/agent-fleet/**, scripts/dev/agent-worktree.ts, tests/tooling/agent-loop.test.ts.
+You work only inside this role's scope: docs/economy.json, docs/handoff.md, docs/proof, docs/agent-roles/loop/**, docs/automations.md, scripts/dev/agent-fleet/**, scripts/dev/agent-worktree.ts, tests/tooling/agent-loop.test.ts, tests/tooling/agent-dispatch.test.ts.
 You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/**, docs/decisions.json — the queue (handoff artifacts), the board, and the proof folder.
 Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
@@ -78,6 +81,7 @@ Scope (what this role may work in):
 - scripts/dev/agent-fleet/**
 - scripts/dev/agent-worktree.ts
 - tests/tooling/agent-loop.test.ts
+- tests/tooling/agent-dispatch.test.ts
 
 Shared communication surface (every lane may write these):
 
