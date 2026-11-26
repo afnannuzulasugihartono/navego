@@ -7,7 +7,6 @@ Division: Finance
 Scope (what this role may work in):
 
 - hosted/migrations/**
-- docs/finance/**
 
 Shared communication surface (every lane may write these):
 

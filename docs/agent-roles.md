@@ -40,10 +40,10 @@ the entry key; the division says where the work belongs.
 | researcher | Research & Development | docs/research/** | planned |
 | sales-rep | Sales | README.md, docs/prospects.md | planned |
 | marketer | Marketing | site/app/routes/artikel-ai-browser-indonesia.tsx, site/app/routes/artikel.tsx, site/app/routes/bandingkan.tsx, site/app/routes/beranda.tsx, site/app/routes/changelog.tsx, site/app/routes/consent.tsx, site/app/routes/docs.tsx, site/app/routes/dukungan.tsx, site/app/routes/en.tsx, site/app/routes/faq.tsx, site/app/routes/fitur.tsx, site/app/routes/harga.tsx, site/app/routes/index.tsx, site/app/routes/keamanan.tsx, site/app/routes/mcp.tsx, site/app/routes/metodologi.tsx, site/app/routes/notfound.tsx, site/app/routes/privasi.tsx, site/app/routes/syarat.tsx, site/app/routes/unduh.tsx | planned |
-| engineer | Engineering | extension/**, local/**, shared/**, site/app/lib/**, site/app/components/**, site/app/routes/akun.tsx, site/app/routes/dashboard.tsx, site/app/data/tools.json, docs/api.md, docs/agent-friendly.md, docs/tools/**, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json | planned |
+| engineer | Engineering | extension/**, local/**, shared/**, site/app/lib/**, site/app/components/**, site/app/routes/akun.tsx, site/app/routes/dashboard.tsx, site/app/data/tools.json, docs/api.md, docs/agent-friendly.md, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json | planned |
 | release-engineer | Engineering | .github/**, .gitleaks.toml, CHANGELOG.md, docs/releases/**, scripts/pack/**, scripts/release/**, server.json, site/app/data/releases.json | planned |
-| finance-analyst | Finance | hosted/migrations/**, docs/finance/** | planned |
-| support-agent | Customer Support | docs/product/support.md, docs/product/navego-adoption.md, docs/support/** | planned |
+| finance-analyst | Finance | hosted/migrations/** | planned |
+| support-agent | Customer Support | docs/product/support.md, docs/product/navego-adoption.md | planned |
 | onboarding-guide | Customer Success | docs/install.md, docs/external-install.md, docs/agent-call.md | planned |
 
 Every role's `communicationPaths` are `docs/agent-roles/queue/**`,

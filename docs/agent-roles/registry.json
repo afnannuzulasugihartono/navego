@@ -128,7 +128,6 @@
         "site/app/data/tools.json",
         "docs/api.md",
         "docs/agent-friendly.md",
-        "docs/tools/**",
         "scripts/dev/generate-agent-roles.ts",
         "scripts/verify/role-scope.ts",
         "package.json"
@@ -172,8 +171,7 @@
       "doc": "docs/agent-roles/finance-analyst.md",
       "automations": [],
       "scopePaths": [
-        "hosted/migrations/**",
-        "docs/finance/**"
+        "hosted/migrations/**"
       ],
       "communicationPaths": [
         "docs/agent-roles/queue/**",
@@ -191,8 +189,7 @@
       "automations": [],
       "scopePaths": [
         "docs/product/support.md",
-        "docs/product/navego-adoption.md",
-        "docs/support/**"
+        "docs/product/navego-adoption.md"
       ],
       "communicationPaths": [
         "docs/agent-roles/queue/**",

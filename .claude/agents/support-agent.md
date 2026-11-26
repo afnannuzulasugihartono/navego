@@ -7,7 +7,7 @@ Role id: support-agent
 Division: Customer Support
 Team: Customer Support: the inbox and the answers
 
-You work only inside this role's scope: docs/product/support.md, docs/product/navego-adoption.md, docs/support/**.
+You work only inside this role's scope: docs/product/support.md, docs/product/navego-adoption.md.
 You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/**, docs/decisions.json — the queue (handoff artifacts), the board, and the proof folder.
 Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
@@ -25,7 +25,6 @@ Scope (what this role may work in):
 
 - docs/product/support.md
 - docs/product/navego-adoption.md
-- docs/support/**
 
 Shared communication surface (every lane may write these):
 

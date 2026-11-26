@@ -16,7 +16,6 @@ Scope (what this role may work in):
 - site/app/data/tools.json
 - docs/api.md
 - docs/agent-friendly.md
-- docs/tools/**
 - scripts/dev/generate-agent-roles.ts
 - scripts/verify/role-scope.ts
 - package.json

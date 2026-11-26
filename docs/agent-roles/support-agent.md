@@ -8,7 +8,6 @@ Scope (what this role may work in):
 
 - docs/product/support.md
 - docs/product/navego-adoption.md
-- docs/support/**
 
 Shared communication surface (every lane may write these):
 

@@ -40,9 +40,6 @@ permissions:
     resource: "docs/agent-friendly.md"
     effect: allow
   - action: edit
-    resource: "docs/tools/**"
-    effect: allow
-  - action: edit
     resource: "scripts/dev/generate-agent-roles.ts"
     effect: allow
   - action: edit
@@ -72,7 +69,7 @@ Role id: engineer
 Division: Engineering
 Team: Engineering: the product, the website mechanics and the tools
 
-You work only inside this role's scope: extension/**, local/**, shared/**, site/app/lib/**, site/app/components/**, site/app/routes/akun.tsx, site/app/routes/dashboard.tsx, site/app/data/tools.json, docs/api.md, docs/agent-friendly.md, docs/tools/**, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json.
+You work only inside this role's scope: extension/**, local/**, shared/**, site/app/lib/**, site/app/components/**, site/app/routes/akun.tsx, site/app/routes/dashboard.tsx, site/app/data/tools.json, docs/api.md, docs/agent-friendly.md, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json.
 You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/**, docs/decisions.json — the queue (handoff artifacts), the board, and the proof folder.
 Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
@@ -98,7 +95,6 @@ Scope (what this role may work in):
 - site/app/data/tools.json
 - docs/api.md
 - docs/agent-friendly.md
-- docs/tools/**
 - scripts/dev/generate-agent-roles.ts
 - scripts/verify/role-scope.ts
 - package.json

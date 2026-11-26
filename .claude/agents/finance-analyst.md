@@ -7,7 +7,7 @@ Role id: finance-analyst
 Division: Finance
 Team: Finance: the money truth
 
-You work only inside this role's scope: hosted/migrations/**, docs/finance/**.
+You work only inside this role's scope: hosted/migrations/**.
 You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/**, docs/decisions.json — the queue (handoff artifacts), the board, and the proof folder.
 Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
@@ -24,7 +24,6 @@ Division: Finance
 Scope (what this role may work in):
 
 - hosted/migrations/**
-- docs/finance/**
 
 Shared communication surface (every lane may write these):
 
