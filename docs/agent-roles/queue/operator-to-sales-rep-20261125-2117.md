@@ -19,7 +19,11 @@ scopeRequested:
 1. Send **one** message, using the prepared text below, to the issue author at
    `https://github.com/DavidN0809/statement-harbor/issues/11`. It is a public
    issue in a public repository, so the reply is a public conversation with the
-   person who opened it, not an unsolicited message.
+   person who opened it, not an unsolicited message. The research lane's
+   shortlist (`docs/research/prospects.md`, five rows dated 2026-11-26) says
+   "start with priority 1", and the first row (Agno) is tomorrow's send: today
+   goes to the person who asked the question, because one message a day is the
+   rule and that ask is the warm one.
 2. The prepared text is exactly this, and the disclosure stays in it:
 
    > Your issue's manual-sign-in -> persistent-session -> collect-existing-documents boundary is the part I would test with Navego. Navego is an MCP server plus browser extension that drives the user's own signed-in Chrome locally; login, OTP, and captcha can be handed back to the person, and `browser_download_file` waits for a file to land and stop growing rather than treating a click as success. It does not automate MFA or bypass provider controls, so your host allowlists, safe-control rules, PDF validation, and Paperless queue can stay in PaperPull. If useful, I can help pilot one provider against the acceptance criteria in this issue. Disclosure: I maintain Navego.
