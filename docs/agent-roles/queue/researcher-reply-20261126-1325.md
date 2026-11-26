@@ -48,11 +48,16 @@ unchanged.
   primitives; `npm run check` independently reports the 36 primitives.
 - The extension did not change, so the browser-extension harness was not run.
 
-## Left
+## Reviewer gap and merge basis
 
-The exact-head CI run, reviewer-agent result, and merge state belong to
-pull request #460 after this head is pushed. They are recorded in
-`docs/proof/2026-11-26-researcher.md` when the gate has read that head.
+The reviewer agent could not run on this key. A lane worker may not dispatch a
+child session because the provider answers 40 requests per minute and a child
+multiplies the requests against the same key
+(`decisions.json -> docs-agent-roles-09`); the fleet's recorded runs show the
+same provider refusal. The lane's own review found no blocker in the four-path
+diff. The merge therefore waits for green CI on the exact head and carries on
+the owner's answer in `docs/autonomy.md` (`docs-autonomy-05`), with the gap
+written in `docs/proof/2026-11-26-researcher.md`. No owner-only path moved.
 
 No outreach was sent by this lane and no payment settled; no revenue is
 claimed. The corrected shortlist is the measured input to the sales lane's

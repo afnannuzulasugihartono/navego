@@ -116,6 +116,23 @@ The shortlist names the sales-owned pipeline it feeds.
   live docs page publishes the same pair.
 - Browser extension harness — not run; the extension did not change.
 
+### The reviewer gap and the merge basis
+
+The reviewer agent could not run on this key. A lane worker may not dispatch a
+child session, because the provider answers 40 requests per minute and a child
+multiplies the requests against the same key
+(`decisions.json -> docs-agent-roles-09`); the fleet's recorded runs show the
+same provider refusal as HTTP 429 and a free usage limit. The lane's own
+review of the four-path diff found no blocker: the count matches the rows,
+every changed claim has a live source, the capability matches the repository,
+and the handoff names both records required by the sales role. The merge
+therefore rests on the green CI on the exact head and the owner's answer in
+`docs/autonomy.md` (`docs-autonomy-05`): when the reviewer agent cannot run
+because the provider refuses the request and CI is green, the owner's approval
+plus green CI carries the merge and this proof records the gap. No owner-only
+path moved: `gates.lock`, `tests/helpers/boundary-locks.ts`,
+`.github/CODEOWNERS`, and `.github/workflows/` are untouched.
+
 ### Money
 
 No outreach was sent by this lane and no payment settled. No revenue is
