@@ -8,6 +8,7 @@ Scope (what this role may work in):
 
 - docs/economy.json
 - docs/handoff.md
+- docs/agent-roles/keys.json
 - docs/proof
 - docs/agent-roles/loop/**
 - docs/automations.md

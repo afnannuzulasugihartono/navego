@@ -473,4 +473,4 @@ const main = async (): Promise<void> => {
   if (!result.sessionsAvailable) console.log('session list unreadable: the process table carried the check');
 };
 
-if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) main();
+if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) void main();

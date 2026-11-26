@@ -189,4 +189,4 @@ const main = async (): Promise<void> => {
   console.log(`dispatched ${started.title} (pid ${started.pid ?? '?'})`);
 };
 
-if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) main();
+if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) void main();
