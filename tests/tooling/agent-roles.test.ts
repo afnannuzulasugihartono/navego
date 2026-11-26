@@ -165,12 +165,14 @@ test('package.json exposes the role scope verifier', () => {
   assert.equal(pkg.scripts['scope:role'], 'node scripts/verify/role-scope.ts');
 });
 
-test('every lane session runs the scope gate over the real diff before it opens a pull request', () => {
+test('every lane session runs the scope gate over its own diff before the merge', () => {
   const { register } = load();
   for (const role of register.roles) {
     for (const expected of [`.opencode/agents/${role.id}.md`, `.claude/agents/${role.id}.md`]) {
       const text = fs.readFileSync(path.join(root, expected), 'utf8');
-      assert.ok(text.includes(`npm run scope:role -- ${role.id} --base origin/main --head HEAD`), `${expected} does not tell the lane to run the scope gate for ${role.id} over the diff - a lane that is told to check a path list it names itself can pass a diff it never looked at`);
+      assert.ok(text.includes(`npm run scope:role -- ${role.id} --base`), `${expected} does not tell the lane to run the scope gate for ${role.id} - a lane that is told to check a path list it names itself can pass a diff it never looked at`);
+      assert.ok(text.includes('--head HEAD'), `${expected} does not tell the lane which head to check`);
+      assert.ok(text.includes('the base ref your pull request targets'), `${expected} pins one base ref, so a lane on a stacked pull request reads the whole stack instead of its own changes`);
     }
   }
 });
