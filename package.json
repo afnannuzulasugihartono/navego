@@ -31,6 +31,7 @@
     "check": "npm run types && node scripts/verify/type-debt.ts && node scripts/verify/check.ts",
     "scope": "node scripts/verify/scope.ts",
     "scope:diff": "node scripts/verify/scope-check.ts",
+    "scope:role": "node scripts/verify/role-scope.ts",
     "roles": "node scripts/dev/generate-agent-roles.ts",
     "roles:check": "node scripts/dev/generate-agent-roles.ts --check"
   },

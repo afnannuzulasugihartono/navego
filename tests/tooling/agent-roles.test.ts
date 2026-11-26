@@ -170,6 +170,11 @@ test('the agent file denies editing outside the role scope and allows the scope'
   }
 });
 
+test('package.json exposes the role scope verifier', () => {
+  const pkg = read('package.json') as { scripts: Record<string, string> };
+  assert.equal(pkg.scripts['scope:role'], 'node scripts/verify/role-scope.ts');
+});
+
 test('the role scope gate refuses a changed path outside the named role scope', () => {
   const { register } = load();
   const result = checkRoleScope(register, 'engineer', [
