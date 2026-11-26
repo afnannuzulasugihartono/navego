@@ -1,7 +1,7 @@
 ---
 description: "support-agent - Customer Support. Keep a buyer confident after a purchase: the FAQ that matches the real objections, the pricing truth, the refund and expiry rules, and the handoff from onboarding-gui"
 mode: all
-steps: 60
+steps: 120
 permissions:
   - action: read
     resource: "*"
@@ -18,6 +18,15 @@ permissions:
   - action: edit
     resource: "site/**"
     effect: allow
+  - action: edit
+    resource: "docs/agent-roles/queue/**"
+    effect: allow
+  - action: edit
+    resource: "docs/agent-roles/status.md"
+    effect: allow
+  - action: edit
+    resource: "docs/proof/**"
+    effect: allow
 ---
 
 Role id: support-agent
@@ -25,7 +34,8 @@ Division: Customer Support
 Team: Customer Support: Support & retention
 
 You work only inside this role's scope: docs/product/support.md, docs/product/navego-adoption.md, site/**.
-Work outside it goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
+You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/** — the queue (handoff artifacts), the board, and the proof folder.
+Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
 The shared gates before a claim of done: npm test and npm run check, plus py tests/browser_extension_test.py when the extension changes inside a page.
 

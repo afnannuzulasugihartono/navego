@@ -1470,6 +1470,16 @@
         "kind": "recorded",
         "ref": "the CI runs of 2026-11-26 (45724772292, 45725696712, 45726605870) failed because gitleaks detect --source . reads the full history and read the OpenCode automation id written in docs/proof/2026-11-25-survival-run-13.md as a generic-api-key, which left every pull request red; the allowlist in .gitleaks.toml already carries path-scoped exceptions for known fixtures, including entries for paths that only appear in older commits"
       }
+    },
+    {
+      "id": "docs-agent-roles-07",
+      "scope": "agent/roles",
+      "file": "docs/agent-roles/registry.json",
+      "decision": "Every role carries a communicationPaths list beside its work scope: the handoff queue, the status board and the proof folder are paths every lane may write, because a lane that cannot report its own work cannot finish it. The generated agent files allow exactly those paths, and the gate refuses a register without them. A lane worker reads its ticket and its own role file, acts first and records afterwards, under a step budget large enough to finish the action.",
+      "source": {
+        "kind": "recorded",
+        "ref": "the sales lane session of 2026-11-26 (ses_deac22d12ffeEmPAtfaHiFhCIK, opened 07:25 WIB on the nvidia-1 account) ran for two hours and twenty minutes without sending: the issue https://github.com/DavidN0809/statement-harbor/issues/11 still held 0 comments, because its 60-step budget ran out while it read and because its role file did not allow it to write docs/proof/outreach/2026-11-26.md"
+      }
     }
   ]
 }

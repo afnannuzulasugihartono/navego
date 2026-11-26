@@ -1,7 +1,7 @@
 ---
 description: "finance-analyst - Finance. Keep the economy ledger honest: settled revenue read from live operator_notification_log rows grouped by one order id, known costs with payer and due date, the monthly gap, "
 mode: all
-steps: 60
+steps: 120
 permissions:
   - action: read
     resource: "*"
@@ -21,6 +21,15 @@ permissions:
   - action: edit
     resource: "hosted/migrations/**"
     effect: allow
+  - action: edit
+    resource: "docs/agent-roles/queue/**"
+    effect: allow
+  - action: edit
+    resource: "docs/agent-roles/status.md"
+    effect: allow
+  - action: edit
+    resource: "docs/proof/**"
+    effect: allow
 ---
 
 Role id: finance-analyst
@@ -28,7 +37,8 @@ Division: Finance
 Team: Finance: Economy
 
 You work only inside this role's scope: docs/economy.json, docs/proof/**, docs/handoff.md, hosted/migrations/**.
-Work outside it goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
+You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/** — the queue (handoff artifacts), the board, and the proof folder.
+Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
 The shared gates before a claim of done: npm test and npm run check, plus py tests/browser_extension_test.py when the extension changes inside a page.
 

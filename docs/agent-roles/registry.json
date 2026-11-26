@@ -17,7 +17,12 @@
         "aut_21421fd5c001SHZTGFdHocNTwY"
       ],
       "status": "active",
-      "division": "Operations"
+      "division": "Operations",
+      "communicationPaths": [
+        "docs/agent-roles/queue/**",
+        "docs/agent-roles/status.md",
+        "docs/proof/**"
+      ]
     },
     {
       "id": "researcher",
@@ -30,7 +35,12 @@
       "doc": "docs/agent-roles/researcher.md",
       "automations": [],
       "status": "planned",
-      "division": "Research & Development"
+      "division": "Research & Development",
+      "communicationPaths": [
+        "docs/agent-roles/queue/**",
+        "docs/agent-roles/status.md",
+        "docs/proof/**"
+      ]
     },
     {
       "id": "ceo",
@@ -47,7 +57,12 @@
       "doc": "docs/agent-roles/ceo.md",
       "automations": [],
       "status": "planned",
-      "division": "Executive"
+      "division": "Executive",
+      "communicationPaths": [
+        "docs/agent-roles/queue/**",
+        "docs/agent-roles/status.md",
+        "docs/proof/**"
+      ]
     },
     {
       "id": "sales-rep",
@@ -60,7 +75,12 @@
       "doc": "docs/agent-roles/sales-rep.md",
       "automations": [],
       "status": "planned",
-      "division": "Sales"
+      "division": "Sales",
+      "communicationPaths": [
+        "docs/agent-roles/queue/**",
+        "docs/agent-roles/status.md",
+        "docs/proof/**"
+      ]
     },
     {
       "id": "marketer",
@@ -71,7 +91,12 @@
       "doc": "docs/agent-roles/marketer.md",
       "automations": [],
       "status": "planned",
-      "division": "Marketing"
+      "division": "Marketing",
+      "communicationPaths": [
+        "docs/agent-roles/queue/**",
+        "docs/agent-roles/status.md",
+        "docs/proof/**"
+      ]
     },
     {
       "id": "engineer",
@@ -87,7 +112,12 @@
       "doc": "docs/agent-roles/engineer.md",
       "automations": [],
       "status": "planned",
-      "division": "Engineering"
+      "division": "Engineering",
+      "communicationPaths": [
+        "docs/agent-roles/queue/**",
+        "docs/agent-roles/status.md",
+        "docs/proof/**"
+      ]
     },
     {
       "id": "release-engineer",
@@ -104,7 +134,12 @@
       "doc": "docs/agent-roles/release-engineer.md",
       "automations": [],
       "status": "planned",
-      "division": "Engineering"
+      "division": "Engineering",
+      "communicationPaths": [
+        "docs/agent-roles/queue/**",
+        "docs/agent-roles/status.md",
+        "docs/proof/**"
+      ]
     },
     {
       "id": "finance-analyst",
@@ -118,7 +153,12 @@
       "doc": "docs/agent-roles/finance-analyst.md",
       "automations": [],
       "status": "planned",
-      "division": "Finance"
+      "division": "Finance",
+      "communicationPaths": [
+        "docs/agent-roles/queue/**",
+        "docs/agent-roles/status.md",
+        "docs/proof/**"
+      ]
     },
     {
       "id": "support-agent",
@@ -131,7 +171,12 @@
       "doc": "docs/agent-roles/support-agent.md",
       "automations": [],
       "status": "planned",
-      "division": "Customer Support"
+      "division": "Customer Support",
+      "communicationPaths": [
+        "docs/agent-roles/queue/**",
+        "docs/agent-roles/status.md",
+        "docs/proof/**"
+      ]
     },
     {
       "id": "onboarding-guide",
@@ -142,7 +187,12 @@
       "doc": "docs/agent-roles/onboarding-guide.md",
       "automations": [],
       "status": "planned",
-      "division": "Customer Success"
+      "division": "Customer Success",
+      "communicationPaths": [
+        "docs/agent-roles/queue/**",
+        "docs/agent-roles/status.md",
+        "docs/proof/**"
+      ]
     }
   ]
 }

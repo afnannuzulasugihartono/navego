@@ -21,6 +21,7 @@ interface Role {
   team: string;
   division: string;
   scopePaths: string[];
+  communicationPaths: string[];
   doc: string;
   automations: string[];
   status: string;
@@ -87,6 +88,8 @@ test('every role is complete enough for a session to open with', () => {
     assert.ok(typeof role.team === 'string' && role.team.length >= 4, `${role.id} names its team`);
     assert.ok(COMPANY_DIVISIONS.includes(role.division), `${role.id} names the division ${role.division}, which is not a company division`);
     assert.ok(docText(role.doc).includes(`Division: ${role.division}`), `${role.id}'s doc does not name its division`);
+    assert.ok(Array.isArray(role.communicationPaths) && role.communicationPaths.length >= 1, `${role.id} names the shared communication surface it may write`);
+    assert.ok(role.communicationPaths.every((p) => resolves(p)), `${role.id} scopes a communication path that does not exist`);
     assert.ok(role.scopePaths.length >= 1, `${role.id} has at least one scope path`);
     assert.ok(role.scopePaths.every((p) => typeof p === 'string' && resolves(p)), `${role.id} scopes ${role.scopePaths.filter((p) => !resolves(p))} that do not exist - a role that may not touch real paths cannot be the entry point`);
     assert.ok(typeof role.doc === 'string' && resolves(role.doc), `${role.id} points at ${role.doc}, which does not exist`);
@@ -136,6 +139,10 @@ test('the agent file denies editing outside the role scope and allows the scope'
     for (const scopePath of role.scopePaths) {
       const resource = editResource(scopePath);
       assert.ok(text.includes(`resource: "${resource}"\n    effect: allow`), `${role.id} does not allow editing its scope path ${scopePath}`);
+    }
+    for (const sharedPath of role.communicationPaths) {
+      const resource = editResource(sharedPath);
+      assert.ok(text.includes(`resource: "${resource}"\n    effect: allow`), `${role.id} cannot write the shared communication surface ${sharedPath} - a lane that cannot report is a lane that cannot report`);
     }
   }
 });

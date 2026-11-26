@@ -17,6 +17,7 @@ interface Role {
   team: string;
   division: string;
   scopePaths: string[];
+  communicationPaths: string[];
   doc: string;
   automations: string[];
   status: string;
@@ -76,6 +77,7 @@ export const renderAgentFiles = (register: Register): Array<{ path: string; cont
       '    resource: "*"',
       '    effect: deny',
       ...role.scopePaths.map((scopePath) => `  - action: edit\n    resource: "${editResource(scopePath)}"\n    effect: allow`),
+      ...role.communicationPaths.map((sharedPath) => `  - action: edit\n    resource: "${editResource(sharedPath)}"\n    effect: allow`),
     ].join('\n');
     const body = [
       `Role id: ${role.id}`,
@@ -83,7 +85,8 @@ export const renderAgentFiles = (register: Register): Array<{ path: string; cont
       `Team: ${role.team}`,
       '',
       `You work only inside this role's scope: ${role.scopePaths.join(', ')}.`,
-      'Work outside it goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.',
+      `You may also write the shared communication surface: ${role.communicationPaths.join(', ')} — the queue (handoff artifacts), the board, and the proof folder.`,
+      'Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.',
       'The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.',
       'The shared gates before a claim of done: npm test and npm run check, plus py tests/browser_extension_test.py when the extension changes inside a page.',
       '',
@@ -92,7 +95,7 @@ export const renderAgentFiles = (register: Register): Array<{ path: string; cont
 
     files.push({
       path: `.opencode/agents/${role.id}.md`,
-      content: `---\ndescription: ${JSON.stringify(description)}\nmode: all\nsteps: 60\npermissions:\n${permissions}\n---\n\n${body}\n`,
+      content: `---\ndescription: ${JSON.stringify(description)}\nmode: all\nsteps: 120\npermissions:\n${permissions}\n---\n\n${body}\n`,
     });
     files.push({
       path: `.claude/agents/${role.id}.md`,

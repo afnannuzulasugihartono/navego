@@ -39,6 +39,36 @@ shortlist could not merge under the merge-by-gate rule.
    out as ticket `operator-to-researcher-20261126-0845.md` instead of being
    edited across a scope boundary.
 
+## The sales lane ran for two hours and sent nothing
+
+The first per-key worker fired at 07:25 WIB on the `nvidia-1` account and
+opened the `sales-rep` session (`ses_deac22d12ffeEmPAtfaHiFhCIK`, title
+`slot-nvidia-1/sales-rep-20261126-0025`, its own worktree, its own key). It
+is listed and exportable while it runs, so the owner can watch it.
+
+At 08:50 WIB the issue `https://github.com/DavidN0809/statement-harbor/issues/11`
+still held **0 comments**: two hours and twenty minutes of lane, and no
+message. Two causes, both mine:
+
+1. **The step budget ran out before the action.** The generated role file
+   carried `steps: 60`, and the lane spent those turns reading the standing
+   order, the handoff and the board. The budget is now 120, and the worker's
+   prompt tells the lane to read its ticket and its own role file, act first,
+   and record afterwards.
+2. **The lane was not allowed to write its own record.** The ticket asks the
+   lane to record the send in `docs/proof/outreach/` and to refresh its line
+   in `docs/agent-roles/status.md`, and neither path was in the role's scope,
+   so the permission refused the write. Every role now carries a
+   `communicationPaths` list in the register (the queue, the board, the proof
+   folder), the generated agent files allow exactly those paths, and the gate
+   refuses a register without them. This is the first item of the engineer
+   ticket, landed by the CEO lane because the sales lane could not move
+   without it.
+
+The marker that held the ticket is released with the truth in it, so the next
+worker takes the ticket again instead of waiting forever on a lane that
+stalled.
+
 ## The sales lane is running
 
 The first per-key worker fired at 07:25 WIB on the `nvidia-1` account, took the
