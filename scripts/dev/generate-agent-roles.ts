@@ -47,8 +47,8 @@ export const editResource = (scopePath: string): string => {
 
 const oneLine = (text: string): string => text.split('\n').map((line) => line.trim()).filter(Boolean).join(' ');
 
-const goalLine = (doc: string): string => {
-  const lines = fs.readFileSync(path.join(root, doc), 'utf8').split('\n');
+const goalLine = (text: string): string => {
+  const lines = text.split('\n');
   const goalAt = lines.findIndex((line) => line.trim() === 'Goal:');
   if (goalAt < 0) return '';
   const body: string[] = [];
@@ -89,11 +89,14 @@ export const renderRoleDocuments = (register: Register): Array<{ path: string; c
   return files;
 };
 
-export const renderAgentFiles = (register: Register): Array<{ path: string; content: string }> => {
+export const renderAgentFiles = (
+  register: Register,
+  documents?: Map<string, string>,
+): Array<{ path: string; content: string }> => {
   const files: Array<{ path: string; content: string }> = [];
   for (const role of register.roles) {
-    const docBody = fs.readFileSync(path.join(root, role.doc), 'utf8').trimEnd();
-    const goal = goalLine(role.doc);
+    const docBody = (documents?.get(role.doc) ?? fs.readFileSync(path.join(root, role.doc), 'utf8')).trimEnd();
+    const goal = goalLine(docBody);
     const firstSentence = goal.split(/(?<=\.)\s/)[0] ?? goal;
     const description = `${role.id} - ${role.division}. ${firstSentence}`.slice(0, 200);
     const permissions = [
@@ -134,7 +137,10 @@ export const renderAgentFiles = (register: Register): Array<{ path: string; cont
 
 const main = (): void => {
   const register = readRegister();
-  const files = [...renderAgentFiles(register), ...renderRoleDocuments(register)];
+  // The role documents are rendered first and their content is handed to the agent renderer: a renderer that reads the old document from disk writes an agent file one scope behind the register, and the check then fails on the file the same run wrote.
+  const roleDocuments = renderRoleDocuments(register);
+  const documents = new Map(roleDocuments.map((file) => [file.path, file.content]));
+  const files = [...renderAgentFiles(register, documents), ...roleDocuments];
   const check = process.argv.includes('--check');
   const drifted: string[] = [];
   for (const file of files) {

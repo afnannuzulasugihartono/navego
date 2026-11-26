@@ -8,8 +8,6 @@ Scope (what this role may work in):
 
 - docs/agent-roles.md
 - docs/agent-roles/registry.json
-- docs/agent-roles/status.md
-- docs/agent-roles/queue/**
 - docs/agent-roles/*.md
 
 Shared communication surface (every lane may write these):
@@ -19,6 +17,7 @@ Shared communication surface (every lane may write these):
 - docs/proof/**
 - docs/economy.json
 - docs/handoff.md
+- docs/decisions.json
 
 Goal:
 

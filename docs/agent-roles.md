@@ -36,9 +36,9 @@ the entry key; the division says where the work belongs.
 
 | agent id | division | scope (repo paths) | status |
 |---|---|---|---|
-| operator | Operations | docs/economy.json, docs/handoff.md, docs/proof | active |
+| operator | Operations | docs/economy.json, docs/handoff.md, docs/proof, docs/agent-roles/loop/**, docs/automations.md, scripts/dev/agent-fleet/**, scripts/dev/agent-worktree.ts, tests/tooling/agent-loop.test.ts | active |
 | researcher | Research & Development | docs/research/** | planned |
-| ceo | Executive | docs/agent-roles.md, docs/agent-roles/registry.json, docs/agent-roles/status.md, docs/agent-roles/queue/**, docs/agent-roles/*.md | planned |
+| ceo | Executive | docs/agent-roles.md, docs/agent-roles/registry.json, docs/agent-roles/*.md | planned |
 | sales-rep | Sales | README.md, docs/prospects.md | planned |
 | marketer | Marketing | site/** | planned |
 | engineer | Engineering | extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json, tests/tooling/agent-roles.test.ts, .opencode/agents/**, .claude/agents/** | planned |
@@ -127,12 +127,27 @@ assembled from many sessions without drifting:
 **One communication container** — `docs/agent-roles/status.md`. It is the shared line-per-role board every division reads: what is missing for a division, what can be upgraded, and the open upgrades. A session opens it, refreshes its own line, and proposes upgrades in the queue artifact below when it sees a gap it owns; nothing stays secret because it lived in a chat, since the status is a file.
 
 Handoff between divisions is one artifact per ticket, in
-`docs/agent-roles/queue/`, named `<from-role>-to-<to-role>-<yyyymmdd>.md`, with
-these fields: `intent`, `why`, `scopeRequested` (what the other role must do),
-`acceptance` (the shared gates that count as done), `deadline` (optional). The
-receiving session reads the queue, works, and answers by writing a reply
-artifact next to it. Handoff is not delegation of a file: the receiving role
-runs its own session, inside its own scope.
+`docs/agent-roles/queue/`, named
+`<from-role>-to-<to-role>-<yyyymmdd-HHMM>.md`, with these fields: `intent`,
+`why`, `scopeRequested` (what the other role must do), `acceptance` (the shared
+gates that count as done), `deadline` (optional). The receiving session reads
+the queue, works, and answers by writing a reply artifact next to it. Handoff
+is not delegation of a file: the receiving role runs its own session, inside
+its own scope.
+
+**The manager loop.** The `operator` role is the agent manager. It assigns one
+ticket at a time, the lane claims it with a started marker and returns a reply
+carrying `answered: <ticket>`, and the manager reads the reply, closes it on the
+status board and in `docs/proof/`, and only then chooses the next ticket. The
+queue is the memory: a conversation is not an assignment, and a chat message is
+not a result. The contract is
+[`agent-roles/loop/README.md`](agent-roles/loop/README.md).
+
+The liveness check is the process table, not the marker's age: the watchdog
+`scripts/dev/agent-fleet/watch.ts` runs every ten minutes, releases a marker
+whose worker process is gone, and blocks a ticket after three releases. A
+failed process-table read is `unknown`, not death, so nothing is released on a
+failed read.
 
 Sessions start in their role. A session that was pointed at another division's
 work records that deviation in the handoff artifact it writes; a session that

@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 import os from 'node:os';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { editResource, renderAgentFiles } from '../../scripts/dev/generate-agent-roles.ts';
-import { checkRoleScope, scopePathMatches } from '../../scripts/verify/role-scope.ts';
+import { checkRolesScope, checkRoleScope, scopePathMatches } from '../../scripts/verify/role-scope.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const read = (name: string): unknown => JSON.parse(fs.readFileSync(path.join(root, name), 'utf8')) as unknown;
@@ -177,6 +177,34 @@ test('the role scope gate refuses a changed path outside the named role scope', 
     'docs/agent-roles/queue/engineer-to-ceo.md',
   ]);
   assert.deepEqual(result.refused, ['site/app/lib/funnel.ts']);
+});
+
+test('two named lanes may share a communication path, but not a work scope', () => {
+  const shared = checkRolesScope(
+    {
+      roles: [
+        { id: 'operator', scopePaths: ['docs/proof'], communicationPaths: ['docs/agent-roles/queue/**'] },
+        { id: 'engineer', scopePaths: ['extension/**'], communicationPaths: ['docs/agent-roles/queue/**'] },
+      ],
+    },
+    ['operator', 'engineer'],
+    ['docs/agent-roles/queue/operator-to-engineer-20261126-0725.md'],
+  );
+  assert.deepEqual(shared.refused, [], 'a shared communication path is allowed');
+  assert.deepEqual(shared.ambiguous, [], 'a shared communication path is not a work-scope overlap');
+
+  const overlap = checkRolesScope(
+    {
+      roles: [
+        { id: 'marketer', scopePaths: ['site/**'], communicationPaths: [] },
+        { id: 'support-agent', scopePaths: ['site/**'], communicationPaths: [] },
+      ],
+    },
+    ['marketer', 'support-agent'],
+    ['site/app/page.tsx'],
+  );
+  assert.deepEqual(overlap.refused, [], 'a work scope is still an owner');
+  assert.deepEqual(overlap.ambiguous, ['site/app/page.tsx'], 'two work scopes on one path are ambiguous');
 });
 
 test('no two roles work scopes cover the same tracked file', () => {

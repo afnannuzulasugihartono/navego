@@ -42,7 +42,9 @@ const normalizeRelativePath = (value: string): string | null => {
   const normalized = value.replace(/\\/g, '/').replace(/^\.\/+/, '');
   if (!normalized || normalized.startsWith('/') || /^[A-Za-z]:\//.test(normalized)) return null;
   if (normalized.split('/').some((segment) => segment === '..')) return null;
-  return normalized.replace(/\/+$/, '');
+  let end = normalized.length;
+  while (end > 0 && normalized[end - 1] === '/') end -= 1;
+  return normalized.slice(0, end);
 };
 
 const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -102,13 +104,19 @@ export const checkRolesScope = (register: Register, roleIds: string[], changedPa
   const refused: string[] = [];
   const ambiguous: string[] = [];
   for (const changedPath of changedPaths) {
+    const workOwners = roles
+      .filter((role) => role.scopePaths.some((scopePath) => scopePathMatches(changedPath, scopePath)))
+      .map((role) => role.id);
     const pathOwners = roles
       .filter((role) => role.scopePaths.some((scopePath) => scopePathMatches(changedPath, scopePath))
         || role.communicationPaths.some((communicationPath) => scopePathMatches(changedPath, communicationPath)))
       .map((role) => role.id);
     owners.push({ path: changedPath, owners: pathOwners });
     if (pathOwners.length === 0) refused.push(changedPath);
-    if (pathOwners.length > 1) ambiguous.push(changedPath);
+    // A communication path is shared by design: two named lanes may both write
+    // the queue, the board or the proof. Only two work scopes on one path are
+    // ambiguous, because a work scope has one owner.
+    if (workOwners.length > 1) ambiguous.push(changedPath);
   }
   return { owners, refused, ambiguous };
 };
@@ -118,7 +126,9 @@ const readRegister = (): Register =>
 
 export const changedPathsBetween = (base: string, head: string, cwd = process.cwd()): string[] => {
   // --no-renames keeps both sides of a move: a rename prints only its destination otherwise, and a lane could move another role's file into its own scope without the source path ever being checked.
-  const output = execFileSync('git', ['diff', '--name-only', '--no-renames', `${base}...${head}`], { cwd, encoding: 'utf8' });
+  // The executable is fixed, not resolved through PATH: a directory a caller can write is a binary a caller can replace.
+  const git = process.platform === 'win32' ? 'C:\\Program Files\\Git\\cmd\\git.exe' : '/usr/bin/git';
+  const output = execFileSync(git, ['diff', '--name-only', '--no-renames', `${base}...${head}`], { cwd, encoding: 'utf8' });
   return output.split('\n').map((line) => line.trim()).filter(Boolean);
 };
 

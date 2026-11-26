@@ -15,6 +15,7 @@ Shared communication surface (every lane may write these):
 - docs/proof/**
 - docs/economy.json
 - docs/handoff.md
+- docs/decisions.json
 
 Goal:
 

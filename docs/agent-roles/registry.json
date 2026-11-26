@@ -6,22 +6,29 @@
   "roles": [
     {
       "id": "operator",
-      "team": "Operations: Survival & Growth runner",
+      "team": "Agent Management: fleet, ledger and proofs",
       "scopePaths": [
         "docs/economy.json",
         "docs/handoff.md",
-        "docs/proof"
+        "docs/proof",
+        "docs/agent-roles/loop/**",
+        "docs/automations.md",
+        "scripts/dev/agent-fleet/**",
+        "scripts/dev/agent-worktree.ts",
+        "tests/tooling/agent-loop.test.ts"
       ],
       "doc": "docs/agent-roles/operator.md",
       "automations": [
-        "aut_21421fd5c001SHZTGFdHocNTwY"
+        "aut_2164ffcfd001KHx72ub2lmEtrT",
+        "aut_2176da47e001Cmh2bDVBUDj5Nn"
       ],
       "status": "active",
       "division": "Operations",
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
-        "docs/proof/**"
+        "docs/proof/**",
+        "docs/decisions.json"
       ]
     },
     {
@@ -37,7 +44,8 @@
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
-        "docs/proof/**"
+        "docs/proof/**",
+        "docs/decisions.json"
       ]
     },
     {
@@ -46,8 +54,6 @@
       "scopePaths": [
         "docs/agent-roles.md",
         "docs/agent-roles/registry.json",
-        "docs/agent-roles/status.md",
-        "docs/agent-roles/queue/**",
         "docs/agent-roles/*.md"
       ],
       "doc": "docs/agent-roles/ceo.md",
@@ -59,7 +65,8 @@
         "docs/agent-roles/status.md",
         "docs/proof/**",
         "docs/economy.json",
-        "docs/handoff.md"
+        "docs/handoff.md",
+        "docs/decisions.json"
       ]
     },
     {
@@ -76,7 +83,8 @@
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
-        "docs/proof/**"
+        "docs/proof/**",
+        "docs/decisions.json"
       ]
     },
     {
@@ -92,7 +100,8 @@
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
-        "docs/proof/**"
+        "docs/proof/**",
+        "docs/decisions.json"
       ]
     },
     {
@@ -118,7 +127,8 @@
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
-        "docs/proof/**"
+        "docs/proof/**",
+        "docs/decisions.json"
       ]
     },
     {
@@ -140,7 +150,8 @@
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
-        "docs/proof/**"
+        "docs/proof/**",
+        "docs/decisions.json"
       ]
     },
     {
@@ -158,7 +169,8 @@
         "docs/agent-roles/status.md",
         "docs/proof/**",
         "docs/economy.json",
-        "docs/handoff.md"
+        "docs/handoff.md",
+        "docs/decisions.json"
       ]
     },
     {
@@ -174,7 +186,8 @@
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
-        "docs/proof/**"
+        "docs/proof/**",
+        "docs/decisions.json"
       ]
     },
     {
@@ -192,7 +205,8 @@
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
-        "docs/proof/**"
+        "docs/proof/**",
+        "docs/decisions.json"
       ]
     }
   ]

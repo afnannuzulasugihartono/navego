@@ -13,6 +13,7 @@ Shared communication surface (every lane may write these):
 - docs/agent-roles/queue/**
 - docs/agent-roles/status.md
 - docs/proof/**
+- docs/decisions.json
 
 Goal:
 
