@@ -29,7 +29,8 @@
         "tests/tooling/agent-loop.test.ts",
         "tests/tooling/agent-dispatch.test.ts",
         ".opencode/agents/**",
-        ".claude/agents/**"
+        ".claude/agents/**",
+        "tests/tooling/agent-roles.test.ts"
       ],
       "communicationPaths": [
         "docs/agent-roles/queue/**",
@@ -130,8 +131,7 @@
         "docs/tools/**",
         "scripts/dev/generate-agent-roles.ts",
         "scripts/verify/role-scope.ts",
-        "package.json",
-        "tests/tooling/agent-roles.test.ts"
+        "package.json"
       ],
       "communicationPaths": [
         "docs/agent-roles/queue/**",

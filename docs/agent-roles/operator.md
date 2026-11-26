@@ -21,6 +21,7 @@ Scope (what this role may work in):
 - tests/tooling/agent-dispatch.test.ts
 - .opencode/agents/**
 - .claude/agents/**
+- tests/tooling/agent-roles.test.ts
 
 Shared communication surface (every lane may write these):
 
