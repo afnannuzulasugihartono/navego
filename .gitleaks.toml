@@ -42,18 +42,9 @@ id = "generic-api-key"
   ]
 
   [[rules.allowlists]]
-  description = "OpenCode automation ids are identifiers, not credentials. The operator lane records the id of every automation it runs so a reader can find that automation in the harness; the shape is the fixed 'aut_' prefix followed by a long alphanumeric token, and it appears only in this repository's own documents. A key from another provider does not carry that prefix, so the exception is the identifier shape and not the documents at large."
+  description = "The OpenCode automation id written in one proof record is an identifier, not a credential: the shape is the fixed aut_ prefix followed by a long alphanumeric token, and the path names the single file that carries it. The generic API-key rule stays enabled everywhere else, and a key of any other shape in this same file is still reported."
   condition = "AND"
-  paths = ['''^docs/.*\.md$''']
-  regexTarget = "line"
-  regexes = [
-    '''aut_[A-Za-z0-9]{20,}''',
-  ]
-
-  [[rules.allowlists]]
-  description = "The same OpenCode automation id shape in this repository's own JSON records (the economy ledger and the role roster name the automation each lane runs)."
-  condition = "AND"
-  paths = ['''^docs/.*\.json$''']
+  paths = ['''^docs/proof/2026-11-25-survival-run-13\.md$''']
   regexTarget = "line"
   regexes = [
     '''aut_[A-Za-z0-9]{20,}''',
