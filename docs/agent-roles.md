@@ -37,15 +37,15 @@ the entry key; the division says where the work belongs.
 | agent id | division | scope (repo paths) | status |
 |---|---|---|---|
 | operator | Operations | docs/economy.json, docs/handoff.md, docs/proof | active |
-| researcher | Research & Development | docs/research, docs/product, README.md | planned |
-| sales-rep | Sales | README.md, docs/prospects.md, docs/product | planned |
+| researcher | Research & Development | docs/research/** | planned |
+| ceo | Executive | docs/agent-roles.md, docs/agent-roles/registry.json, docs/agent-roles/status.md, docs/agent-roles/queue/**, docs/agent-roles/*.md | planned |
+| sales-rep | Sales | README.md, docs/prospects.md | planned |
 | marketer | Marketing | site/** | planned |
-| engineer | Engineering | extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md, docs/research/**, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json, tests/tooling/agent-roles.test.ts, .opencode/agents/**, .claude/agents/** | planned |
-| release-engineer | Engineering | .github/**, .gitleaks.toml, scripts/release/**, scripts/pack/**, docs/releases/**, CHANGELOG.md, server.json | planned |
-| finance-analyst | Finance | docs/economy.json, docs/proof/**, hosted/migrations, docs/handoff.md | planned |
-| support-agent | Customer Support | docs/product/support.md, docs/product/navego-adoption.md | planned |
+| engineer | Engineering | extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json, tests/tooling/agent-roles.test.ts, .opencode/agents/**, .claude/agents/** | planned |
+| release-engineer | Engineering | .github/**, .gitleaks.toml, CHANGELOG.md, docs/releases/**, scripts/pack/**, scripts/release/**, server.json | planned |
+| finance-analyst | Finance | hosted/migrations/** | planned |
+| support-agent | Customer Support | docs/product/** | planned |
 | onboarding-guide | Customer Success | docs/install.md, docs/external-install.md, docs/agent-call.md | planned |
-| ceo | Executive | docs/agent-roles.md, docs/agent-roles/registry.json, docs/agent-roles/status.md, docs/agent-roles/queue/**, docs/agent-roles/*.md, docs/economy.json, docs/handoff.md | planned |
 
 Every role's `communicationPaths` are `docs/agent-roles/queue/**`,
 `docs/agent-roles/status.md` and `docs/proof/**`.

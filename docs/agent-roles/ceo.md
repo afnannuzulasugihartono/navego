@@ -6,11 +6,19 @@ Division: Executive
 
 Scope (what this role may work in):
 
-- docs/agent-roles.md (the role system itself)
+- docs/agent-roles.md
 - docs/agent-roles/registry.json
 - docs/agent-roles/status.md
 - docs/agent-roles/queue/**
-- docs/economy.json, docs/handoff.md (the owner's records)
+- docs/agent-roles/*.md
+
+Shared communication surface (every lane may write these):
+
+- docs/agent-roles/queue/**
+- docs/agent-roles/status.md
+- docs/proof/**
+- docs/economy.json
+- docs/handoff.md
 
 Goal:
 

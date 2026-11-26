@@ -6,8 +6,13 @@ Division: Customer Support
 
 Scope (what this role may work in):
 
-- docs/product/support.md
-- docs/product/navego-adoption.md
+- docs/product/**
+
+Shared communication surface (every lane may write these):
+
+- docs/agent-roles/queue/**
+- docs/agent-roles/status.md
+- docs/proof/**
 
 Goal:
 

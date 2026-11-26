@@ -11,6 +11,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import os from 'node:os';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { editResource, renderAgentFiles } from '../../scripts/dev/generate-agent-roles.ts';
 import { checkRoleScope, scopePathMatches } from '../../scripts/verify/role-scope.ts';
@@ -178,37 +179,37 @@ test('the role scope gate refuses a changed path outside the named role scope', 
   assert.deepEqual(result.refused, ['site/app/lib/funnel.ts']);
 });
 
-test('no two roles work scopes cover the same path', () => {
+test('no two roles work scopes cover the same tracked file', () => {
   const { roles } = load();
-  for (let left = 0; left < roles.length; left += 1) {
-    const leftRole = roles[left];
-    assert.ok(leftRole, 'a role is present');
-    for (let right = left + 1; right < roles.length; right += 1) {
-      const rightRole = roles[right];
-      assert.ok(rightRole, 'a role is present');
-      const leftPaths: string[] = leftRole.scopePaths;
-      const rightPaths: string[] = rightRole.scopePaths;
-      for (const leftPath of leftPaths) {
-        for (const rightPath of rightPaths) {
-          const overlap: boolean = scopePathMatches(leftPath, rightPath) || scopePathMatches(rightPath, leftPath);
-          assert.equal(overlap, false, `${leftRole.id} and ${rightRole.id} both claim ${leftPath} / ${rightPath} - a work scope has one owner`);
-        }
-      }
-    }
+  const tracked = execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' })
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const shared = new Set(roles.flatMap((role) => role.communicationPaths));
+  for (const file of tracked) {
+    const owners = roles
+      .filter((role) => role.scopePaths.some((scopePath) => scopePathMatches(file, scopePath)))
+      .map((role) => role.id);
+    if (owners.length === 0) continue;
+    const workOwners = owners.filter((owner) => {
+      const role = roles.find((candidate) => candidate.id === owner);
+      return role ? !role.scopePaths.every((scopePath) => shared.has(scopePath)) : true;
+    });
+    assert.equal(workOwners.length <= 1, true, `${file} is claimed by ${workOwners.join(', ')} - a work scope has one owner`);
   }
 });
 
 test('the scope checker refuses an out-of-scope path when it is run with the real diff', () => {
   const script = path.join(root, 'scripts/verify/role-scope.ts');
-  const sandbox = fs.mkdtempSync(path.join(root, '.role-scope-test-'));
-  const run = (cwd: string, base: string, head: string) => {
-    const result = spawnSync(process.execPath, [script, 'engineer', '--base', base, '--head', head], { cwd, encoding: 'utf8' });
-    return result;
+  const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'role-scope-test-'));
+  const run = (cwd: string, base: string, head: string, extra: string[] = []) => {
+    return spawnSync(process.execPath, [script, 'engineer', '--base', base, '--head', head, ...extra], { cwd, encoding: 'utf8' });
   };
   try {
     execFileSync('git', ['init', '--quiet'], { cwd: sandbox });
     execFileSync('git', ['config', 'user.email', 'gate@example.test'], { cwd: sandbox });
     execFileSync('git', ['config', 'user.name', 'Gate'], { cwd: sandbox });
+    execFileSync('git', ['checkout', '--quiet', '-b', 'base'], { cwd: sandbox });
     fs.mkdirSync(path.join(sandbox, 'extension/lib'), { recursive: true });
     fs.mkdirSync(path.join(sandbox, 'site/app/lib'), { recursive: true });
     fs.writeFileSync(path.join(sandbox, 'extension/lib/protocol.ts'), 'export const protocol = 1;\n');
@@ -219,15 +220,21 @@ test('the scope checker refuses an out-of-scope path when it is run with the rea
     fs.writeFileSync(path.join(sandbox, 'extension/lib/protocol.ts'), 'export const protocol = 2;\n');
     execFileSync('git', ['add', '.'], { cwd: sandbox });
     execFileSync('git', ['commit', '--quiet', '-m', 'in scope'], { cwd: sandbox });
-    const allowed = run(sandbox, 'master', 'change');
+    const allowed = run(sandbox, 'base', 'change');
     assert.equal(allowed.status, 0, 'an in-scope change passes the command');
 
     fs.writeFileSync(path.join(sandbox, 'site/app/lib/funnel.ts'), 'export const funnel = 2;\n');
     execFileSync('git', ['add', '.'], { cwd: sandbox });
     execFileSync('git', ['commit', '--quiet', '-m', 'out of scope'], { cwd: sandbox });
-    const refused = run(sandbox, 'master', 'change');
+    const refused = run(sandbox, 'base', 'change');
     assert.equal(refused.status, 1, 'an out-of-scope change makes the command exit non-zero');
     assert.match(refused.stderr, /site\/app\/lib\/funnel\.ts/, 'the command names the refused path');
+
+    const withPathList = run(sandbox, 'base', 'change', ['extension/lib/protocol.ts']);
+    assert.equal(withPathList.status, 1, 'a caller-supplied path list cannot make the command pass');
+
+    const empty = run(sandbox, 'change', 'change');
+    assert.equal(empty.status, 1, 'an empty diff is a refusal, not a pass');
   } finally {
     fs.rmSync(sandbox, { recursive: true, force: true });
   }

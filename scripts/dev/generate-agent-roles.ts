@@ -62,6 +62,33 @@ const goalLine = (doc: string): string => {
   return oneLine(body.join(' '));
 };
 
+const scopeBlock = (role: Role): string => {
+  const work = role.scopePaths.map((scopePath) => `- ${scopePath}`).join('\n');
+  const shared = role.communicationPaths.map((sharedPath) => `- ${sharedPath}`).join('\n');
+  return `Scope (what this role may work in):\n\n${work}\n\nShared communication surface (every lane may write these):\n\n${shared}`;
+};
+
+export const renderRoleDocuments = (register: Register): Array<{ path: string; content: string }> => {
+  const files: Array<{ path: string; content: string }> = [];
+  for (const role of register.roles) {
+    const current = fs.readFileSync(path.join(root, role.doc), 'utf8');
+    const start = current.indexOf('Scope (what this role may work in):');
+    const end = current.indexOf('\n\nGoal:', start);
+    if (start < 0 || end < 0) continue;
+    files.push({ path: role.doc, content: current.slice(0, start) + scopeBlock(role) + current.slice(end) });
+  }
+  const rolesDocPath = 'docs/agent-roles.md';
+  const rolesDoc = fs.readFileSync(path.join(root, rolesDocPath), 'utf8');
+  const tableStart = rolesDoc.indexOf('| agent id | division | scope (repo paths) | status |');
+  const tableEnd = rolesDoc.indexOf('\n\n', tableStart);
+  if (tableStart >= 0 && tableEnd > tableStart) {
+    const rows = register.roles.map((role) => `| ${role.id} | ${role.division} | ${role.scopePaths.join(', ')} | ${role.status} |`);
+    const header = '| agent id | division | scope (repo paths) | status |\n|---|---|---|---|';
+    files.push({ path: rolesDocPath, content: rolesDoc.slice(0, tableStart) + header + '\n' + rows.join('\n') + rolesDoc.slice(tableEnd) });
+  }
+  return files;
+};
+
 export const renderAgentFiles = (register: Register): Array<{ path: string; content: string }> => {
   const files: Array<{ path: string; content: string }> = [];
   for (const role of register.roles) {
@@ -107,7 +134,7 @@ export const renderAgentFiles = (register: Register): Array<{ path: string; cont
 
 const main = (): void => {
   const register = readRegister();
-  const files = renderAgentFiles(register);
+  const files = [...renderAgentFiles(register), ...renderRoleDocuments(register)];
   const check = process.argv.includes('--check');
   const drifted: string[] = [];
   for (const file of files) {

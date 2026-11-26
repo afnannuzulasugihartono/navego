@@ -41,7 +41,43 @@ finance-analyst briefs before either lane starts. This reply does not pretend
 that rewriting the original ticket changed its address; until the split
 exists, the engineer may work only on step 1.
 
-acceptance, with every edit named:
+acceptance, quoted from the two original tickets with every
+edit named:
+
+- The `-2115.md` list gains one item: `package.json` carries the
+  `scope:role` command. Every other item is unchanged.
+- The `-2116.md` list keeps every item, and the wording "the dashboard
+  labels are honest" replaces "the dashboard labels say which is which". No
+  item is dropped.
+
+The two lists, as they stand in the tickets:
+
+```
+acceptance:
+
+- `npm test` and `npm run check` are green, and the new gate fails when a
+  changed path sits outside the named role's scope (a test proves the
+  refusal, not only the pass).
+- The generated agent files carry the communication paths in their
+  permissions, and `npm run roles:check` still reports no drift.
+- The role registry keeps one source: the scope and the communication surface
+  are read from it, never written twice.
+```
+
+```
+acceptance:
+
+- `npm test` and `npm run check` are green, plus the site build
+  (`npm --prefix site run build`).
+- A test proves the press and the copy are two different steps and that each
+  is recorded once.
+- The migration is applied in production (one at a time, from the main
+  checkout, evidence in `docs/proof/`) and the new rows appear in the live
+  funnel the next day.
+- The operator lane's next read shows both rows separately, so a zero under
+  the press row means presses, not copies.
+```
+
 
 - The `-2115.md` list gains one item: `package.json` carries the
   `scope:role` command. Every other item of that list is unchanged.

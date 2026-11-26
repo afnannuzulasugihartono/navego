@@ -61,11 +61,17 @@ Scope (what this role may work in):
 
 - .github/**
 - .gitleaks.toml
-- scripts/release/**
-- scripts/pack/**
-- docs/releases/**
 - CHANGELOG.md
+- docs/releases/**
+- scripts/pack/**
+- scripts/release/**
 - server.json
+
+Shared communication surface (every lane may write these):
+
+- docs/agent-roles/queue/**
+- docs/agent-roles/status.md
+- docs/proof/**
 
 Goal:
 

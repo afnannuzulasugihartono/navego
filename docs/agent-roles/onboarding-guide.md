@@ -10,6 +10,12 @@ Scope (what this role may work in):
 - docs/external-install.md
 - docs/agent-call.md
 
+Shared communication surface (every lane may write these):
+
+- docs/agent-roles/queue/**
+- docs/agent-roles/status.md
+- docs/proof/**
+
 Goal:
 
 Make every new person reach the first shipped artifact quickly and honestly:

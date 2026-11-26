@@ -47,10 +47,15 @@ Division: Finance
 
 Scope (what this role may work in):
 
-- docs/economy.json
-- docs/proof/**
-- docs/handoff.md
 - hosted/migrations/**
+
+Shared communication surface (every lane may write these):
+
+- docs/agent-roles/queue/**
+- docs/agent-roles/status.md
+- docs/proof/**
+- docs/economy.json
+- docs/handoff.md
 
 Goal:
 

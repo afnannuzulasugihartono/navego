@@ -21,12 +21,14 @@ Division: Sales
 
 Scope (what this role may work in):
 
-- README.md (the prospect pipeline)
+- README.md
 - docs/prospects.md
-- docs/product/**
 
-Research feeds from the researcher role; the prospect pipeline lives in
-the lanes named above.
+Shared communication surface (every lane may write these):
+
+- docs/agent-roles/queue/**
+- docs/agent-roles/status.md
+- docs/proof/**
 
 Goal:
 
