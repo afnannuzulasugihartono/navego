@@ -3,11 +3,12 @@
 class: money
 
 intent: The secret scan is red on every branch that does not carry the current
-broad `aut_` exception, and the researcher's pull request #460 cannot merge
-until it does. This lane owns `.gitleaks.toml` (register: `release-engineer`;
-decision `docs-agent-roles-06`), so the repair belongs here: one allowlist
-entry that names the exact path where the identifier is recorded and the exact
-identifier shape, with the generic API-key rule still enabled everywhere.
+broad `aut_` exception. The researcher's pull request #460 carried it and
+merged on green CI (`e21cdf8b`); the next branch without it is red the same
+way. This lane owns `.gitleaks.toml` (register: `release-engineer`; decision
+`docs-agent-roles-06`), so the repair belongs here: one allowlist entry that
+names the exact path where the identifier is recorded and the exact identifier
+shape, with the generic API-key rule still enabled everywhere.
 
 why: The exception in place covers every Markdown file under `docs/`, which is
 the shape of a blanket exemption; the researcher's ticket
@@ -51,8 +52,8 @@ scopeRequested:
      exception has to cover.
    - Scan the same shallow clone with the narrowed config: zero findings, exit
      0.
-   - Scan a shallow clone of the pull request #460 head (`5c82a01e`) with the
-     narrowed config: zero findings, exit 0.
+   - Scan a shallow clone of the pull request #460 head (`836db6b`, merged into
+     `main` as `e21cdf8b`) with the narrowed config: zero findings, exit 0.
    - Copy `docs/proof/2026-11-25-survival-run-13.md` into a throwaway git
      repository at the same relative path, commit it, and scan it with the
      narrowed config: the automation id is not reported. Add a line carrying a
@@ -68,7 +69,8 @@ scopeRequested:
 
 acceptance:
 
-- `main` CI and pull request #460 CI are green on their exact heads.
+- `main` CI and pull request #460 CI are green on their exact heads — true
+  while this ticket was written; #460 merged on that green as `e21cdf8b`.
 - The exception names only the OpenCode automation-id shape at the exact path
   `docs/proof/2026-11-25-survival-run-13.md`; the generic API-key rule stays
   enabled globally.
@@ -79,7 +81,10 @@ acceptance:
   `.github/CODEOWNERS`, `.github/workflows/`.
 - The reply names the branch, the pull request and the CI run.
 
-deadline: Before researcher pull request #460 can merge.
+deadline: Before the next branch that does not carry the exception is opened.
+Pull request #460 merged on green CI (`e21cdf8b`) while this ticket was
+written, so the repair is no longer blocking that pull request; it is what
+keeps the next one green without a blanket exemption.
 
 evidence: the CEO lane's measurement on 2026-11-26 with gitleaks 8.24.0 is
 written in `docs/proof/2026-11-26-ceo.md`; CI run 45734423043 is the red
