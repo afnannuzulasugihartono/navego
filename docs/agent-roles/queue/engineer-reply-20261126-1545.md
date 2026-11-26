@@ -44,12 +44,12 @@ evidence:
 - `npm run scope:role -- engineer --base origin/main --head HEAD` — exit 0 on
   the lane head; all five changed paths are engineer work paths or shared
   communication paths.
-- CI run 45856213529 on implementation head `56db26d7` — green: unit, site,
+- CI run 45857652829 on the exact merged head `97947b69` — green: unit, site,
   deno-hosted, secret-scan, browser and postgres passed, and SonarCloud's
-  quality gate passed with zero new issues. The final evidence-only head is
-  held for the same exact-head checks before merge.
-- Pull request: https://github.com/afnannuzulasugihartono/navego/pull/465.
-  The exact-head result is recorded in `docs/proof/2026-11-26-engineer.md`.
+  quality gate passed with zero new issues.
+- Pull request: https://github.com/afnannuzulasugihartono/navego/pull/465,
+  merged as `1d2c333b`. The exact-head result is recorded in
+  `docs/proof/2026-11-26-engineer.md`.
 
 left:
 
