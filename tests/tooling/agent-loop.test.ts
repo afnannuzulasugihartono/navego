@@ -38,10 +38,11 @@ const session = (overrides: Partial<{ id: string; title: string; parentId: strin
   ...overrides,
 });
 
-const evidence = (overrides: Partial<{ processLines: string[] | null; sessions: ReturnType<typeof session>[] | null; staleMinutes: number }> = {}) => ({
+const evidence = (overrides: Partial<{ processLines: string[] | null; sessions: ReturnType<typeof session>[] | null; staleMinutes: number; remoteAnswers: Set<string> | null }> = {}) => ({
   processLines: LIVE,
   sessions: null,
   staleMinutes: 30,
+  remoteAnswers: null,
   ...overrides,
 });
 
@@ -122,6 +123,20 @@ test('a reply closes the ticket even while a stale marker sits beside it', () =>
     write(dir, MARKER, MARKER_TEXT);
     write(dir, REPLY, REPLY_TEXT);
     assert.equal(classify(readQueue(dir), evidence({ processLines: [] }), NOW)[0]?.state, 'returned', 'the reply is the result');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('a ticket answered on the remote is returned, even in a stale checkout', () => {
+  const dir = makeQueue();
+  try {
+    write(dir, TICKET, 'class: measurement\n');
+    write(dir, MARKER, MARKER_TEXT);
+    const remote = evidence({ remoteAnswers: new Set([TICKET]) });
+    const row = classify(readQueue(dir), remote, NOW)[0];
+    assert.equal(row?.state, 'returned', 'the answer on origin/main closes the ticket');
+    assert.equal(row?.reply, 'answered on origin/main', 'the row says where the answer lives');
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }

@@ -15,6 +15,7 @@ const evidence = (overrides: Partial<Evidence> = {}): Evidence => ({
   processLines: null,
   sessions: null,
   staleMinutes: 30,
+  remoteAnswers: null,
   ...overrides,
 });
 import { readQueue } from '../../scripts/dev/agent-fleet/watch.ts';
@@ -102,6 +103,19 @@ test('a slot with a live session does not start a second one on the same key', (
   assert.equal(slotBusy(slot, evidence({ sessions: [session] }), now), true, 'a live session holds the slot even when its launcher process is gone');
   assert.equal(slotBusy(slot, evidence({ sessions: [{ ...session, outcome: 'error' }] }), now), false, 'a session that ended in an error releases the key');
   assert.equal(slotBusy(slot, evidence({ sessions: [{ ...session, updatedMs: now - 3 * 3600000 }] }), now), false, 'a session that went silent releases the key');
+});
+
+test('a ticket answered on the remote is never dispatched again', () => {
+  const dir = makeQueue();
+  try {
+    write(dir, 'operator-to-marketer-20261126-1045.md', ticketText('measurement'));
+    const snapshot = readQueue(dir);
+    const answered = new Set(['operator-to-marketer-20261126-1045.md']);
+    assert.equal(selectTicket(snapshot, NOW, 120, evidence({ remoteAnswers: answered })), null, 'the answer on origin/main closes the ticket');
+    assert.ok(selectTicket(snapshot, NOW, 120, evidence()), 'without that answer the ticket is ready');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 test('a lane with a live session is busy, whatever its marker says', () => {
