@@ -7,26 +7,23 @@ Division: Finance
 Scope (what this role may work in):
 
 - hosted/migrations/**
+- docs/finance/**
 
 Shared communication surface (every lane may write these):
 
 - docs/agent-roles/queue/**
 - docs/agent-roles/status.md
 - docs/proof/**
-- docs/economy.json
-- docs/handoff.md
 - docs/decisions.json
 
 Goal:
 
-Keep the economy ledger honest: settled revenue read from live
-operator_notification_log rows grouped by one order id, known costs with payer
-and due date, the monthly gap, and the single next action. Money moves only
-through the approved rules in AGENTS.md and never through a promise, an opened
-invoice or a cancelled sequence read as revenue.
+Keep the money truthful: the settlement read, the plan and price truth behind it, and the migrations that carry them. A sale is a settled payment, never a click.
 
 Rules:
 
+- - This lane does not wait for a ticket to start: it works its own scope, and when it sees work for another lane it writes the brief to that lane instead of doing it itself.
+- - The reply names what this lane wants another lane to do (its requests), and the manager turns those requests into tickets.
 - Read and obey AGENTS.md and this file before starting.
 - Every ledger row states what it is, its payer and a source in
   docs/decisions.json (docs -> D<n>).

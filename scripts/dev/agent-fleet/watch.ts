@@ -103,6 +103,68 @@ export const DEFAULT_STALE_MINUTES = 30;
 
 const stripTail = (value: string): string => value.replace(/[.,;:]+$/, '');
 
+// The drive that holds the session store is the fleet's disk.
+// On 2026-11-26 the snapshot cache grew to 4.2 GB inside two minutes and filled the drive to zero free bytes, and a session that cannot write its state is a session that stops without an error - the failure the owner kept seeing.
+// The watchdog reads the free space every ten minutes and prunes the cache when it drops.
+
+export const freeBytes = (target = os.homedir()): number | null => {
+  try {
+    const stats = fs.statfsSync(target);
+    return Number(stats.bavail) * Number(stats.bsize);
+  } catch {
+    return null;
+  }
+};
+
+export const DISK_LIMIT_BYTES = 5 * 1024 * 1024 * 1024;
+
+export const pruneSnapshots = (options: {
+  limitBytes?: number;
+  snapshotRoot?: string;
+  target?: string;
+}): { freedBytes: number; removedFiles: number } => {
+  const limitBytes = options.limitBytes ?? DISK_LIMIT_BYTES;
+  const snapshotRoot = options.snapshotRoot ?? path.join(os.homedir(), '.local', 'share', 'opencode', 'snapshot');
+  const target = options.target ?? os.homedir();
+  let freed = 0;
+  let removed = 0;
+  let free = freeBytes(target);
+  if (free === null || free >= limitBytes) return { freedBytes: 0, removedFiles: 0 };
+  const cache = path.join(snapshotRoot, 'global');
+  const roots = fs.existsSync(cache) ? [cache] : [snapshotRoot];
+  const files: string[] = [];
+  for (const root of roots) {
+    if (!fs.existsSync(root)) continue;
+    for (const entry of fs.readdirSync(root, { withFileTypes: true, recursive: true })) {
+      if (!entry.isFile()) continue;
+      const file = path.join(entry.parentPath, entry.name);
+      try {
+        files.push(file);
+      } catch {
+        continue;
+      }
+    }
+  }
+  files.sort((left, right) => {
+    const leftTime = fs.statSync(left).mtimeMs;
+    const rightTime = fs.statSync(right).mtimeMs;
+    return leftTime - rightTime;
+  });
+  for (const file of files) {
+    if (free !== null && free >= limitBytes) break;
+    try {
+      const size = fs.statSync(file).size;
+      fs.rmSync(file, { force: true });
+      freed += size;
+      removed += 1;
+      free = freeBytes(target);
+    } catch {
+      continue;
+    }
+  }
+  return { freedBytes: freed, removedFiles: removed };
+};
+
 const GIT = process.platform === 'win32' ? 'C:\\Program Files\\Git\\cmd\\git.exe' : '/usr/bin/git';
 
 // A lane's merge lands on the remote before the local checkout has it, and a stale checkout must not read an answered ticket as unanswered: the release would send the next worker to redo work that already landed.
@@ -499,6 +561,15 @@ const main = async (): Promise<void> => {
   }, {});
   const summary = Object.entries(counts).map(([state, count]) => `${count} ${state}`).join(', ') || 'no ticket';
   console.log(`loop: ${summary}${result.stateWritten ? ' (state written)' : ''}`);
+  const free = freeBytes();
+  if (free !== null) {
+    const freeGb = (free / 1024 / 1024 / 1024).toFixed(1);
+    console.log(`free disk: ${freeGb} GB`);
+    if (free < DISK_LIMIT_BYTES) {
+      const pruned = pruneSnapshots({});
+      console.log(`disk below the ${(DISK_LIMIT_BYTES / 1024 / 1024 / 1024).toFixed(0)} GB floor: pruned ${pruned.removedFiles} snapshot files (${(pruned.freedBytes / 1024 / 1024 / 1024).toFixed(2)} GB)`);
+    }
+  }
   if (args.includes('--print')) console.log(renderState(result.rows));
   for (const file of result.released) console.log(`released: ${file}`);
   for (const ticket of result.blocked) console.log(`blocked: ${ticket}`);

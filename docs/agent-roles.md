@@ -36,37 +36,36 @@ the entry key; the division says where the work belongs.
 
 | agent id | division | scope (repo paths) | status |
 |---|---|---|---|
-| operator | Operations | docs/economy.json, docs/handoff.md, docs/agent-roles/keys.json, docs/proof, docs/agent-roles/loop/**, docs/automations.md, scripts/dev/agent-fleet/**, scripts/dev/agent-worktree.ts, tests/tooling/agent-loop.test.ts, tests/tooling/agent-dispatch.test.ts | active |
+| operator | Operations | docs/economy.json, docs/handoff.md, docs/proof, docs/agent-roles/loop/**, docs/automations.md, docs/agent-roles/keys.json, docs/agent-roles/registry.json, docs/agent-roles.md, docs/agent-roles/*.md, scripts/dev/agent-fleet/**, scripts/dev/agent-worktree.ts, tests/tooling/agent-loop.test.ts, tests/tooling/agent-dispatch.test.ts, .opencode/agents/**, .claude/agents/** | active |
 | researcher | Research & Development | docs/research/** | planned |
-| ceo | Executive | docs/agent-roles.md, docs/agent-roles/registry.json, docs/agent-roles/*.md | planned |
 | sales-rep | Sales | README.md, docs/prospects.md | planned |
-| marketer | Marketing | site/** | planned |
-| engineer | Engineering | extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json, tests/tooling/agent-roles.test.ts, .opencode/agents/**, .claude/agents/** | planned |
-| release-engineer | Engineering | .github/**, .gitleaks.toml, CHANGELOG.md, docs/releases/**, scripts/pack/**, scripts/release/**, server.json | planned |
-| finance-analyst | Finance | hosted/migrations/** | planned |
-| support-agent | Customer Support | docs/product/** | planned |
+| marketer | Marketing | site/app/routes/artikel-ai-browser-indonesia.tsx, site/app/routes/artikel.tsx, site/app/routes/bandingkan.tsx, site/app/routes/beranda.tsx, site/app/routes/changelog.tsx, site/app/routes/consent.tsx, site/app/routes/docs.tsx, site/app/routes/dukungan.tsx, site/app/routes/en.tsx, site/app/routes/faq.tsx, site/app/routes/fitur.tsx, site/app/routes/harga.tsx, site/app/routes/index.tsx, site/app/routes/keamanan.tsx, site/app/routes/mcp.tsx, site/app/routes/metodologi.tsx, site/app/routes/notfound.tsx, site/app/routes/privasi.tsx, site/app/routes/syarat.tsx, site/app/routes/unduh.tsx | planned |
+| engineer | Engineering | extension/**, local/**, shared/**, site/app/lib/**, site/app/components/**, site/app/routes/akun.tsx, site/app/routes/dashboard.tsx, site/app/data/tools.json, docs/api.md, docs/agent-friendly.md, docs/tools/**, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json, tests/tooling/agent-roles.test.ts | planned |
+| release-engineer | Engineering | .github/**, .gitleaks.toml, CHANGELOG.md, docs/releases/**, scripts/pack/**, scripts/release/**, server.json, site/app/data/releases.json | planned |
+| finance-analyst | Finance | hosted/migrations/**, docs/finance/** | planned |
+| support-agent | Customer Support | docs/product/support.md, docs/product/navego-adoption.md, docs/support/** | planned |
 | onboarding-guide | Customer Success | docs/install.md, docs/external-install.md, docs/agent-call.md | planned |
 
 Every role's `communicationPaths` are `docs/agent-roles/queue/**`,
 `docs/agent-roles/status.md`, `docs/proof/**` and `docs/decisions.json`.
 
-Every path has exactly one work-scope owner: `marketer` owns the site files,
-`finance-analyst` owns the migrations, `ceo` owns the role register and the
-role documents, `engineer` owns the role generator, the scope checker, its
-`package.json` command, the role gate and the generated role entry points,
-`researcher` owns the research folder, `sales-rep` owns the root readme and
-the prospect pipeline in `docs/prospects.md`, `support-agent` owns the product
-folder, and `operator` owns the economy ledger, the handoff record, the proof
-folder, the loop and the fleet tooling. The gate
-`tests/tooling/agent-roles.test.ts` refuses a register where two work scopes
-cover the same tracked file.
+Every path has exactly one work-scope owner: `marketer` owns the public pages
+of the site, `finance-analyst` owns the migrations, `engineer` owns the
+product, the site's mechanics and the tool inventory, the role generator, the
+scope checker, its `package.json` command, the role gate and the generated
+role entry points, `researcher` owns the research folder, `sales-rep` owns the
+root readme and the prospect pipeline in `docs/prospects.md`, `support-agent`
+owns the support inbox and its answers, `onboarding-guide` owns the first-run
+documents, and `operator` owns the economy ledger, the handoff record, the
+proof folder, the loop, the fleet tooling, the role register and the role
+documents. The gate `tests/tooling/agent-roles.test.ts` refuses a register
+where two work scopes cover the same tracked file.
 
 These paths are shared by design, and the handoff rule is what moves work
 across them: every role may write the queue
-(`docs/agent-roles/queue/**`), the board (`docs/agent-roles/status.md`) and
-the proof folder (`docs/proof/**`), and the finance and chief-executive lanes
-also write the ledger (`docs/economy.json`) and the handoff record
-(`docs/handoff.md`). A lane that needs another lane's work scope writes a
+(`docs/agent-roles/queue/**`), the board (`docs/agent-roles/status.md`), the
+proof folder (`docs/proof/**`) and the decision register
+(`docs/decisions.json`). A lane that needs another lane's work scope writes a
 handoff artifact for that lane instead of editing the file.
 The divisions and the naming are grounded in
 [`docs/research/agent-roles.md`](research/agent-roles.md).

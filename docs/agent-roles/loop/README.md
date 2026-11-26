@@ -71,9 +71,32 @@ the count in the state table is how the manager sees a lane that ignored it.
 1. Read `docs/agent-roles/loop/state.md` and the queue.
 2. For every `returned` ticket: read the reply, write the outcome on the status
    board and in `docs/proof/`, and name the next action. That closes the ticket.
-3. For every `blocked` ticket: read the release notes, narrow the ticket or
+3. **Every request a lane names becomes a ticket** for the lane that owns it.
+   A lane that finishes its work says what it wants done next (the `requests`
+   section of its reply); the manager turns each request into one bounded
+   ticket for the owning lane, or answers why not. The lane does not wait for
+   permission to keep working, and it does not do another lane's work itself.
+4. For every `blocked` ticket: read the release notes, narrow the ticket or
    escalate it to the owner; do not re-dispatch the same text a fourth time.
-4. Only then choose the next assignment.
+5. Only then choose the next assignment.
 
 The manager never does a lane's work. A lane never writes its own ticket or
 closes its own ticket.
+
+## The lanes
+
+Nine lanes, and no chief-executive lane: the agent manager owns the register,
+the briefs and the decisions, so a separate executive hop only cost a session
+and a round trip. Each lane has a mandate it acts on, not only reports:
+
+| lane | what it owns | what it decides on its own |
+|---|---|---|
+| `operator` (agent manager) | the register, the briefs, the ledger, the proofs, the fleet | what the company works on next, and who gets it |
+| `researcher` | the market, the website and the product: what to build, what to improve, what to stop | what is worth building, with dated sources |
+| `sales-rep` | one public conversation a day | the message, and how to turn an answer into a trial |
+| `marketer` | the public pages, the pricing page, the articles, the listing surfaces | what the site says and how it promotes Navego |
+| `engineer` | the product, the site's mechanics, the tool inventory | whether each tool is still worth keeping, and the strategy for the tools' development |
+| `release-engineer` | the release, the changelog, the signed artifact, the CI configuration | how a release is made safe to land |
+| `finance-analyst` | the settlement, the plan and price truth, the migrations behind them | what a sale is and what it is worth |
+| `support-agent` | the support inbox and the answers | what the product must change because of what people wrote |
+| `onboarding-guide` | the first five minutes | the first win a new user sees, and how they get there |

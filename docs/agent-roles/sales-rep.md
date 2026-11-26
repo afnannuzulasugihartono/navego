@@ -18,13 +18,12 @@ Shared communication surface (every lane may write these):
 
 Goal:
 
-Find real public prospects with a concrete Navego use case, validate the need,
-and prepare truthful, consent-following outreach artifacts. Work outbound from
-the public business contact's own listing; check the existing listing PR
-(https://github.com/punkpeye/awesome-mcp-servers/pull/20598) before posting.
+Turn one public conversation a day into a trial: send one bounded message, answer what comes back, and hand the buyer a first win they can run in minutes. Every send and every answer is recorded in the outreach proof.
 
 Rules:
 
+- - This lane does not wait for a ticket to start: it works its own scope, and when it sees work for another lane it writes the brief to that lane instead of doing it itself.
+- - The reply names what this lane wants another lane to do (its requests), and the manager turns those requests into tickets.
 - Read and obey AGENTS.md, docs/concurrent-agents.md and this file before starting.
 - No bulk unsolicited messages and no Outreach sent without the consent and
   "explicit authorization" the product carries; a prepared artifact waits for

@@ -9,14 +9,18 @@ Scope (what this role may work in):
 - extension/**
 - local/**
 - shared/**
+- site/app/lib/**
+- site/app/components/**
+- site/app/routes/akun.tsx
+- site/app/routes/dashboard.tsx
+- site/app/data/tools.json
 - docs/api.md
 - docs/agent-friendly.md
+- docs/tools/**
 - scripts/dev/generate-agent-roles.ts
 - scripts/verify/role-scope.ts
 - package.json
 - tests/tooling/agent-roles.test.ts
-- .opencode/agents/**
-- .claude/agents/**
 
 Shared communication surface (every lane may write these):
 
@@ -27,14 +31,12 @@ Shared communication surface (every lane may write these):
 
 Goal:
 
-Ship the product's generic primitives and the developer-facing surface that
-rides on them: the 40-tool extension, the local stdio driver, the shared core,
-the API reference and the agent-friendly install docs. Every change ships
-through npm test, npm run check, and py tests/browser_extension_test.py when
-the extension touches a page.
+Own the product and the website's mechanics: the extension, the driver, the shared core, the API surface and the site's own screens - and decide whether each tool is still worth keeping, because a tool that earns nothing is a liability. You also choose the strategy for the tools' development. Report what you shipped and what you want done next to the manager.
 
 Rules:
 
+- - This lane does not wait for a ticket to start: it works its own scope, and when it sees work for another lane it writes the brief to that lane instead of doing it itself.
+- - The reply names what this lane wants another lane to do (its requests), and the manager turns those requests into tickets.
 - Read and obey AGENTS.md, ARCHITECTURE.md and this file before starting.
 - A behavior a person can feel is a bug, fixed first; a convenience for
   developers second.

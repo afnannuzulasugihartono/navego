@@ -140,3 +140,17 @@ is the CEO's, the product work is the engineer's), no separate Design role
 (the site's visual system is one file, `site/app/tokens.css`, with the
 Marketing lane owning it). A role is added when a division has work the current lanes cannot
 hold, and the CEO role (or the owner) re-scopes then.
+
+## Update 2026-11-27: the chief-executive lane is folded
+
+The owner folded the `ceo` lane into the agent manager and gave every lane a
+proactive mandate - marketing implements its own ideas on the website, research
+researches what to build and where to sell, engineering owns the website's
+mechanics and judges whether each tool is still worth keeping - with the lanes
+reporting to the manager and the manager assigning what a lane asks for
+(`decisions.json -> docs-agent-roles-12`).
+
+The register now carries nine lanes. The research above records the ten-role
+design that started it; the reasons that still hold are the ones the register
+depends on: one session opens in one role, one work-scope owner per path, and
+the role is the entry key, not a title.
