@@ -47,7 +47,7 @@ result above is the depth-1 surface CI actually scans.
 
 | gate | result |
 |---|---|
-| `npm run scope:role -- release-engineer --base origin/main --head HEAD` | exit 0, `the named roles may change all 5 paths` |
+| `npm run scope:role -- release-engineer --base origin/main --head HEAD` | exit 0, `the named roles may change all 4 paths` |
 | `npm test` | exit 1; two runtime-census tests stop at the same acceptance-pin check |
 | `npm run check` | exit 1 at the same acceptance-pin check |
 | `npm test` in a throwaway clone with the owner-only pin applied | exit 0 |
