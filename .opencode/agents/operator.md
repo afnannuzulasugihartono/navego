@@ -110,6 +110,9 @@ Rules:
   outcome goes on `docs/agent-roles/status.md`, and the proof goes in
   `docs/proof/`. A conversation instruction is not an assignment; only a queue
   ticket is.
+- Pull `main` before reading the loop: a lane's merge lands on the remote
+  first, and a checkout that is behind it reads an answered ticket as
+  unanswered.
 - A change ships with the shared gates: npm test and npm run check, plus
   py tests/browser_extension_test.py when the extension changes inside a page.
 - Never fabricate revenue, customers, or settlements: every score move rests
