@@ -7,6 +7,7 @@ Division: Finance
 Scope (what this role may work in):
 
 - hosted/migrations/**
+- tests/hosted/**
 
 Shared communication surface (every lane may write these):
 
@@ -28,6 +29,7 @@ invoice or a cancelled sequence read as revenue.
 Rules:
 
 - Read and obey AGENTS.md and this file before starting.
+- The lane owns the tests that prove the migrations it owns (`tests/hosted/**`), so the test for a migration lands with the migration.
 - Every ledger row states what it is, its payer and a source in
   docs/decisions.json (docs -> D<n>).
 - Never read a Promise in a payment provider as revenue, and never invent

@@ -1542,6 +1542,17 @@
         "ref": "the CI run of 2026-11-26 (45734423043 on pull request #460) failed its secret-scan job because gitleaks 8.24.0 read the OpenCode automation id written at docs/proof/2026-11-25-survival-run-13.md:66 as a generic-api-key, and the exception in .gitleaks.toml then covered every Markdown file under docs/; the measurement of 2026-11-26 with the same scanner on a shallow clone of main and of the pull request head shows that the only finding without the automation-id entries is that line, that both heads scan clean with one narrow entry, and that a key of another shape at that same path is still reported",
         "also": "docs/proof/2026-11-26-ceo.md (the measurement and the commands behind the narrow entry)"
       }
+    },
+    {
+      "id": "docs-agent-roles-12",
+      "scope": "agent/roles",
+      "file": "docs/agent-roles/registry.json",
+      "decision": "The lane that owns the code owns the test that proves it: the marketer lane owns tests/site/** and the finance-analyst lane owns tests/hosted/**, so the test of a funnel change lands with the change it proves, each test folder keeps one owner, and no test path is left for a lane to refuse. The generated agent files carry the new scope when the engineer lane runs the role generator, because the entry points are the engineer lane's paths and this lane does not edit them.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/agent-roles/queue/engineer-to-ceo-20261126-1233.md:31-43",
+        "also": "docs/agent-roles/queue/engineer-to-marketer-20261126-1233.md:77-81 (the marketer brief names tests/site/funnel.test.ts as the test that proves the press and the copy, and no role's scope covered it)"
+      }
     }
   ]
 }

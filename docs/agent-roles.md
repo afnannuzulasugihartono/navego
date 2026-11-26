@@ -40,24 +40,25 @@ the entry key; the division says where the work belongs.
 | researcher | Research & Development | docs/research/** | planned |
 | ceo | Executive | docs/agent-roles.md, docs/agent-roles/registry.json, docs/agent-roles/*.md | planned |
 | sales-rep | Sales | README.md, docs/prospects.md | planned |
-| marketer | Marketing | site/** | planned |
+| marketer | Marketing | site/**, tests/site/** | planned |
 | engineer | Engineering | extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json, tests/tooling/agent-roles.test.ts, .opencode/agents/**, .claude/agents/** | planned |
 | release-engineer | Engineering | .github/**, .gitleaks.toml, CHANGELOG.md, docs/releases/**, scripts/pack/**, scripts/release/**, server.json | planned |
-| finance-analyst | Finance | hosted/migrations/** | planned |
+| finance-analyst | Finance | hosted/migrations/**, tests/hosted/** | planned |
 | support-agent | Customer Support | docs/product/** | planned |
 | onboarding-guide | Customer Success | docs/install.md, docs/external-install.md, docs/agent-call.md | planned |
 
 Every role's `communicationPaths` are `docs/agent-roles/queue/**`,
 `docs/agent-roles/status.md`, `docs/proof/**` and `docs/decisions.json`.
 
-Every path has exactly one work-scope owner: `marketer` owns the site files,
-`finance-analyst` owns the migrations, `ceo` owns the role register and the
-role documents, `engineer` owns the role generator, the scope checker, its
-`package.json` command, the role gate and the generated role entry points,
-`researcher` owns the research folder, `sales-rep` owns the root readme and
-the prospect pipeline in `docs/prospects.md`, `support-agent` owns the product
-folder, and `operator` owns the economy ledger, the handoff record, the proof
-folder, the loop and the fleet tooling. The gate
+Every path has exactly one work-scope owner: `marketer` owns the site files and
+the tests that prove them (`tests/site/**`), `finance-analyst` owns the
+migrations and the tests that prove them (`tests/hosted/**`), `ceo` owns the
+role register and the role documents, `engineer` owns the role generator, the
+scope checker, its `package.json` command, the role gate and the generated role
+entry points, `researcher` owns the research folder, `sales-rep` owns the root
+readme and the prospect pipeline in `docs/prospects.md`, `support-agent` owns
+the product folder, and `operator` owns the economy ledger, the handoff record,
+the proof folder, the loop and the fleet tooling. The gate
 `tests/tooling/agent-roles.test.ts` refuses a register where two work scopes
 cover the same tracked file.
 
