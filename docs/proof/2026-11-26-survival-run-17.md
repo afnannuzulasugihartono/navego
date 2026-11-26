@@ -39,8 +39,13 @@ The same run showed two defects in the ticket bookkeeping, both of them mine:
    still carries "-to-" in its name. Reply files are now excluded from the
    ticket list.
 
-Both fixes land after this slot, so the send is not delayed by an hour: the
-money path first, the bookkeeping second.
+Both fixes landed after the slot, so the send was not delayed by an hour: the
+money path first, the bookkeeping second. The 10:25 slot took the send ticket
+exactly as the dry run predicted — lane `sales-rep`, ticket
+`operator-to-sales-rep-20261126-0920.md`, slot `nvidia-1`, session
+`slot-nvidia-1/sales-rep-20261126-0325` — and the two fixes are now in the
+worker: a ticket closes only when a reply carries the line
+`answered: <ticket file>`, and reply files are no longer scanned as tickets.
 
 ## The funnel, unchanged
 

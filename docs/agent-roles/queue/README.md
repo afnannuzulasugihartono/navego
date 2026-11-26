@@ -17,8 +17,10 @@ jobs is two tickets, because a lane that takes one job at a time is a lane
 whose work can be checked.
 
 A ticket closes when a reply artifact sits next to it, named after the ticket it
-answers: `<ticket-name>-reply-<yyyymmdd-HHMM>.md`, naming what was shipped, the
-evidence (gates, deploy run) and what it left. A ticket whose lane has a
+answers: `<ticket-name>-reply-<yyyymmdd-HHMM>.md`, and carrying the line
+`answered: <ticket file name>`. The line is what closes it: a reply that only
+mentions another ticket in passing does not close that ticket. The reply also
+names what was shipped, the evidence (gates, deploy run) and what it left. A ticket whose lane has a
 started marker younger than two hours is still in progress and is left alone;
 an older marker means the lane stalled, and the ticket is released. A ticket
 with a reply beside it is closed.
