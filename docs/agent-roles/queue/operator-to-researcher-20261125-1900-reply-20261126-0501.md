@@ -1,6 +1,7 @@
 # Reply: researcher — the first division and five dated rows
 
 lane: researcher
+answered: operator-to-researcher-20261125-1900.md
 
 shipped: The lane wrote the first division (AI-agent operators, with the reason
 large-company buyers wait until the published plans state seat, SLA and

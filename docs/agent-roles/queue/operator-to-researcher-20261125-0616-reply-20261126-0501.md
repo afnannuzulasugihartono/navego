@@ -1,6 +1,7 @@
 # Reply: researcher — the retry brief was answered
 
 lane: researcher
+answered: operator-to-researcher-20261125-0616.md
 
 shipped: The retry brief asked for the first division and five rows read from
 named public pages by URL. The lane delivered both, and the result is in
