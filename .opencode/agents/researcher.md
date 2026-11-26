@@ -32,6 +32,7 @@ You may also write the shared communication surface: docs/agent-roles/queue/**, 
 Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
 The shared gates before a claim of done: npm test and npm run check, plus py tests/browser_extension_test.py when the extension changes inside a page.
+Before the pull request, the scope gate: run npm run scope:role -- researcher --base origin/main --head HEAD in this worktree; the verifier reads every changed path from that diff itself, and a non-zero exit blocks the pull request and the merge.
 
 # researcher
 
