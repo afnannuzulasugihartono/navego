@@ -6,8 +6,8 @@ Division: Customer Support
 
 Scope (what this role may work in):
 
-- docs/product/support.md, docs/product/navego-adoption.md
-- site/** when it is the docs surface
+- docs/product/support.md
+- docs/product/navego-adoption.md
 
 Goal:
 
@@ -20,6 +20,7 @@ Rules:
 
 - Read and obey AGENTS.md and this file before starting.
 - Support facts change only with a sourced decision in docs/decisions.json.
+- Site changes, including the support docs surface, go through marketer.
 - Retention changes (upgrade offers, extension install guides) belong to
   onboarding-guide; support facts that matter to onboarding go through a
   handoff artifact toward onboarding-guide.

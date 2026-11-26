@@ -15,6 +15,8 @@ has:
 - an `id` (kebab-case token, the entry key),
 - a `team` (the division that owns it),
 - `scopePaths` (the paths the role may touch),
+- `communicationPaths` (the shared queue, status board and proof paths the role
+  may write),
 - a `doc` (this role's markdown, which names the role id and says the scope),
 - `automations` (the automations that open sessions for it),
 - `status` (`active` while an automation runs it, `planned` otherwise).
@@ -38,16 +40,21 @@ the entry key; the division says where the work belongs.
 | researcher | Research & Development | docs/research, docs/product, README.md | planned |
 | sales-rep | Sales | README.md, docs/research/prospects.md, docs/product | planned |
 | marketer | Marketing | site/** | planned |
-| engineer | Engineering | extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md | planned |
-| release-engineer | Engineering | .github/**, scripts/release/**, scripts/pack/**, docs/releases, CHANGELOG.md, server.json | planned |
+| engineer | Engineering | extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md, docs/research/**, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json, tests/tooling/agent-roles.test.ts, .opencode/agents/**, .claude/agents/** | planned |
+| release-engineer | Engineering | .github/**, .gitleaks.toml, scripts/release/**, scripts/pack/**, docs/releases/**, CHANGELOG.md, server.json | planned |
 | finance-analyst | Finance | docs/economy.json, docs/proof/**, hosted/migrations, docs/handoff.md | planned |
-| support-agent | Customer Support | docs/product/support.md, docs/product/navego-adoption.md, site/** (docs surface) | planned |
-| onboarding-guide | Customer Success | docs/** (prose and definitions) | planned |
-| ceo | Executive | docs/agent-roles.md, docs/agent-roles/registry.json, docs/agent-roles/status.md, docs/agent-roles/queue, docs/economy.json, docs/handoff.md | planned |
+| support-agent | Customer Support | docs/product/support.md, docs/product/navego-adoption.md | planned |
+| onboarding-guide | Customer Success | docs/install.md, docs/external-install.md, docs/agent-call.md | planned |
+| ceo | Executive | docs/agent-roles.md, docs/agent-roles/registry.json, docs/agent-roles/status.md, docs/agent-roles/queue/**, docs/agent-roles/*.md, docs/economy.json, docs/handoff.md | planned |
 
-`support-agent` and `onboarding-guide` both hold `docs/product`; a written
-handoff between them, not inheritance, moves work across. The divisions and
-the naming are grounded in
+Every role's `communicationPaths` are `docs/agent-roles/queue/**`,
+`docs/agent-roles/status.md` and `docs/proof/**`.
+
+The funnel and role-system implementation paths have one owner each:
+`marketer` owns the two site files, `finance-analyst` owns the migration,
+`ceo` owns the role register, and `engineer` owns the role generator, scope
+checker, its `package.json` command, role gate and generated agent entry points.
+The divisions and the naming are grounded in
 [`docs/research/agent-roles.md`](research/agent-roles.md).
 
 ## The key roster (capacity split by credential)

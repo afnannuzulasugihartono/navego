@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "generated": "2026-11-25",
-  "source": "User request 2026-11-25: 'untuk automation nya buat semua bisa terdokumentasi di repo dan kelompokkan sesuai dengan role yang sedang dikerjakan satu sesi tidak boleh lintas role; role itu jadi pintu masuk agent supaya dia mengerjakan hanya bagian itu; list dulu apa yang mau di bangun ke aku aku review'",
-  "note": "The machine-readable role register: the entry key every session opens with, the team, the repo paths the role may touch, the role's markdown, and the automations that open sessions for it. docs/agent-roles.md is the human half of the same system.",
+  "generated": "2026-11-26",
+  "source": "User request 2026-11-25: 'untuk automation nya buat semua bisa terdokumentasi di repo dan kelompokkan sesuai dengan role yang sedang dikerjakan satu sesi tidak boleh lintas role; role itu jadi pintu masuk agent supaya dia mengerjakan hanya bagian itu; list dulu apa yang mau di bangun ke aku aku review'. 2026-11-26 path ownership: docs/agent-roles/queue/engineer-to-ceo-20261126-0501.md.",
+  "note": "The machine-readable role register: the entry key every session opens with, the team, the repo paths the role may touch, the shared communication paths every role may write, the role's markdown, and the automations that open sessions for it. Each path named by the 2026-11-26 funnel handoff has one work-scope owner; docs/agent-roles.md is the human half of the same system.",
   "roles": [
     {
       "id": "operator",
@@ -107,7 +107,13 @@
         "shared/**",
         "docs/api.md",
         "docs/agent-friendly.md",
-        "docs/research/**"
+        "docs/research/**",
+        "scripts/dev/generate-agent-roles.ts",
+        "scripts/verify/role-scope.ts",
+        "package.json",
+        "tests/tooling/agent-roles.test.ts",
+        ".opencode/agents/**",
+        ".claude/agents/**"
       ],
       "doc": "docs/agent-roles/engineer.md",
       "automations": [],
@@ -165,8 +171,7 @@
       "team": "Customer Support: Support & retention",
       "scopePaths": [
         "docs/product/support.md",
-        "docs/product/navego-adoption.md",
-        "site/**"
+        "docs/product/navego-adoption.md"
       ],
       "doc": "docs/agent-roles/support-agent.md",
       "automations": [],
@@ -182,7 +187,9 @@
       "id": "onboarding-guide",
       "team": "Customer Success: Onboarding docs",
       "scopePaths": [
-        "docs/**"
+        "docs/install.md",
+        "docs/external-install.md",
+        "docs/agent-call.md"
       ],
       "doc": "docs/agent-roles/onboarding-guide.md",
       "automations": [],

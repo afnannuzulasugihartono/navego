@@ -12,6 +12,12 @@ Scope (what this role may work in):
 - docs/api.md
 - docs/agent-friendly.md
 - docs/research/**
+- scripts/dev/generate-agent-roles.ts
+- scripts/verify/role-scope.ts
+- package.json
+- tests/tooling/agent-roles.test.ts
+- .opencode/agents/**
+- .claude/agents/**
 
 Goal:
 
