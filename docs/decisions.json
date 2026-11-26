@@ -1531,6 +1531,17 @@
         "ref": "docs/agent-roles/queue/operator-to-engineer-20261125-2116.md:10-19 (the live production funnel read on 2026-11-25: page.view 83 events from 26 browsers, install.view 11 from 9, plan.view 8 from 1, buy.click 3 from 1, and install.click 0 while the copy event fired)",
         "also": "site/app/lib/funnel.ts:113 (recordInstallCopy fires install.click, so the row counted copies)"
       }
+    },
+    {
+      "id": "docs-agent-roles-11",
+      "scope": "agent/roles",
+      "file": "docs/agent-roles/registry.json",
+      "decision": "The secret-scan exception for an OpenCode automation id is one path-and-pattern pair at the exact file that carries the identifier, not a blanket exemption over the documents: the path is docs/proof/2026-11-25-survival-run-13.md and the pattern is the fixed aut_ prefix followed by a long alphanumeric token, the generic API-key rule stays enabled everywhere else, and a key of any other shape in that same file is still reported. The repair belongs to the release-engineer lane, because that lane owns .gitleaks.toml.",
+      "source": {
+        "kind": "recorded",
+        "ref": "the CI run of 2026-11-26 (45734423043 on pull request #460) failed its secret-scan job because gitleaks 8.24.0 read the OpenCode automation id written at docs/proof/2026-11-25-survival-run-13.md:66 as a generic-api-key, and the exception in .gitleaks.toml then covered every Markdown file under docs/; the measurement of 2026-11-26 with the same scanner on a shallow clone of main and of the pull request head shows that the only finding without the automation-id entries is that line, that both heads scan clean with one narrow entry, and that a key of another shape at that same path is still reported",
+        "also": "docs/proof/2026-11-26-ceo.md (the measurement and the commands behind the narrow entry)"
+      }
     }
   ]
 }
