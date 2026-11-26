@@ -52,6 +52,9 @@ evidence:
   proof and this reply — every one of them a marketer-owned or communication
   path.
 - Pull request: https://github.com/afnannuzulasugihartono/navego/pull/472
+- CI on the exact head: `site` ✓, `deno-hosted` ✓, `secret-scan` ✓, `browser` ✓,
+  `SonarCloud` ✓; `unit` and `postgres` red on the five assertions named below
+  and on the one that was already red on `main` (`the plan names the slot`).
 
 left:
 
