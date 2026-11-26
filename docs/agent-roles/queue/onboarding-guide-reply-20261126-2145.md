@@ -11,17 +11,18 @@ shipped:
    iex`, the string in `site/app/lib/install-command.ts`), with the force-install
    cost and the undo path in the same place as the command; then the check
    (`npx -y navego doctor`, which ends in `verdict ready`); then the first win -
-   the three MCP calls that drive the everyday Chrome and leave a checked file
+   the four MCP calls that drive the everyday Chrome and leave a checked file
    on disk, with the exact answer and the folder it lands in.
-   `docs/external-install.md` carries the same check and the same three calls
+   `docs/external-install.md` carries the same check and the same four calls
    for the platforms whose install route differs, and `docs/agent-call.md`
    carries the first win where the MCP call surface lives.
 2. **The first win is a real file, and it was driven.** `npx -y navego doctor`
    answered `verdict ready` over the loopback bridge at `127.0.0.1:9451`, and
-   `browser_open_url` → `browser_scroll` → `browser_download_file` drove the
-   everyday Chrome to save the site's sample spreadsheet:
-   `downloaded:true`, `bytes:21066`, in `~/Downloads/navego`. The bytes on disk
-   hashed equal to `site/public/contoh/laporan-keuangan-2026-09.xlsx`
+   `browser_open_url` → `browser_scroll` → `browser_wait_until` →
+   `browser_download_file` drove the everyday Chrome to save the site's sample
+   spreadsheet: `downloaded:true`, `bytes:21066`, in `~/Downloads/navego`. The
+   bytes on disk hashed equal to
+   `site/public/contoh/laporan-keuangan-2026-09.xlsx`
    (sha256 `A4F12765…C931922`). The record, with every answer verbatim, is
    `docs/proof/2026-11-27-onboarding-guide.md`.
 3. **The reply-ready shape is written down.** The proof ends with the two lines
@@ -34,7 +35,7 @@ evidence:
 - `npx -y navego doctor` on 2026-11-27 - `bridge listening on 127.0.0.1:9451;
   1 device(s) linked`, one device with its version and id redacted, `verdict
   ready`.
-- The three MCP calls over the bridge, answered `downloaded:true`,
+- The four MCP calls over the bridge, answered `downloaded:true`,
   `bytes:21066`, `dir:C:\Users\ASUS\Downloads\navego`; the file on disk hashed
   `A4F12765B77329EB5EC37DAE3AD4323AC1D1D6659CD6261BB689C2736C931922`, equal to
   the sample the site ships.
@@ -51,11 +52,25 @@ evidence:
 - `npm run scope:role -- onboarding-guide --base origin/main --head HEAD` -
   exit 0: every changed path is an onboarding-guide document or a shared
   communication path.
-- Pull request: the branch `agent/onboarding-guide/20261126-2145/first-win`,
-  opened against `main`.
+- Pull request: https://github.com/afnannuzulasugihartono/navego/pull/473,
+  branch `agent/onboarding-guide/20261126-2145/first-win`, open against `main`.
+- The CI on the exact head is red, and the red is not in this diff: `site`,
+  `deno-hosted`, `secret-scan`, `browser` and SonarCloud passed, while `unit`
+  and `postgres` both failed on "the plan names the slot"
+  (`tests/tooling/agent-dispatch.test.ts:128`). The same assertion fails on
+  `main` itself - the run for `e6e9d143` failed the same way - so the red
+  predates this branch. The dispatcher returns nothing when
+  `opencodeExecutable()` finds no CLI, and the CI runner never installs
+  opencode. The merge is stopped by the gate, as `docs/autonomy.md` says it
+  must be, and the reason is written into
+  `docs/proof/2026-11-27-onboarding-guide.md`.
 
 left:
 
+- The red gate is the operator lane's: `scripts/dev/agent-fleet/**` and
+  `tests/tooling/agent-dispatch.test.ts` are in its registered scope, and this
+  lane cannot touch them. The handoff is
+  `docs/agent-roles/queue/onboarding-guide-to-operator-20261126-2145.md`.
 - The reviewer agent could not run on this key: a lane worker may not dispatch
   a child session, because the provider answers 40 requests per minute and a
   child multiplies the requests against the same key

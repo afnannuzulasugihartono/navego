@@ -13,10 +13,10 @@ There is no second, gentler path in this repository. The classic external-key ro
 
 Updates ride the same URL: every browser start, the browser re-reads `update.xml`, and a newly published build arrives without anyone asking. **No path on this page involves choosing a folder** - the folder flow is the developer-mode fallback in `docs/install.md`.
 
-# THE FIRST WIN - THE SAME TWO LINES
+# THE FIRST WIN - THE SAME CHECK, THE SAME WIN
 
 The install differs per platform; the check and the win do not. Whatever route
-you took above, these are the next two lines, and they were run on 2026-11-27
+you took above, these are the next steps, and they were run on 2026-11-27
 (the record: [`docs/proof/2026-11-27-onboarding-guide.md`](./proof/2026-11-27-onboarding-guide.md)).
 
 ```
@@ -30,6 +30,7 @@ local`; the wiring is in [`docs/agent-call.md`](./agent-call.md)):
 ```
 browser_open_url      {"url":"https://navego.pages.dev/beranda"}
 browser_scroll        {"tabId":"<tab>","selector":"a[href='/contoh/laporan-keuangan-2026-09.xlsx']"}
+browser_wait_until    {"tabId":"<tab>","until":"stable","quietMs":400}
 browser_download_file {"tabId":"<tab>","role":"link","name":"Unduh berkas contoh"}
 ```
 

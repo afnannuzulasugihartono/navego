@@ -40,62 +40,63 @@ The extension version is a clock that moves with every release, so a document
 that quotes it goes stale the day the next one ships. Every other line is the
 answer as it came.
 
-### 2. The first win: three MCP calls, one file on disk
+### 2. The first win: four MCP calls, one file on disk
+
+The four calls below are the recipe the documents carry, and they were run
+exactly as written, one after another, on the tab they opened.
 
 ```
 browser_open_url      {"url":"https://navego.pages.dev/beranda"}
 ```
 
 ```json
-{"action":{"url":"https://navego.pages.dev/beranda","id":11517050842,"port":9451},"page":{"url":"about:blank","title":"","textChars":0,"rows":0},"ok":true,"elapsedMs":164}
+{"action":{"url":"https://navego.pages.dev/beranda","id":11517050848,"port":9451},"window":null,"page":{"url":"about:blank","title":"","textChars":0,"rows":0,"focus":null},"changed":{"added":[],"moved":[],"removed":0,"reshaped":false,"baseline":true,"url":null,"textGrew":null},"ok":true,"elapsedMs":113}
 ```
 
-The tab answered empty because it had not painted yet; the page settled on
-`https://navego.pages.dev/beranda` with 2943 characters of text and 43 rows,
-and the header carried the account link - the everyday profile was signed in.
+The tab answered empty because it had not painted yet. The page settled on
+`https://navego.pages.dev/beranda` with 2943 characters of text and 43 rows, and
+the header carried the account link - the everyday profile was signed in. The
+account link itself is left out of this record so the file holds no address;
+every other value is the answer as it came.
 
 ```
-browser_wait_until    {"tabId":"11517050842","until":"text","text":"Unduh berkas contoh","timeoutMs":20000}
-```
-
-```json
-{"action":{"found":true,"ms":28,"settled":true},"page":{"url":"https://navego.pages.dev/beranda","textChars":2943,"rows":43},"ok":true,"elapsedMs":50}
-```
-
-```
-browser_scroll        {"tabId":"11517050842","selector":"a[href='/contoh/laporan-keuangan-2026-09.xlsx']"}
+browser_scroll        {"tabId":"11517050848","selector":"a[href='/contoh/laporan-keuangan-2026-09.xlsx']"}
 ```
 
 ```json
-{"action":{"from":{"x":0,"y":0},"to":{"x":0,"y":0},"scroller":{"from":0,"name":"document","to":0},"movedPx":0,"target":{"found":true,"text":"Unduh berkas contoh →","visible":false,"y":2302},"why":"nothing moved: document had no room to move (travelPx unknown)"},"page":{"url":"https://navego.pages.dev/beranda","textChars":2943,"rows":43},"ok":true,"elapsedMs":19}
+{"action":{"from":{"x":0,"y":0},"to":{"x":0,"y":0},"scroller":{"from":0,"name":"document","to":0},"movedPx":0,"atEnd":false,"travelPx":null,"root":"document","target":{"found":true,"text":"Unduh berkas contoh →","visible":false,"y":2302},"why":"nothing moved: document had no room to move (travelPx unknown)"},"page":{"url":"https://navego.pages.dev/beranda","textChars":2943,"rows":43},"ok":true,"elapsedMs":53}
 ```
 
 The scroll's own answer reads `nothing moved` while the page is still scrolling:
-the site scrolls smoothly, and the answer was measured mid-animation. The next
-read is the one that settles it - the link is inside the viewport:
+the site scrolls smoothly, and the answer was measured mid-animation. The wait
+is what settles it - and it shows the link inside the viewport:
 
 ```
-browser_find_element  {"tabId":"11517050842","role":"link","name":"Unduh berkas contoh"}
+browser_wait_until    {"tabId":"11517050848","until":"stable","quietMs":400,"timeoutMs":10000}
 ```
 
 ```json
-{"row":{"name":"Unduh berkas contoh →","node":12,"role":"link","x":300,"y":360,"handle":"opera-128"},"ok":true,"elapsedMs":15}
+{"action":{"still":true,"ms":1146,"checks":69,"settled":true},"page":{"url":"https://navego.pages.dev/beranda","textChars":2943,"rows":43},"changed":{"added":[],"moved":[{"name":"Unduh berkas contoh →","role":"link","x":300,"y":360},{"name":"Unduh berkas contoh →","role":"link","x":678,"y":360},{"name":"Unduh berkas contoh →","role":"link","x":1057,"y":360}],"removed":0,"reshaped":false,"baseline":false,"url":"same","textGrew":0},"ok":true,"elapsedMs":1157}
 ```
 
-`y: 360` inside a 1536x720 viewport. Without the scroll the same call is
-refused by name, and the refusal says what to do:
+`y: 360` inside a 1536x720 viewport. Without the scroll the download is refused
+by name, and the refusal says what to do:
 
 ```json
 {"ok":false,"error":{"code":"MCP_EXECUTION_ERROR","message":"click refused: 300,2312 is outside the 1536x776 viewport - scroll({text}) or scroll({y}) to bring it into view, then click again\nNext: browser_scroll({text}) or browser_scroll({y}) to bring it into the viewport, then click again"}}
 ```
 
 ```
-browser_download_file {"tabId":"11517050842","role":"link","name":"Unduh berkas contoh"}
+browser_download_file {"tabId":"11517050848","role":"link","name":"Unduh berkas contoh"}
 ```
 
 ```json
-{"downloaded":true,"file":"laporan-keuangan-2026-09 (2).xlsx","path":"C:\\Users\\ASUS\\Downloads\\navego\\laporan-keuangan-2026-09 (2).xlsx","bytes":21066,"dir":"C:\\Users\\ASUS\\Downloads\\navego","ms":1695,"armedVia":"browser-folder","clicked":{"x":300,"y":360,"handle":"opera-128","covered":false},"landedAt":"C:\\Users\\ASUS\\Downloads\\navego\\laporan-keuangan-2026-09 (2).xlsx","ok":true,"elapsedMs":1705}
+{"downloaded":true,"file":"laporan-keuangan-2026-09 (2).xlsx","path":"C:\\Users\\ASUS\\Downloads\\navego\\laporan-keuangan-2026-09 (2).xlsx","bytes":21066,"dir":"C:\\Users\\ASUS\\Downloads\\navego","ms":1364,"armedVia":"browser-folder","clicked":{"x":300,"y":360,"handle":"opera-127","covered":false},"landedAt":"C:\\Users\\ASUS\\Downloads\\navego\\laporan-keuangan-2026-09 (2).xlsx","ok":true,"elapsedMs":1372}
 ```
+
+A read confirms the same row without changing anything:
+`browser_find_element` on that tab answered
+`{"row":{"name":"Unduh berkas contoh →","node":12,"role":"link","x":300,"y":360,"handle":"opera-127"},"ok":true,"elapsedMs":13}`.
 
 ### 3. The file on disk
 
@@ -171,6 +172,7 @@ npx -y navego doctor
 ```
 browser_open_url      {"url":"https://navego.pages.dev/beranda"}
 browser_scroll        {"tabId":"<tab>","selector":"a[href='/contoh/laporan-keuangan-2026-09.xlsx']"}
+browser_wait_until    {"tabId":"<tab>","until":"stable","quietMs":400}
 browser_download_file {"tabId":"<tab>","role":"link","name":"Unduh berkas contoh"}
 ```
 
@@ -180,12 +182,57 @@ The file lands in `C:\Users\<you>\Downloads\navego\laporan-keuangan-2026-09.xlsx
 ## What changed
 
 - `docs/install.md` - the first-win section: the landing page's install line
-  with its cost and its undo, the doctor, the three MCP calls, the expected
+  with its cost and its undo, the doctor, the four MCP calls, the expected
   answer and where the file lands.
-- `docs/external-install.md` - the same check and the same three calls, with
+- `docs/external-install.md` - the same check and the same four calls, with
   the note that the install route is the part that differs per platform.
 - `docs/agent-call.md` - the first win as an MCP call, where the call surface
   is documented.
+
+## The gate on this head
+
+The local gates are green on this head:
+
+- `npm test` - exit 0.
+- `npm run check` - exit 0: `type-debt: 0 errors — at baseline 0`; `check ok:
+  36 allowlisted browser primitives, 319 runtime safety files`.
+- `npm run scope:role -- onboarding-guide --base origin/main --head HEAD` -
+  exit 0: the named roles may change all 7 paths.
+
+The CI on the exact head is **red**, and it is red for a reason that is not in
+this diff. Pull request #473 ran the six CI jobs; `site`, `deno-hosted`,
+`secret-scan`, `browser` and SonarCloud passed, and `unit` and `postgres` both
+failed on one assertion:
+
+```
+✖ the dry run prints the plan, prints no credential, and writes nothing
+  AssertionError [ERR_ASSERTION]: the plan names the slot
+    at tests/tooling/agent-dispatch.test.ts:128
+```
+
+The same assertion fails on `main` itself - the run for `e6e9d143` ("Close the
+Agno ticket and keep the dry-run test off the live lanes") failed the same way,
+so the red predates this branch. The cause is in the dispatcher, which is the
+operator lane's path:
+
+- `scripts/dev/agent-fleet/dispatch.ts` returns nothing from `dispatch()` when
+  `opencodeExecutable()` finds no CLI (`dispatch.ts:234`), and the dry run then
+  prints `NO_READY_TICKET` instead of the plan.
+- `opencodeExecutable()` looks for `/usr/local/bin/opencode` and
+  `/usr/bin/opencode` on Linux. The CI runner installs Node and the npm
+  dependencies and never installs opencode, so the dry run has no plan to
+  print.
+- On the machine that wrote this record the CLI is there
+  (`%APPDATA%\npm\node_modules\@opencode\cli\bin\opencode.exe`), which is why
+  the same test passes here - 14 tests, exit 0 - and fails on the runner.
+
+The merge is therefore stopped by the gate, as `docs/autonomy.md` says it must
+be: a failing gate stops the lane and writes the reason here. The fix belongs
+to the operator lane, which owns `scripts/dev/agent-fleet/**` and
+`tests/tooling/agent-dispatch.test.ts`; the handoff is
+`docs/agent-roles/queue/onboarding-guide-to-operator-20261126-2145.md`. No
+owner-only path moved in this branch, and nothing in this diff touches the
+dispatcher or its test.
 
 ## The reviewer gap
 

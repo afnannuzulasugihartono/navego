@@ -76,15 +76,17 @@ navego local`; the wiring is in [`docs/agent-call.md`](./agent-call.md)):
 ```
 browser_open_url      {"url":"https://navego.pages.dev/beranda"}
 browser_scroll        {"tabId":"<tab>","selector":"a[href='/contoh/laporan-keuangan-2026-09.xlsx']"}
+browser_wait_until    {"tabId":"<tab>","until":"stable","quietMs":400}
 browser_download_file {"tabId":"<tab>","role":"link","name":"Unduh berkas contoh"}
 ```
 
 `browser_open_url` answers with the tab id. The scroll brings the sample link
 into the viewport - a click below the fold is refused, by name, so the link has
 to be on screen first. The page scrolls smoothly, so the scroll's own answer can
-read `nothing moved` while the page is still moving; the next read shows the
-link inside the viewport. The download clicks it and waits until the file has
-stopped growing. The answer on 2026-11-27 was:
+read `nothing moved` while the page is still moving; the wait is what settles
+it, and the link then sits at `y: 360` inside the 1536x720 viewport. The
+download clicks it and waits until the file has stopped growing. The answer on
+2026-11-27 was:
 
 ```
 {"downloaded":true,"file":"laporan-keuangan-2026-09 (2).xlsx","path":"C:\\Users\\<you>\\Downloads\\navego\\laporan-keuangan-2026-09 (2).xlsx","bytes":21066,"dir":"C:\\Users\\<you>\\Downloads\\navego","armedVia":"browser-folder","ok":true}

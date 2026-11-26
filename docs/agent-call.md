@@ -79,7 +79,7 @@ says so.
 
 `scripts/dev/navego-agent.ts` is the thin client I drive Navego through from an agent harness that has a shell but no Navego tool in its own catalog. `list` and `tabs` are lookups; `open-and-read <url> [text] [file]` opens one tab, waits for a real text, reads it and writes a screenshot in the **same process**, because a tab claim belongs to one driver lease — separate CLI processes collide on the claim. `batch <file.json>` runs a list of commands in one lease. Every write tool takes an explicit `tabId`: no default tab, because the everyday browser carries private tabs.
 
-## The first win - three calls, one file on disk
+## The first win - four calls, one file on disk
 
 The first thing worth driving is a file: the everyday Chrome, signed in, saves a
 document and the answer names the path and the byte count. It was run on
@@ -89,16 +89,18 @@ document and the answer names the path and the byte count. It was run on
 ```
 browser_open_url      {"url":"https://navego.pages.dev/beranda"}
 browser_scroll        {"tabId":"<tab>","selector":"a[href='/contoh/laporan-keuangan-2026-09.xlsx']"}
+browser_wait_until    {"tabId":"<tab>","until":"stable","quietMs":400}
 browser_download_file {"tabId":"<tab>","role":"link","name":"Unduh berkas contoh"}
 ```
 
 `browser_open_url` answers with the tab id and never navigates a tab somebody
 is reading. The scroll brings the link into the viewport, because a click below
 the fold is refused by name. The page scrolls smoothly, so the scroll's own
-answer can read `nothing moved` while the page is still moving; the next read
-shows the link inside the viewport. `browser_download_file` clicks the link and
-waits until the file has stopped growing - a `.crdownload` is not a result, and
-two files landing at once is not a result either.
+answer can read `nothing moved` while the page is still moving; the wait is
+what settles it, and the link then sits at `y: 360` inside the 1536x720
+viewport. `browser_download_file` clicks the link and waits until the file has
+stopped growing - a `.crdownload` is not a result, and two files landing at
+once is not a result either.
 
 The answer on 2026-11-27 was:
 
