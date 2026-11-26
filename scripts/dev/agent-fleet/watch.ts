@@ -68,6 +68,7 @@ export interface Evidence {
   processLines: string[] | null;
   sessions: SessionInfo[] | null;
   staleMinutes: number;
+  remoteAnswers: Set<string> | null;
 }
 
 export interface LoopRow {
@@ -101,6 +102,24 @@ const RELEASED = /^(.+)-released-(\d{8}-\d{4})\.md$/;
 export const DEFAULT_STALE_MINUTES = 30;
 
 const stripTail = (value: string): string => value.replace(/[.,;:]+$/, '');
+
+const GIT = process.platform === 'win32' ? 'C:\\Program Files\\Git\\cmd\\git.exe' : '/usr/bin/git';
+
+// A lane's merge lands on the remote before the local checkout has it, and a stale checkout must not read an answered ticket as unanswered: the release would send the next worker to redo work that already landed.
+
+export const readRemoteAnswers = (cwd = process.cwd()): Set<string> | null => {
+  try {
+    const output = execFileSync(GIT, ['grep', '-h', '^answered:', 'origin/main', '--', 'docs/agent-roles/queue'], { cwd, encoding: 'utf8' });
+    const answers = new Set<string>();
+    for (const line of output.split('\n')) {
+      const match = line.match(/^answered:\s*(\S+)/);
+      if (match?.[1]) answers.add(match[1]);
+    }
+    return answers;
+  } catch {
+    return null;
+  }
+};
 
 // The marker's own stamp is the dispatch time, and it is the only time the fleet wrote down.
 // A file's mtime can be bumped by anything that touches it, so it is never the evidence that a lane is still working.
@@ -214,12 +233,13 @@ export const classify = (
   const rows: LoopRow[] = [];
   for (const ticket of snapshot.tickets) {
     const reply = snapshot.replies.find((candidate) => candidate.answered === ticket.file) ?? null;
+    const answeredRemotely = reply === null && (evidence.remoteAnswers?.has(ticket.file) ?? false);
     const marker = latestMarker(snapshot, ticket.file);
     const releases = releaseCount(snapshot, ticket.file);
     const session = marker ? sessionFor(sessions, marker) : null;
     const subagents = subagentCount(sessions, session);
     let state: TicketState = ticket.blocked ? 'blocked' : 'ready';
-    if (reply) state = 'returned';
+    if (reply || answeredRemotely) state = 'returned';
     else if (marker) {
       const processAlive = processLines !== null
         && processLines.some((line) => line.includes(`lane-${marker.lane}-${marker.stamp}`));
@@ -244,7 +264,7 @@ export const classify = (
       session: session ? session.id : null,
       subagents,
       outcome: session ? (session.outcome ?? '-') : null,
-      reply: reply ? reply.file : null,
+      reply: reply ? reply.file : answeredRemotely ? 'answered on origin/main' : null,
       slow: state === 'working' && sessionAge !== null && sessionAge > 120,
       note: sessionAge === null ? (age === null ? null : `${age} min since the marker`) : `${sessionAge} min since the session spoke`,
     });
@@ -431,13 +451,14 @@ export const readSessions = async (port: number): Promise<SessionInfo[] | null> 
 
 export const readEvidence = async (
   staleMinutes = DEFAULT_STALE_MINUTES,
-  overrides: { processLines?: string[] | null; sessions?: SessionInfo[] | null } = {},
+  overrides: { processLines?: string[] | null; sessions?: SessionInfo[] | null; remoteAnswers?: Set<string> | null } = {},
 ): Promise<Evidence> => {
   const processes = readProcesses();
   const processLines = overrides.processLines ?? (processes === null ? null : processes.map((row) => row.commandLine));
   const servicePort = processes?.find((row) => row.port !== null)?.port ?? null;
   const sessions = overrides.sessions ?? (servicePort === null ? null : await readSessions(servicePort));
-  return { processLines, sessions, staleMinutes };
+  const remoteAnswers = overrides.remoteAnswers ?? readRemoteAnswers();
+  return { processLines, sessions, staleMinutes, remoteAnswers };
 };
 
 const usage = (): void => {

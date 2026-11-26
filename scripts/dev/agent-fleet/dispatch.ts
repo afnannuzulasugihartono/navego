@@ -77,11 +77,12 @@ export const selectTicket = (
   snapshot: QueueSnapshot,
   now: number,
   markerMinutes = DEFAULT_MARKER_MINUTES,
-  evidence: Evidence = { processLines: null, sessions: null, staleMinutes: 30 },
+  evidence: Evidence = { processLines: null, sessions: null, staleMinutes: 30, remoteAnswers: null },
 ): TicketFile | null => {
   const ready = snapshot.tickets.filter((ticket) => {
     if (ticket.blocked) return false;
     if (snapshot.replies.some((reply) => reply.answered === ticket.file)) return false;
+    if (evidence.remoteAnswers?.has(ticket.file)) return false;
     return !laneBusy(snapshot, ticket.lane, now, markerMinutes, evidence);
   });
   const money = ready.filter((ticket) => ticket.class === 'money').sort((left, right) => left.stamp.localeCompare(right.stamp));
@@ -143,7 +144,7 @@ export const dispatch = async (options: {
   repoRoot: string;
   evidence?: Evidence;
 }): Promise<{ title: string; pid: number | undefined; stamp: string } | null> => {
-  const { slot, snapshot, queueDir, now, repoRoot, evidence = { processLines: null, sessions: null, staleMinutes: 30 } } = options;
+  const { slot, snapshot, queueDir, now, repoRoot, evidence = { processLines: null, sessions: null, staleMinutes: 30, remoteAnswers: null } } = options;
   if (slotBusy(slot, evidence, now)) return null;
   const ticket = selectTicket(snapshot, now, DEFAULT_MARKER_MINUTES, evidence);
   if (!ticket) return null;
