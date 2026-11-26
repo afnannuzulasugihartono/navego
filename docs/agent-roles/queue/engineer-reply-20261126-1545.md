@@ -44,7 +44,8 @@ evidence:
 - `npm run scope:role -- engineer --base origin/main --head HEAD` — exit 0 on
   the lane head; all five changed paths are engineer work paths or shared
   communication paths.
-- The pull-request result is recorded in `docs/proof/2026-11-26-engineer.md`.
+- Pull request: https://github.com/afnannuzulasugihartono/navego/pull/465.
+  The exact-head result is recorded in `docs/proof/2026-11-26-engineer.md`.
 
 left:
 
