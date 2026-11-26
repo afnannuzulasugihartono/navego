@@ -114,7 +114,7 @@ test('the dry run prints the plan, prints no credential, and writes nothing', ()
   try {
     const keyFile = path.join(dir, 'key');
     fs.writeFileSync(keyFile, 'nvapi-the-secret-value');
-    write(dir, 'operator-to-marketer-20261126-1045.md', ticketText('measurement'));
+    write(dir, 'operator-to-dry-run-lane-20261126-1045.md', ticketText('measurement'));
     const rosterPath = path.join(dir, 'roster.json');
     fs.writeFileSync(rosterPath, JSON.stringify({
       version: 1,
@@ -126,10 +126,10 @@ test('the dry run prints the plan, prints no credential, and writes nothing', ()
     const run = spawnSync(process.execPath, ['--experimental-strip-types', script, '--slot', 'dry-run-slot', '--dry-run', '--queue', dir, '--roster', rosterPath], { encoding: 'utf8' });
     assert.equal(run.status, 0, `the dry run exits zero: ${run.stderr}`);
     assert.match(run.stdout, /^slot: dry-run-slot$/m, 'the plan names the slot');
-    assert.match(run.stdout, /^lane: marketer$/m, 'the plan names the lane');
-    assert.match(run.stdout, /^ticket: operator-to-marketer-20261126-1045\.md$/m, 'the plan names the ticket');
+    assert.match(run.stdout, /^lane: dry-run-lane$/m, 'the plan names the lane');
+    assert.match(run.stdout, /^ticket: operator-to-dry-run-lane-20261126-1045\.md$/m, 'the plan names the ticket');
     assert.match(run.stdout, /^credential digest: [0-9a-f]{8}$/m, 'the plan carries the digest prefix');
-    assert.match(run.stdout, /^command: .*opencode.*run.*--agent marketer/m, 'the plan carries the command');
+    assert.match(run.stdout, /^command: .*opencode.*run.*--agent dry-run-lane/m, 'the plan carries the command');
     assert.ok(!run.stdout.includes('nvapi-the-secret-value'), 'the dry run prints no credential value');
     const queueFiles = fs.readdirSync(dir).filter((name) => name.includes('started-'));
     assert.deepEqual(queueFiles, [], 'the dry run writes no marker');

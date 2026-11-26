@@ -88,6 +88,20 @@ against a temporary queue and roster: "the dry run prints the plan, prints no
 credential, and writes nothing" and "the command refuses a credential collision
 and starts nothing". The reply is `operator-reply-20261126-1715.md`.
 
+## The Agno message went out
+
+The sales lane took the ticket and sent one direct Gmail message at
+2026-11-27 00:00 Asia/Jakarta - the signed-in account made direct email
+available, so the discussion fallback in the ticket was not needed - to
+`hello@agno.com`, the address Agno publishes on its about page. It states what
+Navego is, the published Pro price ($9 for one month) with
+https://navego.pages.dev/harga, one concrete authenticated document-collection
+use case, an easy no, and the disclosure that the sender maintains Navego. The
+exact text is in [`docs/proof/outreach/2026-11-27.md`](outreach/2026-11-27.md) and
+the reply artifact `sales-rep-reply-20261126-1635.md` closes the ticket.
+
+A message is not revenue: the settlement still reads $0.00 and 0 orders.
+
 ## Verification
 
 - `npm test` exits 0 and `npm run check` exits 0 on `main`; the fleet tests are
