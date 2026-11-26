@@ -1,6 +1,6 @@
 // @last-edited: 2026-11-26 UTC+7.
 // @title: agent roles - the registry is the rule; a session's role and scope are enforced by this gate.
-// @state: every role has a doc and both path lists, each implementation path has one work-scope owner, the scope gate refuses paths outside a role, and generated permissions match the register.
+// @state: every role has a doc and both path lists, each implementation path has one work-scope owner, the scope gate refuses paths outside a role, every lane session runs that gate over the real diff, and generated permissions match the register.
 // @dependencies: node:test, strict, node:fs, node:path, node:url.
 
 // Roles are the door an automation-opened session walks through (docs/agent-roles.md).
@@ -163,6 +163,18 @@ test('the agent file denies editing outside the role scope and allows the scope'
 test('package.json exposes the role scope verifier', () => {
   const pkg = read('package.json') as { scripts: Record<string, string> };
   assert.equal(pkg.scripts['scope:role'], 'node scripts/verify/role-scope.ts');
+});
+
+test('every lane session runs the scope gate over its own diff before the merge', () => {
+  const { register } = load();
+  for (const role of register.roles) {
+    for (const expected of [`.opencode/agents/${role.id}.md`, `.claude/agents/${role.id}.md`]) {
+      const text = fs.readFileSync(path.join(root, expected), 'utf8');
+      assert.ok(text.includes(`npm run scope:role -- ${role.id} --base`), `${expected} does not tell the lane to run the scope gate for ${role.id} - a lane that is told to check a path list it names itself can pass a diff it never looked at`);
+      assert.ok(text.includes('--head HEAD'), `${expected} does not tell the lane which head to check`);
+      assert.ok(text.includes('the base ref your pull request targets'), `${expected} pins one base ref, so a lane on a stacked pull request reads the whole stack instead of its own changes`);
+    }
+  }
 });
 
 test('the role scope gate refuses a changed path outside the named role scope', () => {

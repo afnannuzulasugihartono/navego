@@ -1,6 +1,6 @@
-// @last-edited: 2026-11-25 UTC+7.
+// @last-edited: 2026-11-26 UTC+7.
 // @title: generate-agent-roles - renders the role agent files from the one role register.
-// @state: the OpenCode and Claude Code agent files are written from docs/agent-roles/registry.json, and --check refuses a tree whose files drifted from the register.
+// @state: the OpenCode and Claude Code agent files are written from docs/agent-roles/registry.json, every rendered session carries the scope gate command for its own role id, and --check refuses a tree whose files drifted from the register.
 // @dependencies: node:fs, node:path, node:url.
 
 // The register is the one source for who the roles are and what they may touch (docs/agent-roles/registry.json).
@@ -119,6 +119,7 @@ export const renderAgentFiles = (
       'Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.',
       'The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.',
       'The shared gates before a claim of done: npm test and npm run check, plus py tests/browser_extension_test.py when the extension changes inside a page.',
+      `Before the merge, the scope gate: run npm run scope:role -- ${role.id} --base <the base ref your pull request targets> --head HEAD in this worktree (a pull request against main uses origin/main); the verifier reads every changed path from that diff itself, and a non-zero exit blocks the merge.`,
       '',
       docBody,
     ].join('\n');
