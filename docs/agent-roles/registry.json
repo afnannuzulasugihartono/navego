@@ -28,9 +28,7 @@
       "id": "researcher",
       "team": "R&D: Research & Development",
       "scopePaths": [
-        "docs/research/**",
-        "docs/product/**",
-        "README.md"
+        "docs/research/**"
       ],
       "doc": "docs/agent-roles/researcher.md",
       "automations": [],
@@ -50,9 +48,7 @@
         "docs/agent-roles/registry.json",
         "docs/agent-roles/status.md",
         "docs/agent-roles/queue/**",
-        "docs/agent-roles/*.md",
-        "docs/economy.json",
-        "docs/handoff.md"
+        "docs/agent-roles/*.md"
       ],
       "doc": "docs/agent-roles/ceo.md",
       "automations": [],
@@ -61,7 +57,9 @@
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
-        "docs/proof/**"
+        "docs/proof/**",
+        "docs/economy.json",
+        "docs/handoff.md"
       ]
     },
     {
@@ -69,8 +67,7 @@
       "team": "Sales: Prospecting & outreach",
       "scopePaths": [
         "README.md",
-        "docs/research/prospects.md",
-        "docs/product/**"
+        "docs/prospects.md"
       ],
       "doc": "docs/agent-roles/sales-rep.md",
       "automations": [],
@@ -107,7 +104,6 @@
         "shared/**",
         "docs/api.md",
         "docs/agent-friendly.md",
-        "docs/research/**",
         "scripts/dev/generate-agent-roles.ts",
         "scripts/verify/role-scope.ts",
         "package.json",
@@ -151,9 +147,6 @@
       "id": "finance-analyst",
       "team": "Finance: Economy",
       "scopePaths": [
-        "docs/economy.json",
-        "docs/proof/**",
-        "docs/handoff.md",
         "hosted/migrations/**"
       ],
       "doc": "docs/agent-roles/finance-analyst.md",
@@ -163,15 +156,16 @@
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
-        "docs/proof/**"
+        "docs/proof/**",
+        "docs/economy.json",
+        "docs/handoff.md"
       ]
     },
     {
       "id": "support-agent",
       "team": "Customer Support: Support & retention",
       "scopePaths": [
-        "docs/product/support.md",
-        "docs/product/navego-adoption.md"
+        "docs/product/**"
       ],
       "doc": "docs/agent-roles/support-agent.md",
       "automations": [],

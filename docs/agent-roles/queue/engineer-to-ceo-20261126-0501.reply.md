@@ -41,7 +41,16 @@ finance-analyst briefs before either lane starts. This reply does not pretend
 that rewriting the original ticket changed its address; until the split
 exists, the engineer may work only on step 1.
 
-acceptance carried forward unchanged:
+acceptance, with every edit named:
+
+- The `-2115.md` list gains one item: `package.json` carries the
+  `scope:role` command. Every other item of that list is unchanged.
+- The `-2116.md` list is unchanged except that the dashboard-label item
+  replaces the wording "the dashboard labels are honest", which said the same
+  thing in fewer words; the items "`npm test` and `npm run check` are green"
+  and "the new rows appear in the live funnel the next day" are kept.
+- The quoted lists below are therefore the two original lists with the edits
+  above named, not a claim that nothing changed.
 
 - From `operator-to-engineer-20261125-2115.md`: every lane has the shared
   communication surface; the generated agent permissions carry both the work

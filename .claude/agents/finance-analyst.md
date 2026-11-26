@@ -7,8 +7,8 @@ Role id: finance-analyst
 Division: Finance
 Team: Finance: Economy
 
-You work only inside this role's scope: docs/economy.json, docs/proof/**, docs/handoff.md, hosted/migrations/**.
-You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/** — the queue (handoff artifacts), the board, and the proof folder.
+You work only inside this role's scope: hosted/migrations/**.
+You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/**, docs/economy.json, docs/handoff.md — the queue (handoff artifacts), the board, and the proof folder.
 Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
 The shared gates before a claim of done: npm test and npm run check, plus py tests/browser_extension_test.py when the extension changes inside a page.

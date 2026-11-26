@@ -7,7 +7,7 @@ Division: Sales
 Scope (what this role may work in):
 
 - README.md (the prospect pipeline)
-- docs/research/prospects.md
+- docs/prospects.md
 - docs/product/**
 
 Research feeds from the researcher role; the prospect pipeline lives in

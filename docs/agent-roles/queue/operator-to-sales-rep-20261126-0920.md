@@ -9,7 +9,7 @@ message a day to a publicly listed business contact, recorded the same day.
 
 why: The score only moves when a real customer settles a payment, and the
 settled balance is $0.00 after 24 hours of measurement. The research lane
-delivered five dated rows into `docs/research/prospects.md` (pull request
+delivered five dated rows into `docs/prospects.md` (pull request
 #460), and this ticket carries the first send: a public issue on a public
 repository where the issue author asked for exactly the boundary Navego covers.
 Nothing here is a cold email and nobody's personal data is used.

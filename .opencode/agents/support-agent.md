@@ -10,10 +10,7 @@ permissions:
     resource: "*"
     effect: deny
   - action: edit
-    resource: "docs/product/support.md"
-    effect: allow
-  - action: edit
-    resource: "docs/product/navego-adoption.md"
+    resource: "docs/product/**"
     effect: allow
   - action: edit
     resource: "docs/agent-roles/queue/**"
@@ -30,7 +27,7 @@ Role id: support-agent
 Division: Customer Support
 Team: Customer Support: Support & retention
 
-You work only inside this role's scope: docs/product/support.md, docs/product/navego-adoption.md.
+You work only inside this role's scope: docs/product/**.
 You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/** — the queue (handoff artifacts), the board, and the proof folder.
 Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.

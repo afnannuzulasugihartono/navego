@@ -18,7 +18,7 @@ retry ticket was claimed before that work began.
 
 ## What the lane prepared
 
-`docs/research/prospects.md` now selects AI-agent operators as the first
+`docs/prospects.md` now selects AI-agent operators as the first
 division and explains the local-browser execution gap from the named public
 sources. It carries five dated rows, each with a public business contact, a
 concrete Navego use case, a published price, and consent state. The old Skyvern
@@ -38,7 +38,7 @@ No outreach was sent by this lane. The shortlist is the input for the
 - Reviewer agent — final read-only report on content head
   `2aac6611fa127ed5f1f66a57714abaa996f8d4c1`: "No findings. Ready to merge:
   Yes." The later head only merged `main`; the reviewed diff stayed
-  `docs/research/prospects.md`.
+  `docs/prospects.md`.
 - CI run 45728466728 on PR #460 — `unit`, `site`, `deno-hosted`, `browser`,
   `postgres`, and SonarCloud passed. `secret-scan` failed on an OpenCode
   automation id in `docs/proof/2026-11-25-survival-run-13.md`, which came from

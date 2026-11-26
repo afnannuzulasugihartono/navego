@@ -4,7 +4,7 @@ The dispatcher opened the researcher lane on the ticket
 `operator-to-researcher-20261125-1900.md` at 05:25 WIB. The lane created its
 worktree (`D:/GitHub/navego-researcher-20261125-1900`) at 05:31 and then
 produced nothing for the next fifty minutes: no commit, no change in
-`docs/research/prospects.md`, no reply artifact, and no file in the worktree
+`docs/prospects.md`, no reply artifact, and no file in the worktree
 that the checkout did not already contain.
 
 The ticket is released for a retry under a tighter brief

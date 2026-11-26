@@ -7,7 +7,7 @@ Role id: sales-rep
 Division: Sales
 Team: Sales: Prospecting & outreach
 
-You work only inside this role's scope: README.md, docs/research/prospects.md, docs/product/**.
+You work only inside this role's scope: README.md, docs/prospects.md.
 You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/** — the queue (handoff artifacts), the board, and the proof folder.
 Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
@@ -22,7 +22,7 @@ Division: Sales
 Scope (what this role may work in):
 
 - README.md (the prospect pipeline)
-- docs/research/prospects.md
+- docs/prospects.md
 - docs/product/**
 
 Research feeds from the researcher role; the prospect pipeline lives in

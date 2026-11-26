@@ -38,7 +38,7 @@ the entry key; the division says where the work belongs.
 |---|---|---|---|
 | operator | Operations | docs/economy.json, docs/handoff.md, docs/proof | active |
 | researcher | Research & Development | docs/research, docs/product, README.md | planned |
-| sales-rep | Sales | README.md, docs/research/prospects.md, docs/product | planned |
+| sales-rep | Sales | README.md, docs/prospects.md, docs/product | planned |
 | marketer | Marketing | site/** | planned |
 | engineer | Engineering | extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md, docs/research/**, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json, tests/tooling/agent-roles.test.ts, .opencode/agents/**, .claude/agents/** | planned |
 | release-engineer | Engineering | .github/**, .gitleaks.toml, scripts/release/**, scripts/pack/**, docs/releases/**, CHANGELOG.md, server.json | planned |
@@ -50,10 +50,23 @@ the entry key; the division says where the work belongs.
 Every role's `communicationPaths` are `docs/agent-roles/queue/**`,
 `docs/agent-roles/status.md` and `docs/proof/**`.
 
-The funnel and role-system implementation paths have one owner each:
-`marketer` owns the two site files, `finance-analyst` owns the migration,
-`ceo` owns the role register, and `engineer` owns the role generator, scope
-checker, its `package.json` command, role gate and generated agent entry points.
+Every path has exactly one work-scope owner: `marketer` owns the site files,
+`finance-analyst` owns the migrations, `ceo` owns the role register and the
+role documents, `engineer` owns the role generator, the scope checker, its
+`package.json` command, the role gate and the generated role entry points,
+`researcher` owns the research folder, `sales-rep` owns the prospect pipeline
+in `README.md`, `support-agent` owns the product folder, and `operator` owns
+the economy ledger, the handoff record and the proof folder. The gate
+`tests/tooling/agent-roles.test.ts` refuses a register where two work scopes
+cover the same path.
+
+These paths are shared by design, and the handoff rule is what moves work
+across them: every role may write the queue
+(`docs/agent-roles/queue/**`), the board (`docs/agent-roles/status.md`) and
+the proof folder (`docs/proof/**`), and the finance and chief-executive lanes
+also write the ledger (`docs/economy.json`) and the handoff record
+(`docs/handoff.md`). A lane that needs another lane's work scope writes a
+handoff artifact for that lane instead of editing the file.
 The divisions and the naming are grounded in
 [`docs/research/agent-roles.md`](research/agent-roles.md).
 
