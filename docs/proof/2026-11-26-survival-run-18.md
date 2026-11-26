@@ -31,6 +31,21 @@ one. The honest reading of the last 24 hours is: **no human traffic at all,
 except four browsers that reached `/harga` (three of them in the seconds around
 the first outreach, and one that pressed buy).**
 
+## The launcher, once more, and this time the real cause
+
+The 11:25 slot dispatched the engineer lane and wrote its dispatch note, and the
+lane process again did not start: the worker log says "The system cannot find
+the file specified". The cause is not the PATH. `Start-Process` with redirected
+output starts the program through CreateProcess, which cannot run a `.cmd`
+shim - and `opencode.cmd` is a batch file. The shim runs
+`opencode.exe` by hand; the worker asked for the shim.
+
+The worker now starts the executable itself
+(\`%APPDATA%\npm\node_modules\@opencode\cli\bin\opencode.exe\`, with a
+`Get-Command opencode.exe\` fallback), and the pattern was proven before it
+went back into the queue: a launched `--version\` printed
+`opencode v2.4.1\` into the redirected file.
+
 ## What changed in this run
 
 - The measurement truth is now a ticket with the evidence and the fix:
