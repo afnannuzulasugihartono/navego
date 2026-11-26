@@ -17,7 +17,7 @@ pair and for proof that a different key in the same file is still rejected.
 The CEO lane measured the repair on 2026-11-26 with the scanner CI pins
 (gitleaks 8.24.0) on a shallow clone of `main` and of the pull request head, so
 this ticket carries the exact edit and the exact commands that show it works.
-Decision: `docs/decisions.json` -> `docs-agent-roles-10`.
+Decision: `docs/decisions.json` -> `docs-agent-roles-11`.
 
 scopeRequested:
 
