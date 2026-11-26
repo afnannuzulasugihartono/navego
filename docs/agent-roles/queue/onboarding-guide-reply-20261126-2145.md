@@ -54,9 +54,10 @@ evidence:
   communication path.
 - Pull request: https://github.com/afnannuzulasugihartono/navego/pull/473,
   branch `agent/onboarding-guide/20261126-2145/first-win`, open against `main`.
-- The CI on the exact head is red, and the red is not in this diff: `site`,
-  `deno-hosted`, `secret-scan`, `browser` and SonarCloud passed, while `unit`
-  and `postgres` both failed on "the plan names the slot"
+- The CI on the exact head is red, and the red is not in this diff: CI run
+  45909283421 on the head `bcfc54eb` passed `site`, `deno-hosted`,
+  `secret-scan`, `browser` and SonarCloud, while `unit` and `postgres` both
+  failed on "the plan names the slot"
   (`tests/tooling/agent-dispatch.test.ts:128`). The same assertion fails on
   `main` itself - the run for `e6e9d143` failed the same way - so the red
   predates this branch. The dispatcher returns nothing when

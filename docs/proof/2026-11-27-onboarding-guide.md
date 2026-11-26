@@ -200,9 +200,9 @@ The local gates are green on this head:
   exit 0: the named roles may change all 7 paths.
 
 The CI on the exact head is **red**, and it is red for a reason that is not in
-this diff. Pull request #473 ran the six CI jobs; `site`, `deno-hosted`,
-`secret-scan`, `browser` and SonarCloud passed, and `unit` and `postgres` both
-failed on one assertion:
+this diff. The run for the head `bcfc54eb` (CI run 45909283421, pull request
+#473) ran the six CI jobs; `site`, `deno-hosted`, `secret-scan`, `browser` and
+SonarCloud passed, and `unit` and `postgres` both failed on one assertion:
 
 ```
 ✖ the dry run prints the plan, prints no credential, and writes nothing
