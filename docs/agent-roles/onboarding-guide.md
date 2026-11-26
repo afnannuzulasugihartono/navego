@@ -6,7 +6,16 @@ Division: Customer Success
 
 Scope (what this role may work in):
 
-- docs/** (prose and definitions, the onboarding record)
+- docs/install.md
+- docs/external-install.md
+- docs/agent-call.md
+
+Shared communication surface (every lane may write these):
+
+- docs/agent-roles/queue/**
+- docs/agent-roles/status.md
+- docs/proof/**
+- docs/decisions.json
 
 Goal:
 

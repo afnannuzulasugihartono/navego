@@ -42,7 +42,7 @@ written, all of them fixed in this run.
 The dispatcher takes a money ticket before a measurement ticket, because
 AGENTS.md puts income above polish, and inside each class the oldest ticket
 first. The sales ticket is written with a condition: if
-`docs/research/prospects.md` holds no dated row yet, the lane writes one line
+`docs/prospects.md` holds no dated row yet, the lane writes one line
 and sends nothing.
 
 ## What changed in this run

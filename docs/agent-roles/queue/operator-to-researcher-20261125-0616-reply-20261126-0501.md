@@ -5,7 +5,7 @@ answered: operator-to-researcher-20261125-0616.md
 
 shipped: The retry brief asked for the first division and five rows read from
 named public pages by URL. The lane delivered both, and the result is in
-`docs/research/prospects.md` (pull request #460).
+`docs/prospects.md` (pull request #460).
 
 evidence: the branch's own CI run and the reviewer agent's findings, which the
 lane answers in its own scope under

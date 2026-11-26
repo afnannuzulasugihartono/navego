@@ -26,7 +26,7 @@ scopeRequested:
    published, what they build or buy, the one concrete Navego use case that
    fits them, the price that fits that use case, and the date the row was
    written.
-3. Write the rows into `docs/research/prospects.md`, which is the pipeline the
+3. Write the rows into `docs/prospects.md`, which is the pipeline the
    `sales-rep` lane works from.
 
 acceptance:

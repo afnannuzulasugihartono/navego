@@ -11,7 +11,19 @@ Scope (what this role may work in):
 - shared/**
 - docs/api.md
 - docs/agent-friendly.md
-- docs/research/**
+- scripts/dev/generate-agent-roles.ts
+- scripts/verify/role-scope.ts
+- package.json
+- tests/tooling/agent-roles.test.ts
+- .opencode/agents/**
+- .claude/agents/**
+
+Shared communication surface (every lane may write these):
+
+- docs/agent-roles/queue/**
+- docs/agent-roles/status.md
+- docs/proof/**
+- docs/decisions.json
 
 Goal:
 

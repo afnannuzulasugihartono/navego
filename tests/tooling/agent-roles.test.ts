@@ -1,6 +1,6 @@
-// @last-edited: 2026-11-25 UTC+7.
+// @last-edited: 2026-11-26 UTC+7.
 // @title: agent roles - the registry is the rule; a session's role and scope are enforced by this gate.
-// @state: the registry parses, every role has a doc that names the role, every scope path resolves, the doc table lists every role, and every automations entry exists.
+// @state: every role has a doc and both path lists, each implementation path has one work-scope owner, the scope gate refuses paths outside a role, every lane session runs that gate over the real diff, and generated permissions match the register.
 // @dependencies: node:test, strict, node:fs, node:path, node:url.
 
 // Roles are the door an automation-opened session walks through (docs/agent-roles.md).
@@ -11,7 +11,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { editResource, renderAgentFiles } from '../../scripts/dev/generate-agent-roles.ts';
+import os from 'node:os';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { editResource, renderAgentFiles, renderRoleDocuments } from '../../scripts/dev/generate-agent-roles.ts';
+import { checkRolesScope, checkRoleScope, scopePathMatches } from '../../scripts/verify/role-scope.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const read = (name: string): unknown => JSON.parse(fs.readFileSync(path.join(root, name), 'utf8')) as unknown;
@@ -51,6 +54,13 @@ const resolves = (p: string): boolean => {
 
 const docText = (p: string): string => fs.readFileSync(path.join(root, p), 'utf8');
 
+const REQUIRED_COMMUNICATION_PATHS = [
+  'docs/agent-roles/queue/**',
+  'docs/agent-roles/status.md',
+  'docs/proof/**',
+];
+
+
 // The divisions a company actually runs, read from the corporate titles and the functional structure (Wikipedia, Organizational structure and Chief executive officer, read 2026-11-25).
 // A role that names no real division is a project label, and a project label is not a lane an agent can enter.
 
@@ -89,6 +99,9 @@ test('every role is complete enough for a session to open with', () => {
     assert.ok(COMPANY_DIVISIONS.includes(role.division), `${role.id} names the division ${role.division}, which is not a company division`);
     assert.ok(docText(role.doc).includes(`Division: ${role.division}`), `${role.id}'s doc does not name its division`);
     assert.ok(Array.isArray(role.communicationPaths) && role.communicationPaths.length >= 1, `${role.id} names the shared communication surface it may write`);
+    for (const sharedPath of REQUIRED_COMMUNICATION_PATHS) {
+      assert.ok(role.communicationPaths.includes(sharedPath), `${role.id} does not allow the shared communication path ${sharedPath}`);
+    }
     assert.ok(role.communicationPaths.every((p) => resolves(p)), `${role.id} scopes a communication path that does not exist`);
     assert.ok(role.scopePaths.length >= 1, `${role.id} has at least one scope path`);
     assert.ok(role.scopePaths.every((p) => typeof p === 'string' && resolves(p)), `${role.id} scopes ${role.scopePaths.filter((p) => !resolves(p))} that do not exist - a role that may not touch real paths cannot be the entry point`);
@@ -144,6 +157,169 @@ test('the agent file denies editing outside the role scope and allows the scope'
       const resource = editResource(sharedPath);
       assert.ok(text.includes(`resource: "${resource}"\n    effect: allow`), `${role.id} cannot write the shared communication surface ${sharedPath} - a lane that cannot report is a lane that cannot report`);
     }
+    assert.ok(
+      text.includes('- action: subagent\n    resource: "*"\n    effect: deny'),
+      `${role.id} does not deny subagents - a child session multiplies requests on the same key`,
+    );
+    assert.ok(text.includes('the subagent action is denied'), `${role.id}'s body does not carry the no-subagent rule`);
+    const claude = fs.readFileSync(path.join(root, `.claude/agents/${role.id}.md`), 'utf8');
+    assert.ok(claude.includes('the subagent action is denied'), `${role.id}'s Claude body does not carry the no-subagent rule`);
+  }
+});
+
+test('the role documents and the table are rendered from the register', () => {
+  const { register } = load();
+  const rendered = renderRoleDocuments(register);
+  assert.ok(rendered.some((file) => file.path === 'docs/agent-roles.md'), 'the role table is rendered from the register');
+  for (const role of register.roles) {
+    const file = rendered.find((candidate) => candidate.path === role.doc);
+    assert.ok(file, `the register does not render ${role.doc}`);
+    assert.equal(docText(role.doc), file.content, `${role.doc} drifted from the register - run: node scripts/dev/generate-agent-roles.ts`);
+  }
+});
+
+test('package.json exposes the role scope verifier', () => {
+  const pkg = read('package.json') as { scripts: Record<string, string> };
+  assert.equal(pkg.scripts['scope:role'], 'node scripts/verify/role-scope.ts');
+});
+
+test('every lane session runs the scope gate over its own diff before the merge', () => {
+  const { register } = load();
+  for (const role of register.roles) {
+    for (const expected of [`.opencode/agents/${role.id}.md`, `.claude/agents/${role.id}.md`]) {
+      const text = fs.readFileSync(path.join(root, expected), 'utf8');
+      assert.ok(text.includes(`npm run scope:role -- ${role.id} --base`), `${expected} does not tell the lane to run the scope gate for ${role.id} - a lane that is told to check a path list it names itself can pass a diff it never looked at`);
+      assert.ok(text.includes('--head HEAD'), `${expected} does not tell the lane which head to check`);
+      assert.ok(text.includes('the base ref your pull request targets'), `${expected} pins one base ref, so a lane on a stacked pull request reads the whole stack instead of its own changes`);
+    }
+  }
+});
+
+test('the role scope gate refuses a changed path outside the named role scope', () => {
+  const { register } = load();
+  const result = checkRoleScope(register, 'engineer', [
+    'extension/lib/protocol.ts',
+    'docs/agent-roles/queue/engineer-to-ceo.md',
+    'site/app/lib/funnel.ts',
+  ]);
+  assert.deepEqual(result.allowed, [
+    'extension/lib/protocol.ts',
+    'docs/agent-roles/queue/engineer-to-ceo.md',
+  ]);
+  assert.deepEqual(result.refused, ['site/app/lib/funnel.ts']);
+});
+
+test('two named lanes may share a communication path, but not a work scope', () => {
+  const shared = checkRolesScope(
+    {
+      roles: [
+        { id: 'operator', scopePaths: ['docs/proof'], communicationPaths: ['docs/agent-roles/queue/**'] },
+        { id: 'engineer', scopePaths: ['extension/**'], communicationPaths: ['docs/agent-roles/queue/**'] },
+      ],
+    },
+    ['operator', 'engineer'],
+    ['docs/agent-roles/queue/operator-to-engineer-20261126-0725.md'],
+  );
+  assert.deepEqual(shared.refused, [], 'a shared communication path is allowed');
+  assert.deepEqual(shared.ambiguous, [], 'a shared communication path is not a work-scope overlap');
+
+  const overlap = checkRolesScope(
+    {
+      roles: [
+        { id: 'marketer', scopePaths: ['site/**'], communicationPaths: [] },
+        { id: 'support-agent', scopePaths: ['site/**'], communicationPaths: [] },
+      ],
+    },
+    ['marketer', 'support-agent'],
+    ['site/app/page.tsx'],
+  );
+  assert.deepEqual(overlap.refused, [], 'a work scope is still an owner');
+  assert.deepEqual(overlap.ambiguous, ['site/app/page.tsx'], 'two work scopes on one path are ambiguous');
+});
+
+test('no two roles work scopes cover the same tracked file', () => {
+  const { roles } = load();
+  const tracked = execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' })
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+  for (const file of tracked) {
+    const owners = roles
+      .filter((role) => role.scopePaths.some((scopePath) => scopePathMatches(file, scopePath)))
+      .map((role) => role.id);
+    assert.equal(owners.length <= 1, true, `${file} is claimed by ${owners.join(', ')} - a work scope has one owner`);
+  }
+});
+
+test('no two work scopes overlap even before a file exists', () => {
+  const { roles } = load();
+  const representative = (pattern: string): string => pattern.replace('/**', '/probe').replace(/\*/g, 'probe');
+  for (const left of roles) {
+    for (const right of roles) {
+      if (left.id >= right.id) continue;
+      for (const leftPath of left.scopePaths) {
+        for (const rightPath of right.scopePaths) {
+          const overlaps = scopePathMatches(representative(leftPath), rightPath)
+            || scopePathMatches(representative(rightPath), leftPath);
+          assert.equal(overlaps, false, `${left.id} (${leftPath}) and ${right.id} (${rightPath}) cover the same path`);
+        }
+      }
+    }
+  }
+});
+
+test('the scope checker refuses an out-of-scope path when it is run with the real diff', () => {
+  const script = path.join(root, 'scripts/verify/role-scope.ts');
+  const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'role-scope-test-'));
+  const run = (cwd: string, base: string, head: string, extra: string[] = []) => {
+    return spawnSync(process.execPath, [script, 'engineer', '--base', base, '--head', head, ...extra], { cwd, encoding: 'utf8' });
+  };
+  try {
+    execFileSync('git', ['init', '--quiet'], { cwd: sandbox });
+    execFileSync('git', ['config', 'user.email', 'gate@example.test'], { cwd: sandbox });
+    execFileSync('git', ['config', 'user.name', 'Gate'], { cwd: sandbox });
+    execFileSync('git', ['checkout', '--quiet', '-b', 'base'], { cwd: sandbox });
+    fs.mkdirSync(path.join(sandbox, 'extension/lib'), { recursive: true });
+    fs.mkdirSync(path.join(sandbox, 'site/app/lib'), { recursive: true });
+    fs.writeFileSync(path.join(sandbox, 'extension/lib/protocol.ts'), 'export const protocol = 1;\n');
+    fs.writeFileSync(path.join(sandbox, 'site/app/lib/funnel.ts'), 'export const funnel = 1;\n');
+    execFileSync('git', ['add', '.'], { cwd: sandbox });
+    execFileSync('git', ['commit', '--quiet', '-m', 'first'], { cwd: sandbox });
+    execFileSync('git', ['checkout', '--quiet', '-b', 'change'], { cwd: sandbox });
+    fs.writeFileSync(path.join(sandbox, 'extension/lib/protocol.ts'), 'export const protocol = 2;\n');
+    execFileSync('git', ['add', '.'], { cwd: sandbox });
+    execFileSync('git', ['commit', '--quiet', '-m', 'in scope'], { cwd: sandbox });
+    const allowed = run(sandbox, 'base', 'change');
+    assert.equal(allowed.status, 0, 'an in-scope change passes the command');
+
+    fs.writeFileSync(path.join(sandbox, 'site/app/lib/funnel.ts'), 'export const funnel = 2;\n');
+    execFileSync('git', ['add', '.'], { cwd: sandbox });
+    execFileSync('git', ['commit', '--quiet', '-m', 'out of scope'], { cwd: sandbox });
+    const refused = run(sandbox, 'base', 'change');
+    assert.equal(refused.status, 1, 'an out-of-scope change makes the command exit non-zero');
+    assert.match(refused.stderr, /site\/app\/lib\/funnel\.ts/, 'the command names the refused path');
+
+    const withPathList = run(sandbox, 'base', 'change', ['extension/lib/protocol.ts']);
+    assert.equal(withPathList.status, 1, 'a caller-supplied path list cannot make the command pass');
+
+    const empty = run(sandbox, 'change', 'change');
+    assert.equal(empty.status, 1, 'an empty diff is a refusal, not a pass');
+  } finally {
+    fs.rmSync(sandbox, { recursive: true, force: true });
+  }
+});
+
+test('generated permissions allow exactly the work and communication lists', () => {
+  const { register } = load();
+  for (const role of register.roles) {
+    const text = fs.readFileSync(path.join(root, `.opencode/agents/${role.id}.md`), 'utf8');
+    const rules = [...text.matchAll(/  - action: edit\n    resource: "([^"]+)"\n    effect: (allow|deny)/g)]
+      .map((match) => ({ resource: match[1], effect: match[2] }));
+    assert.deepEqual(rules, [
+      { resource: '*', effect: 'deny' },
+      ...role.scopePaths.map((scopePath) => ({ resource: editResource(scopePath), effect: 'allow' })),
+      ...role.communicationPaths.map((sharedPath) => ({ resource: editResource(sharedPath), effect: 'allow' })),
+    ], `${role.id} has edit permissions outside its work and communication lists`);
   }
 });
 

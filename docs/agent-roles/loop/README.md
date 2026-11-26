@@ -1,0 +1,57 @@
+# The manager loop
+
+The `operator` role is the agent manager. It assigns one bounded ticket at a
+time, reads the reply, and closes the loop on the board. The queue is the
+memory: a chat message is not an assignment, and a conversation is not a
+result.
+
+## States
+
+| state | written by | meaning | next |
+|---|---|---|---|
+| assigned | manager | `<manager>-to-<role>-<stamp>.md` sits in the queue | the role's lane worker claims it |
+| working | lane | `<role>-started-<stamp>.md` carries the ticket, the slot and the worker title | the lane writes a reply |
+| returned | lane | `<role>-reply-<stamp>.md` carries `answered: <ticket>` | the manager reads and closes |
+| closed | manager | the reply is named on `docs/agent-roles/status.md` and in `docs/proof/` | none |
+| stalled | watchdog | the worker process is gone and no reply exists | the marker is released, the ticket returns to assigned |
+| blocked | watchdog | three releases for one ticket | the manager narrows or escalates it |
+
+## The liveness check
+
+`scripts/dev/agent-fleet/watch.ts` runs every ten minutes. It reads two
+signals: the operating system's process table, and the session list of the
+running OpenCode service.
+
+- A lane is **working** while a live `opencode.exe` carries
+  `--worktree lane-<role>-<stamp>` and the lane's session spoke in the last
+  thirty minutes.
+- A lane is **stalled** when the process is gone, when its session ended in an
+  error, or when its session went silent for thirty minutes. The marker is
+  renamed to `<role>-released-<stamp>.md` with the reason, and the next lane
+  worker dispatches the ticket again.
+- Three releases move the ticket to `queue/blocked/`, where the manager sees a
+  repeated failure instead of a silent loop.
+- A failed read is **unknown**: an unreadable process table or session list
+  releases nothing, because a failed read is not evidence of death.
+
+The check reads the session's own heartbeat, not the marker's age: an agent
+that dies two minutes after it starts is released on the next ten-minute tick,
+and an agent that sits alive on a provider error while its session stops
+moving is released too.
+
+The table also counts the **child sessions** a lane dispatched. A lane that
+dispatches subagents multiplies requests against the same 40 rpm key, which
+ends in HTTP 429; every generated agent file denies the `subagent` action, and
+the count in the state table is how the manager sees a lane that ignored it.
+
+## What the manager does every run
+
+1. Read `docs/agent-roles/loop/state.md` and the queue.
+2. For every `returned` ticket: read the reply, write the outcome on the status
+   board and in `docs/proof/`, and name the next action. That closes the ticket.
+3. For every `blocked` ticket: read the release notes, narrow the ticket or
+   escalate it to the owner; do not re-dispatch the same text a fourth time.
+4. Only then choose the next assignment.
+
+The manager never does a lane's work. A lane never writes its own ticket or
+closes its own ticket.

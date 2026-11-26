@@ -32,7 +32,7 @@ scopeRequested:
    - `https://github.com/browser-use/browser-use` and
      `https://github.com/mediar-ai/skyvern` — two agent projects that drive a
      browser, for the shape of their own limits.
-3. Write five shortlist rows into `docs/research/prospects.md`, which is the
+3. Write five shortlist rows into `docs/prospects.md`, which is the
    pipeline the `sales-rep` lane works from. Each row carries: the
    organisation, the public URL where the contact is published, what they build
    or buy, the one concrete Navego use case that fits them, the price that

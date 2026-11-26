@@ -35,7 +35,7 @@ shortlist could not merge under the merge-by-gate rule.
    The reviewer reported ten findings on pull request #460; eight remain
    unfixed, and they are all about what a cited page actually says (a count, a
    capability, three product descriptions, and a missing step in the sales
-   handoff). The researcher lane owns `docs/research/prospects.md`, so they went
+   handoff). The researcher lane owns `docs/prospects.md`, so they went
    out as ticket `operator-to-researcher-20261126-0845.md` instead of being
    edited across a scope boundary.
 

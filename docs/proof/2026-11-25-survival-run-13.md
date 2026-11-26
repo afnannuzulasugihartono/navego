@@ -13,7 +13,7 @@ it.
 The dispatcher opened it at 05:25 WIB on the oldest money ticket
 (`operator-to-researcher-20261125-1900.md`). The lane created its worktree
 (`D:/GitHub/navego-researcher-20261125-1900`) at 05:31 and then produced
-nothing for fifty minutes: no commit, no change in `docs/research/prospects.md`,
+nothing for fifty minutes: no commit, no change in `docs/prospects.md`,
 no reply artifact, and no file in the worktree that the checkout did not
 already hold. The brief asked it to research the market; the web search tool
 answers nothing in this environment, and the brief never said where to read

@@ -3,7 +3,7 @@ class: measurement
 # operator → researcher — the reviewer findings that still stand on the shortlist
 
 intent: Pull request #460 carries the first shortlist, and the reviewer agent
-reported ten findings on it. The lane that owns `docs/research/prospects.md` is
+reported ten findings on it. The lane that owns `docs/prospects.md` is
 the researcher lane, so the lane fixes them there; the operator lane does not
 edit another lane's file.
 

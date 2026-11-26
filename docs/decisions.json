@@ -1480,6 +1480,26 @@
         "kind": "recorded",
         "ref": "the sales lane session of 2026-11-26 (ses_deac22d12ffeEmPAtfaHiFhCIK, opened 07:25 WIB on the nvidia-1 account) ran for two hours and twenty minutes without sending: the issue https://github.com/DavidN0809/statement-harbor/issues/11 still held 0 comments, because its 60-step budget ran out while it read and because its role file did not allow it to write docs/proof/outreach/2026-11-26.md"
       }
+    },
+    {
+      "id": "docs-agent-roles-08",
+      "scope": "agent/roles",
+      "file": "docs/agent-roles/loop/README.md",
+      "decision": "The operator role is the agent manager: it assigns one bounded ticket at a time in docs/agent-roles/queue, the lane claims it with a started marker, returns a reply carrying answered: <ticket>, and the manager closes it on docs/agent-roles/status.md and in docs/proof/. The queue is the memory; a conversation is not an assignment and a chat message is not a result. A watchdog reads the operating system's process table and the lane session's own heartbeat every ten minutes: a lane is working only while a live opencode.exe carries --worktree lane-<role>-<stamp> and its session spoke in the last thirty minutes; a marker whose process is gone, whose session ended in an error or whose session went silent is renamed to a released marker with the reason, and a ticket is blocked after three releases; an unreadable read is unknown, not death, so nothing is released on a failed read. The table also counts the child sessions a lane dispatched, because a subagent multiplies requests on the same 40 rpm key.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-26: 'aku mau role operator jadi agent manager deh lebih berguna gak sih?' and 'sama perlu komunikasi juga gak sih antara agent manager dan tiap role terus modelnya feedback loop jadi misal agent manager assign tugas ke role engineer kemudian engineer selesai lalu dia kasih hasilnya ke agent manager tapi harus dibuat terdokumentasi supaya tidak mengandalkan memori yang ada di percakapan kemudian untuk automationnya cukup mengecek agent apakah off atau masih mengerjakan soalnya kadang agent gagal atau timed out sendiri dan akhirnya berhenti tiba tiba'"
+      }
+    },
+    {
+      "id": "docs-agent-roles-09",
+      "scope": "agent/roles",
+      "file": "docs/agent-roles/registry.json",
+      "decision": "No role dispatches a subagent. Each lane runs on one credential whose provider answers at 40 requests per minute, and a child session multiplies requests against the same key; the observed result is HTTP 429 and a lane that stops mid-task. The generated agent files deny the subagent action and every role body says to do the work in the session.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-26 with the lane screenshot: 'karena pakai apikey dari nvidia yang dibatasi 40 rpm saranku untuk setiap role dilarang dispatch sub agents karena itu akan membuat rpm naik dan akibatnya request timed out'"
+      }
     }
   ]
 }

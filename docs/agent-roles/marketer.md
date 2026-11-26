@@ -8,6 +8,13 @@ Scope (what this role may work in):
 
 - site/**
 
+Shared communication surface (every lane may write these):
+
+- docs/agent-roles/queue/**
+- docs/agent-roles/status.md
+- docs/proof/**
+- docs/decisions.json
+
 Goal:
 
 Ship public-facing site content and copy that fits the product story without

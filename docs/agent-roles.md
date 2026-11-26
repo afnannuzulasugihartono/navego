@@ -15,6 +15,8 @@ has:
 - an `id` (kebab-case token, the entry key),
 - a `team` (the division that owns it),
 - `scopePaths` (the paths the role may touch),
+- `communicationPaths` (the shared queue, status board and proof paths the role
+  may write),
 - a `doc` (this role's markdown, which names the role id and says the scope),
 - `automations` (the automations that open sessions for it),
 - `status` (`active` while an automation runs it, `planned` otherwise).
@@ -34,20 +36,39 @@ the entry key; the division says where the work belongs.
 
 | agent id | division | scope (repo paths) | status |
 |---|---|---|---|
-| operator | Operations | docs/economy.json, docs/handoff.md, docs/proof | active |
-| researcher | Research & Development | docs/research, docs/product, README.md | planned |
-| sales-rep | Sales | README.md, docs/research/prospects.md, docs/product | planned |
+| operator | Operations | docs/economy.json, docs/handoff.md, docs/agent-roles/keys.json, docs/proof, docs/agent-roles/loop/**, docs/automations.md, scripts/dev/agent-fleet/**, scripts/dev/agent-worktree.ts, tests/tooling/agent-loop.test.ts, tests/tooling/agent-dispatch.test.ts | active |
+| researcher | Research & Development | docs/research/** | planned |
+| ceo | Executive | docs/agent-roles.md, docs/agent-roles/registry.json, docs/agent-roles/*.md | planned |
+| sales-rep | Sales | README.md, docs/prospects.md | planned |
 | marketer | Marketing | site/** | planned |
-| engineer | Engineering | extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md | planned |
-| release-engineer | Engineering | .github/**, scripts/release/**, scripts/pack/**, docs/releases, CHANGELOG.md, server.json | planned |
-| finance-analyst | Finance | docs/economy.json, docs/proof/**, hosted/migrations, docs/handoff.md | planned |
-| support-agent | Customer Support | docs/product/support.md, docs/product/navego-adoption.md, site/** (docs surface) | planned |
-| onboarding-guide | Customer Success | docs/** (prose and definitions) | planned |
-| ceo | Executive | docs/agent-roles.md, docs/agent-roles/registry.json, docs/agent-roles/status.md, docs/agent-roles/queue, docs/economy.json, docs/handoff.md | planned |
+| engineer | Engineering | extension/**, local/**, shared/**, docs/api.md, docs/agent-friendly.md, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json, tests/tooling/agent-roles.test.ts, .opencode/agents/**, .claude/agents/** | planned |
+| release-engineer | Engineering | .github/**, .gitleaks.toml, CHANGELOG.md, docs/releases/**, scripts/pack/**, scripts/release/**, server.json | planned |
+| finance-analyst | Finance | hosted/migrations/** | planned |
+| support-agent | Customer Support | docs/product/** | planned |
+| onboarding-guide | Customer Success | docs/install.md, docs/external-install.md, docs/agent-call.md | planned |
 
-`support-agent` and `onboarding-guide` both hold `docs/product`; a written
-handoff between them, not inheritance, moves work across. The divisions and
-the naming are grounded in
+Every role's `communicationPaths` are `docs/agent-roles/queue/**`,
+`docs/agent-roles/status.md`, `docs/proof/**` and `docs/decisions.json`.
+
+Every path has exactly one work-scope owner: `marketer` owns the site files,
+`finance-analyst` owns the migrations, `ceo` owns the role register and the
+role documents, `engineer` owns the role generator, the scope checker, its
+`package.json` command, the role gate and the generated role entry points,
+`researcher` owns the research folder, `sales-rep` owns the root readme and
+the prospect pipeline in `docs/prospects.md`, `support-agent` owns the product
+folder, and `operator` owns the economy ledger, the handoff record, the proof
+folder, the loop and the fleet tooling. The gate
+`tests/tooling/agent-roles.test.ts` refuses a register where two work scopes
+cover the same tracked file.
+
+These paths are shared by design, and the handoff rule is what moves work
+across them: every role may write the queue
+(`docs/agent-roles/queue/**`), the board (`docs/agent-roles/status.md`) and
+the proof folder (`docs/proof/**`), and the finance and chief-executive lanes
+also write the ledger (`docs/economy.json`) and the handoff record
+(`docs/handoff.md`). A lane that needs another lane's work scope writes a
+handoff artifact for that lane instead of editing the file.
+The divisions and the naming are grounded in
 [`docs/research/agent-roles.md`](research/agent-roles.md).
 
 ## The key roster (capacity split by credential)
@@ -104,15 +125,36 @@ assembled from many sessions without drifting:
 3. **Product state.** `docs/handoff.md` is the rolling "what is true now, next
    step" record; a division writes its last state there when it ships.
 
+**No subagents.** No role dispatches a subagent. Each lane runs on one
+credential whose provider answers at 40 requests per minute, and a child
+session multiplies requests against the same key; the observed result is HTTP
+429 and a lane that stops mid-task. The generated agent files deny the
+`subagent` action, and every role body says to do the work in the session.
+
 **One communication container** — `docs/agent-roles/status.md`. It is the shared line-per-role board every division reads: what is missing for a division, what can be upgraded, and the open upgrades. A session opens it, refreshes its own line, and proposes upgrades in the queue artifact below when it sees a gap it owns; nothing stays secret because it lived in a chat, since the status is a file.
 
 Handoff between divisions is one artifact per ticket, in
-`docs/agent-roles/queue/`, named `<from-role>-to-<to-role>-<yyyymmdd>.md`, with
-these fields: `intent`, `why`, `scopeRequested` (what the other role must do),
-`acceptance` (the shared gates that count as done), `deadline` (optional). The
-receiving session reads the queue, works, and answers by writing a reply
-artifact next to it. Handoff is not delegation of a file: the receiving role
-runs its own session, inside its own scope.
+`docs/agent-roles/queue/`, named
+`<from-role>-to-<to-role>-<yyyymmdd-HHMM>.md`, with these fields: `intent`,
+`why`, `scopeRequested` (what the other role must do), `acceptance` (the shared
+gates that count as done), `deadline` (optional). The receiving session reads
+the queue, works, and answers by writing a reply artifact next to it. Handoff
+is not delegation of a file: the receiving role runs its own session, inside
+its own scope.
+
+**The manager loop.** The `operator` role is the agent manager. It assigns one
+ticket at a time, the lane claims it with a started marker and returns a reply
+carrying `answered: <ticket>`, and the manager reads the reply, closes it on the
+status board and in `docs/proof/`, and only then chooses the next ticket. The
+queue is the memory: a conversation is not an assignment, and a chat message is
+not a result. The contract is
+[`agent-roles/loop/README.md`](agent-roles/loop/README.md).
+
+The liveness check is the process table, not the marker's age: the watchdog
+`scripts/dev/agent-fleet/watch.ts` runs every ten minutes, releases a marker
+whose worker process is gone, and blocks a ticket after three releases. A
+failed process-table read is `unknown`, not death, so nothing is released on a
+failed read.
 
 Sessions start in their role. A session that was pointed at another division's
 work records that deviation in the handoff artifact it writes; a session that

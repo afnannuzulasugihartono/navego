@@ -6,7 +6,7 @@ answered: operator-to-researcher-20261125-1900.md
 shipped: The lane wrote the first division (AI-agent operators, with the reason
 large-company buyers wait until the published plans state seat, SLA and
 compliance terms) and five dated public contacts into
-`docs/research/prospects.md`, then a reviewer pass inside the lane corrected
+`docs/prospects.md`, then a reviewer pass inside the lane corrected
 the handoff. The shortlist reached `main` as pull request #460; the operator
 lane merged it by the merge-by-gate rule.
 
