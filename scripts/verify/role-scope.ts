@@ -94,6 +94,9 @@ export const checkRoleScope = (register: Register, roleId: string, changedPaths:
   return { roleId, allowed, refused };
 };
 
+// A communication path is shared by design: two named lanes may both write the queue, the board or the proof.
+// Only two work scopes on one path are ambiguous.
+
 export const checkRolesScope = (register: Register, roleIds: string[], changedPaths: string[]): MultiRoleCheckResult => {
   const roles = roleIds.map((roleId) => {
     const role = register.roles.find((candidate) => candidate.id === roleId);
@@ -113,9 +116,6 @@ export const checkRolesScope = (register: Register, roleIds: string[], changedPa
       .map((role) => role.id);
     owners.push({ path: changedPath, owners: pathOwners });
     if (pathOwners.length === 0) refused.push(changedPath);
-    // A communication path is shared by design: two named lanes may both write
-    // the queue, the board or the proof. Only two work scopes on one path are
-    // ambiguous, because a work scope has one owner.
     if (workOwners.length > 1) ambiguous.push(changedPath);
   }
   return { owners, refused, ambiguous };

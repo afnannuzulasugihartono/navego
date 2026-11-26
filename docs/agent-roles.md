@@ -48,17 +48,18 @@ the entry key; the division says where the work belongs.
 | onboarding-guide | Customer Success | docs/install.md, docs/external-install.md, docs/agent-call.md | planned |
 
 Every role's `communicationPaths` are `docs/agent-roles/queue/**`,
-`docs/agent-roles/status.md` and `docs/proof/**`.
+`docs/agent-roles/status.md`, `docs/proof/**` and `docs/decisions.json`.
 
 Every path has exactly one work-scope owner: `marketer` owns the site files,
 `finance-analyst` owns the migrations, `ceo` owns the role register and the
 role documents, `engineer` owns the role generator, the scope checker, its
 `package.json` command, the role gate and the generated role entry points,
-`researcher` owns the research folder, `sales-rep` owns the prospect pipeline
-in `README.md`, `support-agent` owns the product folder, and `operator` owns
-the economy ledger, the handoff record and the proof folder. The gate
+`researcher` owns the research folder, `sales-rep` owns the root readme and
+the prospect pipeline in `docs/prospects.md`, `support-agent` owns the product
+folder, and `operator` owns the economy ledger, the handoff record, the proof
+folder, the loop and the fleet tooling. The gate
 `tests/tooling/agent-roles.test.ts` refuses a register where two work scopes
-cover the same path.
+cover the same tracked file.
 
 These paths are shared by design, and the handoff rule is what moves work
 across them: every role may write the queue
@@ -123,6 +124,12 @@ assembled from many sessions without drifting:
    (money out only via revenue or cost rows; a gap named in `monthly_gap_usd`).
 3. **Product state.** `docs/handoff.md` is the rolling "what is true now, next
    step" record; a division writes its last state there when it ships.
+
+**No subagents.** No role dispatches a subagent. Each lane runs on one
+credential whose provider answers at 40 requests per minute, and a child
+session multiplies requests against the same key; the observed result is HTTP
+429 and a lane that stops mid-task. The generated agent files deny the
+`subagent` action, and every role body says to do the work in the session.
 
 **One communication container** — `docs/agent-roles/status.md`. It is the shared line-per-role board every division reads: what is missing for a division, what can be upgraded, and the open upgrades. A session opens it, refreshes its own line, and proposes upgrades in the queue artifact below when it sees a gap it owns; nothing stays secret because it lived in a chat, since the status is a file.
 

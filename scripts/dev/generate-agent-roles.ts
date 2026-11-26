@@ -74,18 +74,21 @@ export const renderRoleDocuments = (register: Register): Array<{ path: string; c
     const current = fs.readFileSync(path.join(root, role.doc), 'utf8');
     const start = current.indexOf('Scope (what this role may work in):');
     const end = current.indexOf('\n\nGoal:', start);
-    if (start < 0 || end < 0) continue;
+    if (start < 0 || end < 0) {
+      throw new Error(`${role.doc} has no Scope block followed by a Goal section; the register cannot render it`);
+    }
     files.push({ path: role.doc, content: current.slice(0, start) + scopeBlock(role) + current.slice(end) });
   }
   const rolesDocPath = 'docs/agent-roles.md';
   const rolesDoc = fs.readFileSync(path.join(root, rolesDocPath), 'utf8');
   const tableStart = rolesDoc.indexOf('| agent id | division | scope (repo paths) | status |');
   const tableEnd = rolesDoc.indexOf('\n\n', tableStart);
-  if (tableStart >= 0 && tableEnd > tableStart) {
-    const rows = register.roles.map((role) => `| ${role.id} | ${role.division} | ${role.scopePaths.join(', ')} | ${role.status} |`);
-    const header = '| agent id | division | scope (repo paths) | status |\n|---|---|---|---|';
-    files.push({ path: rolesDocPath, content: rolesDoc.slice(0, tableStart) + header + '\n' + rows.join('\n') + rolesDoc.slice(tableEnd) });
+  if (tableStart < 0 || tableEnd <= tableStart) {
+    throw new Error(`${rolesDocPath} has no role table header; the register cannot render the table`);
   }
+  const rows = register.roles.map((role) => `| ${role.id} | ${role.division} | ${role.scopePaths.join(', ')} | ${role.status} |`);
+  const header = '| agent id | division | scope (repo paths) | status |\n|---|---|---|---|';
+  files.push({ path: rolesDocPath, content: rolesDoc.slice(0, tableStart) + header + '\n' + rows.join('\n') + rolesDoc.slice(tableEnd) });
   return files;
 };
 
@@ -108,6 +111,9 @@ export const renderAgentFiles = (
       '    effect: deny',
       ...role.scopePaths.map((scopePath) => `  - action: edit\n    resource: "${editResource(scopePath)}"\n    effect: allow`),
       ...role.communicationPaths.map((sharedPath) => `  - action: edit\n    resource: "${editResource(sharedPath)}"\n    effect: allow`),
+      '  - action: subagent',
+      '    resource: "*"',
+      '    effect: deny',
     ].join('\n');
     const body = [
       `Role id: ${role.id}`,
@@ -120,6 +126,7 @@ export const renderAgentFiles = (
       'The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.',
       'The shared gates before a claim of done: npm test and npm run check, plus py tests/browser_extension_test.py when the extension changes inside a page.',
       `Before the merge, the scope gate: run npm run scope:role -- ${role.id} --base <the base ref your pull request targets> --head HEAD in this worktree (a pull request against main uses origin/main); the verifier reads every changed path from that diff itself, and a non-zero exit blocks the merge.`,
+      'This session is the only worker on its key: a child session multiplies requests against the same 40 rpm limit, so the subagent action is denied.',
       '',
       docBody,
     ].join('\n');

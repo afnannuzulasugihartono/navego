@@ -13,7 +13,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import os from 'node:os';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { editResource, renderAgentFiles } from '../../scripts/dev/generate-agent-roles.ts';
+import { editResource, renderAgentFiles, renderRoleDocuments } from '../../scripts/dev/generate-agent-roles.ts';
 import { checkRolesScope, checkRoleScope, scopePathMatches } from '../../scripts/verify/role-scope.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
@@ -157,6 +157,24 @@ test('the agent file denies editing outside the role scope and allows the scope'
       const resource = editResource(sharedPath);
       assert.ok(text.includes(`resource: "${resource}"\n    effect: allow`), `${role.id} cannot write the shared communication surface ${sharedPath} - a lane that cannot report is a lane that cannot report`);
     }
+    assert.ok(
+      text.includes('- action: subagent\n    resource: "*"\n    effect: deny'),
+      `${role.id} does not deny subagents - a child session multiplies requests on the same key`,
+    );
+    assert.ok(text.includes('the subagent action is denied'), `${role.id}'s body does not carry the no-subagent rule`);
+    const claude = fs.readFileSync(path.join(root, `.claude/agents/${role.id}.md`), 'utf8');
+    assert.ok(claude.includes('the subagent action is denied'), `${role.id}'s Claude body does not carry the no-subagent rule`);
+  }
+});
+
+test('the role documents and the table are rendered from the register', () => {
+  const { register } = load();
+  const rendered = renderRoleDocuments(register);
+  assert.ok(rendered.some((file) => file.path === 'docs/agent-roles.md'), 'the role table is rendered from the register');
+  for (const role of register.roles) {
+    const file = rendered.find((candidate) => candidate.path === role.doc);
+    assert.ok(file, `the register does not render ${role.doc}`);
+    assert.equal(docText(role.doc), file.content, `${role.doc} drifted from the register - run: node scripts/dev/generate-agent-roles.ts`);
   }
 });
 
@@ -225,17 +243,28 @@ test('no two roles work scopes cover the same tracked file', () => {
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean);
-  const shared = new Set(roles.flatMap((role) => role.communicationPaths));
   for (const file of tracked) {
     const owners = roles
       .filter((role) => role.scopePaths.some((scopePath) => scopePathMatches(file, scopePath)))
       .map((role) => role.id);
-    if (owners.length === 0) continue;
-    const workOwners = owners.filter((owner) => {
-      const role = roles.find((candidate) => candidate.id === owner);
-      return role ? !role.scopePaths.every((scopePath) => shared.has(scopePath)) : true;
-    });
-    assert.equal(workOwners.length <= 1, true, `${file} is claimed by ${workOwners.join(', ')} - a work scope has one owner`);
+    assert.equal(owners.length <= 1, true, `${file} is claimed by ${owners.join(', ')} - a work scope has one owner`);
+  }
+});
+
+test('no two work scopes overlap even before a file exists', () => {
+  const { roles } = load();
+  const representative = (pattern: string): string => pattern.replace('/**', '/probe').replace(/\*/g, 'probe');
+  for (const left of roles) {
+    for (const right of roles) {
+      if (left.id >= right.id) continue;
+      for (const leftPath of left.scopePaths) {
+        for (const rightPath of right.scopePaths) {
+          const overlaps = scopePathMatches(representative(leftPath), rightPath)
+            || scopePathMatches(representative(rightPath), leftPath);
+          assert.equal(overlaps, false, `${left.id} (${leftPath}) and ${right.id} (${rightPath}) cover the same path`);
+        }
+      }
+    }
   }
 });
 
