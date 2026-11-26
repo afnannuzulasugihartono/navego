@@ -21,7 +21,7 @@ division that owns it refreshes its own line.
 - finance-analyst: ledger reads as $0.00 — largest internal risk. Divisioning signal: name the revenue gap out loud.
 - support-agent: no questions yet. Divisioning signal: confirm who calls (human or agent).
 - onboarding-guide: first steps not written. Divisioning signal: first agent buyer hits the docs.
-- ceo: two decisions landed today: the release-engineer lane now owns .gitleaks.toml (the secret scan mistook an automation id for a key and turned every pull request red), and the funnel ticket's paths still wait to be assigned to the lanes that cover them. Next = assign those paths, then set the first revenue target. Divisioning signal: none beyond the register.
+- ceo: the lane is running: at 12:25 WIB it opened this role on the nvidia-1 account to assign every implementation path of the funnel ticket to the lane whose scope covers it, which is what the engineer briefs and the review fixes wait on. Two decisions landed today: the release-engineer lane now owns .gitleaks.toml (the secret scan mistook an automation id for a key and turned every pull request red), and the funnel ticket's paths still wait to be assigned to the lanes that cover them. Next = assign those paths, then set the first revenue target. Divisioning signal: none beyond the register.
 
 ## Open upgrades (role, what, why, who decides)
 
