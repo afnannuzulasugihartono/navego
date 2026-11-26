@@ -57,6 +57,33 @@ support inbox. The `support-agent` lane reads it, answers the person, and
 records the answer's fact in `docs/product/support.md` with the decision id
 that backs it. GitHub issues stay a public record, not the inbox.
 
+## One decision the owner still owns: who approves a pull request
+
+The merge-by-gate rule above says a pull request merges on its own when CI is
+green, the reviewer agent finds nothing and no owner-only path moved. GitHub
+does not know that rule. The measured state of `main` on 2026-11-26:
+
+- Branch protection requires **one approving review** from a human reviewer,
+  plus the CI checks (unit, site, deno-hosted, secret-scan, browser, postgres).
+- `enforce_admins` is **false**, so an administrator can push straight to
+  `main`. That is how the lane outputs have landed: the operator lane merges
+  the branch locally after CI and the reviewer agent are green, and pushes.
+- `.github/CODEOWNERS` gives the owner `*` (everything), plus `tests/`,
+  `scripts/`, `gates.lock`, `/hosted/migrations/`, `/extension/` and
+  `/shared/`. The narrow owner-only list in this file (gates.lock,
+  tests/helpers/boundary-locks.ts, .github/CODEOWNERS, .github/workflows/) is
+  therefore narrower than what CODEOWNERS says.
+
+So one owner decision remains, and it is one sentence: **either** the owner
+reviews the pull requests by hand (the lanes prepare and open them, the owner
+approves), **or** the owner lets the operator's local merge after CI plus the
+reviewer agent count as the review (today's practice, which relies on
+`enforce_admins` being false), **or** the owner installs a bot that can
+approve as a reviewer, which makes the GitHub rule match the automation rule.
+
+Until that sentence is written, the lanes can open and prepare pull requests
+but not land them without this one answer.
+
 ## What still needs a person
 
 These are the edges no agent may cross, stated so nobody waits for a request
