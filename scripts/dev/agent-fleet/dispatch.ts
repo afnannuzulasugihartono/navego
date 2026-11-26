@@ -11,7 +11,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { readQueue, type QueueSnapshot, type TicketFile } from './watch.ts';
+import { readProcesses, readQueue, type QueueSnapshot, type TicketFile } from './watch.ts';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 
@@ -54,11 +54,14 @@ export const selectTicket = (
   snapshot: QueueSnapshot,
   now: number,
   markerMinutes = DEFAULT_MARKER_MINUTES,
+  processLines: string[] | null = null,
 ): TicketFile | null => {
   const ready = snapshot.tickets.filter((ticket) => {
     if (ticket.blocked) return false;
     if (snapshot.replies.some((reply) => reply.answered === ticket.file)) return false;
-    return !laneBusy(snapshot, ticket.lane, now, markerMinutes);
+    if (laneBusy(snapshot, ticket.lane, now, markerMinutes)) return false;
+    if (processLines && processLines.some((line) => line.includes(`lane-${ticket.lane}-`))) return false;
+    return true;
   });
   const money = ready.filter((ticket) => ticket.class === 'money').sort((left, right) => left.stamp.localeCompare(right.stamp));
   if (money[0]) return money[0];
@@ -117,9 +120,10 @@ export const dispatch = async (options: {
   queueDir: string;
   now: number;
   repoRoot: string;
+  processLines?: string[] | null;
 }): Promise<{ title: string; pid: number | undefined; stamp: string } | null> => {
-  const { slot, snapshot, queueDir, now, repoRoot } = options;
-  const ticket = selectTicket(snapshot, now);
+  const { slot, snapshot, queueDir, now, repoRoot, processLines = null } = options;
+  const ticket = selectTicket(snapshot, now, DEFAULT_MARKER_MINUTES, processLines);
   if (!ticket) return null;
   const cli = opencodeExecutable();
   if (!cli) return null;
@@ -181,7 +185,9 @@ const main = async (): Promise<void> => {
   }
   const queueDir = path.join(root, 'docs/agent-roles/queue');
   const snapshot = readQueue(queueDir);
-  const started = await dispatch({ slot, snapshot, queueDir, now: Date.now(), repoRoot: root });
+  const processes = readProcesses();
+  const processLines = processes === null ? null : processes.map((row) => row.commandLine);
+  const started = await dispatch({ slot, snapshot, queueDir, now: Date.now(), repoRoot: root, processLines });
   if (!started) {
     console.log('NO_READY_TICKET');
     return;

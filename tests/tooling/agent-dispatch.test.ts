@@ -55,6 +55,19 @@ test('the dispatcher skips a ticket that was answered and a lane that is busy', 
   }
 });
 
+test('the dispatcher skips a lane whose worker process is still alive', () => {
+  const dir = makeQueue();
+  try {
+    write(dir, 'operator-to-marketer-20261126-1045.md', ticketText('measurement'));
+    const snapshot = readQueue(dir);
+    const alive = ['opencode.exe run --agent marketer --worktree lane-marketer-20261126-1000'];
+    assert.equal(selectTicket(snapshot, NOW, 120, alive), null, 'a live worker holds the lane');
+    assert.ok(selectTicket(snapshot, NOW, 120, []), 'with no live worker the ticket is ready');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
 test('the lane prompt asks for the reply that closes the ticket and forbids subagents', () => {
   const ticket = {
     file: 'operator-to-engineer-20261126-0725.md',

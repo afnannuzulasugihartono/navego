@@ -98,8 +98,16 @@ So the owner's answer has three parts: who approves a pull request, whether a
 lane may add the scope job to the CI workflow, and whether the verifier is
 pinned in `gates.lock` by the lane that writes it.
 
+The owner answered one part of it on 2026-11-26: when the reviewer agent
+cannot run because the provider refuses the request (HTTP 429 on a capped
+NVIDIA key, a free usage limit on the console provider) and the CI is green on
+the exact head, the owner approves the merge on the operator's own review plus
+the green CI, and the gap is written into the proof. The rest of the sentence
+still waits: who reviews the pull requests by hand, and whether the CI job and
+the `gates.lock` pin for the scope verifier may be written by a lane.
+
 Until that sentence is written, the lanes can open and prepare pull requests
-but not land them without this one answer.
+and can land the ones the owner has answered for.
 
 ## What still needs a person
 

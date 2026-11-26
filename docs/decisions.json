@@ -1500,6 +1500,26 @@
         "kind": "user",
         "ref": "user 2026-11-26 with the lane screenshot: 'karena pakai apikey dari nvidia yang dibatasi 40 rpm saranku untuk setiap role dilarang dispatch sub agents karena itu akan membuat rpm naik dan akibatnya request timed out'"
       }
+    },
+    {
+      "id": "docs-autonomy-05",
+      "scope": "agent/autonomy",
+      "file": "docs/autonomy.md",
+      "decision": "When the reviewer agent cannot run because the provider refuses the request (HTTP 429 on a capped NVIDIA key, a free usage limit on the console provider) and the CI is green on the exact head, the owner approves the merge on the operator's own review plus the green CI, and the gap is recorded in the proof. A reviewer agent that cannot run is still not a pass on its own: the owner's answer is what carries the merge.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-26, asked with the pull request green on seven of seven checks and Sonar, the reviewer session stuck in HTTP 429 and the console provider at its free usage limit, and the fleet deadlocked on the scope gate: the owner answered \"Merge sekarang\""
+      }
+    },
+    {
+      "id": "docs-agent-roles-10",
+      "scope": "agent/keys",
+      "file": "docs/agent-roles/keys.json",
+      "decision": "The fleet runs three NVIDIA accounts, each with its own key, its own provider entry, its own roster row and its own worker slot, so three lanes can run at once without sharing one 40 rpm budget. The owner pointed at the signed-in account store, where three NVIDIA accounts already held three different keys; the keys were written to files outside the repository and no key is ever printed, read by an agent, or asked for.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-26 with the account list open in the terminal: \"sama ambil keynya dari sini itu ketiganya udah beda key\""
+      }
     }
   ]
 }
