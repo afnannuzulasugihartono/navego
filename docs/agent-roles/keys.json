@@ -2,7 +2,7 @@
   "version": 1,
   "generated": "2026-11-25",
   "source": "Owner instruction 2026-11-25: the personal/console NVIDIA route plus two ordinary NVIDIA accounts (nvidia and nvidia2); one session handling several roles must be splittable, every route gets its own session, the credentials in use must differ, and more accounts can be added later. The owner then added the reason the split exists: a subagent dispatched inside the operator conversation spends that conversation's request budget, and NVIDIA answers at 40 requests per minute.",
-  "note": "The credential roster. It names where each route lives, which model a worker runs on, and which session that route owns; it never holds a key. The personal route is the signed-in console session and stays with the operator conversation, so a lane worker never competes with the conversation for its requests. The two ordinary accounts are read by their provider configuration from an environment variable or a file outside this repository, so no agent ever sees a secret.",
+  "note": "The credential roster. It names where each route lives, which model a worker runs on, and which session that route owns; it never holds a key. The personal route is the signed-in console session and stays with the operator conversation, so a lane worker never competes with the conversation for its requests. The two ordinary accounts are read by their provider configuration from an environment variable or a file outside this repository, so no agent ever sees a secret. A worker session is listed under its slot, so two lanes never hide inside one session.",
   "slots": [
     {
       "id": "console",
@@ -11,7 +11,10 @@
       "credential": "console session (signed-in)",
       "session": "slot-console",
       "status": "ready",
-      "serves": ["operator", "this conversation"],
+      "serves": [
+        "operator",
+        "this conversation"
+      ],
       "runsLaneWorkers": false
     },
     {
@@ -21,7 +24,9 @@
       "credential": "env:NVIDIA_API_KEY",
       "session": "slot-nvidia-1",
       "status": "ready",
-      "serves": ["lane worker 1"],
+      "serves": [
+        "lane worker 1"
+      ],
       "runsLaneWorkers": true
     },
     {
@@ -31,7 +36,9 @@
       "credential": "file:~/.config/opencode/nvidia-api-key-2",
       "session": "slot-nvidia-2",
       "status": "pending",
-      "serves": ["lane worker 2"],
+      "serves": [
+        "lane worker 2"
+      ],
       "runsLaneWorkers": true
     }
   ],
@@ -42,6 +49,7 @@
     "No two slots may run on the same credential. The worker hashes each available credential locally (SHA-256), compares the digests before starting, and refuses a slot whose digest already belongs to another running slot; the digest's first eight characters may be logged, the credential itself never is.",
     "Adding an account means adding one provider entry, one slot row, and one more worker; no lane code changes.",
     "The owner places the key file; no agent reads, prints, copies, or asks for the secret.",
-    "Two accounts are not two credits: each account's own quota and the provider's terms apply, so a slot stays inside its credential's documented limit and no slot is used to sidestep another one's limit."
+    "Two accounts are not two credits: each account's own quota and the provider's terms apply, so a slot stays inside its credential's documented limit and no slot is used to sidestep another one's limit.",
+    "A worker session is never archived: it stays listed (opencode session list) and exportable (opencode session export <id>) while it runs, so the owner can watch each lane, its slot and its ticket, and each dispatch leaves a note in docs/proof/."
   ]
 }

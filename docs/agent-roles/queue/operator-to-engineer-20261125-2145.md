@@ -27,10 +27,17 @@ scopeRequested:
    oldest first, skipping a ticket that already carries a lane started marker
    or a lane reply), writes the marker, and starts the lane as a separate
    process: `opencode run --model <slot model> --agent <lane> --worktree
-   <name> --title "<slot session>" --archived --auto "<the lane brief>"`. The
-   script beside `scripts/dev/generate-agent-roles.ts` (call it
+   <name> --title "<slot session>/<lane>-<stamp>" --format json --auto "<the lane
+   brief>"`. The script beside `scripts/dev/generate-agent-roles.ts` (call it
    `run-lane-worker.ts`) must do the same, with the logic under test.
-2. Keep the request budget bounded. A worker must never run inside the
+2. Keep the worker session visible. A worker session is never archived: it
+   stays listed under its slot (`opencode session list`) and exportable
+   (`opencode session export <id>`) while it runs, its title carries the slot
+   and the lane, and every dispatch writes a note into `docs/proof/` naming the
+   slot, the lane, the ticket and the worker log. The operator's current
+   worker does exactly this; the script must keep it and be tested for it.
+
+3. Keep the request budget bounded. A worker must never run inside the
    operator conversation: that route spends the conversation's own budget,
    and NVIDIA answers at 40 requests per minute. The generated role files
    already carry a step limit; the worker keeps one lane per session and one
