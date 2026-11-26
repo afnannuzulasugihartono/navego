@@ -30,14 +30,11 @@ working, because an agent can fail or time out and stop suddenly.
   and treats a shared communication path as shared while only two work scopes
   on one path are ambiguous.
 
-## The live state at 2026-11-26T10:40Z
+## The live state at 2026-11-26T10:40Z and 11:35Z
 
 The first dry run over the real queue read 12 tickets: 1 working, 2 stalled, 6
 ready and 3 returned.
 
-- **working:** `operator-to-engineer-20261125-2115.md`, started 07:25 on
-  `nvidia-1`, process alive but older than two hours. The watchdog flags it
-  `slow`; the manager reads the flag instead of guessing from the marker age.
 - **stalled:** `engineer-to-ceo-20261126-0501.md` (started 05:25) and
   `operator-to-researcher-20261126-0845.md` (started 06:25). The first real
   watchdog run releases both markers, so the next lane worker can pick the
@@ -46,9 +43,19 @@ ready and 3 returned.
   the manager's first close items: the manager reads them, writes the outcome
   on the board and in the proof, and only then chooses new work.
 
-The engineer lane's process was alive but slow, and its session showed HTTP
-429 after it had dispatched two subagents on the nvidia-1 key. That is the
-failure the no-subagent rule answers.
+The second read added the session heartbeat and the child-session count, and
+it changed the reading of the engineer ticket:
+
+- The ceo lane's session (`ses_de9af8506ffewqDNLEA5SX9dqf`) had dispatched
+  **5 child sessions**, and the engineer lane's session
+  (`ses_de941a686ffeAHIYipszqv8tAR`) had dispatched **4**. That is the
+  request multiplication the owner saw as HTTP 429, now counted in the
+  manager's table and denied in every generated agent file.
+- Both lane sessions went silent for more than thirty minutes while their
+  worker processes stayed alive: the engineer session ended with the outcome
+  `succeeded` and never wrote the reply that closes its ticket. The process
+  table alone would have called it working for hours; the session heartbeat
+  calls it stalled, and the watchdog releases the marker.
 
 ## Verification
 

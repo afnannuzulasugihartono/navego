@@ -18,19 +18,31 @@ result.
 
 ## The liveness check
 
-`scripts/dev/agent-fleet/watch.ts` runs every ten minutes. It reads the queue,
-finds each started marker's lane and stamp, and asks the operating system for
-the live `opencode.exe` command lines. A marker is working only while a process
-carries `--worktree lane-<role>-<stamp>`. When the process is gone and the
-reply is not there, the marker is renamed to `<role>-released-<stamp>.md` with
-the reason, and the next lane worker (every hour at :25 and :35) dispatches the
-ticket again. Three releases move the ticket to `queue/blocked/`, where the
-manager sees it.
+`scripts/dev/agent-fleet/watch.ts` runs every ten minutes. It reads two
+signals: the operating system's process table, and the session list of the
+running OpenCode service.
 
-The check reads the process table, not the marker's age: an agent that dies two
-minutes after it starts is released on the next ten-minute tick, not after two
-hours. When the process table cannot be read, the state is `unknown` and
-nothing is released - a failed read is not evidence of death.
+- A lane is **working** while a live `opencode.exe` carries
+  `--worktree lane-<role>-<stamp>` and the lane's session spoke in the last
+  thirty minutes.
+- A lane is **stalled** when the process is gone, when its session ended in an
+  error, or when its session went silent for thirty minutes. The marker is
+  renamed to `<role>-released-<stamp>.md` with the reason, and the next lane
+  worker dispatches the ticket again.
+- Three releases move the ticket to `queue/blocked/`, where the manager sees a
+  repeated failure instead of a silent loop.
+- A failed read is **unknown**: an unreadable process table or session list
+  releases nothing, because a failed read is not evidence of death.
+
+The check reads the session's own heartbeat, not the marker's age: an agent
+that dies two minutes after it starts is released on the next ten-minute tick,
+and an agent that sits alive on a provider error while its session stops
+moving is released too.
+
+The table also counts the **child sessions** a lane dispatched. A lane that
+dispatches subagents multiplies requests against the same 40 rpm key, which
+ends in HTTP 429; every generated agent file denies the `subagent` action, and
+the count in the state table is how the manager sees a lane that ignored it.
 
 ## What the manager does every run
 

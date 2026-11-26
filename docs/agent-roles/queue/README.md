@@ -45,16 +45,19 @@ ticket is released. A ticket with a reply beside it is closed.
 ## The liveness check
 
 The watchdog (`scripts/dev/agent-fleet/watch.ts`, every ten minutes) reads the
-process table, not the marker's age. A marker is working only while a live
-`opencode.exe` carries `--worktree lane-<role>-<stamp>`. When the process is
-gone and no reply exists, the marker is renamed to
+process table and the lane session's own heartbeat, not the marker's age. A
+lane is working while a live `opencode.exe` carries
+`--worktree lane-<role>-<stamp>` and its session spoke in the last thirty
+minutes. When the process is gone, when the session ended in an error, or when
+the session went silent, the marker is renamed to
 `<role>-released-<stamp>.md` with the reason, and the ticket is ready for the
 next lane worker. Three releases move the ticket to `blocked/`, where the
 manager sees a repeated failure instead of a silent loop.
 
-A failed process-table read is not evidence of death: the state is `unknown`
-and nothing is released. The manager reads the live view in
-`docs/agent-roles/loop/state.md`.
+A failed read is not evidence of death: the state is `unknown` and nothing is
+released. The table also counts the child sessions a lane dispatched, because
+a subagent multiplies requests on the same 40 rpm key. The manager reads the
+live view in `docs/agent-roles/loop/state.md`.
 
 A reply artifact uses `<role>-reply-<stamp>.md` and sits beside its ticket. It
 is the answer to that ticket, not another ticket; the dispatcher skips
