@@ -6,7 +6,7 @@ The ticket `operator-to-onboarding-guide-20261127-0230.md` is answered by
 The ticket asked for one command and one first win, written in the lane that
 owns the first-run documents, proved against the real artifact. This is that
 record: every answer below is what the machine answered on 2026-11-27, between
-05:14 and 05:18 Asia/Jakarta (UTC+7), on Windows 11, Node v26.13.1.
+05:14 and 05:54 Asia/Jakarta (UTC+7), on Windows 11, Node v26.13.1.
 
 ## What was driven
 
