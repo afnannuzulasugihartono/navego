@@ -79,6 +79,46 @@ says so.
 
 `scripts/dev/navego-agent.ts` is the thin client I drive Navego through from an agent harness that has a shell but no Navego tool in its own catalog. `list` and `tabs` are lookups; `open-and-read <url> [text] [file]` opens one tab, waits for a real text, reads it and writes a screenshot in the **same process**, because a tab claim belongs to one driver lease — separate CLI processes collide on the claim. `batch <file.json>` runs a list of commands in one lease. Every write tool takes an explicit `tabId`: no default tab, because the everyday browser carries private tabs.
 
+## The first win - four calls, one file on disk
+
+The first thing worth driving is a file: the everyday Chrome, signed in, saves a
+document and the answer names the path and the byte count. It was run on
+2026-11-27; the record is
+[`docs/proof/2026-11-27-onboarding-guide.md`](../docs/proof/2026-11-27-onboarding-guide.md).
+
+```
+browser_open_url      {"url":"https://navego.pages.dev/beranda"}
+browser_scroll        {"tabId":"<tab>","selector":"a[href='/contoh/laporan-keuangan-2026-09.xlsx']"}
+browser_wait_until    {"tabId":"<tab>","until":"stable","quietMs":400}
+browser_download_file {"tabId":"<tab>","role":"link","name":"Unduh berkas contoh"}
+```
+
+`browser_open_url` answers with the tab id and never navigates a tab somebody
+is reading. The scroll brings the link into the viewport, because a click below
+the fold is refused by name. The page scrolls smoothly, so the scroll's own
+answer can read `nothing moved` while the page is still moving; the wait is
+what settles it, and the link then sits at `y: 360` inside the 1536x720
+viewport. `browser_download_file` clicks the link and waits until the file has
+stopped growing - a `.crdownload` is not a result, and two files landing at
+once is not a result either.
+
+The answer on 2026-11-27 was:
+
+```
+{"downloaded":true,"file":"laporan-keuangan-2026-09 (2).xlsx","path":"C:\\Users\\<you>\\Downloads\\navego\\laporan-keuangan-2026-09 (2).xlsx","bytes":21066,"dir":"C:\\Users\\<you>\\Downloads\\navego","armedVia":"browser-folder","ok":true}
+```
+
+The file lands in `C:\Users\<you>\Downloads\navego\` unless `dir` names another
+folder, and `saveAs` names the file inside it. The bytes on disk hashed equal
+to the sample the site ships,
+`site/public/contoh/laporan-keuangan-2026-09.xlsx` (sha256
+`A4F12765B77329EB5EC37DAE3AD4323AC1D1D6659CD6261BB689C2736C931922`, 21066
+bytes). Chrome appends ` (2)` to the name when a file with that name is
+already in the download folder.
+
+`npx -y navego doctor` is the check that comes before this: `verdict ready`
+means the bridge, the device, the plan and the quota are wired.
+
 ## The extension road
 
 The extension in `extension/` opens a socket to this machine and carries CDP

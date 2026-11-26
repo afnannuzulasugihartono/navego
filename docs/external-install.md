@@ -1,6 +1,6 @@
-# @last-edited: 2026-11-15 UTC+7.
+# @last-edited: 2026-11-27 UTC+7.
 # @title: external install - the extension installs and stays, without the Chrome Web Store, on Windows, macOS and Linux.
-# @state: paths and flags are written to the vendor documentation as of 2026-11-15; the same day the route was chosen (owner decision, single route), and nothing here has been driven end to end on any machine yet.
+# @state: paths and flags are written to the vendor documentation as of 2026-11-15; the same day the route was chosen (owner decision, single route), and nothing here has been driven end to end on any machine yet. The first win after the install was driven on 2026-11-27 on a machine that already carried Navego's policy entries (Windows, Chrome); the record is `docs/proof/2026-11-27-onboarding-guide.md`.
 # @dependencies: `docs/store/extension-forceinstall.reg`, `docs/store/extension-forceinstall-remove.reg`, `docs/store/navego-managed.json`, `docs/install.md`.
 
 # WHAT THIS IS
@@ -12,6 +12,36 @@ One route, one story: the extension is **force-installed by policy** and cannot 
 There is no second, gentler path in this repository. The classic external-key route was retired on 2026-11-15 by the owner's decision; the artifacts live in git history, not in the tree.
 
 Updates ride the same URL: every browser start, the browser re-reads `update.xml`, and a newly published build arrives without anyone asking. **No path on this page involves choosing a folder** - the folder flow is the developer-mode fallback in `docs/install.md`.
+
+# THE FIRST WIN - THE SAME CHECK, THE SAME WIN
+
+The install differs per platform; the check and the win do not. Whatever route
+you took above, these are the next steps, and they were run on 2026-11-27
+(the record: [`docs/proof/2026-11-27-onboarding-guide.md`](./proof/2026-11-27-onboarding-guide.md)).
+
+```
+npx -y navego doctor
+```
+
+`verdict ready` means the bridge, the device, the plan and the quota are all
+wired. Then, in the agent that speaks to the local MCP server (`npx -y navego
+local`; the wiring is in [`docs/agent-call.md`](./agent-call.md)):
+
+```
+browser_open_url      {"url":"https://navego.pages.dev/beranda"}
+browser_scroll        {"tabId":"<tab>","selector":"a[href='/contoh/laporan-keuangan-2026-09.xlsx']"}
+browser_wait_until    {"tabId":"<tab>","until":"stable","quietMs":400}
+browser_download_file {"tabId":"<tab>","role":"link","name":"Unduh berkas contoh"}
+```
+
+The file lands in `C:\Users\<you>\Downloads\navego\` (the Windows path; the
+folder follows the machine), and the answer names the path and the byte count.
+The bytes on disk hashed equal to the sample the site ships,
+`site/public/contoh/laporan-keuangan-2026-09.xlsx` (sha256
+`A4F12765B77329EB5EC37DAE3AD4323AC1D1D6659CD6261BB689C2736C931922`, 21066
+bytes). On Windows the install line that comes before this is the one the
+landing page shows, `irm https://navego.pages.dev/install.ps1 | iex`, with its
+cost and its undo in [`docs/install.md`](./install.md).
 
 # BEFORE YOU START
 

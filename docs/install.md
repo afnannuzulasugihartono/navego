@@ -1,7 +1,106 @@
-# @last-edited: 2026-11-15 UTC+7.
+# @last-edited: 2026-11-27 UTC+7.
 # @title: install - one command turns an empty Windows machine into a browser that has Navego.
-# @state: unmeasured as of 2026-11-15 on this machine: the mechanism changed to the forcelist policy on that date and no throwaway profile has been driven since. The 2026-11-12 measurements applied to the classic-key route, which is retired with this change; they are preserved in git history, not carried forward as claims.
+# @state: the first win was driven on 2026-11-27 on a machine that already carried Navego's own policy entries: the doctor answered `ready`, and four MCP calls drove the everyday Chrome to save the site's sample spreadsheet on disk, byte-equal to the file the site ships (the record: `docs/proof/2026-11-27-onboarding-guide.md`). The fresh-machine install is still unmeasured: the mechanism changed to the forcelist policy on 2026-11-15 and no throwaway profile has been driven since. The 2026-11-12 measurements applied to the classic-key route, which is retired with this change; they are preserved in git history, not carried forward as claims.
 # @dependencies: `docs/external-install.md`, `docs/store/extension-forceinstall.reg`, `docs/store/extension-forceinstall-remove.reg`, `local/install.ts`, `local/postinstall.ts`, `local/registry.ts`, `local/bin/navego.ts`.
+
+# THE FIRST WIN - ONE COMMAND, ONE RESULT
+
+Two lines. The first is the command the landing page shows; the second is the
+result you keep. The check and the first win were run on 2026-11-27 and the
+record is
+[`docs/proof/2026-11-27-onboarding-guide.md`](./proof/2026-11-27-onboarding-guide.md).
+The install line was fetched live on the same day and run in the dry-run mode
+its own script carries - it writes policy values, so it was not run as written
+on the machine that did the drive.
+
+## LINE 1 - THE INSTALL, AS THE LANDING PAGE SHOWS IT
+
+```
+irm https://navego.pages.dev/install.ps1 | iex
+```
+
+One line, unchanged from `site/app/lib/install-command.ts` and from the landing
+page at https://navego.pages.dev/. The script it fetches was live on
+2026-11-27 and byte-equal to `site/public/install.ps1` (sha256
+`A3E84D00D01795789D9E371065519AB06EAD0065954619F042A79B8053BBB07A`). It writes
+one `ExtensionInstallForcelist` value per Chromium browser under `HKCU` and
+prints what it wrote.
+
+**What it costs, in the same place:** the browser then reports itself as managed
+by your own registry, and the extension cannot be removed from
+`chrome://extensions` while the policy stands. A machine an administrator
+manages keeps the administrator's answer; this command does not try to win
+that.
+
+**The undo, in the same place:** `navego uninstall` deletes exactly this
+extension's policy values and the `%LOCALAPPDATA%\Navego` folder; the installed
+copy itself is removed at `chrome://extensions` (`edge://`, `brave://`). The
+script prints the same path when it runs.
+
+The npm route does the same thing and brings the command with it: `npm i -g
+navego` runs the install from the postinstall hook (never in CI, and
+`NAVEGO_NO_INSTALL=1` opts out). On macOS and Linux the route is
+[`docs/external-install.md`](./external-install.md).
+
+## LINE 2 - THE FIRST WIN
+
+The check first, so that the result means something:
+
+```
+npx -y navego doctor
+```
+
+It prints the bridge, the device, the extension version, the plan and the quota,
+and ends with `verdict ready` when the everyday browser is wired. The run on
+2026-11-27 answered (the device id and the extension version are the two values
+redacted here and in the proof - run the doctor and read them yourself):
+
+```
+navego doctor
+
+device file   none (only the wallet and hosted tools need it)
+cloud login   not signed in - cloud mode needs it (`navego auth`, or NAVEGO_MCP_TOKEN)
+bridge        listening on 127.0.0.1:9451; 1 device(s) linked
+preferred     none (tab-less commands follow the first ready browser)
+device 1      version <extension version>; id <device id redacted>
+  plan        plan.usd-17
+  allowance   500 commands per session (this session sent 0)
+  daily quota 17000 per day (0 used today across surfaces, 0 this session, 17000 left)
+CRX download  https://nenmkmtvjremqphfqnfw.supabase.co/functions/v1/navego-update/download/navego.crx
+verdict       ready
+```
+
+Then the win itself, in the agent that speaks to the local MCP server (`npx -y
+navego local`; the wiring is in [`docs/agent-call.md`](./agent-call.md)):
+
+```
+browser_open_url      {"url":"https://navego.pages.dev/beranda"}
+browser_scroll        {"tabId":"<tab>","selector":"a[href='/contoh/laporan-keuangan-2026-09.xlsx']"}
+browser_wait_until    {"tabId":"<tab>","until":"stable","quietMs":400}
+browser_download_file {"tabId":"<tab>","role":"link","name":"Unduh berkas contoh"}
+```
+
+`browser_open_url` answers with the tab id. The scroll brings the sample link
+into the viewport - a click below the fold is refused, by name, so the link has
+to be on screen first. The page scrolls smoothly, so the scroll's own answer can
+read `nothing moved` while the page is still moving; the wait is what settles
+it, and the link then sits at `y: 360` inside the 1536x720 viewport. The
+download clicks it and waits until the file has stopped growing. The answer on
+2026-11-27 was:
+
+```
+{"downloaded":true,"file":"laporan-keuangan-2026-09 (2).xlsx","path":"C:\\Users\\<you>\\Downloads\\navego\\laporan-keuangan-2026-09 (2).xlsx","bytes":21066,"dir":"C:\\Users\\<you>\\Downloads\\navego","armedVia":"browser-folder","ok":true}
+```
+
+**Where the result lands:** `C:\Users\<you>\Downloads\navego\` - the folder the
+tool names by default, and `dir` moves it somewhere else. The bytes on disk
+hashed equal to the sample the site ships,
+`site/public/contoh/laporan-keuangan-2026-09.xlsx` (sha256
+`A4F12765B77329EB5EC37DAE3AD4323AC1D1D6659CD6261BB689C2736C931922`, 21066
+bytes), so the file is the document and not a page that says so. Chrome appends
+` (2)` to the name when a file with that name is already in the download
+folder, and the driver moves the file into the folder it names under that
+name.
 
 # WHAT THE COMMAND DOES
 
