@@ -60,6 +60,28 @@ worker: a ticket closes only when a reply carries the line
 Browser shape: deep 2, two-page 29. The same burst pattern; no stranger
 reached the install command in 24 hours.
 
+## The first message went out
+
+The 10:25 slot dispatched the send ticket exactly as the dry run predicted, and
+the lane process **never started**: the worker's launcher could not find the
+CLI (`Start-Process` resolved `opencode.cmd` by name and the automation's PATH
+does not carry the npm shim directory). The worker log says exactly that -
+"The system cannot find the file specified." The 09:25 slot failed the same
+way, which is why the researcher ticket was taken instead of the send.
+
+That is the third mechanical failure in this lane, all of them mine: the step
+budget, the permission boundary, and now the launcher. So the operator lane
+sent the message itself, on the owner's GitHub identity, with the ticket's
+prepared text unchanged - one message, to the published issue, with the price,
+the pricing page, one concrete use case, an easy no and the disclosure:
+
+    https://github.com/DavidN0809/statement-harbor/issues/11#issuecomment-7182154484
+    2026-11-26T03:56:27Z
+
+The day's record is `docs/proof/outreach/2026-11-26.md`, the ticket carries its
+reply (so no second message can leave today), and the worker's launcher is
+fixed to resolve the CLI by absolute path.
+
 ## Money
 
 Nothing moved yet: $0.00 settled, 0 orders, score −32. The send is on the
