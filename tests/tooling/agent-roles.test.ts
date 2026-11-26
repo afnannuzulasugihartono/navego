@@ -371,6 +371,30 @@ test('the credential roster gives every slot its own credential and its own sess
   assert.ok(!/nvapi-[A-Za-z0-9_-]{20,}/.test(text), 'the roster must not hold a credential value');
 });
 
+test('the second ordinary account reads the roster credential file and keeps the key out of the repository', () => {
+  const roster = read('docs/agent-roles/keys.json') as {
+    slots: Array<{ id: string; provider: string; model: string; credential: string }>;
+  };
+  const config = read('opencode.json') as {
+    providers: Record<string, {
+      canonical?: string;
+      settings?: { apiKey?: string };
+      models?: Record<string, unknown>;
+    }>;
+  };
+  const slot = roster.slots.find((candidate) => candidate.id === 'nvidia-2');
+  assert.ok(slot, 'the roster names the second ordinary account');
+  assert.ok(slot.credential.startsWith('file:'), 'the second ordinary account reads a file outside the repository');
+  const provider = config.providers[slot.provider];
+  assert.ok(provider, `opencode.json names the second ordinary account provider ${slot.provider}`);
+  assert.equal(provider.canonical, 'nvidia', 'the second ordinary account uses the NVIDIA provider');
+  assert.equal(provider.settings?.apiKey, `{file:${slot.credential.slice('file:'.length)}}`, 'the provider reads exactly the credential path the roster names');
+  const modelId = slot.model.slice(slot.model.indexOf('/') + 1);
+  assert.ok(provider.models?.[modelId], `the provider exposes the roster model ${slot.model}`);
+  const configText = fs.readFileSync(path.join(root, 'opencode.json'), 'utf8');
+  assert.doesNotMatch(configText, /nvapi-[A-Za-z0-9_-]{20,}/, 'the repository must not hold credential material');
+});
+
 test('the decisions register carries the roles decision', () => {
   const decisions = read('docs/decisions.json') as { decisions: Array<{ id: string }> };
   const ids = new Set(decisions.decisions.map((d) => d.id));
