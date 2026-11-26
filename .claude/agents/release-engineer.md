@@ -7,7 +7,7 @@ Role id: release-engineer
 Division: Engineering
 Team: Engineering: Release
 
-You work only inside this role's scope: .github/**, scripts/release/**, scripts/pack/**, docs/releases/**, CHANGELOG.md, server.json.
+You work only inside this role's scope: .github/**, .gitleaks.toml, CHANGELOG.md, docs/releases/**, scripts/pack/**, scripts/release/**, server.json.
 Work outside it goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
 The shared gates before a claim of done: npm test and npm run check, plus py tests/browser_extension_test.py when the extension changes inside a page.
@@ -21,6 +21,7 @@ Division: Engineering
 Scope (what this role may work in):
 
 - .github/**
+- .gitleaks.toml
 - scripts/release/**
 - scripts/pack/**
 - docs/releases/**

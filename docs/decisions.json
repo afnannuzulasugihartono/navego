@@ -1460,6 +1460,16 @@
         "kind": "internet",
         "ref": "https://opencode.ai/docs/providers (a provider is keyed by id and reads its credential from env or from a file with {file:path}; a model reference is provider/model) and https://opencode.ai/docs/agents (an agent may pin its own model, and steps caps the number of model steps a run may take) and https://opencode.ai/docs/config (variable and file substitution in configuration) and the opencode run flags --model, --agent, --worktree, --title and --archived (read on 2026-11-25); the owner instruction of the same day: the personal/console NVIDIA route plus two ordinary NVIDIA accounts (nvidia and nvidia2), each route dispatching in its own session, the credentials in use must differ, one session handling several roles must be splittable, more accounts can be added later, and a subagent dispatched inside the conversation spends the conversation request budget because NVIDIA answers at 40 requests per minute"
       }
+    },
+    {
+      "id": "docs-agent-roles-06",
+      "scope": "agent/roles",
+      "file": "docs/agent-roles/registry.json",
+      "decision": "The release-engineer lane owns the CI configuration the acceptance surface depends on, including .gitleaks.toml, and the secret scan keeps scanning the whole history while one narrow exception names the identifier shape it mistook for a key: an OpenCode automation id (the fixed aut_ prefix followed by a long alphanumeric token) written in this repository own documents. Every other key shape stays flagged, and the exception is the identifier, not the documents.",
+      "source": {
+        "kind": "recorded",
+        "ref": "the CI runs of 2026-11-26 (45724772292, 45725696712, 45726605870) failed because gitleaks detect --source . reads the full history and read the OpenCode automation id written in docs/proof/2026-11-25-survival-run-13.md as a generic-api-key, which left every pull request red; the allowlist in .gitleaks.toml already carries path-scoped exceptions for known fixtures, including entries for paths that only appear in older commits"
+      }
     }
   ]
 }

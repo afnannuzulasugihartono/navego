@@ -7,6 +7,7 @@ Division: Engineering
 Scope (what this role may work in):
 
 - .github/**
+- .gitleaks.toml
 - scripts/release/**
 - scripts/pack/**
 - docs/releases/**
