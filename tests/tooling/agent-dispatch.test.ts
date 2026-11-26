@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { buildPrompt, credentialPresent, markerText, selectTicket, stampOf } from '../../scripts/dev/agent-fleet/dispatch.ts';
+import { buildPrompt, credentialPresent, markerText, selectTicket, slotBusy, stampOf } from '../../scripts/dev/agent-fleet/dispatch.ts';
 import { readQueue } from '../../scripts/dev/agent-fleet/watch.ts';
 
 const NOW = Date.parse('2026-11-26T11:40:00.000Z');
@@ -66,6 +66,28 @@ test('the dispatcher skips a lane whose worker process is still alive', () => {
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test('a marker holds the lane by its own stamp, not by the file time', () => {
+  const dir = makeQueue();
+  try {
+    write(dir, 'operator-to-marketer-20261126-1045.md', ticketText('measurement'));
+    write(dir, 'marketer-started-20261126-0500.md', 'Ticket: operator-to-marketer-20261126-1045.md. Slot: nvidia-1.\n');
+    const old = readQueue(dir);
+    assert.ok(selectTicket(old, NOW, 120, []), 'an old stamp frees the lane, whatever the file time says');
+    write(dir, 'marketer-started-20261126-1130.md', 'Ticket: operator-to-marketer-20261126-1045.md. Slot: nvidia-1.\n');
+    const fresh = readQueue(dir);
+    assert.equal(selectTicket(fresh, NOW, 120, []), null, 'a stamp from ten minutes ago holds the lane');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('a slot with a live session does not start a second one on the same key', () => {
+  const slot = { id: 'nvidia-1', provider: 'nvidia1', model: 'nvidia1/minimaxai/minimax-m3.1-flash', credential: 'file:~/.config/opencode/nvidia-api-key-1', session: 'slot-nvidia-1', serves: ['lane worker 1'], status: 'ready', runsLaneWorkers: true };
+  assert.equal(slotBusy(slot, ['opencode.exe run --title slot-nvidia-1/engineer-20261126-1233']), true, 'the slot holds a session');
+  assert.equal(slotBusy(slot, ['opencode.exe run --title slot-nvidia-2/ceo-20261126-1233']), false, 'another slot is a different key');
+  assert.equal(slotBusy(slot, null), false, 'an unreadable process table is not a busy slot');
 });
 
 test('the lane prompt asks for the reply that closes the ticket and forbids subagents', () => {

@@ -35,6 +35,7 @@ export interface MarkerFile {
   slot: string | null;
   released: boolean;
   mtimeMs: number;
+  startedMs: number;
 }
 
 export interface ReplyFile {
@@ -101,6 +102,16 @@ export const DEFAULT_STALE_MINUTES = 30;
 
 const stripTail = (value: string): string => value.replace(/[.,;:]+$/, '');
 
+// The marker's own stamp is the dispatch time, and it is the only time the fleet wrote down.
+// A file's mtime can be bumped by anything that touches it, so it is never the evidence that a lane is still working.
+
+export const stampMs = (stamp: string): number | null => {
+  const match = /^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})$/.exec(stamp);
+  if (!match) return null;
+  const [, year, month, day, hour, minute] = match;
+  return Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute));
+};
+
 const readText = (file: string): string => fs.readFileSync(file, 'utf8');
 
 export const readQueue = (queueDir: string): QueueSnapshot => {
@@ -137,28 +148,32 @@ export const readQueue = (queueDir: string): QueueSnapshot => {
       if (marker) {
         const ticketLine = text.match(/^Ticket:\s*([^\s]+)/m);
         const slotLine = text.match(/Slot:\s*([A-Za-z0-9-]+)/);
+        const stamp = marker[2] ?? '';
         markers.push({
           file: entry.name,
           lane: marker[1] ?? '',
-          stamp: marker[2] ?? '',
+          stamp,
           ticket: ticketLine ? stripTail(ticketLine[1] ?? '') : '',
           slot: slotLine ? (slotLine[1] ?? null) : null,
           released: false,
           mtimeMs: fs.statSync(file).mtimeMs,
+          startedMs: stampMs(stamp) ?? fs.statSync(file).mtimeMs,
         });
         continue;
       }
       const released = RELEASED.exec(entry.name);
       if (released) {
         const ticketLine = text.match(/^Ticket:\s*([^\s]+)/m);
+        const stamp = released[2] ?? '';
         markers.push({
           file: entry.name,
           lane: released[1] ?? '',
-          stamp: released[2] ?? '',
+          stamp,
           ticket: ticketLine ? stripTail(ticketLine[1] ?? '') : '',
           slot: null,
           released: true,
           mtimeMs: fs.statSync(file).mtimeMs,
+          startedMs: stampMs(stamp) ?? fs.statSync(file).mtimeMs,
         });
       }
     }
@@ -217,7 +232,7 @@ export const classify = (
       else state = processAlive ? 'working' : 'stalled';
     }
     if (state !== 'returned' && state !== 'working' && releases >= 3) state = 'blocked';
-    const age = marker ? Math.round((now - marker.mtimeMs) / 60000) : null;
+    const age = marker ? Math.round((now - marker.startedMs) / 60000) : null;
     const sessionAge = session ? Math.round((now - session.updatedMs) / 60000) : null;
     rows.push({
       ticket: ticket.file,

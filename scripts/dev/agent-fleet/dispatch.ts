@@ -48,7 +48,7 @@ export const credentialPresent = (credential: string): boolean => {
 const laneBusy = (snapshot: QueueSnapshot, lane: string, now: number, markerMinutes: number): boolean =>
   snapshot.markers.some((marker) => !marker.released
     && marker.lane === lane
-    && now - marker.mtimeMs < markerMinutes * 60000);
+    && now - marker.startedMs < markerMinutes * 60000);
 
 export const selectTicket = (
   snapshot: QueueSnapshot,
@@ -114,6 +114,9 @@ export const dispatchNote = (slot: Slot, ticket: TicketFile, stamp: string, titl
   '',
 ].join('\n');
 
+export const slotBusy = (slot: Slot, processLines: string[] | null): boolean =>
+  processLines !== null && processLines.some((line) => line.includes(`slot-${slot.id}/`));
+
 export const dispatch = async (options: {
   slot: Slot;
   snapshot: QueueSnapshot;
@@ -123,6 +126,7 @@ export const dispatch = async (options: {
   processLines?: string[] | null;
 }): Promise<{ title: string; pid: number | undefined; stamp: string } | null> => {
   const { slot, snapshot, queueDir, now, repoRoot, processLines = null } = options;
+  if (slotBusy(slot, processLines)) return null;
   const ticket = selectTicket(snapshot, now, DEFAULT_MARKER_MINUTES, processLines);
   if (!ticket) return null;
   const cli = opencodeExecutable();
@@ -189,7 +193,7 @@ const main = async (): Promise<void> => {
   const processLines = processes === null ? null : processes.map((row) => row.commandLine);
   const started = await dispatch({ slot, snapshot, queueDir, now: Date.now(), repoRoot: root, processLines });
   if (!started) {
-    console.log('NO_READY_TICKET');
+    console.log(slotBusy(slot, processLines) ? 'SLOT_BUSY' : 'NO_READY_TICKET');
     return;
   }
   console.log(`dispatched ${started.title} (pid ${started.pid ?? '?'})`);
