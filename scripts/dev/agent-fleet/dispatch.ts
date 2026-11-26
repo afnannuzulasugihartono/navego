@@ -11,7 +11,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { readProcesses, readQueue, type QueueSnapshot, type TicketFile } from './watch.ts';
+import { readEvidence, readQueue, type Evidence, type QueueSnapshot, type TicketFile } from './watch.ts';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 
@@ -33,6 +33,27 @@ export interface Roster {
 
 export const DEFAULT_MARKER_MINUTES = 120;
 
+// A lane is busy while its session is still moving, and a slot is busy while it holds any session at all.
+// The process table alone misses a session the service keeps alive after its launcher process is gone, and two sessions on one key is the request multiplication that ends in HTTP 429.
+
+export const liveSessionFor = (evidence: Evidence, lane: string, now: number): boolean => {
+  if (!evidence.sessions) return false;
+  return evidence.sessions.some((session) => {
+    if (!session.title.includes(`/${lane}-`)) return false;
+    if (session.outcome === 'error' || session.outcome === 'aborted') return false;
+    return now - session.updatedMs <= evidence.staleMinutes * 60000;
+  });
+};
+
+export const slotBusy = (slot: Slot, evidence: Evidence, now: number): boolean => {
+  if (evidence.processLines?.some((line) => line.includes(`slot-${slot.id}/`))) return true;
+  if (!evidence.sessions) return false;
+  return evidence.sessions.some((session) => session.title.startsWith(`slot-${slot.id}/`)
+    && session.outcome !== 'error'
+    && session.outcome !== 'aborted'
+    && now - session.updatedMs <= evidence.staleMinutes * 60000);
+};
+
 export const readRoster = (file: string): Roster =>
   JSON.parse(fs.readFileSync(file, 'utf8')) as Roster;
 
@@ -45,23 +66,23 @@ export const credentialPresent = (credential: string): boolean => {
   return false;
 };
 
-const laneBusy = (snapshot: QueueSnapshot, lane: string, now: number, markerMinutes: number): boolean =>
+const laneBusy = (snapshot: QueueSnapshot, lane: string, now: number, markerMinutes: number, evidence: Evidence): boolean =>
   snapshot.markers.some((marker) => !marker.released
     && marker.lane === lane
-    && now - marker.startedMs < markerMinutes * 60000);
+    && now - marker.startedMs < markerMinutes * 60000)
+  || (evidence.processLines?.some((line) => line.includes(`lane-${lane}-`)) ?? false)
+  || liveSessionFor(evidence, lane, now);
 
 export const selectTicket = (
   snapshot: QueueSnapshot,
   now: number,
   markerMinutes = DEFAULT_MARKER_MINUTES,
-  processLines: string[] | null = null,
+  evidence: Evidence = { processLines: null, sessions: null, staleMinutes: 30 },
 ): TicketFile | null => {
   const ready = snapshot.tickets.filter((ticket) => {
     if (ticket.blocked) return false;
     if (snapshot.replies.some((reply) => reply.answered === ticket.file)) return false;
-    if (laneBusy(snapshot, ticket.lane, now, markerMinutes)) return false;
-    if (processLines && processLines.some((line) => line.includes(`lane-${ticket.lane}-`))) return false;
-    return true;
+    return !laneBusy(snapshot, ticket.lane, now, markerMinutes, evidence);
   });
   const money = ready.filter((ticket) => ticket.class === 'money').sort((left, right) => left.stamp.localeCompare(right.stamp));
   if (money[0]) return money[0];
@@ -114,20 +135,17 @@ export const dispatchNote = (slot: Slot, ticket: TicketFile, stamp: string, titl
   '',
 ].join('\n');
 
-export const slotBusy = (slot: Slot, processLines: string[] | null): boolean =>
-  processLines !== null && processLines.some((line) => line.includes(`slot-${slot.id}/`));
-
 export const dispatch = async (options: {
   slot: Slot;
   snapshot: QueueSnapshot;
   queueDir: string;
   now: number;
   repoRoot: string;
-  processLines?: string[] | null;
+  evidence?: Evidence;
 }): Promise<{ title: string; pid: number | undefined; stamp: string } | null> => {
-  const { slot, snapshot, queueDir, now, repoRoot, processLines = null } = options;
-  if (slotBusy(slot, processLines)) return null;
-  const ticket = selectTicket(snapshot, now, DEFAULT_MARKER_MINUTES, processLines);
+  const { slot, snapshot, queueDir, now, repoRoot, evidence = { processLines: null, sessions: null, staleMinutes: 30 } } = options;
+  if (slotBusy(slot, evidence, now)) return null;
+  const ticket = selectTicket(snapshot, now, DEFAULT_MARKER_MINUTES, evidence);
   if (!ticket) return null;
   const cli = opencodeExecutable();
   if (!cli) return null;
@@ -189,11 +207,10 @@ const main = async (): Promise<void> => {
   }
   const queueDir = path.join(root, 'docs/agent-roles/queue');
   const snapshot = readQueue(queueDir);
-  const processes = readProcesses();
-  const processLines = processes === null ? null : processes.map((row) => row.commandLine);
-  const started = await dispatch({ slot, snapshot, queueDir, now: Date.now(), repoRoot: root, processLines });
+  const evidence = await readEvidence();
+  const started = await dispatch({ slot, snapshot, queueDir, now: Date.now(), repoRoot: root, evidence });
   if (!started) {
-    console.log(slotBusy(slot, processLines) ? 'SLOT_BUSY' : 'NO_READY_TICKET');
+    console.log(slotBusy(slot, evidence, Date.now()) ? 'SLOT_BUSY' : 'NO_READY_TICKET');
     return;
   }
   console.log(`dispatched ${started.title} (pid ${started.pid ?? '?'})`);

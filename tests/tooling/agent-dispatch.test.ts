@@ -9,6 +9,14 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { buildPrompt, credentialPresent, markerText, selectTicket, slotBusy, stampOf } from '../../scripts/dev/agent-fleet/dispatch.ts';
+import type { Evidence } from '../../scripts/dev/agent-fleet/watch.ts';
+
+const evidence = (overrides: Partial<Evidence> = {}): Evidence => ({
+  processLines: null,
+  sessions: null,
+  staleMinutes: 30,
+  ...overrides,
+});
 import { readQueue } from '../../scripts/dev/agent-fleet/watch.ts';
 
 const NOW = Date.parse('2026-11-26T11:40:00.000Z');
@@ -61,8 +69,8 @@ test('the dispatcher skips a lane whose worker process is still alive', () => {
     write(dir, 'operator-to-marketer-20261126-1045.md', ticketText('measurement'));
     const snapshot = readQueue(dir);
     const alive = ['opencode.exe run --agent marketer --worktree lane-marketer-20261126-1000'];
-    assert.equal(selectTicket(snapshot, NOW, 120, alive), null, 'a live worker holds the lane');
-    assert.ok(selectTicket(snapshot, NOW, 120, []), 'with no live worker the ticket is ready');
+    assert.equal(selectTicket(snapshot, NOW, 120, evidence({ processLines: alive })), null, 'a live worker holds the lane');
+    assert.ok(selectTicket(snapshot, NOW, 120, evidence({ processLines: [] })), 'with no live worker the ticket is ready');
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
@@ -74,10 +82,10 @@ test('a marker holds the lane by its own stamp, not by the file time', () => {
     write(dir, 'operator-to-marketer-20261126-1045.md', ticketText('measurement'));
     write(dir, 'marketer-started-20261126-0500.md', 'Ticket: operator-to-marketer-20261126-1045.md. Slot: nvidia-1.\n');
     const old = readQueue(dir);
-    assert.ok(selectTicket(old, NOW, 120, []), 'an old stamp frees the lane, whatever the file time says');
+    assert.ok(selectTicket(old, NOW, 120, evidence()), 'an old stamp frees the lane, whatever the file time says');
     write(dir, 'marketer-started-20261126-1130.md', 'Ticket: operator-to-marketer-20261126-1045.md. Slot: nvidia-1.\n');
     const fresh = readQueue(dir);
-    assert.equal(selectTicket(fresh, NOW, 120, []), null, 'a stamp from ten minutes ago holds the lane');
+    assert.equal(selectTicket(fresh, NOW, 120, evidence()), null, 'a stamp from ten minutes ago holds the lane');
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
@@ -85,9 +93,27 @@ test('a marker holds the lane by its own stamp, not by the file time', () => {
 
 test('a slot with a live session does not start a second one on the same key', () => {
   const slot = { id: 'nvidia-1', provider: 'nvidia1', model: 'nvidia1/minimaxai/minimax-m3.1-flash', credential: 'file:~/.config/opencode/nvidia-api-key-1', session: 'slot-nvidia-1', serves: ['lane worker 1'], status: 'ready', runsLaneWorkers: true };
-  assert.equal(slotBusy(slot, ['opencode.exe run --title slot-nvidia-1/engineer-20261126-1233']), true, 'the slot holds a session');
-  assert.equal(slotBusy(slot, ['opencode.exe run --title slot-nvidia-2/ceo-20261126-1233']), false, 'another slot is a different key');
-  assert.equal(slotBusy(slot, null), false, 'an unreadable process table is not a busy slot');
+  const running = ['opencode.exe run --title slot-nvidia-1/engineer-20261126-1233'];
+  const now = Date.now();
+  assert.equal(slotBusy(slot, evidence({ processLines: running }), now), true, 'the slot holds a session');
+  assert.equal(slotBusy(slot, evidence({ processLines: ['opencode.exe run --title slot-nvidia-2/ceo-20261126-1233'] }), now), false, 'another slot is a different key');
+  assert.equal(slotBusy(slot, evidence(), now), false, 'an unreadable process table is not a busy slot');
+  const session = { id: 'ses_a', title: 'slot-nvidia-1/engineer-20261126-1233', agent: 'engineer', parentId: null, outcome: null, updatedMs: now };
+  assert.equal(slotBusy(slot, evidence({ sessions: [session] }), now), true, 'a live session holds the slot even when its launcher process is gone');
+  assert.equal(slotBusy(slot, evidence({ sessions: [{ ...session, outcome: 'error' }] }), now), false, 'a session that ended in an error releases the key');
+  assert.equal(slotBusy(slot, evidence({ sessions: [{ ...session, updatedMs: now - 3 * 3600000 }] }), now), false, 'a session that went silent releases the key');
+});
+
+test('a lane with a live session is busy, whatever its marker says', () => {
+  const dir = makeQueue();
+  try {
+    write(dir, 'operator-to-marketer-20261126-1045.md', ticketText('measurement'));
+    write(dir, 'marketer-started-20261126-0500.md', 'Ticket: operator-to-marketer-20261126-1045.md. Slot: nvidia-1.\n');
+    const session = { id: 'ses_m', title: 'slot-nvidia-3/marketer-20261126-1233', agent: 'marketer', parentId: null, outcome: null, updatedMs: NOW };
+    assert.equal(selectTicket(readQueue(dir), NOW, 120, evidence({ sessions: [session] })), null, 'the live session holds the lane');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 test('the lane prompt asks for the reply that closes the ticket and forbids subagents', () => {
