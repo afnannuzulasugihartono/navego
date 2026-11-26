@@ -81,6 +81,23 @@ reviewer agent count as the review (today's practice, which relies on
 `enforce_admins` being false), **or** the owner installs a bot that can
 approve as a reviewer, which makes the GitHub rule match the automation rule.
 
+Two owner-only paths also stand between the scope rule and the build, and no
+lane may touch either:
+
+- **`.github/workflows/ci.yml`** - the scope verifier
+  (scripts/verify/role-scope.ts) is registered as `npm run scope:role` but
+  no CI job, test or check runs it, so the scope rule never fires on a pull
+  request. The reviewer of pull request #461 found this on 2026-11-26: a lane
+  that reaches outside its scope would still pass the build.
+- **`gates.lock`** - the new verifier is absent from the pins, so an agent
+  could weaken it without the hash mismatch its siblings get. The repository's
+  own rule says a gate that must move is re-pinned in the same commit with the
+  reason written in it.
+
+So the owner's answer has three parts: who approves a pull request, whether a
+lane may add the scope job to the CI workflow, and whether the verifier is
+pinned in `gates.lock` by the lane that writes it.
+
 Until that sentence is written, the lanes can open and prepare pull requests
 but not land them without this one answer.
 
