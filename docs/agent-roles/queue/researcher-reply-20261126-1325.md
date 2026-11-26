@@ -39,7 +39,7 @@ unchanged.
 - `npm test` — exit 0 after `npm ci` installed this clean worktree's pinned
   dependencies.
 - `npm run check` — exit 0: `type-debt: 0 errors — at baseline 0`; `check ok:
-  36 allowlisted browser primitives, 319 runtime safety files, version 1.8.1`.
+  36 allowlisted browser primitives, 319 runtime safety files`.
 - All 20 public URLs cited by the corrected shortlist returned HTTP 200 on
   2026-11-26.
 - The repository and live docs both publish 40 tools over 36 browser
