@@ -1533,6 +1533,17 @@
       }
     },
     {
+      "id": "site-funnel-views-01",
+      "scope": "site/funnel",
+      "file": "site/app/lib/funnel.ts",
+      "decision": "The install view belongs to the rendered command and the pairing view belongs to a visitor with a session. install.view is written where the install command is on screen - the landing's install block and the download page's install block - so the row no longer counts a page load, and the landing page load keeps its own row, page.view. pair.view is written only for a visitor with a session, so a crawler probe or an anonymous load of the dashboard stops writing a funnel step that no human reached. One browser reports one step once: a re-render is not a second visitor.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/agent-roles/queue/operator-to-marketer-20261126-1045.md:32-43",
+        "also": "site/app/lib/funnel.ts:109-122 (the install view and the pairing view are written by the surfaces that reach them, not by the page load)"
+      }
+    },
+    {
       "id": "docs-agent-roles-11",
       "scope": "agent/roles",
       "file": "docs/agent-roles/registry.json",

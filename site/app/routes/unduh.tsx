@@ -1,7 +1,7 @@
-// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots) decisions.json -> site-install-cta-01, site-install-cta-02
+// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots) decisions.json -> site-install-cta-01, site-install-cta-02, site-funnel-views-01
 
 import { seoMeta } from '../lib/seo.js';
-import { recordInstallCopy, track } from '../lib/funnel';
+import { recordInstallCopy, recordInstallView, track } from '../lib/funnel';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { CopyCommand } from '../components/CopyCommand';
@@ -63,6 +63,7 @@ export default function Unduh() {
               buttonLabel="Salin perintah"
               successMessage="Perintah disalin. Jalankan di PowerShell."
               onCopied={() => recordInstallCopy('download')}
+              onRendered={() => recordInstallView('download')}
             />
             <div className="hero-cta">
               <a className="btn btn-ghost" href={`${DOWNLOAD}.zip?for=chrome`} download onClick={() => track('install.click', { browser: 'chrome', artifact: 'zip' })}>Pasang manual (.zip)</a>

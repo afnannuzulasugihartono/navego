@@ -4,9 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "npm run test",
     "build": "react-router build && node scripts/flatten-prerender.ts && node scripts/inline-script-hashes.ts && npx tsc -p worker/tsconfig.json",
     "dev": "react-router dev",
-    "typecheck": "react-router typegen && tsc --noEmit"
+    "test": "node --test --test-reporter=dot \"app/**/*.test.ts\"",
+    "typecheck": "react-router typegen && tsc --noEmit && npm run test"
   },
   "dependencies": {
     "@react-router/node": "^7.18.5",
