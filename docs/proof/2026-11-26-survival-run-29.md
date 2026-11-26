@@ -64,6 +64,30 @@ disclosure that the sender maintains Navego, and the record in
 The outreach conversation on the Statement Harbor issue still has one comment -
 ours - and no reply.
 
+## The dispatcher's two guards
+
+The engineer lane handed this lane a ticket (`engineer-to-operator-20261126-1545.md`)
+for the two worker behaviours that were still missing, and both are now in the
+canonical dispatcher:
+
+- **A credential collision is refused.** The selected slot's credential is
+  resolved locally, hashed with SHA-256, and compared with every other slot in
+  the roster. Two slots that resolve to the same bytes are one key wearing two
+  names, so the run is refused with the words `credential collision`, a
+  non-zero exit, and nothing started or written. Only the first eight
+  characters of the digest are kept, and they are the only credential material
+  in the dispatch proof note.
+- **The dry run describes instead of doing.** `--dry-run` writes no marker,
+  writes no proof note, starts no process, and prints the selected slot, the
+  lane, the ticket, the credential digest prefix and the exact `opencode run`
+  command. On the live roster it prints `SLOT_BUSY` for nvidia-3, because the
+  engineer lane holds that key.
+
+Both are proved by command-level tests in `tests/tooling/agent-dispatch.test.ts`
+against a temporary queue and roster: "the dry run prints the plan, prints no
+credential, and writes nothing" and "the command refuses a credential collision
+and starts nothing". The reply is `operator-reply-20261126-1715.md`.
+
 ## Verification
 
 - `npm test` exits 0 and `npm run check` exits 0 on `main`; the fleet tests are

@@ -9,6 +9,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { readEvidence, readQueue, type Evidence, type QueueSnapshot, type TicketFile } from './watch.ts';
@@ -64,6 +65,45 @@ export const credentialPresent = (credential: string): boolean => {
     return fs.existsSync(target);
   }
   return false;
+};
+
+// Two slots that resolve to the same bytes are one key wearing two names, and two lanes on one key is the request multiplication that ends in HTTP 429.
+// The credential is read to be hashed and is never printed, stored, or logged: only the first eight characters of its digest are (decisions.json -> docs-agent-roles-05).
+
+export const resolveCredential = (credential: string): string | null => {
+  if (credential.startsWith('env:')) return process.env[credential.slice(4)] ?? null;
+  if (credential.startsWith('file:')) {
+    const target = credential.slice(5).replace(/^~/, os.homedir());
+    if (!fs.existsSync(target)) return null;
+    return fs.readFileSync(target, 'utf8').trim();
+  }
+  return null;
+};
+
+export const digestOf = (value: string): string =>
+  crypto.createHash('sha256').update(value).digest('hex');
+
+export interface CredentialCheck {
+  ok: boolean;
+  digestPrefix: string | null;
+  collisionWith: string | null;
+}
+
+export const checkCredential = (roster: Roster, slotId: string): CredentialCheck => {
+  const slot = roster.slots.find((candidate) => candidate.id === slotId);
+  if (!slot) return { ok: false, digestPrefix: null, collisionWith: null };
+  const own = resolveCredential(slot.credential);
+  if (own === null) return { ok: false, digestPrefix: null, collisionWith: null };
+  const ownDigest = digestOf(own);
+  for (const other of roster.slots) {
+    if (other.id === slotId) continue;
+    const value = resolveCredential(other.credential);
+    if (value === null) continue;
+    if (digestOf(value) === ownDigest) {
+      return { ok: false, digestPrefix: ownDigest.slice(0, 8), collisionWith: other.id };
+    }
+  }
+  return { ok: true, digestPrefix: ownDigest.slice(0, 8), collisionWith: null };
 };
 
 const laneBusy = (snapshot: QueueSnapshot, lane: string, now: number, markerMinutes: number, evidence: Evidence): boolean =>
@@ -123,18 +163,54 @@ export const markerText = (ticket: TicketFile, slot: Slot, stamp: string, title:
   '',
 ].join('\n');
 
-export const dispatchNote = (slot: Slot, ticket: TicketFile, stamp: string, title: string, logDir: string): string => [
+export const dispatchNote = (slot: Slot, ticket: TicketFile, stamp: string, title: string, logDir: string, digestPrefix: string | null): string => [
   `# Dispatch ${stamp}`,
   '',
   `- slot: ${slot.id} (provider ${slot.provider}, model ${slot.model})`,
   `- lane: ${ticket.lane}`,
   `- ticket: ${ticket.file}`,
   `- session title: ${title} (listed by: opencode session list)`,
+  `- credential digest: ${digestPrefix ?? 'unavailable'} (first eight characters of the SHA-256 of this slot's key; the key itself is never printed)`,
   `- worker log: ${logDir}`,
   '',
   'The session is not archived, so it can be watched and exported while it runs; it holds its own credential, its own session and its own worktree.',
   '',
 ].join('\n');
+
+export interface DispatchPlan {
+  slot: string;
+  lane: string;
+  ticket: string;
+  digestPrefix: string | null;
+  command: string;
+}
+
+export const planDispatch = (
+  slot: Slot,
+  ticket: TicketFile,
+  stamp: string,
+  digestPrefix: string | null,
+  cli: string,
+): DispatchPlan => {
+  const title = `slot-${slot.id}/${ticket.lane}-${stamp}`;
+  const worktree = `lane-${ticket.lane}-${stamp}`;
+  const args = [
+    'run',
+    '--model', slot.model,
+    '--agent', ticket.lane,
+    '--worktree', worktree,
+    '--title', title,
+    '--format', 'json',
+    '--auto', buildPrompt(ticket, stamp),
+  ];
+  return {
+    slot: slot.id,
+    lane: ticket.lane,
+    ticket: ticket.file,
+    digestPrefix,
+    command: [cli, ...args].join(' '),
+  };
+};
 
 export const dispatch = async (options: {
   slot: Slot;
@@ -143,14 +219,23 @@ export const dispatch = async (options: {
   now: number;
   repoRoot: string;
   evidence?: Evidence;
-}): Promise<{ title: string; pid: number | undefined; stamp: string } | null> => {
-  const { slot, snapshot, queueDir, now, repoRoot, evidence = { processLines: null, sessions: null, staleMinutes: 30, remoteAnswers: null } } = options;
+  digestPrefix?: string | null;
+  dryRun?: boolean;
+}): Promise<{ title: string; pid: number | undefined; stamp: string; plan: DispatchPlan } | null> => {
+  const {
+    slot, snapshot, queueDir, now, repoRoot,
+    evidence = { processLines: null, sessions: null, staleMinutes: 30, remoteAnswers: null },
+    digestPrefix = null,
+    dryRun = false,
+  } = options;
   if (slotBusy(slot, evidence, now)) return null;
   const ticket = selectTicket(snapshot, now, DEFAULT_MARKER_MINUTES, evidence);
   if (!ticket) return null;
   const cli = opencodeExecutable();
   if (!cli) return null;
   const stamp = stampOf(now);
+  const plan = planDispatch(slot, ticket, stamp, digestPrefix, cli);
+  if (dryRun) return { title: `slot-${slot.id}/${ticket.lane}-${stamp}`, pid: undefined, stamp, plan };
   const title = `slot-${slot.id}/${ticket.lane}-${stamp}`;
   const worktree = `lane-${ticket.lane}-${stamp}`;
   const logDir = path.join(os.tmpdir(), 'opencode', 'lane-logs');
@@ -168,16 +253,21 @@ export const dispatch = async (options: {
   ], { cwd: repoRoot, detached: true, stdio: ['ignore', out, err], windowsHide: true });
   child.unref();
   fs.writeFileSync(path.join(queueDir, `${ticket.lane}-started-${stamp}.md`), markerText(ticket, slot, stamp, title));
-  fs.writeFileSync(path.join(repoRoot, 'docs', 'proof', `${stamp}-dispatch-${slot.id}.md`), dispatchNote(slot, ticket, stamp, title, logDir));
-  return { title, pid: child.pid, stamp };
+  fs.writeFileSync(path.join(repoRoot, 'docs', 'proof', `${stamp}-dispatch-${slot.id}.md`), dispatchNote(slot, ticket, stamp, title, logDir, digestPrefix));
+  return { title, pid: child.pid, stamp, plan };
 };
 
 const usage = (): void => {
-  console.error('usage: node scripts/dev/agent-fleet/dispatch.ts --slot <slot-id>');
+  console.error('usage: node scripts/dev/agent-fleet/dispatch.ts --slot <slot-id> [--dry-run] [--queue <dir>] [--roster <file>]');
+  console.error('--dry-run prints the plan (slot, lane, ticket, credential digest prefix, command) and writes nothing.');
 };
 
 const main = async (): Promise<void> => {
   const args = process.argv.slice(2);
+  const flagValue = (flag: string): string | undefined => {
+    const at = args.indexOf(flag);
+    return at >= 0 ? args[at + 1] : undefined;
+  };
   const slotAt = args.indexOf('--slot');
   const slotId = slotAt >= 0 ? args[slotAt + 1] : undefined;
   if (!slotId) {
@@ -189,7 +279,7 @@ const main = async (): Promise<void> => {
     console.log('SCOPE_GATE_PENDING');
     return;
   }
-  const roster = readRoster(path.join(root, 'docs/agent-roles/keys.json'));
+  const roster = readRoster(flagValue('--roster') ?? path.join(root, 'docs/agent-roles/keys.json'));
   const slot = roster.slots.find((candidate) => candidate.id === slotId);
   if (!slot) {
     console.log('NO_SLOT');
@@ -206,12 +296,40 @@ const main = async (): Promise<void> => {
   if (slot.status !== 'ready') {
     console.log(`slot ${slot.id} says ${slot.status} in the roster but its credential is there; dispatching`);
   }
-  const queueDir = path.join(root, 'docs/agent-roles/queue');
+  const credential = checkCredential(roster, slot.id);
+  if (!credential.ok && credential.collisionWith) {
+    console.error(`credential collision: slot ${slot.id} and slot ${credential.collisionWith} resolve to the same key (digest ${credential.digestPrefix}); refusing the run`);
+    process.exitCode = 1;
+    return;
+  }
+  if (!credential.ok) {
+    console.log('CREDENTIAL_UNREADABLE');
+    return;
+  }
+  const queueDir = flagValue('--queue') ?? path.join(root, 'docs/agent-roles/queue');
   const snapshot = readQueue(queueDir);
   const evidence = await readEvidence();
-  const started = await dispatch({ slot, snapshot, queueDir, now: Date.now(), repoRoot: root, evidence });
+  const dryRun = args.includes('--dry-run');
+  const started = await dispatch({
+    slot,
+    snapshot,
+    queueDir,
+    now: Date.now(),
+    repoRoot: root,
+    evidence,
+    digestPrefix: credential.digestPrefix,
+    dryRun,
+  });
   if (!started) {
     console.log(slotBusy(slot, evidence, Date.now()) ? 'SLOT_BUSY' : 'NO_READY_TICKET');
+    return;
+  }
+  if (dryRun) {
+    console.log(`slot: ${started.plan.slot}`);
+    console.log(`lane: ${started.plan.lane}`);
+    console.log(`ticket: ${started.plan.ticket}`);
+    console.log(`credential digest: ${started.plan.digestPrefix ?? 'unavailable'}`);
+    console.log(`command: ${started.plan.command}`);
     return;
   }
   console.log(`dispatched ${started.title} (pid ${started.pid ?? '?'})`);

@@ -8,7 +8,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { buildPrompt, credentialPresent, markerText, selectTicket, slotBusy, stampOf } from '../../scripts/dev/agent-fleet/dispatch.ts';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { buildPrompt, checkCredential, credentialPresent, markerText, selectTicket, slotBusy, stampOf } from '../../scripts/dev/agent-fleet/dispatch.ts';
 import type { Evidence } from '../../scripts/dev/agent-fleet/watch.ts';
 
 const evidence = (overrides: Partial<Evidence> = {}): Evidence => ({
@@ -18,6 +20,8 @@ const evidence = (overrides: Partial<Evidence> = {}): Evidence => ({
   remoteAnswers: null,
   ...overrides,
 });
+
+const root = fileURLToPath(new URL('../../', import.meta.url));
 import { readQueue } from '../../scripts/dev/agent-fleet/watch.ts';
 
 const NOW = Date.parse('2026-11-26T11:40:00.000Z');
@@ -103,6 +107,92 @@ test('a slot with a live session does not start a second one on the same key', (
   assert.equal(slotBusy(slot, evidence({ sessions: [session] }), now), true, 'a live session holds the slot even when its launcher process is gone');
   assert.equal(slotBusy(slot, evidence({ sessions: [{ ...session, outcome: 'error' }] }), now), false, 'a session that ended in an error releases the key');
   assert.equal(slotBusy(slot, evidence({ sessions: [{ ...session, updatedMs: now - 3 * 3600000 }] }), now), false, 'a session that went silent releases the key');
+});
+
+test('the dry run prints the plan, prints no credential, and writes nothing', () => {
+  const dir = makeQueue();
+  try {
+    const keyFile = path.join(dir, 'key');
+    fs.writeFileSync(keyFile, 'nvapi-the-secret-value');
+    write(dir, 'operator-to-marketer-20261126-1045.md', ticketText('measurement'));
+    const rosterPath = path.join(dir, 'roster.json');
+    fs.writeFileSync(rosterPath, JSON.stringify({
+      version: 1,
+      slots: [
+        { id: 'dry-run-slot', provider: 'nvidia1', model: 'nvidia1/minimaxai/minimax-m3.1-flash', credential: `file:${keyFile}`, session: 'slot-dry-run', serves: ['lane worker 1'], status: 'ready', runsLaneWorkers: true },
+      ],
+    }));
+    const script = path.join(root, 'scripts/dev/agent-fleet/dispatch.ts');
+    const run = spawnSync(process.execPath, ['--experimental-strip-types', script, '--slot', 'dry-run-slot', '--dry-run', '--queue', dir, '--roster', rosterPath], { encoding: 'utf8' });
+    assert.equal(run.status, 0, `the dry run exits zero: ${run.stderr}`);
+    assert.match(run.stdout, /^slot: dry-run-slot$/m, 'the plan names the slot');
+    assert.match(run.stdout, /^lane: marketer$/m, 'the plan names the lane');
+    assert.match(run.stdout, /^ticket: operator-to-marketer-20261126-1045\.md$/m, 'the plan names the ticket');
+    assert.match(run.stdout, /^credential digest: [0-9a-f]{8}$/m, 'the plan carries the digest prefix');
+    assert.match(run.stdout, /^command: .*opencode.*run.*--agent marketer/m, 'the plan carries the command');
+    assert.ok(!run.stdout.includes('nvapi-the-secret-value'), 'the dry run prints no credential value');
+    const queueFiles = fs.readdirSync(dir).filter((name) => name.includes('started-'));
+    assert.deepEqual(queueFiles, [], 'the dry run writes no marker');
+    const proofs = fs.readdirSync(path.join(root, 'docs/proof')).filter((name) => name.includes('dispatch-dry-run-slot'));
+    assert.deepEqual(proofs, [], 'the dry run writes no proof note');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('the command refuses a credential collision and starts nothing', () => {
+  const dir = makeQueue();
+  try {
+    const first = path.join(dir, 'key-1');
+    const second = path.join(dir, 'key-2');
+    fs.writeFileSync(first, 'nvapi-same-key');
+    fs.writeFileSync(second, 'nvapi-same-key');
+    write(dir, 'operator-to-marketer-20261126-1045.md', ticketText('measurement'));
+    const rosterPath = path.join(dir, 'roster.json');
+    fs.writeFileSync(rosterPath, JSON.stringify({
+      version: 1,
+      slots: [
+        { id: 'collision-slot', provider: 'nvidia1', model: 'nvidia1/minimaxai/minimax-m3.1-flash', credential: `file:${first}`, session: 'slot-collision', serves: ['lane worker 1'], status: 'ready', runsLaneWorkers: true },
+        { id: 'other-slot', provider: 'nvidia2', model: 'nvidia2/minimaxai/minimax-m3.1-flash', credential: `file:${second}`, session: 'slot-other', serves: ['lane worker 2'], status: 'ready', runsLaneWorkers: true },
+      ],
+    }));
+    const script = path.join(root, 'scripts/dev/agent-fleet/dispatch.ts');
+    const run = spawnSync(process.execPath, ['--experimental-strip-types', script, '--slot', 'collision-slot', '--dry-run', '--queue', dir, '--roster', rosterPath], { encoding: 'utf8' });
+    assert.notEqual(run.status, 0, 'the refusal exits non-zero');
+    assert.match(run.stderr, /credential collision/, 'the refusal says why');
+    assert.ok(!run.stdout.includes('nvapi-same-key'), 'the refusal prints no credential value');
+    const queueFiles = fs.readdirSync(dir).filter((name) => name.includes('started-'));
+    assert.deepEqual(queueFiles, [], 'the refusal writes no marker');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('two slots that resolve to the same key are refused, and different keys are not', () => {
+  const dir = makeQueue();
+  try {
+    const first = path.join(dir, 'key-1');
+    const second = path.join(dir, 'key-2');
+    fs.writeFileSync(first, 'nvapi-same-key');
+    fs.writeFileSync(second, 'nvapi-same-key');
+    const roster = {
+      version: 1,
+      slots: [
+        { id: 'nvidia-1', provider: 'nvidia1', model: 'nvidia1/minimaxai/minimax-m3.1-flash', credential: `file:${first}`, session: 'slot-nvidia-1', serves: ['lane worker 1'], status: 'ready', runsLaneWorkers: true },
+        { id: 'nvidia-2', provider: 'nvidia2', model: 'nvidia2/minimaxai/minimax-m3.1-flash', credential: `file:${second}`, session: 'slot-nvidia-2', serves: ['lane worker 2'], status: 'ready', runsLaneWorkers: true },
+      ],
+    };
+    const collision = checkCredential(roster, 'nvidia-1');
+    assert.equal(collision.ok, false, 'the same bytes behind two slots are one key');
+    assert.equal(collision.collisionWith, 'nvidia-2', 'the collision names the other slot');
+    assert.equal(collision.digestPrefix?.length, 8, 'only the digest prefix is kept');
+    fs.writeFileSync(second, 'nvapi-a-different-key');
+    const distinct = checkCredential(roster, 'nvidia-1');
+    assert.equal(distinct.ok, true, 'different keys are accepted');
+    assert.equal(distinct.collisionWith, null, 'no collision to name');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 test('a ticket answered on the remote is never dispatched again', () => {
