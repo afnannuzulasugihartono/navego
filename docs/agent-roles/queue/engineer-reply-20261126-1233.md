@@ -40,7 +40,7 @@ evidence:
 - `npm test` — green in the lane worktree on this head (the dot reporter ends
   with no failure).
 - `npm run check` — green: type debt `0 errors — at baseline 0`; `check ok: 36
-  allowlisted browser primitives, 319 runtime safety files, version 1.8.1`.
+  allowlisted browser primitives, 319 runtime safety files`.
 - The scope gate over this lane's own diff:
   `npm run scope:role -- engineer --base origin/main --head HEAD` exits 0; the
   changed paths are the decision, the three briefs, this reply, the proof and
