@@ -33,7 +33,9 @@ read. The full contract, including the liveness check, is in
    carrying the line `answered: <ticket file name>`. The line is what closes
    it: a reply that only mentions another ticket in passing does not close that
    ticket. The reply also names what was shipped, the evidence (gates, deploy
-   run) and what it left.
+   run) and what it left, and it carries a **requests** section: what this lane
+   wants another lane to do next. The manager turns each request into one
+   bounded ticket for the lane that owns it.
 4. **Closed.** The manager reads the reply, writes the outcome on
    `docs/agent-roles/status.md`, records it in `docs/proof/`, and only then
    chooses the next assignment.

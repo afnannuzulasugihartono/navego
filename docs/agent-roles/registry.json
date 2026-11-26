@@ -1,31 +1,37 @@
 {
   "version": 1,
-  "generated": "2026-11-26",
-  "source": "User request 2026-11-25: 'untuk automation nya buat semua bisa terdokumentasi di repo dan kelompokkan sesuai dengan role yang sedang dikerjakan satu sesi tidak boleh lintas role; role itu jadi pintu masuk agent supaya dia mengerjakan hanya bagian itu; list dulu apa yang mau di bangun ke aku aku review'. 2026-11-26 path ownership: docs/agent-roles/queue/engineer-to-ceo-20261126-0501.md.",
+  "generated": "2026-11-27",
+  "source": "User request 2026-11-25: 'untuk automation nya buat semua bisa terdokumentasi di repo dan kelompokkan sesuai dengan role yang sedang dikerjakan satu sesi tidak boleh lintas role; role itu jadi pintu masuk agent supaya dia mengerjakan hanya bagian itu; list dulu apa yang mau di bangun ke aku aku review'. 2026-11-26 path ownership: docs/agent-roles/queue/engineer-to-ceo-20261126-0501.md. Owner instruction 2026-11-27: the chief-executive lane is folded into the agent manager, and every lane gets a proactive mandate - marketing implements its own ideas on the website, research researches what to build and where to sell, engineering owns the website's mechanics and judges whether each tool is still worth keeping - with the lanes reporting to the manager and the manager assigning what a lane asks for.",
   "note": "The machine-readable role register: the entry key every session opens with, the team, the repo paths the role may touch, the shared communication paths every role may write, the role's markdown, and the automations that open sessions for it. Each path named by the 2026-11-26 funnel handoff has one work-scope owner; docs/agent-roles.md is the human half of the same system.",
   "roles": [
     {
       "id": "operator",
-      "team": "Agent Management: fleet, ledger and proofs",
-      "scopePaths": [
-        "docs/economy.json",
-        "docs/handoff.md",
-        "docs/agent-roles/keys.json",
-        "docs/proof",
-        "docs/agent-roles/loop/**",
-        "docs/automations.md",
-        "scripts/dev/agent-fleet/**",
-        "scripts/dev/agent-worktree.ts",
-        "tests/tooling/agent-loop.test.ts",
-        "tests/tooling/agent-dispatch.test.ts"
-      ],
+      "team": "Agent Management: fleet, ledger, register and proofs",
+      "division": "Operations",
+      "status": "active",
       "doc": "docs/agent-roles/operator.md",
       "automations": [
         "aut_2164ffcfd001KHx72ub2lmEtrT",
         "aut_2176da47e001Cmh2bDVBUDj5Nn"
       ],
-      "status": "active",
-      "division": "Operations",
+      "scopePaths": [
+        "docs/economy.json",
+        "docs/handoff.md",
+        "docs/proof",
+        "docs/agent-roles/loop/**",
+        "docs/automations.md",
+        "docs/agent-roles/keys.json",
+        "docs/agent-roles/registry.json",
+        "docs/agent-roles.md",
+        "docs/agent-roles/*.md",
+        "scripts/dev/agent-fleet/**",
+        "scripts/dev/agent-worktree.ts",
+        "tests/tooling/agent-loop.test.ts",
+        "tests/tooling/agent-dispatch.test.ts",
+        ".opencode/agents/**",
+        ".claude/agents/**",
+        "tests/tooling/agent-roles.test.ts"
+      ],
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
@@ -35,53 +41,32 @@
     },
     {
       "id": "researcher",
-      "team": "R&D: Research & Development",
+      "team": "R&D: market, website and product research",
+      "division": "Research & Development",
+      "status": "planned",
+      "doc": "docs/agent-roles/researcher.md",
+      "automations": [],
       "scopePaths": [
         "docs/research/**"
       ],
-      "doc": "docs/agent-roles/researcher.md",
-      "automations": [],
-      "status": "planned",
-      "division": "Research & Development",
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
         "docs/proof/**",
-        "docs/decisions.json"
-      ]
-    },
-    {
-      "id": "ceo",
-      "team": "Executive: CEO",
-      "scopePaths": [
-        "docs/agent-roles.md",
-        "docs/agent-roles/registry.json",
-        "docs/agent-roles/*.md"
-      ],
-      "doc": "docs/agent-roles/ceo.md",
-      "automations": [],
-      "status": "planned",
-      "division": "Executive",
-      "communicationPaths": [
-        "docs/agent-roles/queue/**",
-        "docs/agent-roles/status.md",
-        "docs/proof/**",
-        "docs/economy.json",
-        "docs/handoff.md",
         "docs/decisions.json"
       ]
     },
     {
       "id": "sales-rep",
-      "team": "Sales: Prospecting & outreach",
+      "team": "Sales: conversations that become trials",
+      "division": "Sales",
+      "status": "planned",
+      "doc": "docs/agent-roles/sales-rep.md",
+      "automations": [],
       "scopePaths": [
         "README.md",
         "docs/prospects.md"
       ],
-      "doc": "docs/agent-roles/sales-rep.md",
-      "automations": [],
-      "status": "planned",
-      "division": "Sales",
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
@@ -91,14 +76,33 @@
     },
     {
       "id": "marketer",
-      "team": "Marketing: Site & public surface",
-      "scopePaths": [
-        "site/**"
-      ],
+      "team": "Marketing: the website sells",
+      "division": "Marketing",
+      "status": "planned",
       "doc": "docs/agent-roles/marketer.md",
       "automations": [],
-      "status": "planned",
-      "division": "Marketing",
+      "scopePaths": [
+        "site/app/routes/artikel-ai-browser-indonesia.tsx",
+        "site/app/routes/artikel.tsx",
+        "site/app/routes/bandingkan.tsx",
+        "site/app/routes/beranda.tsx",
+        "site/app/routes/changelog.tsx",
+        "site/app/routes/consent.tsx",
+        "site/app/routes/docs.tsx",
+        "site/app/routes/dukungan.tsx",
+        "site/app/routes/en.tsx",
+        "site/app/routes/faq.tsx",
+        "site/app/routes/fitur.tsx",
+        "site/app/routes/harga.tsx",
+        "site/app/routes/index.tsx",
+        "site/app/routes/keamanan.tsx",
+        "site/app/routes/mcp.tsx",
+        "site/app/routes/metodologi.tsx",
+        "site/app/routes/notfound.tsx",
+        "site/app/routes/privasi.tsx",
+        "site/app/routes/syarat.tsx",
+        "site/app/routes/unduh.tsx"
+      ],
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
@@ -108,24 +112,26 @@
     },
     {
       "id": "engineer",
-      "team": "Engineering: Product & DX",
+      "team": "Engineering: the product, the website mechanics and the tools",
+      "division": "Engineering",
+      "status": "planned",
+      "doc": "docs/agent-roles/engineer.md",
+      "automations": [],
       "scopePaths": [
         "extension/**",
         "local/**",
         "shared/**",
+        "site/app/lib/**",
+        "site/app/components/**",
+        "site/app/routes/akun.tsx",
+        "site/app/routes/dashboard.tsx",
+        "site/app/data/tools.json",
         "docs/api.md",
         "docs/agent-friendly.md",
         "scripts/dev/generate-agent-roles.ts",
         "scripts/verify/role-scope.ts",
-        "package.json",
-        "tests/tooling/agent-roles.test.ts",
-        ".opencode/agents/**",
-        ".claude/agents/**"
+        "package.json"
       ],
-      "doc": "docs/agent-roles/engineer.md",
-      "automations": [],
-      "status": "planned",
-      "division": "Engineering",
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
@@ -136,6 +142,10 @@
     {
       "id": "release-engineer",
       "team": "Engineering: Release",
+      "division": "Engineering",
+      "status": "planned",
+      "doc": "docs/agent-roles/release-engineer.md",
+      "automations": [],
       "scopePaths": [
         ".github/**",
         ".gitleaks.toml",
@@ -143,12 +153,9 @@
         "docs/releases/**",
         "scripts/pack/**",
         "scripts/release/**",
-        "server.json"
+        "server.json",
+        "site/app/data/releases.json"
       ],
-      "doc": "docs/agent-roles/release-engineer.md",
-      "automations": [],
-      "status": "planned",
-      "division": "Engineering",
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
@@ -158,33 +165,32 @@
     },
     {
       "id": "finance-analyst",
-      "team": "Finance: Economy",
+      "team": "Finance: the money truth",
+      "division": "Finance",
+      "status": "planned",
+      "doc": "docs/agent-roles/finance-analyst.md",
+      "automations": [],
       "scopePaths": [
         "hosted/migrations/**"
       ],
-      "doc": "docs/agent-roles/finance-analyst.md",
-      "automations": [],
-      "status": "planned",
-      "division": "Finance",
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
         "docs/proof/**",
-        "docs/economy.json",
-        "docs/handoff.md",
         "docs/decisions.json"
       ]
     },
     {
       "id": "support-agent",
-      "team": "Customer Support: Support & retention",
-      "scopePaths": [
-        "docs/product/**"
-      ],
+      "team": "Customer Support: the inbox and the answers",
+      "division": "Customer Support",
+      "status": "planned",
       "doc": "docs/agent-roles/support-agent.md",
       "automations": [],
-      "status": "planned",
-      "division": "Customer Support",
+      "scopePaths": [
+        "docs/product/support.md",
+        "docs/product/navego-adoption.md"
+      ],
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",
@@ -194,16 +200,16 @@
     },
     {
       "id": "onboarding-guide",
-      "team": "Customer Success: Onboarding docs",
+      "team": "Customer Success: the first five minutes",
+      "division": "Customer Success",
+      "status": "planned",
+      "doc": "docs/agent-roles/onboarding-guide.md",
+      "automations": [],
       "scopePaths": [
         "docs/install.md",
         "docs/external-install.md",
         "docs/agent-call.md"
       ],
-      "doc": "docs/agent-roles/onboarding-guide.md",
-      "automations": [],
-      "status": "planned",
-      "division": "Customer Success",
       "communicationPaths": [
         "docs/agent-roles/queue/**",
         "docs/agent-roles/status.md",

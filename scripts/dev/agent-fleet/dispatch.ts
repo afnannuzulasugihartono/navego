@@ -135,6 +135,7 @@ export const buildPrompt = (ticket: TicketFile, stamp: string): string => [
   `Read the ticket ${ticket.file} in docs/agent-roles/queue/ and your role file docs/agent-roles/${ticket.lane}.md, then do that ticket's scopeRequested and nothing else.`,
   'Work only inside your scope and the shared communication surface (the queue, docs/agent-roles/status.md, docs/proof/).',
   'Act first: send or write the thing the ticket asks for, then record it (docs/proof/<date>-' + ticket.lane + '.md and a reply artifact next to the ticket named ' + ticket.lane + '-reply-' + stamp + '.md whose text carries the line answered: ' + ticket.file + '), then refresh your line in docs/agent-roles/status.md.',
+  'The reply also carries a requests section: what this lane wants another lane to do next, one line each. The manager turns every request into a ticket for the lane that owns it.',
   'When the owner rule in docs/autonomy.md and a ticket text disagree, the owner rule wins; if the text you are asked to send misses what that rule requires, fix the text first and send the compliant one.',
   'Ship it the way docs/autonomy.md says: npm test and npm run check, a pull request, and merge by gate.',
   'Never claim money that did not move.',
@@ -146,14 +147,15 @@ export const stampOf = (now: number): string => {
   return `${iso.slice(0, 4)}${iso.slice(5, 7)}${iso.slice(8, 10)}-${iso.slice(11, 13)}${iso.slice(14, 16)}`;
 };
 
+export const opencodeCandidates = (): string[] => (process.platform === 'win32'
+  ? [
+    path.join(process.env.APPDATA ?? '', 'npm', 'node_modules', '@opencode', 'cli', 'bin', 'opencode.exe'),
+    'C:\\Program Files\\nodejs\\node_modules\\@opencode\\cli\\bin\\opencode.exe',
+  ]
+  : ['/usr/local/bin/opencode', '/usr/bin/opencode']);
+
 export const opencodeExecutable = (): string | null => {
-  const candidates = process.platform === 'win32'
-    ? [
-      path.join(process.env.APPDATA ?? '', 'npm', 'node_modules', '@opencode', 'cli', 'bin', 'opencode.exe'),
-      'C:\\Program Files\\nodejs\\node_modules\\@opencode\\cli\\bin\\opencode.exe',
-    ]
-    : ['/usr/local/bin/opencode', '/usr/bin/opencode'];
-  for (const candidate of candidates) if (candidate && fs.existsSync(candidate)) return candidate;
+  for (const candidate of opencodeCandidates()) if (candidate && fs.existsSync(candidate)) return candidate;
   return null;
 };
 
@@ -231,7 +233,8 @@ export const dispatch = async (options: {
   if (slotBusy(slot, evidence, now)) return null;
   const ticket = selectTicket(snapshot, now, DEFAULT_MARKER_MINUTES, evidence);
   if (!ticket) return null;
-  const cli = opencodeExecutable();
+  // The dry run describes the command it would run, so it prints the plan even where the CLI is not installed; a real dispatch needs the binary.
+  const cli = dryRun ? (opencodeCandidates()[0] ?? 'opencode') : opencodeExecutable();
   if (!cli) return null;
   const stamp = stampOf(now);
   const plan = planDispatch(slot, ticket, stamp, digestPrefix, cli);
