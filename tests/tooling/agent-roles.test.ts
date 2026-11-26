@@ -1,6 +1,6 @@
-// @last-edited: 2026-11-25 UTC+7.
+// @last-edited: 2026-11-26 UTC+7.
 // @title: agent roles - the registry is the rule; a session's role and scope are enforced by this gate.
-// @state: the registry parses, every role has a doc that names the role, every scope path resolves, the doc table lists every role, and every automations entry exists.
+// @state: every role has a doc and both path lists, each implementation path has one work-scope owner, the scope gate refuses paths outside a role, and generated permissions match the register.
 // @dependencies: node:test, strict, node:fs, node:path, node:url.
 
 // Roles are the door an automation-opened session walks through (docs/agent-roles.md).
@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { editResource, renderAgentFiles } from '../../scripts/dev/generate-agent-roles.ts';
+import { checkRoleScope } from '../../scripts/verify/role-scope.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const read = (name: string): unknown => JSON.parse(fs.readFileSync(path.join(root, name), 'utf8')) as unknown;
@@ -51,6 +52,25 @@ const resolves = (p: string): boolean => {
 
 const docText = (p: string): string => fs.readFileSync(path.join(root, p), 'utf8');
 
+const REQUIRED_COMMUNICATION_PATHS = [
+  'docs/agent-roles/queue/**',
+  'docs/agent-roles/status.md',
+  'docs/proof/**',
+];
+
+const testScopeMatches = (changedPath: string, scopePath: string): boolean => {
+  if (!scopePath.includes('*')) return changedPath === scopePath || changedPath.startsWith(`${scopePath}/`);
+  const pattern = scopePath
+    .split('/')
+    .map((segment) => {
+      if (segment === '**') return '.*';
+      if (segment === '*') return '[^/]*';
+      return segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    })
+    .join('/');
+  return new RegExp(`^${pattern}$`).test(changedPath);
+};
+
 // The divisions a company actually runs, read from the corporate titles and the functional structure (Wikipedia, Organizational structure and Chief executive officer, read 2026-11-25).
 // A role that names no real division is a project label, and a project label is not a lane an agent can enter.
 
@@ -89,6 +109,9 @@ test('every role is complete enough for a session to open with', () => {
     assert.ok(COMPANY_DIVISIONS.includes(role.division), `${role.id} names the division ${role.division}, which is not a company division`);
     assert.ok(docText(role.doc).includes(`Division: ${role.division}`), `${role.id}'s doc does not name its division`);
     assert.ok(Array.isArray(role.communicationPaths) && role.communicationPaths.length >= 1, `${role.id} names the shared communication surface it may write`);
+    for (const sharedPath of REQUIRED_COMMUNICATION_PATHS) {
+      assert.ok(role.communicationPaths.includes(sharedPath), `${role.id} does not allow the shared communication path ${sharedPath}`);
+    }
     assert.ok(role.communicationPaths.every((p) => resolves(p)), `${role.id} scopes a communication path that does not exist`);
     assert.ok(role.scopePaths.length >= 1, `${role.id} has at least one scope path`);
     assert.ok(role.scopePaths.every((p) => typeof p === 'string' && resolves(p)), `${role.id} scopes ${role.scopePaths.filter((p) => !resolves(p))} that do not exist - a role that may not touch real paths cannot be the entry point`);
@@ -144,6 +167,57 @@ test('the agent file denies editing outside the role scope and allows the scope'
       const resource = editResource(sharedPath);
       assert.ok(text.includes(`resource: "${resource}"\n    effect: allow`), `${role.id} cannot write the shared communication surface ${sharedPath} - a lane that cannot report is a lane that cannot report`);
     }
+  }
+});
+
+test('the role scope gate refuses a changed path outside the named role scope', () => {
+  const { register } = load();
+  const result = checkRoleScope(register, 'engineer', [
+    'extension/lib/protocol.ts',
+    'docs/agent-roles/queue/engineer-to-ceo.md',
+    'site/app/lib/funnel.ts',
+  ]);
+  assert.deepEqual(result.allowed, [
+    'extension/lib/protocol.ts',
+    'docs/agent-roles/queue/engineer-to-ceo.md',
+  ]);
+  assert.deepEqual(result.refused, ['site/app/lib/funnel.ts']);
+});
+
+test('every funnel and role-system implementation path has exactly one work-scope owner', () => {
+  const { roles } = load();
+  const ownership: Array<[string, string]> = [
+    ['site/app/lib/funnel.ts', 'marketer'],
+    ['site/app/routes/dashboard.tsx', 'marketer'],
+    ['hosted/migrations/20261124120000_opera_funnel_events.sql', 'finance-analyst'],
+    ['docs/agent-roles/registry.json', 'ceo'],
+    ['scripts/dev/generate-agent-roles.ts', 'engineer'],
+    ['scripts/verify/role-scope.ts', 'engineer'],
+    ['tests/tooling/agent-roles.test.ts', 'engineer'],
+  ];
+  for (const role of roles) {
+    ownership.push([`.opencode/agents/${role.id}.md`, 'engineer']);
+    ownership.push([`.claude/agents/${role.id}.md`, 'engineer']);
+  }
+  for (const [changedPath, expectedOwner] of ownership) {
+    const owners = roles
+      .filter((role) => role.scopePaths.some((scopePath) => testScopeMatches(changedPath, scopePath)))
+      .map((role) => role.id);
+    assert.deepEqual(owners, [expectedOwner], `${changedPath} must have exactly one work-scope owner`);
+  }
+});
+
+test('generated permissions allow exactly the work and communication lists', () => {
+  const { register } = load();
+  for (const role of register.roles) {
+    const text = fs.readFileSync(path.join(root, `.opencode/agents/${role.id}.md`), 'utf8');
+    const rules = [...text.matchAll(/  - action: edit\n    resource: "([^"]+)"\n    effect: (allow|deny)/g)]
+      .map((match) => ({ resource: match[1], effect: match[2] }));
+    assert.deepEqual(rules, [
+      { resource: '*', effect: 'deny' },
+      ...role.scopePaths.map((scopePath) => ({ resource: editResource(scopePath), effect: 'allow' })),
+      ...role.communicationPaths.map((sharedPath) => ({ resource: editResource(sharedPath), effect: 'allow' })),
+    ], `${role.id} has edit permissions outside its work and communication lists`);
   }
 });
 

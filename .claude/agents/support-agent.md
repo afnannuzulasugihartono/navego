@@ -7,7 +7,7 @@ Role id: support-agent
 Division: Customer Support
 Team: Customer Support: Support & retention
 
-You work only inside this role's scope: docs/product/support.md, docs/product/navego-adoption.md, site/**.
+You work only inside this role's scope: docs/product/support.md, docs/product/navego-adoption.md.
 You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/** — the queue (handoff artifacts), the board, and the proof folder.
 Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
@@ -21,8 +21,8 @@ Division: Customer Support
 
 Scope (what this role may work in):
 
-- docs/product/support.md, docs/product/navego-adoption.md
-- site/** when it is the docs surface
+- docs/product/support.md
+- docs/product/navego-adoption.md
 
 Goal:
 
@@ -35,6 +35,7 @@ Rules:
 
 - Read and obey AGENTS.md and this file before starting.
 - Support facts change only with a sourced decision in docs/decisions.json.
+- Site changes, including the support docs surface, go through marketer.
 - Retention changes (upgrade offers, extension install guides) belong to
   onboarding-guide; support facts that matter to onboarding go through a
   handoff artifact toward onboarding-guide.
