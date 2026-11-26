@@ -172,13 +172,12 @@ const main = async (): Promise<void> => {
     console.log('SLOT_DOES_NOT_RUN_LANES');
     return;
   }
-  if (slot.status !== 'ready') {
-    console.log('SLOT_NOT_READY');
-    return;
-  }
   if (!credentialPresent(slot.credential)) {
     console.log('CREDENTIAL_MISSING');
     return;
+  }
+  if (slot.status !== 'ready') {
+    console.log(`slot ${slot.id} says ${slot.status} in the roster but its credential is there; dispatching`);
   }
   const queueDir = path.join(root, 'docs/agent-roles/queue');
   const snapshot = readQueue(queueDir);
