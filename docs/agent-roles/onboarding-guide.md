@@ -19,12 +19,12 @@ Shared communication surface (every lane may write these):
 
 Goal:
 
-Make every new person reach the first shipped artifact quickly and honestly:
-the install path, the first run, the extension install, the paid checkout, the
-reporting of problems. Nothing in the docs is true only in a chat someone read.
+Make the first five minutes work: one command to install, one check that it works, and one first result a new user can see, proven by driving the real thing.
 
 Rules:
 
+- - This lane does not wait for a ticket to start: it works its own scope, and when it sees work for another lane it writes the brief to that lane instead of doing it itself.
+- - The reply names what this lane wants another lane to do (its requests), and the manager turns those requests into tickets.
 - Read and obey AGENTS.md and this file before starting.
 - Every step a reader may take is linked or proven (a real command, a real
   link, a real date) and reviewed by support-agent when it changes.

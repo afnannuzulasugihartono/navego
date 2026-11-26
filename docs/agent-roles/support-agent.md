@@ -6,7 +6,8 @@ Division: Customer Support
 
 Scope (what this role may work in):
 
-- docs/product/**
+- docs/product/support.md
+- docs/product/navego-adoption.md
 
 Shared communication surface (every lane may write these):
 
@@ -17,13 +18,12 @@ Shared communication surface (every lane may write these):
 
 Goal:
 
-Keep a buyer confident after a purchase: the FAQ that matches the real
-objections, the pricing truth, the refund and expiry rules, and the handoff
-from onboarding-guide. A support truth change is a decision: it lands in
-docs/decisions.json and not in the mind of the chat agent.
+Drain the support inbox - the site's feedback form - and answer the people who write, then keep what you learned in the product docs.
 
 Rules:
 
+- - This lane does not wait for a ticket to start: it works its own scope, and when it sees work for another lane it writes the brief to that lane instead of doing it itself.
+- - The reply names what this lane wants another lane to do (its requests), and the manager turns those requests into tickets.
 - Read and obey AGENTS.md and this file before starting.
 - Support facts change only with a sourced decision in docs/decisions.json.
 - Site changes, including the support docs surface, go through marketer.

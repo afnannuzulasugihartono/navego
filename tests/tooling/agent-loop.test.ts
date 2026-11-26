@@ -11,7 +11,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { classify, readQueue, renderState, watch } from '../../scripts/dev/agent-fleet/watch.ts';
+import { classify, freeBytes, pruneSnapshots, readQueue, renderState, watch } from '../../scripts/dev/agent-fleet/watch.ts';
 import { readOwnTraffic } from '../../scripts/dev/agent-fleet/own-traffic.ts';
 
 const TICKET = 'operator-to-engineer-20261126-0725.md';
@@ -214,6 +214,26 @@ test('the own-traffic read tells the manager whose acted browser is ours', () =>
   assert.deepEqual(verdict.ownOrders, ['4F879979XA2129329'], 'the operator order is named');
   const noOperators = readOwnTraffic(acted, orders, []);
   assert.deepEqual(noOperators.strangerBrowsers.sort(), ['ours', 'stranger'], 'without the operator list nobody is ours');
+});
+
+test('the fleet disk is watched, and a full drive is pruned back', () => {
+  const dir = makeQueue();
+  try {
+    const free = freeBytes(dir);
+    assert.ok(typeof free === 'number' && free > 0, 'the free space of the drive is readable');
+    const snapshotRoot = path.join(dir, 'snapshot');
+    const global = path.join(snapshotRoot, 'global');
+    fs.mkdirSync(global, { recursive: true });
+    fs.writeFileSync(path.join(global, 'old-blob'), 'x'.repeat(2048));
+    fs.writeFileSync(path.join(global, 'new-blob'), 'x'.repeat(2048));
+    const pruned = pruneSnapshots({ limitBytes: 1, snapshotRoot, target: dir });
+    assert.equal(pruned.removedFiles, 0, 'a drive with room is left alone');
+    const forced = pruneSnapshots({ limitBytes: Number.MAX_SAFE_INTEGER, snapshotRoot, target: dir });
+    assert.ok(forced.removedFiles >= 1, 'a drive below the floor loses its snapshot cache');
+    assert.ok(forced.freedBytes >= 2048, 'the freed bytes are counted');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 test('the state table names every state the manager must read', () => {
