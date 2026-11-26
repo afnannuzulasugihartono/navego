@@ -102,9 +102,13 @@ The shortlist names the sales-owned pipeline it feeds.
 - `npm ci` installed the clean worktree's pinned development dependencies;
   the first `npm test` attempt stopped before tests because `biome` was not
   installed.
-- `npm test` — exit 0 after `npm ci`.
+- `npm test` — exit 0 after `npm ci`. The first final-content run found the lane
+  records quoting the current release version; the version clock does not belong
+  in lane records, so the literal was removed and the test reran green.
 - `npm run check` — exit 0: `type-debt: 0 errors — at baseline 0` and `check
   ok: 36 allowlisted browser primitives, 319 runtime safety files`.
+- `npm run scope:role -- researcher --base origin/main --head HEAD` — exit 0:
+  the named roles may change all 4 paths in the pull request diff.
 - Public sources — all 20 URLs cited by the corrected shortlist returned HTTP
   200 on 2026-11-26.
 - Capability evidence — `ARCHITECTURE.md` and `local/README.md` carry 40

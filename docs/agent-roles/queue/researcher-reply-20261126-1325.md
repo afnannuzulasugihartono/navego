@@ -40,6 +40,8 @@ unchanged.
   dependencies.
 - `npm run check` — exit 0: `type-debt: 0 errors — at baseline 0`; `check ok:
   36 allowlisted browser primitives, 319 runtime safety files`.
+- `npm run scope:role -- researcher --base origin/main --head HEAD` — exit 0:
+  the named roles may change all 4 paths in the pull request diff.
 - All 20 public URLs cited by the corrected shortlist returned HTTP 200 on
   2026-11-26.
 - The repository and live docs both publish 40 tools over 36 browser
