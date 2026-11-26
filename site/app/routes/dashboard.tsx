@@ -1,4 +1,4 @@
-// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots)
+// decisions.json -> D35, D36, D37 (no eyebrows, h1 first, commas not middle dots) decisions.json -> site-funnel-views-01
 
 import { useEffect, useState } from 'react';
 import { seoMeta } from '../lib/seo.js';
@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { NavegoMark } from '../components/NavegoMark';
 import { AUTH_HOST, announceSession, clearSession, ensureSession, headersFor, storeEmail } from '../lib/auth';
-import { track } from '../lib/funnel';
+import { recordPairView, track } from '../lib/funnel';
 import {
   type Device,
   type FunnelSummary,
@@ -109,6 +109,7 @@ const wantPairIntent = (): boolean => {
 
 export default function Dashboard() {
   const [ready, setReady] = useState(false);
+  const [hasSession, setHasSession] = useState(false);
   const [view, setView] = useState<View>('ringkasan');
   const [operatorOpen, setOperatorOpen] = useState(false);
   const [userEmail, setUserEmail] = useState('');
@@ -181,6 +182,7 @@ export default function Dashboard() {
         window.location.replace('/?next=' + encodeURIComponent(next));
         return;
       }
+      setHasSession(true);
       try {
         const response = await fetch(`${AUTH_HOST}/user`, { headers: headersFor(token) });
         if (response.ok) {
@@ -236,9 +238,10 @@ export default function Dashboard() {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
+  // The pairing view belongs to a visitor with a session: the dashboard route also serves an anonymous probe, and that probe reached no human.
   useEffect(() => {
-    if (view === 'pairing') track('pair.view');
-  }, [view]);
+    if (view === 'pairing') recordPairView(hasSession);
+  }, [hasSession, view]);
 
   // The funnel spans every account, so it is loaded only once the operator group is open.
   useEffect(() => {

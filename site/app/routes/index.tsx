@@ -1,4 +1,4 @@
-// decisions.json -> D32, D34, D35, D36, D38 (one mark, no eyebrows, h1 first, the lockup panel) decisions.json -> site-install-cta-02
+// decisions.json -> D32, D34, D35, D36, D38 (one mark, no eyebrows, h1 first, the lockup panel) decisions.json -> site-install-cta-02, site-funnel-views-01
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
@@ -6,7 +6,7 @@ import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
 import { CopyCommand } from '../components/CopyCommand';
 import { NavegoMark, NavegoWordmark } from '../components/NavegoMark';
-import { recordInstallCopy } from '../lib/funnel';
+import { recordInstallCopy, recordInstallView } from '../lib/funnel';
 import { WINDOWS_INSTALL_COMMAND } from '../lib/install-command';
 
 import { AUTH_HOST, announceSession, clearSession, getReturnTo, getRefreshToken, getStoredToken, proveSession, renewAccessToken, storeEmail, storeRefreshToken, storeToken, PUBLISHABLE_KEY } from '../lib/auth';
@@ -141,6 +141,7 @@ export default function Index() {
                   buttonLabel="Salin perintah"
                   successMessage="Perintah disalin. Jalankan di PowerShell."
                   onCopied={() => recordInstallCopy('landing')}
+                  onRendered={() => recordInstallView('landing')}
                 />
               </>
             ) : null}

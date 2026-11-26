@@ -1,4 +1,4 @@
-// decisions.json -> site-install-cta-01, site-install-cta-02
+// decisions.json -> site-install-cta-01, site-install-cta-02, site-funnel-views-01
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createCopyCommand, type CopyFeedback } from '../lib/copy-command.js';
@@ -10,12 +10,18 @@ export type CopyCommandProps = {
   buttonLabel?: string;
   successMessage?: string;
   onCopied?: () => void;
+  onRendered?: () => void;
 };
 
-export function CopyCommand({ id, label, command, buttonLabel = 'Salin', successMessage = 'Disalin.', onCopied }: CopyCommandProps) {
+// The command is on screen from the moment it renders, so the block reports that once and a re-render is not a second report.
+
+export function CopyCommand({ id, label, command, buttonLabel = 'Salin', successMessage = 'Disalin.', onCopied, onRendered }: CopyCommandProps) {
   const [feedback, setFeedback] = useState<CopyFeedback | null>(null);
   const onCopiedRef = useRef(onCopied);
   useEffect(() => { onCopiedRef.current = onCopied; }, [onCopied]);
+  const onRenderedRef = useRef(onRendered);
+  useEffect(() => { onRenderedRef.current = onRendered; }, [onRendered]);
+  useEffect(() => { onRenderedRef.current?.(); }, []);
   const controller = useMemo(() => createCopyCommand({
     text: command,
     successMessage,

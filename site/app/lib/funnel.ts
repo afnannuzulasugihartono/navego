@@ -1,6 +1,6 @@
-// @last-edited: 2026-11-25 UTC+7.
+// @last-edited: 2026-11-27 UTC+7.
 // @title: funnel — the steps a stranger takes, written where the operator can read them.
-// decisions.json -> site-install-cta-01, site-install-cta-02
+// decisions.json -> site-install-cta-01, site-install-cta-02, site-funnel-steps-01, site-funnel-views-01
 // @state: one random browser id, one whitelisted step name, and a fire-and-forget write that never blocks the page.
 // @dependencies: none at runtime; the endpoint and the publishable key mirror auth.ts, and funnel.test.ts fails when the two drift apart.
 
@@ -106,8 +106,19 @@ export function currentPath(): string {
 
 export type InstallSurface = 'landing' | 'download';
 
+// The install view is the command on screen, not the page that carries it.
+// The landing's install block and the download page's install block report it from where they render, so a page load that never showed the command writes no install row.
+
 export function recordInstallView(surface: InstallSurface, path = currentPath()): void {
   track('install.view', { surface }, path);
+}
+
+// A pairing view is a visitor with a session.
+// The dashboard route serves an anonymous probe as well, and that probe reached no human, so it writes no funnel step.
+
+export function recordPairView(hasSession: boolean, path = currentPath()): void {
+  if (!hasSession) return;
+  track('pair.view', {}, path);
 }
 
 export function recordInstallCopy(surface: InstallSurface): void {
@@ -138,6 +149,7 @@ export function track(name: FunnelStep, meta: Record<string, unknown> = {}, path
 }
 
 // A pageview is counted once per path per browser session: a reload is the same visit, and a scroll is not a visit at all.
+// The page load writes its own row and nothing else: the install view belongs to the rendered command, and the pairing view belongs to a visitor with a session.
 
 export function trackView(path = currentPath()): void {
   const views = readJson(VIEW_KEY);
@@ -146,7 +158,5 @@ export function trackView(path = currentPath()): void {
   if (Number.isFinite(last) && now - last < 30 * 60 * 1000) return;
   writeJson(VIEW_KEY, { ...views, [path]: now });
   track('page.view', { path }, path);
-  if (path === '/') recordInstallView('landing', path);
-  if (path === '/unduh') recordInstallView('download', path);
   if (path === '/harga') track('plan.view', {}, path);
 }
