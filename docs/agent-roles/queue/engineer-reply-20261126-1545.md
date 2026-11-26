@@ -41,8 +41,10 @@ evidence:
   dependencies; the dot reporter ends with no failure.
 - `npm run check` — green: type debt `0 errors — at baseline 0`; `check ok: 36
   allowlisted browser primitives, 319 runtime safety files`.
-- The exact-head scope gate and pull-request result are recorded in
-  `docs/proof/2026-11-26-engineer.md`.
+- `npm run scope:role -- engineer --base origin/main --head HEAD` — exit 0 on
+  the lane head; all five changed paths are engineer work paths or shared
+  communication paths.
+- The pull-request result is recorded in `docs/proof/2026-11-26-engineer.md`.
 
 left:
 
