@@ -1520,6 +1520,17 @@
         "kind": "user",
         "ref": "user 2026-11-26 with the account list open in the terminal: \"sama ambil keynya dari sini itu ketiganya udah beda key\""
       }
+    },
+    {
+      "id": "site-funnel-steps-01",
+      "scope": "site/funnel",
+      "file": "site/app/lib/funnel.ts",
+      "decision": "The funnel counts a press and a copy as two steps, not one. The install press is recorded as install.press the moment the button or the manual download link is pressed, whether or not the clipboard write succeeds, and the successful command copy keeps the name it carries today, install.click, so a zero under the press row means presses and not copies. Every record carries where the visitor came from and whether the visit was a probe: meta.probe is true when the URL carried the probe flag navego_probe=1, meta.referrer names the document that sent the visitor, and meta.from names the site path an in-app link sent them. One browser reports one step once: a re-render is not a second visitor.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/agent-roles/queue/operator-to-engineer-20261125-2116.md:10-19 (the live production funnel read on 2026-11-25: page.view 83 events from 26 browsers, install.view 11 from 9, plan.view 8 from 1, buy.click 3 from 1, and install.click 0 while the copy event fired)",
+        "also": "site/app/lib/funnel.ts:113 (recordInstallCopy fires install.click, so the row counted copies)"
+      }
     }
   ]
 }
