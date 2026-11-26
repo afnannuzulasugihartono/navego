@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { classify, readQueue, renderState, watch } from '../../scripts/dev/agent-fleet/watch.ts';
+import { readOwnTraffic } from '../../scripts/dev/agent-fleet/own-traffic.ts';
 
 const TICKET = 'operator-to-engineer-20261126-0725.md';
 const MARKER = 'engineer-started-20261126-0725.md';
@@ -194,6 +195,25 @@ test('three releases block the ticket so the manager sees a repeated failure', (
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test('the own-traffic read tells the manager whose acted browser is ours', () => {
+  const operator = '1ec02bc3-7c1b-45a2-b864-837e95ba3b24';
+  const acted = [
+    { anon_id: 'ours', name: 'buy.click', path: '/harga', created_at: '2026-11-26T14:48:13.995Z', user_id: null, meta: { plan: 'plan.usd-1' } },
+    { anon_id: 'ours', name: 'plan.view', path: '/harga', created_at: '2026-11-26T14:46:31.600Z', user_id: null, meta: {} },
+    { anon_id: 'stranger', name: 'buy.click', path: '/harga', created_at: '2026-11-26T14:50:00.000Z', user_id: null, meta: { plan: 'plan.usd-1' } },
+  ];
+  const orders = [
+    { order_id: '4F879979XA2129329', owner_id: operator, plan: 'plan.usd-1', amount_cents: 100, status: 'created', created_at: '2026-11-26T14:48:15.756Z' },
+  ];
+  const verdict = readOwnTraffic(acted, orders, [operator]);
+  assert.equal(verdict.actedBrowsers.length, 2, 'two browsers acted');
+  assert.deepEqual(verdict.ownBrowsers, ['ours'], 'the browser whose order belongs to the operator is ours');
+  assert.deepEqual(verdict.strangerBrowsers, ['stranger'], 'the other browser is a stranger');
+  assert.deepEqual(verdict.ownOrders, ['4F879979XA2129329'], 'the operator order is named');
+  const noOperators = readOwnTraffic(acted, orders, []);
+  assert.deepEqual(noOperators.strangerBrowsers.sort(), ['ours', 'stranger'], 'without the operator list nobody is ours');
 });
 
 test('the state table names every state the manager must read', () => {

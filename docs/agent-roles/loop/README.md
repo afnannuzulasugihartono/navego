@@ -16,6 +16,28 @@ result.
 | stalled | watchdog | the worker process is gone and no reply exists | the marker is released, the ticket returns to assigned |
 | blocked | watchdog | three releases for one ticket | the manager narrows or escalates it |
 
+## Whose traffic is it?
+
+The hourly read counts an acted browser, and our own checkout tests are acted
+browsers too. On 2026-11-26 the only acted traffic in 24 hours was the
+operator's own signed-in test: a live $1 PayPal order created at 14:48:15Z for
+the operator account, with two buy clicks from the same browser. A manager that
+reads "1 acted browser, 2 buy clicks" as a lead is chasing its own tail.
+
+`scripts/dev/agent-fleet/own-traffic.ts` settles it before anyone acts: it
+reads the acted events, the live PayPal orders and the operator accounts, and
+names the stranger browsers and our own. A buy click whose order belongs to an
+operator account, within half a minute of the click, is our own test drive; the
+revenue read already excludes operator payments for the same reason.
+
+The read needs the rows, so the manager fetches them (the settlement read has
+the same tables) and runs:
+
+```
+node --experimental-strip-types scripts/dev/agent-fleet/own-traffic.ts \
+  --acted <acted.json> --orders <orders.json> --operators <operators.json>
+```
+
 ## The liveness check
 
 `scripts/dev/agent-fleet/watch.ts` runs every ten minutes. It reads two
