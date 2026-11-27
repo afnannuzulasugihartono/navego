@@ -1710,6 +1710,26 @@
       }
     },
     {
+      "id": "local-doctor-session-expiry-01",
+      "scope": "local/doctor",
+      "file": "local/doctor.ts",
+      "decision": "The doctor reads the cloud session the way the runtime reads it: a live access token or a stored refresh means the machine is signed in, and a lapsed session with nothing to renew it is no login at all, so the verdict names `navego auth` instead of blaming the extension.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/proof/2026-11-28-doctor-session-expiry.md (the operator review that asked for it, 2026-11-27)"
+      }
+    },
+    {
+      "id": "local-oauth-session-state-01",
+      "scope": "local/oauth",
+      "file": "local/oauth.ts",
+      "decision": "One rule reads the token file: a live access token or a stored refresh token is a session the machine can still use, and a lapsed token with nothing to renew it is no session, so the doctor and the cloud client never answer the sign-in question differently.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/proof/2026-11-28-doctor-session-expiry.md (the operator review that asked for it, 2026-11-27)"
+      }
+    },
+    {
       "id": "docs-agent-org-spec-01",
       "scope": "docs/superpowers/specs",
       "file": "docs/superpowers/specs/2026-11-27-agent-org-architecture-design.md",
