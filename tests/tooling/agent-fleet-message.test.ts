@@ -46,7 +46,7 @@ test('round four is refused so the loop cannot run forever', () => {
   );
 });
 
-test('session resolution picks the newest live session and refuses terminal ones', () => {
+test('session resolution picks the newest live session and refuses stale ones', () => {
   const sessions = [
     session('old', 'slot-console/agent-manager', null, 1000),
     session('new', 'slot-console/agent-manager', null, 2000),
@@ -54,6 +54,14 @@ test('session resolution picks the newest live session and refuses terminal ones
   ];
   assert.equal(resolveSessionId('slot-console', sessions), 'new');
   assert.equal(resolveSessionId('slot-console', [sessions[2]!]), null);
+});
+
+test('a just-finished session with a fresh heartbeat still receives the review', () => {
+  const now = 1_000_000;
+  const fresh = session('live', 'slot-console/agent-manager', 'succeeded', now - 60_000);
+  const stale = session('dead', 'slot-console/agent-manager', 'succeeded', now - 31 * 60_000);
+  assert.equal(resolveSessionId('slot-console', [fresh], now), 'live', 'outcome alone does not mean dead');
+  assert.equal(resolveSessionId('slot-console', [stale], now), null, 'a stale heartbeat is still refused');
 });
 
 test('sendMessage queues a labelled message without interrupting the target', async () => {

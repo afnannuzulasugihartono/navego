@@ -71,8 +71,12 @@ export type SendDeps = {
 
 const delivered = new Set<string>();
 
-export function resolveSessionId(titlePrefix: string, sessions: SessionInfo[]): string | null {
-  const live = sessions.filter((session) => session.title.includes(titlePrefix) && !session.outcome);
+export function resolveSessionId(titlePrefix: string, sessions: SessionInfo[], now = Date.now(), staleMs = 30 * 60_000): string | null {
+  // A review can arrive just after a session finished its previous turn.
+  // The stored outcome is not liveness; a fresh heartbeat is the ground truth.
+  // An old heartbeat is still refused.
+  const live = sessions.filter((session) => session.title.includes(titlePrefix)
+    && (!session.outcome || now - session.updatedMs <= staleMs));
   if (live.length === 0) return null;
   const first = live[0];
   if (!first) return null;
