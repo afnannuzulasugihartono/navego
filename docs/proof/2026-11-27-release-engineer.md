@@ -63,7 +63,7 @@ path-scoped entry, which is a different ticket.
 | `npm run scope:role -- release-engineer --base origin/main --head HEAD` | exit 0 — the named roles may change all 4 paths |
 | `npm test` | exit 1 — the two runtime-census tests stop at the acceptance-pin line below |
 | `npm run check` | exit 1 at the same line; `type-debt: 0 errors — at baseline 0` before it |
-| CI run 45921345906 on the exact head `c44cfde4` | `secret-scan`, `site`, `deno-hosted`, `browser` and SonarCloud pass; `unit` and `postgres` fail on that one acceptance-pin line and on nothing else |
+| CI run 45922069823 on head `7541dc4e` | `secret-scan`, `site`, `deno-hosted`, `browser` and SonarCloud pass; `unit` and `postgres` fail on that one acceptance-pin line and on nothing else |
 
 The line both gates stop at names one file, and it is not this lane's path:
 
@@ -110,12 +110,13 @@ surface. No owner-only path moved in this pull request.
 The merge is not done, and this lane does not claim it. `npm test` and
 `npm run check` are red on the owner-only acceptance pin above, the
 merge-by-gate rule needs CI green on the exact head, and the one line that
-makes it green is the owner's to write. CI run 45921345906 on the exact head
-`c44cfde4` is green on every job that does not read that pin — `secret-scan`,
+makes it green is the owner's to write. CI run 45922069823 on head
+`7541dc4e` is green on every job that does not read that pin — `secret-scan`,
 `site`, `deno-hosted`, `browser` and SonarCloud — and red on `unit` and
-`postgres` for that one line and nothing else. Pull request #474, the earlier
-attempt at the same edit from a base that is now behind `main`, is closed in
-favour of #476.
+`postgres` for that one line and nothing else. The commit after that head
+records this result and changes no configuration. Pull request #474, the
+earlier attempt at the same edit from a base that is now behind `main`, is
+closed in favour of #476.
 
 A reviewer agent was not dispatched: this lane is the only worker on its key
 and a child session multiplies the requests against the same 40 rpm limit
