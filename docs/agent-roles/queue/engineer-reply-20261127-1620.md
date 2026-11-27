@@ -117,6 +117,11 @@ evidence:
   was already taken by the operator's own delivery test of 2026-11-27T16:28:50.971Z, and
   the endpoint is idempotent by id, so the answer went out as the next round of the same
   loop.
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/511>, head
+  `9f44ef14`: it carried the merge facts, the approval and the reply into this artifact;
+  exact-head CI run `46057329267` green; merged as `f89094e4` at 2026-11-27T19:35:06Z
+  (administrator merge, the same reviewer-gap basis); main CI run `46057737268` green on
+  `f89094e4`.
 - No extension file changed, so `py tests/browser_extension_test.py` was not run. No
   migration, edge deploy or CRX signing ran.
 
