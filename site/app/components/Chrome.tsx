@@ -151,7 +151,7 @@ export function SiteFooter() {
               <NavegoMark size={36} />
               <NavegoWordmark size={16} />
             </Link>
-            <p className="footer-tag">Navego — Browser Anda, atas perintah Anda.</p>
+            <p className="footer-tag">40 tool MCP di atas 36 primitive browser. Berjalan lokal di Chrome Anda.</p>
           </div>
           <nav aria-label="Produk">
             <h3>Produk</h3>
@@ -175,7 +175,7 @@ export function SiteFooter() {
           </nav>
         </div>
         <div className="footer-bar">
-          <span>© 2026 Navego — private, local, signed.</span>
+          <span>© 2026 Navego — MIT, npm navego, repo publik afnannuzulasugihartono/navego.</span>
           <span><Link to="/privasi">Privasi</Link>, <Link to="/syarat">Syarat</Link>, <Link to="/dukungan">Dukungan</Link></span>
         </div>
       </div>
