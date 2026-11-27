@@ -35,7 +35,8 @@
         ".claude/agents/**",
         "tests/tooling/agent-roles.test.ts",
         "docs/research/agent-roles.md",
-        "docs/autonomy.md"
+        "docs/autonomy.md",
+        "tests/tooling/agent-fleet-message.test.ts"
       ],
       "communicationPaths": [
         "docs/agent-roles/queue/**",

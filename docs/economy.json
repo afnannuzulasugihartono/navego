@@ -9,7 +9,7 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "A settled stranger payment is still the only score move. Statement Harbor has no reply yet; Steel outreach is stacked for 2026-11-29; guest checkout ticket 2304 remains queued. Billing order creation is verified; capture is not.",
+  "next_action": "Only a settled stranger payment moves the score. Statement Harbor still has no reply; Steel outreach is stacked for 2026-11-29; guest checkout ticket 2304 is still open. The checkout-return path is now verified live.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
@@ -153,5 +153,10 @@
     "not_proven": "capture, webhook activation and plan activation still require a real customer payment.",
     "evidence": "docs/proof/2026-11-28-0135-billing-verification.md",
     "revenue_effect": "none — $0.00 settled, 0 orders; an open order or quote is not revenue"
+  },
+  "checkout_return_live": {
+    "verified": "Signed-in /harga resumed a stored plan (asia:plan.usd-3) and showed 'Lanjutkan plan pilihan Anda'; no Masuk dulu wall. Test key removed and tab closed afterwards.",
+    "evidence": "docs/proof/2026-11-28-0424-checkout-return-live.md",
+    "revenue_effect": "none — verification only, no payment captured"
   }
 }

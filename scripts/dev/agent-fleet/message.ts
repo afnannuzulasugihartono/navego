@@ -65,18 +65,24 @@ export type SessionInfo = {
 export type SendDeps = {
   cli: string;
   sessions: SessionInfo[];
+  processLines?: string[];
   roster: MessageRoster;
   run: (args: string[]) => Promise<string>;
 };
 
 const delivered = new Set<string>();
 
-export function resolveSessionId(titlePrefix: string, sessions: SessionInfo[], now = Date.now(), staleMs = 30 * 60_000): string | null {
-  // A review can arrive just after a session finished its previous turn.
-  // The stored outcome is not liveness; a fresh heartbeat is the ground truth.
-  // An old heartbeat is still refused.
-  const live = sessions.filter((session) => session.title.includes(titlePrefix)
-    && (!session.outcome || now - session.updatedMs <= staleMs));
+// The console session belongs to the running OpenCode service, whose process line carries no session title; keep it addressable while that service exists, but never let it rescue a lane worker.
+
+export function resolveSessionId(titlePrefix: string, sessions: SessionInfo[], now = Date.now(), staleMs = 30 * 60_000, processLines: string[] = []): string | null {
+  // Liveness is a fresh heartbeat, or a running process for a session that has not reported an outcome yet.
+  // An old heartbeat alone is never enough, and an outcome alone is not death while the heartbeat is still fresh.
+  const live = sessions.filter((session) => {
+    if (!session.title.includes(titlePrefix)) return false;
+    if (titlePrefix === 'slot-console' && processLines.some((line) => line.includes('serve --service'))) return true;
+    if (now - session.updatedMs <= staleMs) return true;
+    return !session.outcome && processLines.some((line) => line.includes(session.title));
+  });
   if (live.length === 0) return null;
   const first = live[0];
   if (!first) return null;
@@ -88,7 +94,7 @@ export async function sendMessage(input: MessageInput, deps: SendDeps): Promise<
   const id = messageIdOf(input);
   if (delivered.has(id)) return { id, sessionId: '', alreadyDelivered: true };
   const prefix = input.to === 'operator' ? 'slot-console' : `/${input.to}-`;
-  const sessionId = resolveSessionId(prefix, deps.sessions);
+  const sessionId = resolveSessionId(prefix, deps.sessions, Date.now(), 30 * 60_000, deps.processLines ?? []);
   if (!sessionId) throw new Error('TARGET_SESSION_MISSING');
   const endpoint = input.kind === 'report' ? '/synthetic' : '/prompt';
   const body = {
@@ -131,6 +137,7 @@ if (invokedDirectly) {
     cli,
     roster,
     sessions: evidence.sessions ?? [],
+    processLines: evidence.processLines ?? [],
     run: async (args) => {
       const child = spawnSync(args[0] ?? cli, args.slice(1), { encoding: 'utf8' });
       if (child.status !== 0) throw new Error(child.stderr || child.stdout || 'OPENCODE_API_FAILED');

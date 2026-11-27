@@ -47,13 +47,14 @@ test('round four is refused so the loop cannot run forever', () => {
 });
 
 test('session resolution picks the newest live session and refuses stale ones', () => {
+  const now = Date.now();
   const sessions = [
-    session('old', 'slot-console/agent-manager', null, 1000),
-    session('new', 'slot-console/agent-manager', null, 2000),
-    session('done', 'slot-console/agent-manager', 'succeeded', 3000),
+    session('old', 'slot-console/agent-manager', null, now - 10 * 60_000),
+    session('new', 'slot-console/agent-manager', null, now - 60_000),
+    session('done', 'slot-console/agent-manager', 'succeeded', now - 40 * 60_000),
   ];
-  assert.equal(resolveSessionId('slot-console', sessions), 'new');
-  assert.equal(resolveSessionId('slot-console', [sessions[2]!]), null);
+  assert.equal(resolveSessionId('slot-console', sessions, now), 'new');
+  assert.equal(resolveSessionId('slot-console', [sessions[2]!], now), null);
 });
 
 test('a just-finished session with a fresh heartbeat still receives the review', () => {
@@ -64,13 +65,44 @@ test('a just-finished session with a fresh heartbeat still receives the review',
   assert.equal(resolveSessionId('slot-console', [stale], now), null, 'a stale heartbeat is still refused');
 });
 
+test('an idle session with no outcome is refused at the same age', () => {
+  const now = 1_000_000;
+  const idle = session('idle', 'slot-console/agent-manager', null, now - 40 * 60_000);
+  assert.equal(resolveSessionId('slot-console', [idle], now), null, 'no outcome is not a licence to post into a stale session');
+});
+
+test('a running process keeps a stale session addressable while it has no outcome', () => {
+  const now = 1_000_000;
+  const active = session('active', 'slot-console/agent-manager', null, now - 40 * 60_000);
+  const processLines = ['opencode.exe run --agent operator --title slot-console/agent-manager-20261126'];
+  assert.equal(resolveSessionId('slot-console', [active], now, 30 * 60_000, processLines), 'active');
+});
+
+test('the console session stays addressable while its service process runs', () => {
+  const now = 1_000_000;
+  const consoleSession = session('console', 'slot-console/agent-manager', 'succeeded', now - 43 * 60_000);
+  const service = ['opencode.exe serve --service'];
+  assert.equal(resolveSessionId('slot-console', [consoleSession], now, 30 * 60_000, service), 'console');
+  assert.equal(resolveSessionId('slot-console', [consoleSession], now, 30 * 60_000, []), null);
+});
+
+test('the service process does not rescue a finished lane worker', () => {
+  const now = 1_000_000;
+  const worker = session('worker', 'slot-nvidia-1/engineer-20261127-2025', 'succeeded', now - 43 * 60_000);
+  assert.equal(
+    resolveSessionId('/engineer-', [worker], now, 30 * 60_000, ['opencode.exe serve --service']),
+    null,
+    'console service is not a worker process',
+  );
+});
+
 test('sendMessage queues a labelled message without interrupting the target', async () => {
   const calls: string[][] = [];
   const input = { kind: 'report' as const, from: 'engineer' as const, to: 'operator' as const, ticket: 'resolver.md', round: 1, text: 'pointer' };
   const result = await sendMessage(input, {
     cli: 'opencode',
     roster,
-    sessions: [session('op', 'slot-console/agent-manager', null, 2000)],
+    sessions: [session('op', 'slot-console/agent-manager', null, Date.now())],
     run: async (args) => { calls.push(args); return '{}'; },
   });
   assert.equal(result.sessionId, 'op');
@@ -90,7 +122,7 @@ test('a repeated send returns the original id without posting twice', async () =
   const deps = {
     cli: 'opencode',
     roster,
-    sessions: [session('eng', 'slot-nvidia-2/engineer-20261127-1235', null, 2000)],
+    sessions: [session('eng', 'slot-nvidia-2/engineer-20261127-1235', null, Date.now())],
     run: async (_args: string[]) => { calls += 1; return '{}'; },
   };
   const first = await sendMessage(input, deps);

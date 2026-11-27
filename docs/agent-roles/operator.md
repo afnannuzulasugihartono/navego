@@ -24,6 +24,7 @@ Scope (what this role may work in):
 - tests/tooling/agent-roles.test.ts
 - docs/research/agent-roles.md
 - docs/autonomy.md
+- tests/tooling/agent-fleet-message.test.ts
 
 Shared communication surface (every lane may write these):
 
