@@ -85,18 +85,17 @@ closes its own ticket.
 
 ## The lanes
 
-Nine lanes, and no chief-executive lane: the agent manager owns the register,
+Four lanes, and no chief-executive lane: the agent manager owns the register,
 the briefs and the decisions, so a separate executive hop only cost a session
 and a round trip. Each lane has a mandate it acts on, not only reports:
 
 | lane | what it owns | what it decides on its own |
 |---|---|---|
 | `operator` (agent manager) | the register, the briefs, the ledger, the proofs, the fleet | what the company works on next, and who gets it |
-| `researcher` | the market, the website and the product: what to build, what to improve, what to stop | what is worth building, with dated sources |
-| `sales-rep` | one public conversation a day | the message, and how to turn an answer into a trial |
-| `marketer` | the public pages, the pricing page, the articles, the listing surfaces | what the site says and how it promotes Navego |
-| `engineer` | the product, the site's mechanics, the tool inventory | whether each tool is still worth keeping, and the strategy for the tools' development |
-| `release-engineer` | the release, the changelog, the signed artifact, the CI configuration | how a release is made safe to land |
-| `finance-analyst` | the settlement, the plan and price truth, the migrations behind them | what a sale is and what it is worth |
-| `support-agent` | the support inbox and the answers | what the product must change because of what people wrote |
-| `onboarding-guide` | the first five minutes | the first win a new user sees, and how they get there |
+| `sales-rep` | one public conversation a day, the prospect list | the message, and how to turn an answer into a trial |
+| `engineer` | the product, the whole website, the tools and the release plumbing | whether each tool is still worth keeping, and what to fix first |
+| `onboarding-guide` | the first-run and support documents | the first win a new user sees, and how they get there |
+
+Research, marketing, release, finance and support are functions, not lanes: the
+manager writes them as tickets for one of the four. Their job descriptions are
+in `docs/agent-roles/job-descriptions.md`.

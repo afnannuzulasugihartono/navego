@@ -20,6 +20,38 @@ Scope (what this role may work in):
 - scripts/verify/role-scope.ts
 - package.json
 - tests/site/**
+- site/app/routes/artikel-ai-browser-indonesia.tsx
+- site/app/routes/artikel.tsx
+- site/app/routes/bandingkan.tsx
+- site/app/routes/beranda.tsx
+- site/app/routes/changelog.tsx
+- site/app/routes/consent.tsx
+- site/app/routes/docs.tsx
+- site/app/routes/dukungan.tsx
+- site/app/routes/en.tsx
+- site/app/routes/faq.tsx
+- site/app/routes/fitur.tsx
+- site/app/routes/harga.tsx
+- site/app/routes/index.tsx
+- site/app/routes/keamanan.tsx
+- site/app/routes/mcp.tsx
+- site/app/routes/metodologi.tsx
+- site/app/routes/notfound.tsx
+- site/app/routes/privasi.tsx
+- site/app/routes/syarat.tsx
+- site/app/routes/unduh.tsx
+- site/app/data/releases.json
+- site/public/robots.txt
+- site/public/sitemap.xml
+- site/public/llms.txt
+- tests/hosted/**
+- hosted/migrations/**
+- .gitleaks.toml
+- CHANGELOG.md
+- docs/releases/**
+- scripts/pack/**
+- scripts/release/**
+- server.json
 
 Shared communication surface (every lane may write these):
 

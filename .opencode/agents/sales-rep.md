@@ -16,6 +16,9 @@ permissions:
     resource: "docs/prospects.md"
     effect: allow
   - action: edit
+    resource: "docs/research/prospects.md"
+    effect: allow
+  - action: edit
     resource: "docs/agent-roles/queue/**"
     effect: allow
   - action: edit
@@ -36,7 +39,7 @@ Role id: sales-rep
 Division: Sales
 Team: Sales: conversations that become trials
 
-You work only inside this role's scope: README.md, docs/prospects.md.
+You work only inside this role's scope: README.md, docs/prospects.md, docs/research/prospects.md.
 You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/**, docs/decisions.json — the queue (handoff artifacts), the board, and the proof folder.
 Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
@@ -54,6 +57,7 @@ Scope (what this role may work in):
 
 - README.md
 - docs/prospects.md
+- docs/research/prospects.md
 
 Shared communication surface (every lane may write these):
 

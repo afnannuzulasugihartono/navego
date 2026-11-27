@@ -36,30 +36,17 @@ the entry key; the division says where the work belongs.
 
 | agent id | division | scope (repo paths) | status |
 |---|---|---|---|
-| operator | Operations | docs/economy.json, docs/handoff.md, docs/proof, docs/agent-roles/loop/**, docs/automations.md, docs/agent-roles/keys.json, docs/agent-roles/registry.json, docs/agent-roles.md, docs/agent-roles/*.md, scripts/dev/agent-fleet/**, scripts/dev/agent-worktree.ts, tests/tooling/agent-loop.test.ts, tests/tooling/agent-dispatch.test.ts, .opencode/agents/**, .claude/agents/**, tests/tooling/agent-roles.test.ts | active |
-| researcher | Research & Development | docs/research/** | active |
-| sales-rep | Sales | README.md, docs/prospects.md | active |
-| marketer | Marketing | site/app/routes/artikel-ai-browser-indonesia.tsx, site/app/routes/artikel.tsx, site/app/routes/bandingkan.tsx, site/app/routes/beranda.tsx, site/app/routes/changelog.tsx, site/app/routes/consent.tsx, site/app/routes/docs.tsx, site/app/routes/dukungan.tsx, site/app/routes/en.tsx, site/app/routes/faq.tsx, site/app/routes/fitur.tsx, site/app/routes/harga.tsx, site/app/routes/index.tsx, site/app/routes/keamanan.tsx, site/app/routes/mcp.tsx, site/app/routes/metodologi.tsx, site/app/routes/notfound.tsx, site/app/routes/privasi.tsx, site/app/routes/syarat.tsx, site/app/routes/unduh.tsx, site/public/robots.txt, site/public/sitemap.xml, site/public/llms.txt | active |
-| engineer | Engineering | extension/**, local/**, shared/**, site/app/lib/**, site/app/components/**, site/app/routes/akun.tsx, site/app/routes/dashboard.tsx, site/app/data/tools.json, docs/api.md, docs/agent-friendly.md, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json, tests/site/** | active |
-| release-engineer | Engineering | .github/**, .gitleaks.toml, CHANGELOG.md, docs/releases/**, scripts/pack/**, scripts/release/**, server.json, site/app/data/releases.json | active |
-| finance-analyst | Finance | hosted/migrations/** | active |
-| support-agent | Customer Support | docs/product/support.md, docs/product/navego-adoption.md | active |
-| onboarding-guide | Customer Success | docs/install.md, docs/external-install.md, docs/agent-call.md | active |
+| operator | Operations | docs/economy.json, docs/handoff.md, docs/proof, docs/agent-roles/loop/**, docs/automations.md, docs/agent-roles/keys.json, docs/agent-roles/registry.json, docs/agent-roles.md, docs/agent-roles/*.md, scripts/dev/agent-fleet/**, scripts/dev/agent-worktree.ts, tests/tooling/agent-loop.test.ts, tests/tooling/agent-dispatch.test.ts, .opencode/agents/**, .claude/agents/**, tests/tooling/agent-roles.test.ts, docs/research/agent-roles.md | active |
+| sales-rep | Sales | README.md, docs/prospects.md, docs/research/prospects.md | active |
+| engineer | Engineering | extension/**, local/**, shared/**, site/app/lib/**, site/app/components/**, site/app/routes/akun.tsx, site/app/routes/dashboard.tsx, site/app/data/tools.json, docs/api.md, docs/agent-friendly.md, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json, tests/site/**, site/app/routes/artikel-ai-browser-indonesia.tsx, site/app/routes/artikel.tsx, site/app/routes/bandingkan.tsx, site/app/routes/beranda.tsx, site/app/routes/changelog.tsx, site/app/routes/consent.tsx, site/app/routes/docs.tsx, site/app/routes/dukungan.tsx, site/app/routes/en.tsx, site/app/routes/faq.tsx, site/app/routes/fitur.tsx, site/app/routes/harga.tsx, site/app/routes/index.tsx, site/app/routes/keamanan.tsx, site/app/routes/mcp.tsx, site/app/routes/metodologi.tsx, site/app/routes/notfound.tsx, site/app/routes/privasi.tsx, site/app/routes/syarat.tsx, site/app/routes/unduh.tsx, site/app/data/releases.json, site/public/robots.txt, site/public/sitemap.xml, site/public/llms.txt, tests/hosted/**, hosted/migrations/**, .gitleaks.toml, CHANGELOG.md, docs/releases/**, scripts/pack/**, scripts/release/**, server.json | active |
+| onboarding-guide | Customer Success | docs/install.md, docs/external-install.md, docs/agent-call.md, docs/product/support.md, docs/product/navego-adoption.md | active |
 
 Every role's `communicationPaths` are `docs/agent-roles/queue/**`,
 `docs/agent-roles/status.md`, `docs/proof/**` and `docs/decisions.json`.
 
-Every path has exactly one work-scope owner: `marketer` owns the public pages
-of the site, `finance-analyst` owns the migrations, `engineer` owns the
-product, the site's mechanics and the tool inventory, the role generator, the
-scope checker, its `package.json` command, the role gate and the generated
-role entry points, `researcher` owns the research folder, `sales-rep` owns the
-root readme and the prospect pipeline in `docs/prospects.md`, `support-agent`
-owns the support inbox and its answers, `onboarding-guide` owns the first-run
-documents, and `operator` owns the economy ledger, the handoff record, the
-proof folder, the loop, the fleet tooling, the role register and the role
-documents. The gate `tests/tooling/agent-roles.test.ts` refuses a register
-where two work scopes cover the same tracked file.
+Every path has exactly one work-scope owner: `operator` owns the economy ledger, the handoff record, the proof folder, the loop, the fleet tooling, the role register and the role documents, `sales-rep` owns the prospect list and the outreach record, `engineer` owns the product, the whole website, the tools, the migrations and the release plumbing, and `onboarding-guide` owns the first-run and support documents. The gate `tests/tooling/agent-roles.test.ts` refuses a register where two work scopes cover the same tracked file.
+
+Four lanes, and no standing research/marketing/release/finance/support lane: their functions remain as bounded tickets for one of the four. The job descriptions are in [`docs/agent-roles/job-descriptions.md`](agent-roles/job-descriptions.md).
 
 These paths are shared by design, and the handoff rule is what moves work
 across them: every role may write the queue
