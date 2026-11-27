@@ -1,3 +1,7 @@
+// @last-edited: 2026-11-27 UTC+7.
+// @title: message - labelled, whitelisted, idempotent review messages between lanes.
+// @state: built from the direct review loop plan; the label and whitelist are pinned by tests.
+// @dependencies: node:test, node:assert, docs/agent-roles/keys.json, scripts/dev/agent-fleet/watch.ts.
 // decisions.json -> docs-agent-roles-16, docs-agent-org-spec-01 A lane message is a notification and a pointer, never the source of truth.
 // The visible label keeps a report from being mistaken for the owner speaking.
 
@@ -38,4 +42,49 @@ export function assertAllowed(input: MessageInput, roster: MessageRoster): void 
     && pair.to === input.to
     && pair.kinds.includes(input.kind));
   if (!allowed) throw new Error('NOT_ALLOWED');
+}
+
+export type SessionInfo = {
+  id: string;
+  title: string;
+  agent: string;
+  parentId: string | null;
+  outcome: string | null;
+  updatedMs: number;
+};
+
+export type SendDeps = {
+  cli: string;
+  sessions: SessionInfo[];
+  roster: MessageRoster;
+  run: (args: string[]) => Promise<string>;
+};
+
+const delivered = new Set<string>();
+
+export function resolveSessionId(titlePrefix: string, sessions: SessionInfo[]): string | null {
+  const live = sessions.filter((session) => session.title.includes(titlePrefix) && !session.outcome);
+  if (live.length === 0) return null;
+  return live.reduce((best, next) => (next.updatedMs > best.updatedMs ? next : best)).id;
+}
+
+export async function sendMessage(input: MessageInput, deps: SendDeps): Promise<{ id: string; sessionId: string; alreadyDelivered: boolean }> {
+  assertAllowed(input, deps.roster);
+  const id = messageIdOf(input);
+  if (delivered.has(id)) return { id, sessionId: '', alreadyDelivered: true };
+  const prefix = input.to === 'operator' ? 'slot-console' : `/${input.to}-`;
+  const sessionId = resolveSessionId(prefix, deps.sessions);
+  if (!sessionId) throw new Error('TARGET_SESSION_MISSING');
+  const endpoint = input.kind === 'report' ? '/synthetic' : '/prompt';
+  const body = {
+    id,
+    text: `${labelOf(input)}\n${input.text}`,
+    description: `${input.from} -> ${input.to}`,
+    delivery: 'queue',
+    resume: true,
+    metadata: { fromAgent: input.from, toAgent: input.to, ticket: input.ticket, round: input.round, kind: input.kind },
+  };
+  await deps.run([deps.cli, 'api', 'post', `/api/session/${sessionId}${endpoint}`, '--data', JSON.stringify(body)]);
+  delivered.add(id);
+  return { id, sessionId, alreadyDelivered: false };
 }
