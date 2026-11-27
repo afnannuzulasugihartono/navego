@@ -230,11 +230,12 @@ test('every CSP header value stays below Cloudflare\'s 2000-byte ceiling, one po
   for (const [pathname, count] of seen) assert.equal(count, 1, `${pathname} carries ${count} CSP headers`);
 });
 
-test('the sitemap names exactly the routes the build carries (404 and unknowns are not in it)', () => {
+test('the sitemap names exactly the public routes (404, unknowns and the signed-in app screens are not in it)', () => {
   buildSite();
   const sitemap = fs.readFileSync(path.join(client, 'sitemap.xml'), 'utf8');
   const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => String(m[1]).replace('https://navego.pages.dev', ''));
-  const expected = ['/beranda', '/en', '/fitur', '/harga', '/unduh', '/docs', '/mcp', '/dukungan', '/bandingkan', '/changelog', '/faq', '/keamanan', '/metodologi', '/privasi', '/syarat', '/akun', '/dashboard', '/artikel', '/artikel/ai-browser-indonesia', '/oauth/consent', '/'];
+  // docs-seo-01: /akun and /dashboard are signed-in app screens, not public content, so robots disallows them and the sitemap must not offer them.
+  const expected = ['/beranda', '/en', '/fitur', '/harga', '/unduh', '/docs', '/mcp', '/dukungan', '/bandingkan', '/changelog', '/faq', '/keamanan', '/metodologi', '/privasi', '/syarat', '/artikel', '/artikel/ai-browser-indonesia', '/oauth/consent', '/'];
   assert.deepEqual([...locs].sort(), [...expected].sort());
 });
 
