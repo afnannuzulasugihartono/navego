@@ -9,7 +9,7 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "The only score move is a settled stranger payment. Sales sends one Statement Harbor follow-up from 2026-11-28 00:00 WIB through the single active automation. Engineer's next bounded round is ticket 20261127-2126. Revenue stays $0.00 until a stranger pays.",
+  "next_action": "At 2026-11-28 00:01 WIB the single automation re-checks the issue, posts the restored body, verifies the URL and records docs/proof/outreach/2026-11-28.md. This is a bounded public action, not revenue. The only score move remains a settled stranger payment. Engineer has ticket 20261127-2126 for one live review-loop round.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
@@ -79,5 +79,11 @@
     "shipped": "Tasks 1-3 of the approved plan: labelled message contract with whitelist and round cap, session resolver with idempotent queue/resume send, and CLI wired into the dispatcher prompt. 25 tests green.",
     "blocked": "Task 4 needs a live worker session; all sessions are terminal, so the CLI failed closed with TARGET_SESSION_MISSING. Proof: docs/proof/2026-11-27-2126-review-loop-refusal.md.",
     "next": "Fresh bounded ticket operator-to-engineer-20261127-2126.md opens one session and reports through the CLI; the operator then reviews in that same session."
+  },
+  "send_window_check": {
+    "found": "The body file for the single active 00:01 send automation was missing after the disk cleanup made earlier this evening.",
+    "fixed": "Restored 1957 bytes verbatim from docs/proof/2026-11-27-statement-harbor-followup-draft.md; verified the corrected doctor line, the 2-of-5 proof and the price are present.",
+    "verified": "One send automation active (aut_21c67fa57001ZR943uV03CZdqJ), three paused; issue #11 still has only our comment. Evidence: docs/proof/2026-11-27-2225-send-window-check.md.",
+    "revenue_effect": "none — $0.00 settled, 0 orders at check time"
   }
 }
