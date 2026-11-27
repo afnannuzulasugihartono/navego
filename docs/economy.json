@@ -85,5 +85,19 @@
     "fixed": "Restored 1957 bytes verbatim from docs/proof/2026-11-27-statement-harbor-followup-draft.md; verified the corrected doctor line, the 2-of-5 proof and the price are present.",
     "verified": "One send automation active (aut_21c67fa57001ZR943uV03CZdqJ), three paused; issue #11 still has only our comment. Evidence: docs/proof/2026-11-27-2225-send-window-check.md.",
     "revenue_effect": "none — $0.00 settled, 0 orders at check time"
+  },
+  "delivery_diagnostics": {
+    "basis": "Baseline, not a target. DORA metrics are read as a compass; source https://dora.dev/guides/dora-metrics-four-keys/.",
+    "change_lead_time": "Ticket to merge observed in proofs on 2026-11-27: dispatcher ticket 1105 opened 11:05 WIB, merged through PR 497 by 17:xx WIB; the exact minutes are in docs/proof/2026-11-27-engineer.md and the merge commit history.",
+    "deployment_frequency": "Site deploys on 2026-11-27 include runs 45970433290, 45974329158, 45981393404 and 45992102919, all success. This is a baseline, not a quota.",
+    "failed_deployment_recovery": "No failed site deploy was recorded on 2026-11-27; the one failed CI browser job was an external apt 403 and was re-run green.",
+    "change_fail_rate": "One red unit CI run on PR 493 (future-dated outreach path) and one Sonar reduce() finding on PR 499, both fixed before merge; no merged commit required rollback.",
+    "rework_rate": "Two fix passes were needed today: ticket reference repair and the reduce() initial value. Both are recorded in proof files.",
+    "golden_signals": {
+      "acted_browsers": "1 in run 36; 0 buy clicks",
+      "errors": "buy clicks without settlement: 0 new in run 36; claims without proof tracked in the spec Known gaps",
+      "latency": "operator review loop still unproven; ticket 20261127-2126 open",
+      "saturation": "one session per key enforced; C: disk recovered to 1.45 GB after scratch cleanup"
+    }
   }
 }
