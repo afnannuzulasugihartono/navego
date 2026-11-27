@@ -34,7 +34,8 @@
         ".opencode/agents/**",
         ".claude/agents/**",
         "tests/tooling/agent-roles.test.ts",
-        "docs/research/agent-roles.md"
+        "docs/research/agent-roles.md",
+        "docs/autonomy.md"
       ],
       "communicationPaths": [
         "docs/agent-roles/queue/**",

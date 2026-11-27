@@ -11,9 +11,10 @@ hourly `operator` run reads this file before it acts.
 The `sales-rep` role may send one message per day, on its own, under these
 limits:
 
-- The recipient is a business contact listed publicly by that business
-  (company site, public listing, public repository). No scraped personal
-  addresses, no bought lists, no bulk.
+- The surface is public: a business contact listed publicly by that
+  business (company site, public listing, public repository), a public thread
+  or listing on another site, or a public social post. No scraped personal
+  addresses, no bought lists, no bulk, no personal data.
 - The message states what Navego is, offers the real price on
   https://navego.pages.dev/harga, names one concrete use case, and closes with
   an easy no.
@@ -21,8 +22,9 @@ limits:
   under review when it was never submitted.
 - Two negative replies stop the lane for that recipient, and a third refusal
   of the same kind stops the lane for everyone until the owner says otherwise.
-- Every send is recorded the same day in `docs/proof/outreach/<date>.md`: who,
-  when, which artifact, which reply.
+- Every action is recorded the same day in `docs/proof/outreach/<date>.md`:
+  which public surface and its URL, when, the exact text or image, and the
+  reply. One bounded public action a day, whatever the channel.
 - Consent and anti-spam law still outrank this rule; a contact who asked not
   to be contacted is never contacted again.
 
