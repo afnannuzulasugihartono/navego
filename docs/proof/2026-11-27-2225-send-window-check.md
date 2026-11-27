@@ -21,6 +21,6 @@ It also contains the measured 2-of-5 PDF result (578,104 bytes), the two public 
 - Only one send automation is active; three are paused.
 - No external reply on the issue, so the condition "issue still open, no external reply" is true.
 
-## Next
+## Follow-up: the body now lives in the repo
 
-At 00:01 WIB the single automation checks the issue again, posts this one comment, verifies the returned URL, records `docs/proof/outreach/2026-11-28.md`, and closes the ticket. Settled external revenue remains $0.00, 0 orders at the time of this check.
+Because temp is scratch space, the exact body was moved to `docs/proof/outreach/drafts/2026-11-28-statement-harbor.md` and the single active automation was recreated with that repo path. New id: `aut_21da41d0e00169pXbvWR0WLUYL`, still `2026-11-28T00:01` Asia/Jakarta, same target session. The old temp-based automation was deleted. A future disk cleanup can no longer remove the message before the send.
