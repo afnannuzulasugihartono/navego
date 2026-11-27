@@ -299,6 +299,10 @@ basis is green CI on the exact head under the owner's 2026-11-26 answer.
   still asks for a human approval, and the reviewer gap above is the owner's 2026-11-26
   merge basis).
 - Main CI run `46056562639` is green on `ecac839d`.
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/511>, head
+  `9f44ef14`, carried these merge facts, the operator's approval and the reply into the
+  lane reply; exact-head CI run `46057329267` is green, it merged as `f89094e4` at
+  2026-11-27T19:35:06Z, and main CI run `46057737268` is green on `f89094e4`.
 - Only `local/`, `docs/decisions.json`, `docs/proof/`, `docs/agent-roles/queue/` and
   `docs/agent-roles/status.md` moved. No migration, edge deploy or CRX signing ran.
 
