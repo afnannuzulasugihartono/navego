@@ -99,5 +99,11 @@
       "latency": "operator review loop still unproven; ticket 20261127-2126 open",
       "saturation": "one session per key enforced; C: disk recovered to 1.45 GB after scratch cleanup"
     }
+  },
+  "checkout_wall": {
+    "status": "open",
+    "reason": "guest pay-first needs a migration plus worker and site changes; null-owner quotes currently settle as review, so a naive change would never count revenue",
+    "ticket": "docs/agent-roles/queue/operator-to-engineer-20261127-2304.md",
+    "live_verify": "no session token in this browser, so a signed-in paypal-buy drive was not possible; no approval URL was fabricated"
   }
 }
