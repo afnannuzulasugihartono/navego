@@ -63,6 +63,7 @@ path-scoped entry, which is a different ticket.
 | `npm run scope:role -- release-engineer --base origin/main --head HEAD` | exit 0 — the named roles may change all 4 paths |
 | `npm test` | exit 1 — the two runtime-census tests stop at the acceptance-pin line below |
 | `npm run check` | exit 1 at the same line; `type-debt: 0 errors — at baseline 0` before it |
+| CI run 45921345906 on the exact head `c44cfde4` | `secret-scan`, `site`, `deno-hosted`, `browser` and SonarCloud pass; `unit` and `postgres` fail on that one acceptance-pin line and on nothing else |
 
 The line both gates stop at names one file, and it is not this lane's path:
 
@@ -92,8 +93,8 @@ which changed `.gitleaks.toml` and re-pinned `gates.lock` in one commit with
 the reason in the commit message.
 
 The same two gates were driven in a throwaway clone with that one owner line
-applied and nothing else changed: both were green there, so the narrowed
-config itself breaks no other gate.
+applied and nothing else changed: `npm test` exits 0 and `npm run check`
+exits 0 there, so the narrowed config itself breaks no other gate.
 
 The browser extension harness was not run: this lane changed no extension
 file. No migration, edge deploy or CRX signing ran: this lane changed no
@@ -109,7 +110,10 @@ this pull request.
 The merge is not done, and this lane does not claim it. `npm test` and
 `npm run check` are red on the owner-only acceptance pin above, the
 merge-by-gate rule needs CI green on the exact head, and the one line that
-makes it green is the owner's to write. Pull request #474, the earlier
+makes it green is the owner's to write. CI run 45921345906 on the exact head
+`c44cfde4` is green on every job that does not read that pin — `secret-scan`,
+`site`, `deno-hosted`, `browser` and SonarCloud — and red on `unit` and
+`postgres` for that one line and nothing else. Pull request #474, the earlier
 attempt at the same edit from a base that is now behind `main`, is closed in
 favour of #476.
 

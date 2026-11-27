@@ -31,7 +31,10 @@ shipped:
    check` stop at one line, and it is not this lane's path: `gates.lock` pins
    the git-blob SHA-256 of `.gitleaks.toml`, and the pin moved with the file.
    In a throwaway clone with that one owner line applied and nothing else
-   changed, both gates are green.
+   changed, both gates are green. CI run 45921345906 on the exact head
+   `c44cfde4` is green on `secret-scan`, `site`, `deno-hosted`, `browser` and
+   SonarCloud, and red on `unit` and `postgres` for that one line and nothing
+   else.
 
 left:
 
