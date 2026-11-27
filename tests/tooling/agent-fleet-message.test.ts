@@ -28,7 +28,7 @@ const session = (id: string, title: string, outcome: string | null, updatedMs: n
 test('a report carries a visible sender label and a stable idempotency id', () => {
   const input = { kind: 'report' as const, from: 'engineer' as const, to: 'operator' as const, ticket: 't.md', round: 1, text: 'pointer' };
   assert.equal(labelOf(input), '[LANE-REPORT engineer] ticket=t.md round=1');
-  assert.equal(messageIdOf(input), 't.md:1:report');
+  assert.equal(messageIdOf(input), 'msg_t.md:1:report');
 });
 
 test('only a lane report to the operator and an operator review are allowed', () => {
@@ -68,7 +68,7 @@ test('sendMessage queues a labelled message without interrupting the target', as
   assert.equal(result.sessionId, 'op');
   assert.equal(result.alreadyDelivered, false);
   const body = JSON.parse(calls[0]![calls[0]!.length - 1]!);
-  assert.equal(body.id, 'resolver.md:1:report');
+  assert.equal(body.id, 'msg_resolver.md:1:report');
   assert.equal(body.delivery, 'queue');
   assert.equal(body.resume, true);
   assert.equal(body.metadata.fromAgent, 'engineer');

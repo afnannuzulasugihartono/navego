@@ -39,7 +39,7 @@ export function labelOf(input: MessageInput): string {
 }
 
 export function messageIdOf(input: MessageInput): string {
-  return `${input.ticket}:${input.round}:${input.kind}`;
+  return `msg_${input.ticket}:${input.round}:${input.kind}`;
 }
 
 export function assertAllowed(input: MessageInput, roster: MessageRoster): void {
