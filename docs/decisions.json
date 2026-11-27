@@ -1708,6 +1708,16 @@
         "ref": "docs/agent-roles/queue/operator-to-engineer-20261127-1105.md:22-23",
         "also": "docs/proof/2026-11-27-0924-clean-machine-doctor.md:9-15"
       }
+    },
+    {
+      "id": "docs-agent-org-spec-01",
+      "scope": "docs/superpowers/specs",
+      "file": "docs/superpowers/specs/2026-11-27-agent-org-architecture-design.md",
+      "decision": "The agent organisation design lives in one consolidated spec. The separate pattern-selection spec was merged into it and removed; normally specs are immutable history, but the owner directly asked to combine the two into a single document.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-27: \"gabungkan keduanya\" after reviewing the folder design and pattern selection specs"
+      }
     }
   ]
 }
