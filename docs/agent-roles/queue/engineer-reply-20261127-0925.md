@@ -17,7 +17,9 @@ evidence:
 - `npm run check` — green: `type-debt: 0 errors — at baseline 0`, `check ok: 36 allowlisted browser primitives, 319 runtime safety files`.
 - Site typecheck and site build — green (`react-router build`, 22 routes flattened).
 - Live tab: HTTP 200 on `/`, `/harga`, `/masuk`, `/proof/navego-drive-pdf-page1.jpg` and `/llms.txt`; homepage `scrollWidth === clientWidth` at 1440 px (1425) and 390 px (390).
-- Scope gate: `npm run scope:role -- engineer --base origin/main --head HEAD` — see the proof for the exit.
+- Scope gate: `npm run scope:role -- engineer --base origin/main --head HEAD` — `the named roles may change all 6 paths`, exit 0.
+- PR <https://github.com/afnannuzulasugihartono/navego/pull/491>, head d85796fd; CI 45980366111 green on the exact head, merged as 5ff581fd at 2026-11-27T10:17:46Z (administrator merge), CI 45980886157 green on the merged commit; site deploy 45981393404 green on 5ff581fd.
+- After the deploy, the live page was driven again: `/` answers 200 at 1440 px and 390 px with no horizontal overflow, the redaction sentence and alt text are live, "apa adanya" is gone, the image declares its true 1103 px height, and `/llms.txt` carries the measured section.
 - No extension file changed, so `py tests/browser_extension_test.py` was not run. No migration, edge deploy or CRX signing ran.
 
 left:
