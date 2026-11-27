@@ -9,7 +9,7 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "Only a settled stranger payment moves the score. Statement Harbor send result from 2026-11-28 00:01 must be recorded. Guest checkout ticket 2304 stays queued. Do not add metrics beyond the five-field contract.",
+  "next_action": "Wait for a real reply on Statement Harbor and record it the day it arrives. Steel outreach stays stacked with not-before 2026-11-29. Guest checkout ticket 2304 stays queued. Only a settled stranger payment moves the score.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
@@ -139,5 +139,12 @@
       "window": "every run",
       "action": ">0: retract claim and write incident"
     }
+  },
+  "send_result_20261128": {
+    "sent": "One Statement Harbor follow-up at 00:05 WIB, comment 7224022021, body hash verified d1a19aec...ce510.",
+    "automations": "aut_21da41d0e00169pXbvWR0WLUYL done, runCount 1; three duplicates paused with runCount 0.",
+    "reply": "No external reply yet; two comments total, both ours.",
+    "support_form": "Live OPTIONS preflight to navego-feedback returned 204 with the correct CORS headers; no fake row written.",
+    "evidence": "docs/proof/2026-11-28-0026-send-and-form-verification.md"
   }
 }
