@@ -9,7 +9,7 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "At 2026-11-28 00:01 WIB the single automation re-checks the issue, posts the restored body, verifies the URL and records docs/proof/outreach/2026-11-28.md. This is a bounded public action, not revenue. The only score move remains a settled stranger payment. Engineer has ticket 20261127-2126 for one live review-loop round.",
+  "next_action": "Statement Harbor send at 2026-11-28 00:01 WIB from the single active automation, then record its proof. Steel form ticket is stacked for 2026-11-29. Settled revenue remains $0.00; only a stranger payment moves the score.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
@@ -105,5 +105,11 @@
     "reason": "guest pay-first needs a migration plus worker and site changes; null-owner quotes currently settle as review, so a naive change would never count revenue",
     "ticket": "docs/agent-roles/queue/operator-to-engineer-20261127-2304.md",
     "live_verify": "no session token in this browser, so a signed-in paypal-buy drive was not possible; no approval URL was fabricated"
+  },
+  "research_20261127": {
+    "found": "Two dated public rows added to docs/research/prospects.md: Steel (public enterprise form, persistent-auth need in their own docs) and Browserless (published support address and MCP docs).",
+    "listing_check": "awesome-mcp-servers PR 20598 still Open with has-emoji, valid-name and has-glama; nothing posted today.",
+    "stacked": "operator-to-sales-rep-20261127-2315.md is class measurement with not-before 2026-11-29T00:00+07:00, so it cannot take tomorrow's Statement Harbor slot.",
+    "no_send": "No outreach was sent today by this research; the 2026-11-27 allowance was Agno."
   }
 }

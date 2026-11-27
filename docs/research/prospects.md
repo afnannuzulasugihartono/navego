@@ -87,3 +87,19 @@ submission. The proof record names the form URL, submission time, first name,
 last name, work email, job title, organisation, and message. Use only truthful
 sender identity values; if the sender has no truthful values for a required
 field, submit nothing and record that exact blocker.
+
+## Dated additions — 2026-11-27
+
+These are research rows only. No outreach was sent to either organisation on
+this date; the 2026-11-27 allowance was used for Agno and the next public send
+is Statement Harbor at 2026-11-28 00:00 WIB.
+
+| Priority | Organisation | Public business surface | Need validated by their own words | One Navego use case | Consent state |
+|---|---|---|---|---|---|
+| 1 | **Steel (Nen Labs)** | Public enterprise contact form at https://steel.dev/enterprise ; public support address support@steel.dev in https://steel.dev/docs/support.md | Their homepage https://steel.dev/ says a task must stay signed in from one run to the next, with profiles, session context or stored credentials; the docs offer profiles and persistent auth in a cloud runtime. | An agent using Steel for hosted browser work routes the final step that must happen in the person's own signed-in Chrome to Navego's local MCP server; the file returns to the user's machine and the session never becomes a cloud profile. | Public contact form only; no personal address, no bulk, no prior refusal. Partnership/integration framing, not a claim of a customer. |
+| 2 | **Browserless** | Published support address support@browserless.io on https://browserless.io/ ; MCP server docs at https://docs.browserless.io/mcp/browserless-mcp-server | Their public docs describe an MCP server with scrape, download, export and crawl over managed browsers, and AI integrations for agent frameworks. | A browserless MCP workflow hands an authenticated document-collection step to Navego when the document lives behind a person's own Chrome session instead of a hosted profile. | Public business address; no prior contact, no refusal. Treat as an integration partner, not a buyer claim. |
+
+Both sit in the first division already chosen by the owner: teams that build agents which must act in a real browser or business system. Neither is a large regulated enterprise; the current plans do not promise seats, SLA or compliance terms.
+
+Public listing check before posting: PR https://github.com/punkpeye/awesome-mcp-servers/pull/20598 is still Open with labels has-emoji, valid-name and has-glama. Nothing was posted to that PR on this date.
+
