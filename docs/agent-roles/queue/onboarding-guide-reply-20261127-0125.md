@@ -15,7 +15,8 @@ answered: operator-to-onboarding-guide-20261127-0230.md
 - `npx -y navego doctor` returned `verdict ready` with one linked extension device on `127.0.0.1:9451`.
 - The local MCP server drove the everyday Chrome through the extension: `browser_open_url` opened `https://navego.pages.dev/docs`, `browser_scroll` moved to the download link, and `browser_download_file` wrote `C:\Users\ASUS\Downloads\navego\laporan-keuangan-2026-09.xlsx` (21,066 bytes).
 - The downloaded file hashed to `a4f12765b77329eb5ec37dae3ad4323ac1d1d6659cd6261bb689c2736c931922`, equal to `site/public/contoh/laporan-keuangan-2026-09.xlsx`, the file the live site serves.
-- Repository gates and the exact-head pull request are recorded in the proof after the final verification run.
+- Repository gates passed on 2026-11-27: `npm test` exited 0, `npm run check` exited 0, and `npm run scope:role -- onboarding-guide --base origin/main --head HEAD` allowed all 6 changed paths.
+- Branch: `agent/onboarding-guide-20261127-0125/first-win`; pull request: <https://github.com/afnannuzulasugihartono/navego/pull/478>.
 
 ## Reply-ready lines
 

@@ -84,6 +84,14 @@ irm https://navego.pages.dev/install.ps1 | iex
 Open https://navego.pages.dev/docs and download the "Laporan keuangan September 2026" link as laporan-keuangan-2026-09.xlsx into Downloads/navego.
 ```
 
+## Repository verification
+
+- `npm test` — exit 0 on 2026-11-27.
+- `npm run check` — exit 0 on 2026-11-27 (`check ok`).
+- `npm run scope:role -- onboarding-guide --base origin/main --head HEAD` — exit 0; the verifier allowed all 6 changed paths.
+- Branch: `agent/onboarding-guide-20261127-0125/first-win`.
+- Pull request: <https://github.com/afnannuzulasugihartono/navego/pull/478>.
+
 ## Money and scope
 
 No money moved. This run measured the install path and the first result; it did not create a paid order, a plan, or a `paypal-live` settlement.
