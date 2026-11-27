@@ -176,8 +176,8 @@ And the JSON a script reads, for the lapsed session:
 
 ## The test that fails before the fix
 
-`docs/proof/2026-11-28-doctor-session-expiry.test.ts` holds the two new branches. Before
-the fix, against the built doctor:
+`docs/proof/2026-11-27-doctor-verdict.test.ts` holds the branch's four cases - the two the
+1105 ticket left and the two this review added. Before the fix, against the built doctor:
 
 ```text
 ✖ a machine whose cloud session lapsed is told to sign in again (7.9352ms)
@@ -199,6 +199,11 @@ After the fix, with the 2026-11-27 branches beside it:
 ℹ pass 4
 ℹ fail 0
 ```
+
+The two new cases live in the branch's own test file rather than in a second file of their
+own: a copy of the fixture builders in a second file was 23.9% duplicated lines on new
+code, and the quality gate on pull request #509 said so. One file, four cases, one set of
+fixture builders.
 
 ## The gates
 
