@@ -1,8 +1,9 @@
-// @last-edited: 2026-11-18 UTC+7.
+// @last-edited: 2026-11-27 UTC+7.
 // @title: doctor - the operator's one question about this machine, answered in words and in JSON.
 // @state: the bridge's state, the device's meter, the pairing, the cloud login, and the CRX link.
 // The --json flag emits the same answers as a single object for MCP clients and scripts.
 // @dependencies: ./wallet-client.js, ./oauth.js, ./lib/endpoints.js.
+// decisions.json -> local-doctor-verdict-01
 
 // THIS FILE EXISTS
 
@@ -49,6 +50,13 @@ async function probeBridge(port: number, fetchImpl: typeof fetch): Promise<Bridg
   }
 }
 
+function setupAdvice(cloudLogin: DoctorReport['cloudLogin'], paired: boolean): string | null {
+  const steps: string[] = [];
+  if (cloudLogin === 'none') steps.push('sign in with `navego auth`');
+  if (!paired) steps.push('pair the browser');
+  return steps.length ? steps.join(', then ') : null;
+}
+
 export async function doctor({ env = process.env, stdout = process.stdout, fetchImpl = fetch, args = [] }: { env?: NodeJS.ProcessEnv; stdout?: { write(chunk: string): unknown }; fetchImpl?: typeof fetch; args?: readonly string[] } = {}): Promise<number> {
   const port = Number(env.NAVEGO_BRIDGE_PORT || 9451);
   const home = typeof env.NAVEGO_HOME === 'string' ? env.NAVEGO_HOME : undefined;
@@ -76,7 +84,8 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
     const devicesRaw = Array.isArray(healthForDevices?.devices) ? (healthForDevices?.devices as Array<Record<string, unknown>>) : [];
     const linked = healthForDevices?.linked === true;
     const refusal = typeof healthForDevices?.meterRefusal === 'string' && healthForDevices.meterRefusal.trim() ? (healthForDevices.meterRefusal as string).trim() : null;
-    if (refusal) problems.push('the meter refused the session; update the extension to the current release and reload it');
+    const setup = setupAdvice(cloudLogin, Boolean(paired));
+    if (refusal) problems.push(setup ?? 'the meter refused the session; update the extension to the current release and reload it');
     else if (!devicesRaw.length && !linked) problems.push('the extension is not linked to this bridge; reload the everyday browser with Navego installed');
     else if (!devicesRaw.length) problems.push('the bridge runs pre-meter code; restart the driver process so it can report the session');
     for (const device of devicesRaw) {

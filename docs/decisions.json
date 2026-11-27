@@ -1697,6 +1697,17 @@
         "kind": "recorded",
         "ref": "docs/proof/2026-11-27-1124-dispatcher-starvation.md (2026-11-27T11:24Z)"
       }
+    },
+    {
+      "id": "local-doctor-verdict-01",
+      "scope": "local/doctor",
+      "file": "local/doctor.ts",
+      "decision": "A meter refusal on a machine with no cloud login or no device file names the setup steps the person still owes: sign in with `navego auth`, then pair the browser. Only a signed-in, paired machine is told that the extension may be stale, so a current extension is never blamed for missing account setup.",
+      "source": {
+        "kind": "repo",
+        "ref": "docs/agent-roles/queue/operator-to-engineer-20261127-1105.md:22-23",
+        "also": "docs/proof/2026-11-27-0924-clean-machine-doctor.md:9-15"
+      }
     }
   ]
 }

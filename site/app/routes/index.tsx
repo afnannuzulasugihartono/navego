@@ -1,4 +1,4 @@
-// decisions.json -> D32, D34, D35, D36, D38, site-design-01 (one mark, no eyebrows, h1 first; the proof is the first screen)
+// decisions.json -> D32, D34, D35, D36, D38, site-design-01, local-doctor-verdict-01 (one mark, no eyebrows, h1 first; the proof and the doctor state are honest)
 
 import { useEffect } from 'react';
 import { Link } from 'react-router';
@@ -74,7 +74,7 @@ export default function Index() {
                   />
                 </>
               ) : null}
-              <p className="note"><code>npx -y navego doctor</code> → <code>ready</code>; bridge <code>127.0.0.1:9451</code>, 1 device terhubung. Baca biaya dan jalur undo di halaman <Link to="/unduh">Unduh</Link> sebelum menjalankannya.</p>
+              <p className="note"><code>npx -y navego doctor</code> → setelah signing in dan pairing, doctor menampilkan paket dan jatah; di mesin baru, statusnya degraded sampai signing in dan pairing selesai. Baca biaya dan jalur undo di halaman <Link to="/unduh">Unduh</Link> sebelum menjalankannya.</p>
             </div>
 
             <div className="card">

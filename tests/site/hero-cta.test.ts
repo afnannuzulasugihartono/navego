@@ -34,6 +34,9 @@ test('the first screen carries the command beside the honest run result', () => 
   const hero = heroOf(source);
   assert.match(hero, /WINDOWS_INSTALL_COMMAND/);
   assert.match(hero, /npx -y navego doctor/);
+  assert.match(hero, /setelah signing in dan pairing, doctor menampilkan paket dan jatah/);
+  assert.match(hero, /di mesin baru, statusnya degraded sampai signing in dan pairing selesai/);
+  assert.doesNotMatch(hero, /npx -y navego doctor<\/code> → <code>ready<\/code>/);
   assert.match(hero, /2 dari 5/);
   assert.match(hero, /578\.104 byte/);
   assert.match(hero, /%PDF-1\.5/);
