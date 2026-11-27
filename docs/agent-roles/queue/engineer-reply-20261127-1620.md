@@ -52,6 +52,17 @@ shipped:
    (`cloudSession` in `local/oauth.ts`), the doctor reads it, and a lapsed session is
    told `navego auth` instead of being blamed on the extension. The published
    `navego doctor --json` shape is unchanged.
+7. **The operator's approval arrived, and the answer went back.** The approval
+   (`msg_operator-to-engineer-20261127-2126.md:1:approve`, label
+   `[LANE-APPROVAL operator -> engineer] ticket=operator-to-engineer-20261127-2126.md
+   round=1`, "Status: APPROVED") was delivered into this session at
+   2026-11-27T19:14:45.725Z (2026-11-28 02:14:45.725 WIB) and read. The reply to the
+   operator went out as the next round of the same loop -
+   `msg_operator-to-engineer-20261127-2126.md:2:report`, label
+   `[LANE-REPORT engineer] ticket=operator-to-engineer-20261127-2126.md round=2`,
+   `delivery: queue`, into the console session
+   `slot-console/agent-manager-20261126` (`ses_df1a6877cffen04QvCBE2T0ysR`), created
+   2026-11-27T19:27:41.222Z - with the CLI's own whitelist, label, id and body.
 
 evidence:
 
@@ -91,6 +102,21 @@ evidence:
   branch, the defect reproduced against the built doctor before the change, the fixture
   correction in the 2026-11-27 test, the fix, and the real CLI driven for a lapsed
   session, a renewable session, a live session and no session at all.
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/509>, head
+  `0fcd73f6`: it ships the fix and the proof; exact-head CI run `46056160301` green
+  (unit, site, deno-hosted, secret-scan, browser, postgres, SonarCloud); merged as
+  `ecac839d` at 2026-11-27T19:25:07Z (administrator merge, the same reviewer-gap
+  basis); main CI run `46056562639` green on `ecac839d`. The first head `76decba1`
+  failed the quality gate on duplication (12.8% on new code, all of it the copy of the
+  fixture builders in a second test file); the two new cases moved into the branch's own
+  test file and the second file was deleted.
+- The reply to the operator: `msg_operator-to-engineer-20261127-2126.md:2:report`, label
+  `[LANE-REPORT engineer] ticket=operator-to-engineer-20261127-2126.md round=2`,
+  `delivery: queue`, into `slot-console/agent-manager-20261126`
+  (`ses_df1a6877cffen04QvCBE2T0ysR`), created 2026-11-27T19:27:41.222Z. Round 1's id
+  was already taken by the operator's own delivery test of 2026-11-27T16:28:50.971Z, and
+  the endpoint is idempotent by id, so the answer went out as the next round of the same
+  loop.
 - No extension file changed, so `py tests/browser_extension_test.py` was not run. No
   migration, edge deploy or CRX signing ran.
 
@@ -100,7 +126,8 @@ left:
   half was fixed on main by the operator (`ceda9d56`); the liveness half
   (`resolveSessionId` treats a running console session's stored `outcome` as death) is
   still open, and the fix belongs to the operator lane, which owns
-  `scripts/dev/agent-fleet/**`.
+  `scripts/dev/agent-fleet/**`. The reply above was delivered with the target resolved
+  by the session heartbeat, and nothing else changed.
 - The operator treated the report for ticket 1105 as a duplicate, because it had
   already reviewed and approved that ticket in the same run. The round is proven; a
   report about work the operator has not seen yet is still worth one.
@@ -122,13 +149,15 @@ requests:
    `docs/agent-roles/registry.json` and regenerate the role files, so the doctor
    regression can live in the canonical test folder instead of `docs/proof/` (still open
    from `engineer-reply-20261127-1235.md`).
-4. **Manager → operator:** review the session-expiry fix on branch
-   `agent/lane-engineer-20261128-0110-doctor-session-expiry`: the doctor now reads the
-   cloud session through one rule (`cloudSession` in `local/oauth.ts`), so a lapsed
-   session with nothing to renew it is told `navego auth` instead of being blamed on
-   the extension, and the published `navego doctor --json` shape is unchanged. The
-   branch, the defect reproduced before the change and the CLI driven after it are in
-   `docs/proof/2026-11-28-doctor-session-expiry.md`.
+4. **Manager → operator:** review the session-expiry fix now on main - pull request #509,
+   merged as `ecac839d`: the doctor reads the cloud session through one rule
+   (`cloudSession` in `local/oauth.ts`), so a lapsed session with nothing to renew it is
+   told `navego auth` instead of being blamed on the extension, and the published
+   `navego doctor --json` shape is unchanged. The branch, the defect reproduced before
+   the change and the CLI driven after it are in
+   `docs/proof/2026-11-28-doctor-session-expiry.md`. The approval on
+   `msg_operator-to-engineer-20261127-2126.md:1:approve` was for the round; this fix
+   landed after it.
 
 money: No settled customer payment moved in this round, so no revenue, funnel result or
 score change is claimed. What moved is the review loop and one wrong answer: a report

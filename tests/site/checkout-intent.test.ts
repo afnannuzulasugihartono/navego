@@ -1,6 +1,6 @@
-// @last-edited: 2026-11-25 UTC+7.
-// @title: checkout-intent.test - a chosen plan survives the sign-in round trip in this tab.
-// @state: one pending plan key is remembered, read once the session returns, and cleared after an order opens.
+// @last-edited: 2026-11-28 UTC+7.
+// @title: checkout-intent.test - a chosen plan survives sign-in, including a magic link opened in a new tab.
+// @state: one pending plan key is remembered in browser-local storage, read on return, and cleared after an order opens.
 // @dependencies: node:test, strict, ../../site/app/lib/checkout-intent.ts.
 
 import test from 'node:test';
@@ -59,4 +59,21 @@ test('blocked tab storage never breaks the pricing page', async () => {
   assert.doesNotThrow(() => rememberPendingPlan('asia:plan.usd-1', blocked));
   assert.equal(readPendingPlan(blocked), null);
   assert.doesNotThrow(() => forgetPendingPlan(blocked));
+});
+
+test('the pending plan survives a magic link that opens a new tab', async () => {
+  const { rememberPendingPlan, readPendingPlan } = await intentModule();
+  const local = memoryStore();
+  const tab = memoryStore();
+  (globalThis as unknown as { localStorage: StorageLike }).localStorage = local;
+  (globalThis as unknown as { sessionStorage: StorageLike }).sessionStorage = tab;
+  try {
+    rememberPendingPlan('asia:plan.usd-3');
+    assert.equal(local.getItem('navego-checkout-plan'), 'asia:plan.usd-3', 'stored where a new tab can read it');
+    assert.equal(tab.getItem('navego-checkout-plan'), null, 'not trapped in the original tab');
+    assert.equal(readPendingPlan(), 'asia:plan.usd-3', 'the return tab reads the chosen plan');
+  } finally {
+    delete (globalThis as unknown as { localStorage?: StorageLike }).localStorage;
+    delete (globalThis as unknown as { sessionStorage?: StorageLike }).sessionStorage;
+  }
 });
