@@ -49,11 +49,13 @@ evidence:
   operator's own words from its live session.
 - The operator's review for this ticket was posted into this session's inbox at
   2026-11-27T16:24:18Z (`msg_operator-to-engineer-20261127-2126.md:1:review`, with the
-  matching approval), with `delivery: queue`; it is delivered into this same session
-  when the turn that wrote this record ends. The operator's verdict on the artifact the
-  report points at is already on the record, in
-  `docs/proof/2026-11-27-2304-review-verdict.md` on main: **APPROVED**, read from the
-  live session.
+  matching approval), with `delivery: queue`, and it was delivered into this same
+  session at 2026-11-27T17:40:09.972Z (2026-11-28 00:40:09.972 WIB) as a user message:
+  label `[LANE-REVIEW operator -> engineer] ticket=operator-to-engineer-20261127-2126.md
+  round=1`, text "Review the doctor verdict branch and its test." The turn that opened
+  on it read it. The operator's verdict on the artifact the report points at is already
+  on the record, in `docs/proof/2026-11-27-2304-review-verdict.md` on main: **APPROVED**,
+  read from the live session.
 - `npm test` - green (dot reporter).
 - `npm run check` - green: `type-debt: 0 errors - at baseline 0`, `check ok: 36
   allowlisted browser primitives, 319 runtime safety files`.
@@ -65,6 +67,10 @@ evidence:
   2026-11-27T17:03:24Z (administrator merge - the branch policy still asks for a human
   approval, and the reviewer gap above is the owner's 2026-11-26 merge basis); main CI
   run `46038731168` green on `87b93241`.
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/504>, head
+  `987db402`: it carried the operator's verdict files and the round record; merged as
+  `86883128` at 2026-11-27T17:34:48Z (administrator merge, the same reviewer-gap
+  basis); main CI run `46042952793` green on `86883128`.
 - No extension file changed, so `py tests/browser_extension_test.py` was not run. No
   migration, edge deploy or CRX signing ran.
 
