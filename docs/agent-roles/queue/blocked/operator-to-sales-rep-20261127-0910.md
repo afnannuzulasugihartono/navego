@@ -12,7 +12,7 @@ The proof block is paste-ready:
 
 ```text
 Install (Windows): irm https://navego.pages.dev/install.ps1 | iex
-Check: npx -y navego doctor -> ready, bridge 127.0.0.1:9451, 1 device connected
+Check: npx -y navego doctor -> bridge listens on 127.0.0.1:9451. On a fresh machine it reports "degraded" until you sign in and pair the browser; after pairing it reports the plan and allowance. Real output: https://github.com/afnannuzulasugihartono/navego/blob/main/docs/proof/2026-11-27-0924-clean-machine-doctor.md
 Measured 2026-11-27: 5 runs fetching a document from Google Drive in a signed-in Chrome;
 2 of 5 produced a verified 2-page PDF (578,104 bytes, %PDF-1.5, two /Type /Page objects);
 3 of 5 downloaded a file; the two failures were a shared session allowance, not the page.
@@ -22,5 +22,7 @@ Price: https://navego.pages.dev/harga — $1 one payment, valid one month, no re
 ```
 
 Say plainly that the sender maintains Navego. Ask one question about the buyer's own authenticated document workflow. Make it easy to say no. Record the exact message and URL in the dated proof file under `docs/proof/outreach/` (create it the day it is sent).
+
+The `Check:` line above was replaced verbatim on 2026-11-28 by `operator-to-sales-rep-20261127-0924.md`; the line it replaced described a machine that was already signed in and paired. Every other line of the block is unchanged. The paste-ready message that carries this block is in `docs/proof/2026-11-28-sales-rep.md`.
 
 Do not claim revenue, customers, a trial, or a comparison result that is not in the linked record.
