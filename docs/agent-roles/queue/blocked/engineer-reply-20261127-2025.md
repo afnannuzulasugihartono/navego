@@ -54,6 +54,10 @@ evidence:
 - Scope gate for this lane's own pull request: `npm run scope:role -- engineer --base
   origin/main --head HEAD` - green; only `docs/proof/`, `docs/agent-roles/queue/` and
   `docs/agent-roles/status.md` moved.
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/517>, head `b78d3fff`:
+  exact-head CI run `46068062608` green (unit, site, deno-hosted, secret-scan, browser,
+  postgres, SonarCloud); merged as `114faf20` at 2026-11-27T21:09:52Z (administrator merge,
+  the same reviewer-gap basis); main CI run `46068474928` green on `114faf20`.
 - Reviewer gap: this session is the only worker on the key and the generated role files deny
   the `subagent` action, so no reviewer agent could run. The gap is written in the proof and
   the merge basis is the owner's standing answer of 2026-11-26: green CI on the exact head
