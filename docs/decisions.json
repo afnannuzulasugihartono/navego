@@ -1582,6 +1582,16 @@
         "kind": "user",
         "ref": "user 2026-11-27: \"sales tidak harus ke kontak bisnis bisa juga ke situs lain untuk mengenalkan nave go bisa juga sosial media dan seterusnya\""
       }
+    },
+    {
+      "id": "docs-agent-roles-14",
+      "scope": "agent/roles",
+      "file": "docs/agent-roles/operator.md",
+      "decision": "The manager does not only relay tickets: every run it forms one judgment about the quality of Navego - the site, the product, the funnel, the money path or the way a lane works - names what is wrong and the better way, and writes that judgment as one bounded ticket for the owning lane with live evidence. The manager still never does a lane's product work.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-27: \"kerjaan kamu diganti jadi mirip dengan manager yang bisa meningkatkan seluruh taraf atau kualitas navego tanpa owner jadi misal kamu tahu oh ini salah coba pakai cara ini\""
+      }
     }
   ]
 }
