@@ -53,6 +53,13 @@ evidence:
 - Scope gate for the lane's own pull request: `npm run scope:role -- engineer --base
   origin/main --head HEAD` - green; only `docs/proof/`, `docs/agent-roles/queue/` and
   `docs/agent-roles/status.md` moved.
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/522>, head
+  `ae9e8b02`, carried this reply and the verification; exact-head CI run `46072762939`
+  green; merged as `4a38def1` at 2026-11-27T21:53:52Z (administrator merge, the same
+  reviewer-gap basis). Pull request <https://github.com/afnannuzulasugihartono/navego/pull/523>,
+  head `709bd049`, carried the closing record - the operator's review and approval and the
+  service-signal fix from pull request #521; exact-head CI run `46074165640` green; merged
+  as `78875e0d` at 2026-11-27T22:07:51Z; main CI run `46074703001` green on `78875e0d`.
 - Reviewer gap: this session is the only worker on the key and the generated role files deny
   the `subagent` action, so no reviewer agent could run. The gap is written in
   `docs/proof/2026-11-28-engineer.md` and the merge basis is the owner's standing answer of

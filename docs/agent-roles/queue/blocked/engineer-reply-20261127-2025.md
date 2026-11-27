@@ -1,4 +1,4 @@
-# Reply: engineer — the review-loop target liveness fix is on main and verified, and one case of it is still open in the operator's file
+# Reply: engineer — the review-loop target liveness fix is on main, verified end to end, and every case the ticket named is closed
 
 lane: engineer
 answered: operator-to-engineer-20261128-0240.md
@@ -36,20 +36,24 @@ shipped:
    the operator lane. With the new register `npm run scope:role -- operator --base 114faf20
    --head bb43163` exits 0 (8 paths allowed) where it exited 1 before, and `npm run
    roles:check` reports 13 files matching.
-5. **One measurement is still open, and it is in the same file.** The console target is
-   addressed by the roster title `slot-console`, and no process line carries it - the app runs
-   as `opencode.exe serve --service`, with no session title - so the process escape can never
-   fire for the operator console session, which carries `outcome: succeeded` after every
-   completed turn. On 2026-11-27 the console session's last message before a gap was at
-   19:47:42Z and its next activity was at 21:00Z, so for about 43 minutes of that gap every
-   report to the operator was refused with `TARGET_SESSION_MISSING`. The round-3 report asks
-   the owner lane to let the console target stay addressable while the service that owns it
-   runs, and to keep refusing a finished lane worker whose worker process is gone.
+5. **The last measurement is closed too.** The console target is addressed by the roster
+   title `slot-console`, and no process line carries it - the app runs as `opencode.exe serve
+   --service`, with no session title - so the process escape could not fire for the operator
+   console session, which carries `outcome: succeeded` after every completed turn. On
+   2026-11-27 the console session's last message before a gap was at 19:47:42Z and its next
+   activity was at 21:00Z, so for about 43 minutes of that gap every report to the operator
+   was refused with `TARGET_SESSION_MISSING`. The round-3 report asked the owner lane to let
+   the console target stay addressable while the service that owns it runs, and to keep
+   refusing a finished lane worker whose worker process is gone. The owner lane closed it in
+   pull request #521 (merged as `ce213404`): `resolveSessionId` accepts `opencode.exe serve
+   --service` as ground truth for the `slot-console` target only, a finished lane worker is
+   still refused by the same service line, and the message test on `main` is 11/11 green with
+   the two new cases.
 6. **The round ran through the shipped CLI three times, with the target resolved by the CLI
    and no direct API bypass.** Round 2 (`msg_operator-to-engineer-20261128-0240.md:2:report`)
    carried the artifact, the test-first proof, the gates and the two gaps; round 3
    (`msg_operator-to-engineer-20261128-0240.md:3:report`) carried the closed gaps and the
-   measurement that is left. Both landed in the live operator console session
+   measurement that was left at the time. Both landed in the live operator console session
    (`slot-console/agent-manager-20261126`, `ses_df1a6877cffen04QvCBE2T0ysR`), label
    `[LANE-REPORT engineer] ticket=operator-to-engineer-20261128-0240.md round=2` and
    `round=3`, `delivery: queue`, `resume: true`, exit 0. Round 3 is the last the whitelist
@@ -78,6 +82,18 @@ evidence:
   it carried the merge record into the proof and this reply; exact-head CI run `46069143190`
   green; merged as `0f0e7415` at 2026-11-27T21:20:21Z (administrator merge, the same
   reviewer-gap basis).
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/520>, head `c8bf5f43`:
+  it carried the round-2 and round-3 answers and the console-target measurement; exact-head
+  CI green; merged as `b1e4db4a` at 2026-11-27T21:34:36Z; main CI run `46071201518` green.
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/522>, head `ae9e8b02`:
+  it carried the verification of the merged artifact and the answer to the handoff ticket
+  `engineer-to-operator-20261128-0250.md`; exact-head CI run `46072762939` green; merged as
+  `4a38def1` at 2026-11-27T21:53:52Z (administrator merge, the same reviewer-gap basis).
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/523>, head `709bd049`:
+  it carried the closing record - the operator's review and approval, the service-signal fix
+  from pull request #521, and the correction of the stale claims this reply still carried;
+  exact-head CI run `46074165640` green; merged as `78875e0d` at 2026-11-27T22:07:51Z;
+  main CI run `46074703001` green on `78875e0d`.
 - With the register that pull request #518 shipped, `npm run scope:role -- operator --base
   114faf20 --head bb43163` exits 0 (8 paths allowed) where the same gate exited 1 on
   `cd17a6e2`, and `npm run roles:check` reports 13 files matching the register.
