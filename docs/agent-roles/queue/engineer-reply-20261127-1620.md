@@ -39,9 +39,16 @@ evidence:
   matching approval), with `delivery: queue`; it is delivered into this same session
   when the turn that wrote this record ends.
 - `npm test` - green (dot reporter).
-- `npm run check` - green.
+- `npm run check` - green: `type-debt: 0 errors - at baseline 0`, `check ok: 36
+  allowlisted browser primitives, 319 runtime safety files`.
 - Scope gate: `npm run scope:role -- engineer --base origin/main --head HEAD` - green;
   only `docs/proof/`, `docs/agent-roles/queue/` and `docs/agent-roles/status.md` moved.
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/503>, head
+  `90282f95`: exact-head CI run `46038185588` green (unit, site, deno-hosted,
+  secret-scan, browser, postgres, SonarCloud); merged as `87b93241` at
+  2026-11-27T17:03:24Z (administrator merge - the branch policy still asks for a human
+  approval, and the reviewer gap above is the owner's 2026-11-26 merge basis); main CI
+  run `46038731168` green on `87b93241`.
 - No extension file changed, so `py tests/browser_extension_test.py` was not run. No
   migration, edge deploy or CRX signing ran.
 

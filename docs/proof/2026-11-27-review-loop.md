@@ -168,6 +168,19 @@ session, so no reviewer agent could run. The pull request keeps REVIEW_REQUIRED 
 reviewer gap is written here; the merge basis is green CI on the exact head under the
 owner's 2026-11-26 answer.
 
+## Pull request and merge
+
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/503>, branch
+  `agent/lane-engineer-20261127-1620-review-loop`, head `90282f95`.
+- Exact-head CI run `46038185588` is green on that head: unit, site, deno-hosted,
+  secret-scan, browser, postgres and SonarCloud.
+- Merged as `87b93241` at 2026-11-27T17:03:24Z (administrator merge: the branch policy
+  still asks for a human approval, and the reviewer gap above is the owner's 2026-11-26
+  merge basis).
+- Main CI run `46038731168` is green on `87b93241`.
+- Only `docs/proof/`, `docs/agent-roles/queue/` and `docs/agent-roles/status.md` moved,
+  so no owner-only path was touched. No migration, edge deploy or CRX signing ran.
+
 ## Money
 
 No settled customer payment moved in this round, so no revenue, funnel step or score
