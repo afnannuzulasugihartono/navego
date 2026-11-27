@@ -9,6 +9,16 @@ bounded ticket instead of a new role. The work belongs to the engineer lane
 that already owns the site's mechanics, and it is judged by a drive, not by a
 screenshot count.
 
+Live read on 2026-11-27 at 1520 px (homepage, real browser, no guesswork):
+
+1. The first screen states the promise ("Situs tanpa API. Perintah jadi berkas.") but shows **no product visual and no proof** - a stranger sees a claim, not an artifact.
+2. The install command itself is hidden behind a button ("Semua cara memasang"); the single strongest proof - one command that produces a file - is not visible on the first screen.
+3. There is **no verifiable signal of use** near the hero: no real GitHub/npm/Glama status, no measured result. The footer has text links, but trust is built above the fold.
+4. For a signed-in viewer the centre of the page is an account card ("Masuk sebagai <email>" + "Buka dashboard"), so the product proof is replaced by account chrome.
+5. The page ends almost immediately after that card and the footer: there is no section a stranger can scroll into that shows how it works or that it was actually driven.
+
+Use the **real** artifacts already in the repo, never an invented testimonial: the five driven runs and the two fixed bugs in docs/proof/2026-11-27-engineer.md (2 of 5 produced a verified 2-page PDF, 3 of 5 downloaded a file), the public repo/npm/MCP Registry/Glama links, and a real screenshot of the extension and its resulting file. State the failure rate honestly - that is more credible than a claim of perfection.
+
 why: the site was restyled on 2026-11-23 (PRs #446-#455) and the funnel shows
 no stranger who stayed long enough to judge it. Design work without a human
 reading the page is polish nobody asked for; a drive at both widths with a
