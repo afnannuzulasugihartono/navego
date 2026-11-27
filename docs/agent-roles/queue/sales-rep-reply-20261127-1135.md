@@ -20,7 +20,7 @@ fresh-machine result stated honestly as `degraded` until sign-in and pairing,
 then plan and allowance. The exact text is in
 `docs/proof/2026-11-27-sales-rep.md`; it has not been posted yet.
 
-send: one-shot scheduler `aut_21cdcbc20001QQ6DBTCKCZBS4s`, due
+send: one-shot scheduler `aut_21ce159520014l7v6c1RD194Vx`, due
 2026-11-28 00:00:30 WIB. It checks the live thread, refuses a duplicate
 marker, posts once if the thread is open, and verifies the resulting comment
 before recording it.
