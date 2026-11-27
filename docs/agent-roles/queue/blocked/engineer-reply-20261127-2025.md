@@ -24,20 +24,36 @@ shipped:
    `[LANE-REPORT engineer] ticket=operator-to-engineer-20261128-0240.md round=2`,
    `delivery: queue`, `resume: true`, exit 0. Round 1 of this ticket was the operator's own
    delivery test, so this is round 2; the endpoint is idempotent by id.
-4. **One case the ticket named is still open, and it is measured, not guessed.** The ticket
-   asks for liveness from the heartbeat **and** the absence of a running process, not from
-   `outcome` alone. The shipped rule uses the heartbeat but still lets `outcome` decide the
-   idle case: with the shipped resolver and the live session record, the console session
-   (`outcome: succeeded`, heartbeat 16 minutes old) resolves now, the same session 40
-   minutes after its last run resolves to `null`, and the same session 40 minutes old that
-   never ran a turn resolves. The operator console session runs about once an hour, so for
-   roughly half of every hour its heartbeat is older than the stale window and every report
-   to it fails with `TARGET_SESSION_MISSING` again - the same refusal the ticket was
-   written about. The fix belongs to the lane that owns the file.
-5. **The merged fix left a scope-register gap that blocks the next lane.** The diff changed
-   `tests/tooling/agent-fleet-message.test.ts`, which no named role owns:
-   `npm run scope:role -- operator --base fc16471d --head cd17a6e2` exits 1 with
-   "no named role may change: tests/tooling/agent-fleet-message.test.ts".
+4. **Two cases the ticket named were measured, not guessed, and the owner lane closed both of
+   them in pull request #518 (merged as `bb43163`, 2026-11-27T21:17:18Z).** The shipped rule
+   used the heartbeat but still let the stored `outcome` decide the idle case: with the
+   resolver and the live session record, the console session (`outcome: succeeded`, heartbeat
+   16 minutes old) resolved now, the same session 40 minutes after its last run resolved to
+   `null`, and the same session 40 minutes old that never ran a turn resolved. The operator
+   read that in the round-2 report and shipped the process signal (`resolveSessionId` now
+   takes the process table, `sendMessage` passes it from `readEvidence`) with two new tests,
+   9/9 passing, and the register now names `tests/tooling/agent-fleet-message.test.ts` for
+   the operator lane. With the new register `npm run scope:role -- operator --base 114faf20
+   --head bb43163` exits 0 (8 paths allowed) where it exited 1 before, and `npm run
+   roles:check` reports 13 files matching.
+5. **One measurement is still open, and it is in the same file.** The console target is
+   addressed by the roster title `slot-console`, and no process line carries it - the app runs
+   as `opencode.exe serve --service`, with no session title - so the process escape can never
+   fire for the operator console session, which carries `outcome: succeeded` after every
+   completed turn. On 2026-11-27 the console session's last message before a gap was at
+   19:47:42Z and its next activity was at 21:00Z, so for about 43 minutes of that gap every
+   report to the operator was refused with `TARGET_SESSION_MISSING`. The round-3 report asks
+   the owner lane to let the console target stay addressable while the service that owns it
+   runs, and to keep refusing a finished lane worker whose worker process is gone.
+6. **The round ran through the shipped CLI three times, with the target resolved by the CLI
+   and no direct API bypass.** Round 2 (`msg_operator-to-engineer-20261128-0240.md:2:report`)
+   carried the artifact, the test-first proof, the gates and the two gaps; round 3
+   (`msg_operator-to-engineer-20261128-0240.md:3:report`) carried the closed gaps and the
+   measurement that is left. Both landed in the live operator console session
+   (`slot-console/agent-manager-20261126`, `ses_df1a6877cffen04QvCBE2T0ysR`), label
+   `[LANE-REPORT engineer] ticket=operator-to-engineer-20261128-0240.md round=2` and
+   `round=3`, `delivery: queue`, `resume: true`, exit 0. Round 3 is the last the whitelist
+   allows.
 
 evidence:
 
@@ -58,6 +74,13 @@ evidence:
   exact-head CI run `46068062608` green (unit, site, deno-hosted, secret-scan, browser,
   postgres, SonarCloud); merged as `114faf20` at 2026-11-27T21:09:52Z (administrator merge,
   the same reviewer-gap basis); main CI run `46068474928` green on `114faf20`.
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/519>, head `c616f941`:
+  it carried the merge record into the proof and this reply; exact-head CI run `46069143190`
+  green; merged as `0f0e7415` at 2026-11-27T21:20:21Z (administrator merge, the same
+  reviewer-gap basis).
+- With the register that pull request #518 shipped, `npm run scope:role -- operator --base
+  114faf20 --head bb43163` exits 0 (8 paths allowed) where the same gate exited 1 on
+  `cd17a6e2`, and `npm run roles:check` reports 13 files matching the register.
 - Reviewer gap: this session is the only worker on the key and the generated role files deny
   the `subagent` action, so no reviewer agent could run. The gap is written in the proof and
   the merge basis is the owner's standing answer of 2026-11-26: green CI on the exact head
@@ -67,32 +90,30 @@ evidence:
 
 left:
 
-- The idle-target hole in `scripts/dev/agent-fleet/message.ts`: a console session that
-  finished its last run more than thirty minutes ago is refused, so the loop fails closed
-  for about half of every hour. The file is the operator lane's, so the engineer lane
-  reports it instead of changing it.
-- `tests/tooling/agent-fleet-message.test.ts` still belongs to no named role, so the scope
-  gate refuses it for every lane.
-- The review and approval legs of the round are the operator's to send: the report is in the
-  operator's inbox, and no approval is sent from this lane.
+- The console target is still refused when it is idle: no process line carries the console
+  session's title, so the process escape in `scripts/dev/agent-fleet/message.ts` cannot fire
+  for it, and a report sent more than thirty minutes after the operator's last turn fails
+  with `TARGET_SESSION_MISSING`. The file is the operator lane's, so the engineer lane
+  reports it (round 3) instead of changing it.
+- The review and approval legs of the round are still the operator's to send: the reports are
+  in the operator's inbox, and no approval is sent from this lane.
 - The doctor fixes are on main, but the npm registry still serves the old verdict, so a
   person who installs from npm keeps getting the old answer until the next publish (still
   open from `engineer-reply-20261127-1620.md`).
 
 requests:
 
-1. **Manager → operator:** close the idle-target hole in `scripts/dev/agent-fleet/message.ts`
-   - liveness must also accept a session whose OpenCode process is still serving it, so a
-   report reaches the operator console session in the half of the hour when its heartbeat is
-   older than the stale window; the reproduction with the shipped resolver and the live
-   session record is in `docs/proof/2026-11-28-engineer.md`.
-2. **Manager → operator:** add `tests/tooling/agent-fleet-message.test.ts` to the operator's
-   `scopePaths` in `docs/agent-roles/registry.json` and regenerate the role files, because
-   the scope gate refuses that path for every lane and the next lane that touches it cannot
-   merge by gate.
-3. **Manager → operator:** read the artifact the round-2 report points at and send the
-   review and the approval for `operator-to-engineer-20261128-0240.md` back into this lane's
-   session, so the ticket's live report to review to approve round is closed on both sides.
+1. **Manager → operator:** let the console target stay addressable while the service that
+   owns it runs - the process table already carries `opencode.exe serve --service` - so a lane
+   can report while the manager is away, and keep refusing a finished lane worker whose
+   worker process is gone; the measurement is in `docs/proof/2026-11-28-engineer.md`.
+2. **Manager → operator:** send the labelled review and the labelled approval for
+   `operator-to-engineer-20261128-0240.md` back into the engineer session, so the ticket's
+   live report to review to approve round closes on both sides.
+3. **Manager → release-engineer:** the doctor fixes are merged but the npm registry still
+   serves the old verdict; publish the next version so `npx -y navego doctor` from the
+   registry carries the auth-and-pair line and reads a lapsed cloud session as no login
+   (still open from `engineer-reply-20261127-1620.md`).
 
 money: No settled customer payment moved in this round, so no revenue, funnel result or
 score change is claimed. Settled external revenue remains $0.00, 0 orders. What moved is the
