@@ -169,6 +169,27 @@ DORA metrics are diagnostics for the engineer lane (change lead time, deployment
 - No change to billing, protocols, public API, or the decision register in this design stage.
 - No renaming of `sales-rep` or `onboarding-guide`; the owner chose to keep both names.
 
+# KNOWN GAPS
+
+Found by re-reading the live repository against OWASP GenAI Top 10 (https://genai.owasp.org/llm-top-10/), NIST AI RMF (https://www.nist.gov/itl/ai-risk-management-framework), and Google SRE postmortem culture (https://sre.google/sre-book/postmortem-culture/). These are open holes, not shipped work.
+
+| Priority | Gap | Evidence | Source that names the risk |
+|---|---|---|---|
+| P0 | The maker-checker loop is design only: `scripts/dev/agent-fleet/message.ts` does not exist and no `synthetic`/`LANE-REPORT` call is wired. | file check | Azure maker-checker needs criteria, cap and fallback |
+| P0 | A buyer must create an account before PayPal; click -> "Masuk dulu"; 2 buy clicks, 0 settlements after 34 runs. | live `/harga`, `docs/economy.json` | NIST MEASURE - a metric without an outcome is not management |
+| P0 | Every architectural improvement so far still leaves settled revenue at $0.00. | ledger | survival rule: only a stranger's settled payment moves the score |
+| P1 | No sender whitelist for `/synthetic` messages to the operator; a lane report can be read as user input (OWASP LLM01/LLM06). | no `metadata.fromAgent` check in the tree | OWASP prompt injection, excessive agency |
+| P1 | Generated agent files still source their Goal from `docs/agent-roles/<lane>.md`, not from `agents/<lane>/role.md`. | `generate-agent-roles.ts` | Divio - do not mix reference and how-to |
+| P1 | `hosted/functions/navego-feedback` exists but no form reaches it; `/dukungan` asks for a personal Gmail address. | route grep | NIST GOVERN - a channel with no front door is not a channel |
+| P1 | No blameless postmortem exists for the dispatcher starvation, four duplicate automations, or the stale `doctor` claim. | no `*postmortem*` proof file | SRE - no postmortem left unreviewed |
+| P2 | No AI risk register: 173 decisions record *why*, not risk, likelihood, owner or mitigation. | decision count | NIST MAP/MANAGE |
+| P2 | DORA/golden signals are described but not stored as weekly diagnostics in the ledger. | `docs/economy.json` | DORA - measure as a compass, never a target |
+| P2 | `agents/` is not created, `ARCHITECTURE.md` has no row for it, and `research-ticket-template.md` does not exist. | path check | Nygard - decisions must live in the repo with the code |
+
+Already closed and not to be reopened: four lanes only, research retired, no `subagent`, one session per key, `not-before`/`superseded-by` ticket headers, terminal-session lane release, `money -> product -> measurement` ordering, one active send automation, `untrustedContent: true` on page reads, one decision register, proof files as ground truth.
+
+Recommended closing order: (1) implement `message.ts` with labelled, whitelisted sender metadata - this closes both the P0 review loop and the P1 injection hole; (2) remove the account-before-PayPal wall; (3) add a feedback form posting to `navego-feedback`; (4) write one blameless postmortem for the dispatcher starvation and duplicate automations; (5) only then create `agents/`, the risk register and the weekly diagnostics.
+
 # OPEN ITEM FOR IMPLEMENTATION PLANNING
 
 How to keep generated agent files consistent once a lane's Goal lives in `agents/<lane>/role.md`: either keep `docs/agent-roles/<lane>.md` as the generated source and link to the new folder, or change `scripts/dev/generate-agent-roles.ts` to read the new area. The owner must choose before implementation.
