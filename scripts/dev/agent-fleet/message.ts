@@ -72,11 +72,14 @@ export type SendDeps = {
 
 const delivered = new Set<string>();
 
+// The console session belongs to the running OpenCode service, whose process line carries no session title; keep it addressable while that service exists, but never let it rescue a lane worker.
+
 export function resolveSessionId(titlePrefix: string, sessions: SessionInfo[], now = Date.now(), staleMs = 30 * 60_000, processLines: string[] = []): string | null {
   // Liveness is a fresh heartbeat, or a running process for a session that has not reported an outcome yet.
   // An old heartbeat alone is never enough, and an outcome alone is not death while the heartbeat is still fresh.
   const live = sessions.filter((session) => {
     if (!session.title.includes(titlePrefix)) return false;
+    if (titlePrefix === 'slot-console' && processLines.some((line) => line.includes('serve --service'))) return true;
     if (now - session.updatedMs <= staleMs) return true;
     return !session.outcome && processLines.some((line) => line.includes(session.title));
   });

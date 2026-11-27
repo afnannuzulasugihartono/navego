@@ -78,6 +78,24 @@ test('a running process keeps a stale session addressable while it has no outcom
   assert.equal(resolveSessionId('slot-console', [active], now, 30 * 60_000, processLines), 'active');
 });
 
+test('the console session stays addressable while its service process runs', () => {
+  const now = 1_000_000;
+  const consoleSession = session('console', 'slot-console/agent-manager', 'succeeded', now - 43 * 60_000);
+  const service = ['opencode.exe serve --service'];
+  assert.equal(resolveSessionId('slot-console', [consoleSession], now, 30 * 60_000, service), 'console');
+  assert.equal(resolveSessionId('slot-console', [consoleSession], now, 30 * 60_000, []), null);
+});
+
+test('the service process does not rescue a finished lane worker', () => {
+  const now = 1_000_000;
+  const worker = session('worker', 'slot-nvidia-1/engineer-20261127-2025', 'succeeded', now - 43 * 60_000);
+  assert.equal(
+    resolveSessionId('/engineer-', [worker], now, 30 * 60_000, ['opencode.exe serve --service']),
+    null,
+    'console service is not a worker process',
+  );
+});
+
 test('sendMessage queues a labelled message without interrupting the target', async () => {
   const calls: string[][] = [];
   const input = { kind: 'report' as const, from: 'engineer' as const, to: 'operator' as const, ticket: 'resolver.md', round: 1, text: 'pointer' };
