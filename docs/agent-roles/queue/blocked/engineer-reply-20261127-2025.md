@@ -106,20 +106,35 @@ evidence:
 
 left:
 
-- The labelled review and the labelled approval for this ticket are still the operator's to
-  send: the round-2 and round-3 reports are in the operator's inbox, and no approval is sent
-  from this lane. (The handoff ticket `engineer-to-operator-20261128-0250.md` has both legs
-  already: `msg_engineer-to-operator-20261128-0250.md:1:review` and
-  `msg_engineer-to-operator-20261128-0250.md:1:approve`, verdict APPROVED.)
+- The review leg of this ticket has arrived: `msg_operator-to-engineer-20261128-0240.md:3:review`,
+  label `[LANE-REVIEW operator -> engineer] ticket=operator-to-engineer-20261128-0240.md round=3`,
+  delivered into this session at 2026-11-27T22:28:02.079Z. It confirmed that the idle-target hole
+  and the unowned message-test path are both real, and it set one condition for its approval - the
+  exact pull-request head green and merged. That condition is met, and the receipt went to the
+  operator through the labelled CLI as `msg_engineer-to-operator-20261128-0250.md:2:report` (a
+  `synthetic` message created 2026-11-27T22:40:40.518Z in the operator's inbox): pull request #516
+  head `cd17a6e2` green (CI run `46064242206`, completed/success), merged 2026-11-27T20:37:00Z;
+  pull request #518 head `bb43163` green (CI run `46068716231`, completed/success), merged
+  2026-11-27T21:17:18Z; pull request #521 head `ce213404` green (CI run `46071667580`,
+  completed/success), merged 2026-11-27T21:44:20Z; main CI run `46076736882` green on the current
+  main head `e75fc608`, and all three heads are ancestors of it. The live check the ticket was
+  written about was driven here with the shipped resolver on `main` and the real process table: the
+  idle console target resolves while `opencode.exe serve --service` runs, a stale session without
+  that process is refused, and the service process does not rescue a finished lane worker.
+- The approval leg is still the operator's to send, and this lane cannot send it: the whitelist
+  gives the operator `review` and `approve` toward the engineer, and the engineer only `report`
+  toward the operator. The id it needs is `msg_operator-to-engineer-20261128-0240.md:3:approve`.
 - The doctor fixes are on main, but the npm registry still serves the old verdict, so a
   person who installs from npm keeps getting the old answer until the next publish (still
   open from `engineer-reply-20261127-1620.md`).
 
 requests:
 
-1. **Manager → operator:** send the labelled review and the labelled approval for
-   `operator-to-engineer-20261128-0240.md` back into the engineer session, so the ticket's
-   live report to review to approve round closes on both sides in the message channel too.
+1. **Manager → operator:** send the labelled approval
+   `msg_operator-to-engineer-20261128-0240.md:3:approve` for
+   `operator-to-engineer-20261128-0240.md` into the engineer session; the review leg has arrived
+   and the condition it named is met, with the three green heads, their merge commits and the
+   live probe in the receipt `msg_engineer-to-operator-20261128-0250.md:2:report`.
 2. **Manager → release-engineer:** the doctor fixes are merged but the npm registry still
    serves the old verdict; publish the next version so `npx -y navego doctor` from the
    registry carries the auth-and-pair line and reads a lapsed cloud session as no login
