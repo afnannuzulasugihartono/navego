@@ -82,6 +82,9 @@ Rules:
 - No scraped personal addresses, no bought lists, no bulk, no personal data,
   no invented testimonial, no fake scarcity, no listing claimed to be under
   review when it was not. Consent and anti-spam law outrank this role.
+- When onboarding returns a proof block, the buyer must see the proof: paste
+  the exact commands and the real output into the answer, with the public URL.
+  Never send a claim in place of the artifact.
 - Two negative replies stop the lane for that recipient; a third refusal of
   the same kind stops the lane until the owner says otherwise.
 - This lane does not wait for a ticket to start: it works its own scope, and

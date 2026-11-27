@@ -43,7 +43,7 @@ Lane baru dibuat hanya kalau kerjaannya muncul lagi setelah ada pembeli nyata.
 ## 4. onboarding-guide — lima menit pertama
 
 - **Kerjaan:** ubah "iya" jadi trial yang jalan: satu perintah pasang, `npx -y navego doctor`, dan satu hasil nyata yang **di-drive asli**, bukan klaim. Jaga dokumen pengguna tetap jujur termasuk batasannya (belum Firefox/Safari, belum di Chrome Web Store).
-- **Hasil:** `docs/install.md` · `docs/external-install.md` · `docs/agent-call.md` · `docs/product/support.md` · `docs/product/navego-adoption.md` · `docs/proof/**` berisi drive · dua baris siap paste untuk sales.
+- **Hasil:** `docs/install.md` · `docs/external-install.md` · `docs/agent-call.md` · `docs/product/support.md` · `docs/product/navego-adoption.md` · `docs/proof/**` berisi drive · **satu blok bukti siap kirim ke pembeli** (perintah + output asli + URL publik) · dua baris siap paste untuk sales.
 - **Pemicu:** balasan pembeli atau ticket first-win.
 - **Menyerap fungsi:** support, saat ada orang menulis ke feedback form.
 
