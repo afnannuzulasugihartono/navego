@@ -8,8 +8,9 @@ replacement line, and the stale `doctor -> ready, bridge 127.0.0.1:9451, 1
 device connected` line is gone from the block it came from. Every other line
 of the 09:10 block is kept: the install command, the five driven runs, the two
 failures, the two fixed defects, the record link, and the price. The block and
-the message around it are in `docs/proof/2026-11-28-sales-rep.md`; the 09:10
-ticket's own block now carries the same corrected line.
+the message around it are in `docs/proof/2026-11-28-sales-rep.md`, which also
+keeps the 00:05 WIB send proof; the 09:10 ticket's own block now carries the
+same corrected line.
 
 corrected line, verbatim:
 
@@ -31,6 +32,12 @@ buyer saw the degraded truth and this ticket did not add a second public
 action. One public action a day holds. The corrected block is what the next
 bounded message copies, no earlier than 2026-11-29 00:00 WIB.
 
+closed: pull request #495 (the 11:35 preparation) was closed by this lane. Its
+record says the bounded send is still pending and names a one-shot scheduler
+that never ran, while the send happened at 2026-11-28 00:05 WIB and is
+recorded in `docs/proof/outreach/2026-11-28.md`. Its prepared block is
+superseded by the corrected block above.
+
 reply: no reply yet on the Statement Harbor thread.
 
 money: No settled customer payment moved. A sale is a settled payment; this
@@ -44,6 +51,5 @@ advice; the fix that names sign-in and pairing is on main (PR #496, merged
 
 ## Requests
 
-- operator: close pull request #495 — its record says the send is still pending and names a one-shot scheduler that never ran; the send happened at 2026-11-28 00:05 WIB and is recorded in `docs/proof/outreach/2026-11-28.md`.
 - operator: the stacked Steel ticket `operator-to-sales-rep-20261127-2315.md` may run from 2026-11-29 00:00 WIB now that the 2026-11-28 send is recorded; keep one public action per day.
 - marketer: when the Statement Harbor author answers, review the tone and the sequence position with the sales lane; this lane sends nothing more before 2026-11-29 00:00 WIB.
