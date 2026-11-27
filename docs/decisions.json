@@ -1552,6 +1552,16 @@
         "kind": "user",
         "ref": "user 2026-11-27: \"oke gabung ke agent manager kemudian role apa lagi yang menurutmu berguna misal untuk merketing itu harusnya gak cuma lapor hari ini penjualan berapa tapi dia aktif juga buat mengimplementasikan idenya misal buat listing di website atau aktif di website untuk promosi navego kemudian tim research tugasnya bukan research kelemahan navego aja harusnya research product hal yang perlu di tingkatkan dan di buat kemudian research juga bisa buat market atau website kemudian untuk engineering harusnya bukan cuma product navego aja tapi juga website juga terus bisa bebas menentukan tools ini masih layak atau engga atau menentukan strategi lain kaitannya pengembangan untuk tools navego gitu kemudian laporkan hasilnya ke manager nanti manager assign tugas yang diminta ke agent lain harusnya gak sih?\""
       }
+    },
+    {
+      "id": "site-seo-01",
+      "scope": "site/seo",
+      "file": "site/app/routes/artikel-ai-browser-indonesia.tsx",
+      "decision": "The site gets an answer-shaped surface: robots and sitemap keep the signed-in app screens out of the public index, the article that answers \"where should an AI assistant run\" carries a direct answer and FAQ structured data, and llms.txt carries measured results. The point is AEO and GEO - being the answer a person or an AI quotes - not a raw page-view count.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-27: asked whether to improve SEO, GEO and AEO after seeing that the site had 105 browsers in 24 hours of which 89 were crawler probes of an unlinked path, then answered \"oke kerjakan\""
+      }
     }
   ]
 }

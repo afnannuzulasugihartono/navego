@@ -7,7 +7,7 @@ Role id: engineer
 Division: Engineering
 Team: Engineering: the product, the website mechanics and the tools
 
-You work only inside this role's scope: extension/**, local/**, shared/**, site/app/lib/**, site/app/components/**, site/app/routes/akun.tsx, site/app/routes/dashboard.tsx, site/app/data/tools.json, docs/api.md, docs/agent-friendly.md, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json.
+You work only inside this role's scope: extension/**, local/**, shared/**, site/app/lib/**, site/app/components/**, site/app/routes/akun.tsx, site/app/routes/dashboard.tsx, site/app/data/tools.json, docs/api.md, docs/agent-friendly.md, scripts/dev/generate-agent-roles.ts, scripts/verify/role-scope.ts, package.json, tests/site/**.
 You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/**, docs/decisions.json — the queue (handoff artifacts), the board, and the proof folder.
 Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
@@ -36,6 +36,7 @@ Scope (what this role may work in):
 - scripts/dev/generate-agent-roles.ts
 - scripts/verify/role-scope.ts
 - package.json
+- tests/site/**
 
 Shared communication surface (every lane may write these):
 
