@@ -1562,6 +1562,16 @@
         "kind": "user",
         "ref": "user 2026-11-27: asked whether to improve SEO, GEO and AEO after seeing that the site had 105 browsers in 24 hours of which 89 were crawler probes of an unlinked path, then answered \"oke kerjakan\""
       }
+    },
+    {
+      "id": "docs-agent-roles-13",
+      "scope": "agent/roles",
+      "file": "docs/agent-roles/registry.json",
+      "decision": "The register keeps four lanes - manager, sales, engineer and onboarding - and removes the redundant standing lanes (research, marketing, release, finance, support). Their functions stay as bounded tickets written by the manager for one of the four; a new lane is created only when the work recurs after a real buyer appears. Each kept lane has a job description in docs/agent-roles/job-descriptions.md, and its scope paths are permissions the harness enforces.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-27: \"oke pertahankan yang perlu di pertahankan dan hapus yang redundant kemudian aku mau list job descnya untuk masing masing agent\""
+      }
     }
   ]
 }

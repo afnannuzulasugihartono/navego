@@ -200,13 +200,13 @@ test('the role scope gate refuses a changed path outside the named role scope', 
   const result = checkRoleScope(register, 'engineer', [
     'extension/lib/protocol.ts',
     'docs/agent-roles/queue/engineer-to-ceo.md',
-    'site/app/routes/beranda.tsx',
+    'docs/agent-roles/registry.json',
   ]);
   assert.deepEqual(result.allowed, [
     'extension/lib/protocol.ts',
     'docs/agent-roles/queue/engineer-to-ceo.md',
   ]);
-  assert.deepEqual(result.refused, ['site/app/routes/beranda.tsx']);
+  assert.deepEqual(result.refused, ['docs/agent-roles/registry.json']);
 });
 
 test('two named lanes may share a communication path, but not a work scope', () => {
@@ -280,9 +280,9 @@ test('the scope checker refuses an out-of-scope path when it is run with the rea
     execFileSync('git', ['config', 'user.name', 'Gate'], { cwd: sandbox });
     execFileSync('git', ['checkout', '--quiet', '-b', 'base'], { cwd: sandbox });
     fs.mkdirSync(path.join(sandbox, 'extension/lib'), { recursive: true });
-    fs.mkdirSync(path.join(sandbox, 'site/app/routes'), { recursive: true });
+    fs.mkdirSync(path.join(sandbox, 'docs/agent-roles'), { recursive: true });
     fs.writeFileSync(path.join(sandbox, 'extension/lib/protocol.ts'), 'export const protocol = 1;\n');
-    fs.writeFileSync(path.join(sandbox, 'site/app/routes/beranda.tsx'), 'export const funnel = 1;\n');
+    fs.writeFileSync(path.join(sandbox, 'docs/agent-roles/registry.json'), 'export const funnel = 1;\n');
     execFileSync('git', ['add', '.'], { cwd: sandbox });
     execFileSync('git', ['commit', '--quiet', '-m', 'first'], { cwd: sandbox });
     execFileSync('git', ['checkout', '--quiet', '-b', 'change'], { cwd: sandbox });
@@ -292,12 +292,12 @@ test('the scope checker refuses an out-of-scope path when it is run with the rea
     const allowed = run(sandbox, 'base', 'change');
     assert.equal(allowed.status, 0, 'an in-scope change passes the command');
 
-    fs.writeFileSync(path.join(sandbox, 'site/app/routes/beranda.tsx'), 'export const funnel = 2;\n');
+    fs.writeFileSync(path.join(sandbox, 'docs/agent-roles/registry.json'), 'export const funnel = 2;\n');
     execFileSync('git', ['add', '.'], { cwd: sandbox });
     execFileSync('git', ['commit', '--quiet', '-m', 'out of scope'], { cwd: sandbox });
     const refused = run(sandbox, 'base', 'change');
     assert.equal(refused.status, 1, 'an out-of-scope change makes the command exit non-zero');
-    assert.match(refused.stderr, /site\/app\/routes\/beranda\.tsx/, 'the command names the refused path');
+    assert.match(refused.stderr, /docs\/agent-roles\/registry\.json/, 'the command names the refused path');
 
     const withPathList = run(sandbox, 'base', 'change', ['extension/lib/protocol.ts']);
     assert.equal(withPathList.status, 1, 'a caller-supplied path list cannot make the command pass');

@@ -8,6 +8,7 @@ Scope (what this role may work in):
 
 - README.md
 - docs/prospects.md
+- docs/research/prospects.md
 
 Shared communication surface (every lane may write these):
 

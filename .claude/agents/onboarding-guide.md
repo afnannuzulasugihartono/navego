@@ -7,7 +7,7 @@ Role id: onboarding-guide
 Division: Customer Success
 Team: Customer Success: the first five minutes
 
-You work only inside this role's scope: docs/install.md, docs/external-install.md, docs/agent-call.md.
+You work only inside this role's scope: docs/install.md, docs/external-install.md, docs/agent-call.md, docs/product/support.md, docs/product/navego-adoption.md.
 You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/**, docs/decisions.json — the queue (handoff artifacts), the board, and the proof folder.
 Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
@@ -26,6 +26,8 @@ Scope (what this role may work in):
 - docs/install.md
 - docs/external-install.md
 - docs/agent-call.md
+- docs/product/support.md
+- docs/product/navego-adoption.md
 
 Shared communication surface (every lane may write these):
 

@@ -9,6 +9,8 @@ Scope (what this role may work in):
 - docs/install.md
 - docs/external-install.md
 - docs/agent-call.md
+- docs/product/support.md
+- docs/product/navego-adoption.md
 
 Shared communication surface (every lane may write these):
 
