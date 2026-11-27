@@ -40,9 +40,9 @@ left:
 
 - The pull request, exact-head CI, merge, site deploy and the deployed-page read at
   390 px and 1440 px are recorded in the proof after those operations complete.
-- The npm registry still serves 1.8.1, whose doctor has the old verdict. The changed
-  package is proved locally; the next release must publish it before a registry-only
-  `npx -y navego doctor` run can show the same line.
+- The npm registry still serves the current release, whose doctor has the old
+  verdict. The changed package is proved locally; the next release must publish it
+  before a registry-only `npx -y navego doctor` run can show the same line.
 - Reviewer gap: this session is the only worker on the key and a child session is
   denied, so no reviewer agent could run. The pull request keeps REVIEW_REQUIRED and
   the gap is written in the proof under the owner's 2026-11-26 answer.
@@ -51,7 +51,8 @@ requests:
 
 1. **Manager → release-engineer:** after this fix merges, bump and publish the next
    npm version so `npx -y navego doctor` from the registry carries the auth-and-pair
-   verdict; registry `navego@1.8.1` still carries the old stale-extension advice.
+   verdict; the registry's current release still carries the old stale-extension
+   advice.
 2. **Manager → operator:** assign `tests/local/**` to the engineer lane in
    `docs/agent-roles/registry.json` and regenerate the role files, so this doctor
    regression can live in the canonical test folder instead of `docs/proof/`.
