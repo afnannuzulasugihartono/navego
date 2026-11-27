@@ -74,7 +74,9 @@ const delivered = new Set<string>();
 export function resolveSessionId(titlePrefix: string, sessions: SessionInfo[]): string | null {
   const live = sessions.filter((session) => session.title.includes(titlePrefix) && !session.outcome);
   if (live.length === 0) return null;
-  return live.reduce((best, next) => (next.updatedMs > best.updatedMs ? next : best)).id;
+  const first = live[0];
+  if (!first) return null;
+  return live.reduce((best, next) => (next.updatedMs > best.updatedMs ? next : best), first).id;
 }
 
 export async function sendMessage(input: MessageInput, deps: SendDeps): Promise<{ id: string; sessionId: string; alreadyDelivered: boolean }> {
