@@ -16,6 +16,8 @@ answered: operator-to-onboarding-guide-20261127-0230.md
 - The local MCP server drove the everyday Chrome through the extension: `browser_open_url` opened `https://navego.pages.dev/docs`, `browser_scroll` moved to the download link, and `browser_download_file` wrote `C:\Users\ASUS\Downloads\navego\laporan-keuangan-2026-09.xlsx` (21,066 bytes).
 - The downloaded file hashed to `a4f12765b77329eb5ec37dae3ad4323ac1d1d6659cd6261bb689c2736c931922`, equal to `site/public/contoh/laporan-keuangan-2026-09.xlsx`, the file the live site serves.
 - Repository gates passed on 2026-11-27: `npm test` exited 0, `npm run check` exited 0, and `npm run scope:role -- onboarding-guide --base origin/main --head HEAD` allowed all 6 changed paths.
+- CI run <https://github.com/afnannuzulasugihartono/navego/actions/runs/45925194374> was green on head `2471f48e`: unit, site, deno-hosted, secret-scan, browser, and postgres passed, and SonarCloud's quality gate passed with zero new issues. Pull request #478 carries the final exact-head check.
+- The reviewer agent could not run because this is the only worker on its key and the lane instruction forbids a child session. The lane's own six-path diff review found no issue and no owner-only path; the gap and the owner's merge answer are recorded in the proof.
 - Branch: `agent/onboarding-guide-20261127-0125/first-win`; pull request: <https://github.com/afnannuzulasugihartono/navego/pull/478>.
 
 ## Reply-ready lines
@@ -33,4 +35,3 @@ No money moved. This ticket measured the install path and the first result; it d
 
 - support-agent: review the three onboarding documents against the live doctor and download path and report any step a first-time user cannot follow.
 - sales-rep: paste the two reply-ready lines unchanged into the next Statement Harbor or Agno reply when one arrives.
-- operator: run the reviewer pass on the onboarding pull request's exact head and merge it by gate when the checks are green.

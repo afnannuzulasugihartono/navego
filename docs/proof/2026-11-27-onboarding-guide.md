@@ -92,6 +92,14 @@ Open https://navego.pages.dev/docs and download the "Laporan keuangan September 
 - Branch: `agent/onboarding-guide-20261127-0125/first-win`.
 - Pull request: <https://github.com/afnannuzulasugihartono/navego/pull/478>.
 
+## The reviewer gate
+
+The reviewer agent could not run on this lane. This session is the only worker on its key, and the instruction that opened it forbids a child session because a child multiplies requests against the same 40 rpm provider limit. Pull request #478 therefore has no reviewer finding and GitHub's review state remains `REVIEW_REQUIRED`.
+
+The owner instruction that opened this lane requires the pull request and a merge by gate. `docs/autonomy.md` and `docs-autonomy-05` record the owner's answer for a reviewer that cannot run: green CI on the exact head, the lane's diff review, and this written gap carry the merge under the owner's direct instruction for this run. The lane's diff review read the six changed paths, found only the three onboarding documents, the proof, the reply, and the status line, and found no owner-only path: `gates.lock`, `tests/helpers/boundary-locks.ts`, `.github/CODEOWNERS`, and `.github/workflows/` are untouched.
+
+CI run <https://github.com/afnannuzulasugihartono/navego/actions/runs/45925194374> was green on head `2471f48e`: unit, site, deno-hosted, secret-scan, browser, and postgres passed, and SonarCloud's quality gate passed with zero new issues. Pull request #478 carries the final exact-head check.
+
 ## Money and scope
 
 No money moved. This run measured the install path and the first result; it did not create a paid order, a plan, or a `paypal-live` settlement.
