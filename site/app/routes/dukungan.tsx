@@ -3,6 +3,7 @@
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
+import { FeedbackForm } from '../components/FeedbackForm';
 
 export function meta() {
   return seoMeta({
@@ -36,7 +37,7 @@ const FIXES = [
 ];
 
 const DOORS = [
-  ['Email', 'afnannuzulasugihartono@gmail.com', 'mailto:afnannuzulasugihartono@gmail.com'],
+  ['Form dukungan', 'Pakai form di bawah', '#form-dukungan'],
   ['Isu publik', 'Buka isu baru', 'https://github.com/afnannuzulasugihartono/navego/issues'],
   ['Keamanan', 'Laporkan secara privat', 'https://github.com/afnannuzulasugihartono/navego/security/advisories/new']
 ] as const;
@@ -93,14 +94,21 @@ export default function Dukungan() {
           </div>
         </section>
 
+        <section className="band band-soft" aria-labelledby="formTitle">
+          <div className="wrap">
+            <h2 id="formTitle" className="section-title">Tulis jawaban Anda.</h2>
+            <FeedbackForm />
+          </div>
+        </section>
+
         <section className="band">
           <div className="wrap">
             <div className="cta-band">
               <h2 className="section-title text-on-dark">Belum ketemu jawabannya?</h2>
-              <p>Mulai dari docs untuk langkah lengkap, atau kirim email dengan tab dan pesan error yang Anda lihat.</p>
+              <p>Mulai dari docs untuk langkah lengkap, atau pakai form dukungan dengan tab dan pesan error yang Anda lihat.</p>
               <div className="hero-cta mt-2">
                 <Link className="btn btn-solid" to="/docs">Buka docs</Link>
-                <a className="btn btn-ghost" href="mailto:afnannuzulasugihartono@gmail.com">Kirim email</a>
+                <a className="btn btn-ghost" href="#form-dukungan">Ke form dukungan</a>
               </div>
             </div>
           </div>
