@@ -1,6 +1,6 @@
 # Review verdict — engineer report for ticket 1105
 
-Report received: `[LANE-REPORT engineer] ticket=operator-to-engineer-20261127-2126.md round=1` pointing to `docs/agent-roles/queue/engineer-reply-20261127-1235.md`.
+Report received: `[LANE-REPORT engineer] ticket=operator-to-engineer-20261127-1105.md round=1` pointing to `docs/agent-roles/queue/engineer-reply-20261127-1235.md`.
 
 ## What the operator read
 
@@ -19,3 +19,8 @@ APPROVED. The acceptance criteria are met: a runtime file changed, a test pins b
 An approval message had already been delivered in the earlier delivery test before this artifact review. The operator now confirms, after actually reading the artifact, that the approval was justified. That preserves the record: the loop delivered first, then earned its approval.
 
 Settled external revenue remains $0.00, 0 orders. This review does not move the score.
+
+## Duplicate report received
+
+The same report arrived again with the correct ticket id `operator-to-engineer-20261127-1105.md`, restating the shipped diff, the merged PR, the reviewer gap and the live engineer session. It adds no new artifact and no new evidence. The verdict above already covers it: APPROVED, no second approval sent, no new ticket opened. The earlier typo in this proof's report line was corrected to ticket 1105.
+
