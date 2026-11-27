@@ -155,8 +155,46 @@ The `review` message for this ticket is in this session's own inbox as well:
 `msg_operator-to-engineer-20261127-2126.md:1:review`, label
 `[LANE-REVIEW operator -> engineer] ticket=operator-to-engineer-20261127-2126.md
 round=1`, posted by the operator at 2026-11-27T16:24:18Z with `delivery: queue` and
-`resume: true`. It was queued behind this session's turn when the round ran; the
-delivery as this session receives it is recorded below once the message arrives.
+`resume: true`. It was queued behind this session's turn when the round ran, and it
+arrived when that turn ended.
+
+## The review arrives in this session
+
+The queue held the review until the turn that wrote the round record ended. It was
+delivered into this session at 2026-11-27T17:40:09.972Z (2026-11-28 00:40:09.972 WIB)
+as a user message, and the turn that opened on it read it. The message exactly as this
+session received it:
+
+```json
+{
+  "id": "msg_operator-to-engineer-20261127-2126.md:1:review",
+  "metadata": {
+    "fromAgent": "operator",
+    "toAgent": "engineer",
+    "ticket": "operator-to-engineer-20261127-2126.md",
+    "round": 1,
+    "kind": "review"
+  },
+  "time": {
+    "created": 1795801209972
+  },
+  "text": "[LANE-REVIEW operator -> engineer] ticket=operator-to-engineer-20261127-2126.md round=1\nReview the doctor verdict branch and its test.",
+  "type": "user"
+}
+```
+
+| What | Value |
+| --- | --- |
+| Message id | `msg_operator-to-engineer-20261127-2126.md:1:review` |
+| Label | `[LANE-REVIEW operator -> engineer] ticket=operator-to-engineer-20261127-2126.md round=1` |
+| Kind and round | `review`, round 1 |
+| Posted by the operator | 2026-11-27T16:24:18Z, `delivery: queue`, `resume: true` |
+| Delivered into this session | 2026-11-27T17:40:09.972Z (2026-11-28 00:40:09.972 WIB) |
+| Receiving session | `slot-nvidia-2/engineer-20261127-1620` (`ses_de230dfc8ffeuzMVHxRFo30Ym2`), `outcome: null` - the same session that sent the report |
+| What it asks | "Review the doctor verdict branch and its test." |
+
+So both legs of the round ran in one live session: the report left this session, and
+the operator's review came back into it with the label the ticket asked for.
 
 ## What the round proves, and what it does not
 
@@ -165,8 +203,10 @@ Proven:
 - A labelled, whitelisted report from the engineer lane reaches the running operator
   session, and the operator reads the artifact it points at and answers in that
   session with a verdict that is on the record.
-- The operator's review for this ticket is queued in the engineer session's own inbox
-  and arrives in that same session.
+- The operator's review for this ticket was delivered into the engineer session's own
+  inbox - the same session that sent the report - labelled
+  `[LANE-REVIEW operator -> engineer] ticket=operator-to-engineer-20261127-2126.md
+  round=1`, and it was read in the turn that opened on it.
 
 Not proven, and named here rather than glossed over:
 
@@ -205,6 +245,10 @@ owner's 2026-11-26 answer.
   still asks for a human approval, and the reviewer gap above is the owner's 2026-11-26
   merge basis).
 - Main CI run `46038731168` is green on `87b93241`.
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/504>, branch
+  `agent/lane-engineer-20261127-1620-review-loop-record`, head `987db402`, carried the
+  operator's verdict files and this record; it merged as `86883128` at
+  2026-11-27T17:34:48Z, and main CI run `46042952793` is green on `86883128`.
 - Only `docs/proof/`, `docs/agent-roles/queue/` and `docs/agent-roles/status.md` moved,
   so no owner-only path was touched. No migration, edge deploy or CRX signing ran.
 
