@@ -64,5 +64,53 @@
     "The owner placed the three account keys on 2026-11-26 (the signed-in account store was the source, on the owner's instruction); the key files stay outside this repository, and no agent prints a key or asks for one.",
     "Two accounts are not two credits: each account's own quota and the provider's terms apply, so a slot stays inside its credential's documented limit and no slot is used to sidestep another one's limit.",
     "A worker session is never archived: it stays listed (opencode session list) and exportable (opencode session export <id>) while it runs, so the owner can watch each lane, its slot and its ticket, and each dispatch leaves a note in docs/proof/."
+  ],
+  "operatorSessionTitle": "slot-console",
+  "messagePairs": [
+    {
+      "from": "engineer",
+      "to": "operator",
+      "kinds": [
+        "report"
+      ]
+    },
+    {
+      "from": "sales-rep",
+      "to": "operator",
+      "kinds": [
+        "report"
+      ]
+    },
+    {
+      "from": "onboarding-guide",
+      "to": "operator",
+      "kinds": [
+        "report"
+      ]
+    },
+    {
+      "from": "operator",
+      "to": "engineer",
+      "kinds": [
+        "review",
+        "approve"
+      ]
+    },
+    {
+      "from": "operator",
+      "to": "sales-rep",
+      "kinds": [
+        "review",
+        "approve"
+      ]
+    },
+    {
+      "from": "operator",
+      "to": "onboarding-guide",
+      "kinds": [
+        "review",
+        "approve"
+      ]
+    }
   ]
 }
