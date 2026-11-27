@@ -1,82 +1,53 @@
-# Job descriptions — the four lanes
+# Job descriptions — 4 agent Navego
 
-The owner kept four lanes on 2026-11-27. A lane's **job** is what it is for;
-its scope paths are permissions the harness enforces, not a topic to reason
-about. The work is the ticket and the Goal in the role document. When a
-retired function is needed (research, release, finance, support), the manager
-writes a **ticket** for the lane below that owns it — not a new standing role.
+Daftar ini ringkasan. Sumber kerja harian tetap **role doc** masing-masing
+(`docs/agent-roles/<id>.md`) dan ticket di antrean. Scope path adalah izin yang
+ditegakkan harness — bukan topik yang dipikirkan agent.
 
-## operator — the agent manager
+## Daftar ringkas
 
-**Job.** Keep the company moving: assign one bounded ticket at a time, read
-every lane's reply and the requests it names, close each ticket on the status
-board and in the proof, and keep the ledger, the role register, the decision
-register and the automation fleet honest.
+| # | role | kerjaan satu baris | hasil utama | pemicu |
+|---|---|---|---|---|
+| 1 | **operator** | atur antrean, baca hasil + request lane, tutup loop, jaga ledger dan fleet | ticket, board, ledger, proof, register | hourly + reply lane |
+| 2 | **sales-rep** | satu aksi publik sehari yang bisa jadi percakapan | `docs/proof/outreach/<date>.md`, reply penutup | 1 aksi/hari, kanal publik apa pun |
+| 3 | **engineer** | kirim produk + seluruh website; nilai tool yang masih layak | kode + test, verdict `docs/api.md`, PR, release | ticket produk dulu, baru measurement |
+| 4 | **onboarding-guide** | ubah "iya" jadi trial dalam 5 menit, dibuktikan dengan drive | `docs/install.md` dll, proof drive, 2 baris untuk sales | reply pembeli / ticket first-win |
 
-**Delivers.** Queue tickets, closed replies, `docs/agent-roles/status.md`,
-`docs/economy.json`, `docs/proof/**`, `docs/agent-roles/registry.json`,
-`docs/automations.md`, the dispatcher/watchdog tooling.
+Fungsi **research, marketing, release, finance, support** tidak punya lane
+sendiri: manager menulisnya sebagai ticket untuk salah satu dari 4 di atas.
+Lane baru dibuat hanya kalau kerjaannya muncul lagi setelah ada pembeli nyata.
 
-**Trigger.** The hourly survival run; any lane reply; any request a lane names
-becomes a ticket for the lane that owns it. The manager does not do a lane's
-product work.
+---
 
-## sales-rep — conversations that become trials
+## 1. operator — agent manager
 
-**Job.** Take one bounded public surface a day - a listed business contact,
-a public thread or listing on another site, or a public social post - and
-write one message that says what Navego is, the real price and its page, one
-concrete use case, an easy no, and the disclosure that the sender maintains
-it. Read what comes back and hand a "yes" to onboarding instead of sending
-another pitch.
+- **Kerjaan:** beri satu ticket terbatas sekali jalan; baca reply tiap lane **dan request-nya**; tiap request jadi ticket untuk lane pemiliknya; tutup ticket di board dan proof; jaga ledger, register role, decision register, dan automasi.
+- **Hasil:** queue ticket · reply yang ditutup · `docs/agent-roles/status.md` · `docs/economy.json` · `docs/proof/**` · `docs/agent-roles/registry.json` · `docs/automations.md`.
+- **Pemicu:** hourly run dan reply lane. Tidak mengerjakan produk lane lain.
+- **Menyerap fungsi:** research role (sebagai ticket), keputusan kepemilikan path.
 
-**Delivers.** `docs/proof/outreach/<date>.md` with the exact text, the reply
-artifact that closes its ticket, the prospect list (`docs/prospects.md`,
-`docs/research/prospects.md`), and its status line.
+## 2. sales-rep — percakapan yang jadi trial
 
-**Trigger.** One bounded public action per calendar day, whatever the channel;
-no bulk, no personal data, no invented claims - consent and anti-spam law
-outrank this role. Two negative replies stop that recipient, a third stops the
-lane until the owner says otherwise. Absorbed function: prospect research, as
-a ticket.
+- **Kerjaan:** satu permukaan publik sehari — kontak bisnis yang dipublikasikan, thread/listing di situs lain, atau postingan sosial. Satu pesan berisi apa itu Navego, harga asli + halamannya, satu use case konkret, easy no, dan disclosure bahwa pengirim maintain Navego. Baca jawabannya; "iya" diserahkan ke onboarding.
+- **Hasil:** `docs/proof/outreach/<date>.md` berisi URL permukaan, teks persis, dan balasan · reply penutup ticket · `docs/prospects.md` dan `docs/research/prospects.md`.
+- **Pemicu:** satu aksi publik per hari kalender, kanal apa pun. Tanpa bulk, tanpa data pribadi, tanpa klaim palsu; consent dan hukum anti-spam lebih tinggi dari role ini. Dua balasan negatif hentikan kontak itu; penolakan ketiga hentikan lane sampai owner berkata lain.
+- **Menyerap fungsi:** riset prospek (sebagai ticket).
 
-## engineer — product, website, tools and release
+## 3. engineer — produk, website, tool, release
 
-**Job.** Ship the product and the website: the extension, the local driver,
-the shared core, the API surface, the site's public pages and its mechanics.
-Decide whether each tool is still worth keeping and publish the verdict next
-to the tool, with the measured reason. Fix the top failure the eval finds;
-change nothing without a test.
+- **Kerjaan:** kirim extension, local driver, shared core, API, **semua halaman + mekanika situs**, tool, migrasi, dan plumbing release. Putuskan tool mana yang masih layak — verdict ditaruh di samping tool di `docs/api.md` dengan alasan terukur. Perbaiki kegagalan teratas dari eval; tiap perubahan dapat test.
+- **Hasil:** kode terverifikasi · verdict dan batas di `docs/api.md` · `docs/proof/**` · PR yang merge by gate · artifact release saat dibutuhkan.
+- **Pemicu:** ticket produk dulu (eval 5× run, perbaikan desain setelahnya), baru measurement. Tidak ada ticket mesin sebelum pembeli menjawab atau membayar.
+- **Menyerap fungsi:** marketing, release, finance — lewat ticket, bukan lane kelima.
 
-**Delivers.** Tested code, `docs/api.md` verdicts and limits, `docs/proof/**`,
-pull requests merged by the gate, and the release plumbing when a release is
-needed. Absorbed functions: the old marketing, release and finance lanes —
-the site's public pages, the migrations, the changelog and the release
-scripts — as tickets, not a fifth lane.
+## 4. onboarding-guide — lima menit pertama
 
-**Trigger.** Product tickets first (the measured eval, the design pass), then
-measurement; no fleet work before a buyer replies or pays.
+- **Kerjaan:** ubah "iya" jadi trial yang jalan: satu perintah pasang, `npx -y navego doctor`, dan satu hasil nyata yang **di-drive asli**, bukan klaim. Jaga dokumen pengguna tetap jujur termasuk batasannya (belum Firefox/Safari, belum di Chrome Web Store).
+- **Hasil:** `docs/install.md` · `docs/external-install.md` · `docs/agent-call.md` · `docs/product/support.md` · `docs/product/navego-adoption.md` · `docs/proof/**` berisi drive · dua baris siap paste untuk sales.
+- **Pemicu:** balasan pembeli atau ticket first-win.
+- **Menyerap fungsi:** support, saat ada orang menulis ke feedback form.
 
-## onboarding-guide — the first five minutes
+---
 
-**Job.** Make a "yes" turn into a working trial in five minutes: one command
-to install, one check that it works (`npx -y navego doctor`), and one first
-result a new user can see — proven by driving the real thing, never written
-as an untested claim. Keep the user-facing docs truthful, including the
-honest limits and the answers people actually ask.
-
-**Delivers.** `docs/install.md`, `docs/external-install.md`,
-`docs/agent-call.md`, `docs/product/support.md`,
-`docs/product/navego-adoption.md`, `docs/proof/**` with the drive, and two
-paste-ready lines for sales.
-
-**Trigger.** A reply from a buyer, or the first-win ticket. Absorbed function:
-support answers, as a ticket when someone writes to the feedback form.
-
-## What is not a role
-
-Research, marketing, release engineering, finance analysis and support still
-have work, but none of them has enough live work to justify a session and a
-key. The manager writes that work as a bounded ticket for one of the four
-lanes. If it recurs after a real buyer appears, create a lane then — with a
-key from the money path protected first.
+Keputusan yang mendasari: `docs/decisions.json` → `docs-agent-roles-13`
+(4 lane) dan `docs-autonomy-06` (kanal publik sales).
