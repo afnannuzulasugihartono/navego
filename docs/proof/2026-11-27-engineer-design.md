@@ -97,4 +97,40 @@ answer).
 
 ## After: the drive that proves it
 
-_To be filled after the merge, the deploy dispatch and the live re-drive._
+The same four pages were driven again at `1440 x 900` and `390 x 844` after the
+merge and the site deploy. Captures:
+`C:\Users\ASUS\AppData\Local\Temp\opencode\after-index-1440.png` and
+`after-index-390.png`. HTTP 200 on all four pages; `scrollWidth ===
+clientWidth` at both widths on all four (1425 and 390), so no new overflow.
+
+On `/` both real screenshots loaded from the deployed assets
+(`/assets/popup-pair-1280x800-NeTeVI8B.png`,
+`/assets/extension-portal-C9EfrEzL.jpg`), the popup figure carries its live
+caption "Tangkapan layar asli: popup ekstensi saat pairing.", and the proof
+section carries the three downloadable sample files, the npm/repo/MIT facts,
+the 578,104-byte result and the honest limits. No account card renders on the
+public hero. On `/harga` the `$1` price is visible at both widths; on `/unduh`
+the install command is still visible; on the article the honest limitations
+are still readable. The one thing that changed — the absence of product proof
+on the first screen — is gone, and nothing the ticket told us to keep was lost.
+
+## Merge and deploy
+
+- Pull request: <https://github.com/afnannuzulasugihartono/navego/pull/488>,
+  head 42937f80. Scope gate: `the named roles may change all 6 paths`, exit 0.
+- CI on the exact head: run 45946294357, all six jobs green; CI on the merged
+  commit: run 45947014633, green.
+- Local merge commit 1c99599d pushed to `main` after the manager's parallel
+  iterations 1-4; the Chrome.tsx footer conflict was resolved in their favour
+  (their factual wording), keeping only this lane's exported `VERSION` so the
+  page shows the real package version.
+- Site deploy: run 45947394001 (`Deploy site`), green; it published
+  `site/build/client`, ran the build gates and confirmed `https://navego.pages.dev/`
+  answers. The live re-drive above is after that deploy.
+
+## Money
+
+No settled customer payment moved in this pass, so no revenue, funnel step or
+score change is claimed. The page now carries the measured result and the real
+files a sales conversation can point to instead of a slogan; that is a possible
+input to the next money step, not the step itself.
