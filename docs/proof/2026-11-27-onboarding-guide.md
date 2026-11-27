@@ -90,7 +90,7 @@ Open https://navego.pages.dev/docs and download the "Laporan keuangan September 
 - `npm run check` — exit 0 on 2026-11-27 (`check ok`).
 - `npm run scope:role -- onboarding-guide --base origin/main --head HEAD` — exit 0; the verifier allowed all 6 changed paths.
 - Branch: `agent/onboarding-guide-20261127-0125/first-win`.
-- Pull request: <https://github.com/afnannuzulasugihartono/navego/pull/478>.
+- Pull request: <https://github.com/afnannuzulasugihartono/navego/pull/478>, merged at 2026-11-27T02:04:01Z as `ada0527e3c2298251b44fc40cb0cf11d7a297873`.
 
 ## The reviewer gate
 
@@ -98,7 +98,9 @@ The reviewer agent could not run on this lane. This session is the only worker o
 
 The owner instruction that opened this lane requires the pull request and a merge by gate. `docs/autonomy.md` and `docs-autonomy-05` record the owner's answer for a reviewer that cannot run: green CI on the exact head, the lane's diff review, and this written gap carry the merge under the owner's direct instruction for this run. The lane's diff review read the six changed paths, found only the three onboarding documents, the proof, the reply, and the status line, and found no owner-only path: `gates.lock`, `tests/helpers/boundary-locks.ts`, `.github/CODEOWNERS`, and `.github/workflows/` are untouched.
 
-CI run <https://github.com/afnannuzulasugihartono/navego/actions/runs/45925194374> was green on head `2471f48e`: unit, site, deno-hosted, secret-scan, browser, and postgres passed, and SonarCloud's quality gate passed with zero new issues. Pull request #478 carries the final exact-head check.
+The same reviewer gap applies to record-only pull request #480: this lane still may not dispatch a child session, so the lane read its three communication-surface paths itself and found no owner-only path. Its exact-head CI is on that pull request.
+
+CI run <https://github.com/afnannuzulasugihartono/navego/actions/runs/45925194374> was green on head `2471f48e`: unit, site, deno-hosted, secret-scan, browser, and postgres passed, and SonarCloud's quality gate passed with zero new issues. The final exact-head run, <https://github.com/afnannuzulasugihartono/navego/actions/runs/45925800483>, was green on head `41ccd3eb` with the same six CI jobs and SonarCloud green; pull request #478 then merged as `ada0527e3c2298251b44fc40cb0cf11d7a297873`.
 
 ## Money and scope
 
