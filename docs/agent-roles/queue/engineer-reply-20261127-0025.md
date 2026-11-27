@@ -27,7 +27,7 @@ evidence:
   tests.
 - `npm run check` — green: `0 errors — at baseline 0`, `check ok: 36 allowlisted
   browser primitives, 319 runtime safety files`.
-- Five-run raw records: `C:\Users\ASUS\Downloads\navego-eval-runs-naive.json` and
+- Pull request: <https://github.com/afnannuzulasugihartono/navego/pull/486>, head 7a2143c; the scope gate read all 11 changed paths from that diff and exited 0.\n- Five-run raw records: `C:\Users\ASUS\Downloads\navego-eval-runs-naive.json` and
   `navego-eval-runs-2.json` on this machine; the PDFs are under
   `C:\Users\ASUS\Downloads\opera-statements\2026-11\navego-eval-2` and `-3`.
 - Sources read 2026-11-27: Browser Use README at
