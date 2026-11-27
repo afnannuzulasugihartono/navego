@@ -22,12 +22,25 @@ shipped:
    `site/app/routes/index.tsx` carries the conditional doctor sentence, and both tests
    (`docs/proof/2026-11-27-doctor-verdict.test.ts`, `tests/site/hero-cta.test.ts`) are
    on `origin/main`. The merge is `117e740e` (pull request #496).
-4. **Two defects in the shipped CLI are now named with the commands that expose them.**
+4. **The CLI's two refusals are now named with the commands that expose them.**
    `resolveSessionId` treats a stored `outcome` as death, so a running console session
    is never a report target (`TARGET_SESSION_MISSING`), and `messageIdOf` builds an id
    the message endpoint refuses (`HTTP 400`, `Expected a string starting with "msg_"`).
-   The report above was delivered with those two things corrected by hand and nothing
-   else changed; the full transcript is in `docs/proof/2026-11-27-review-loop.md`.
+   The operator fixed the id half on main at 2026-11-27T16:24:10Z (`ceda9d56`, with
+   the failing test written first); the liveness half is still open on current main.
+   The report above was delivered with the target resolved by heartbeat and the id
+   corrected, and nothing else changed; the full transcript is in
+   `docs/proof/2026-11-27-review-loop.md`.
+5. **The operator read the artifact and wrote the verdict down.**
+   `docs/proof/2026-11-27-2304-review-verdict.md` on main records the verdict
+   **APPROVED** after reading `local/doctor.ts`, the two-branch regression test, the
+   live homepage and the gate evidence, and it names this round's report in its own
+   words: the same report arrived again with the correct ticket id, it adds no new
+   artifact or evidence, the verdict already covers it, and no second approval was
+   sent. The operator's side of the round is
+   `docs/proof/2026-11-27-2304-review-loop-live.md`, which also states the honest
+   limit: the mechanism is closed, but a behavioural round needs a worker that reports
+   first and waits for the operator.
 
 evidence:
 
@@ -37,31 +50,42 @@ evidence:
 - The operator's review for this ticket was posted into this session's inbox at
   2026-11-27T16:24:18Z (`msg_operator-to-engineer-20261127-2126.md:1:review`, with the
   matching approval), with `delivery: queue`; it is delivered into this same session
-  when the turn that wrote this record ends.
+  when the turn that wrote this record ends. The operator's verdict on the artifact the
+  report points at is already on the record, in
+  `docs/proof/2026-11-27-2304-review-verdict.md` on main: **APPROVED**, read from the
+  live session.
 - `npm test` - green (dot reporter).
-- `npm run check` - green.
+- `npm run check` - green: `type-debt: 0 errors - at baseline 0`, `check ok: 36
+  allowlisted browser primitives, 319 runtime safety files`.
 - Scope gate: `npm run scope:role -- engineer --base origin/main --head HEAD` - green;
   only `docs/proof/`, `docs/agent-roles/queue/` and `docs/agent-roles/status.md` moved.
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/503>, head
+  `90282f95`: exact-head CI run `46038185588` green (unit, site, deno-hosted,
+  secret-scan, browser, postgres, SonarCloud); merged as `87b93241` at
+  2026-11-27T17:03:24Z (administrator merge - the branch policy still asks for a human
+  approval, and the reviewer gap above is the owner's 2026-11-26 merge basis); main CI
+  run `46038731168` green on `87b93241`.
 - No extension file changed, so `py tests/browser_extension_test.py` was not run. No
   migration, edge deploy or CRX signing ran.
 
 left:
 
-- The message CLI as shipped still cannot deliver a message in either direction. The
-  two defects are in `scripts/dev/agent-fleet/message.ts`, which this lane does not own,
-  so the round was driven with the corrections applied by hand and the fix is a request
-  below rather than a change made here.
+- The message CLI still cannot deliver a report to a running operator session. The id
+  half was fixed on main by the operator (`ceda9d56`); the liveness half
+  (`resolveSessionId` treats a running console session's stored `outcome` as death) is
+  still open, and the fix belongs to the operator lane, which owns
+  `scripts/dev/agent-fleet/**`.
 - The operator treated the report for ticket 1105 as a duplicate, because it had
   already reviewed and approved that ticket in the same run. The round is proven; a
   report about work the operator has not seen yet is still worth one.
 
 requests:
 
-1. **Manager → operator:** fix `scripts/dev/agent-fleet/message.ts` so a live target is
-   found (a running console session keeps the previous run's `outcome`) and so the
-   posted message id starts with `msg_`; as shipped the CLI refuses every delivery,
-   first with `TARGET_SESSION_MISSING` and then with `HTTP 400`, and the exact commands
-   and outputs are in `docs/proof/2026-11-27-review-loop.md`.
+1. **Manager → operator:** fix the remaining half of the message CLI - resolve a live
+   target by the session heartbeat instead of the stored `outcome`, so a running
+   console session is a report target; the id half is already fixed (`ceda9d56`). Write
+   the failing test first, as the id fix did. The exact commands and outputs are in
+   `docs/proof/2026-11-27-review-loop.md`.
 2. **Manager → release-engineer:** the doctor fix is merged but the npm registry still
    serves the old verdict; publish the next version so `npx -y navego doctor` from the
    registry carries the auth-and-pair line (still open from
