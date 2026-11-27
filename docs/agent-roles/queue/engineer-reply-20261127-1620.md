@@ -81,8 +81,11 @@ evidence:
 - `npm test` - green (dot reporter).
 - `npm run check` - green: `type-debt: 0 errors - at baseline 0`, `check ok: 36
   allowlisted browser primitives, 319 runtime safety files`.
-- Scope gate: `npm run scope:role -- engineer --base origin/main --head HEAD` - green;
-  only `docs/proof/`, `docs/agent-roles/queue/` and `docs/agent-roles/status.md` moved.
+- Scope gate: `npm run scope:role -- engineer --base origin/main --head HEAD` - green. For
+  pull requests #503 and #508 only `docs/proof/`, `docs/agent-roles/queue/` and
+  `docs/agent-roles/status.md` moved; for pull request #509 the diff also moved
+  `local/doctor.ts` and `local/oauth.ts`, which the gate names as allowed for the
+  engineer lane ("the named roles may change all 8 paths").
 - Pull request <https://github.com/afnannuzulasugihartono/navego/pull/503>, head
   `90282f95`: exact-head CI run `46038185588` green (unit, site, deno-hosted,
   secret-scan, browser, postgres, SonarCloud); merged as `87b93241` at
@@ -122,6 +125,16 @@ evidence:
   exact-head CI run `46057329267` green; merged as `f89094e4` at 2026-11-27T19:35:06Z
   (administrator merge, the same reviewer-gap basis); main CI run `46057737268` green on
   `f89094e4`.
+- The operator's round-2 verdict, written after reading the artifact:
+  `docs/proof/2026-11-28-review-verdict-2126-r2.md` on main records **APPROVED for round
+  2** - "the worker found a real defect in that branch, fixed it with one shared rule,
+  and proved it against the real CLI. No further revision on this ticket." It also
+  corrects the record: the scope-gate sentence in this artifact now names pull request
+  #509's runtime files, and the earlier `msg_operator-to-engineer-20261127-2126.md:1:approve`
+  was delivered during the loop delivery test before the artifact existed, so this
+  verdict is the one that read it.
+- The liveness defect the round exposed is now a bounded ticket, and the brief is
+  handed to the lane that owns the file: `docs/agent-roles/queue/engineer-to-operator-20261128-0250.md`.
 - No extension file changed, so `py tests/browser_extension_test.py` was not run. No
   migration, edge deploy or CRX signing ran.
 
@@ -145,7 +158,12 @@ requests:
    target by the session heartbeat instead of the stored `outcome`, so a running
    console session is a report target; the id half is already fixed (`ceda9d56`). Write
    the failing test first, as the id fix did. The exact commands and outputs are in
-   `docs/proof/2026-11-27-review-loop.md`.
+   `docs/proof/2026-11-27-review-loop.md`. The operator's own bounded ticket
+   `operator-to-engineer-20261128-0240.md` now carries this, and the brief is handed
+   over in `docs/agent-roles/queue/engineer-to-operator-20261128-0250.md` because
+   `scripts/dev/agent-fleet/**` belongs to the operator lane and the engineer scope
+   gate refuses it. If the manager wants the engineer lane to carry the work instead,
+   the path ownership moves in `docs/agent-roles/registry.json` with it.
 2. **Manager → release-engineer:** the doctor fixes are merged but the npm registry still
    serves the old verdict; publish the next version so `npx -y navego doctor` from the
    registry carries the auth-and-pair line and reads a lapsed cloud session as no login
