@@ -4,7 +4,7 @@ import { NavegoMark, NavegoWordmark } from './NavegoMark';
 import { readConsent, storeConsent, type ConsentChoice } from '../lib/consent.js';
 import { onSessionChange, sessionAccount } from '../lib/auth';
 
-const VERSION = '1.8.1';
+export const VERSION = '1.8.1';
 
 // one navigation surface: a slim dark bar with product links and one CTA; a Menu button opens the same list on a small screen.
 // decisions.json -> site-nav-inline-01

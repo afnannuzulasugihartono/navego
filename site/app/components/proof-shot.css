@@ -1,0 +1,14 @@
+/*
+ * @last-edited: 2026-11-27 UTC+7.
+ * @title: proof-shot - keeps the two real proof screenshots inside their tiles at every width.
+ * @state: screenshots are width-limited, keep their aspect ratio, and use the shared line and radius tokens.
+ * @dependencies: tokens.css.
+ */
+
+.proof-shot {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
