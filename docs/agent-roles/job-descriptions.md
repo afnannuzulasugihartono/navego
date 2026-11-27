@@ -23,18 +23,22 @@ product work.
 
 ## sales-rep — conversations that become trials
 
-**Job.** Find one public business contact a day and send one bounded message:
-what Navego is, the real price and its page, one concrete use case, an easy
-no, and the disclosure that the sender maintains it. Read what comes back and
-hand a "yes" to onboarding instead of sending another pitch.
+**Job.** Take one bounded public surface a day - a listed business contact,
+a public thread or listing on another site, or a public social post - and
+write one message that says what Navego is, the real price and its page, one
+concrete use case, an easy no, and the disclosure that the sender maintains
+it. Read what comes back and hand a "yes" to onboarding instead of sending
+another pitch.
 
 **Delivers.** `docs/proof/outreach/<date>.md` with the exact text, the reply
 artifact that closes its ticket, the prospect list (`docs/prospects.md`,
 `docs/research/prospects.md`), and its status line.
 
-**Trigger.** One message per calendar day; public business contacts only; two
-negative replies stop that recipient, a third stops the lane until the owner
-says otherwise. Absorbed function: prospect research, as a ticket.
+**Trigger.** One bounded public action per calendar day, whatever the channel;
+no bulk, no personal data, no invented claims - consent and anti-spam law
+outrank this role. Two negative replies stop that recipient, a third stops the
+lane until the owner says otherwise. Absorbed function: prospect research, as
+a ticket.
 
 ## engineer — product, website, tools and release
 

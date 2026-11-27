@@ -1572,6 +1572,16 @@
         "kind": "user",
         "ref": "user 2026-11-27: \"oke pertahankan yang perlu di pertahankan dan hapus yang redundant kemudian aku mau list job descnya untuk masing masing agent\""
       }
+    },
+    {
+      "id": "docs-autonomy-06",
+      "scope": "agent/autonomy",
+      "file": "docs/autonomy.md",
+      "decision": "The sales lane may use any public surface, not only a listed business contact: another site, a public thread or listing, or social media. One bounded public action per day still holds, with the exact text, URL and reply recorded in docs/proof/outreach/<date>.md; no bulk, no personal data, no invented claims, and consent and anti-spam law still outrank the role.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-27: \"sales tidak harus ke kontak bisnis bisa juga ke situs lain untuk mengenalkan nave go bisa juga sosial media dan seterusnya\""
+      }
     }
   ]
 }
