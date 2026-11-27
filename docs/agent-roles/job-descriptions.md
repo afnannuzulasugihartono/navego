@@ -35,8 +35,8 @@ Lane baru dibuat hanya kalau kerjaannya muncul lagi setelah ada pembeli nyata.
 
 ## 3. engineer — produk, website, tool, release
 
-- **Kerjaan:** kirim extension, local driver, shared core, API, **semua halaman + mekanika situs**, tool, migrasi, dan plumbing release. Putuskan tool mana yang masih layak — verdict ditaruh di samping tool di `docs/api.md` dengan alasan terukur. Perbaiki kegagalan teratas dari eval; tiap perubahan dapat test.
-- **Hasil:** kode terverifikasi · verdict dan batas di `docs/api.md` · `docs/proof/**` · PR yang merge by gate · artifact release saat dibutuhkan.
+- **Kerjaan (mandatnya): perbaiki produk** — kirim extension, local driver, shared core, API, **semua halaman + mekanika situs**, tool, migrasi, dan plumbing release. Putuskan tool mana yang masih layak — verdict ditaruh di samping tool di `docs/api.md` dengan alasan terukur. Perbaiki kegagalan teratas dari eval; tiap perubahan dapat test.
+- **Hasil:** kode terverifikasi · verdict dan batas di `docs/api.md` · `docs/proof/**` · PR yang merge by gate · artifact release saat dibutuhkan. Dokumen saja bukan hasil untuk ticket produk; ticket yang memang hanya dokumentasi harus menyebutnya secara eksplisit.
 - **Pemicu:** ticket produk dulu (eval 5× run, perbaikan desain setelahnya), baru measurement. Tidak ada ticket mesin sebelum pembeli menjawab atau membayar.
 - **Menyerap fungsi:** marketing, release, finance — lewat ticket, bukan lane kelima.
 

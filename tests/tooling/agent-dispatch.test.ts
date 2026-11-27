@@ -257,6 +257,7 @@ test('the lane prompt asks for the reply that closes the ticket and forbids suba
   assert.ok(prompt.includes('answered: operator-to-engineer-20261126-0725.md'), 'the prompt asks for the line that closes the ticket');
   assert.ok(prompt.includes('engineer-reply-20261126-1140.md'), 'the prompt names the reply file');
   assert.ok(prompt.includes('Do not dispatch subagents'), 'the prompt forbids subagents');
+  assert.ok(prompt.includes('a runtime file and its test changed'), 'the prompt refuses document-only product work');
 });
 
 test('the marker names the ticket, the slot and the session title', () => {

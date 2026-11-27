@@ -1653,7 +1653,29 @@
       "decision": "The first screen carries a real downloaded artifact, not a mockup: a JPEG of page one of the two-page PDF Navego fetched from Google Drive on 2026-11-27 (578,104 bytes). The owner asked for it to be redacted, so the name, NIM and signature are blurred; the document, its header and its clauses are unchanged. The proof link still leads to the full unredacted record of the five driven runs.",
       "source": {
         "kind": "user",
-        "ref": "user 2026-11-27: \"fix navego sejujur mungkin lakukan segala cara untuk mendapatkan pelanggan\" then \"redact dokumen\""      }
+        "ref": "user 2026-11-27: \"fix navego sejujur mungkin lakukan segala cara untuk mendapatkan pelanggan\" then \"redact dokumen\""
+      }
+    },
+    {
+      "id": "docs-agent-roles-15",
+      "scope": "docs/agent-roles",
+      "file": "docs/agent-roles/job-descriptions.md",
+      "decision": "A product ticket is complete only when a runtime file and its test change. A reply that changes only documents is not shipped work unless the ticket explicitly states that documentation is the deliverable. The dispatcher prompt carries the same rule so a lane cannot close a product ticket with proof files alone.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-27: \"engineer aku lihat edit dokumen aja gak buat apa apa\" — the visible output of recent engineer lanes was documentation and copy, because the manager routed documentation tickets"
+      }
+    },
+    {
+      "id": "docs-engineer-mandate-01",
+      "scope": "docs/agent-roles",
+      "file": "docs/agent-roles/engineer.md",
+      "decision": "The engineer lane's mandate is product improvement, not document production: one self-contained runtime change per ticket with the failing-before test in the same diff, documentation only when shipped behaviour changed, and a self-review covering design, user functionality, simplicity, naming, comments that explain why, and tests that fail when the code breaks. Adapted for one-agent sessions from Google's engineering practices; proof files remain evidence, never the deliverable.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://google.github.io/eng-practices/review/developer/small-cls.html (one self-contained change, related test code in the same CL, keep the build working, split refactors from behaviour changes)",
+        "also": "https://google.github.io/eng-practices/review/reviewer/looking-for.html (design, functionality for users, complexity, tests that fail when broken, naming, comments that explain why, documentation when behaviour changes)"
+      }
     }
   ]
 }
