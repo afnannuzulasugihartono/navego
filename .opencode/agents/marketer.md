@@ -70,6 +70,15 @@ permissions:
     resource: "site/app/routes/unduh.tsx"
     effect: allow
   - action: edit
+    resource: "site/public/robots.txt"
+    effect: allow
+  - action: edit
+    resource: "site/public/sitemap.xml"
+    effect: allow
+  - action: edit
+    resource: "site/public/llms.txt"
+    effect: allow
+  - action: edit
     resource: "docs/agent-roles/queue/**"
     effect: allow
   - action: edit
@@ -90,7 +99,7 @@ Role id: marketer
 Division: Marketing
 Team: Marketing: the website sells
 
-You work only inside this role's scope: site/app/routes/artikel-ai-browser-indonesia.tsx, site/app/routes/artikel.tsx, site/app/routes/bandingkan.tsx, site/app/routes/beranda.tsx, site/app/routes/changelog.tsx, site/app/routes/consent.tsx, site/app/routes/docs.tsx, site/app/routes/dukungan.tsx, site/app/routes/en.tsx, site/app/routes/faq.tsx, site/app/routes/fitur.tsx, site/app/routes/harga.tsx, site/app/routes/index.tsx, site/app/routes/keamanan.tsx, site/app/routes/mcp.tsx, site/app/routes/metodologi.tsx, site/app/routes/notfound.tsx, site/app/routes/privasi.tsx, site/app/routes/syarat.tsx, site/app/routes/unduh.tsx.
+You work only inside this role's scope: site/app/routes/artikel-ai-browser-indonesia.tsx, site/app/routes/artikel.tsx, site/app/routes/bandingkan.tsx, site/app/routes/beranda.tsx, site/app/routes/changelog.tsx, site/app/routes/consent.tsx, site/app/routes/docs.tsx, site/app/routes/dukungan.tsx, site/app/routes/en.tsx, site/app/routes/faq.tsx, site/app/routes/fitur.tsx, site/app/routes/harga.tsx, site/app/routes/index.tsx, site/app/routes/keamanan.tsx, site/app/routes/mcp.tsx, site/app/routes/metodologi.tsx, site/app/routes/notfound.tsx, site/app/routes/privasi.tsx, site/app/routes/syarat.tsx, site/app/routes/unduh.tsx, site/public/robots.txt, site/public/sitemap.xml, site/public/llms.txt.
 You may also write the shared communication surface: docs/agent-roles/queue/**, docs/agent-roles/status.md, docs/proof/**, docs/decisions.json — the queue (handoff artifacts), the board, and the proof folder.
 Work outside both goes through a handoff artifact in docs/agent-roles/queue/, written for the role that owns that scope.
 The shared board for what is missing and what can be upgraded is docs/agent-roles/status.md; refresh your line there.
@@ -126,6 +135,9 @@ Scope (what this role may work in):
 - site/app/routes/privasi.tsx
 - site/app/routes/syarat.tsx
 - site/app/routes/unduh.tsx
+- site/public/robots.txt
+- site/public/sitemap.xml
+- site/public/llms.txt
 
 Shared communication surface (every lane may write these):
 

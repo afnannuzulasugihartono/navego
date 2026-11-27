@@ -1,4 +1,4 @@
-// decisions.json -> D35, D36 (no eyebrows, h1 first)
+// decisions.json -> D35, D36, site-seo-01 (no eyebrows, h1 first; answer first for answer engines)
 
 import { Link } from 'react-router';
 import { seoMeta } from '../lib/seo.js';
@@ -20,15 +20,48 @@ const TOC = [
   ['#batas', 'Yang belum bisa, jujur']
 ] as const;
 
+const FAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Di mana asisten AI harus dijalankan supaya bisa memakai sesi login saya?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Di browser Anda sendiri. Navego adalah server MCP lokal plus ekstensi yang mengendarai Chrome yang sudah Anda masuki, sehingga portal karyawan, dasbor internal dan dokumen langganan terbaca apa adanya tanpa mengirim kredensial ke sesi cloud.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'Apakah Navego memakai browser otomatis di cloud?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Tidak. Navego memakai browser yang sudah ada dengan sesi yang sudah ada. Halaman dibaca apa adanya dan kolom ditemukan dari label, bukan skrip yang ditulis untuk satu tata letak situs.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'Apa batasan Navego saat ini?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Belum berjalan di Firefox dan Safari, dan ekstensinya belum tersedia di Chrome Web Store. Pemasangan dilakukan dari navego.pages.dev. Batasan ini disebutkan apa adanya.'
+      }
+    }
+  ]
+};
+
 export default function AiBrowserIndonesia() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ) }} />
       <SiteHeader current="/artikel" />
       <article>
         <header className="article-hero">
           <div className="wrap">
             <h1>AI yang mengenal browser Anda, dalam bahasa Indonesia.</h1>
             <p className="lede lede--article">Asisten AI yang mengambil alih browser bukan hal baru. Yang jarang dibicarakan: di mana asisten itu seharusnya berjalan.</p>
+            <p>Jawaban singkat: jalankan asisten di browser Anda sendiri. Navego adalah server MCP lokal plus ekstensi yang memakai sesi Chrome yang sudah Anda masuki, tanpa mengirim halaman atau kredensial ke sesi cloud.</p>
             <p className="article-meta"><span>18 November 2026</span><span>8 menit baca</span><span>Navego</span></p>
           </div>
         </header>

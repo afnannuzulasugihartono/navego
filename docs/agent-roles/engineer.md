@@ -19,6 +19,7 @@ Scope (what this role may work in):
 - scripts/dev/generate-agent-roles.ts
 - scripts/verify/role-scope.ts
 - package.json
+- tests/site/**
 
 Shared communication surface (every lane may write these):
 

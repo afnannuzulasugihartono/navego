@@ -116,7 +116,10 @@
         "site/app/routes/notfound.tsx",
         "site/app/routes/privasi.tsx",
         "site/app/routes/syarat.tsx",
-        "site/app/routes/unduh.tsx"
+        "site/app/routes/unduh.tsx",
+        "site/public/robots.txt",
+        "site/public/sitemap.xml",
+        "site/public/llms.txt"
       ],
       "communicationPaths": [
         "docs/agent-roles/queue/**",
@@ -149,7 +152,8 @@
         "docs/agent-friendly.md",
         "scripts/dev/generate-agent-roles.ts",
         "scripts/verify/role-scope.ts",
-        "package.json"
+        "package.json",
+        "tests/site/**"
       ],
       "communicationPaths": [
         "docs/agent-roles/queue/**",

@@ -26,6 +26,9 @@ Scope (what this role may work in):
 - site/app/routes/privasi.tsx
 - site/app/routes/syarat.tsx
 - site/app/routes/unduh.tsx
+- site/public/robots.txt
+- site/public/sitemap.xml
+- site/public/llms.txt
 
 Shared communication surface (every lane may write these):
 
