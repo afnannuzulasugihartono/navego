@@ -78,14 +78,14 @@ export default function Index() {
             </div>
 
             <div className="card">
-              <p className="note"><strong>27 November 2026, lima kali jalan</strong> mengambil surat dari Google Drive dengan sesi yang sudah masuk. Ini halaman pertama salah satu hasilnya, apa adanya:</p>
+              <p className="note"><strong>27 November 2026, lima kali jalan</strong> mengambil surat dari Google Drive dengan sesi yang sudah masuk. Ini halaman pertama salah satu hasilnya; nama, NIM, dan tanda tangan diburam atas permintaan pemilik, isi lainnya utuh:</p>
               <figure className="proof-figure">
                 <img
                   src="/proof/navego-drive-pdf-page1.jpg"
                   width={780}
-                  height={1102}
+                  height={1103}
                   loading="lazy"
-                  alt="Halaman pertama surat keputusan rektor yang diunduh Navego: dokumen asli, bukan gambar contoh."
+                  alt="Halaman pertama surat keputusan rektor yang diunduh Navego: dokumen asli, bukan gambar contoh; nama, NIM, dan tanda tangan diburam."
                 />
                 <figcaption>Hasil unduhan Navego, bukan tiruan. 578.104 byte, dua halaman.</figcaption>
               </figure>

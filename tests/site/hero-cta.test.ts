@@ -58,6 +58,13 @@ test('the public hero stays an artifact: no account card, only a dashboard way b
   assert.ok(source.indexOf('id="bukti-title"') > source.indexOf('</section>'), 'the proof section follows the hero');
 });
 
+test('the published document says what was blurred', () => {
+  const hero = heroOf(source);
+  assert.match(hero, /nama, NIM, dan tanda tangan diburam/);
+  assert.match(hero, /alt="[^"]*diburam[^"]*"/);
+  assert.doesNotMatch(hero, /apa adanya/, 'the published image is redacted, so "as-is" overstates it');
+});
+
 test('real files, facts and limits back the claim', () => {
   assert.match(source, /portalProof from '.*docs\/proof\/extension-portal\.jpg'/);
   assert.match(source, /\/contoh\/laporan-keuangan-2026-09\.xlsx/);

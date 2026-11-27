@@ -37,6 +37,12 @@ From any MCP client:
 - Does not bypass paywalls, captchas, sign-in walls, or rate limits.
 - Does not run per-site code or free `eval` in the browser.
 
+## Measured, not claimed
+
+- 5 driven runs of one real task on 2026-11-27 (collect a document from a browser the person is signed into): 3 downloads, 2 of them checked as real 2-page PDFs of 578,104 bytes, 2 runs lost to a spent session allowance.
+- The runs found 2 defects, both fixed and tested: a wait that answered `settled: true` before the page settled, and a ZIP saved under a `.pdf` name accepted as a document.
+- Per-run record: https://github.com/afnannuzulasugihartono/navego/blob/main/docs/proof/2026-11-27-engineer.md
+
 ## Docs for agents
 
 - llms.txt and per-client snippets: https://github.com/afnannuzulasugihartono/navego/blob/main/llms.txt and https://github.com/afnannuzulasugihartono/navego/blob/main/docs/agent-friendly.md
