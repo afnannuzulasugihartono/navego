@@ -65,7 +65,8 @@ export default function Index() {
                   />
                 </>
               ) : null}
-              <p className="note"><code>npx -y navego doctor</code> - <code>ready</code>; bridge <code>127.0.0.1:9451</code>, 1 device terhubung. Baca biaya dan jalur undo di halaman <Link to="/unduh">Unduh</Link> sebelum menjalankannya.</p>
+              <p className="note"><code>npx -y navego doctor</code> → <code>ready</code>; bridge <code>127.0.0.1:9451</code>, 1 device terhubung. Baca biaya dan jalur undo di halaman <Link to="/unduh">Unduh</Link> sebelum menjalankannya.</p>
+              <p className="note"><strong>Bukti 27 Nov 2026:</strong> 2 dari 5 kali jalan menghasilkan PDF dua halaman terverifikasi (578.104 byte); 3 dari 5 mengunduh berkas. Dua cacat ditemukan dan diperbaiki. <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/proof/2026-11-27-engineer.md">Catatan lima kali jalan →</a></p>
             </div>
 
             <div className="card">
