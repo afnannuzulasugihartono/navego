@@ -148,7 +148,7 @@ test('every other path is the asset server\'s, untouched and never sent to the f
     throw new Error('the function must not be called for an asset');
   });
 
-  const request = new Request('https://navego.pages.dev/beranda');
+  const request = new Request('https://navego.pages.dev/fitur');
   const response = await worker.fetch(request, env);
 
   assert.equal(calls.length, 0, 'the worker owns one path, not the site');
@@ -209,9 +209,18 @@ test('the redirect keeps a pairing deep link intact', async () => {
   assert.equal(response.headers.get('location'), 'https://navego.pages.dev/dashboard.html?pair=1#pairing');
 });
 
+test('the old homepage is one URL, so both /beranda and .html move to the single homepage', async () => {
+  for (const [path, expected] of [['/beranda', '/'], ['/beranda.html', '/'], ['/beranda?x=1#bagian', '/?x=1#bagian']]) {
+    const response = await worker.fetch(new Request(`https://navego.pages.dev${path}`), env);
+    assert.equal(response.status, 301, `${path} is a permanent move`);
+    assert.equal(response.headers.get('location'), expected, `${path} lands on the only homepage`);
+    assert.equal(assetCalls.length, 0, 'the legacy page is no longer served');
+  }
+});
+
 test('the canonical host is served as itself, never redirected', async () => {
   reset(() => new Response('asset'));
-  const response = await worker.fetch(new Request('https://navego.pages.dev/beranda'), env);
+  const response = await worker.fetch(new Request('https://navego.pages.dev/fitur'), env);
   assert.equal(response.status, 200);
   assert.equal(response.headers.get('location'), null);
 });

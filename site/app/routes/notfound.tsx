@@ -13,7 +13,6 @@ export function meta() {
 }
 
 const EXITS = [
-  ['/beranda', 'Beranda', 'Cara kerjanya dan semua jawaban umum.'],
   ['/unduh', 'Unduh', 'Arsip extension dan sidik jarinya.'],
   ['/', 'Masuk', 'Akun Anda, lewat Google, GitHub, atau magic link.'],
   ['/akun', 'Akun', 'Identitas Anda dan penyedia yang tertaut.'],

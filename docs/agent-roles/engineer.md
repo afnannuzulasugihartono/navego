@@ -23,7 +23,6 @@ Scope (what this role may work in):
 - site/app/routes/artikel-ai-browser-indonesia.tsx
 - site/app/routes/artikel.tsx
 - site/app/routes/bandingkan.tsx
-- site/app/routes/beranda.tsx
 - site/app/routes/changelog.tsx
 - site/app/routes/consent.tsx
 - site/app/routes/docs.tsx

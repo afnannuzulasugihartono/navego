@@ -169,6 +169,11 @@ export default {
         headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }
       });
     }
+    // Two homepages split the story and the legacy one is the weaker page, so both spellings move to one address.
+    if (path === '/beranda' || path === '/beranda.html') {
+      const asked = new URL(request.url);
+      return new Response(null, { status: 301, headers: { location: `/${asked.search}${asked.hash}` } });
+    }
     if (path.endsWith('.html')) {
       const pretty = path.slice(0, -'.html'.length) || '/';
       const asked = new URL(request.url);

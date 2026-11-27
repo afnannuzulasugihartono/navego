@@ -44,13 +44,11 @@ test('a chosen plan survives the sign-in round trip in this tab', () => {
   assert.match(harga, /Lanjutkan plan pilihan Anda\. Klik Beli dengan PayPal/);
 });
 
-test('the homepage offers real artifacts instead of only a scripted demo', () => {
-  const beranda = read('app/routes/beranda.tsx');
-  assert.match(beranda, /Situs tanpa API\. Perintah jadi berkas\./);
-  assert.match(beranda, /\/contoh\/laporan-keuangan-2026-09\.xlsx/);
-  assert.match(beranda, /\/contoh\/rencana-pemasaran-2027\.docx/);
-  assert.match(beranda, /\/contoh\/rencana-strategis-2027\.pptx/);
-  assert.match(beranda, /Bukan screenshot\. Berkas yang bisa Anda buka\./);
+test('the only homepage carries real proof instead of a scripted demo', () => {
+  const home = read('app/routes/index.tsx');
+  assert.match(home, /578\.104 byte/);
+  assert.match(home, /Lihat harga/);
+  assert.doesNotMatch(home, /Situs tanpa API\. Perintah jadi berkas\./);
 });
 
 test('onboarding starts with npx instead of a global install', () => {

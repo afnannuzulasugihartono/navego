@@ -41,7 +41,7 @@ export function ErrorBoundary() {
       <p className="section-head"><h2>{is404 ? 'Halaman ini tidak ada.' : 'Terjadi kesalahan.'}</h2></p>
       <p className="text-muted">
         {is404 ? 'Tautan yang Anda ikuti mungkin sudah dipindahkan.' : 'Coba muat ulang halaman ini.'}{' '}
-        <a href="/beranda">Kembali ke beranda</a>
+        <a href="/">Kembali ke beranda</a>
       </p>
     </main>
   );

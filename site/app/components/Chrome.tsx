@@ -69,7 +69,7 @@ export function SiteHeader({ current }: { current?: string }) {
   return (
     <header className={menuOpen ? 'site-header nav-open' : 'site-header'} data-version={VERSION}>
       <div className="site-header-row site-header-bleed header-inner">
-        <Link className="brand" to="/beranda" aria-label="Navego — beranda">
+        <Link className="brand" to="/" aria-label="Navego — beranda">
           <NavegoMark size={24} />
           <NavegoWordmark size={14} />
         </Link>
@@ -149,7 +149,7 @@ export function SiteFooter() {
       <div className="wrap">
         <div className="footer-cols">
           <div>
-            <Link className="brand brand--footer" to="/beranda" aria-label="Navego — beranda">
+            <Link className="brand brand--footer" to="/" aria-label="Navego — beranda">
               <NavegoMark size={36} />
               <NavegoWordmark size={16} />
             </Link>

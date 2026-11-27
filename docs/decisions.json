@@ -1155,7 +1155,7 @@
     {
       "id": "site-conversion-01",
       "scope": "web/components",
-      "file": "site/app/routes/beranda.tsx",
+      "file": "site/app/routes/index.tsx",
       "decision": "The page sells a verifiable outcome instead of a tool count: sites without APIs become real files. Visitors can download the actual xlsx/docx/pptx evidence, start with npx instead of a global install, read exact one-time plan periods and no-markup cost boundaries, and choose an English landing page for global reach. No testimonials, customer counts or unmeasured success claims are invented.",
       "source": {
         "kind": "user",
@@ -1248,7 +1248,7 @@
       "source": {
         "kind": "user",
         "ref": "user 2026-11-24: the privacy audit found absolute copy contradicted by the implementation",
-        "also": "site/app/routes/beranda.tsx and site/app/routes/en.tsx (the short public answer matches the long policy)"
+        "also": "site/app/routes/index.tsx and site/app/routes/en.tsx (the short public answer matches the long policy)"
       }
     },
     {
@@ -1747,6 +1747,16 @@
       "source": {
         "kind": "user",
         "ref": "user 2026-11-27: \"lanjut ke agents dulu untuk otomatisasi\" after reviewing the agent organisation spec"
+      }
+    },
+    {
+      "id": "site-home-01",
+      "scope": "site",
+      "file": "site/worker/_worker.ts",
+      "decision": "There is one homepage. /beranda and /beranda.html answer 301 to /, the logo links to /, and the legacy route and its header/CSP blocks are removed. The old page split the story and was the weaker, mockup-based surface.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-28: \"kerjakan sekarang\" after the UX research comparing /beranda with Linear and Apple"
       }
     }
   ]

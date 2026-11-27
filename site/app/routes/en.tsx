@@ -52,7 +52,7 @@ export default function English() {
                 <span>40 MCP tools</span>
                 <span>SHA-256 per file</span>
               </div>
-              <p className="microcopy">An extension and a local driver you can inspect and remove. <Link to="/beranda">Bahasa Indonesia →</Link></p>
+              <p className="microcopy">An extension and a local driver you can inspect and remove. <Link to="/">Bahasa Indonesia →</Link></p>
             </div>
             <div className="demo-window" aria-hidden="true">
               <div className="demo-bar">
