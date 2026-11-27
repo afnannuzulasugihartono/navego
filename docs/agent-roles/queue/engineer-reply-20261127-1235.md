@@ -33,24 +33,35 @@ evidence:
 - `npm run check` - green: `type-debt: 0 errors - at baseline 0`, `check ok: 36
   allowlisted browser primitives, 319 runtime safety files`.
 - Site typecheck and build green (`react-router build`, 22 routes flattened).
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/496>, head
+  `5419d99d`: exact-head CI run `46002855605` green in unit, site, deno-hosted,
+  secret-scan, browser, postgres and SonarCloud; merged as `117e740e`; main CI run
+  `46003286964` green.
+- Site deploy run `46003433002` green on `117e740e`. The live page was read again
+  at 1440 x 900 and 390 x 844: HTTP 200 at both widths, the conditional doctor
+  sentence present, the old unconditional `ready` claim absent, and no horizontal
+  overflow (`scrollWidth === clientWidth`: 1425 and 390).
+- The first CI run, `46002294734`, was not green: unit found a release number
+  written literally in this reply, and postgres hit an unrelated PayPal sandbox
+  fixture foreign key. The version literal was removed, the release-bump gate
+  passed, and the exact-head rerun above was green in every job.
 - No extension file changed, so `py tests/browser_extension_test.py` was not run. No
-  migration, edge deploy or CRX signing ran.
+  migration, edge-function deploy or CRX signing ran; the site deploy did run.
 
 left:
 
-- The pull request, exact-head CI, merge, site deploy and the deployed-page read at
-  390 px and 1440 px are recorded in the proof after those operations complete.
 - The npm registry still serves the current release, whose doctor has the old
   verdict. The changed package is proved locally; the next release must publish it
   before a registry-only `npx -y navego doctor` run can show the same line.
 - Reviewer gap: this session is the only worker on the key and a child session is
-  denied, so no reviewer agent could run. The pull request keeps REVIEW_REQUIRED and
-  the gap is written in the proof under the owner's 2026-11-26 answer.
+  denied, so no reviewer agent could run. The pull request stayed REVIEW_REQUIRED
+  and was merged with administrator rights under the owner's 2026-11-26 answer; the
+  gap is written in the proof.
 
 requests:
 
-1. **Manager → release-engineer:** after this fix merges, bump and publish the next
-   npm version so `npx -y navego doctor` from the registry carries the auth-and-pair
+1. **Manager → release-engineer:** the fix is merged; bump and publish the next npm
+   version so `npx -y navego doctor` from the registry carries the auth-and-pair
    verdict; the registry's current release still carries the old stale-extension
    advice.
 2. **Manager → operator:** assign `tests/local/**` to the engineer lane in
