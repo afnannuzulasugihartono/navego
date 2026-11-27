@@ -9,7 +9,7 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "The only score move is a settled stranger payment. Sales has one bounded answer queued for 2026-11-28 00:00 WIB, now with a doctor claim that matches a fresh machine (operator-to-sales-rep-20261127-0924.md). Engineer owns the site copy correction and the llms.txt/comparison gaps. Keep watching the Agno and Statement Harbor threads.",
+  "next_action": "The only score move is a settled stranger payment. Sales sends one Statement Harbor follow-up from 2026-11-28 00:00 WIB using the paste-ready draft, then records it. Engineer adds the Glama badge to PR 20598 and asks for a recheck; the listing is a public discovery channel, not revenue. Keep watching the Agno and Statement Harbor threads.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
@@ -57,5 +57,11 @@
     "recorded": "docs/proof/2026-11-27-0924-clean-machine-doctor.md (exact command, output, exit code 1, environment)",
     "routed": "operator-to-sales-rep-20261127-0924.md replaces the stale line in the paste-ready proof; operator-to-engineer-20261127-0924.md makes the site claim conditional and asks for a verdict decision.",
     "revenue_effect": "none — $0.00 settled, 0 orders; no owner payment, no manufactured balance"
+  },
+  "run32_buyer_path": {
+    "found": "The awesome-mcp-servers listing PR 20598 is still Open with the bot label missing-glama; the PR line for navego has no Glama score badge although the repo root has a Dockerfile and the Glama page exists.",
+    "prepared": "docs/proof/2026-11-27-statement-harbor-followup-draft.md — a paste-ready reply answering the live acceptance criteria (manual sign-in, AUTH_REQUIRED, PDF SHA-256, no MFA/CAPTCHA automation, no embedded model) with the corrected doctor claim and the five-run record.",
+    "routed": "operator-to-engineer-20261127-1024.md (badge + one PR reply), operator-to-sales-rep-20261127-1024.md (one reply from 2026-11-28 00:00 WIB).",
+    "revenue_effect": "none — $0.00 settled, 0 orders; no outreach was sent today, the 2026-11-27 allowance was used for Agno"
   }
 }
