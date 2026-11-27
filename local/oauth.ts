@@ -2,6 +2,7 @@
 // @title: oauth — a browser login for the hosted server, with the token kept beside it.
 // @state: the authorise URL, the loopback callback, the code exchange, the refresh, and where the token file lives.
 // @dependencies: node:crypto, node:fs, node:http, node:os, node:path, node:child_process, node:url.
+// decisions.json -> local-oauth-session-state-01
 
 // THIS FILE EXISTS
 
@@ -200,13 +201,34 @@ function persistentToken(payload: Record<string, unknown>, previousRefresh: unkn
   };
 }
 
+// THE SESSION IS WHAT THE MACHINE CAN STILL USE.
+// A token file on disk says the machine signed in once; only a live access token or a stored refresh says it can sign in again, and the doctor and the cloud client must not answer that question differently.
+
+export interface CloudSession {
+  live: boolean;
+  renewable: boolean;
+  signedIn: boolean;
+  expiresAt: number | null;
+}
+
+export function cloudSession(stored: StoredToken | null, now: () => number = () => Date.now()): CloudSession {
+  if (!stored) return { live: false, renewable: false, signedIn: false, expiresAt: null };
+  const rawExpiry: unknown = stored.expires_at;
+  const parsed = typeof rawExpiry === 'number' ? rawExpiry : Number(rawExpiry);
+  const expiresAt = rawExpiry === null || rawExpiry === undefined || !Number.isFinite(parsed) ? null : parsed;
+  const live = expiresAt !== null && expiresAt > now() + SKEW_MS;
+  const renewable = typeof stored.refresh_token === 'string' && stored.refresh_token.trim() !== '';
+  return { live, renewable, signedIn: live || renewable, expiresAt };
+}
+
 export async function accessToken({ env = process.env, fetchImpl = fetch, now = () => Date.now() }: { env?: NodeJS.ProcessEnv; fetchImpl?: typeof fetch; now?: () => number } = {}): Promise<string | null> {
   if (String(env.NAVEGO_MCP_TOKEN ?? '').trim()) return String(env.NAVEGO_MCP_TOKEN).trim();
   const stored = readStoredToken(env);
   if (!stored) return null;
-  if (Number(stored.expires_at) > now() + SKEW_MS) return stored.access_token;
-  if (!stored.refresh_token) return null;
-  const refreshed = await refreshAccessToken(stored.refresh_token, fetchImpl).catch(() => null);
+  const session = cloudSession(stored, now);
+  if (session.live) return stored.access_token;
+  if (!session.renewable) return null;
+  const refreshed = await refreshAccessToken(String(stored.refresh_token ?? ''), fetchImpl).catch(() => null);
   if (!refreshed) return null;
   writeStoredToken(refreshed, env);
   return refreshed.access_token;

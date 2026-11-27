@@ -3,7 +3,7 @@
 // @state: the bridge's state, the device's meter, the pairing, the cloud login, and the CRX link.
 // The --json flag emits the same answers as a single object for MCP clients and scripts.
 // @dependencies: ./wallet-client.js, ./oauth.js, ./lib/endpoints.js.
-// decisions.json -> local-doctor-verdict-01
+// decisions.json -> local-doctor-verdict-01, local-doctor-session-expiry-01
 
 // THIS FILE EXISTS
 
@@ -11,7 +11,7 @@
 // The doctor reads the only state that is real - the loopback bridge's own health answer, the paired device file, and the cloud login - and prints one line per answer plus the one fix that applies, or emits the same thing as JSON for scripts.
 
 import { readDevice } from './wallet-client.js';
-import { readStoredToken } from './oauth.js';
+import { readStoredToken, cloudSession } from './oauth.js';
 import { resolveBridgeToken } from './bridge-token.js';
 import { UPDATE_BASE_URL } from './lib/endpoints.js';
 
@@ -57,6 +57,10 @@ function setupAdvice(cloudLogin: DoctorReport['cloudLogin'], paired: boolean): s
   return steps.length ? steps.join(', then ') : null;
 }
 
+function expiryText(expiresAt: number | null): string {
+  return expiresAt === null ? 'at an unknown time' : new Date(expiresAt).toISOString();
+}
+
 export async function doctor({ env = process.env, stdout = process.stdout, fetchImpl = fetch, args = [] }: { env?: NodeJS.ProcessEnv; stdout?: { write(chunk: string): unknown }; fetchImpl?: typeof fetch; args?: readonly string[] } = {}): Promise<number> {
   const port = Number(env.NAVEGO_BRIDGE_PORT || 9451);
   const home = typeof env.NAVEGO_HOME === 'string' ? env.NAVEGO_HOME : undefined;
@@ -69,12 +73,13 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
 
   const envToken = typeof env.NAVEGO_MCP_TOKEN === 'string' && env.NAVEGO_MCP_TOKEN.trim();
   const stored = envToken ? null : readStoredToken(env);
+  const session = cloudSession(stored);
 
   const probe = await probeBridge(port, fetchImpl);
 
   const deviceFile: DoctorReport['deviceFile'] = paired ? paired.deviceName : null;
 
-  const cloudLogin: DoctorReport['cloudLogin'] = envToken ? 'token' : stored ? 'signed-in' : 'none';
+  const cloudLogin: DoctorReport['cloudLogin'] = envToken ? 'token' : session.signedIn ? 'signed-in' : 'none';
 
   const bridgeOk = probe.ok;
   if (!bridgeOk) {
@@ -119,8 +124,12 @@ export async function doctor({ env = process.env, stdout = process.stdout, fetch
 
   if (envToken) {
     say('cloud login', 'NAVEGO_MCP_TOKEN (a static token from the environment)');
-  } else if (stored) {
-    say('cloud login', `signed in (token expires ${new Date(Number(stored.expires_at) || 0).toISOString()})`);
+  } else if (session.live) {
+    say('cloud login', `signed in (token expires ${expiryText(session.expiresAt)})`);
+  } else if (session.renewable) {
+    say('cloud login', `signed in (the token expired ${expiryText(session.expiresAt)}; the session renews on use)`);
+  } else if (session.expiresAt !== null) {
+    say('cloud login', `not signed in - the cloud session expired ${expiryText(session.expiresAt)}; \`navego auth\` signs in again`);
   } else {
     say('cloud login', 'not signed in - cloud mode needs it (`navego auth`, or NAVEGO_MCP_TOKEN)');
   }

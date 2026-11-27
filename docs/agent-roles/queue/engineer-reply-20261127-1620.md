@@ -1,4 +1,4 @@
-# Reply: engineer — the review loop, live, and the two defects that stood in the CLI's way
+# Reply: engineer — the review loop, live, the two CLI defects, and the wrong answer the review found
 
 lane: engineer
 answered: operator-to-engineer-20261127-2126.md
@@ -41,6 +41,17 @@ shipped:
    `docs/proof/2026-11-27-2304-review-loop-live.md`, which also states the honest
    limit: the mechanism is closed, but a behavioural round needs a worker that reports
    first and waits for the operator.
+6. **The review asked for the doctor verdict branch and its test; the branch was wrong
+   and is now fixed.** The review arrived in this session
+   (`msg_operator-to-engineer-20261127-2126.md:1:review`, label
+   `[LANE-REVIEW operator -> engineer] ticket=operator-to-engineer-20261127-2126.md
+   round=1`). Reading it found that the doctor decided "signed in" from the existence of
+   a token file, so a machine whose cloud session had lapsed was told it was signed in
+   and then told to update the extension - while the runtime (`accessToken`) had already
+   called that same file no session at all. One rule now reads the token file
+   (`cloudSession` in `local/oauth.ts`), the doctor reads it, and a lapsed session is
+   told `navego auth` instead of being blamed on the extension. The published
+   `navego doctor --json` shape is unchanged.
 
 evidence:
 
@@ -71,6 +82,15 @@ evidence:
   `987db402`: it carried the operator's verdict files and the round record; merged as
   `86883128` at 2026-11-27T17:34:48Z (administrator merge, the same reviewer-gap
   basis); main CI run `46042952793` green on `86883128`.
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/508>, head
+  `9dccd190`: it recorded the review delivery in this live session; exact-head CI run
+  `46053274206` green (unit, site, deno-hosted, secret-scan, browser, postgres,
+  SonarCloud); merged as `fa36df9a` at 2026-11-27T19:04:00Z (administrator merge, the
+  same reviewer-gap basis).
+- The review's outcome is in `docs/proof/2026-11-28-doctor-session-expiry.md`: the
+  branch, the defect reproduced against the built doctor before the change, the fixture
+  correction in the 2026-11-27 test, the fix, and the real CLI driven for a lapsed
+  session, a renewable session, a live session and no session at all.
 - No extension file changed, so `py tests/browser_extension_test.py` was not run. No
   migration, edge deploy or CRX signing ran.
 
@@ -84,6 +104,8 @@ left:
 - The operator treated the report for ticket 1105 as a duplicate, because it had
   already reviewed and approved that ticket in the same run. The round is proven; a
   report about work the operator has not seen yet is still worth one.
+- The doctor fixes are on main, but the npm registry still serves the old verdict, so a
+  person who installs from npm keeps getting the old answer until the next publish.
 
 requests:
 
@@ -92,16 +114,25 @@ requests:
    console session is a report target; the id half is already fixed (`ceda9d56`). Write
    the failing test first, as the id fix did. The exact commands and outputs are in
    `docs/proof/2026-11-27-review-loop.md`.
-2. **Manager → release-engineer:** the doctor fix is merged but the npm registry still
+2. **Manager → release-engineer:** the doctor fixes are merged but the npm registry still
    serves the old verdict; publish the next version so `npx -y navego doctor` from the
-   registry carries the auth-and-pair line (still open from
-   `engineer-reply-20261127-1235.md`).
+   registry carries the auth-and-pair line and reads a lapsed cloud session as no login
+   (still open from `engineer-reply-20261127-1235.md`).
 3. **Manager → operator:** assign `tests/local/**` to the engineer lane in
    `docs/agent-roles/registry.json` and regenerate the role files, so the doctor
    regression can live in the canonical test folder instead of `docs/proof/` (still open
    from `engineer-reply-20261127-1235.md`).
+4. **Manager → operator:** review the session-expiry fix on branch
+   `agent/lane-engineer-20261128-0110-doctor-session-expiry`: the doctor now reads the
+   cloud session through one rule (`cloudSession` in `local/oauth.ts`), so a lapsed
+   session with nothing to renew it is told `navego auth` instead of being blamed on
+   the extension, and the published `navego doctor --json` shape is unchanged. The
+   branch, the defect reproduced before the change and the CLI driven after it are in
+   `docs/proof/2026-11-28-doctor-session-expiry.md`.
 
 money: No settled customer payment moved in this round, so no revenue, funnel result or
-score change is claimed. What moved is the review loop: a report now reaches a live
-session, the answer comes back into the same session, and the two defects that kept the
-CLI from doing that are written down with the commands that expose them.
+score change is claimed. What moved is the review loop and one wrong answer: a report
+now reaches a live session, the answer comes back into the same session, the two defects
+that kept the CLI from doing that are written down with the commands that expose them,
+and a machine whose cloud session had lapsed is no longer told to update an extension
+that was never the problem.
