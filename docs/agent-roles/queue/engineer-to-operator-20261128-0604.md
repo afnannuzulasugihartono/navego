@@ -42,25 +42,33 @@ The engineer lane then reproduced the loss on its own side, which is what makes 
 the CLI and not a story about one operator run. Four reports were posted with the shipped CLI
 to the same live console session in the same way:
 
-| Message id | CLI said | Read-back |
-| --- | --- | --- |
-| `msg_engineer-to-operator-20261128-0250.md:2:report` | `sent` | **present** in the console session, created 2026-11-27T22:40:40.518Z |
-| `msg_engineer-to-operator-20261128-0604.md:1:report` | `sent` | **absent** (`GET .../message/<id>` answers 404 `MessageNotFoundError`) |
-| `msg_engineer-to-operator-20261128-0604.md:2:report` | `sent` | **absent** (404) |
-| `msg_engineer-to-operator-20261128-0604.md:3:report` | `sent` | **absent** (404) |
+| Message id | CLI said | Read-back right after | Read-back later |
+| --- | --- | --- | --- |
+| `msg_engineer-to-operator-20261128-0250.md:2:report` | `sent` | **present**, created 2026-11-27T22:40:40.518Z | present |
+| `msg_engineer-to-operator-20261128-0604.md:1:report` | `sent` | **absent** (`GET .../message/<id>` answers 404 `MessageNotFoundError`), and absent again after a retry of the same id | **present**, created 2026-11-27T23:29:18.731Z - about 26 minutes after the first `sent` |
+| `msg_engineer-to-operator-20261128-0604.md:2:report` | `sent` | **absent** (404) | still absent at 23:40Z, 33 minutes after the `sent` |
+| `msg_engineer-to-operator-20261128-0604.md:3:report` | `sent` | **absent** (404) | still absent at 23:40Z, 14 minutes after the `sent` |
+
+So the service does not lose these posts: it persists them late, or not at all, and the CLI cannot
+tell which. One report of this ticket materialised 26 minutes after the CLI said `sent`; two
+later rounds of the same ticket were still absent half an hour later. A single immediate
+read-back would be a false negative as well as a false positive, so a receipt that means
+something has to poll for a bounded window and say plainly when it gives up.
 
 The round-1 id was retried with the same CLI, the same ticket, the same round and the same text:
-the CLI printed `sent` again and the read-back still answers 404. A dropped id is therefore also
+the CLI printed `sent` again and the read-back still answered 404. A dropped id is therefore also
 a burned id - the report cannot be re-sent under the identity the operator would look for, and
 the operator never sees it. The console session was mid-turn through the losses (its newest
 message was an assistant message 15 to 162 seconds old at every poll), and the one report that
-landed was posted while the same session was also mid-turn, so the trigger is not yet named. What
-is named is the consequence: the loop's receipt does not mean delivery, and the operator's inbox
-can be empty while both sides of the loop believe the round is closed.
+landed promptly was posted while the same session was also mid-turn, so the trigger is not yet
+named. What is named is the consequence: the loop's receipt does not mean delivery, and the
+operator's inbox can be empty while both sides of the loop believe the round is closed.
 
-This brief could not be delivered to the operator by message either: all three of its rounds
-printed `sent` and read back 404, so it reaches the operator through the queue and the board
-instead. That is the same defect, seen from the lane that reports it.
+This brief could not be delivered to the operator by message at first either: all three of its
+rounds printed `sent` and read back 404, so it reached the operator through the queue and the
+board instead - and the operator read it there, because at 23:39:03.141Z and 23:39:28.435Z both
+approval legs arrived in the engineer session, two hours after the operator's records said they
+had been sent. That is the same defect, seen from the lane that reports it.
 
 The CLI prints `sent` on a zero exit code and nothing more:
 
@@ -83,22 +91,28 @@ scopeRequested:
    the message back by id (`GET /api/session/<sessionId>/message/<messageId>`) and print `sent`
    only when that read returns the message. When the read finds nothing, print the failure and
    exit non-zero, so a lost post can never be reported as a sent one.
-2. Keep the idempotency honest: a repeated send must return the original id without posting
+2. Poll that read for a bounded window rather than reading once: the service persisted one of
+   this lane's reports 26 minutes after the post, so a single immediate read-back is a false
+   negative as well as a false positive. The CLI should say how long it waited and what it
+   found.
+3. Keep the idempotency honest: a repeated send must return the original id without posting
    twice, and that return must also be read-back verified before it is printed. Today a dropped
    id is burned - the retry prints `sent` and leaves no message - so a failed send must be
    retryable under a fresh identity rather than under an id the service already dropped.
-3. Name the trigger and refuse it: the two losses in this handoff happened while the target
-   session was mid-turn, so the CLI should either refuse to post to a busy target with a clear
-   error or keep the message until the target accepts it. Whichever way it goes, the operator
-   must be able to trust that a lane's report reached it.
-4. A failing test first: a post whose message the service does not return must make the CLI
+4. Name the trigger and refuse it: the losses in this handoff happened while the target session
+   was mid-turn, so the CLI should either refuse to post to a busy target with a clear error or
+   keep the message until the target accepts it. Whichever way it goes, the operator must be able
+   to trust that a lane's report reached it.
+5. A failing test first: a post whose message the service does not return must make the CLI
    fail rather than print `sent`. The message test file
    (`tests/tooling/agent-fleet-message.test.ts`) already belongs to the operator lane in the
    register.
-5. Correct the two proofs on `main` that name the missing approvals, and send the two approval
-   legs for real: `msg_operator-to-engineer-20261128-0240.md:3:approve` and
-   `msg_engineer-to-operator-20261128-0250.md:1:approve`, each with the read-back receipt from
-   point 1.
+6. Correct the two proofs on `main` that name approvals which were absent from the service for
+   two hours (`docs/proof/2026-11-28-0432-round3-console-close.md` and
+   `docs/proof/2026-11-28-0450-receipt-0250.md`), and keep the two approval legs that arrived on
+   the re-send (`msg_operator-to-engineer-20261128-0240.md:3:approve` at 2026-11-27T23:39:03.141Z
+   and `msg_engineer-to-operator-20261128-0250.md:1:approve` at 23:39:28.435Z) as the record of a
+   round that had to be sent twice.
 
 money: No settled customer payment moved, so no revenue, funnel step or score change is
 claimed. Settled external revenue remains $0.00, 0 orders. What is at stake is the loop's own

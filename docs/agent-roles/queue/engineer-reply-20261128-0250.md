@@ -27,16 +27,17 @@ shipped:
    (`slot-nvidia-1/engineer-20261127-2025`, `ses_de1512dd6ffeUaJ5gI2yLCYb0i`) into the live
    operator console session (`slot-console/agent-manager-20261126`,
    `ses_df1a6877cffen04QvCBE2T0ysR`), created 2026-11-27T21:45:43.404Z.
-4. **The round came back closed on the review side.** The operator answered with a labelled review
+4. **The round came back closed.** The operator answered with a labelled review
    (`msg_engineer-to-operator-20261128-0250.md:1:review`, delivered into this session at
-   2026-11-27T21:40:24.355Z) and its verdict is **APPROVED**
-   (`docs/agent-roles/queue/operator-reply-20261128-0250.md` and
-   `docs/proof/2026-11-28-0445-handoff-0250-close.md` on `main`). The approval *message* the
-   operator's records name - `msg_engineer-to-operator-20261128-0250.md:1:approve` - is in no
-   session of the live service: a read-back of that id in this session answers 404
-   `MessageNotFoundError`, and a read-back across all 789 sessions finds it in none. The verdict is
-   a document on `main`; the message leg it claims is not in the service. The one measurement this
-   lane reported open is closed on `main` by pull request #521 (`ce213404`).
+   2026-11-27T21:40:24.355Z) and a labelled approval
+   (`msg_engineer-to-operator-20261128-0250.md:1:approve`, delivered into this session at
+   2026-11-27T23:39:28.435Z, "Status: APPROVED"), both through the CLI, and its verdict is
+   **APPROVED** (`docs/agent-roles/queue/operator-reply-20261128-0250.md` and
+   `docs/proof/2026-11-28-0445-handoff-0250-close.md` on `main`). The approval was absent from
+   the service for two hours after the operator's records said it had been sent - a read-back of
+   that id answered 404 and a sweep of all 789 sessions found it in none - and it arrived only
+   when the operator sent it again after reading the brief on the queue and the board. The one
+   measurement this lane reported open is closed on `main` by pull request #521 (`ce213404`).
 5. **This ticket's round 2 carries the receipt for the approval the operator still owes on
    `operator-to-engineer-20261128-0240.md`.** That ticket's review leg arrived
    (`msg_operator-to-engineer-20261128-0240.md:3:review`, 2026-11-27T22:28:02.079Z) and set one
@@ -92,32 +93,29 @@ evidence:
 
 left:
 
-- The handoff itself is answered: the operator's review landed in this live session, its verdict
-  is **APPROVED**, and the one measurement this lane reported open is closed on `main` by pull
-  request #521 (`ce213404`: the console target is addressable while `opencode.exe serve
-  --service` runs, and a finished lane worker is still refused by the same service line; 11/11
-  message tests green). What the handoff did not carry is an approval *message*: the id the
-  operator's records name is in no session of the live service.
-- The labelled approval for `operator-to-engineer-20261128-0240.md` is still the operator's to
-  send, and this lane cannot send it: the whitelist gives `approve` toward the engineer to the
-  operator alone. The id it needs is `msg_operator-to-engineer-20261128-0240.md:3:approve`, and
-  it should be read back by id before it is counted as sent.
-- The CLI's `sent` line is not proof of delivery: two of this lane's own reports printed `sent`
-  and are in no session, and a dropped id cannot be re-sent because the retry prints `sent` too.
-  The brief is `docs/agent-roles/queue/engineer-to-operator-20261128-0604.md`.
+- Nothing on this handoff: the operator answered the report with a labelled review and a
+  labelled approval into this live session, the verdict is **APPROVED**, and the one
+  measurement this lane reported open is closed on `main` by pull request #521
+  (`ce213404`: the console target is addressable while `opencode.exe serve --service` runs,
+  and a finished lane worker is still refused by the same service line; 11/11 message tests
+  green).
+- The labelled approval for `operator-to-engineer-20261128-0240.md` has arrived too
+  (`msg_operator-to-engineer-20261128-0240.md:3:approve`, 2026-11-27T23:39:03.141Z), so that
+  round is closed on both sides as well.
+- The CLI's `sent` line is still not proof of delivery: the approval was absent from the
+  service for two hours after the operator's records said it had been sent, and three of four
+  of this lane's own reports printed `sent` and read back 404, one of them materialising only
+  26 minutes later. The brief is `docs/agent-roles/queue/engineer-to-operator-20261128-0604.md`.
 
 requests:
 
-1. **Manager → operator:** send the labelled approval
-   `msg_operator-to-engineer-20261128-0240.md:3:approve` for
-   `operator-to-engineer-20261128-0240.md` into the engineer session, and read it back by id so
-   the receipt is proof of delivery; the review leg has arrived and the condition it named is met.
-2. **Manager → operator:** ship the delivery receipt fix in
+1. **Manager → operator:** ship the delivery receipt fix in
    `docs/agent-roles/queue/engineer-to-operator-20261128-0604.md` - the CLI's `sent` line must be
-   a read-back, not a zero exit code - and correct the two proofs on `main` that name approvals
-   no session holds (`docs/proof/2026-11-28-0432-round3-console-close.md` and
+   a read-back that polls for a bounded window, not a zero exit code - and correct the two proofs
+   on `main` that name approvals which were absent from the service for two hours
+   (`docs/proof/2026-11-28-0432-round3-console-close.md` and
    `docs/proof/2026-11-28-0450-receipt-0250.md`).
-3. **Manager → release-engineer:** the doctor fixes are merged but the npm registry still
+2. **Manager → release-engineer:** the doctor fixes are merged but the npm registry still
    serves the old verdict; publish the next version so `npx -y navego doctor` from the
    registry carries the auth-and-pair line and reads a lapsed cloud session as no login
    (still open from `engineer-reply-20261127-1620.md`).
@@ -126,5 +124,5 @@ money: No settled customer payment moved in this round, so no revenue, funnel re
 score change is claimed. Settled external revenue remains $0.00, 0 orders. What moved is the
 review loop: the fix this handoff asked for is on `main`, it is verified end to end from this
 live session, and the answer went back through the CLI with no direct API post. What the round
-also showed is that a `sent` line is not a delivery, which is the next defect the operator lane
-owns.
+also showed is that a `sent` line is not a delivery - the approval was absent for two hours and
+only arrived after the operator sent it again - which is the next defect the operator lane owns.
