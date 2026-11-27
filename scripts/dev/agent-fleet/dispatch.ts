@@ -50,9 +50,16 @@ export const slotBusy = (slot: Slot, evidence: Evidence, now: number): boolean =
   if (evidence.processLines?.some((line) => line.includes(`slot-${slot.id}/`))) return true;
   if (!evidence.sessions) return false;
   return evidence.sessions.some((session) => session.title.startsWith(`slot-${slot.id}/`)
-    && session.outcome !== 'error'
-    && session.outcome !== 'aborted'
+    && !session.outcome
     && now - session.updatedMs <= evidence.staleMinutes * 60000);
+};
+
+// The register is the list of lanes that may be dispatched.
+// A ticket addressed to a retired lane (the folded chief-executive lane, for one) must not open a session that no role file backs.
+
+export const readActiveLanes = (file: string): Set<string> => {
+  const register = JSON.parse(fs.readFileSync(file, 'utf8')) as { roles: Array<{ id: string; status: string }> };
+  return new Set(register.roles.filter((role) => role.status === 'active').map((role) => role.id));
 };
 
 export const readRoster = (file: string): Roster =>
@@ -118,8 +125,10 @@ export const selectTicket = (
   now: number,
   markerMinutes = DEFAULT_MARKER_MINUTES,
   evidence: Evidence = { processLines: null, sessions: null, staleMinutes: 30, remoteAnswers: null },
+  activeLanes: Set<string> | null = null,
 ): TicketFile | null => {
   const ready = snapshot.tickets.filter((ticket) => {
+    if (activeLanes && !activeLanes.has(ticket.lane)) return false;
     if (ticket.blocked) return false;
     if (snapshot.replies.some((reply) => reply.answered === ticket.file)) return false;
     if (evidence.remoteAnswers?.has(ticket.file)) return false;
@@ -223,15 +232,17 @@ export const dispatch = async (options: {
   evidence?: Evidence;
   digestPrefix?: string | null;
   dryRun?: boolean;
+  activeLanes?: Set<string> | null;
 }): Promise<{ title: string; pid: number | undefined; stamp: string; plan: DispatchPlan } | null> => {
   const {
     slot, snapshot, queueDir, now, repoRoot,
     evidence = { processLines: null, sessions: null, staleMinutes: 30, remoteAnswers: null },
     digestPrefix = null,
     dryRun = false,
+    activeLanes = null,
   } = options;
   if (slotBusy(slot, evidence, now)) return null;
-  const ticket = selectTicket(snapshot, now, DEFAULT_MARKER_MINUTES, evidence);
+  const ticket = selectTicket(snapshot, now, DEFAULT_MARKER_MINUTES, evidence, activeLanes);
   if (!ticket) return null;
   // The dry run describes the command it would run, so it prints the plan even where the CLI is not installed; a real dispatch needs the binary.
   const cli = dryRun ? (opencodeCandidates()[0] ?? 'opencode') : opencodeExecutable();
@@ -312,6 +323,9 @@ const main = async (): Promise<void> => {
   const queueDir = flagValue('--queue') ?? path.join(root, 'docs/agent-roles/queue');
   const snapshot = readQueue(queueDir);
   const evidence = await readEvidence();
+  const activeLanes = readActiveLanes(flagValue('--register') ?? path.join(root, 'docs/agent-roles/registry.json'));
+  const retired = [...new Set(snapshot.tickets.filter((ticket) => !activeLanes.has(ticket.lane)).map((ticket) => ticket.lane))];
+  if (retired.length > 0) console.log(`unregistered lanes: ${retired.join(', ')}`);
   const dryRun = args.includes('--dry-run');
   const started = await dispatch({
     slot,
@@ -322,6 +336,7 @@ const main = async (): Promise<void> => {
     evidence,
     digestPrefix: credential.digestPrefix,
     dryRun,
+    activeLanes,
   });
   if (!started) {
     console.log(slotBusy(slot, evidence, Date.now()) ? 'SLOT_BUSY' : 'NO_READY_TICKET');

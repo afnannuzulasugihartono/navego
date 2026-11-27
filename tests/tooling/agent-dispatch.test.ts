@@ -122,8 +122,10 @@ test('the dry run prints the plan, prints no credential, and writes nothing', ()
         { id: 'dry-run-slot', provider: 'nvidia1', model: 'nvidia1/minimaxai/minimax-m3.1-flash', credential: `file:${keyFile}`, session: 'slot-dry-run', serves: ['lane worker 1'], status: 'ready', runsLaneWorkers: true },
       ],
     }));
+    const registerPath = path.join(dir, 'register.json');
+    fs.writeFileSync(registerPath, JSON.stringify({ roles: [{ id: 'dry-run-lane', status: 'active' }] }));
     const script = path.join(root, 'scripts/dev/agent-fleet/dispatch.ts');
-    const run = spawnSync(process.execPath, ['--experimental-strip-types', script, '--slot', 'dry-run-slot', '--dry-run', '--queue', dir, '--roster', rosterPath], { encoding: 'utf8' });
+    const run = spawnSync(process.execPath, ['--experimental-strip-types', script, '--slot', 'dry-run-slot', '--dry-run', '--queue', dir, '--roster', rosterPath, '--register', registerPath], { encoding: 'utf8' });
     assert.equal(run.status, 0, `the dry run exits zero: ${run.stderr}`);
     assert.match(run.stdout, /^slot: dry-run-slot$/m, 'the plan names the slot');
     assert.match(run.stdout, /^lane: dry-run-lane$/m, 'the plan names the lane');
@@ -190,6 +192,26 @@ test('two slots that resolve to the same key are refused, and different keys are
     const distinct = checkCredential(roster, 'nvidia-1');
     assert.equal(distinct.ok, true, 'different keys are accepted');
     assert.equal(distinct.collisionWith, null, 'no collision to name');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('a session that finished frees its key, and a ticket to a retired lane is never opened', () => {
+  const slot = { id: 'nvidia-1', provider: 'nvidia1', model: 'nvidia1/minimaxai/minimax-m3.1-flash', credential: 'file:~/.config/opencode/nvidia-api-key-1', session: 'slot-nvidia-1', serves: ['lane worker 1'], status: 'ready', runsLaneWorkers: true };
+  const done = { id: 'ses_done', title: 'slot-nvidia-1/marketer-20261126-1233', agent: 'marketer', parentId: null, outcome: 'succeeded', updatedMs: NOW };
+  assert.equal(slotBusy(slot, evidence({ sessions: [done] }), NOW), false, 'a finished session does not hold the key');
+  const working = { ...done, outcome: null };
+  assert.equal(slotBusy(slot, evidence({ sessions: [working] }), NOW), true, 'a session without an outcome still holds the key');
+
+  const dir = makeQueue();
+  try {
+    write(dir, 'operator-to-ceo-20261126-1435.md', ticketText('measurement'));
+    write(dir, 'operator-to-marketer-20261126-1045.md', ticketText('measurement'));
+    const lanes = new Set(['operator', 'marketer', 'engineer']);
+    const picked = selectTicket(readQueue(dir), NOW, 120, evidence(), lanes);
+    assert.equal(picked?.lane, 'marketer', 'the retired lane is skipped');
+    assert.equal(selectTicket(readQueue(dir), NOW, 120, evidence(), new Set(['marketer']))?.lane, 'marketer');
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }

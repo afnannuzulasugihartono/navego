@@ -12,7 +12,10 @@
       "doc": "docs/agent-roles/operator.md",
       "automations": [
         "aut_2164ffcfd001KHx72ub2lmEtrT",
-        "aut_2176da47e001Cmh2bDVBUDj5Nn"
+        "aut_2176da47e001Cmh2bDVBUDj5Nn",
+        "aut_217d4a1c0001gbzCQ0Tz6Qn4Ki",
+        "aut_217d4a1ca001t6HCp4ZkbZ09ug",
+        "aut_217d4a1d0001lnJZJiWPNbYRF2"
       ],
       "scopePaths": [
         "docs/economy.json",
@@ -43,9 +46,13 @@
       "id": "researcher",
       "team": "R&D: market, website and product research",
       "division": "Research & Development",
-      "status": "planned",
+      "status": "active",
       "doc": "docs/agent-roles/researcher.md",
-      "automations": [],
+      "automations": [
+        "aut_217d4a1c0001gbzCQ0Tz6Qn4Ki",
+        "aut_217d4a1ca001t6HCp4ZkbZ09ug",
+        "aut_217d4a1d0001lnJZJiWPNbYRF2"
+      ],
       "scopePaths": [
         "docs/research/**"
       ],
@@ -60,9 +67,13 @@
       "id": "sales-rep",
       "team": "Sales: conversations that become trials",
       "division": "Sales",
-      "status": "planned",
+      "status": "active",
       "doc": "docs/agent-roles/sales-rep.md",
-      "automations": [],
+      "automations": [
+        "aut_217d4a1c0001gbzCQ0Tz6Qn4Ki",
+        "aut_217d4a1ca001t6HCp4ZkbZ09ug",
+        "aut_217d4a1d0001lnJZJiWPNbYRF2"
+      ],
       "scopePaths": [
         "README.md",
         "docs/prospects.md"
@@ -78,9 +89,13 @@
       "id": "marketer",
       "team": "Marketing: the website sells",
       "division": "Marketing",
-      "status": "planned",
+      "status": "active",
       "doc": "docs/agent-roles/marketer.md",
-      "automations": [],
+      "automations": [
+        "aut_217d4a1c0001gbzCQ0Tz6Qn4Ki",
+        "aut_217d4a1ca001t6HCp4ZkbZ09ug",
+        "aut_217d4a1d0001lnJZJiWPNbYRF2"
+      ],
       "scopePaths": [
         "site/app/routes/artikel-ai-browser-indonesia.tsx",
         "site/app/routes/artikel.tsx",
@@ -114,9 +129,13 @@
       "id": "engineer",
       "team": "Engineering: the product, the website mechanics and the tools",
       "division": "Engineering",
-      "status": "planned",
+      "status": "active",
       "doc": "docs/agent-roles/engineer.md",
-      "automations": [],
+      "automations": [
+        "aut_217d4a1c0001gbzCQ0Tz6Qn4Ki",
+        "aut_217d4a1ca001t6HCp4ZkbZ09ug",
+        "aut_217d4a1d0001lnJZJiWPNbYRF2"
+      ],
       "scopePaths": [
         "extension/**",
         "local/**",
@@ -143,9 +162,13 @@
       "id": "release-engineer",
       "team": "Engineering: Release",
       "division": "Engineering",
-      "status": "planned",
+      "status": "active",
       "doc": "docs/agent-roles/release-engineer.md",
-      "automations": [],
+      "automations": [
+        "aut_217d4a1c0001gbzCQ0Tz6Qn4Ki",
+        "aut_217d4a1ca001t6HCp4ZkbZ09ug",
+        "aut_217d4a1d0001lnJZJiWPNbYRF2"
+      ],
       "scopePaths": [
         ".github/**",
         ".gitleaks.toml",
@@ -167,9 +190,13 @@
       "id": "finance-analyst",
       "team": "Finance: the money truth",
       "division": "Finance",
-      "status": "planned",
+      "status": "active",
       "doc": "docs/agent-roles/finance-analyst.md",
-      "automations": [],
+      "automations": [
+        "aut_217d4a1c0001gbzCQ0Tz6Qn4Ki",
+        "aut_217d4a1ca001t6HCp4ZkbZ09ug",
+        "aut_217d4a1d0001lnJZJiWPNbYRF2"
+      ],
       "scopePaths": [
         "hosted/migrations/**"
       ],
@@ -184,9 +211,13 @@
       "id": "support-agent",
       "team": "Customer Support: the inbox and the answers",
       "division": "Customer Support",
-      "status": "planned",
+      "status": "active",
       "doc": "docs/agent-roles/support-agent.md",
-      "automations": [],
+      "automations": [
+        "aut_217d4a1c0001gbzCQ0Tz6Qn4Ki",
+        "aut_217d4a1ca001t6HCp4ZkbZ09ug",
+        "aut_217d4a1d0001lnJZJiWPNbYRF2"
+      ],
       "scopePaths": [
         "docs/product/support.md",
         "docs/product/navego-adoption.md"
@@ -202,9 +233,13 @@
       "id": "onboarding-guide",
       "team": "Customer Success: the first five minutes",
       "division": "Customer Success",
-      "status": "planned",
+      "status": "active",
       "doc": "docs/agent-roles/onboarding-guide.md",
-      "automations": [],
+      "automations": [
+        "aut_217d4a1c0001gbzCQ0Tz6Qn4Ki",
+        "aut_217d4a1ca001t6HCp4ZkbZ09ug",
+        "aut_217d4a1d0001lnJZJiWPNbYRF2"
+      ],
       "scopePaths": [
         "docs/install.md",
         "docs/external-install.md",
