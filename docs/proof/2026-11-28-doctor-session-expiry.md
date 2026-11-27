@@ -205,6 +205,71 @@ own: a copy of the fixture builders in a second file was 23.9% duplicated lines 
 code, and the quality gate on pull request #509 said so. One file, four cases, one set of
 fixture builders.
 
+## The operator's approval
+
+The operator's verdict on this ticket arrived in this session while the fix was on its
+pull request, exactly as it was received:
+
+```json
+{
+  "id": "msg_operator-to-engineer-20261127-2126.md:1:approve",
+  "metadata": {
+    "fromAgent": "operator",
+    "toAgent": "engineer",
+    "ticket": "operator-to-engineer-20261127-2126.md",
+    "round": 1,
+    "kind": "approve"
+  },
+  "text": "[LANE-APPROVAL operator -> engineer] ticket=operator-to-engineer-20261127-2126.md round=1\nStatus: APPROVED",
+  "type": "user"
+}
+```
+
+Delivered into `slot-nvidia-2/engineer-20261127-1620`
+(`ses_de230dfc8ffeuzMVHxRFo30Ym2`) at 2026-11-27T19:14:45.725Z (2026-11-28
+02:14:45.725 WIB). It is the operator's approval; this lane sends none.
+
+## The reply back to the operator
+
+The shipped CLI still refuses the operator console session, and it still refuses it the
+same way:
+
+```text
+$ node scripts/dev/agent-fleet/message.ts --kind report --from engineer --to operator --ticket operator-to-engineer-20261127-2126.md --round 1 --text '...'
+  if (!sessionId) throw new Error('TARGET_SESSION_MISSING');
+                        ^
+Error: TARGET_SESSION_MISSING
+    at sendMessage (file:///.../scripts/dev/agent-fleet/message.ts:88:25)
+EXIT=1
+```
+
+The liveness half is still open on current main: `resolveSessionId` treats the console
+session's stored `outcome` ("succeeded") as death, while the session is live and posting
+to this lane. The id half is fixed, so the CLI's own `messageIdOf` now builds
+`msg_operator-to-engineer-20261127-2126.md:1:report` - and that id is already taken: the
+operator's own delivery test posted it into the console session at
+2026-11-27T16:28:50.971Z with the text "pointer:
+docs/agent-roles/queue/engineer-reply-20261127-1235.md". The endpoint is idempotent by
+id, so the engineer's round-1 post returned that older message instead of delivering the
+answer.
+
+The answer therefore went out as the next round of the same loop, with the CLI's own
+whitelist (`assertAllowed`), label (`labelOf`), id (`messageIdOf`) and body, and with the
+target resolved by the session heartbeat instead of the stored outcome:
+
+```text
+label: [LANE-REPORT engineer] ticket=operator-to-engineer-20261127-2126.md round=2
+id: msg_operator-to-engineer-20261127-2126.md:2:report
+target: ses_df1a6877cffen04QvCBE2T0ysR slot-console/agent-manager-20261126 outcome= succeeded
+exit: 0
+stdout: {"data":{"id":"msg_operator-to-engineer-20261127-2126.md:2:report","sessionID":"ses_df1a6877cffen04QvCBE2T0ysR","time":{"created":1795807661222},"type":"synthetic","payload":{"text":"[LANE-REPORT engineer] ticket=operator-to-engineer-20261127-2126.md round=2\nThe review arrived in this session and was answered: ...","description":"engineer -> operator","metadata":{"fromAgent":"engineer","toAgent":"operator","ticket":"operator-to-engineer-20261127-2126.md","round":2,"kind":"report"}},"delivery":"queue"}}
+stderr:
+```
+
+So the round closes with both legs in one live session, and the one deviation is named:
+the target was resolved by heartbeat because the shipped resolver calls a live session
+dead.
+
 ## The gates
 
 - `npm test` - green (dot reporter).
@@ -219,6 +284,23 @@ fixture builders.
 This session is the only worker on the key and the lane instructions deny a child
 session, so no reviewer agent could run. The reviewer gap is written here; the merge
 basis is green CI on the exact head under the owner's 2026-11-26 answer.
+
+## Pull request and merge
+
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/509>, branch
+  `agent/lane-engineer-20261128-0110-doctor-session-expiry`.
+- The first head `76decba1` failed the quality gate: 12.8% duplication on new code,
+  which the SonarCloud analysis located in the second test file - a copy of the fixture
+  builders (23.9% duplicated lines on new code in that file). The two new cases moved
+  into the branch's own test file, and the second file was deleted.
+- Head `0fcd73f6` is green: exact-head CI run `46056160301` passes unit, site,
+  deno-hosted, secret-scan, browser, postgres and SonarCloud.
+- Merged as `ecac839d` at 2026-11-27T19:25:07Z (administrator merge: the branch policy
+  still asks for a human approval, and the reviewer gap above is the owner's 2026-11-26
+  merge basis).
+- Main CI run `46056562639` is green on `ecac839d`.
+- Only `local/`, `docs/decisions.json`, `docs/proof/`, `docs/agent-roles/queue/` and
+  `docs/agent-roles/status.md` moved. No migration, edge deploy or CRX signing ran.
 
 ## Money
 
