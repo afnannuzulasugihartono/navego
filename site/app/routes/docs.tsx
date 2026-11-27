@@ -102,7 +102,7 @@ export default function Docs() {
               <div className="callout"><strong>Gratis untuk dipasang.</strong> Yang dibayar nanti adalah pekerjaan yang selesai.</div>
 
               <h2 id="pairing">Masuk dan pair device</h2>
-              <p>Masuk dengan magic link email, Google, atau GitHub dari <Link to="/">halaman Masuk</Link>.</p>
+              <p>Masuk dengan magic link email, Google, atau GitHub dari <Link to="/masuk">halaman Masuk</Link>.</p>
               <ol className="steps">
                 <li><span><strong>Klik.</strong> Di <Link to="/dashboard">Dashboard</Link>, buka Pairing — atau klik <strong>Pasangkan browser ini</strong> di popup.</span></li>
                 <li><span><strong>Izin.</strong> Browser meminta izin pairing sekali; tidak ada kode yang diketik.</span></li>

@@ -102,7 +102,7 @@ export default function Unduh() {
             </div>
             <div className="value-grid">
               <div className="value-card"><span className="start-num">1</span><b>Pasang extension</b><p>Windows: jalankan perintah PowerShell di atas. macOS dan Linux: ekstrak .zip, buka <code>chrome://extensions</code>, aktifkan Developer mode, lalu pilih Load unpacked.</p></div>
-              <div className="value-card"><span className="start-num">2</span><b>Masuk</b><p>Masuk dengan Google, GitHub, atau magic link email. Sesi tersimpan setelah reload.</p></div>
+              <div className="value-card"><span className="start-num">2</span><b>Masuk</b><p>Masuk dengan Google, GitHub, atau tautan email di <Link to="/masuk">halaman Masuk</Link>. Sesi tersimpan setelah reload.</p></div>
               <div className="value-card"><span className="start-num">3</span><b>Pair & buktikan</b><p>Dashboard → Pairing → Pasangkan browser ini. Device harus online; jalankan <code>tabs.list</code> dari Aksi.</p></div>
             </div>
           </div>

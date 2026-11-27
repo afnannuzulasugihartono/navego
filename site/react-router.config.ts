@@ -14,6 +14,7 @@ export default {
     '/fitur',
     '/harga',
     '/unduh',
+    '/masuk',
     '/docs',
     '/mcp',
     '/dukungan',

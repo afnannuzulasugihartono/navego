@@ -1635,6 +1635,25 @@
         "ref": "user 2026-11-27: \"buat website yang anti ai slop redesign style dan seluruh konten ... iterasi sampai terlihat dibuat oleh manusia\" - the first screen must read as made by a person",
         "also": "docs/agent-roles/queue/operator-to-engineer-20261127-1200.md (the bounded design pass: the install command, the price and the honest limits stay visible)"
       }
+    },
+    {
+      "id": "site-design-02",
+      "scope": "site/auth",
+      "file": "site/app/routes/masuk.tsx",
+      "decision": "Sign-in is its own page, /masuk, and every dead end points at it with the page to return to: the header, the plan card, the signed-out dashboard redirect. The public homepage stays an artifact and carries no account card. Removing the sign-in form from the homepage without this page left a signed-out visitor in a loop where \"Masuk\" pointed at the page already open.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-27: \"fix navego sejujur mungkin lakukan segala cara untuk mendapatkan pelanggan\""
+      }
+    },
+    {
+      "id": "site-design-03",
+      "scope": "site/design",
+      "file": "site/public/proof/navego-drive-pdf-page1.jpg",
+      "decision": "The first screen carries a real downloaded artifact, not a mockup: a JPEG of page one of the two-page PDF Navego fetched from Google Drive on 2026-11-27 (578,104 bytes). The owner asked for it to be redacted, so the name, NIM and signature are blurred; the document, its header and its clauses are unchanged. The proof link still leads to the full unredacted record of the five driven runs.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-27: \"fix navego sejujur mungkin lakukan segala cara untuk mendapatkan pelanggan\" then \"redact dokumen\""      }
     }
   ]
 }

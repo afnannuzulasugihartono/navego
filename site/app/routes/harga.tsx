@@ -267,17 +267,17 @@ export default function Harga() {
     return (
     <section className="card plan" role="listitem" key={plan.id} aria-labelledby={`usd-${slot}-${plan.id}`}>
       <p className="plan-name">{plan.name}</p>
-      <h2 id={`usd-${slot}-${plan.id}`} className="plan-price">{plan.price}<small> / {plan.id === 'plan.usd-17' ? '6 bulan' : plan.id === 'plan.usd-33' ? 'tahun' : 'bulan'}</small></h2>
+      <h2 id={`usd-${slot}-${plan.id}`} className="plan-price">{plan.price}<small> sekali bayar, {plan.id === 'plan.usd-17' ? 'berlaku 6 bulan' : plan.id === 'plan.usd-33' ? 'berlaku 1 tahun' : 'berlaku 1 bulan'}</small></h2>
       <ul>
         <li>{plan.quota}</li>
         <li>36 primitive browser</li>
-        <li>{plan.premium ? 'Semua fitur (statement, VM, remote drive) + prioritas' : 'Plan dasar'}</li>
+        <li>{plan.premium ? 'Semua tool plus statement, VM, remote drive, prioritas sesi' : 'Semua 40 tool MCP'}</li>
       </ul>
       <button className="btn btn-solid btn-sm w-full" type="button" disabled={buyPending !== null} onClick={() => buy(plan.id, planKey)}>{buyPending === planKey ? 'Menyiapkan…' : 'Beli dengan PayPal'}</button>
       {feedback ? (
         <p className={`status plan-status${feedback.tone === 'warn' ? ' warn' : ''}`}>
           {feedback.tone === 'signin'
-            ? <>{feedback.message} <Link to="/?next=/harga">Masuk dulu</Link>, lalu kembali ke halaman ini.</>
+            ? <>{feedback.message} <Link to="/masuk?next=/harga">Masuk dulu</Link>, lalu kembali ke halaman ini.</>
             : feedback.message}
         </p>
       ) : null}
@@ -321,7 +321,7 @@ export default function Harga() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <h2 id="asiaTitle" className="section-title">Asia, Arab, Afrika.</h2>
+                <h2 id="asiaTitle" className="section-title">Kawasan berdaya beli rendah — $1 sampai $9.</h2>
               </div>
               <p className="section-note">Sekali beli, langsung aktif. Tidak ada perpanjangan otomatis.</p>
             </div>
@@ -337,7 +337,7 @@ export default function Harga() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <h2 id="europeTitle" className="section-title">Eropa dan Amerika Serikat.</h2>
+                <h2 id="europeTitle" className="section-title">Kawasan berdaya beli tinggi — termasuk 6 bulan dan tahunan.</h2>
               </div>
               <p className="section-note">Sekali beli, langsung aktif. Tidak ada perpanjangan otomatis.</p>
             </div>
@@ -351,7 +351,7 @@ export default function Harga() {
         <section className="band band--flush-top" aria-label="Pembayaran">
           <div className="wrap">
             {!activePlanPresent && signedOut ? (
-              <p className="status mt-4 center">Pembayaran memakai akun Anda. <Link to="/?next=/harga">Masuk dulu</Link>, lalu kembali ke halaman ini.</p>
+              <p className="status mt-4 center">Pembayaran memakai akun Anda. <Link to="/masuk?next=/harga">Masuk dulu</Link>, lalu kembali ke halaman ini.</p>
             ) : null}
             {checkoutNote ? <p className="status mt-4 center">{checkoutNote}</p> : null}
             {!activePlanPresent && note ? <p className={`${warn ? 'status warn' : 'status'} mt-4 center`}>{note}</p> : null}

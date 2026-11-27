@@ -75,13 +75,22 @@ export default function Index() {
                 </>
               ) : null}
               <p className="note"><code>npx -y navego doctor</code> → <code>ready</code>; bridge <code>127.0.0.1:9451</code>, 1 device terhubung. Baca biaya dan jalur undo di halaman <Link to="/unduh">Unduh</Link> sebelum menjalankannya.</p>
-              <p className="note"><strong>Bukti 27 Nov 2026:</strong> 2 dari 5 kali jalan menghasilkan PDF dua halaman terverifikasi (578.104 byte); 3 dari 5 mengunduh berkas. Dua cacat ditemukan dan diperbaiki. <a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/proof/2026-11-27-engineer.md">Catatan lima kali jalan →</a></p>
             </div>
 
             <div className="card">
-              <p className="note">Bukti 27 November 2026 - lima kali jalan mengambil dokumen dari Google Drive dengan sesi yang sudah ada:</p>
+              <p className="note"><strong>27 November 2026, lima kali jalan</strong> mengambil surat dari Google Drive dengan sesi yang sudah masuk. Ini halaman pertama salah satu hasilnya, apa adanya:</p>
+              <figure className="proof-figure">
+                <img
+                  src="/proof/navego-drive-pdf-page1.jpg"
+                  width={780}
+                  height={1102}
+                  loading="lazy"
+                  alt="Halaman pertama surat keputusan rektor yang diunduh Navego: dokumen asli, bukan gambar contoh."
+                />
+                <figcaption>Hasil unduhan Navego, bukan tiruan. 578.104 byte, dua halaman.</figcaption>
+              </figure>
               <ul>
-                <li><strong>2 dari 5</strong> menghasilkan PDF dua halaman terverifikasi: 578.104 byte, <code>%PDF-1.5</code>, dua objek <code>/Type /Page</code>.</li>
+                <li><strong>2 dari 5</strong> menghasilkan PDF dua halaman terverifikasi: <code>%PDF-1.5</code>, dua objek <code>/Type /Page</code>.</li>
                 <li><strong>3 dari 5</strong> mengunduh berkas. Dua yang gagal kehabisan jatah sesi bersama - bukan karena halamannya.</li>
                 <li>Dua cacat ditemukan dan diperbaiki: ZIP diterima sebagai <code>.pdf</code>, dan status <code>settled: true</code> muncul pada grid yang belum render.</li>
               </ul>
@@ -89,7 +98,7 @@ export default function Index() {
                 <img className="proof-shot" src={popupProof} alt="Popup ekstensi Navego dengan tombol Pair this browser" />
                 <figcaption>Tangkapan layar asli: <a href={POPUP_SHOT} rel="noreferrer">popup ekstensi saat pairing</a>.</figcaption>
               </figure>
-              <p className="note"><a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/proof/2026-11-27-engineer.md">Baca catatan lima kali jalan →</a></p>
+              <p className="note"><a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/proof/2026-11-27-engineer.md">Baca catatan lima kali jalan, termasuk yang gagal →</a></p>
             </div>
 
             <div className="hero-cta">

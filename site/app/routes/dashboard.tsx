@@ -178,7 +178,7 @@ export default function Dashboard() {
       const token = await ensureSession();
       if (!token) {
         const next = wantPairIntent() ? '/dashboard?pair=1#pairing' : '/dashboard';
-        window.location.replace('/?next=' + encodeURIComponent(next));
+        window.location.replace('/masuk?next=' + encodeURIComponent(next));
         return;
       }
       try {

@@ -17,8 +17,11 @@ test('the pricing page names one-time plans and their real periods without the y
   assert.match(harga, /Harga yang bisa Anda hitung/);
   assert.match(harga, /Tidak ada perpanjangan otomatis/);
   assert.doesNotMatch(harga, /Sekali bayar\. Setahun penuh\./);
-  assert.match(harga, /Asia, Arab, Afrika/);
-  assert.match(harga, /Eropa dan Amerika Serikat/);
+  assert.match(harga, /Kawasan berdaya beli rendah/);
+  assert.match(harga, /Kawasan berdaya beli tinggi/);
+  assert.match(harga, /sekali bayar, .*berlaku 1 bulan/);
+  assert.match(harga, /berlaku 6 bulan/);
+  assert.match(harga, /berlaku 1 tahun/);
 });
 
 test('a plan click answers under the clicked plan, not at the bottom of the page', () => {

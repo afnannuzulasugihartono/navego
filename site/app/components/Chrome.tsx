@@ -98,7 +98,7 @@ export function SiteHeader({ current }: { current?: string }) {
             </>
           ) : (
             <>
-              <Link className="btn btn-ghost btn-sm" to="/">Masuk</Link>
+              <Link className="btn btn-ghost btn-sm" to={current === '/' ? '/masuk' : `/masuk?next=${current}`}>Masuk</Link>
               <Link className="btn btn-solid btn-sm" to="/unduh">Pasang gratis</Link>
             </>
           )}
