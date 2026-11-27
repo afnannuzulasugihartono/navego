@@ -145,6 +145,7 @@ export const buildPrompt = (ticket: TicketFile, stamp: string): string => [
   'Work only inside your scope and the shared communication surface (the queue, docs/agent-roles/status.md, docs/proof/).',
   'Act first: send or write the thing the ticket asks for, then record it (docs/proof/<date>-' + ticket.lane + '.md and a reply artifact next to the ticket named ' + ticket.lane + '-reply-' + stamp + '.md whose text carries the line answered: ' + ticket.file + '), then refresh your line in docs/agent-roles/status.md.',
   'The reply also carries a requests section: what this lane wants another lane to do next, one line each. The manager turns every request into a ticket for the lane that owns it.',
+  'Your job is the ticket and the Goal in your role file. The scope paths are permissions the harness enforces, not a question to reason about: write scratch files with the shell in C:/Users/ASUS/AppData/Local/Temp/opencode/, and keep repository changes inside your scope. Do not spend steps deciding where you may write.',
   'When the owner rule in docs/autonomy.md and a ticket text disagree, the owner rule wins; if the text you are asked to send misses what that rule requires, fix the text first and send the compliant one.',
   'Ship it the way docs/autonomy.md says: npm test and npm run check, a pull request, and merge by gate.',
   'Never claim money that did not move.',
