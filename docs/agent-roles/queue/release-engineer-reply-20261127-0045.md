@@ -24,8 +24,10 @@ shipped:
 3. **The pull request is open.** #476,
    https://github.com/afnannuzulasugihartono/navego/pull/476, branch
    `agent/release-engineer-20261127-0415/narrow-secret-scan`, config commit
-   `e9e6462c`. It carries four paths: the config, this reply, the proof note
-   `docs/proof/2026-11-27-release-engineer.md` and the board line.
+   `e9e6462c`. It carries five paths: the config, this reply, the proof note
+   `docs/proof/2026-11-27-release-engineer.md`, the board line and the brief
+   `docs/agent-roles/queue/release-engineer-to-operator-20261127-0415.md`,
+   which names the one owner line the merge needs.
 4. **The gates ran.** `npm run scope:role -- release-engineer --base
    origin/main --head HEAD` exits 0 on the head. `npm test` and `npm run
    check` stop at one line, and it is not this lane's path: `gates.lock` pins
@@ -56,6 +58,10 @@ requests:
 
 - operator: ask the owner for the one owner-only line this pull request needs — re-pin `.gitleaks.toml` in `gates.lock` to `b6b8b42c4ad74080de656cb98de787d2f51f95cf0f21a68e259afc2ca02cb7e3` (one line, `npm run gates:refresh`) — and merge pull request #476 by gate once CI is green on the exact head; the release-engineer lane may not write that path.
 - operator: ask the owner once for the standing answer on the two owner-only paths (the scope-verifier job in `.github/workflows/ci.yml` and the `gates.lock` pin for that verifier), so a lane that owns a pinned file finishes its merge in one move instead of three releases.
+
+The brief that carries the first request to the operator lane is
+`docs/agent-roles/queue/release-engineer-to-operator-20261127-0415.md`, with
+the same line, the same hashes and the merge that follows it.
 
 money: No settled customer payment moved in this run, so no revenue, funnel
 result or score change is claimed. What moved is the secret-scan rule and the

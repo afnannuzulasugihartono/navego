@@ -103,9 +103,9 @@ production surface.
 ## The merge
 
 Pull request #476 is open and carries the change with this proof, the lane
-reply and the board line — four paths, every one of them the release-engineer
-work scope or the shared communication surface. No owner-only path moved in
-this pull request.
+reply, the board line and the brief to the operator lane — five paths, every
+one of them the release-engineer work scope or the shared communication
+surface. No owner-only path moved in this pull request.
 
 The merge is not done, and this lane does not claim it. `npm test` and
 `npm run check` are red on the owner-only acceptance pin above, the
