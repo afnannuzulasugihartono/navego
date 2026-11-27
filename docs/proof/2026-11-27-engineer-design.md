@@ -134,3 +134,12 @@ No settled customer payment moved in this pass, so no revenue, funnel step or
 score change is claimed. The page now carries the measured result and the real
 files a sales conversation can point to instead of a slogan; that is a possible
 input to the next money step, not the step itself.
+
+## Second pass: the cookie bar that covered the first screen
+
+The hero of this pass was an artifact. The next live read (2026-11-27, PR #489)
+found the fixed cookie-consent bar covering the bottom 141 px of a 1440 px first
+screen: the price amounts on `/harga` and the third line of the honest proof on `/`
+sat behind it, and on a 390 px phone it covered 192 px. The bar is now one compact
+row (70 px at 1440, 160 px at 390) and the facts it states do not change. The full
+before/after drive is in `docs/proof/2026-11-27-engineer.md`.
