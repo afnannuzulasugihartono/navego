@@ -5,6 +5,15 @@
 // decisions.json -> docs-agent-roles-16, docs-agent-org-spec-01 A lane message is a notification and a pointer, never the source of truth.
 // The visible label keeps a report from being mistaken for the owner speaking.
 
+import fs from 'node:fs';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { readEvidence } from './watch.ts';
+import { opencodeCandidates } from './dispatch.ts';
+
+const rosterPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../../docs/agent-roles/keys.json');
+
 export type MessageKind = 'report' | 'review' | 'approve';
 export type LaneId = 'operator' | 'engineer' | 'sales-rep' | 'onboarding-guide';
 
@@ -87,4 +96,40 @@ export async function sendMessage(input: MessageInput, deps: SendDeps): Promise<
   await deps.run([deps.cli, 'api', 'post', `/api/session/${sessionId}${endpoint}`, '--data', JSON.stringify(body)]);
   delivered.add(id);
   return { id, sessionId, alreadyDelivered: false };
+}
+
+export function parseArgs(argv: string[]): MessageInput {
+  const flag = (name: string): string | undefined => {
+    const at = argv.indexOf(name);
+    return at >= 0 ? argv[at + 1] : undefined;
+  };
+  const kind = flag('--kind') as MessageKind | undefined;
+  const from = flag('--from') as LaneId | undefined;
+  const to = flag('--to') as LaneId | undefined;
+  const ticket = flag('--ticket');
+  const round = flag('--round');
+  const text = flag('--text');
+  if (!kind || !from || !to || !ticket || !round || !text) throw new Error('USAGE');
+  return { kind, from, to, ticket, round: Number(round), text };
+}
+
+const invokedDirectly = process.argv[1] ? import.meta.url === pathToFileURL(process.argv[1]).href : false;
+
+if (invokedDirectly) {
+  const input = parseArgs(process.argv.slice(2));
+  const roster = JSON.parse(fs.readFileSync(rosterPath, 'utf8')) as MessageRoster;
+  assertAllowed(input, roster);
+  const evidence = await readEvidence();
+  const cli = opencodeCandidates().find((candidate) => fs.existsSync(candidate)) ?? 'opencode';
+  const result = await sendMessage(input, {
+    cli,
+    roster,
+    sessions: evidence.sessions ?? [],
+    run: async (args) => {
+      const child = spawnSync(args[0] ?? cli, args.slice(1), { encoding: 'utf8' });
+      if (child.status !== 0) throw new Error(child.stderr || child.stdout || 'OPENCODE_API_FAILED');
+      return child.stdout ?? '';
+    },
+  });
+  console.log(`${result.id} ${result.alreadyDelivered ? 'already-delivered' : 'sent'} ${result.sessionId}`);
 }

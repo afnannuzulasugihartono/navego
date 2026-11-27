@@ -313,6 +313,7 @@ test('the lane prompt asks for the reply that closes the ticket and forbids suba
   assert.ok(prompt.includes('engineer-reply-20261126-1140.md'), 'the prompt names the reply file');
   assert.ok(prompt.includes('Do not dispatch subagents'), 'the prompt forbids subagents');
   assert.ok(prompt.includes('a runtime file and its test changed'), 'the prompt refuses document-only product work');
+  assert.ok(prompt.includes('A review message is sent through scripts/dev/agent-fleet/message.ts with --kind'), 'the prompt names the review channel');
 });
 
 test('the marker names the ticket, the slot and the session title', () => {
