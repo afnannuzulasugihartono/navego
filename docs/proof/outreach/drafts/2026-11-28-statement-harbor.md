@@ -15,6 +15,8 @@ Real output from a fresh machine, so the claim is not inflated: npx -y navego do
 Five-run record: https://github.com/afnannuzulasugihartono/navego/blob/main/docs/proof/2026-11-27-engineer.md
 Price: https://navego.pages.dev/harga — $1 for one month, one payment, no renewal.
 
+Which authenticated document workflow in Voya would you want to test first against this checked-file handoff?
+
 If Navego does not fit PaperPull's architecture, no reply needed and I will not follow up again.
 
 Disclosure: I maintain Navego.
