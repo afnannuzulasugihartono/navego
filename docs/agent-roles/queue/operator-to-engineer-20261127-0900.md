@@ -11,11 +11,27 @@ screenshot count.
 
 Live read on 2026-11-27 at 1520 px (homepage, real browser, no guesswork):
 
+**The owner's judgment: this reads as AI slop, not as a tidy site.** The first
+screen is a swappable template - a slogan ("Situs tanpa API. Perintah jadi
+berkas."), a generic feature list, two rounded outline buttons, a large empty
+field, a centered account card and a four-column footer. Another product's name
+could replace "Navego" and the page would still read correctly. That is the
+problem to fix, not a missing badge.
+
 1. The first screen states the promise ("Situs tanpa API. Perintah jadi berkas.") but shows **no product visual and no proof** - a stranger sees a claim, not an artifact.
 2. The install command itself is hidden behind a button ("Semua cara memasang"); the single strongest proof - one command that produces a file - is not visible on the first screen.
 3. There is **no verifiable signal of use** near the hero: no real GitHub/npm/Glama status, no measured result. The footer has text links, but trust is built above the fold.
 4. For a signed-in viewer the centre of the page is an account card ("Masuk sebagai <email>" + "Buka dashboard"), so the product proof is replaced by account chrome.
 5. The page ends almost immediately after that card and the footer: there is no section a stranger can scroll into that shows how it works or that it was actually driven.
+
+Replace the template, do not decorate it. The first screen should be the one
+thing no other agent product can say the same way: the exact command beside the
+real file it produced (a screenshot of the extension and the downloaded file),
+with the honest run result from docs/proof/2026-11-27-engineer.md - 2 of 5 runs
+produced a verified two-page PDF, and the two failure modes are named. Move the
+account card out of the public hero. Replace triad slogans ("private, local,
+signed") with verifiable facts (MIT, 40 tools, npm version, public repo). Keep
+the honest limitations: that is the opposite of slop.
 
 Use the **real** artifacts already in the repo, never an invented testimonial: the five driven runs and the two fixed bugs in docs/proof/2026-11-27-engineer.md (2 of 5 produced a verified 2-page PDF, 3 of 5 downloaded a file), the public repo/npm/MCP Registry/Glama links, and a real screenshot of the extension and its resulting file. State the failure rate honestly - that is more credible than a claim of perfection.
 
