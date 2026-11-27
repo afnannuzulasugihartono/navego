@@ -9,7 +9,7 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "The only score move is a settled stranger payment. Sales has one bounded answer queued for 2026-11-28 00:00 WIB with the paste-ready install/doctor/five-run proof (ticket operator-to-sales-rep-20261127-0910.md). Engineering has the llms.txt numbers and the missing comparison section (ticket operator-to-engineer-20261127-0910.md). Keep watching the Agno and Statement Harbor threads; record any reply the day it arrives.",
+  "next_action": "The only score move is a settled stranger payment. Sales has one bounded answer queued for 2026-11-28 00:00 WIB, now with a doctor claim that matches a fresh machine (operator-to-sales-rep-20261127-0924.md). Engineer owns the site copy correction and the llms.txt/comparison gaps. Keep watching the Agno and Statement Harbor threads.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
@@ -51,5 +51,11 @@
     "found": "A signed-out visitor on /harga clicked Beli dengan PayPal and never reached PayPal: ensureSession failed, and the only sign-in link pointed back to / after iteration 2 removed the sign-in form from the homepage.",
     "fixed": "/masuk now owns Google, GitHub and magic-link sign-in with ?next= return; header, plan card, dashboard redirect and docs point at it. The price cards now state the paid period and real quota; the proof card carries the redacted real artifact.",
     "verified": "main 08e86eb7, npm test exit 0, npm run check exit 0, deploy-site run 45970433290 success, live /masuk and /harga DOM read, settled revenue unchanged at $0.00."
+  },
+  "buyer_evidence_correction": {
+    "found": "The first screen promises \"doctor -> ready, 1 device connected\", but npx -y navego doctor on a fresh machine prints \"verdict degraded\", \"nothing linked\" and a meter 403. A buyer who copies the command sees a different result from the page.",
+    "recorded": "docs/proof/2026-11-27-0924-clean-machine-doctor.md (exact command, output, exit code 1, environment)",
+    "routed": "operator-to-sales-rep-20261127-0924.md replaces the stale line in the paste-ready proof; operator-to-engineer-20261127-0924.md makes the site claim conditional and asks for a verdict decision.",
+    "revenue_effect": "none — $0.00 settled, 0 orders; no owner payment, no manufactured balance"
   }
 }

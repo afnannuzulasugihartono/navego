@@ -19,6 +19,6 @@ Record (including the redacted artifact): https://github.com/afnannuzulasugihart
 Price: https://navego.pages.dev/harga — $1 one payment, valid one month, no renewal.
 ```
 
-Say plainly that the sender maintains Navego. Ask one question about the buyer's own authenticated document workflow. Make it easy to say no. Record the exact message and URL in `docs/proof/outreach/2026-11-28.md` the day it is sent.
+Say plainly that the sender maintains Navego. Ask one question about the buyer's own authenticated document workflow. Make it easy to say no. Record the exact message and URL in the dated proof file under `docs/proof/outreach/` (create it the day it is sent).
 
 Do not claim revenue, customers, a trial, or a comparison result that is not in the linked record.
