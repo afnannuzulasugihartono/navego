@@ -22,10 +22,11 @@ function homeWithDevice(): string {
   return home;
 }
 
+// The login writes the expiry with the token, and the runtime treats a file without one as no session at all.
+
 function homeWithLogin(): string {
   const home = fs.mkdtempSync(path.join(os.tmpdir(), 'navego-doctor-login-'));
   fs.mkdirSync(home, { recursive: true });
-  // The login writes the expiry with the token, and the runtime treats a file without one as no session at all.
   fs.writeFileSync(path.join(home, 'token.json'), JSON.stringify({ access_token: 'signed-in', expires_at: Date.now() + 3600_000 }));
   return home;
 }
