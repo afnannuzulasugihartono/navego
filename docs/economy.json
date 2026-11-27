@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-27",
+  "updated_at": "2026-11-28",
   "mission": "Navego pays for itself and for the agent that keeps it alive: real customers, real charges, every cost named with a payer.",
   "revenue": {
     "settled_orders": 0,
@@ -9,7 +9,7 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "Statement Harbor send at 2026-11-28 00:01 WIB from the single active automation, then record its proof. Steel form ticket is stacked for 2026-11-29. Settled revenue remains $0.00; only a stranger payment moves the score.",
+  "next_action": "Only a settled stranger payment moves the score. Statement Harbor send result from 2026-11-28 00:01 must be recorded. Guest checkout ticket 2304 stays queued. Do not add metrics beyond the five-field contract.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
@@ -111,5 +111,33 @@
     "listing_check": "awesome-mcp-servers PR 20598 still Open with has-emoji, valid-name and has-glama; nothing posted today.",
     "stacked": "operator-to-sales-rep-20261127-2315.md is class measurement with not-before 2026-11-29T00:00+07:00, so it cannot take tomorrow's Statement Harbor slot.",
     "no_send": "No outreach was sent today by this research; the 2026-11-27 allowance was Agno."
+  },
+  "active_metrics": {
+    "policy": "Five fields only, derived from existing events; no manual entry, no targets until seven days of baseline. Contract: agents/shared/metrics.md.",
+    "settled_usd": {
+      "source": "revenue.settled_usd",
+      "window": "24h and 7d",
+      "action": "7 days flat: stop architecture work, acquisition only"
+    },
+    "monthly_cost_usd": {
+      "source": "costs (payer-assigned recurring items with due dates)",
+      "window": "rolling month",
+      "action": "negative gap: cut cost or change price"
+    },
+    "buy_to_settlement": {
+      "source": "derive: settled distinct order ids / browsers with buy.click",
+      "window": "24h",
+      "action": "zero with external buyer: fix checkout wall"
+    },
+    "public_actions_today": {
+      "source": "dated outreach proof plus automation.list",
+      "window": "calendar day Asia/Jakarta",
+      "action": ">1: pause lane and delete duplicate automations"
+    },
+    "fabricated_revenue_count": {
+      "source": "revenue verification: exclude owner, sandbox, wallet, opened invoices",
+      "window": "every run",
+      "action": ">0: retract claim and write incident"
+    }
   }
 }
