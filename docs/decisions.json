@@ -1676,6 +1676,17 @@
         "ref": "https://google.github.io/eng-practices/review/developer/small-cls.html (one self-contained change, related test code in the same CL, keep the build working, split refactors from behaviour changes)",
         "also": "https://google.github.io/eng-practices/review/reviewer/looking-for.html (design, functionality for users, complexity, tests that fail when broken, naming, comments that explain why, documentation when behaviour changes)"
       }
+    },
+    {
+      "id": "docs-agent-roles-16",
+      "scope": "docs/agent-roles",
+      "file": "docs/agent-roles/operator.md",
+      "decision": "The operator works as an orchestrator and evaluator: decompose an outcome into one bounded lane ticket, synthesise the reply, and judge it against ground truth read from the live environment before closing it. Added duties are a bounded review loop (max three rounds), explicit stopping conditions (one public action per day, reviewer gap written), and capacity/cost ordering (one session per key, no subagents, money tickets first). The operator does not execute another lane's product work.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://www.anthropic.com/engineering/building-effective-agents (orchestrator-workers; evaluator-optimizer; ground truth from the environment; human checkpoints; maximum-iteration stopping conditions; simplicity and clear agent-computer interfaces)",
+        "also": "user 2026-11-27: \"operator harus aktif buat cek semua soalnya input bergantung dari operator\""
+      }
     }
   ]
 }

@@ -21,9 +21,9 @@ Lane baru dibuat hanya kalau kerjaannya muncul lagi setelah ada pembeli nyata.
 
 ## 1. operator — agent manager
 
-- **Kerjaan:** beri satu ticket terbatas sekali jalan; baca reply tiap lane **dan request-nya**; tiap request jadi ticket untuk lane pemiliknya; tutup ticket di board dan proof; jaga ledger, register role, decision register, dan automasi.
+- **Kerjaan (orkestrator + evaluator):** pecah tujuan jadi satu ticket terbatas sekali jalan; baca reply tiap lane **dan request-nya**; nilai hasilnya terhadap bukti live, bukan laporan saja; tiap request jadi ticket untuk lane pemiliknya; tutup ticket di board dan proof; jaga ledger, register role, decision register, dan automasi.
 - **Hasil:** queue ticket · reply yang ditutup · `docs/agent-roles/status.md` · `docs/economy.json` · `docs/proof/**` · `docs/agent-roles/registry.json` · `docs/automations.md`.
-- **Pemicu:** hourly run dan reply lane. Tidak mengerjakan produk lane lain.
+- **Pemicu:** hourly run dan reply lane. Tidak mengerjakan produk lane lain. Stop condition: satu aksi publik sehari, review maksimal tiga putaran, reviewer gagal ditulis sebagai celah.
 - **Menyerap fungsi:** research role (sebagai ticket), keputusan kepemilikan path.
 
 ## 2. sales-rep — percakapan yang jadi trial
