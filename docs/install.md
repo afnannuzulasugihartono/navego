@@ -1,9 +1,68 @@
-# @last-edited: 2026-11-15 UTC+7.
+# @last-edited: 2026-11-27 UTC+7.
 # @title: install - one command turns an empty Windows machine into a browser that has Navego.
-# @state: unmeasured as of 2026-11-15 on this machine: the mechanism changed to the forcelist policy on that date and no throwaway profile has been driven since. The 2026-11-12 measurements applied to the classic-key route, which is retired with this change; they are preserved in git history, not carried forward as claims.
-# @dependencies: `docs/external-install.md`, `docs/store/extension-forceinstall.reg`, `docs/store/extension-forceinstall-remove.reg`, `local/install.ts`, `local/postinstall.ts`, `local/registry.ts`, `local/bin/navego.ts`.
+# @state: the Windows command below was checked against the live landing page on 2026-11-27; `npx -y navego doctor` and the first-win download were driven in the everyday Chrome through the extension. A fresh Windows profile has not yet driven the policy install, so the browser-managed behaviour remains vendor-documented rather than measured.
+# @dependencies: `docs/external-install.md`, `docs/agent-call.md`, `docs/proof/2026-11-27-onboarding-guide.md`, `docs/store/extension-forceinstall.reg`, `docs/store/extension-forceinstall-remove.reg`, `local/install.ts`, `local/postinstall.ts`, `local/registry.ts`, `local/bin/navego.ts`.
 
-# WHAT THE COMMAND DOES
+# THE FIRST FIVE MINUTES
+
+## 1. Install the extension on Windows
+
+This is the command shown on the [live landing page](https://navego.pages.dev/), unchanged:
+
+```powershell
+irm https://navego.pages.dev/install.ps1 | iex
+```
+
+The [script source is public](https://github.com/afnannuzulasugihartono/navego/blob/main/site/public/install.ps1), so it can be read before it runs. It writes one per-user browser policy value for each Chromium browser it finds; restart the browser afterwards, and Navego appears enabled in the extensions page.
+
+**What it costs:** the browser reports itself as managed by your own user policy, and the extension cannot be removed while that policy value stands. **How to undo it:** delete the policy values the command prints under `HKCU`, or, if the npm package is installed, run `navego uninstall`. Removing the policy stops the forced install; the installed extension copy still has to be removed from the browser's extensions page.
+
+## 2. Check that it works here
+
+Node.js 22 or newer is required. No global npm install is needed for this check:
+
+```bash
+npx -y navego doctor
+```
+
+A working machine answers with a verdict like this (measured on 2026-11-27; the device count can differ):
+
+```text
+bridge        listening on 127.0.0.1:9451; 1 device(s) linked
+verdict       ready
+```
+
+`ready` means the extension is connected and the meter accepted the session. If the verdict is not `ready`, the doctor names the one fix that applies; do that one thing and run the command again.
+
+## 3. Get the first real file
+
+Point the MCP client at the local server with `npx -y navego local`; the exact client configuration is in [`docs/agent-call.md`](./agent-call.md). Then paste this one line into the agent:
+
+```text
+Open https://navego.pages.dev/docs and download the "Laporan keuangan September 2026" link as laporan-keuangan-2026-09.xlsx into Downloads/navego.
+```
+
+The result lands in the `Downloads/navego` folder in the person's home directory, for example `C:\Users\<you>\Downloads\navego\laporan-keuangan-2026-09.xlsx`. The download answer is the proof, not the click:
+
+```text
+downloaded: true
+file: laporan-keuangan-2026-09.xlsx
+path: C:\Users\<you>\Downloads\navego\laporan-keuangan-2026-09.xlsx
+bytes: 21066
+```
+
+The exact tool calls behind that one line are `browser_open_url` for `https://navego.pages.dev/docs`, `browser_scroll` by 1500 pixels, then `browser_download_file` for the link named `Laporan keuangan September 2026`. The drive happened in the everyday Chrome through the extension on 2026-11-27; the downloaded workbook's SHA-256 was `a4f12765b77329eb5ec37dae3ad4323ac1d1d6659cd6261bb689c2736c931922`, equal to the workbook the live site serves. The commands, output, hash, and file location are recorded in [`docs/proof/2026-11-27-onboarding-guide.md`](./proof/2026-11-27-onboarding-guide.md).
+
+## Reply-ready lines
+
+These are the two lines a buyer can act on without reading the repository:
+
+```text
+irm https://navego.pages.dev/install.ps1 | iex
+Open https://navego.pages.dev/docs and download the "Laporan keuangan September 2026" link as laporan-keuangan-2026-09.xlsx into Downloads/navego.
+```
+
+# THE INSTALLER IN DETAIL
 
 `navego install` (and `npm i -g navego`, via the postinstall hook):
 

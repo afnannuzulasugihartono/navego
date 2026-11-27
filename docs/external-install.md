@@ -1,7 +1,7 @@
-# @last-edited: 2026-11-15 UTC+7.
+# @last-edited: 2026-11-27 UTC+7.
 # @title: external install - the extension installs and stays, without the Chrome Web Store, on Windows, macOS and Linux.
-# @state: paths and flags are written to the vendor documentation as of 2026-11-15; the same day the route was chosen (owner decision, single route), and nothing here has been driven end to end on any machine yet.
-# @dependencies: `docs/store/extension-forceinstall.reg`, `docs/store/extension-forceinstall-remove.reg`, `docs/store/navego-managed.json`, `docs/install.md`.
+# @state: the Windows command below was checked against the live landing page on 2026-11-27, and the first-win download was driven in the everyday Chrome through the extension. The macOS and Linux policy writes, and a fresh-profile install on every platform, have not been driven end to end on a machine.
+# @dependencies: `docs/store/extension-forceinstall.reg`, `docs/store/extension-forceinstall-remove.reg`, `docs/store/navego-managed.json`, `docs/install.md`, `docs/agent-call.md`, `docs/proof/2026-11-27-onboarding-guide.md`.
 
 # WHAT THIS IS
 
@@ -25,7 +25,17 @@ If it does not answer `200` with an `X-Opera-Version` header, nothing on this pa
 
 # WINDOWS
 
-**Force install, no admin, per user** - double-click `docs/store/extension-forceinstall.reg`, or:
+The fastest Windows route is the command shown on the [live landing page](https://navego.pages.dev/), unchanged:
+
+```powershell
+irm https://navego.pages.dev/install.ps1 | iex
+```
+
+The [script source is public](https://github.com/afnannuzulasugihartono/navego/blob/main/site/public/install.ps1). It writes one per-user policy value for each Chromium browser it finds; restart the browser afterwards.
+
+**What it costs:** the browser reports itself as managed by your own user policy, and the extension cannot be removed while that policy value stands. **How to undo it:** delete the policy values the command prints under `HKCU`, or, if the npm package is installed, run `navego uninstall`. Removing the policy stops the forced install; the installed extension copy still has to be removed from the browser's extensions page.
+
+The same policy can be written from the repository file instead. **Force install, no admin, per user** - double-click `docs/store/extension-forceinstall.reg`, or:
 
 ```
 reg import extension-forceinstall.reg
@@ -84,11 +94,30 @@ The file carries `ExtensionInstallForcelist` with the same `id;update-url` entry
 
 Removal: `sudo rm /etc/opt/chrome/policies/managed/navego.json` (or the Edge equivalent), restart, then remove the extension at `chrome://extensions`.
 
+# THE FIRST WIN AFTER INSTALL
+
+Connect an MCP client to the local server with `npx -y navego local` (the exact client configuration is in [`docs/agent-call.md`](./agent-call.md)), then paste this one line into the agent:
+
+```text
+Open https://navego.pages.dev/docs and download the "Laporan keuangan September 2026" link as laporan-keuangan-2026-09.xlsx into Downloads/navego.
+```
+
+The result lands in the `Downloads/navego` folder in the person's home directory, for example `C:\Users\<you>\Downloads\navego\laporan-keuangan-2026-09.xlsx`. The download answer is the proof, not the click:
+
+```text
+downloaded: true
+file: laporan-keuangan-2026-09.xlsx
+path: C:\Users\<you>\Downloads\navego\laporan-keuangan-2026-09.xlsx
+bytes: 21066
+```
+
+That exact path was driven in the everyday Chrome through the extension on 2026-11-27, and the workbook's SHA-256 was `a4f12765b77329eb5ec37dae3ad4323ac1d1d6659cd6261bb689c2736c931922`, equal to the workbook the live site serves. The record is [`docs/proof/2026-11-27-onboarding-guide.md`](./proof/2026-11-27-onboarding-guide.md).
+
 # WHAT IS TRUE, AND WHAT IS NOT
 
 - One route exists here, and it is the strict one: force install, enforced reinstall, no disable button while the policy stands. The gentle route does not exist in this repository anymore.
 - Route choice was the owner's decision on 2026-11-15; the reason is one story to document, one thing to test, one command that cannot half-work.
-- Nothing on this page has been driven end to end. The mechanism is documented by the vendors (Chrome "Use alternative installation methods", Microsoft Learn "Alternate distribution options"); this file repeats their instructions, not measurements.
+- The policy-install path on macOS and Linux, and a fresh-profile install on every platform, has not been driven end to end. The first-win download above was driven in the everyday Chrome through the extension. The policy mechanism itself is documented by the vendors (Chrome "Use alternative installation methods", Microsoft Learn "Alternate distribution options"); this file repeats their instructions, not measurements.
 - Neither route works on a machine whose administrator policy forbids external installs - the school profile case. A personal profile, or not at all.
 - Updates are re-checked at browser start, not live. A published CRX reaches a machine on its next restart cycle.
 - Removing the policy stops the protection, not the extension. The installed copy stays until you remove it in the browser.
