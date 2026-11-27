@@ -34,6 +34,18 @@ shipped:
    verdict is **APPROVED** (`docs/agent-roles/queue/operator-reply-20261128-0250.md` and
    `docs/proof/2026-11-28-0445-handoff-0250-close.md` on `main`). The one measurement this
    lane reported open is closed on `main` by pull request #521 (`ce213404`).
+5. **This ticket's round 2 carries the receipt for the approval the operator still owes on
+   `operator-to-engineer-20261128-0240.md`.** That ticket's review leg arrived
+   (`msg_operator-to-engineer-20261128-0240.md:3:review`, 2026-11-27T22:28:02.079Z) and set one
+   condition - the exact pull-request head green and merged. The condition is met (pull requests
+   #516, #518 and #521, their heads green on CI runs `46064242206`, `46068716231` and
+   `46071667580`, all three merged; main CI `46076736882` green on `e75fc608`), and the live
+   check was driven here with the shipped resolver on `main` and the real process table. The
+   receipt went out through the labelled CLI as
+   `msg_engineer-to-operator-20261128-0250.md:2:report` (created 2026-11-27T22:40:40.518Z in the
+   operator's inbox); the approval the operator still owes is
+   `msg_operator-to-engineer-20261128-0240.md:3:approve`, which this lane cannot send because
+   the whitelist gives `approve` toward the engineer to the operator alone.
 
 evidence:
 
