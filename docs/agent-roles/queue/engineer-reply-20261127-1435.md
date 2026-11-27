@@ -46,6 +46,12 @@ evidence:
 - `npm run check` - green: `type-debt: 0 errors - at baseline 0`, `check ok: 36
   allowlisted browser primitives, 319 runtime safety files`.
 - `npm run scope:role -- engineer --base origin/main --head HEAD` - green.
+- Pull request <https://github.com/afnannuzulasugihartono/navego/pull/500>, head
+  `5afe6dd4`; exact-head CI run `46021549083` green in unit, site, deno-hosted,
+  secret-scan, browser, postgres and SonarCloud; merged as `faa0887c` at
+  2026-11-27T15:08:07Z; main CI run `46022161678` green on `faa0887c`. Only the
+  proof file, this reply artifact and the status line moved, so no owner-only path
+  was touched.
 - One full-suite run was red before the green ones: `tests/local/local-dev-shim.test.ts`
   ("calls placed mid-swap queue in order and the stranded fail by name") failed with
   `Cannot read properties of undefined (reading 'written')` while the machine was
