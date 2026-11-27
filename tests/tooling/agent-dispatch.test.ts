@@ -53,6 +53,61 @@ test('the dispatcher takes the money ticket before the measurement one, and the 
   }
 });
 
+test('a product ticket is dispatched before an older measurement ticket', () => {
+  const dir = makeQueue();
+  try {
+    write(dir, 'operator-to-engineer-20261127-0924.md', ticketText('measurement'));
+    write(dir, 'operator-to-engineer-20261127-1105.md', ticketText('product'));
+    assert.equal(selectTicket(readQueue(dir), NOW)?.file, 'operator-to-engineer-20261127-1105.md', 'product work outranks older measurement work');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('a superseded ticket is not dispatched again', () => {
+  const dir = makeQueue();
+  try {
+    write(dir, 'operator-to-engineer-20261127-0924.md', `superseded-by: operator-to-engineer-20261127-1105.md\n\n# older copy ticket\n`);
+    write(dir, 'operator-to-engineer-20261127-1105.md', ticketText('measurement'));
+    const snapshot = readQueue(dir);
+    assert.equal(selectTicket(snapshot, NOW)?.file, 'operator-to-engineer-20261127-1105.md', 'the superseding product ticket wins');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('a leftover launcher process does not hold a lane whose session already finished', () => {
+  const dir = makeQueue();
+  try {
+    write(dir, 'operator-to-engineer-20261127-1105.md', ticketText('measurement'));
+    const snapshot = readQueue(dir);
+    const zombie = evidence({
+      processLines: ['opencode.exe run --agent engineer --worktree lane-engineer-20261127-0925'],
+      sessions: [{ id: 'ses_finished', title: 'slot-nvidia-1/engineer-20261127-0925', agent: 'engineer', parentId: null, outcome: 'succeeded', updatedMs: NOW - 60000 }],
+    });
+    assert.equal(selectTicket(snapshot, NOW, 120, zombie)?.file, 'operator-to-engineer-20261127-1105.md', 'the finished session frees the lane');
+    const live = evidence({ processLines: ['opencode.exe run --agent engineer --worktree lane-engineer-20261127-1105'] });
+    assert.equal(selectTicket(snapshot, NOW, 120, live), null, 'a process without a finished session still holds the lane');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('a ticket with a future not-before does not take a slot until its time arrives', () => {
+  const dir = makeQueue();
+  try {
+    write(dir, 'operator-to-sales-rep-20261127-0910.md', `not-before: 2026-11-28T00:00:00+07:00\n\n# wait for the send window\n`);
+    write(dir, 'operator-to-engineer-20261127-1105.md', ticketText('measurement'));
+    const snapshot = readQueue(dir);
+    const sales = snapshot.tickets.find((x) => x.file.includes('sales-rep'));
+    assert.equal(sales?.notBefore, Date.parse('2026-11-28T00:00:00+07:00'), 'the date is parsed from the ticket');
+    assert.equal(selectTicket(snapshot, Date.parse('2026-11-27T18:00:00+07:00'))?.lane, 'engineer', 'the blocked older ticket cannot starve the product lane');
+    assert.equal(selectTicket(snapshot, Date.parse('2026-11-28T01:00:00+07:00'))?.lane, 'sales-rep', 'the ticket becomes eligible after its time');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
 test('the dispatcher skips a ticket that was answered and a lane that is busy', () => {
   const dir = makeQueue();
   try {

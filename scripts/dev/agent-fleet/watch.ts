@@ -25,6 +25,8 @@ export interface TicketFile {
   stamp: string;
   class: string;
   blocked: boolean;
+  notBefore?: number | null;
+  supersededBy?: string | null;
 }
 
 export interface MarkerFile {
@@ -215,6 +217,9 @@ export const readQueue = (queueDir: string): QueueSnapshot => {
       const ticket = TICKET.exec(entry.name);
       if (ticket) {
         const classLine = text.match(/^class:\s*(\w+)/m);
+        const notBeforeLine = text.match(/^not-before:\s*(\S+)/m);
+        const parsedNotBefore = notBeforeLine ? Date.parse(notBeforeLine[1] ?? '') : NaN;
+        const supersededLine = text.match(/^superseded-by:\s*(\S+)/m);
         tickets.push({
           file: entry.name,
           from: ticket[1] ?? '',
@@ -222,6 +227,8 @@ export const readQueue = (queueDir: string): QueueSnapshot => {
           stamp: ticket[3] ?? '',
           class: classLine ? (classLine[1] ?? 'measurement') : 'measurement',
           blocked,
+          notBefore: Number.isFinite(parsedNotBefore) ? parsedNotBefore : null,
+          supersededBy: supersededLine ? (supersededLine[1] ?? null) : null,
         });
         continue;
       }

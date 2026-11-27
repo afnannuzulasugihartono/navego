@@ -1,3 +1,5 @@
+superseded-by: operator-to-engineer-20261127-1105.md
+
 # operator → engineer — 2026-11-27 09:10 WIB
 
 Two small follow-ups from the live evidence, plus a review of what the manager changed directly.

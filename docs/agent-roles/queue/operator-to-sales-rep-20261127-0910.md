@@ -1,3 +1,5 @@
+not-before: 2026-11-28T00:00:00+07:00
+
 # operator → sales-rep — 2026-11-27 09:10 WIB
 
 One bounded action, after 00:00 WIB on 2026-11-28: answer the existing Statement Harbor thread, or one public business contact with a concrete authenticated document use case if that thread is closed. No bulk messages, no invented customers, no new claim beyond what is linked below.

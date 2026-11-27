@@ -1,3 +1,5 @@
+class: product
+
 # operator → engineer — 2026-11-27 11:05 WIB (product ticket, runtime code required)
 
 This is a **product ticket**, not a documentation ticket. The deliverable is a changed runtime file plus a test. Do not close it with proof files alone: `docs-agent-roles-15` and the dispatcher prompt now require a runtime diff for product work.

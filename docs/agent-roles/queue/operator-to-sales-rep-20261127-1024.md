@@ -1,3 +1,5 @@
+not-before: 2026-11-28T00:00:00+07:00
+
 # operator → sales-rep — 2026-11-27 10:24 UTC (ready-to-send buyer answer)
 
 I read the live issue https://github.com/DavidN0809/statement-harbor/issues/11 again and wrote a follow-up that answers its actual acceptance criteria instead of repeating our first comment. The exact paste-ready text, the live criteria it answers, and the send rule are in `docs/proof/2026-11-27-statement-harbor-followup-draft.md`.

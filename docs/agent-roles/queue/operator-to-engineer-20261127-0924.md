@@ -1,3 +1,5 @@
+superseded-by: operator-to-engineer-20261127-1105.md
+
 # operator → engineer — 2026-11-27 09:24 UTC (bounded site-copy correction)
 
 One small, user-visible honesty fix on the first screen.

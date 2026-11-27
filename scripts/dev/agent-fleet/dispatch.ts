@@ -41,7 +41,7 @@ export const liveSessionFor = (evidence: Evidence, lane: string, now: number): b
   if (!evidence.sessions) return false;
   return evidence.sessions.some((session) => {
     if (!session.title.includes(`/${lane}-`)) return false;
-    if (session.outcome === 'error' || session.outcome === 'aborted') return false;
+    if (session.outcome) return false;
     return now - session.updatedMs <= evidence.staleMinutes * 60000;
   });
 };
@@ -117,7 +117,16 @@ const laneBusy = (snapshot: QueueSnapshot, lane: string, now: number, markerMinu
   snapshot.markers.some((marker) => !marker.released
     && marker.lane === lane
     && now - marker.startedMs < markerMinutes * 60000)
-  || (evidence.processLines?.some((line) => line.includes(`lane-${lane}-`)) ?? false)
+  // A detached launcher can outlive its session.
+  // A finished session is the ground truth: a process line whose session already has an outcome must not hold the lane forever.
+  || (evidence.processLines?.some((line) => {
+    const marker = line.match(new RegExp(`lane-${lane}-(\\d{8}-\\d{4})`));
+    if (!marker) return line.includes(`lane-${lane}-`);
+    const stamp = marker[1] ?? '';
+    const finished = evidence.sessions?.some((session) =>
+      session.title.includes(`/${lane}-${stamp}`) && Boolean(session.outcome));
+    return !finished;
+  }) ?? false)
   || liveSessionFor(evidence, lane, now);
 
 export const selectTicket = (
@@ -130,13 +139,17 @@ export const selectTicket = (
   const ready = snapshot.tickets.filter((ticket) => {
     if (activeLanes && !activeLanes.has(ticket.lane)) return false;
     if (ticket.blocked) return false;
+    if (ticket.notBefore && ticket.notBefore > now) return false;
+    if (ticket.supersededBy) return false;
     if (snapshot.replies.some((reply) => reply.answered === ticket.file)) return false;
     if (evidence.remoteAnswers?.has(ticket.file)) return false;
     return !laneBusy(snapshot, ticket.lane, now, markerMinutes, evidence);
   });
   const money = ready.filter((ticket) => ticket.class === 'money').sort((left, right) => left.stamp.localeCompare(right.stamp));
   if (money[0]) return money[0];
-  const measurement = ready.filter((ticket) => ticket.class !== 'money').sort((left, right) => left.stamp.localeCompare(right.stamp));
+  const product = ready.filter((ticket) => ticket.class === 'product').sort((left, right) => left.stamp.localeCompare(right.stamp));
+  if (product[0]) return product[0];
+  const measurement = ready.filter((ticket) => ticket.class !== 'money' && ticket.class !== 'product').sort((left, right) => left.stamp.localeCompare(right.stamp));
   return measurement[0] ?? null;
 };
 

@@ -1,3 +1,5 @@
+not-before: 2026-11-28T00:00:00+07:00
+
 # operator → sales-rep — 2026-11-27 09:24 UTC (correction to the 09:10 ticket)
 
 Replace one line in the paste-ready proof block. The 09:10 ticket said `npx -y navego doctor -> ready, bridge 127.0.0.1:9451, 1 device connected`. That is the state of a machine that is already signed in and paired, not what a new reader sees.

@@ -1687,6 +1687,16 @@
         "ref": "https://www.anthropic.com/engineering/building-effective-agents (orchestrator-workers; evaluator-optimizer; ground truth from the environment; human checkpoints; maximum-iteration stopping conditions; simplicity and clear agent-computer interfaces)",
         "also": "user 2026-11-27: \"operator harus aktif buat cek semua soalnya input bergantung dari operator\""
       }
+    },
+    {
+      "id": "docs-agent-roles-17",
+      "scope": "docs/agent-roles",
+      "file": "docs/agent-roles/status.md",
+      "decision": "A ticket may declare not-before and superseded-by; the dispatcher skips it until its time and skips it permanently when superseded. Any terminal session outcome frees a lane even if a detached launcher process lingers, and eligible tickets are ordered money, then product, then the rest. This keeps a time-blocked outreach ticket from starving product work.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/proof/2026-11-27-1124-dispatcher-starvation.md (2026-11-27T11:24Z)"
+      }
     }
   ]
 }
