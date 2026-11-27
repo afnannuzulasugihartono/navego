@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { NavegoMark, NavegoWordmark } from './NavegoMark';
 import { readConsent, storeConsent, type ConsentChoice } from '../lib/consent.js';
 import { onSessionChange, sessionAccount } from '../lib/auth';
+import './consent-banner.css';
 
 export const VERSION = '1.8.1';
 
@@ -109,6 +110,7 @@ export function SiteHeader({ current }: { current?: string }) {
 
 // the banner is a sibling of the footer because every page already ends there - a page-level overlay would double the markup on every page, and the page a search engine sees carries no consent UI.
 // It renders nothing on the server and nothing for anyone who already chose, so the page a search engine sees carries no consent UI at all.
+// the bar stays a compact row, so it no longer covers the price on /harga or the proof on / - decisions.json -> site-consent-banner-01
 
 function CookieConsent() {
   const [ready, setReady] = useState(false);
@@ -130,7 +132,7 @@ function CookieConsent() {
   return (
     <div className="consent-banner" role="region" aria-label="Persetujuan cookie">
       <div className="wrap consent-inner">
-        <p>Navego memakai tiga cookie first-party: <code>navego_consent</code> (mengingat pilihan ini), <code>navego_region</code> (mengingat kawasan harga Anda), dan <code>oa_device_id</code> (mengingat instance browser untuk pairing). Tidak ada analytics, iklan, atau pelacakan. <Link to="/privasi#cookie">Detail di Kebijakan Privasi</Link></p>
+        <p className="consent-copy">Navego memakai tiga cookie first-party: <code>navego_consent</code> (mengingat pilihan ini), <code>navego_region</code> (mengingat kawasan harga Anda), dan <code>oa_device_id</code> (mengingat instance browser untuk pairing). Tidak ada analytics, iklan, atau pelacakan. <Link to="/privasi#cookie">Detail di Kebijakan Privasi</Link></p>
         <div className="hero-cta">
           <button className="btn btn-solid btn-sm" type="button" onClick={() => decide('granted')}>Accept cookies</button>
           <button className="btn btn-ghost btn-sm" type="button" onClick={() => decide('denied')}>Tolak</button>

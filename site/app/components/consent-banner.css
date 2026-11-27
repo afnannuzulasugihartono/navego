@@ -1,0 +1,20 @@
+/*
+ * @last-edited: 2026-11-27 UTC+7.
+ * @title: consent-banner - the cookie bar is one compact row, so it stops covering the first screen.
+ * @state: the copy flexes beside the buttons on a wide screen, and a phone stacks the copy over the buttons with tighter gaps.
+ * @dependencies: tokens.css.
+ */
+
+/* the copy shares the row with the buttons, so the first screen keeps its price and its proof - decisions.json -> site-consent-banner-01 */
+
+.consent-banner .consent-copy {
+  flex: 1 1 18rem;
+  min-width: 0;
+}
+
+.consent-banner .hero-cta { margin-top: 0; }
+
+@media (max-width: 640px) {
+  .consent-banner .consent-copy { flex: 1 1 100%; }
+  .consent-banner .consent-inner { gap: var(--s-2); padding-block: var(--s-2); }
+}

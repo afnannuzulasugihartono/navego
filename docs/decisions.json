@@ -1624,6 +1624,17 @@
         "kind": "user",
         "ref": "user 2026-11-27: \"bersih? lebih mirip terlihat seperti ai slop\" then \"buat website yang anti ai slop redesign style dan seluruh konten ... iterasi sampai terlihat dibuat oleh manusia\" and \"hy4 flash free\""
       }
+    },
+    {
+      "id": "site-consent-banner-01",
+      "scope": "site/design",
+      "file": "site/app/components/Chrome.tsx",
+      "decision": "The cookie consent bar is a compact bar, not a sheet over the page: its copy shares one row with the two buttons on a wide screen, and a phone stacks the copy over the buttons with tighter gaps. It keeps every fact it states, and it stops covering the first screen - the install command, the price grid and the honest five-run proof stay readable.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-27: \"buat website yang anti ai slop redesign style dan seluruh konten ... iterasi sampai terlihat dibuat oleh manusia\" - the first screen must read as made by a person",
+        "also": "docs/agent-roles/queue/operator-to-engineer-20261127-1200.md (the bounded design pass: the install command, the price and the honest limits stay visible)"
+      }
     }
   ]
 }
