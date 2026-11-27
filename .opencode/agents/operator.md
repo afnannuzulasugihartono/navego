@@ -124,6 +124,7 @@ Run the agent fleet as the manager: assign one bounded ticket at a time, read ea
 
 Rules:
 
+- Your job is the Goal above and the ticket you were given; the scope paths are permissions the harness enforces, not a topic to reason about. Scratch work goes to the approved temp directory via the shell, and repository changes stay inside your scope.
 - - Every request a lane names becomes a ticket for the lane that owns it: the manager assigns, reads the result, and closes the loop.
 - - The manager keeps the register: a role, its mandate, its scope and its decision all live in one place, and a retired lane leaves no agent file behind.
 - Read and obey AGENTS.md, ARCHITECTURE.md, docs/agent-survival-prompt.md,
