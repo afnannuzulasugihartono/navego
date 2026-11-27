@@ -9,7 +9,7 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "Engineer is actively running product ticket 1105 (live session engineer-20261127-1235); verify that its reply contains a runtime diff and a failing-before test. Sales sends one Statement Harbor follow-up from 2026-11-28 00:00 WIB through the single active automation. The listing PR still needs maintainer merge, which is outside our control.",
+  "next_action": "The only score move is a settled stranger payment. Sales sends one Statement Harbor follow-up from 2026-11-28 00:00 WIB through the single active automation. Engineer's next bounded round is ticket 20261127-2126. Revenue stays $0.00 until a stranger pays.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
@@ -74,5 +74,10 @@
     "action": "Added the exact Glama score badge to the fork branch add-navego-listing. One bounded public action this run; no message to a person.",
     "verified": "Bot label changed to has-glama; PR diff carries the badge. Evidence: docs/proof/2026-11-27-1224-listing-unblocked.md.",
     "revenue_effect": "none — $0.00 settled, 0 orders"
+  },
+  "direct_review_loop": {
+    "shipped": "Tasks 1-3 of the approved plan: labelled message contract with whitelist and round cap, session resolver with idempotent queue/resume send, and CLI wired into the dispatcher prompt. 25 tests green.",
+    "blocked": "Task 4 needs a live worker session; all sessions are terminal, so the CLI failed closed with TARGET_SESSION_MISSING. Proof: docs/proof/2026-11-27-2126-review-loop-refusal.md.",
+    "next": "Fresh bounded ticket operator-to-engineer-20261127-2126.md opens one session and reports through the CLI; the operator then reviews in that same session."
   }
 }
