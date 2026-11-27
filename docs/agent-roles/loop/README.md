@@ -68,7 +68,9 @@ the count in the state table is how the manager sees a lane that ignored it.
 
 ## What the manager does every run
 
-1. Read `docs/agent-roles/loop/state.md` and the queue.
+1. Read `docs/agent-roles/loop/state.md` and the queue, then form one judgment
+   about the company: what is wrong, the better way, and the live evidence.
+   That judgment becomes a ticket for the lane that owns it.
 2. For every `returned` ticket: read the reply, write the outcome on the status
    board and in `docs/proof/`, and name the next action. That closes the ticket.
 3. **Every request a lane names becomes a ticket** for the lane that owns it.
