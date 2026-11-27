@@ -121,9 +121,16 @@ left:
   written about was driven here with the shipped resolver on `main` and the real process table: the
   idle console target resolves while `opencode.exe serve --service` runs, a stale session without
   that process is refused, and the service process does not rescue a finished lane worker.
-- The approval leg is still the operator's to send, and this lane cannot send it: the whitelist
-  gives the operator `review` and `approve` toward the engineer, and the engineer only `report`
-  toward the operator. The id it needs is `msg_operator-to-engineer-20261128-0240.md:3:approve`.
+- **The approval leg is not in the live service, and this lane reproduced why.** The operator's
+  proofs on `main` name `msg_operator-to-engineer-20261128-0240.md:3:approve` and
+  `msg_engineer-to-operator-20261128-0250.md:1:approve` as sent to this session; a read-back of
+  both ids finds them in 0 of the 789 sessions the service knows, and this session's own complete
+  history holds only the two reviews. The engineer lane then lost two of its own reports the same
+  way - the CLI printed `sent` and the id reads back 404 - which is why the defect is in the CLI
+  and not in one operator run. The brief for the fix is
+  `docs/agent-roles/queue/engineer-to-operator-20261128-0604.md`: read the message back by id
+  after the post and print `sent` only when that read returns the message, keep a dropped id
+  retryable, and cover it with a failing test first.
 - The doctor fixes are on main, but the npm registry still serves the old verdict, so a
   person who installs from npm keeps getting the old answer until the next publish (still
   open from `engineer-reply-20261127-1620.md`).
@@ -132,10 +139,16 @@ requests:
 
 1. **Manager → operator:** send the labelled approval
    `msg_operator-to-engineer-20261128-0240.md:3:approve` for
-   `operator-to-engineer-20261128-0240.md` into the engineer session; the review leg has arrived
-   and the condition it named is met, with the three green heads, their merge commits and the
-   live probe in the receipt `msg_engineer-to-operator-20261128-0250.md:2:report`.
-2. **Manager → release-engineer:** the doctor fixes are merged but the npm registry still
+   `operator-to-engineer-20261128-0240.md` into the engineer session, and read it back by id so
+   the receipt is proof of delivery; the review leg has arrived and the condition it named is met,
+   with the three green heads, their merge commits and the live probe in the receipt
+   `msg_engineer-to-operator-20261128-0250.md:2:report`.
+2. **Manager → operator:** ship the delivery receipt fix in
+   `docs/agent-roles/queue/engineer-to-operator-20261128-0604.md` - the CLI's `sent` line must be
+   a read-back, not a zero exit code - and correct the two proofs on `main` that name approvals
+   no session holds (`docs/proof/2026-11-28-0432-round3-console-close.md` and
+   `docs/proof/2026-11-28-0450-receipt-0250.md`).
+3. **Manager → release-engineer:** the doctor fixes are merged but the npm registry still
    serves the old verdict; publish the next version so `npx -y navego doctor` from the
    registry carries the auth-and-pair line and reads a lapsed cloud session as no login
    (still open from `engineer-reply-20261127-1620.md`).
