@@ -4,7 +4,7 @@ import { NavegoMark, NavegoWordmark } from './NavegoMark';
 import { readConsent, storeConsent, type ConsentChoice } from '../lib/consent.js';
 import { onSessionChange, sessionAccount } from '../lib/auth';
 
-const VERSION = '1.8.1';
+export const VERSION = '1.8.1';
 
 // one navigation surface: a slim dark bar with product links and one CTA; a Menu button opens the same list on a small screen.
 // decisions.json -> site-nav-inline-01
@@ -175,7 +175,7 @@ export function SiteFooter() {
           </nav>
         </div>
         <div className="footer-bar">
-          <span>© 2026 Navego — private, local, signed.</span>
+          <span>© 2026 Navego — MIT · 40 tool MCP · npm {VERSION} · <a href="https://github.com/afnannuzulasugihartono/navego" rel="noreferrer">GitHub</a></span>
           <span><Link to="/privasi">Privasi</Link>, <Link to="/syarat">Syarat</Link>, <Link to="/dukungan">Dukungan</Link></span>
         </div>
       </div>
