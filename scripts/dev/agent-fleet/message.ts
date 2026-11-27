@@ -67,6 +67,7 @@ export type SendDeps = {
   sessions: SessionInfo[];
   processLines?: string[];
   roster: MessageRoster;
+  readBack?: (id: string, sessionId: string) => Promise<'message' | 'inbox' | null>;
   run: (args: string[]) => Promise<string>;
 };
 
@@ -89,7 +90,7 @@ export function resolveSessionId(titlePrefix: string, sessions: SessionInfo[], n
   return live.reduce((best, next) => (next.updatedMs > best.updatedMs ? next : best), first).id;
 }
 
-export async function sendMessage(input: MessageInput, deps: SendDeps): Promise<{ id: string; sessionId: string; alreadyDelivered: boolean }> {
+export async function sendMessage(input: MessageInput, deps: SendDeps): Promise<{ id: string; sessionId: string; alreadyDelivered: boolean; receipt?: 'message' | 'inbox' }> {
   assertAllowed(input, deps.roster);
   const id = messageIdOf(input);
   if (delivered.has(id)) return { id, sessionId: '', alreadyDelivered: true };
@@ -106,8 +107,10 @@ export async function sendMessage(input: MessageInput, deps: SendDeps): Promise<
     metadata: { fromAgent: input.from, toAgent: input.to, ticket: input.ticket, round: input.round, kind: input.kind },
   };
   await deps.run([deps.cli, 'api', 'post', `/api/session/${sessionId}${endpoint}`, '--data', JSON.stringify(body)]);
+  const receipt = deps.readBack ? await deps.readBack(id, sessionId) : null;
+  if (!receipt) throw new Error('DELIVERY_UNVERIFIED');
   delivered.add(id);
-  return { id, sessionId, alreadyDelivered: false };
+  return { id, sessionId, alreadyDelivered: false, receipt };
 }
 
 export function parseArgs(argv: string[]): MessageInput {
@@ -133,16 +136,33 @@ if (invokedDirectly) {
   assertAllowed(input, roster);
   const evidence = await readEvidence();
   const cli = opencodeCandidates().find((candidate) => fs.existsSync(candidate)) ?? 'opencode';
+  const readJson = (args: string[]): Record<string, unknown> => {
+    const child = spawnSync(args[0] ?? cli, args.slice(1), { encoding: 'utf8' });
+    try {
+      return JSON.parse(child.stdout ?? '{}') as Record<string, unknown>;
+    } catch {
+      return {};
+    }
+  };
   const result = await sendMessage(input, {
     cli,
     roster,
     sessions: evidence.sessions ?? [],
     processLines: evidence.processLines ?? [],
+    readBack: async (id, sessionId) => {
+      const encoded = encodeURIComponent(id);
+      const posted = readJson([cli, 'api', 'get', `/api/session/${sessionId}/message/${encoded}`]);
+      const asData = posted['data'] as { id?: unknown } | undefined;
+      if (asData?.id === id) return 'message';
+      const inbox = readJson([cli, 'api', 'get', `/api/session/${sessionId}/inbox`]);
+      const items = inbox['data'] as Array<{ id?: unknown }> | undefined;
+      return Array.isArray(items) && items.some((item) => item.id === id) ? 'inbox' : null;
+    },
     run: async (args) => {
       const child = spawnSync(args[0] ?? cli, args.slice(1), { encoding: 'utf8' });
       if (child.status !== 0) throw new Error(child.stderr || child.stdout || 'OPENCODE_API_FAILED');
       return child.stdout ?? '';
     },
   });
-  console.log(`${result.id} ${result.alreadyDelivered ? 'already-delivered' : 'sent'} ${result.sessionId}`);
+  console.log(`${result.id} ${result.alreadyDelivered ? 'already-delivered' : `sent:${result.receipt}`} ${result.sessionId}`);
 }

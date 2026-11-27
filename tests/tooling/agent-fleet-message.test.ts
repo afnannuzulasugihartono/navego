@@ -103,6 +103,7 @@ test('sendMessage queues a labelled message without interrupting the target', as
     cli: 'opencode',
     roster,
     sessions: [session('op', 'slot-console/agent-manager', null, Date.now())],
+    readBack: async () => 'message' as const,
     run: async (args) => { calls.push(args); return '{}'; },
   });
   assert.equal(result.sessionId, 'op');
@@ -116,6 +117,18 @@ test('sendMessage queues a labelled message without interrupting the target', as
   assert.ok(calls[0]!.some((arg) => arg.endsWith('/synthetic')));
 });
 
+test('a post the service drops is a loud failure, not a sent receipt', async () => {
+  const input = { kind: 'approve' as const, from: 'operator' as const, to: 'engineer' as const, ticket: 'delivery-unverified.md', round: 1, text: 'Status: APPROVED' };
+  const deps = {
+    cli: 'opencode',
+    roster,
+    sessions: [session('eng', 'slot-nvidia-1/engineer-20261127-2025', null, Date.now())],
+    readBack: async () => null,
+    run: async () => '{}',
+  };
+  await assert.rejects(() => sendMessage(input, deps), /DELIVERY_UNVERIFIED/);
+});
+
 test('a repeated send returns the original id without posting twice', async () => {
   let calls = 0;
   const input = { kind: 'review' as const, from: 'operator' as const, to: 'engineer' as const, ticket: 'retry.md', round: 2, text: 'fix this' };
@@ -123,6 +136,7 @@ test('a repeated send returns the original id without posting twice', async () =
     cli: 'opencode',
     roster,
     sessions: [session('eng', 'slot-nvidia-2/engineer-20261127-1235', null, Date.now())],
+    readBack: async () => 'message' as const,
     run: async (_args: string[]) => { calls += 1; return '{}'; },
   };
   const first = await sendMessage(input, deps);

@@ -9,7 +9,7 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "Only a settled stranger payment moves the score. Wait for a buyer reply; run Steel outreach on 2026-11-29 from the stacked ticket; guest checkout ticket 2304 remains open.",
+  "next_action": "Only a settled stranger payment moves the score. Statement Harbor has no reply; Steel stacked for 2026-11-29; guest checkout ticket 2304 remains open.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
@@ -168,5 +168,11 @@
     "verified": "/beranda and /beranda.html answer 301 to /; / and /harga answer 200. Deploy 46082274937 success.",
     "buyer_threads": "Statement Harbor still has only our two comments; Steel stacked for 2026-11-29.",
     "revenue_effect": "none — $0.00 settled, 0 orders"
+  },
+  "delivery_receipt_fix": {
+    "found": "CLI printed sent after a POST without reading it back; two approvals were queued in the inbox and absent from session messages.",
+    "fixed": "readBack after POST (message endpoint, then inbox); DELIVERY_UNVERIFIED on neither; failing test first; 12/12 tests green.",
+    "delivered": "msg_operator-to-engineer-20261128-0240.md:3:approve and msg_engineer-to-operator-20261128-0250.md:1:approve are now session messages; inbox empty.",
+    "evidence": "docs/proof/2026-11-28-0635-delivery-verified.md"
   }
 }

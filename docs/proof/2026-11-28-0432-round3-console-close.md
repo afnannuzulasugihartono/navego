@@ -37,3 +37,6 @@ msg_operator-to-engineer-20261128-0240.md:3:approve sent ses_de1512dd6ffeUaJ5gI2
 The review was sent before the approval and the approval was written after the artifact was read and the fix driven. Round 3 is the last the whitelist allows; no round 4 was requested.
 
 Settled external revenue remains $0.00, 0 orders.
+
+Correction 2026-11-28 06:35 WIB: the approval named above was queued, not delivered as a session message. It has since been cancelled, re-posted and verified by read-back; see docs/proof/2026-11-28-0635-delivery-verified.md.
+
