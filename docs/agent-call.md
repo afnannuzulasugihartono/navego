@@ -2,11 +2,36 @@
 
 One road, one command: `navego local`. Local on the machine where the browser already is.
 
-The install is one command:
+Install the extension on Windows with the command shown on the [live landing page](https://navego.pages.dev/), unchanged:
 
-```bash
-npm i -g navego
+```powershell
+irm https://navego.pages.dev/install.ps1 | iex
 ```
+
+The [script source is public](https://github.com/afnannuzulasugihartono/navego/blob/main/site/public/install.ps1). Restart the browser after it runs.
+
+**What it costs:** the browser reports itself as managed by your own user policy, and the extension cannot be removed while that policy value stands. **How to undo it:** delete the policy values the command prints under `HKCU`, or, if the npm package is installed, run `navego uninstall`. Removing the policy stops the forced install; the installed extension copy still has to be removed from the browser's extensions page.
+
+The MCP driver itself needs no global install: the snippets below use `npx -y navego local`. `npm i -g navego` remains the global alternative, and its postinstall hook runs the Windows install automatically.
+
+## The first real file
+
+With the MCP client connected, paste this one line into the agent:
+
+```text
+Open https://navego.pages.dev/docs and download the "Laporan keuangan September 2026" link as laporan-keuangan-2026-09.xlsx into Downloads/navego.
+```
+
+The result lands in the `Downloads/navego` folder in the person's home directory, for example `C:\Users\<you>\Downloads\navego\laporan-keuangan-2026-09.xlsx`. The download answer is the proof, not the click:
+
+```text
+downloaded: true
+file: laporan-keuangan-2026-09.xlsx
+path: C:\Users\<you>\Downloads\navego\laporan-keuangan-2026-09.xlsx
+bytes: 21066
+```
+
+That exact path was driven in the everyday Chrome through the extension on 2026-11-27, and the workbook's SHA-256 was `a4f12765b77329eb5ec37dae3ad4323ac1d1d6659cd6261bb689c2736c931922`, equal to the workbook the live site serves. The record is [`docs/proof/2026-11-27-onboarding-guide.md`](./proof/2026-11-27-onboarding-guide.md).
 
 ## The installer and the driver
 
@@ -49,7 +74,7 @@ session ends, so the local road and the pairing account share one daily count �
 `plan.usd-1` carries 1.000 commands per day and 50 per session;
 `plan.usd-17` carries 17.000 and 500, and `plan.usd-33` carries no daily
 limit; every USD plan carries no per-minute cap. The gate lives in the bridge — never in
-readable client code. `navego doctor` prints the bridge, the device,
+readable client code. `npx -y navego doctor` prints the bridge, the device,
 the extension version, the plan, and the quota.
 
 `browser_status` answers with the port the drive is really on, so read it
@@ -85,11 +110,12 @@ The extension in `extension/` opens a socket to this machine and carries CDP
 both ways, so the everyday browser can be driven without a debugging port. The
 socket is one WebSocket on `127.0.0.1:9451`.
 
-1. Install the extension. The archive is on the site's download page, and
-   `chrome://extensions` with developer mode on loads it unpacked.
+1. Install the extension with the Windows command at the top of this guide.
+   The archive is also on the site's download page, and `chrome://extensions`
+   with developer mode on loads it unpacked.
 2. Pair the browser in the dashboard — the meter needs a paired device to name
    the account the session belongs to.
-3. Run `navego doctor`. It prints the bridge, the device, the
+3. Run `npx -y navego doctor`. It prints the bridge, the device, the
    extension version, the plan, and the quota; a `degraded` verdict names the
    one fix that applies.
 
@@ -112,3 +138,12 @@ The last recorded run carried seven calls over the bridge — `browser_status`,
 `browser_close_tab` — and the CSV it pulled down hashed equal to the file the portal
 served. `tests/extension/extension-run.test.ts` re-hashes that fixture and compares it
 with the hash in the record; it does not drive a browser again.
+
+## Reply-ready lines
+
+These are the two lines a buyer can act on without reading the repository:
+
+```text
+irm https://navego.pages.dev/install.ps1 | iex
+Open https://navego.pages.dev/docs and download the "Laporan keuangan September 2026" link as laporan-keuangan-2026-09.xlsx into Downloads/navego.
+```
