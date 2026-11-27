@@ -1554,7 +1554,8 @@
         "also": "docs/proof/2026-11-27-engineer-wait-regression.test.ts (drives all four wait kinds against a driver whose condition never arrives)"
       }
     },
-    {      "id": "local-delivery-bytes-01",
+    {
+      "id": "local-delivery-bytes-01",
       "scope": "mcp/local",
       "file": "local/statements.ts",
       "decision": "A delivery whose name ends in .pdf is refused when its first bytes do not sniff as a PDF. The extension is the caller's claim about the document; the bytes are the fact. A workbook keeps its own extension and is recorded as a zip, but a folder archive cannot be filed as a signed statement because it arrived under a .pdf name.",
@@ -1564,7 +1565,8 @@
         "also": "docs/proof/2026-11-27-engineer-regression.test.ts (proves the refusal and that a real 1-page PDF is still delivered)"
       }
     },
-    {      "id": "docs-agent-roles-12",
+    {
+      "id": "docs-agent-roles-12",
       "scope": "agent/roles",
       "file": "docs/agent-roles/registry.json",
       "decision": "The chief-executive lane is folded into the agent manager, and every lane gets a proactive mandate: marketing implements its own ideas on the website public pages, research researches what to build, what to improve and where to sell, engineering owns the website mechanics and judges whether each tool is still worth keeping, and every lane reports to the manager, which turns each request a lane names into one bounded ticket for the lane that owns it. The register carries nine lanes, one work-scope owner per path, and the manager owns the register, the briefs and the decisions.",
@@ -1611,6 +1613,16 @@
       "source": {
         "kind": "user",
         "ref": "user 2026-11-27: \"kerjaan kamu diganti jadi mirip dengan manager yang bisa meningkatkan seluruh taraf atau kualitas navego tanpa owner jadi misal kamu tahu oh ini salah coba pakai cara ini\""
+      }
+    },
+    {
+      "id": "site-design-01",
+      "scope": "site/design",
+      "file": "site/app/routes/index.tsx",
+      "decision": "The public homepage is a proof artifact, not a template landing page and not an account panel: the exact install command, the doctor result and the five driven runs (including failures) are on the first screen. The account card is removed from the public route; sign-in stays in the header and the dashboard. Generic slogans and a swappable hero are not acceptable.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-27: \"bersih? lebih mirip terlihat seperti ai slop\" then \"buat website yang anti ai slop redesign style dan seluruh konten ... iterasi sampai terlihat dibuat oleh manusia\" and \"hy4 flash free\""
       }
     }
   ]

@@ -115,6 +115,9 @@ test('every inline script is allowed by the CSP of the page it ships in', () => 
   assert.ok(checked >= 16, `verified ${checked} inline scripts against their page CSP`);
 });
 
+// site-design-01: the public landing is an artifact, not an account panel.
+// Sign-in lives in the header; the magic-link flow is still on /dashboard.
+
 const CLAIMS = {
   '/beranda.html': ['Navego', '40', 'primitive browser', 'tanpa eval'],
   '/en.html': ['real browser', 'Commands into files', 'xlsx'],
@@ -137,7 +140,7 @@ const CLAIMS = {
   '/faq.html': ['Apa itu Navego', 'Berapa harganya', 'PayPal'],
   '/keamanan.html': ['Tanpa eval', 'Kata sandi', 'SECURITY.md'],
   '/metodologi.html': ['Diukur, bukan diklaim', 'Google Docs', 'p50'],
-  '/': ['Masuk atau daftar', 'magic link']
+  '/': ['Lihat harga', '578.104 byte']
 };
 
 for (const [route, needles] of Object.entries(CLAIMS)) {
