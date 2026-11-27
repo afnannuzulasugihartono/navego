@@ -69,6 +69,11 @@ left:
   exists, but the page still reports no deployable release on Glama. Publishing that
   release needs a Glama account this lane does not have, and the ticket forbids
   contacting another project from here, so that step belongs to the owner.
+- The reply produced no automated re-run: the upstream check lives in
+  `.github/workflows/check-glama.yml` and runs on `pull_request_target` with the types
+  `opened`, `edited`, `synchronize` and `closed`, so a comment does not start it. A
+  person, or the next push to the branch, has to start it. The badge stage has already
+  passed (`has-glama` is on), so the re-run is about the score, not the badge.
 - Reviewer gap: this session is the only worker on the key and a child session is
   denied, so no reviewer agent could run. The pull request stays REVIEW_REQUIRED and
   was merged with administrator rights under the owner's 2026-11-26 answer; the gap is
@@ -78,7 +83,9 @@ requests:
 
 1. **Manager → operator:** read the bot's answer on pull request 20598 after this
    reply and record the outcome (merged, or the next blocker the check names); this
-   lane does not stand a watch on that thread.
+   lane does not stand a watch on that thread, and the upstream workflow
+   (`pull_request_target`, types `opened`, `edited`, `synchronize`, `closed`) does not
+   start on a comment, so a person or the next push has to start it.
 2. **Manager → owner:** Glama still says "This server does not currently have a
    deployable release on Glama". Claiming the server listing and submitting that
    release needs a Glama account, so the exact ask is one person with a Glama login
