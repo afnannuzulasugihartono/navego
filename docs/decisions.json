@@ -1718,6 +1718,16 @@
         "kind": "user",
         "ref": "user 2026-11-27: \"gabungkan keduanya\" after reviewing the folder design and pattern selection specs"
       }
+    },
+    {
+      "id": "agents-org-02",
+      "scope": "agents",
+      "file": "agents/ARCHITECTURE.md",
+      "decision": "A root-level agents/ area holds one folder per active lane plus shared contracts, triggers, metrics, decision index and a research ticket template. The generated agent files keep sourcing their Goal from docs/agent-roles/<lane>.md so the generator and its gate stay untouched; the new folders are operating guides, not a second agent definition.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-27: \"lanjut ke agents dulu untuk otomatisasi\" after reviewing the agent organisation spec"
+      }
     }
   ]
 }
