@@ -1,4 +1,4 @@
-// @last-edited: 2026-11-20 UTC+7.
+// @last-edited: 2026-11-27 UTC+7.
 // @title: browser-actions — the browser tool cases, their own module; the dispatcher asks it for the answer.
 // @state: runBrowserAction dispatches the browser cases; every case returns the final result the dispatcher returns; the window-truth, budget clamp and meter reads are browser-shaped and live here too.
 // @dependencies: ./burst.js, ./bing-serp.js, ./page-expressions.js, ./bridge.js, ./bridge-token.js, ./gates.js, ./captcha-solver.js, ./tidy.js, ./tools.js, ./types.js.
@@ -345,7 +345,8 @@ export async function runBrowserAction(name: string, args: JsonRecord, deps: Bro
         const state = await driver.waitForText(String(args.text), { timeoutMs, intervalMs, absent });
         const read = isObject(state) ? state : {};
         const includes = String(read.text ?? '').includes(String(args.text));
-        return deps.afterAction(driver, { found: includes !== absent, ms: Date.now() - started, settled: true });
+        const found = includes !== absent;
+        return deps.afterAction(driver, { found, ms: Date.now() - started, settled: found });
       }
       if (until === 'row') {
         if (!args.role) throw new Error('wait until=row needs role — e.g. menuitem');
@@ -357,7 +358,8 @@ export async function runBrowserAction(name: string, args: JsonRecord, deps: Bro
           timeoutMs: budgetOf(args.timeoutMs, 10000, 60000),
           intervalMs: gapOf(args.intervalMs, 50, 50)
         });
-        return deps.afterAction(driver, { ...(isObject(rowOut) ? rowOut : {}), settled: true });
+        const rowFound = isObject(rowOut) && rowOut.found === true;
+        return deps.afterAction(driver, { ...(isObject(rowOut) ? rowOut : {}), settled: rowFound });
       }
       if (until === 'url') {
         if (!args.contains && !args.matches) throw new Error('wait until=url needs contains or matches');
@@ -366,14 +368,16 @@ export async function runBrowserAction(name: string, args: JsonRecord, deps: Bro
           matches: typeof args.matches === 'string' ? args.matches : null,
           timeoutMs: Math.min(Math.max(Number(args.timeoutMs) || 8000, 500), 60000)
         });
-        return deps.afterAction(driver, { ...(isObject(urlOut) ? urlOut : {}), settled: true });
+        const urlFound = isObject(urlOut) && urlOut.found === true;
+        return deps.afterAction(driver, { ...(isObject(urlOut) ? urlOut : {}), settled: urlFound });
       }
       if (until === 'stable') {
         const stillOut = await driver.waitForStill({
           timeoutMs: budgetOf(args.timeoutMs, 8000),
           quietMs: quietOf(args.quietMs, 120)
         });
-        return deps.afterAction(driver, { ...(isObject(stillOut) ? stillOut : {}), settled: true });
+        const stillFound = isObject(stillOut) && stillOut.still === true;
+        return deps.afterAction(driver, { ...(isObject(stillOut) ? stillOut : {}), settled: stillFound });
       }
       throw new Error(`wait until must be text, row, url or stable — got: ${until}`);
     }

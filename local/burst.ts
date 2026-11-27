@@ -1,4 +1,4 @@
-// @last-edited: 2026-10-22 UTC+7.
+// @last-edited: 2026-11-27 UTC+7.
 // @title: burst — dependent steps on one tab, with one page look at the end.
 // @state: the action vocabulary, a checked step list, and a stop-on-failure runner.
 // @dependencies: ./gates.js.
@@ -441,7 +441,7 @@ export async function runLocalBurst({ driver, steps, timeoutMs = BURST_MAX_TIMEO
   // A BURST THAT SETTLED TELLS THE LOOK.
   // A wait step ends on a settled page, and a chord-only stream returns a verdict that it watched the page go quiet.
   // The look after the burst would settle the same page again, which is one round trip billed twice, so the burst passes the verdict it already has.
-  const settledStep = results.some((entry) => entry.action === 'browser_wait_until' || (entry.action === 'stream' && entry.settled === true));
+  const settledStep = results.some((entry) => entry.action === 'browser_wait_until' && (entry.found === true || entry.still === true || entry.present === true) || (entry.action === 'stream' && entry.settled === true));
 
   if (errors.length) {
     const first = errors[0];

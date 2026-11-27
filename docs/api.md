@@ -1,4 +1,4 @@
-@last-edited: 2026-10-07 UTC+7.
+@last-edited: 2026-11-27 UTC+7.
 @related: [AGENTS.md](../AGENTS.md) - [security.md](security.md)
 
 # Gateway API
@@ -156,6 +156,59 @@ network is the single biggest term and only batching amortizes it.
 An honest footnote on method: one series showed every claim landing 30 seconds
 late in a batch. That was not the transport — ten inserts issued inside one DO
 block share one transaction and stay invisible until it commits.
+
+## Measured limits of the local browser drive
+
+The gateway table above is about transport. This section is about the task a
+person actually asks for: **collect existing documents from the browser they are
+signed into and leave one checked file on disk**. Five runs of that task were
+driven through the product's own MCP server on 2026-11-27 against the signed-in
+Google Drive My Drive page, on a real Chrome with the extension's bridge. Full
+per-run record: `docs/proof/2026-11-27-engineer.md`.
+
+| Measure | Result |
+| --- | --- |
+| Runs completed end to end | 3 of 5 (2 lost to a spent shared session allowance, not to the page) |
+| Time to first listing, once the session was fresh | 1.5 s, 3.6 s, 7.1 s, 12.2 s (median ~5.4 s) |
+| Time to one downloaded document | 26.5 s, 34.1 s, 54.2 s |
+| File checked as a real 2-page PDF | 2 of 5; the third landing was a 23 KB ZIP saved as `.pdf` |
+| Gate detection on Google Drive | `none` in every run that reached a read |
+| Session allowance contention | 2 of 5 refused with `the session allowance of 31 commands ... is spent` |
+
+Limits that held in the measurement, stated so they can be disproved:
+
+- The task only works where the person is already signed in. No login, CAPTCHA
+  or 2FA was solved; a site that puts a gate in front of the documents stops this
+  drive until the person clears it.
+- The Drive grid is virtualised. A row is absent from the accessibility tree
+  until it is scrolled into view; find the document by its **text**, scroll to it,
+  then click its rectangle. A `role: "row"` lookup by name finds nothing for an
+  off-screen row and is not evidence that the document is missing.
+- A "settled" wait is not a "found" wait. `browser_wait_until` now answers
+  `settled: false` when its text, row, url or stillness condition was not met.
+  A read can still arrive before a slow grid renders; wait for a word that only
+  the rendered list carries before concluding a folder is empty.
+- A filename is a claim, not proof. `delivery_record` refuses a `.pdf` whose
+  bytes sniff as an archive; check `kind` and `pages` in its answer before
+  reporting a document delivered.
+
+### Honest comparison, read on 2026-11-27
+
+| Claim | Browser Use | Skyvern | Navego here |
+| --- | --- | --- | --- |
+| Drives the open signed-in Chrome | Yes, but the README requires enabling remote debugging on `chrome://inspect/#remote-debugging`; a named profile is a temporary copy, not the live one (not on Windows) | Hosted cloud browser, or self-hosted Docker; SDKs and MCP | Yes: the person's own browser through an installed extension, no debugging port and no profile copy |
+| Collects an existing document behind a login | Yes, with `Browser('chrome')` attached to a debugging port; downloads land in `agent.workspace/downloads` | Yes; claims vendor portals behind login, 2FA and CAPTCHA, with document parsing and routing | Yes, shown above: 3 of 5 landed a file, 2 of those checked out as the requested PDF |
+| Published reliability evidence | BU Bench v2 (60-task subset) and a per-run model Judge with a `success` / `failure_reason` verdict | A "See Our Benchmark" link and SOC 2 / HIPAA posture | This 5-run eval, one domain, one task; no general benchmark |
+| What it automates | LLM chooses actions from a natural-language task; cloud can solve CAPTCHAs | LLM-driven actions, native CAPTCHA solving and full 2FA/TOTP claims, proxies and encrypted vault | Generic browser primitives; no CAPTCHA or 2FA automation, no LLM in the loop |
+
+Sources, read 2026-11-27: <https://raw.githubusercontent.com/browser-use/browser-use/main/README.md>
+and <https://www.skyvern.com/>. Where Navego wins is the session boundary: no
+debugging port, no copied profile, no hosted browser holding the person's
+cookies, and a checked file built locally. Where it loses is the agent loop and
+coverage: Browser Use and Skyvern turn a task into actions with a model in the
+loop and publish benchmark evidence; this driver hands the model generic
+primitives and has only the measured five runs above. Their CAPTCHA and 2FA
+claims are not matched here. No claim of overall superiority is made.
 
 ## Endpoints
 

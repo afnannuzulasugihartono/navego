@@ -14,7 +14,7 @@
     "pretest": "npm run audit && npm run biome && npm run build:shared && npm run build:local && npm run build:extension && node scripts/pack/pack-mcp.ts",
     "audit": "node scripts/audit/audit-cheats.ts",
     "biome": "biome check .",
-    "test": "node --test --test-timeout=120000 --test-reporter=dot tests/**/*.test.ts",
+    "test": "node --test --test-timeout=120000 --test-reporter=dot tests/**/*.test.ts docs/proof/*.test.ts",
     "test:unit": "node --test tests/extension/protocol.test.ts tests/vm/workflow-dsl.test.ts",
     "test:browser": "python tests/browser_extension_test.py",
     "benchmark:semantic": "node scripts/verify/semantic-baseline.ts --runs=3",

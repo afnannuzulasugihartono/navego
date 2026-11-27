@@ -27,7 +27,7 @@
     {
       "id": "D03",
       "scope": "web/tokens",
-      "decision": "h1 is 40 px (hero 64 px on /beranda, 28 px on ≤860 px), h2 is 28 px, h3 is 20 px, h4 is 18 px.",
+      "decision": "h1 is 40 px (hero 64 px on /beranda, 28 px on â‰¤860 px), h2 is 28 px, h3 is 20 px, h4 is 18 px.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-18: 'jika misalnya heading 1 heading 2 dan seterusnya gunakan ukuran genap dan konsisten'",
@@ -76,7 +76,7 @@
     {
       "id": "D08",
       "scope": "web/tokens",
-      "decision": "Paragraph → paragraph spacing is 1 em.",
+      "decision": "Paragraph â†’ paragraph spacing is 1 em.",
       "source": {
         "kind": "internet",
         "ref": "https://practicaltypography.com/space-between-paragraphs.html (50-100% of the point size)"
@@ -103,7 +103,7 @@
     {
       "id": "D11",
       "scope": "web/tokens",
-      "decision": "The gutter is 20 px, 32 px at ≥940 px - one fixed even step each, no fractional vw.",
+      "decision": "The gutter is 20 px, 32 px at â‰¥940 px - one fixed even step each, no fractional vw.",
       "source": {
         "kind": "internet",
         "ref": "https://material.io/design/layout/spacing-methods.html (4-px base unit, both values sit on the grid)"
@@ -169,7 +169,7 @@
     {
       "id": "D18",
       "scope": "web/components",
-      "decision": "Button padding is 12 px × 24 px; small button 8 px × 16 px; chips 4 px × 12 px - even pixel steps on the 4-px grid.",
+      "decision": "Button padding is 12 px Ã— 24 px; small button 8 px Ã— 16 px; chips 4 px Ã— 12 px - even pixel steps on the 4-px grid.",
       "source": {
         "kind": "internet",
         "ref": "https://material.io/design/layout/spacing-methods.html (4dp nested units)",
@@ -262,7 +262,7 @@
     {
       "id": "D28",
       "scope": "web/identity",
-      "decision": "The mark is one hand-drawn stroke: left stem, the diagonal (top-left to bottom-right), right stem, each with a slight human bow — never ruler-straight.",
+      "decision": "The mark is one hand-drawn stroke: left stem, the diagonal (top-left to bottom-right), right stem, each with a slight human bow â€” never ruler-straight.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-18: pick D, fix the reversed stroke direction, then 'buat huruf N pada logo lebih natural seperti coretan manusia'"
@@ -289,7 +289,7 @@
     {
       "id": "D31",
       "scope": "web/identity",
-      "decision": "The letters a and e are drawn to read unmistakably (closed bowl plus stem for a; loop plus crossbar for e) — a wordmark nobody can read is decoration, not a wordmark.",
+      "decision": "The letters a and e are drawn to read unmistakably (closed bowl plus stem for a; loop plus crossbar for e) â€” a wordmark nobody can read is decoration, not a wordmark.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-18: 'huruf a dan e masih belum bisa terbaca'"
@@ -316,7 +316,7 @@
     {
       "id": "D34",
       "scope": "web/identity",
-      "decision": "No Huginn & Muninn anywhere; the footer line is 'Navego — Browser Anda, atas perintah Anda.' and the auth panel carries the logo lockup, not a myth label.",
+      "decision": "No Huginn & Muninn anywhere; the footer line is 'Navego â€” Browser Anda, atas perintah Anda.' and the auth panel carries the logo lockup, not a myth label.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-18: 'ganti huginn & muninn dengan navego dan logonya'"
@@ -325,7 +325,7 @@
     {
       "id": "D35",
       "scope": "web/copy",
-      "decision": "No eyebrows, kickers or crumbs above headings, anywhere — the heading is the first thing on the page.",
+      "decision": "No eyebrows, kickers or crumbs above headings, anywhere â€” the heading is the first thing on the page.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-18 (beranda screenshot, then 'hapus semua eyebrows no eyebrows')",
@@ -335,7 +335,7 @@
     {
       "id": "D36",
       "scope": "web/copy",
-      "decision": "The document outline runs h1 → h2 → body; nothing sits above the h1.",
+      "decision": "The document outline runs h1 â†’ h2 â†’ body; nothing sits above the h1.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-18: 'agentik browser lokal ada di atas heading satu yang mana itu tidak urut'",
@@ -345,7 +345,7 @@
     {
       "id": "D37",
       "scope": "web/copy",
-      "decision": "The middle dot is never used as a separator — commas, dashes or parentheses instead.",
+      "decision": "The middle dot is never used as a separator â€” commas, dashes or parentheses instead.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-18: 'pemisah tidak boleh menggunakan titik tengah'"
@@ -1200,7 +1200,7 @@
       "id": "hosted-paypal-capture-01",
       "scope": "hosted/functions",
       "file": "hosted/functions/navego-billing/index.ts",
-      "decision": "The PayPal path is order → owner check → capture → activation. readPaypalOrder supplies custom_id, capture is a POST to /capture, and a failed activation returns an error instead of ok. The webhook checks activation.error too, so a paid order can never silently become an unactivated success.",
+      "decision": "The PayPal path is order â†’ owner check â†’ capture â†’ activation. readPaypalOrder supplies custom_id, capture is a POST to /capture, and a failed activation returns an error instead of ok. The webhook checks activation.error too, so a paid order can never silently become an unactivated success.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-24: production checkout returned 502 paypal credentials are not set and the audit found no capture or reliable activation",
@@ -1364,7 +1364,7 @@
       "id": "docs-agent-roles-01",
       "scope": "agent/",
       "file": "docs/agent-roles.md",
-      "decision": "Every automation-opened session opens inside a named role: roles are lanes of one division, one session may not work in two roles, the role doc is the session entry point, and the role names the repo paths it may touch — the registry is docs/agent-roles/registry.json.",
+      "decision": "Every automation-opened session opens inside a named role: roles are lanes of one division, one session may not work in two roles, the role doc is the session entry point, and the role names the repo paths it may touch â€” the registry is docs/agent-roles/registry.json.",
       "source": {
         "kind": "user",
         "ref": "user 2026-11-25: 'untuk automation nya buat semua bisa terdokumentasi di repo dan kelompokkan sesuai dengan role yang sedang dikerjakan satu sesi tidak boleh lintas role; role itu jadi pintu masuk agent supaya dia mengerjakan hanya bagian itu; list dulu apa yang mau di bangun ke aku aku review'"
@@ -1544,7 +1544,27 @@
       }
     },
     {
-      "id": "docs-agent-roles-12",
+      "id": "local-wait-verdict-01",
+      "scope": "mcp/local",
+      "file": "local/browser-actions.ts",
+      "decision": "A browser_wait_until answer carries settled:true only when its own condition was met. A text, row, url or stable wait that ran out of budget answers found:false or still:false and settled:false, so a driver cannot turn a timed-out wait into a claim that the page is ready; a burst claims settled only from a step that actually found its condition.",
+      "source": {
+        "kind": "recorded",
+        "ref": "the five Google Drive runs of 2026-11-27 in docs/proof/2026-11-27-engineer.md: run 1 read a 346-character shell with settled:true while the file grid was still loading, and run 4's wait for the file url answered ok with the page still on my-drive",
+        "also": "docs/proof/2026-11-27-engineer-wait-regression.test.ts (drives all four wait kinds against a driver whose condition never arrives)"
+      }
+    },
+    {      "id": "local-delivery-bytes-01",
+      "scope": "mcp/local",
+      "file": "local/statements.ts",
+      "decision": "A delivery whose name ends in .pdf is refused when its first bytes do not sniff as a PDF. The extension is the caller's claim about the document; the bytes are the fact. A workbook keeps its own extension and is recorded as a zip, but a folder archive cannot be filed as a signed statement because it arrived under a .pdf name.",
+      "source": {
+        "kind": "recorded",
+        "ref": "run 1 of the five Google Drive runs of 2026-11-27 in docs/proof/2026-11-27-engineer.md downloaded a 23,037-byte PK archive named .pdf and the download answered downloaded:true; delivery_record then recorded it as kind zip instead of refusing it",
+        "also": "docs/proof/2026-11-27-engineer-regression.test.ts (proves the refusal and that a real 1-page PDF is still delivered)"
+      }
+    },
+    {      "id": "docs-agent-roles-12",
       "scope": "agent/roles",
       "file": "docs/agent-roles/registry.json",
       "decision": "The chief-executive lane is folded into the agent manager, and every lane gets a proactive mandate: marketing implements its own ideas on the website public pages, research researches what to build, what to improve and where to sell, engineering owns the website mechanics and judges whether each tool is still worth keeping, and every lane reports to the manager, which turns each request a lane names into one bounded ticket for the lane that owns it. The register carries nine lanes, one work-scope owner per path, and the manager owns the register, the briefs and the decisions.",

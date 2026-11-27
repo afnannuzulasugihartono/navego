@@ -1,4 +1,4 @@
-// @last-edited: 2026-10-21 UTC+7.
+// @last-edited: 2026-11-27 UTC+7.
 // @title: statements - one client-month, one file, one line of proof.
 // @state: the card names the file before the drive starts; the manifest refuses a file that is not whole.
 // @dependencies: node:fs, node:os, node:path.
@@ -215,6 +215,12 @@ export function statementDelivered({
 
   const bytes = fs.readFileSync(where);
   const kind = kindOf(bytes.subarray(0, 8));
+  // A stated extension is a promise about the bytes.
+  // Drive answers an offline or folder request with a ZIP, and a driver that saves it under a .pdf name would file a container as a statement.
+  // The suffix names the claim; the bytes win.
+  if (path.extname(where).toLowerCase() === '.pdf' && kind !== 'pdf') {
+    throw new Error(`${path.basename(where)} is named .pdf but its bytes sniff as ${kind}; a workbook or a folder archive is not a PDF statement. Save the real document under this name, or name the file for the kind it really is.`);
+  }
   const pages = kind === 'pdf' ? countPdfPages(bytes) : null;
   const digits = balanceDigits(balance);
   const record = {
