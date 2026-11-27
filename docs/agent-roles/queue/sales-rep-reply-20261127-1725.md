@@ -38,6 +38,14 @@ that never ran, while the send happened at 2026-11-28 00:05 WIB and is
 recorded in `docs/proof/outreach/2026-11-28.md`. Its prepared block is
 superseded by the corrected block above.
 
+merged: pull request #506
+(https://github.com/afnannuzulasugihartono/navego/pull/506), head `b986c109`,
+every CI job green on that exact head, merged as `30fb1bea` at
+2026-11-28T01:16:57WIB with administrator rights. The reviewer agent could
+not run: the message contract refuses a finished operator session
+(`TARGET_SESSION_MISSING`) and a child session is denied on this key, so the
+gap is written in the proof under the owner's 2026-11-26 answer.
+
 reply: no reply yet on the Statement Harbor thread.
 
 money: No settled customer payment moved. A sale is a settled payment; this
