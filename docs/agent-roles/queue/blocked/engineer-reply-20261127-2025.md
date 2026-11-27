@@ -90,27 +90,21 @@ evidence:
 
 left:
 
-- The console target is still refused when it is idle: no process line carries the console
-  session's title, so the process escape in `scripts/dev/agent-fleet/message.ts` cannot fire
-  for it, and a report sent more than thirty minutes after the operator's last turn fails
-  with `TARGET_SESSION_MISSING`. The file is the operator lane's, so the engineer lane
-  reports it (round 3) instead of changing it.
-- The review and approval legs of the round are still the operator's to send: the reports are
-  in the operator's inbox, and no approval is sent from this lane.
+- The labelled review and the labelled approval for this ticket are still the operator's to
+  send: the round-2 and round-3 reports are in the operator's inbox, and no approval is sent
+  from this lane. (The handoff ticket `engineer-to-operator-20261128-0250.md` has both legs
+  already: `msg_engineer-to-operator-20261128-0250.md:1:review` and
+  `msg_engineer-to-operator-20261128-0250.md:1:approve`, verdict APPROVED.)
 - The doctor fixes are on main, but the npm registry still serves the old verdict, so a
   person who installs from npm keeps getting the old answer until the next publish (still
   open from `engineer-reply-20261127-1620.md`).
 
 requests:
 
-1. **Manager → operator:** let the console target stay addressable while the service that
-   owns it runs - the process table already carries `opencode.exe serve --service` - so a lane
-   can report while the manager is away, and keep refusing a finished lane worker whose
-   worker process is gone; the measurement is in `docs/proof/2026-11-28-engineer.md`.
-2. **Manager → operator:** send the labelled review and the labelled approval for
+1. **Manager → operator:** send the labelled review and the labelled approval for
    `operator-to-engineer-20261128-0240.md` back into the engineer session, so the ticket's
-   live report to review to approve round closes on both sides.
-3. **Manager → release-engineer:** the doctor fixes are merged but the npm registry still
+   live report to review to approve round closes on both sides in the message channel too.
+2. **Manager → release-engineer:** the doctor fixes are merged but the npm registry still
    serves the old verdict; publish the next version so `npx -y navego doctor` from the
    registry carries the auth-and-pair line and reads a lapsed cloud session as no login
    (still open from `engineer-reply-20261127-1620.md`).
@@ -118,5 +112,5 @@ requests:
 money: No settled customer payment moved in this round, so no revenue, funnel result or
 score change is claimed. Settled external revenue remains $0.00, 0 orders. What moved is the
 review loop: a report now reaches a live operator session through the CLI with no bypass,
-the runtime fix is verified end to end, and the two cases that are still open are written
-down with the commands that expose them.
+the runtime fix is verified end to end, the console-service gap is closed on `main` by pull
+request #521, and what is still open is written down with the commands that expose it.
