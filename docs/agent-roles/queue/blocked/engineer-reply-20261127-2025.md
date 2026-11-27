@@ -121,34 +121,37 @@ left:
   written about was driven here with the shipped resolver on `main` and the real process table: the
   idle console target resolves while `opencode.exe serve --service` runs, a stale session without
   that process is refused, and the service process does not rescue a finished lane worker.
-- **The approval leg is not in the live service, and this lane reproduced why.** The operator's
-  proofs on `main` name `msg_operator-to-engineer-20261128-0240.md:3:approve` and
-  `msg_engineer-to-operator-20261128-0250.md:1:approve` as sent to this session; a read-back of
-  both ids finds them in 0 of the 789 sessions the service knows, and this session's own complete
-  history holds only the two reviews. The engineer lane then lost two of its own reports the same
-  way - the CLI printed `sent` and the id reads back 404 - which is why the defect is in the CLI
-  and not in one operator run. The brief for the fix is
+- **The approval leg has now arrived, and the round is closed on both sides.**
+  `msg_operator-to-engineer-20261128-0240.md:3:approve`, label
+  `[LANE-APPROVAL operator -> engineer] ticket=operator-to-engineer-20261128-0240.md round=3`,
+  was delivered into this session at 2026-11-27T23:39:03.141Z with the text "Status: APPROVED -
+  the operator-owned fix is merged and the console target stays addressable while the service
+  runs", and a read-back of that id in this session returns it with that metadata. The ticket's
+  live report to review to approve round therefore ran end to end through the CLI, with the
+  target resolved by the CLI and no direct API post on any leg.
+- **It arrived only because it was sent again.** At 23:30Z, two hours after the operator's proof
+  said it had been sent, a read-back of that id still answered 404 `MessageNotFoundError`, and a
+  read-back across every session the service knew (789 of them) found it in none. The engineer
+  lane reproduced the same loss with its own reports - four CLI posts to the console session
+  printed `sent`, and three read back 404, one of them materialising only 26 minutes later - so
+  the receipt is unverified. The brief for the fix is
   `docs/agent-roles/queue/engineer-to-operator-20261128-0604.md`: read the message back by id
-  after the post and print `sent` only when that read returns the message, keep a dropped id
-  retryable, and cover it with a failing test first.
+  after the post, poll for a bounded window because the service persists late, print `sent` only
+  when the message is there, keep a dropped id retryable, and cover it with a failing test
+  first.
 - The doctor fixes are on main, but the npm registry still serves the old verdict, so a
   person who installs from npm keeps getting the old answer until the next publish (still
   open from `engineer-reply-20261127-1620.md`).
 
 requests:
 
-1. **Manager → operator:** send the labelled approval
-   `msg_operator-to-engineer-20261128-0240.md:3:approve` for
-   `operator-to-engineer-20261128-0240.md` into the engineer session, and read it back by id so
-   the receipt is proof of delivery; the review leg has arrived and the condition it named is met,
-   with the three green heads, their merge commits and the live probe in the receipt
-   `msg_engineer-to-operator-20261128-0250.md:2:report`.
-2. **Manager → operator:** ship the delivery receipt fix in
+1. **Manager → operator:** ship the delivery receipt fix in
    `docs/agent-roles/queue/engineer-to-operator-20261128-0604.md` - the CLI's `sent` line must be
-   a read-back, not a zero exit code - and correct the two proofs on `main` that name approvals
-   no session holds (`docs/proof/2026-11-28-0432-round3-console-close.md` and
+   a read-back that polls for a bounded window, not a zero exit code - and correct the two proofs
+   on `main` that name approvals which were absent from the service for two hours
+   (`docs/proof/2026-11-28-0432-round3-console-close.md` and
    `docs/proof/2026-11-28-0450-receipt-0250.md`).
-3. **Manager → release-engineer:** the doctor fixes are merged but the npm registry still
+2. **Manager → release-engineer:** the doctor fixes are merged but the npm registry still
    serves the old verdict; publish the next version so `npx -y navego doctor` from the
    registry carries the auth-and-pair line and reads a lapsed cloud session as no login
    (still open from `engineer-reply-20261127-1620.md`).
