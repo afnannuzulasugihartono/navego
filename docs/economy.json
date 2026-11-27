@@ -9,7 +9,7 @@
   },
   "costs": [],
   "monthly_gap_usd": null,
-  "next_action": "Wait for a real reply on Statement Harbor and record it the day it arrives. Steel outreach stays stacked with not-before 2026-11-29. Guest checkout ticket 2304 stays queued. Only a settled stranger payment moves the score.",
+  "next_action": "A settled stranger payment is still the only score move. Statement Harbor has no reply yet; Steel outreach is stacked for 2026-11-29; guest checkout ticket 2304 remains queued. Billing order creation is verified; capture is not.",
   "leak_found_2": {
     "what": "The deployed Supabase Auth config named only dead predecessor hosts (site_url on the retired product domain, allow-list on the retired deployment), so the consent page on the live domain got 400 'unauthorized request origin' and pairing died at the approval step - the funnel's wall between 15 pair views and 1 install view.",
     "proof": "owner console capture 2026-11-24 (the oauth consent endpoint answered 400 unauthorized request origin); CI read run 45373897531 printed the predecessor site_url and an allow-list without navego.pages.dev.",
@@ -146,5 +146,12 @@
     "reply": "No external reply yet; two comments total, both ours.",
     "support_form": "Live OPTIONS preflight to navego-feedback returned 204 with the correct CORS headers; no fake row written.",
     "evidence": "docs/proof/2026-11-28-0026-send-and-form-verification.md"
+  },
+  "billing_verification": {
+    "method": "Magic-link sign-in from the live /masuk page, then paypal-buy plan.usd-1 against the production billing function from the signed-in browser.",
+    "result": "HTTP 200, ok true, plan.usd-1, real PayPal order id and paypal.com approval URL. Approval URL was not opened and no payment was captured.",
+    "not_proven": "capture, webhook activation and plan activation still require a real customer payment.",
+    "evidence": "docs/proof/2026-11-28-0135-billing-verification.md",
+    "revenue_effect": "none — $0.00 settled, 0 orders; an open order or quote is not revenue"
   }
 }
