@@ -83,6 +83,12 @@ and the OpenCode message endpoint requires an id that starts with `msg_`. The bo
 shipped CLI posts is refused by the API, so the CLI cannot deliver a message to any
 session, in either direction, until the id is corrected.
 
+The operator found this one from the other side while driving the loop and fixed it on
+main at 2026-11-27T16:24:10Z (`ceda9d56`, "Prefix review message ids with `msg_` as
+the OpenCode API requires", with the failing test written first). This worktree's
+checkout predates that commit, which is why the refusal above is what the shipped code
+still does here; on current main the id is already correct.
+
 ## Attempt 3 - the same label, the same body, the two corrections the live session and the API require
 
 Only two things changed from attempt 2: the id carries the `msg_` prefix the endpoint
@@ -128,29 +134,50 @@ asked for, and the operator's answer is on the record.
 
 ## The review leg
 
-The operator posted the review and the approval for this ticket into this session's
-inbox at 2026-11-27T16:24:18Z, as `msg_operator-to-engineer-20261127-2126.md:1:review`
-and `msg_operator-to-engineer-20261127-2126.md:1:approve`, both with `delivery: queue`.
-This session was mid-turn while they waited, so they are delivered when the turn ends;
-the delivery as this session received it is written below, after the message arrived.
+The operator read the artifact the report points at, in its live session, and wrote the
+verdict down: `docs/proof/2026-11-27-2304-review-verdict.md` on main records the
+verdict **APPROVED** after reading `local/doctor.ts`, the two-branch regression test,
+the live homepage and the gate evidence, and it names this round's report in its own
+words:
+
+> The same report arrived again with the correct ticket id
+> `operator-to-engineer-20261127-1105.md`, restating the shipped diff, the merged PR,
+> the reviewer gap and the live engineer session. It adds no new artifact and no new
+> evidence. The verdict above already covers it: APPROVED, no second approval sent, no
+> new ticket opened.
+
+The operator's own side of the round is `docs/proof/2026-11-27-2304-review-loop-live.md`
+on main: the three labelled messages for this ticket with their ids, the live sessions
+they went to, and the honest limit it states - the mechanism is closed, but a
+behavioural round needs a worker that reports first and waits for the operator.
+
+The `review` message for this ticket is in this session's own inbox as well:
+`msg_operator-to-engineer-20261127-2126.md:1:review`, label
+`[LANE-REVIEW operator -> engineer] ticket=operator-to-engineer-20261127-2126.md
+round=1`, posted by the operator at 2026-11-27T16:24:18Z with `delivery: queue` and
+`resume: true`. It was queued behind this session's turn when the round ran; the
+delivery as this session receives it is recorded below once the message arrives.
 
 ## What the round proves, and what it does not
 
 Proven:
 
 - A labelled, whitelisted report from the engineer lane reaches the running operator
-  session, and the operator answers it in that session.
+  session, and the operator reads the artifact it points at and answers in that
+  session with a verdict that is on the record.
 - The operator's review for this ticket is queued in the engineer session's own inbox
   and arrives in that same session.
 
 Not proven, and named here rather than glossed over:
 
-- **The shipped CLI cannot run the loop.** `resolveSessionId` treats a stored `outcome`
-  as death, so a running console session is never a target, and `messageIdOf` builds an
-  id the API refuses. The report in this round needed both corrected by hand. The fix
-  belongs to the lane that owns `scripts/dev/agent-fleet/**`.
+- **The shipped CLI still cannot deliver a report to the operator.** `resolveSessionId`
+  treats a stored `outcome` as death, so a running console session is never a target.
+  That half is still open on current main: `ceda9d56` fixed the id half, and
+  `resolveSessionId` still filters on `!session.outcome`. The report in this round
+  needed the target resolved by heartbeat instead.
 - No approval is sent from this lane. The approval in the engineer's inbox was posted
-  by the operator.
+  by the operator, and the operator's own proof says plainly that it was posted as a
+  delivery test, not as an earned second verdict.
 
 ## Gates
 
