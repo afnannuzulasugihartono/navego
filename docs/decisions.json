@@ -1830,6 +1830,16 @@
         "kind": "user",
         "ref": "user 2026-11-28: 'kenapa ... belum bisa autonomy untuk mencapai tujuan ... research mendalam kenapa dan solusinya lalu implementasikan'"
       }
+    },
+    {
+      "id": "hosted-guest-edge-01",
+      "scope": "hosted/functions",
+      "file": "hosted/functions/navego-billing/index.ts",
+      "decision": "The billing edge serves a guest PayPal order only when there is no session and guest === true, mints the one-time token inside the function, and allows capture of a guest order only for the account whose claim is stored with a claimed_at. A manager deviation is recorded because no lane owns hosted/functions/** and the engineer handoff carries the exact diff.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/agent-roles/queue/engineer-to-operator-20261128-0025.md - exact edge diff handed to the manager because the registry assigns hosted/functions/** to no role"
+      }
     }
   ]
 }

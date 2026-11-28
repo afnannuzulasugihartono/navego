@@ -1160,14 +1160,32 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
           const order = await readPaypalOrder(env, orderId);
           const units = (order as { purchase_units?: Array<{ custom_id?: string }> }).purchase_units ?? [];
           const parsed = planFromCustomId(String(units[0]?.custom_id ?? ""));
-          if (!parsed || parsed.owner !== owner) return json({ error: "this PayPal order belongs to another account" }, 403, cors);
+          const isGuest = parsed?.owner === 'guest';
+          if (!parsed || (parsed.owner !== owner && !(isGuest && parsed.owner === 'guest'))) return json({ error: "this PayPal order belongs to another account" }, 403, cors);
           if (!USD_PLANS.includes(parsed.plan)) return json({ error: "plan USD tidak dikenal" }, 400, cors);
+          let claimedByOwner = false;
+          if (isGuest) {
+            // A guest order carries the marker, not the buyer's account.
+            // The stored quote is the only thing that says who claimed it, and an unclaimed quote cannot be activated.
+            const quoteDb = await db();
+            const { data: quoteRow } = await quoteDb.from("opera_paypal_orders")
+              .select("owner_id, claimed_at, plan")
+              .eq("environment", env.environment)
+              .eq("order_id", orderId)
+              .maybeSingle();
+            if (!quoteRow?.claimed_at || quoteRow.owner_id !== owner || quoteRow.plan !== parsed.plan) {
+              return json({ error: "this PayPal order belongs to another account" }, 403, cors);
+            }
+            claimedByOwner = true;
+          }
           const alreadyCompleted = String((order as { status?: string }).status ?? "").toUpperCase() === "COMPLETED";
           if (!alreadyCompleted) await capturePaypalOrder(env, orderId);
           const completedOrder = await readPaypalOrder(env, orderId);
           const settlement = settlementFromPaypalOrder(orderId, completedOrder);
           if (!settlement) throw new Error('the completed PayPal order could not be read as a USD sale');
-          if (settlement.owner !== owner || settlement.plan !== parsed.plan) throw new Error('the completed PayPal order does not belong to this purchase');
+          const ownerMatches = settlement.owner === owner
+            || (isGuest && claimedByOwner && settlement.owner === 'guest');
+          if (!ownerMatches || settlement.plan !== parsed.plan) throw new Error('the completed PayPal order does not belong to this purchase');
           const supabase = await db();
           const settled = await supabase.rpc("opera_paypal_settle_order", {
             p_environment: env.environment,
@@ -1196,7 +1214,9 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
 
       if (body.action === "paypal-buy") {
         const owner = await sessionOrNull(req);
-        if (!owner) return json({ error: "masuk dulu sebelum membeli plan USD" }, 401, cors);
+        // A signed-out buyer may pay first and claim the order after signing in, but only by asking for it: a missing session alone still hits the wall.
+        const guest = !owner && body.guest === true;
+        if (!owner && !guest) return json({ error: "masuk dulu sebelum membeli plan USD" }, 401, cors);
         const plan = String(body.plan || "");
         if (!USD_PLANS.includes(plan)) return json({ error: "plan USD tidak dikenal" }, 400, cors);
         const supabase = await db();
@@ -1216,8 +1236,24 @@ const looksLikePaypalWebhook = body.event_type != null && typeof body.event_type
             amountCents: expectedAmount,
             currency: String(row.currency),
             description: `Navego ${plan}`,
-            customId: `${plan}:${owner}`
+            customId: `${plan}:${guest ? 'guest' : owner}`
           });
+          if (guest) {
+            // The browser never holds the quote authority: one token is minted here, hashed by the database, and claimed once by an account later.
+            const guestToken = crypto.randomUUID();
+            const quote = await supabase.rpc("opera_paypal_create_guest_order", {
+              p_environment: env.environment,
+              p_order_id: order.id,
+              p_guest_token: guestToken,
+              p_plan: plan,
+              p_amount_cents: expectedAmount,
+              p_currency: 'USD'
+            });
+            if (quote.error) return json({ error: `PayPal quote was not stored: ${quote.error.message}` }, 502, cors);
+            const quoteState = quote.data as { ok?: boolean; error?: string } | null;
+            if (!quoteState?.ok) return json({ error: quoteState?.error || 'PayPal guest quote was refused' }, 502, cors);
+            return json({ ok: true, plan, orderId: order.id, approvalUrl: order.approvalUrl, guestToken, amountCents: expectedAmount, currency: 'USD' }, 200, cors);
+          }
           const quote = await supabase.rpc("opera_paypal_create_order", {
             p_environment: env.environment,
             p_order_id: order.id,
