@@ -1900,6 +1900,16 @@
         "kind": "user",
         "ref": "user 2026-11-28: 'kerjakan yang bisa di kerjakan untuk hourly automation auto merge dan cek nilai serta lance yang menganggur'"
       }
+    },
+    {
+      "id": "agents-growth-loop-01",
+      "scope": "agents/shared",
+      "file": "agents/shared/findings/RF-021-2026-11-28-growth-research-loop.md",
+      "decision": "Growth runs as one bounded loop: observe the metric, name the problem, research with live evidence and counter-evidence, write one RF with a decision-change sentence, turn it into one lane task, implement with a failing test first, verify the live artefact, and re-measure. Cadence alone never justifies a topic.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-28: 'untuk growth yang terus menerus butuh loop research and problem gak sih' then 'sekalian research loop yang efektif gimana'"
+      }
     }
   ]
 }
