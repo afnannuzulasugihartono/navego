@@ -120,21 +120,32 @@ export function isTicketPath(file: string, root: string): boolean {
 const invokedDirectly = process.argv[1] ? import.meta.url === new URL(`file:///${process.argv[1].replace(/\\/g, '/')}`).href : false;
 
 if (invokedDirectly) {
-  const file = process.argv[2];
-  if (!file) {
-    console.error('usage: node scripts/dev/agent-fleet/research-gate.ts <ticket.md>');
+  const name = process.argv[2];
+  if (!name || !/^[A-Za-z0-9][A-Za-z0-9._-]*\.md$/.test(name)) {
+    console.error('usage: node scripts/dev/agent-fleet/research-gate.ts <ticket-name.md>');
     process.exitCode = 2;
   } else {
+    // The CLI argument is only a name to match against directory entries.
+    // It never becomes a path, so a caller cannot choose a file outside the ticket folders.
     const root = fileURLToPath(new URL('../../../', import.meta.url));
-    const resolved = path.resolve(file);
-    if (!isTicketPath(file, root)) {
-      console.error('a ticket must be a .md file inside docs/agent-roles/queue or agents/shared');
+    const folders = ['docs/agent-roles/queue', 'agents/shared'].map((dir) => path.join(root, dir));
+    let found: string | undefined;
+    for (const folder of folders) {
+      try {
+        for (const entry of fs.readdirSync(folder)) {
+          if (entry === name) found = path.join(folder, entry);
+        }
+      } catch {
+      }
+    }
+    if (!found) {
+      console.error('ticket not found in docs/agent-roles/queue or agents/shared');
       process.exitCode = 2;
     } else {
-      const ticket = parseTicket(fs.readFileSync(resolved, 'utf8'));
+      const ticket = parseTicket(fs.readFileSync(found, 'utf8'));
       const prior = readPrior(path.join(root, 'agents/shared/findings'));
       const verdict = decideResearch(ticket, { prior });
-      console.log(JSON.stringify({ file: resolved, ticket, priorFindings: prior.length, ...verdict }, null, 2));
+      console.log(JSON.stringify({ file: found, ticket, priorFindings: prior.length, ...verdict }, null, 2));
       process.exitCode = verdict.verdict === 'run' ? 0 : verdict.verdict === 'skip' ? 1 : 2;
     }
   }

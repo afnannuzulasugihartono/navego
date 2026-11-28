@@ -8,4 +8,4 @@ Body must name: the decision this evidence supports, the exact public URL to rea
 
 A research task never sends a message and never opens a standing agent.
 
-Before dispatch, run `node scripts/dev/agent-fleet/research-gate.ts <ticket.md>`. Only verdict `run` is dispatched; `skip` means the question is already answered or the ticket asks for outreach, and `needs-human` means the ticket is incomplete. The gate is deterministic, so a model never spends a run discovering those facts.
+Before dispatch, run `node scripts/dev/agent-fleet/research-gate.ts <ticket-name.md>` with the bare filename, which the gate matches against entries in the queue and `agents/shared`. Only verdict `run` is dispatched; `skip` means the question is already answered or the ticket asks for outreach, and `needs-human` means the ticket is incomplete. The gate is deterministic, so a model never spends a run discovering those facts.
