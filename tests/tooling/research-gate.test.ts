@@ -8,11 +8,12 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import fs from 'node:fs';
 import os from 'node:os';
-import { decideResearch, isTicketPath, researchDispatchAllowed, type ResearchTicket, type PriorFinding } from '../../scripts/dev/agent-fleet/research-gate.ts';
+import { decideResearch, isTicketPath, parseTicket, researchDispatchAllowed, type ResearchTicket, type PriorFinding } from '../../scripts/dev/agent-fleet/research-gate.ts';
 
 const now = Date.parse('2026-11-28T00:00:00Z');
 const ticket: ResearchTicket = {
   decision: 'which public organisation gets the next bounded outreach',
+  decisionChange: 'choose one public surface for the next bounded action',
   urls: ['https://developers.google.com/search/docs/essentials'],
   date: '2026-11-28',
   resultPath: 'RF-014-2026-11-28-research-automation.md'
@@ -87,6 +88,28 @@ test('dispatch is blocked for a research ticket the gate would skip', () => {
     assert.equal(researchDispatchAllowed('operator-to-engineer-20261128-0900.md', dir, dir), true, 'non-research tickets are unaffected');
     assert.equal(researchDispatchAllowed('operator-to-researcher-20261128-0900.md', dir, dir), false, 'a research ticket asking for outreach is not dispatched');
     assert.equal(researchDispatchAllowed('operator-to-researcher-missing.md', dir, dir), false, 'a missing ticket is not dispatched');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+test('a ticket without a decision-change value waits for a person', () => {
+  const verdict = decideResearch({ ...ticket, decisionChange: '' }, { prior, now });
+  assert.equal(verdict.verdict, 'needs-human');
+  assert.match(verdict.reasons.join(' '), /decision-change/i);
+});
+
+test('the gate parses the decision-change line from a ticket file', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gate-value-'));
+  try {
+    const file = path.join(dir, 'operator-to-researcher-20261128-1200.md');
+    fs.writeFileSync(file, [
+      'decision: which public organisation gets the next bounded outreach',
+      'decision-change: choose one public surface for the next bounded action',
+      'url: https://developers.google.com/search/docs/essentials',
+      'date: 2026-11-28',
+      'result: RF-099-2026-11-28-value.md'
+    ].join('\n'));
+    assert.equal(parseTicket(fs.readFileSync(file, 'utf8')).decisionChange, 'choose one public surface for the next bounded action');
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }

@@ -14,6 +14,7 @@ import { fileURLToPath } from 'node:url';
 
 export interface ResearchTicket {
   decision: string;
+  decisionChange?: string;
   urls: string[];
   date: string;
   resultPath: string;
@@ -45,6 +46,7 @@ export function decideResearch(ticket: ResearchTicket, options: GateOptions = {}
 
   if (ticket.asksOutreach) reasons.push('a research task never performs outreach');
   if (!ticket.decision.trim()) reasons.push('no decision named - the evidence cannot change anything');
+  if (!ticket.decisionChange?.trim()) reasons.push('no decision-change named - value of information is zero');
   if (!ticket.urls.length || ticket.urls.some((url) => !/^https:\/\//.test(url))) {
     reasons.push('no openable public URL named');
   }
@@ -88,6 +90,7 @@ export function parseTicket(text: string): ResearchTicket {
   };
   return {
     decision: values('decision')[0] ?? '',
+    decisionChange: values('decision-change')[0] ?? '',
     urls: values('url'),
     date: values('date')[0] ?? '',
     resultPath: values('result')[0] ?? '',

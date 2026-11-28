@@ -1890,6 +1890,16 @@
         "kind": "user",
         "ref": "user 2026-11-28: 'implementasi yang belum' - audit items 1 and 2 in RF-020"
       }
+    },
+    {
+      "id": "docs-automation-wiring-01",
+      "scope": "docs/automations",
+      "file": "docs/automations.md",
+      "decision": "The hourly automation runs the outcome register, known-failure gate and executor before spending model work; repository auto-merge is enabled without weakening branch protection, and a research ticket needs a decision-change line to have value.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-28: 'kerjakan yang bisa di kerjakan untuk hourly automation auto merge dan cek nilai serta lance yang menganggur'"
+      }
     }
   ]
 }

@@ -36,10 +36,10 @@ Read every row of `agents/shared/findings/index.md`, read the "what was built / 
 
 1. **Machine-readable outcome signals** (RF-015 item 3, RF-013 item 3). **Implemented in run 57**: `scripts/dev/agent-fleet/outcomes.ts` writes `docs/agent-roles/loop/outcomes.json` with schema `navego-outcomes-v1`, and `goal.ts` reads that register when supplied. Four tests pin the derivation and the fallback.
 2. **One grouped regression gate for real failures** (RF-015 item 4, RF-017 item 3). **Implemented in run 57**: `scripts/dev/agent-fleet/regressions.ts` returns three checks — reply register, queued receipt, own buy click — and exits 1 if any fails. Two tests pin both the passing and failing paths.
-3. **Wire the hourly automation to the executor** (RF-013 item 1). `executor.ts` is not invoked by the hourly automation; a model still starts each run. Wiring it would remove the largest remaining manual touch for deterministic classes.
-4. **GitHub auto-merge for green PRs** (RF-013 item 2). `allow_auto_merge` is `false`. This is a repository setting change, not new code; gates must stay intact.
-5. **Topic selection inside the research gate** (RF-018). The gate cannot yet refuse a topic merely because no decision would change or the constraint is elsewhere.
-6. **Collapse idle lanes** (RF-015 item 5). Registry still has four active lanes; sales-rep and onboarding-guide wait on a buyer and a maintainer. This is an architectural change and should not be done casually.
+3. **Wire the hourly automation to the executor** (RF-013 item 1). **Implemented in run 58**: the hourly automation now runs outcomes, regressions and executor first, and only spends model work on a deferred ticket. Automation id `aut_2222337f9001cNsfBZkQ9m7Aig`. Wiring it would remove the largest remaining manual touch for deterministic classes.
+4. **GitHub auto-merge for green PRs** (RF-013 item 2). **Enabled in run 58**: `allow_auto_merge=true`; branch protection still requires one approving review, code-owner review and six status checks.
+5. **Topic selection inside the research gate** (RF-018). **Partially implemented in run 58**: a ticket without a `decision-change:` line is refused by the gate; constraint ranking remains prose.
+6. **Collapse idle lanes** (RF-015 item 5). **Deferred with a reason**: sales-rep owns the Steel and mcp.so actions and onboarding-guide still has an open ticket; collapsing would strand live work.
 7. **External outcomes** (RF-004, RF-017, RF-019): the inbound link, a settled stranger payment, and the two stacked public actions. These are not code; they are waiting on time and, for Search Console/marketplace merge, on the owner.
 
 ## What is deliberately not "implemented"
