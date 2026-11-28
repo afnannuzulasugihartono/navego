@@ -194,7 +194,7 @@ Rules:
 
 Automations:
 
-- `aut_2164ffcfd001KHx72ub2lmEtrT` - the hourly survival-and-growth run
+- `aut_2222337f9001cNsfBZkQ9m7Aig` - the hourly survival-and-growth run
   (Asia/Jakarta). It reads the settlement and the funnel, scores the hour, and
   opens this role's session.
 - `aut_2176da47e001Cmh2bDVBUDj5Nn` - the fleet watchdog (every ten minutes).
