@@ -99,6 +99,7 @@ export default function Index() {
                 <figcaption>Tangkapan layar asli: <a href={POPUP_SHOT} rel="noreferrer">popup ekstensi saat pairing</a>.</figcaption>
               </figure>
               <p className="note"><a href="https://github.com/afnannuzulasugihartono/navego/blob/main/docs/proof/2026-11-27-engineer.md">Baca catatan lima kali jalan, termasuk yang gagal →</a></p>
+              <p className="note"><Link to="/panduan-mcp-chrome-login">Panduan: pakai MCP di Chrome yang sudah Anda masuki →</Link></p>
             </div>
 
             <div className="hero-cta">

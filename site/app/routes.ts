@@ -12,6 +12,7 @@ const PAGES: Array<[path: string, file: string, id: string]> = [
   ['harga', './routes/harga.tsx', 'harga'],
   ['unduh', './routes/unduh.tsx', 'unduh'],
   ['masuk', './routes/masuk.tsx', 'masuk'],
+  ['panduan-mcp-chrome-login', './routes/panduan-mcp-chrome-login.tsx', 'panduan-mcp-chrome-login'],
   ['docs', './routes/docs.tsx', 'docs'],
   ['mcp', './routes/mcp.tsx', 'mcp'],
   ['dukungan', './routes/dukungan.tsx', 'dukungan'],

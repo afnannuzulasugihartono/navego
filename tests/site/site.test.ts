@@ -17,7 +17,7 @@ const site = path.join(root, 'site');
 const client = path.join(site, 'build', 'client');
 
 const ROUTES = [
-  '/', '/en.html', '/fitur.html', '/harga.html', '/unduh.html', '/masuk.html', '/docs.html',
+  '/', '/en.html', '/fitur.html', '/harga.html', '/unduh.html', '/masuk.html', '/panduan-mcp-chrome-login.html', '/docs.html',
   '/mcp.html', '/dukungan.html', '/privasi.html',
   '/syarat.html', '/akun.html', '/404.html', '/oauth/consent.html', '/dashboard.html',
   '/artikel.html', '/artikel/ai-browser-indonesia.html',
@@ -238,7 +238,7 @@ test('the sitemap names exactly the public routes (404, unknowns and the signed-
   const sitemap = fs.readFileSync(path.join(client, 'sitemap.xml'), 'utf8');
   const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => String(m[1]).replace('https://navego.pages.dev', ''));
   // docs-seo-01: /akun and /dashboard are signed-in app screens, not public content, so robots disallows them and the sitemap must not offer them.
-  const expected = ['/en', '/fitur', '/harga', '/unduh', '/masuk', '/docs', '/mcp', '/dukungan', '/bandingkan', '/changelog', '/faq', '/keamanan', '/metodologi', '/privasi', '/syarat', '/artikel', '/artikel/ai-browser-indonesia', '/oauth/consent', '/'];
+  const expected = ['/en', '/fitur', '/harga', '/unduh', '/masuk', '/panduan-mcp-chrome-login', '/docs', '/mcp', '/dukungan', '/bandingkan', '/changelog', '/faq', '/keamanan', '/metodologi', '/privasi', '/syarat', '/artikel', '/artikel/ai-browser-indonesia', '/oauth/consent', '/'];
   assert.deepEqual([...locs].sort(), [...expected].sort());
 });
 

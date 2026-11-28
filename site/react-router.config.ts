@@ -15,6 +15,7 @@ export default {
     '/harga',
     '/unduh',
     '/masuk',
+    '/panduan-mcp-chrome-login',
     '/docs',
     '/mcp',
     '/dukungan',

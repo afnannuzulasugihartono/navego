@@ -1778,6 +1778,16 @@
         "kind": "user",
         "ref": "user 2026-11-28: 'nah di agents/shared itu buat folder native yang khusus untuk findings kamu dan tim agent lainnya' then 'kasih nomor ... pakai format yang software development biasa gunakan'"
       }
+    },
+    {
+      "id": "site-answer-01",
+      "scope": "site",
+      "file": "site/app/routes/panduan-mcp-chrome-login.tsx",
+      "decision": "One public page answers one real search question - how to use MCP in an already signed-in Chrome - with the exact commands, honest limits, first-hand proof and FAQ structured data. The homepage links to it so it is discoverable. This is an answer for a person, not a page written to manipulate rankings.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-28: 'kerjakan juga langkah yang tadi hasilnya sudah kita bahas' - the one-answer-page step"
+      }
     }
   ]
 }
