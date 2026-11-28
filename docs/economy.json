@@ -8,7 +8,10 @@
     "buyer_replies_waiting": 0,
     "blocked_lanes": 0,
     "claim_drift": 0,
-    "note": "L1 settled external revenue is still 0.00; every field here feeds one selected action, and a field with no action is not added."
+    "note": "L1 settled external revenue is still 0.00; every field here feeds one selected action, and a field with no action is not added.",
+    "selected_action": "close-ticket",
+    "selected_signal": "open-ticket",
+    "next_step": "The selector prints one action per run; the owner changes outcomes and boundaries, not the steps."
   },
   "revenue": {
     "settled_orders": 0,
