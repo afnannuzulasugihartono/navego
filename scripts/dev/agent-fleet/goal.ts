@@ -137,9 +137,10 @@ const countBlocked = (statePath: string): number => {
 const countUnanswered = (dir: string): number => {
   try {
     return fs.readdirSync(dir).filter((name) => {
-      if (!name.endsWith('.md')) return false;
+      // The register's README documents the format with `answered: no | yes`; a documentation example is not a buyer waiting for an answer.
+      if (!/^\d{4}-\d{2}-\d{2}-.+\.md$/.test(name)) return false;
       try {
-        return /answered:\s*no\b/i.test(fs.readFileSync(path.join(dir, name), 'utf8'));
+        return /^answered:\s*no\s*$/im.test(fs.readFileSync(path.join(dir, name), 'utf8'));
       } catch {
         return false;
       }

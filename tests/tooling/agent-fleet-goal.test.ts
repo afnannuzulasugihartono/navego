@@ -121,3 +121,25 @@ test('an unanswered buyer reply in an outreach proof is a live signal', () => {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
+test('the reply register README is documentation, not a waiting buyer', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'goal-replies-'));
+  try {
+    fs.writeFileSync(path.join(dir, 'README.md'), 'answered: no | yes\n');
+    fs.writeFileSync(path.join(dir, '2026-11-28-harbor.md'), 'surface: github\nanswered: no\n');
+    const state = readMissionState(path.join(dir, 'economy.json'), dir, { repliesDir: dir });
+    assert.equal(state.buyerRepliesWaiting, 1, 'only a dated reply file counts');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('an ambiguous answered value is not evidence of a waiting buyer', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'goal-replies-'));
+  try {
+    fs.writeFileSync(path.join(dir, '2026-11-28-harbor.md'), 'answered: no | yes\n');
+    const state = readMissionState(path.join(dir, 'economy.json'), dir, { repliesDir: dir });
+    assert.equal(state.buyerRepliesWaiting, 0);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
