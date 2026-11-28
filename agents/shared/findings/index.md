@@ -20,5 +20,6 @@ Every lane writes dated findings here. A finding is evidence for a decision, not
 | RF-014 | RF-014-2026-11-28-research-decision-automation.md | whether a research ticket should run at all | 6 public sources |
 | RF-015 | RF-015-2026-11-28-fleet-effectiveness.md | how to upgrade the fleet from busy to effective | 7 public sources + live fleet metrics |
 | RF-016 | RF-016-2026-11-28-automation-cross-check.md | what can be automated without a person, and the hard boundary | 8 public sources |
+| RF-017 | RF-017-2026-11-28-finding-weaknesses.md | whether hunting defects actually improves product quality | 6 public sources + our own outcomes |
 
 Rules: a URL must open; a claim must be quoted or measured; no personal contact data; no outreach from a finding. Long-running evidence stays in docs/proof and docs/research; these files are the shared summary for every lane.
