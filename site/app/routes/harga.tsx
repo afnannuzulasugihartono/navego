@@ -191,9 +191,12 @@ export default function Harga() {
       if (guest && guest.orderId === orderId) {
         const claimed = await claimGuestCheckout(guest, `${REST}/rpc/opera_paypal_claim_order`, headersFor(token));
         if (!claimed.ok) {
-          setWarn(true);
-          setNote(`Order belum bisa diklaim: ${claimed.error || 'tidak diketahui'}. Hubungi dukungan dengan order ID ${orderId}.`);
-          return;
+          // A claim that already succeeded is not a failure: the browser may have reloaded between the claim and the capture, and the quote is the one that decides who owns it.
+          if (!/already claimed/i.test(String(claimed.error || ''))) {
+            setWarn(true);
+            setNote(`Order belum bisa diklaim: ${claimed.error || 'tidak diketahui'}. Hubungi dukungan dengan order ID ${orderId}.`);
+            return;
+          }
         }
         forgetGuestCheckout();
         setGuestOrder(null);
@@ -351,6 +354,22 @@ export default function Harga() {
             <p className="lede">Mulai $1. Bayar sekali. Tidak ada perpanjangan otomatis, tidak ada tagihan tersembunyi.</p>
           </div>
         </section>
+
+        {guestOrder ? (
+          <section className="band band-soft" aria-label="Pesanan menunggu">
+            <div className="wrap">
+              <h2 className="section-title">Pembayaran Anda sudah tercatat.</h2>
+              <p className="note">Order <strong>{guestOrder.orderId}</strong> masih menunggu diklaim ke akun Anda. Klaim bisa dilakukan lagi dari halaman ini, tidak hanya lewat tautan kembali dari PayPal.</p>
+              <div className="hero-cta mt-2">
+                {signedOut ? (
+                  <Link className="btn btn-solid" to={signInHref}>Masuk untuk klaim</Link>
+                ) : (
+                  <button className="btn btn-solid" type="button" onClick={() => void finishCheckout()}>Klaim pesanan saya</button>
+                )}
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         {detected ? (
           <section className="band band--flush-bottom" aria-label="Kawasan harga">
