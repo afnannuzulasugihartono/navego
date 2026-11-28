@@ -124,6 +124,7 @@ export default function Mcp() {
               <div className="hero-cta mt-2">
                 <Link className="btn btn-solid" to="/docs">Baca docs lengkap</Link>
                 <Link className="btn btn-ghost" to="/unduh">Pasang extension</Link>
+                <Link className="btn btn-ghost" to="/panduan-mcp-chrome-login">Chrome yang sudah login</Link>
               </div>
             </div>
           </div>
