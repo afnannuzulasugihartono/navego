@@ -25,5 +25,6 @@ Every lane writes dated findings here. A finding is evidence for a decision, not
 | RF-019 | RF-019-2026-11-28-discovery-surface.md | which public surface can produce the next real inbound link | 5 live URLs |
 | RF-020 | RF-020-2026-11-28-implementation-audit.md | which research remains unimplemented and what to do next | direct repository audit |
 | RF-021 | RF-021-2026-11-28-growth-research-loop.md | what makes a growth research loop effective | 7 public sources |
+| RF-023 | RF-023-2026-11-28-self-forming-growth-loop.md | how the agent names its own problem and judges its own result | 7 public sources |
 
 Rules: a URL must open; a claim must be quoted or measured; no personal contact data; no outreach from a finding. Long-running evidence stays in docs/proof and docs/research; these files are the shared summary for every lane.

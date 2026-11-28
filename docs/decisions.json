@@ -1920,6 +1920,16 @@
         "kind": "recorded",
         "ref": "docs/agent-roles/queue/engineer-to-operator-20261128-0604.md (measured against the live OpenCode service on 2026-11-28)"
       }
+    },
+    {
+      "id": "scripts-self-forming-growth-01",
+      "scope": "scripts/dev/agent-fleet",
+      "file": "scripts/dev/agent-fleet/growth.ts",
+      "decision": "The agent formulates its growth problem from live metrics and judges an outcome deterministically: flat stays flat, a drop stays a drop, and a rise on a sample under thirty is weak evidence rather than effectiveness. Generated research tickets must pass the existing research gate.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-28: 'aku mau otomatis tanpa aku bilang kenapa uang masih 0 jadi agents mencari merumuskan masalah sendiri ... terus dihitung berdasarkan output'"
+      }
     }
   ]
 }
