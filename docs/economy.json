@@ -11,13 +11,20 @@
     "note": "L1 settled external revenue is still 0.00; every field here feeds one selected action, and a field with no action is not added.",
     "selected_action": "close-ticket",
     "selected_signal": "open-ticket",
-    "next_step": "Land one real inbound link (listing PR 20598) and wait for a settled stranger payment; no new internal proof raises the score.",
-    "last_verified_at": "2026-11-28T03:24:00Z",
+    "next_step": "Land one real inbound link (listing PR 20598) and wait for a settled stranger payment; no further internal proof raises the score.",
+    "last_verified_at": "2026-11-28T04:24:00Z",
     "guest_edge_verified": {
       "deploy_run": "46102472942",
       "live_order": "8WS729371J1679801",
       "result": "guest paypal-buy returned ok with approvalUrl, guestToken, amountCents 100, currency USD; quote stored with owner_id null and hashed token; plain signed-out buy still 401",
       "capture_performed": false,
+      "settled_change_usd": 0
+    },
+    "claim_resume_verified": {
+      "deploy_run": "46108123467",
+      "artifact": "live /harga rendered the pending-order banner and Klaim pesanan saya button with a proof-only order",
+      "proof_order_is_real": false,
+      "captured": false,
       "settled_change_usd": 0
     }
   },
