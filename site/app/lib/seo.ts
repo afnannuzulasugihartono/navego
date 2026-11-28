@@ -1,4 +1,5 @@
-// @last-edited: 2026-11-18 UTC+7.
+// @last-edited: 2026-11-28 UTC+7.
+// decisions.json -> site-canonical-01 (a rel="canonical" signal must be a link element)
 // @title: seo - the shared answer for link previews, social cards and the search engine.
 // @state: every route asks through this helper; nothing here is hand-typed twice.
 // @dependencies: none.
@@ -34,6 +35,6 @@ export function seoMeta({ title, description, path, locale = 'id_ID' }: SeoInput
     { name: 'twitter:description', content: description },
     { name: 'twitter:image', content: OG_IMAGE },
     { name: 'twitter:site', content: TWITTER },
-    { rel: 'canonical', href: url },
+    { tagName: 'link', rel: 'canonical', href: url },
   ];
 }

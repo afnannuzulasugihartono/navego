@@ -1758,6 +1758,16 @@
         "kind": "user",
         "ref": "user 2026-11-28: \"kerjakan sekarang\" after the UX research comparing /beranda with Linear and Apple"
       }
+    },
+    {
+      "id": "site-canonical-01",
+      "scope": "site",
+      "file": "site/app/lib/seo.ts",
+      "decision": "The canonical signal is emitted as a real link element (tagName: 'link', rel: 'canonical', href) because Google names rel=canonical link annotations as an indexing signal; a meta element with a rel attribute is not that signal. This addresses one measured cause of zero indexed pages, not the whole discovery problem.",
+      "source": {
+        "kind": "internet",
+        "ref": "https://developers.google.com/search/docs/crawling-indexing/canonicalization"
+      }
     }
   ]
 }
