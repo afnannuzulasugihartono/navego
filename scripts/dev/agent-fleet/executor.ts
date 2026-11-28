@@ -23,6 +23,7 @@ export interface ExecutionResult extends NextAction {
   deferred: boolean;
   reason: string;
   receipt?: string;
+  routed?: string;
 }
 
 interface AnsweredTicket {
@@ -78,6 +79,45 @@ const writeReceipt = (paths: ExecutorPaths, found: AnsweredTicket, chosen: NextA
   return target;
 };
 
+// A deferred action still needs an owner of the work.
+// Writing that ticket is deterministic, so a person never has to decide which lane receives it.
+
+const ROUTES: Record<string, { lane: string; kind: string }> = {
+  'answer-buyer': { lane: 'sales-rep', kind: 'money' },
+  'close-revenue-path': { lane: 'engineer', kind: 'money' },
+  'unblock-lane': { lane: 'operator', kind: 'measurement' },
+  'fix-claim-drift': { lane: 'engineer', kind: 'measurement' },
+  'one-customer-visible-defect': { lane: 'engineer', kind: 'product' }
+};
+
+// One ticket per action per day keeps the loop idempotent when the hourly automation fires again before the lane has picked the work up.
+
+const writeRoute = (chosen: NextAction, paths: ExecutorPaths, reason: string): string => {
+  const route = ROUTES[chosen.action];
+  if (!route) return '';
+  const now = paths.now ?? Date.now();
+  const date = new Date(now).toISOString().slice(0, 10);
+  const name = `${date}-auto-route-${chosen.action}.md`;
+  const target = path.join(paths.queueDir, name);
+  if (!fs.existsSync(target)) {
+    const body = [
+      '# Action routed by the fleet executor',
+      '',
+      `auto-routed: ${chosen.action}`,
+      `lane: ${route.lane}`,
+      `class: ${route.kind}`,
+      `signal: ${chosen.signal}`,
+      `reason: ${reason}`,
+      `scopeRequested: ${chosen.exit}`,
+      `stop: ${chosen.exit}`,
+      '',
+      'No secret, cash request or owner-only path is part of this ticket. The dispatcher may open the lane session without a human choosing it.'
+    ].join('\n') + '\n';
+    fs.writeFileSync(target, body);
+  }
+  return target;
+};
+
 export function executeNext(chosen: NextAction, paths: ExecutorPaths): ExecutionResult {
   if (chosen.action === 'close-ticket') {
     const found = findAnsweredTicket(paths.queueDir);
@@ -94,11 +134,13 @@ export function executeNext(chosen: NextAction, paths: ExecutorPaths): Execution
     'fix-claim-drift': 'a claim drift needs evidence read by a model before it is corrected',
     'one-customer-visible-defect': 'shipping a customer-visible defect needs a test, code and a live verification'
   };
+  const reason = reasons[chosen.action] ?? 'no deterministic handler for this action';
   return {
     ...chosen,
     executed: false,
     deferred: true,
-    reason: reasons[chosen.action] ?? 'no deterministic handler for this action'
+    reason,
+    routed: writeRoute(chosen, paths, reason)
   };
 }
 

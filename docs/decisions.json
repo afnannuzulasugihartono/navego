@@ -1870,6 +1870,16 @@
         "kind": "user",
         "ref": "user 2026-11-28: 'gimana cara upgrade fleet supaya lebih efektif?' then 'research mendalam di internet'"
       }
+    },
+    {
+      "id": "scripts-auto-route-01",
+      "scope": "scripts/dev/agent-fleet",
+      "file": "scripts/dev/agent-fleet/executor.ts",
+      "decision": "A deferred action is routed automatically to the owning lane by an idempotent ticket with signal, reason, scopeRequested and stop. Payments, account reviews, marketplace merge decisions and owner-only paths remain outside automation because excessive agency is a risk, not a feature.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-28: 'research sekali lagi untuk cross check kemudian implementasikan supaya fully automated dan tanpa human intervension'"
+      }
     }
   ]
 }

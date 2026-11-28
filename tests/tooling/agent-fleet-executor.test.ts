@@ -65,3 +65,35 @@ test('actions that need a model or an owner are deferred, not pretended', () => 
     assert.ok(result.reason.length > 0, `${action} carries a reason`);
   }
 });
+
+test('every deferred action is routed to an owning lane without a human choosing', () => {
+  const paths = fixtures(true);
+  const cases: Array<[string, string]> = [
+    ['answer-buyer', 'sales-rep'],
+    ['close-revenue-path', 'engineer'],
+    ['unblock-lane', 'operator'],
+    ['fix-claim-drift', 'engineer'],
+    ['one-customer-visible-defect', 'engineer']
+  ];
+  for (const [action, lane] of cases) {
+    const result = executeNext({ ...close, action }, paths);
+    assert.equal(result.deferred, true, `${action} is still not executed by the machine`);
+    assert.ok(result.routed, `${action} routes to a lane`);
+    const text = fs.readFileSync(String(result.routed), 'utf8');
+    assert.match(text, new RegExp(`lane: ${lane}`));
+    assert.match(text, /auto-routed:/);
+    assert.match(text, /stop:/);
+    assert.match(text, /scopeRequested:/);
+  }
+});
+
+test('the same deferred action is not ticketed twice in one day', () => {
+  const paths = fixtures(true);
+  const first = executeNext({ ...close, action: 'one-customer-visible-defect' }, paths);
+  const before = fs.readdirSync(paths.queue).filter((name) => name.includes('auto-route')).length;
+  const second = executeNext({ ...close, action: 'one-customer-visible-defect' }, paths);
+  const after = fs.readdirSync(paths.queue).filter((name) => name.includes('auto-route')).length;
+  assert.equal(before, 1);
+  assert.equal(after, 1, 'a second call does not create a duplicate ticket');
+  assert.equal(second.routed, first.routed);
+});
