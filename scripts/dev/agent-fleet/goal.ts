@@ -1,0 +1,133 @@
+// @last-edited: 2026-11-28 UTC+7.
+// @title: agent-fleet goal - the operator's next action, chosen from state instead of from an instruction.
+// @state: the selection order is money first, then the queue, then the lanes, then one customer-visible defect; every action carries an exit condition.
+// @dependencies: node:fs, node:path, node:url, strict.
+
+// The mission is long and the agent's reliable horizon is short, so the mission is cut into steps that each finish in one run and can be checked.
+// METR measures the length of tasks a model completes reliably; a mission that cannot be cut into one-run steps is what fails.
+// https://metr.org/blog/2025-03-19-measuring-ai-ability-to-complete-long-tasks/
+
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+export interface MissionState {
+  settledUsd: number;
+  daysSinceSettlement: number;
+  buyerRepliesWaiting: number;
+  openTickets: number;
+  blockedLanes: number;
+  claimDrift: number;
+}
+
+export interface NextAction {
+  action: string;
+  signal: string;
+  reason: string;
+  exit: string;
+}
+
+export function selectNextAction(state: MissionState): NextAction {
+  if (state.buyerRepliesWaiting > 0) {
+    return {
+      action: 'answer-buyer',
+      signal: 'buyer-reply-waiting',
+      reason: 'a buyer is waiting; attention decays and the answer is the shortest path to money',
+      exit: 'the reply is recorded in docs/proof/outreach/ and the ticket is answered'
+    };
+  }
+  if (state.settledUsd === 0 && state.daysSinceSettlement >= 7) {
+    return {
+      action: 'close-revenue-path',
+      signal: 'no-settlement-7d',
+      reason: 'no external money has settled for a week, so the revenue path itself is the work',
+      exit: 'one bounded step toward a settled stranger payment is shipped and proved live'
+    };
+  }
+  if (state.openTickets > 0) {
+    return {
+      action: 'close-ticket',
+      signal: 'open-ticket',
+      reason: 'an open ticket already carries evidence and a defined finish',
+      exit: 'the ticket has a reply artifact, a proof and a closed line on the board'
+    };
+  }
+  if (state.blockedLanes > 0) {
+    return {
+      action: 'unblock-lane',
+      signal: 'blocked-lane',
+      reason: 'a lane that cannot run is worth more than new work',
+      exit: 'the lane starts on its own ticket and the fix is proved by a live run'
+    };
+  }
+  if (state.claimDrift > 0) {
+    return {
+      action: 'fix-claim-drift',
+      signal: 'claim-drift',
+      reason: 'a claim that outruns its evidence costs trust faster than a missing feature',
+      exit: 'the claim matches a proof file again and a test pins it'
+    };
+  }
+  return {
+    action: 'one-customer-visible-defect',
+    signal: 'default',
+    reason: 'nothing is pending, so the next unit of value is one defect a customer would feel',
+    exit: 'one runtime change and its test ship and the live behaviour is re-read'
+  };
+}
+
+export function countOpenTickets(queueDir: string): number {
+  const answered = new Set<string>();
+  let tickets: string[] = [];
+  let entries: string[] = [];
+  try {
+    entries = fs.readdirSync(queueDir);
+  } catch {
+    return 0;
+  }
+  for (const entry of entries) {
+    if (!entry.endsWith('.md')) continue;
+    const text = fs.readFileSync(path.join(queueDir, entry), 'utf8');
+    const reply = text.match(/^answered:\s*(\S+)/m);
+    if (reply?.[1]) answered.add(reply[1]);
+    if (/^operator-to-.*\.md$/.test(entry) && !entry.includes('-reply-')) tickets.push(entry);
+  }
+  const blockedDir = path.join(queueDir, 'blocked');
+  try {
+    for (const entry of fs.readdirSync(blockedDir)) {
+      if (/^operator-to-.*\.md$/.test(entry) && !entry.includes('.blocked.md')) tickets = tickets.filter((name) => name !== entry);
+    }
+  } catch {
+  }
+  return tickets.filter((name) => !answered.has(name)).length;
+}
+
+interface EconomyShape {
+  revenue?: { settled_usd?: number };
+  mission?: { days_since_settlement?: number; buyer_replies_waiting?: number; blocked_lanes?: number; claim_drift?: number };
+}
+
+export const readMissionState = (economyPath: string, queueDir: string): MissionState => {
+  let economy: EconomyShape = {};
+  try {
+    economy = JSON.parse(fs.readFileSync(economyPath, 'utf8')) as EconomyShape;
+  } catch {
+  }
+  return {
+    settledUsd: economy.revenue?.settled_usd ?? 0,
+    daysSinceSettlement: economy.mission?.days_since_settlement ?? 0,
+    buyerRepliesWaiting: economy.mission?.buyer_replies_waiting ?? 0,
+    openTickets: countOpenTickets(queueDir),
+    blockedLanes: economy.mission?.blocked_lanes ?? 0,
+    claimDrift: economy.mission?.claim_drift ?? 0
+  };
+};
+
+const invokedDirectly = process.argv[1] ? import.meta.url === new URL(`file:///${process.argv[1].replace(/\\/g, '/')}`).href : false;
+
+if (invokedDirectly) {
+  const root = fileURLToPath(new URL('../../../', import.meta.url));
+  const state = readMissionState(path.join(root, 'docs/economy.json'), path.join(root, 'docs/agent-roles/queue'));
+  const chosen = selectNextAction(state);
+  console.log(JSON.stringify({ state, ...chosen }, null, 2));
+}

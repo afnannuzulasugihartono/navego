@@ -1,6 +1,15 @@
 {
   "updated_at": "2026-11-28",
-  "mission": "Navego pays for itself and for the agent that keeps it alive: real customers, real charges, every cost named with a payer.",
+  "mission": {
+    "ladder": "agents/operator/mission.md (L0 mission to L4 referral)",
+    "selector": "scripts/dev/agent-fleet/goal.ts",
+    "goal": "People use Navego for work with AI, and the income pays for a living.",
+    "days_since_settlement": 4,
+    "buyer_replies_waiting": 0,
+    "blocked_lanes": 0,
+    "claim_drift": 0,
+    "note": "L1 settled external revenue is still 0.00; every field here feeds one selected action, and a field with no action is not added."
+  },
   "revenue": {
     "settled_orders": 0,
     "settled_usd": 0,

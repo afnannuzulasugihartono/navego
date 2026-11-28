@@ -12,6 +12,8 @@ The owner sets outcomes and constraints once. The operator chooses the next acti
 
 ## Selection rule
 
+Run `node scripts/dev/agent-fleet/goal.ts` first. It reads live state and prints the one action for this run with its signal, reason and exit condition. The order below is the one it implements.
+
 **settled money > customer-visible defect > lane unblock > quality judgment.** Pick one. If a lane does not start, fix the dispatcher or ticket header instead of writing another document. Research follows the why-first protocol: one question, live artifact, primary source, counter-evidence, one numbered RF finding in `agents/shared/findings/`.
 
 ## Output contract per run

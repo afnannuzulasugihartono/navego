@@ -1820,6 +1820,16 @@
         "ref": "docs/agent-roles/queue/operator-to-engineer-20261127-2304.md:14 - the operator ticket asks for a guest checkout token that lives in the browser until the person signs in; the PayPal approval opens with noopener and the sign-in link may open in another tab, so a tab-scoped copy never reaches the tab that signs in and the token lives in browser-local storage the way the pending plan already does",
         "also": "docs/decisions.json -> site-checkout-intent-03 (the same reason for the same reason) and tests/site/checkout-guest.test.ts"
       }
+    },
+    {
+      "id": "agents-mission-01",
+      "scope": "agents/operator",
+      "file": "agents/operator/mission.md",
+      "decision": "The operator works from a mission ladder (L0 mission to L4 referral) and selects each run's action from live state through scripts/dev/agent-fleet/goal.ts: money first, then the queue, then the lanes, then one customer-visible defect. Each action ends in an exit condition, so a months-long mission is cut into steps that fit one run.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-28: 'kenapa ... belum bisa autonomy untuk mencapai tujuan ... research mendalam kenapa dan solusinya lalu implementasikan'"
+      }
     }
   ]
 }

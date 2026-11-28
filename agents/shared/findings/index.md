@@ -14,5 +14,6 @@ Every lane writes dated findings here. A finding is evidence for a decision, not
 | RF-008 | RF-008-2026-11-28-checkout-ux.md | buy-click classification and pay-first ticket | 3 public URLs + live DB |
 | RF-009 | RF-009-2026-11-28-review-delivery.md | read-back, wake and retry in the review loop | measured live API semantics |
 | RF-010 | RF-010-2026-11-28-autonomous-operator.md | how the operator chooses work without owner direction | 8 public sources |
+| RF-011 | RF-011-2026-11-28-mission-horizon.md | why the mission was never reached, and the ladder that fixes it | 8 public sources |
 
 Rules: a URL must open; a claim must be quoted or measured; no personal contact data; no outreach from a finding. Long-running evidence stays in docs/proof and docs/research; these files are the shared summary for every lane.
