@@ -1768,6 +1768,16 @@
         "kind": "internet",
         "ref": "https://developers.google.com/search/docs/crawling-indexing/canonicalization"
       }
+    },
+    {
+      "id": "agents-findings-01",
+      "scope": "agents/shared",
+      "file": "agents/shared/findings/index.md",
+      "decision": "Agent research findings live in one native findings folder under agents/shared, named RF-<three-digit sequence>-<ISO date>-<slug>.md and indexed by sequence. Any lane may write a finding; research stays a bounded ticket, not a standing lane, and never performs outreach.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-28: 'nah di agents/shared itu buat folder native yang khusus untuk findings kamu dan tim agent lainnya' then 'kasih nomor ... pakai format yang software development biasa gunakan'"
+      }
     }
   ]
 }
