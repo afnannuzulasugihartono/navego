@@ -23,5 +23,6 @@ Every lane writes dated findings here. A finding is evidence for a decision, not
 | RF-017 | RF-017-2026-11-28-finding-weaknesses.md | whether hunting defects actually improves product quality | 6 public sources + our own outcomes |
 | RF-018 | RF-018-2026-11-28-research-topic-selection.md | whether every turn needs new research and how to pick the topic | 7 public sources |
 | RF-019 | RF-019-2026-11-28-discovery-surface.md | which public surface can produce the next real inbound link | 5 live URLs |
+| RF-020 | RF-020-2026-11-28-implementation-audit.md | which research remains unimplemented and what to do next | direct repository audit |
 
 Rules: a URL must open; a claim must be quoted or measured; no personal contact data; no outreach from a finding. Long-running evidence stays in docs/proof and docs/research; these files are the shared summary for every lane.
