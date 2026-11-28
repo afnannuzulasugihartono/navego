@@ -111,6 +111,7 @@ export interface MissionSources {
   now?: number;
   statePath?: string;
   repliesDir?: string;
+  outcomesPath?: string;
 }
 
 const DAY_MS = 86_400_000;
@@ -166,6 +167,22 @@ const countDrift = (queueDir: string): number => {
   }
 };
 
+// The register is a mirror with one schema, not a second truth; if it is missing or malformed the selector falls back to reading the artefacts directly.
+
+const readOutcomeRegister = (file?: string): { settled_usd: number; buyer_replies_waiting: number } | null => {
+  if (!file) return null;
+  try {
+    const parsed = JSON.parse(fs.readFileSync(file, 'utf8')) as {
+      schema?: string; settled_usd?: number; buyer_replies_waiting?: number;
+    };
+    if (parsed.schema !== 'navego-outcomes-v1') return null;
+    if (!Number.isFinite(parsed.settled_usd) || !Number.isFinite(parsed.buyer_replies_waiting)) return null;
+    return { settled_usd: Number(parsed.settled_usd), buyer_replies_waiting: Number(parsed.buyer_replies_waiting) };
+  } catch {
+    return null;
+  }
+};
+
 export const readMissionState = (economyPath: string, queueDir: string, sources: MissionSources = {}): MissionState => {
   let economy: EconomyShape = {};
   try {
@@ -177,10 +194,11 @@ export const readMissionState = (economyPath: string, queueDir: string, sources:
   const repliesDir = sources.repliesDir ?? path.join(path.dirname(rolesDir), 'proof', 'outreach', 'replies');
   const now = sources.now ?? Date.now();
   const lastSettled = economy.revenue?.last_settled_at;
+  const register = readOutcomeRegister(sources.outcomesPath);
   return {
-    settledUsd: economy.revenue?.settled_usd ?? 0,
+    settledUsd: register?.settled_usd ?? economy.revenue?.settled_usd ?? 0,
     daysSinceSettlement: daysSince(lastSettled, now) || (lastSettled ? 0 : daysSince(economy.mission?.started_at, now)),
-    buyerRepliesWaiting: countUnanswered(repliesDir),
+    buyerRepliesWaiting: register?.buyer_replies_waiting ?? countUnanswered(repliesDir),
     openTickets: countOpenTickets(queueDir),
     blockedLanes: countBlocked(statePath),
     claimDrift: countDrift(queueDir)
@@ -196,9 +214,10 @@ if (invokedDirectly) {
     ledger: path.join(root, 'docs/economy.json'),
     queue: queueDir,
     fleetState: path.join(root, 'docs/agent-roles/loop/state.md'),
-    replies: path.join(root, 'docs/proof/outreach/replies')
+    replies: path.join(root, 'docs/proof/outreach/replies'),
+    outcomes: path.join(root, 'docs/agent-roles/loop/outcomes.json')
   };
-  const state = readMissionState(sources.ledger, queueDir, { statePath: sources.fleetState, repliesDir: sources.replies });
+  const state = readMissionState(sources.ledger, queueDir, { statePath: sources.fleetState, repliesDir: sources.replies, outcomesPath: sources.outcomes });
   const chosen = selectNextAction(state);
   console.log(JSON.stringify({ state, sources, ...chosen }, null, 2));
 }

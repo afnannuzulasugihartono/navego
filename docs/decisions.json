@@ -1880,6 +1880,16 @@
         "kind": "user",
         "ref": "user 2026-11-28: 'research sekali lagi untuk cross check kemudian implementasikan supaya fully automated dan tanpa human intervension'"
       }
+    },
+    {
+      "id": "scripts-outcome-register-01",
+      "scope": "scripts/dev/agent-fleet",
+      "file": "scripts/dev/agent-fleet/outcomes.ts",
+      "decision": "A single machine-readable outcome register mirrors settled money, unanswered dated buyer replies, verified receipts and answered tickets; the selector reads it when present and falls back to artefacts when absent. Known real failures are grouped in one regression gate that exits non-zero if any reappears.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-28: 'implementasi yang belum' - audit items 1 and 2 in RF-020"
+      }
     }
   ]
 }

@@ -43,4 +43,4 @@ Add more features, add metrics without an action, ask for secrets or cash, weake
 
 ## Status
 
-This finding changes no product code and no gate. After this finding was recorded, run 51 implemented upgrade items 1 and 2 in scripts/dev/agent-fleet/executor.ts and wired esearchDispatchAllowed into dispatch.ts. Settled external revenue remains $0.00, 0 orders.
+This finding changes no product code and no gate. After this finding was recorded, run 51 implemented upgrade items 1 and 2 in scripts/dev/agent-fleet/executor.ts and wired researchDispatchAllowed into dispatch.ts. Run 57 implemented items 3 and 4 as outcomes.ts and regressions.ts. Settled external revenue remains $0.00, 0 orders.

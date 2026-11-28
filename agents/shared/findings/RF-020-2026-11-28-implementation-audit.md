@@ -34,8 +34,8 @@ Read every row of `agents/shared/findings/index.md`, read the "what was built / 
 
 ## The genuinely unimplemented items, ranked
 
-1. **Machine-readable outcome signals** (RF-015 item 3, RF-013 item 3). No `outcomes.json` or equivalent exists; the selector still parses prose registers. This caused the false buyer-reply signal in run 49. Small, bounded, high value.
-2. **One grouped regression gate for real failures** (RF-015 item 4, RF-017 item 3). Tests for false receipts, false buyer reply and own buy click exist but are scattered; no single gate every run must pass.
+1. **Machine-readable outcome signals** (RF-015 item 3, RF-013 item 3). **Implemented in run 57**: `scripts/dev/agent-fleet/outcomes.ts` writes `docs/agent-roles/loop/outcomes.json` with schema `navego-outcomes-v1`, and `goal.ts` reads that register when supplied. Four tests pin the derivation and the fallback.
+2. **One grouped regression gate for real failures** (RF-015 item 4, RF-017 item 3). **Implemented in run 57**: `scripts/dev/agent-fleet/regressions.ts` returns three checks — reply register, queued receipt, own buy click — and exits 1 if any fails. Two tests pin both the passing and failing paths.
 3. **Wire the hourly automation to the executor** (RF-013 item 1). `executor.ts` is not invoked by the hourly automation; a model still starts each run. Wiring it would remove the largest remaining manual touch for deterministic classes.
 4. **GitHub auto-merge for green PRs** (RF-013 item 2). `allow_auto_merge` is `false`. This is a repository setting change, not new code; gates must stay intact.
 5. **Topic selection inside the research gate** (RF-018). The gate cannot yet refuse a topic merely because no decision would change or the constraint is elsewhere.
