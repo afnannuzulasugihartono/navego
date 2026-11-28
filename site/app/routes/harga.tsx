@@ -39,7 +39,7 @@ const QA = [
   ['rencana', 'Plan, bukan langganan', 'Sekali beli, langsung aktif. Starter, Basic, Plus, Pro, dan Advanced berlaku satu bulan; Business enam bulan; Enterprise satu tahun. Tidak ada perpanjangan otomatis.'],
   ['kuota', 'Kuota harian', 'Kuota hari ini habis hari ini. Tidak diakumulasikan.'],
   ['fitur', 'Semua fitur, bukan tier yang dikebiri', 'Asia/Arab/Afrika: lima plan dasar. Eropa/AS: Starter, Pro, Business, Enterprise — dua terakhir dengan prioritas dukungan.'],
-  ['paypal', 'Bayar dengan PayPal', 'Selesaikan di PayPal. Plan aktif setelahnya.'],
+  ['paypal', 'Bayar dengan PayPal', 'Selesaikan di PayPal. Anda bisa bayar tanpa akun, lalu masuk dan mengklaim order Anda. Plan aktif setelah pembayaran dikonfirmasi.'],
   ['biaya', 'Biaya di luar plan', 'Navego tidak menambah markup token atau biaya proxy. Model AI yang sudah Anda pakai ditagih oleh provider Anda sendiri, sesuai tarif mereka.'],
   ['gagal', 'Pekerjaan gagal, Anda tidak dirugikan', 'Kuota terpakai tetap terpakai. Itu perhitungan harian.']
 ] as const;
@@ -410,7 +410,7 @@ export default function Harga() {
             ) : null}
             {checkoutNote ? <p className="status mt-4 center">{checkoutNote}</p> : null}
             {!activePlanPresent && note ? <p className={`${warn ? 'status warn' : 'status'} mt-4 center`}>{note}</p> : null}
-            <p className="note mt-3 center">Bayar dengan <strong>PayPal</strong>. Plan langsung aktif setelah pembayaran dikonfirmasi.</p>
+            <p className="note mt-3 center">Bayar dengan <strong>PayPal</strong>. Bisa tanpa akun: setelah bayar, masuk untuk mengklaim plan ke akun Anda. Plan aktif setelah pembayaran dikonfirmasi.</p>
           </div>
         </section>
 
