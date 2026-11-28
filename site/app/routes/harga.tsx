@@ -5,9 +5,10 @@ import { readConsent, readRegionCookie, storeRegionCookie } from '../lib/consent
 import { seoMeta } from '../lib/seo.js';
 import { Link } from 'react-router';
 import { SiteFooter, SiteHeader } from '../components/Chrome';
-import { BILLING, ensureSession, getStoredToken, headersFor } from '../lib/auth';
+import { BILLING, PUBLISHABLE_KEY, REST, ensureSession, getStoredToken, headersFor } from '../lib/auth';
 import { track } from '../lib/funnel';
 import { planFeedback } from '../lib/checkout-feedback';
+import { claimGuestCheckout, forgetGuestCheckout, readGuestCheckout, rememberGuestCheckout, type GuestCheckout } from '../lib/checkout-guest';
 import { forgetPendingPlan, readPendingPlan, rememberPendingPlan } from '../lib/checkout-intent';
 import { bandForCountry, type PricingBand } from '../lib/region.js';
 
@@ -56,6 +57,7 @@ export default function Harga() {
   const [buyPending, setBuyPending] = useState<string | null>(null);
   const [lastPlan, setLastPlan] = useState<string | null>(null);
   const [checkoutNote, setCheckoutNote] = useState('');
+  const [guestOrder, setGuestOrder] = useState<GuestCheckout | null>(null);
 
   const countryRef = useRef<string | null>(null);
 
@@ -119,6 +121,7 @@ export default function Harga() {
     if (checkout === 'cancelled') setCheckoutNote('Checkout dibatalkan. Plan belum dibeli.');
     if (checkout === 'success') void finishCheckout();
     setSignedOut(!getStoredToken());
+    setGuestOrder(readGuestCheckout());
     const pending = readPendingPlan();
     if (pending) {
       setLastPlan(pending);
@@ -172,7 +175,8 @@ export default function Harga() {
     // PAYPAL RETURNS TO THE TAB IT OPENED, AND THAT TAB HAS NO sessionStorage COPY.
     // The approval page is opened with `noopener`, so on return it is a browsing context without the opener's sessionStorage: the order id saved at buy time is not there, and the capture call never happened because of it.
     // PayPal appends `token=<order id>` to return_url, which is the order id the capture needs; localStorage is the fallback for a return that arrives without it.
-    const orderId = new URLSearchParams(window.location.search).get('token') || window.localStorage.getItem('navego-paypal-order');
+    const guest = readGuestCheckout();
+    const orderId = guest?.orderId || new URLSearchParams(window.location.search).get('token') || window.localStorage.getItem('navego-paypal-order');
     if (!orderId) {
       setWarn(true);
       setNote('Order PayPal tidak ditemukan di tab ini. Plan belum dapat dikonfirmasi — hubungi dukungan dengan transaction ID Anda.');
@@ -183,6 +187,16 @@ export default function Harga() {
       if (!token) {
         setSignedOut(true);
         return;
+      }
+      if (guest && guest.orderId === orderId) {
+        const claimed = await claimGuestCheckout(guest, `${REST}/rpc/opera_paypal_claim_order`, headersFor(token));
+        if (!claimed.ok) {
+          setWarn(true);
+          setNote(`Order belum bisa diklaim: ${claimed.error || 'tidak diketahui'}. Hubungi dukungan dengan order ID ${orderId}.`);
+          return;
+        }
+        forgetGuestCheckout();
+        setGuestOrder(null);
       }
       const response = await fetch(BILLING, {
         method: 'POST',
@@ -205,6 +219,44 @@ export default function Harga() {
     }
   }
 
+  async function startGuestOrder(planKind: string, planKey: string): Promise<boolean> {
+    // A BUYER WITHOUT AN ACCOUNT MAY STILL PAY.
+    // The order is quoted without an owner, and one account claims it after signing in, so the conversion wall before PayPal is gone.
+    setBuyPending(planKey);
+    setWarn(false);
+    setNote('Menyiapkan halaman PayPal...');
+    try {
+      const response = await fetch(BILLING, {
+        method: 'POST',
+        headers: { apikey: PUBLISHABLE_KEY, 'content-type': 'application/json' },
+        body: JSON.stringify({ action: 'paypal-buy', plan: planKind, guest: true })
+      });
+      const answer = await response.json().catch(() => null);
+      const url = answer?.url || answer?.approvalUrl;
+      const amountCents = Number(answer?.amountCents);
+      if (!answer?.ok || !url || !answer.guestToken || !Number.isFinite(amountCents) || amountCents <= 0) return false;
+      const orderId = String(answer.orderId || '');
+      if (orderId) window.localStorage.setItem('navego-paypal-order', orderId);
+      const record: GuestCheckout = {
+        orderId,
+        token: String(answer.guestToken),
+        plan: planKind,
+        amountCents,
+        currency: String(answer.currency || 'USD')
+      };
+      rememberGuestCheckout(record);
+      setGuestOrder(record);
+      window.open(url, '_blank', 'noopener,noreferrer');
+      forgetPendingPlan();
+      setNote('Halaman PayPal terbuka di tab baru. Selesaikan pembayaran di sana, lalu masuk agar plan aktif untuk akun Anda.');
+      return true;
+    } catch {
+      return false;
+    } finally {
+      setBuyPending(null);
+    }
+  }
+
   async function buy(planKind: string, planKey: string) {
     if (buyPending) return;
     setLastPlan(planKey);
@@ -212,6 +264,7 @@ export default function Harga() {
     track('buy.click', { plan: planKind, rail: 'paypal' });
     const current = await ensureSession();
     if (!current) {
+      if (await startGuestOrder(planKind, planKey)) return;
       setSignedOut(true);
       setNote('');
       return;
@@ -253,12 +306,14 @@ export default function Harga() {
   if (band !== 'premium') for (const plan of ASIA_PLANS) visiblePlanKeys.add(`asia:${plan.id}`);
   if (band !== 'affordable') for (const plan of EUROPE_PLANS) visiblePlanKeys.add(`europe:${plan.id}`);
   const { present: activePlanPresent, feedback: activeFeedback } = planFeedback({ lastPlan, visiblePlanKeys, pendingKey: buyPending, signedOut, note, warn });
+  const signInHref = guestOrder ? `/masuk?next=${encodeURIComponent('/harga?checkout=success')}` : '/masuk?next=/harga';
+  const signInMessage = guestOrder ? 'Pembayaran Anda menunggu akun.' : 'Pembayaran memakai akun Anda.';
   const announcement = activeFeedback
     ? activeFeedback.tone === 'signin'
-      ? `${activeFeedback.message} Masuk dulu, lalu kembali ke halaman ini.`
+      ? `${signInMessage} Masuk dulu, lalu kembali ke halaman ini.`
       : activeFeedback.message
     : checkoutNote
-      || (!activePlanPresent && signedOut ? 'Pembayaran memakai akun Anda. Masuk dulu, lalu kembali ke halaman ini.' : '')
+      || (!activePlanPresent && signedOut ? `${signInMessage} Masuk dulu, lalu kembali ke halaman ini.` : '')
       || (!activePlanPresent && note ? note : '');
 
   const PlanCard = (plan: { id: string; price: string; name: string; quota: string; premium: boolean }, slot: 'asia' | 'europe') => {
@@ -277,7 +332,7 @@ export default function Harga() {
       {feedback ? (
         <p className={`status plan-status${feedback.tone === 'warn' ? ' warn' : ''}`}>
           {feedback.tone === 'signin'
-            ? <>{feedback.message} <Link to="/masuk?next=/harga">Masuk dulu</Link>, lalu kembali ke halaman ini.</>
+            ? <>{signInMessage} <Link to={signInHref}>Masuk dulu</Link>, lalu kembali ke halaman ini.</>
             : feedback.message}
         </p>
       ) : null}
@@ -351,7 +406,7 @@ export default function Harga() {
         <section className="band band--flush-top" aria-label="Pembayaran">
           <div className="wrap">
             {!activePlanPresent && signedOut ? (
-              <p className="status mt-4 center">Pembayaran memakai akun Anda. <Link to="/masuk?next=/harga">Masuk dulu</Link>, lalu kembali ke halaman ini.</p>
+              <p className="status mt-4 center">{signInMessage} <Link to={signInHref}>Masuk dulu</Link>, lalu kembali ke halaman ini.</p>
             ) : null}
             {checkoutNote ? <p className="status mt-4 center">{checkoutNote}</p> : null}
             {!activePlanPresent && note ? <p className={`${warn ? 'status warn' : 'status'} mt-4 center`}>{note}</p> : null}

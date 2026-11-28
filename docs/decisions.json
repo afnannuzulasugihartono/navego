@@ -1798,6 +1798,28 @@
         "kind": "user",
         "ref": "user 2026-11-28: 'supaya autonomous research mendalam ... sejauh ini masih aku arahkan semua pekerjaanya'"
       }
+    },
+    {
+      "id": "hosted-paypal-guest-checkout-01",
+      "scope": "hosted/functions",
+      "file": "hosted/migrations/20261128000000_opera_paypal_guest_checkout.sql",
+      "decision": "A guest checkout is a PayPal quote stored without an owner. The claim token is kept only as a hash, the claim binds the signed-in account exactly once and only while the plan, the amount and the currency still match the quote, and a settlement of a claimed guest quote still refuses every mismatch. The PayPal order of a guest checkout carries the owner marker guest, so the settlement can tell a guest order from an order an account already bought, and no order is activated without a real capture.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/agent-roles/queue/operator-to-engineer-20261127-2304.md:9 - the operator ticket read the migration and found that a null owner was rejected at creation and a null or different owner could only reach review, so a guest order could never become a sale",
+        "also": "tests/hosted/paypal-guest-checkout.test.ts and tests/hosted/integration-paypal-guest.test.ts (the null-owner quote, the replay refusal, the wrong account, the mismatch, and the capture that settles after the claim)"
+      }
+    },
+    {
+      "id": "site-checkout-guest-01",
+      "scope": "web/components",
+      "file": "site/app/lib/checkout-guest.ts",
+      "decision": "A buyer without an account may pay: the pricing page asks the billing function for a guest order, keeps the one-time claim token in browser-local storage, and after the sign-in claims the quote for the signed-in account before the capture runs. The token is claimed once and dies with the claim, and the claim is judged by the database from the session in the request, never by the browser.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/agent-roles/queue/operator-to-engineer-20261127-2304.md:14 - the operator ticket asks for a guest checkout token that lives in the browser until the person signs in; the PayPal approval opens with noopener and the sign-in link may open in another tab, so a tab-scoped copy never reaches the tab that signs in and the token lives in browser-local storage the way the pending plan already does",
+        "also": "docs/decisions.json -> site-checkout-intent-03 (the same reason for the same reason) and tests/site/checkout-guest.test.ts"
+      }
     }
   ]
 }
