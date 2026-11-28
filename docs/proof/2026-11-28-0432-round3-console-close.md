@@ -40,3 +40,5 @@ Settled external revenue remains $0.00, 0 orders.
 
 Correction 2026-11-28 06:35 WIB: the approval named above was queued, not delivered as a session message. It has since been cancelled, re-posted and verified by read-back; see docs/proof/2026-11-28-0635-delivery-verified.md.
 
+Correction 2026-11-28 13:45 WIB: the `sent` line above was the CLI's claim, not a delivery, and the round-3 approval leg was sent twice. The operator's own records put the first post at 2026-11-27T21:32:35.946Z, and the id `msg_operator-to-engineer-20261128-0240.md:3:approve` was in none of the 789 sessions until the re-sent leg was created at 2026-11-27T23:39:03.141Z, two hours later, in the engineer session `ses_de1512dd6ffeUaJ5gI2yLCYb0i`. The live read of that session is the record: one message, `type: user`, created 1795822743141, and the label `[LANE-APPROVAL operator -> engineer] ticket=operator-to-engineer-20261128-0240.md round=3`. The receipt in this file therefore closed a round that was not yet delivered.
+

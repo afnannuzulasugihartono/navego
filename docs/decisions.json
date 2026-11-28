@@ -1910,6 +1910,16 @@
         "kind": "user",
         "ref": "user 2026-11-28: 'untuk growth yang terus menerus butuh loop research and problem gak sih' then 'sekalian research loop yang efektif gimana'"
       }
+    },
+    {
+      "id": "scripts-message-01",
+      "scope": "scripts/dev/agent-fleet",
+      "file": "scripts/dev/agent-fleet/message.ts",
+      "decision": "A lane message is reported as sent only after the target session's message list holds that id; the CLI reads the id back for a bounded window, names the window, the ids it tried and the target's busy state when it gives up, retries a dropped id under a fresh identity, and never repeats a post the service already holds.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/agent-roles/queue/engineer-to-operator-20261128-0604.md (measured against the live OpenCode service on 2026-11-28)"
+      }
     }
   ]
 }
