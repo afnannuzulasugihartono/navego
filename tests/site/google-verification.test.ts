@@ -13,3 +13,9 @@ test('the downloaded verification file lands byte for byte at the public root', 
   const content = fs.readFileSync(file, 'utf8');
   assert.equal(content, 'google-site-verification: googleeff3efb1a2e4c74e.html');
 });
+test('the worker serves the verification file directly instead of 301-ing it', () => {
+  const worker = new URL('../../site/worker/_worker.ts', import.meta.url);
+  const source = fs.readFileSync(worker, 'utf8');
+  assert.match(source, /googleeff3efb1a2e4c74e\.html/);
+  assert.ok(source.indexOf('googleeff3efb1a2e4c74e.html') < source.indexOf("endsWith('.html')"));
+});

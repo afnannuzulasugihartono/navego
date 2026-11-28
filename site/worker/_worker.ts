@@ -174,6 +174,7 @@ export default {
       const asked = new URL(request.url);
       return new Response(null, { status: 301, headers: { location: `/${asked.search}${asked.hash}` } });
     }
+    if (path === '/googleeff3efb1a2e4c74e.html') return env.ASSETS.fetch(request);
     if (path.endsWith('.html')) {
       const pretty = path.slice(0, -'.html'.length) || '/';
       const asked = new URL(request.url);
