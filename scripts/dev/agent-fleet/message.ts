@@ -38,8 +38,9 @@ export function labelOf(input: MessageInput): string {
   return `[LANE-APPROVAL ${input.from} -> ${input.to}]${tail}`;
 }
 
-export function messageIdOf(input: MessageInput): string {
-  return `msg_${input.ticket}:${input.round}:${input.kind}`;
+export function messageIdOf(input: MessageInput, attempt = 1): string {
+  const base = `msg_${input.ticket}:${input.round}:${input.kind}`;
+  return attempt === 1 ? base : `${base}:r${attempt}`;
 }
 
 export function assertAllowed(input: MessageInput, roster: MessageRoster): void {
@@ -68,6 +69,8 @@ export type SendDeps = {
   processLines?: string[];
   roster: MessageRoster;
   readBack?: (id: string, sessionId: string) => Promise<'message' | 'inbox' | null>;
+  cancelQueued?: (baseId: string, sessionId: string) => Promise<string[]>;
+  wake?: (sessionId: string) => Promise<void>;
   run: (args: string[]) => Promise<string>;
 };
 
@@ -90,13 +93,14 @@ export function resolveSessionId(titlePrefix: string, sessions: SessionInfo[], n
   return live.reduce((best, next) => (next.updatedMs > best.updatedMs ? next : best), first).id;
 }
 
-export async function sendMessage(input: MessageInput, deps: SendDeps): Promise<{ id: string; sessionId: string; alreadyDelivered: boolean; receipt?: 'message' | 'inbox' }> {
+export async function sendMessage(input: MessageInput, deps: SendDeps, attempt = 1): Promise<{ id: string; sessionId: string; alreadyDelivered: boolean; receipt?: 'message' | 'inbox' }> {
   assertAllowed(input, deps.roster);
-  const id = messageIdOf(input);
+  const id = messageIdOf(input, attempt);
   if (delivered.has(id)) return { id, sessionId: '', alreadyDelivered: true };
   const prefix = input.to === 'operator' ? 'slot-console' : `/${input.to}-`;
   const sessionId = resolveSessionId(prefix, deps.sessions, Date.now(), 30 * 60_000, deps.processLines ?? []);
   if (!sessionId) throw new Error('TARGET_SESSION_MISSING');
+  if (attempt > 1 && deps.cancelQueued) await deps.cancelQueued(messageIdOf(input), sessionId);
   const endpoint = input.kind === 'report' ? '/synthetic' : '/prompt';
   const body = {
     id,
@@ -107,8 +111,14 @@ export async function sendMessage(input: MessageInput, deps: SendDeps): Promise<
     metadata: { fromAgent: input.from, toAgent: input.to, ticket: input.ticket, round: input.round, kind: input.kind },
   };
   await deps.run([deps.cli, 'api', 'post', `/api/session/${sessionId}${endpoint}`, '--data', JSON.stringify(body)]);
-  const receipt = deps.readBack ? await deps.readBack(id, sessionId) : null;
-  if (!receipt) throw new Error('DELIVERY_UNVERIFIED');
+  const readBack = deps.readBack;
+  let receipt = readBack ? await readBack(id, sessionId) : null;
+  if (receipt === 'inbox') {
+    if (!deps.wake || !readBack) throw new Error('DELIVERY_QUEUED');
+    await deps.wake(sessionId);
+    receipt = await readBack(id, sessionId);
+  }
+  if (receipt !== 'message') throw new Error(receipt === 'inbox' ? 'DELIVERY_QUEUED' : 'DELIVERY_UNVERIFIED');
   delivered.add(id);
   return { id, sessionId, alreadyDelivered: false, receipt };
 }
@@ -144,6 +154,14 @@ if (invokedDirectly) {
       return {};
     }
   };
+  const attemptAt = process.argv.indexOf('--attempt');
+  const attempted = attemptAt >= 0 ? Number(process.argv[attemptAt + 1]) : 1;
+  const attempt = Number.isFinite(attempted) && attempted >= 1 ? Math.floor(attempted) : 1;
+  const run = async (args: string[]): Promise<string> => {
+    const child = spawnSync(args[0] ?? cli, args.slice(1), { encoding: 'utf8' });
+    if (child.status !== 0) throw new Error(child.stderr || child.stdout || 'OPENCODE_API_FAILED');
+    return child.stdout ?? '';
+  };
   const result = await sendMessage(input, {
     cli,
     roster,
@@ -158,11 +176,28 @@ if (invokedDirectly) {
       const items = inbox['data'] as Array<{ id?: unknown }> | undefined;
       return Array.isArray(items) && items.some((item) => item.id === id) ? 'inbox' : null;
     },
-    run: async (args) => {
-      const child = spawnSync(args[0] ?? cli, args.slice(1), { encoding: 'utf8' });
-      if (child.status !== 0) throw new Error(child.stderr || child.stdout || 'OPENCODE_API_FAILED');
-      return child.stdout ?? '';
+    cancelQueued: async (baseId, sessionId) => {
+      const inbox = readJson([cli, 'api', 'get', `/api/session/${sessionId}/inbox`]);
+      const items = inbox['data'] as Array<{ id?: unknown }> | undefined;
+      const stale = (items ?? []).filter((item) => typeof item.id === 'string'
+        && (item.id === baseId || item.id.startsWith(`${baseId}:r`)));
+      for (const item of stale) {
+        readJson([cli, 'api', 'delete', `/api/session/${sessionId}/inbox/${encodeURIComponent(String(item.id))}`]);
+      }
+      return stale.map((item) => String(item.id));
     },
-  });
+    wake: async (targetSessionId) => {
+      const wakeBody = {
+        id: `msg_wake-${Date.now()}`,
+        text: '[WAKE] Read your inbox and continue the loop.',
+        description: 'operator wake',
+        delivery: 'steer',
+        resume: true,
+        metadata: { fromAgent: 'operator', kind: 'wake' },
+      };
+      await run([cli, 'api', 'post', `/api/session/${targetSessionId}/prompt`, '--data', JSON.stringify(wakeBody)]);
+    },
+    run,
+  }, attempt);
   console.log(`${result.id} ${result.alreadyDelivered ? 'already-delivered' : `sent:${result.receipt}`} ${result.sessionId}`);
 }

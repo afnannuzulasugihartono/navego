@@ -129,6 +129,54 @@ test('a post the service drops is a loud failure, not a sent receipt', async () 
   await assert.rejects(() => sendMessage(input, deps), /DELIVERY_UNVERIFIED/);
 });
 
+test('a queued but undelivered message is not reported as sent', async () => {
+  const input = { kind: 'report' as const, from: 'engineer' as const, to: 'operator' as const, ticket: 'queued-only.md', round: 1, text: 'pointer' };
+  const deps = {
+    cli: 'opencode',
+    roster,
+    sessions: [session('op', 'slot-console/agent-manager', null, Date.now())],
+    readBack: async () => 'inbox' as const,
+    run: async () => '{}',
+  };
+  await assert.rejects(() => sendMessage(input, deps), /DELIVERY_QUEUED/);
+});
+
+test('a dropped id is retryable with a fresh id after cancelling the queued one', async () => {
+  let cancelled = '';
+  const calls: string[][] = [];
+  const input = { kind: 'report' as const, from: 'engineer' as const, to: 'operator' as const, ticket: 'retry-id.md', round: 1, text: 'pointer' };
+  const deps = {
+    cli: 'opencode',
+    roster,
+    sessions: [session('op', 'slot-console/agent-manager', null, Date.now())],
+    readBack: async (id: string) => (id.endsWith(':r2') ? 'message' as const : null),
+    cancelQueued: async (baseId: string) => { cancelled = baseId; return [baseId]; },
+    run: async (args: string[]) => { calls.push(args); return '{}'; },
+  };
+  const result = await sendMessage(input, deps, 2);
+  assert.equal(result.id, 'msg_retry-id.md:1:report:r2');
+  assert.equal(cancelled, 'msg_retry-id.md:1:report');
+  assert.equal(JSON.parse(calls[0]![calls[0]!.length - 1]!).id, result.id);
+});
+
+test('a queued delivery wakes the target and is re-read before success', async () => {
+  const input = { kind: 'report' as const, from: 'engineer' as const, to: 'operator' as const, ticket: 'wake-test.md', round: 1, text: 'pointer' };
+  let reads = 0;
+  let wakes = 0;
+  const deps = {
+    cli: 'opencode',
+    roster,
+    sessions: [session('op', 'slot-console/agent-manager', null, Date.now())],
+    readBack: async () => (++reads === 1 ? 'inbox' as const : 'message' as const),
+    wake: async () => { wakes += 1; },
+    run: async () => '{}',
+  };
+  const result = await sendMessage(input, deps);
+  assert.equal(result.receipt, 'message');
+  assert.equal(wakes, 1, 'the target was woken once');
+  assert.equal(reads, 2, 'the message was read back after waking');
+});
+
 test('a repeated send returns the original id without posting twice', async () => {
   let calls = 0;
   const input = { kind: 'review' as const, from: 'operator' as const, to: 'engineer' as const, ticket: 'retry.md', round: 2, text: 'fix this' };
