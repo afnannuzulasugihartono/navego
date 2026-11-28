@@ -71,8 +71,10 @@ The function's own refusal, not a gateway JWT error: the deployed function alrea
   safety files`).
 - `npm run typecheck --prefix site` and `npm run build --prefix site` are green.
 - `npm run scope:role -- engineer --base origin/main --head HEAD` is green: "the named roles may change all 9 paths".
-- The CI run on the exact head is 46096592842. The `postgres` job applies every migration to a disposable Postgres 15 and then runs the suite, so the
-  integration test ran against a real database with the guest migration applied: `tests/hosted/integration-paypal-guest.test.ts`.
+- The CI runs on the exact head were 46097696514 (automatic) and 46097705748 (manual, after a rebase had not started a run on its own); both were started for head
+  `70e91a1b`, and the automatic one is green on all seven checks: unit, site, deno-hosted, secret-scan, browser, postgres and SonarCloud. The `postgres` job applies
+  every migration to a disposable Postgres 15 and then runs the suite, so the integration test ran against a real database with the guest migration applied:
+  `tests/hosted/integration-paypal-guest.test.ts`. Locally that test skips both cases (no database); in the postgres job the dot reporter shows no skip markers.
 
 ## The reviewer gap
 
@@ -80,17 +82,34 @@ This session is the only worker on its key and the generated role files deny the
 is the owner's standing answer of 2026-11-26: green CI on the exact head plus this gap on the record. No owner-only path moved (`gates.lock`,
 `tests/helpers/boundary-locks.ts`, `.github/CODEOWNERS`, `.github/workflows/`).
 
+## The merge and the production migration
+
+Pull request 533 was merged by the gate as `c7cc1911` at 2026-11-28T02:27:08Z: CI green on the exact head `70e91a1b` (run 46097696514), reviewer gap on this
+record, and no owner-only path moved. The migration was then applied through `.github/workflows/deploy-functions.yml` in run **46098213102** (dispatch from `main`
+at 02:28:09Z, head `c7cc1911`, completed success). The log says:
+
+```text
+MIGRATION_INPUTS: 20261128000000_opera_paypal_guest_checkout.sql
+applying hosted/migrations/20261128000000_opera_paypal_guest_checkout.sql
+applied 20261128000000_opera_paypal_guest_checkout.sql as 20261128000000_opera_paypal_guest_checkout
+```
+
+An empty `functions` input fell back to the workflow's default, so the same run also redeployed the unchanged `navego-bridge` function (`status 200` on its
+health check). No edge function was changed by this ticket; the billing edge stays exactly as it was.
+
+A read of the live database after the run: `columns [claimed_at, guest_token_hash]`,
+`functions [opera_paypal_claim_order, opera_paypal_create_guest_order, opera_paypal_settle_order]`, the settle definition contains `claimed_at is not null`,
+and the migration ledger has 0 rows for the version. The Management API path applies SQL without writing a ledger row, so `hosted/migrations/ledger-map.json`
+now names this file as `applied-outside-ledger`, and the exact-list assertion in `tests/hosted/migration-ledger-map.test.ts` names deploy run 46098213102.
+
 ## What is not proven
 
 - No money moved. Settled external revenue remains $0.00, 0 orders. The dry run wrote two rows inside a transaction that was rolled back, and the live ledger
   answers 0 rows for them. A real stranger payment in `opera_notification_log` plus the matching activated plan is still the only proof of a sale.
 - The sign-in wall before PayPal is still up, because the edge half is not shipped. The pricing page falls back to the current message until it lands.
-- The migration was not applied to production by this session: the deploy is one dispatch of `.github/workflows/deploy-functions.yml` from `main`, one at a time,
-  and the run id is recorded in the follow-up proof.
 - No extension file changed, so `py tests/browser_extension_test.py` was not run.
 
 ## Next
 
-1. Merge this pull request by the gate, then dispatch the deploy workflow for the migration alone and write the run id into this file.
-2. The operator lane ships the two branches in `docs/agent-roles/queue/engineer-to-operator-20261128-0025.md`.
-3. One real $1 stranger payment through the signed-out path, then read the `paypal-live` settlement row and the activated plan.
+1. The operator lane ships the two branches in `docs/agent-roles/queue/engineer-to-operator-20261128-0025.md`.
+2. One real $1 stranger payment through the signed-out path, then read the `paypal-live` settlement row and the activated plan.
