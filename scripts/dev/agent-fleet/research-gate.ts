@@ -111,6 +111,18 @@ export function readPrior(findingsDir: string): PriorFinding[] {
   }
 }
 
+// A research ticket that the gate would skip or send to a person must never open a model session; every other lane keeps the existing dispatcher path.
+
+export function researchDispatchAllowed(ticketFile: string, queueDir: string, findingsDir: string): boolean {
+  if (!/^operator-to-researcher-.*\.md$/.test(ticketFile)) return true;
+  try {
+    const ticket = parseTicket(fs.readFileSync(path.join(queueDir, ticketFile), 'utf8'));
+    return decideResearch(ticket, { prior: readPrior(findingsDir) }).verdict === 'run';
+  } catch {
+    return false;
+  }
+}
+
 export function isTicketPath(file: string, root: string): boolean {
   const resolved = path.resolve(file);
   const allowed = ['docs/agent-roles/queue', 'agents/shared'].map((dir) => path.resolve(path.join(root, dir)));

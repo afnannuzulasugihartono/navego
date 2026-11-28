@@ -1860,6 +1860,16 @@
         "kind": "user",
         "ref": "user 2026-11-28: 'cari otomatisasi keputusan untuk agent research di internet cari sumber yang terpercaya'"
       }
+    },
+    {
+      "id": "scripts-fleet-executor-01",
+      "scope": "scripts/dev/agent-fleet",
+      "file": "scripts/dev/agent-fleet/executor.ts",
+      "decision": "The fleet closes only work whose finish is already written in a reply file, through a deterministic executor; every action that needs judgment, an external message or money is deferred with a reason, and a research ticket is dispatched only when its gate verdict is run.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-28: 'gimana cara upgrade fleet supaya lebih efektif?' then 'research mendalam di internet'"
+      }
     }
   ]
 }

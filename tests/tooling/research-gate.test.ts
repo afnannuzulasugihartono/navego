@@ -6,7 +6,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import { decideResearch, isTicketPath, type ResearchTicket, type PriorFinding } from '../../scripts/dev/agent-fleet/research-gate.ts';
+import fs from 'node:fs';
+import os from 'node:os';
+import { decideResearch, isTicketPath, researchDispatchAllowed, type ResearchTicket, type PriorFinding } from '../../scripts/dev/agent-fleet/research-gate.ts';
 
 const now = Date.parse('2026-11-28T00:00:00Z');
 const ticket: ResearchTicket = {
@@ -75,4 +77,17 @@ test('the CLI reads only markdown tickets inside the two ticket folders', () => 
   assert.equal(isTicketPath(path.join(root, 'docs/economy.json'), root), false);
   assert.equal(isTicketPath(path.join(root, 'docs/agent-roles/queue/ticket.txt'), root), false);
   assert.equal(isTicketPath(path.join(root, '..', 'outside.md'), root), false);
+});
+test('dispatch is blocked for a research ticket the gate would skip', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'dispatch-gate-'));
+  try {
+    fs.writeFileSync(path.join(dir, 'operator-to-researcher-20261128-0900.md'),
+      'decision: which public surface to try next\nurl: https://developers.google.com/search/docs/essentials\ndate: 2026-11-28\nresult: RF-099-2026-11-28-example.md\noutreach: yes\n');
+    fs.writeFileSync(path.join(dir, 'operator-to-engineer-20261128-0900.md'), 'class: product\n');
+    assert.equal(researchDispatchAllowed('operator-to-engineer-20261128-0900.md', dir, dir), true, 'non-research tickets are unaffected');
+    assert.equal(researchDispatchAllowed('operator-to-researcher-20261128-0900.md', dir, dir), false, 'a research ticket asking for outreach is not dispatched');
+    assert.equal(researchDispatchAllowed('operator-to-researcher-missing.md', dir, dir), false, 'a missing ticket is not dispatched');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });

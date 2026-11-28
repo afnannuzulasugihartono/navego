@@ -13,6 +13,7 @@ import crypto from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { readEvidence, readQueue, type Evidence, type QueueSnapshot, type TicketFile } from './watch.ts';
+import { researchDispatchAllowed } from './research-gate.ts';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 
@@ -239,6 +240,8 @@ export const planDispatch = (
   };
 };
 
+// A research ticket must pass the deterministic gate before a model session is opened; the gate itself is tested in research-gate.test.ts.
+
 export const dispatch = async (options: {
   slot: Slot;
   snapshot: QueueSnapshot;
@@ -260,6 +263,7 @@ export const dispatch = async (options: {
   if (slotBusy(slot, evidence, now)) return null;
   const ticket = selectTicket(snapshot, now, DEFAULT_MARKER_MINUTES, evidence, activeLanes);
   if (!ticket) return null;
+  if (!researchDispatchAllowed(ticket.file, queueDir, path.join(repoRoot, 'agents/shared/findings'))) return null;
   // The dry run describes the command it would run, so it prints the plan even where the CLI is not installed; a real dispatch needs the binary.
   const cli = dryRun ? (opencodeCandidates()[0] ?? 'opencode') : opencodeExecutable();
   if (!cli) return null;
