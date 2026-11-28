@@ -7,3 +7,5 @@ Title: operator -> research task -> <date>
 Body must name: the decision this evidence supports, the exact public URL to read, what fact to extract, the date of the reading, and the ID and path where the result lands: shared/findings/RF-<next-number>-<ISO-date>-<slug>.md. The next number is the highest ID in shared/findings/index.md plus one. Acceptance: one dated row with an openable URL, no invented claim, no personal contact data, and no outreach performed by the research task.
 
 A research task never sends a message and never opens a standing agent.
+
+Before dispatch, run `node scripts/dev/agent-fleet/research-gate.ts <ticket.md>`. Only verdict `run` is dispatched; `skip` means the question is already answered or the ticket asks for outreach, and `needs-human` means the ticket is incomplete. The gate is deterministic, so a model never spends a run discovering those facts.

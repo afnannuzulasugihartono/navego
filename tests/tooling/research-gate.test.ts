@@ -1,0 +1,68 @@
+// @last-edited: 2026-11-28 UTC+7.
+// @title: research gate - a machine decides whether a research ticket runs, before any agent is dispatched.
+// @state: failing before scripts/dev/agent-fleet/research-gate.ts exists, passing after it.
+// @dependencies: node:test, node:assert, scripts/dev/agent-fleet/research-gate.ts.
+
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { decideResearch, type ResearchTicket, type PriorFinding } from '../../scripts/dev/agent-fleet/research-gate.ts';
+
+const now = Date.parse('2026-11-28T00:00:00Z');
+const ticket: ResearchTicket = {
+  decision: 'which public organisation gets the next bounded outreach',
+  urls: ['https://developers.google.com/search/docs/essentials'],
+  date: '2026-11-28',
+  resultPath: 'RF-014-2026-11-28-research-automation.md'
+};
+
+const prior: PriorFinding[] = [];
+
+test('a bounded ticket with a decision, a public URL and a numbered destination runs', () => {
+  const verdict = decideResearch(ticket, { prior, now });
+  assert.equal(verdict.verdict, 'run');
+  assert.deepEqual(verdict.reasons, []);
+});
+
+test('a ticket that asks for outreach is skipped before any agent reads it', () => {
+  const verdict = decideResearch({ ...ticket, asksOutreach: true }, { prior, now });
+  assert.equal(verdict.verdict, 'skip');
+  assert.match(verdict.reasons.join(' '), /outreach/i);
+});
+
+test('a ticket with no decision to change cannot be graded and waits for a person', () => {
+  const verdict = decideResearch({ ...ticket, decision: '' }, { prior, now });
+  assert.equal(verdict.verdict, 'needs-human');
+  assert.match(verdict.reasons.join(' '), /decision/i);
+});
+
+test('a ticket with no source URL cannot produce dated evidence', () => {
+  const verdict = decideResearch({ ...ticket, urls: [] }, { prior, now });
+  assert.equal(verdict.verdict, 'needs-human');
+  assert.match(verdict.reasons.join(' '), /URL/i);
+});
+
+test('a question already answered by a recent finding is skipped', () => {
+  const verdict = decideResearch(ticket, {
+    now,
+    prior: [{
+      id: 'RF-004',
+      decision: 'which public organisation gets the next bounded outreach',
+      date: '2026-11-27',
+      urls: ['https://developers.google.com/search/docs/essentials']
+    }]
+  });
+  assert.equal(verdict.verdict, 'skip');
+  assert.match(verdict.reasons.join(' '), /already answered/i);
+});
+
+test('evidence older than thirty days is not fresh enough for a decision', () => {
+  const verdict = decideResearch({ ...ticket, date: '2026-09-01' }, { prior, now });
+  assert.equal(verdict.verdict, 'needs-human');
+  assert.match(verdict.reasons.join(' '), /stale/i);
+});
+
+test('a result outside the numbered findings folder has no place to land', () => {
+  const verdict = decideResearch({ ...ticket, resultPath: 'notes/idea.md' }, { prior, now });
+  assert.equal(verdict.verdict, 'needs-human');
+  assert.match(verdict.reasons.join(' '), /RF-/);
+});

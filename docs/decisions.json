@@ -1850,6 +1850,16 @@
         "kind": "recorded",
         "ref": "docs/proof/2026-11-25-survival-run-10.md (earliest dated survival proof) and user 2026-11-28 request to research full automation"
       }
+    },
+    {
+      "id": "scripts-research-gate-01",
+      "scope": "scripts/dev/agent-fleet",
+      "file": "scripts/dev/agent-fleet/research-gate.ts",
+      "decision": "A deterministic gate decides run, skip or needs-human for a research ticket before any model is dispatched; duplicates, outreach requests and incomplete tickets are machine decisions, while source authority and synthesis quality stay with the agent and human review.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-28: 'cari otomatisasi keputusan untuk agent research di internet cari sumber yang terpercaya'"
+      }
     }
   ]
 }
