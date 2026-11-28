@@ -32,7 +32,7 @@ The agent can now name the problem and judge the outcome without being told. It 
 
 ## What remains
 
-Wire `growth.ts` into the hourly automation so it proposes the ticket without a model deciding, and record the before/after metric in the same finding when a change ships. Until then the helper exists and is tested, but the hourly prompt still asks the operator to run it.
+`executor.ts` now calls `growthTicket` whenever no stranger has settled and no research ticket is already queued, and the file is named for the next day so one action per day still holds. `recordEffect` persists before, after and the honest verdict to `docs/agent-roles/loop/effects.json` when a change ships. The executor also refuses to close the same ticket twice if its receipt already exists. The only remaining human-shaped step is the model reading sources to write the finding itself; that is research work, not a decision about whether to research.
 
 ## Money
 

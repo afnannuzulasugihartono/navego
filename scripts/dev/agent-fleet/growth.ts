@@ -49,6 +49,22 @@ export function judgeEffect(before: number, after: number): EffectJudgement {
   return { verdict: 'effective', delta, note: 'the metric rose above the minimum sample' };
 }
 
+// A verdict that is never written down becomes a memory, and memories are easy to rewrite.
+// Keep the before, after and judgement together.
+
+export function recordEffect(file: string, key: string, before: number, after: number, now = Date.now()): EffectJudgement {
+  const judgement = judgeEffect(before, after);
+  let rows: Array<Record<string, unknown>> = [];
+  try {
+    const parsed = JSON.parse(fs.readFileSync(file, 'utf8')) as Array<Record<string, unknown>>;
+    if (Array.isArray(parsed)) rows = parsed;
+  } catch {
+  }
+  rows.push({ key, before, after, verdict: judgement.verdict, delta: judgement.delta, note: judgement.note, at: new Date(now).toISOString() });
+  fs.writeFileSync(file, JSON.stringify(rows, null, 2) + '\n');
+  return judgement;
+}
+
 export function growthTicket(input: GrowthInput, options: TicketOptions): string {
   const problem = formulateProblem(input);
   const measure = input.settledUsd === 0 ? 'settled stranger orders' : 'stranger buy clicks';

@@ -11,11 +11,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readMissionState, selectNextAction, type MissionState, type NextAction } from './goal.ts';
+import { growthTicket, type GrowthInput } from './growth.ts';
 
 export interface ExecutorPaths {
   queueDir: string;
   proofDir: string;
   now?: number;
+  growthState?: GrowthInput;
+  findingsDir?: string;
 }
 
 export interface ExecutionResult extends NextAction {
@@ -24,6 +27,7 @@ export interface ExecutionResult extends NextAction {
   reason: string;
   receipt?: string;
   routed?: string;
+  growthTicket?: string | undefined;
 }
 
 interface AnsweredTicket {
@@ -33,7 +37,7 @@ interface AnsweredTicket {
 
 // Only a reply file that names this exact ticket can close it; a queue entry that merely exists is not evidence.
 
-const findAnsweredTicket = (queueDir: string): AnsweredTicket | null => {
+const findAnsweredTicket = (queueDir: string, proofDir: string): AnsweredTicket | null => {
   const answers = new Map<string, string>();
   const tickets: string[] = [];
   let entries: string[] = [];
@@ -54,7 +58,10 @@ const findAnsweredTicket = (queueDir: string): AnsweredTicket | null => {
     if (match?.[1]) answers.set(match[1], entry);
     if (/^operator-to-.*\.md$/.test(entry) && !entry.includes('-reply-')) tickets.push(entry);
   }
-  const closed = tickets.filter((ticket) => answers.has(ticket)).sort((left, right) => left.localeCompare(right));
+  const receipts = fs.existsSync(proofDir) ? fs.readdirSync(proofDir) : [];
+  const closed = tickets.filter((ticket) => answers.has(ticket)
+    && !receipts.some((name) => name.endsWith(`-executor-close-${ticket.replace(/\.md$/, '')}.md`)))
+    .sort((left, right) => left.localeCompare(right));
   if (!closed[0]) return null;
   return { ticket: closed[0], reply: String(answers.get(closed[0])) };
 };
@@ -118,14 +125,45 @@ const writeRoute = (chosen: NextAction, paths: ExecutorPaths, reason: string): s
   return target;
 };
 
+// When no stranger has paid, the metric gap itself is the question.
+// Writing this ticket is deterministic, so nobody has to tell the operator what to investigate.
+
+const ensureGrowthTicket = (paths: ExecutorPaths): string | undefined => {
+  if (!paths.growthState || !paths.findingsDir || paths.growthState.settledUsd > 0) return undefined;
+  const now = paths.now ?? Date.now();
+  const date = new Date(now).toISOString().slice(0, 10);
+  const name = `operator-to-researcher-${date}-growth.md`;
+  const target = path.join(paths.queueDir, name);
+  if (fs.existsSync(target)) return target;
+  const researchQueued = fs.readdirSync(paths.queueDir).some((entry) =>
+    /^operator-to-researcher-.*\.md$/.test(entry) && !entry.includes('-reply-'));
+  if (researchQueued) return undefined;
+  let max = 23;
+  try {
+    const index = fs.readFileSync(path.join(paths.findingsDir, 'index.md'), 'utf8');
+    for (const match of index.matchAll(/RF-(\d{3})/g)) max = Math.max(max, Number(match[1]));
+  } catch {
+  }
+  const next = `RF-${String(max + 1).padStart(3, '0')}`;
+  const tomorrow = new Date(now + 86_400_000).toISOString().slice(0, 10);
+  const text = growthTicket(paths.growthState, {
+    date: tomorrow,
+    resultPath: `${next}-${date}-self-formed.md`,
+    sourceUrl: 'https://baymard.com/research/checkout-usability'
+  });
+  fs.writeFileSync(target, text);
+  return target;
+};
+
 export function executeNext(chosen: NextAction, paths: ExecutorPaths): ExecutionResult {
+  const growth = ensureGrowthTicket(paths);
   if (chosen.action === 'close-ticket') {
-    const found = findAnsweredTicket(paths.queueDir);
+    const found = findAnsweredTicket(paths.queueDir, paths.proofDir);
     if (!found) {
-      return { ...chosen, executed: false, deferred: true, reason: 'no answered ticket exists to close' };
+      return { ...chosen, executed: false, deferred: true, reason: 'no answered ticket exists to close', growthTicket: growth };
     }
     const receipt = writeReceipt(paths, found, chosen);
-    return { ...chosen, executed: true, deferred: false, reason: `closed ${found.ticket} from ${found.reply}`, receipt };
+    return { ...chosen, executed: true, deferred: false, reason: `closed ${found.ticket} from ${found.reply}`, receipt, growthTicket: growth };
   }
   const reasons: Record<string, string> = {
     'answer-buyer': 'an external answer needs the one public action of the day and an owner-owned identity',
@@ -140,7 +178,8 @@ export function executeNext(chosen: NextAction, paths: ExecutorPaths): Execution
     executed: false,
     deferred: true,
     reason,
-    routed: writeRoute(chosen, paths, reason)
+    routed: writeRoute(chosen, paths, reason),
+    growthTicket: growth
   };
 }
 
@@ -152,7 +191,17 @@ if (invokedDirectly) {
   const proofDir = path.join(root, 'docs/proof');
   const state: MissionState = readMissionState(path.join(root, 'docs/economy.json'), queueDir);
   const chosen = selectNextAction(state);
-  const result = executeNext(chosen, { queueDir, proofDir });
+  const result = executeNext(chosen, {
+    queueDir,
+    proofDir,
+    findingsDir: path.join(root, 'agents/shared/findings'),
+    growthState: {
+      settledUsd: state.settledUsd,
+      daysSinceSettlement: state.daysSinceSettlement,
+      pricingBrowsers: 0,
+      strangerBuyClicks: 0
+    }
+  });
   console.log(JSON.stringify({ state, ...result }, null, 2));
   process.exitCode = result.deferred ? 3 : 0;
 }

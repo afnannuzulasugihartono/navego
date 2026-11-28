@@ -5,6 +5,9 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { formulateProblem, judgeEffect, growthTicket, type GrowthInput } from '../../scripts/dev/agent-fleet/growth.ts';
 import { decideResearch, parseTicket } from '../../scripts/dev/agent-fleet/research-gate.ts';
 
@@ -47,4 +50,16 @@ test('the generated ticket passes the research gate', () => {
   assert.equal(verdict.verdict, 'run', JSON.stringify(verdict));
   assert.match(text, /decision-change:/);
   assert.match(text, /outreach: no/);
+});
+
+test('an outcome is recorded with its before, after and honest verdict', async () => {
+  const { recordEffect } = await import('../../scripts/dev/agent-fleet/growth.ts');
+  const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'effect-')), 'effects.json');
+  const first = recordEffect(file, 'pricing-copy', 10, 11);
+  assert.equal(first.verdict, 'weak');
+  const second = recordEffect(file, 'pricing-copy', 100, 110);
+  assert.equal(second.verdict, 'effective');
+  const rows = JSON.parse(fs.readFileSync(file, 'utf8')) as Array<{ key: string; before: number; after: number }>;
+  assert.equal(rows.length, 2);
+  assert.equal(rows[1]?.after, 110);
 });

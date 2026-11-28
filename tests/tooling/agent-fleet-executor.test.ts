@@ -97,3 +97,43 @@ test('the same deferred action is not ticketed twice in one day', () => {
   assert.equal(after, 1, 'a second call does not create a duplicate ticket');
   assert.equal(second.routed, first.routed);
 });
+test('the executor proposes the growth problem itself when no money settled', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'growth-propose-'));
+  const findings = path.join(root, 'findings');
+  fs.mkdirSync(findings, { recursive: true });
+  fs.writeFileSync(path.join(findings, 'index.md'), '| RF-023 | RF-023-2026-11-28-self-forming-growth-loop.md | x | 7 public sources |\n');
+  const paths = { ...fixtures(false), findingsDir: findings, growthState: { settledUsd: 0, daysSinceSettlement: 3, pricingBrowsers: 10, strangerBuyClicks: 0 } };
+  const result = executeNext({ ...close, action: 'close-revenue-path' }, paths);
+  assert.ok(result.growthTicket, 'a research ticket was written without an owner asking');
+  const text = fs.readFileSync(String(result.growthTicket), 'utf8');
+  assert.match(text, /decision-change:/);
+  assert.match(text, /RF-024-/);
+});
+
+test('a settled customer stops the growth ticket generator', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'growth-propose-'));
+  const findings = path.join(root, 'findings');
+  fs.mkdirSync(findings, { recursive: true });
+  const paths = { ...fixtures(false), findingsDir: findings, growthState: { settledUsd: 5, daysSinceSettlement: 0, pricingBrowsers: 10, strangerBuyClicks: 1 } };
+  const result = executeNext({ ...close, action: 'close-revenue-path' }, paths);
+  assert.equal(result.growthTicket, undefined);
+  assert.equal(fs.readdirSync(paths.queue).filter((n) => n.includes('growth')).length, 0);
+});
+test('an existing research ticket stops another one being queued', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'growth-propose-'));
+  const findings = path.join(root, 'findings');
+  fs.mkdirSync(findings, { recursive: true });
+  const paths = { ...fixtures(false), findingsDir: findings, growthState: { settledUsd: 0, daysSinceSettlement: 3, pricingBrowsers: 10, strangerBuyClicks: 0 } };
+  fs.writeFileSync(path.join(paths.queue, 'operator-to-researcher-20261128-1300.md'), 'decision: another question\n');
+  const result = executeNext({ ...close, action: 'close-revenue-path' }, paths);
+  assert.equal(result.growthTicket, undefined);
+  assert.equal(fs.readdirSync(paths.queue).filter((n) => n.includes('growth')).length, 0);
+});
+test('a ticket with an existing close receipt is not closed twice', () => {
+  const paths = fixtures(true);
+  const first = executeNext(close, paths);
+  const second = executeNext(close, paths);
+  assert.equal(first.executed, true);
+  assert.equal(second.executed, false);
+  assert.match(second.reason, /no answered ticket/i);
+});

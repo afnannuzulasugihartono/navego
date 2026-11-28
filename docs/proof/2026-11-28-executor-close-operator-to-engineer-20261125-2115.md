@@ -2,7 +2,7 @@
 
 closed: operator-to-engineer-20261125-2115.md
 answered-by: operator-to-engineer-20261125-2115-reply-20261126-1630.md
-closed-at: 2026-11-28T13:31:34.639Z
+closed-at: 2026-11-28T14:17:33.716Z
 signal: open-ticket
 exit: the ticket has a reply artifact, a proof and a closed line on the board
 
