@@ -42,7 +42,11 @@ evidence:
 - `npm test` and `npm run check` are green in this worktree (`type-debt: 0 errors - at baseline 0`, `check ok: 36 allowlisted browser primitives, 320 runtime
   safety files`); `npm run typecheck --prefix site` and `npm run build --prefix site` are green; the scope gate for this pull request is green
   (`npm run scope:role -- engineer --base origin/main --head HEAD` - "the named roles may change all 9 paths").
-- Pull request 533 carries the change; the CI run on the exact head is 46096592842.
+- Pull request 533 carries the change; it was merged by the gate as `c7cc1911` at 2026-11-28T02:27:08Z. The CI runs on the exact head `70e91a1b` were
+  46097696514 (automatic) and 46097705748 (manual after a rebase had not started a run on its own); the automatic one is green on all seven checks.
+- **The migration is on production.** Deploy run 46098213102 applied `20261128000000_opera_paypal_guest_checkout.sql` from `main` (completed success); the live
+  database now has both columns, all three functions and the guest branch in the settle definition, and no ledger row for the version, so the ledger map names the
+  file `applied-outside-ledger`. An empty `functions` input fell back to the workflow default and the run also redeployed the unchanged `navego-bridge` function.
 - **Reviewer gap:** this session is the only worker on its key and the generated role files deny the `subagent` action, so no reviewer agent could run on the diff.
   The gap is written in `docs/proof/2026-11-28-engineer-guest-checkout.md` and the merge basis is the owner's standing answer of 2026-11-26: green CI on the exact
   head plus the gap on the record. No owner-only path moved.
@@ -52,8 +56,8 @@ left:
 
 - **The sign-in wall before PayPal is still up.** The site half is shipped and the database half is shipped, but the edge that creates the PayPal order for a
   guest is not, so a signed-out click still lands on the current message. The pricing page falls back to it exactly as before.
-- **The migration is not applied to production yet.** The deploy is one dispatch of `.github/workflows/deploy-functions.yml` from `main`, one at a time, and the run
-  id goes into the proof.
+- **The migration is applied.** Deploy run 46098213102 applied it from `main` and the live database carries both columns, all three functions and the guest
+  branch in the settle definition. No edge function was changed by this ticket.
 - **No money moved.** Settled external revenue remains $0.00, 0 orders. The dry run wrote two rows inside a transaction that was rolled back and the live ledger
   answers 0 rows for them. A real stranger payment in `opera_notification_log` plus the matching activated plan is still the only proof of a sale.
 
