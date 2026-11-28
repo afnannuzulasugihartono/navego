@@ -8,7 +8,7 @@ import { FeedbackForm } from '../components/FeedbackForm';
 export function meta() {
   return seoMeta({
     title: 'Dukungan — Navego',
-    description: 'Lima perbaikan paling sering, kontak yang tepat, dan langkah berikutnya — jawaban yang bisa langsung diikuti.',
+    description: 'Enam perbaikan paling sering, termasuk pembayaran yang belum aktif, kontak yang tepat, dan langkah berikutnya — jawaban yang bisa langsung diikuti.',
     path: '/dukungan'
   });
 }
@@ -33,6 +33,10 @@ const FIXES = [
   {
     id: 'privasi', title: 'Privasi dan data',
     body: 'Kendali data ada di halaman Akun dan Privasi. Temuan keamanan jangan dibuka sebagai isu publik; laporkan privat lewat tab Security di repositori.'
+  },
+  {
+    id: 'bayar', title: 'Sudah bayar, plan belum aktif',
+    body: 'Buka harga di browser yang sama dengan tempat Anda membayar. Order yang masih menunggu ditampilkan di bagian atas: masuk, lalu pilih Klaim pesanan saya. Jika PayPal masih memproses, tunggu konfirmasi lalu muat ulang halaman. Sertakan order ID jika Anda tetap perlu bantuan.'
   }
 ];
 
@@ -50,7 +54,7 @@ export default function Dukungan() {
         <section className="page-hero">
           <div className="wrap">
             <h1>Ada yang macet?</h1>
-            <p className="lede">Lima perbaikan paling sering. Kalau tidak ada di sini, tiga pintu di bawah dibaca orang.</p>
+            <p className="lede">Enam perbaikan paling sering. Kalau tidak ada di sini, tiga pintu di bawah dibaca orang.</p>
           </div>
         </section>
 
@@ -58,7 +62,7 @@ export default function Dukungan() {
           <div className="wrap">
             <div className="section-head">
               <div>
-                <h2 id="fixTitle" className="section-title">Lima yang paling sering.</h2>
+                <h2 id="fixTitle" className="section-title">Enam yang paling sering.</h2>
               </div>
             </div>
             <div className="faq">
@@ -69,6 +73,7 @@ export default function Dukungan() {
                   {fix.id === 'mcp' ? <p className="mt-3"><Link to="/docs#mcp">Ke Docs → Hubungkan AI harness</Link></p> : null}
                   {fix.id === 'device' ? <p className="mt-3"><Link to="/dashboard">Buka Dashboard</Link></p> : null}
                   {fix.id === 'ext' ? <p className="mt-3"><Link to="/unduh">Ke halaman Unduh</Link></p> : null}
+                  {fix.id === 'bayar' ? <p className="mt-3"><Link to="/harga">Ke halaman klaim</Link></p> : null}
                 </details>
               ))}
             </div>
