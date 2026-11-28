@@ -25,4 +25,4 @@ Do not invent a customer, a review, a benchmark, or a testimonial. Do not write 
 
 ## Proof required
 
-Record in `docs/proof/outreach/2026-11-30.md`: form URL, submission time, exact submitted text, the returned confirmation, and reply state (no reply yet if none). Then write the lane reply with the literal `answered:` line for this ticket, the outcome, the money state and a requests section. Do not claim revenue.
+Record in the dated outreach proof for the day you actually send, under `docs/proof/outreach/`: form URL, submission time, exact submitted text, the returned confirmation, and reply state (no reply yet if none). Then write the lane reply with the literal `answered:` line for this ticket, the outcome, the money state and a requests section. Do not claim revenue.

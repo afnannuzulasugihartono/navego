@@ -24,4 +24,4 @@ A submission is not acceptance and acceptance is not traffic. Google still holds
 
 ## Next bounded action
 
-Submit the repository through `https://mcp.so/submit` on a day when no other public action has been sent — stacked for 2026-11-30 so the already-stacked Steel form keeps 2026-11-29. Record the time, exact submitted text, confirmation, and reply state in `docs/proof/outreach/2026-11-30.md`. No personal contact data, no bulk, no claim of customer or revenue.
+Submit the repository through `https://mcp.so/submit` on a day when no other public action has been sent — stacked for 2026-11-30 so the already-stacked Steel form keeps 2026-11-29. Record the time, exact submitted text, confirmation, and reply state in the dated outreach proof for the day you actually send, under `docs/proof/outreach/`. No personal contact data, no bulk, no claim of customer or revenue.
