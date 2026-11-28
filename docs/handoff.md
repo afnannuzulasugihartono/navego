@@ -55,7 +55,6 @@ What is true now, and what to do next. Cap 150 lines. Spent detail: git history.
 - **A publish step must fail loudly.** The CRX base64 exceeds the Linux argument limit, so the run went green having published nothing; `publish-crx.yml` now fails unless the status is 2xx.
 - **The served-version check asked the wrong endpoint for years** and nothing noticed; measured live: `/health` answers `{"version":"1.0.1","extensionId":"pagjlnohdemoohcncicjmaejedcmcocm"}`, `/health?id=ofgemipoobcnbjkfanmofjbdonjapmgl` answers the current release, and the zip HEAD answers `X-Opera-Version`.
 
-
 **Remaining operational risks, measured live on 2026-11-22**
 
 | Risk | Evidence | Severity |
