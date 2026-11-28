@@ -53,7 +53,7 @@ const findAnsweredTicket = (queueDir: string): AnsweredTicket | null => {
     if (match?.[1]) answers.set(match[1], entry);
     if (/^operator-to-.*\.md$/.test(entry) && !entry.includes('-reply-')) tickets.push(entry);
   }
-  const closed = tickets.filter((ticket) => answers.has(ticket)).sort();
+  const closed = tickets.filter((ticket) => answers.has(ticket)).sort((left, right) => left.localeCompare(right));
   if (!closed[0]) return null;
   return { ticket: closed[0], reply: String(answers.get(closed[0])) };
 };
