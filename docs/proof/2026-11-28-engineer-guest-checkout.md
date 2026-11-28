@@ -71,7 +71,7 @@ The function's own refusal, not a gateway JWT error: the deployed function alrea
   safety files`).
 - `npm run typecheck --prefix site` and `npm run build --prefix site` are green.
 - `npm run scope:role -- engineer --base origin/main --head HEAD` is green: "the named roles may change all 9 paths".
-- The CI run on the exact head is 46094953665. The `postgres` job applies every migration to a disposable Postgres 15 and then runs the suite, so the
+- The CI run on the exact head is 46096592842. The `postgres` job applies every migration to a disposable Postgres 15 and then runs the suite, so the
   integration test ran against a real database with the guest migration applied: `tests/hosted/integration-paypal-guest.test.ts`.
 
 ## The reviewer gap

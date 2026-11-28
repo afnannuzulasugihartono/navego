@@ -33,7 +33,7 @@ evidence:
   claim binding the signed-in account and clearing the hash, the replay refused ("PayPal order was already claimed"), the second account refused, the capture
   settling with the guest marker ("the completed order matches the quote claimed by an account"), and an unclaimed capture going to review. The full JSON is in
   `docs/proof/2026-11-28-engineer-guest-checkout.md`.
-- **The CI postgres job is the disposable-database proof.** CI run 46094953665 applies every migration to a disposable Postgres 15 and then runs the suite, so
+- **The CI postgres job is the disposable-database proof.** CI run 46096592842 applies every migration to a disposable Postgres 15 and then runs the suite, so
   `tests/hosted/integration-paypal-guest.test.ts` ran against a real database with the guest migration applied: the null-owner quote, the replay refusal, the
   wrong account, the mismatch, the capture that settles after the claim, and the unclaimed order that never activates.
 - **The live edge already answers signed-out calls.** `POST /functions/v1/navego-billing` with `{"action":"paypal-buy","plan":"plan.usd-1","guest":true}` and only
@@ -42,7 +42,7 @@ evidence:
 - `npm test` and `npm run check` are green in this worktree (`type-debt: 0 errors - at baseline 0`, `check ok: 36 allowlisted browser primitives, 320 runtime
   safety files`); `npm run typecheck --prefix site` and `npm run build --prefix site` are green; the scope gate for this pull request is green
   (`npm run scope:role -- engineer --base origin/main --head HEAD` - "the named roles may change all 9 paths").
-- Pull request 533 carries the change; the CI run on the exact head is 46094953665.
+- Pull request 533 carries the change; the CI run on the exact head is 46096592842.
 - **Reviewer gap:** this session is the only worker on its key and the generated role files deny the `subagent` action, so no reviewer agent could run on the diff.
   The gap is written in `docs/proof/2026-11-28-engineer-guest-checkout.md` and the merge basis is the owner's standing answer of 2026-11-26: green CI on the exact
   head plus the gap on the record. No owner-only path moved.
