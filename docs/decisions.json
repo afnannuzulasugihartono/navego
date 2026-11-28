@@ -1840,6 +1840,16 @@
         "kind": "recorded",
         "ref": "docs/agent-roles/queue/engineer-to-operator-20261128-0025.md - exact edge diff handed to the manager because the registry assigns hosted/functions/** to no role"
       }
+    },
+    {
+      "id": "scripts-derived-state-01",
+      "scope": "agents/operator",
+      "file": "scripts/dev/agent-fleet/goal.ts",
+      "decision": "The mission selector derives every signal from artefacts the fleet already writes; the one static field mission.started_at is set once from the earliest dated survival proof and is never edited per run. A signal that needs manual typing each run is toil and cannot drive an autonomous loop.",
+      "source": {
+        "kind": "recorded",
+        "ref": "docs/proof/2026-11-25-survival-run-10.md (earliest dated survival proof) and user 2026-11-28 request to research full automation"
+      }
     }
   ]
 }

@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { selectNextAction, countOpenTickets, type MissionState } from '../../scripts/dev/agent-fleet/goal.ts';
+import { selectNextAction, countOpenTickets, readMissionState, type MissionState } from '../../scripts/dev/agent-fleet/goal.ts';
 
 const base: MissionState = {
   settledUsd: 0,
@@ -65,6 +65,58 @@ test('the queue counts tickets that no reply has closed', () => {
     fs.mkdirSync(path.join(dir, 'blocked'), { recursive: true });
     fs.writeFileSync(path.join(dir, 'blocked', 'operator-to-onboarding-guide-20261128-0300.md'), 'open\n');
     assert.equal(countOpenTickets(dir), 1, 'one ticket is open, one is answered, one is blocked');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('time since settlement is derived from the ledger date, not a typed number', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'goal-derive-'));
+  try {
+    fs.writeFileSync(path.join(dir, 'economy.json'), JSON.stringify({
+      revenue: { settled_usd: 12, last_settled_at: '2026-11-21T00:00:00Z' }, mission: {}
+    }));
+    const state = readMissionState(path.join(dir, 'economy.json'), dir, { now: Date.parse('2026-11-28T00:00:00Z') });
+    assert.equal(state.settledUsd, 12);
+    assert.equal(state.daysSinceSettlement, 7);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('with no settlement ever, the clock starts at the one-time mission start', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'goal-derive-'));
+  try {
+    fs.writeFileSync(path.join(dir, 'economy.json'), JSON.stringify({
+      revenue: { settled_usd: 0, last_settled_at: null }, mission: { started_at: '2026-11-25' }
+    }));
+    const state = readMissionState(path.join(dir, 'economy.json'), dir, { now: Date.parse('2026-11-28T12:00:00Z') });
+    assert.equal(state.daysSinceSettlement, 3);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('blocked lanes are counted from the generated fleet state, not typed by the operator', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'goal-derive-'));
+  try {
+    fs.writeFileSync(path.join(dir, 'state.md'), '| a.md | engineer | blocked | - | 3 |\n| b.md | sales-rep | ready | - | 0 |\n| c.md | ceo | blocked | - | 1 |\n');
+    const state = readMissionState(path.join(dir, 'economy.json'), dir, { statePath: path.join(dir, 'state.md') });
+    assert.equal(state.blockedLanes, 2);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('an unanswered buyer reply in an outreach proof is a live signal', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'goal-derive-'));
+  try {
+    const replies = path.join(dir, 'replies');
+    fs.mkdirSync(replies, { recursive: true });
+    fs.writeFileSync(path.join(replies, '2026-11-28-harbor.md'), 'surface: github\nanswered: no\n');
+    fs.writeFileSync(path.join(replies, '2026-11-27-agno.md'), 'surface: github\nanswered: yes\n');
+    const state = readMissionState(path.join(dir, 'economy.json'), dir, { repliesDir: replies });
+    assert.equal(state.buyerRepliesWaiting, 1);
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }

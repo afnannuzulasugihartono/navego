@@ -4,10 +4,6 @@
     "ladder": "agents/operator/mission.md (L0 mission to L4 referral)",
     "selector": "scripts/dev/agent-fleet/goal.ts",
     "goal": "People use Navego for work with AI, and the income pays for a living.",
-    "days_since_settlement": 4,
-    "buyer_replies_waiting": 0,
-    "blocked_lanes": 0,
-    "claim_drift": 0,
     "note": "L1 settled external revenue is still 0.00; every field here feeds one selected action, and a field with no action is not added.",
     "selected_action": "close-ticket",
     "selected_signal": "open-ticket",
@@ -26,7 +22,9 @@
       "proof_order_is_real": false,
       "captured": false,
       "settled_change_usd": 0
-    }
+    },
+    "started_at": "2026-11-25",
+    "state_note": "Every selector signal is now derived from an artefact: settled money and its date from this ledger, open tickets from the queue, blocked lanes from the generated loop/state.md, buyer replies from docs/proof/outreach/replies, claim drift from claim-drift files in the queue. No field here is typed each run."
   },
   "revenue": {
     "settled_orders": 0,

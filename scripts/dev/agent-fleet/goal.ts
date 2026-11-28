@@ -103,23 +103,85 @@ export function countOpenTickets(queueDir: string): number {
 }
 
 interface EconomyShape {
-  revenue?: { settled_usd?: number };
-  mission?: { days_since_settlement?: number; buyer_replies_waiting?: number; blocked_lanes?: number; claim_drift?: number };
+  revenue?: { settled_usd?: number; last_settled_at?: string | null };
+  mission?: { started_at?: string };
 }
 
-export const readMissionState = (economyPath: string, queueDir: string): MissionState => {
+export interface MissionSources {
+  now?: number;
+  statePath?: string;
+  repliesDir?: string;
+}
+
+const DAY_MS = 86_400_000;
+
+// A signal nobody maintains is a signal nobody can trust.
+// Each of these is read from an artefact the fleet already writes; none is typed by the operator each run.
+
+const daysSince = (iso: string | null | undefined, now: number): number => {
+  if (!iso) return 0;
+  const stamp = Date.parse(iso);
+  if (!Number.isFinite(stamp)) return 0;
+  return Math.max(0, Math.floor((now - stamp) / DAY_MS));
+};
+
+const countBlocked = (statePath: string): number => {
+  try {
+    return fs.readFileSync(statePath, 'utf8').split(/\r?\n/)
+      .filter((line) => /\|\s*blocked\s*\|/.test(line)).length;
+  } catch {
+    return 0;
+  }
+};
+
+const countUnanswered = (dir: string): number => {
+  try {
+    return fs.readdirSync(dir).filter((name) => {
+      if (!name.endsWith('.md')) return false;
+      try {
+        return /answered:\s*no\b/i.test(fs.readFileSync(path.join(dir, name), 'utf8'));
+      } catch {
+        return false;
+      }
+    }).length;
+  } catch {
+    return 0;
+  }
+};
+
+const countDrift = (queueDir: string): number => {
+  try {
+    return fs.readdirSync(queueDir).filter((name) => {
+      if (!/^claim-drift-.*\.md$/.test(name)) return false;
+      try {
+        return !/^answered:/m.test(fs.readFileSync(path.join(queueDir, name), 'utf8'));
+      } catch {
+        return false;
+      }
+    }).length;
+  } catch {
+    return 0;
+  }
+};
+
+export const readMissionState = (economyPath: string, queueDir: string, sources: MissionSources = {}): MissionState => {
   let economy: EconomyShape = {};
   try {
     economy = JSON.parse(fs.readFileSync(economyPath, 'utf8')) as EconomyShape;
   } catch {
   }
+  const rolesDir = path.dirname(queueDir);
+  const statePath = sources.statePath ?? path.join(rolesDir, 'loop', 'state.md');
+  const repliesDir = sources.repliesDir ?? path.join(path.dirname(rolesDir), 'proof', 'outreach', 'replies');
+  const now = sources.now ?? Date.now();
+  const lastSettled = economy.revenue?.last_settled_at;
   return {
     settledUsd: economy.revenue?.settled_usd ?? 0,
-    daysSinceSettlement: economy.mission?.days_since_settlement ?? 0,
-    buyerRepliesWaiting: economy.mission?.buyer_replies_waiting ?? 0,
+    daysSinceSettlement: daysSince(lastSettled, now) || (lastSettled ? 0 : daysSince(economy.mission?.started_at, now)),
+    buyerRepliesWaiting: countUnanswered(repliesDir),
     openTickets: countOpenTickets(queueDir),
-    blockedLanes: economy.mission?.blocked_lanes ?? 0,
-    claimDrift: economy.mission?.claim_drift ?? 0
+    blockedLanes: countBlocked(statePath),
+    claimDrift: countDrift(queueDir)
   };
 };
 
@@ -127,7 +189,14 @@ const invokedDirectly = process.argv[1] ? import.meta.url === new URL(`file:///$
 
 if (invokedDirectly) {
   const root = fileURLToPath(new URL('../../../', import.meta.url));
-  const state = readMissionState(path.join(root, 'docs/economy.json'), path.join(root, 'docs/agent-roles/queue'));
+  const queueDir = path.join(root, 'docs/agent-roles/queue');
+  const sources = {
+    ledger: path.join(root, 'docs/economy.json'),
+    queue: queueDir,
+    fleetState: path.join(root, 'docs/agent-roles/loop/state.md'),
+    replies: path.join(root, 'docs/proof/outreach/replies')
+  };
+  const state = readMissionState(sources.ledger, queueDir, { statePath: sources.fleetState, repliesDir: sources.replies });
   const chosen = selectNextAction(state);
-  console.log(JSON.stringify({ state, ...chosen }, null, 2));
+  console.log(JSON.stringify({ state, sources, ...chosen }, null, 2));
 }

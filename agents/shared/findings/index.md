@@ -16,5 +16,6 @@ Every lane writes dated findings here. A finding is evidence for a decision, not
 | RF-010 | RF-010-2026-11-28-autonomous-operator.md | how the operator chooses work without owner direction | 8 public sources |
 | RF-011 | RF-011-2026-11-28-mission-horizon.md | why the mission was never reached, and the ladder that fixes it | 8 public sources |
 | RF-012 | RF-012-2026-11-28-guest-edge-gap.md | why signed-out buyers still cannot pay, and the recorded deviation that finishes it | live endpoint + engineer handoff |
+| RF-013 | RF-013-2026-11-28-full-automation.md | what is automatic today and what a closed loop still needs | 6 public sources + automation inventory |
 
 Rules: a URL must open; a claim must be quoted or measured; no personal contact data; no outreach from a finding. Long-running evidence stays in docs/proof and docs/research; these files are the shared summary for every lane.
