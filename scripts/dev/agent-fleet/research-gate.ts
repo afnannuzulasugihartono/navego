@@ -100,13 +100,21 @@ export function readPrior(findingsDir: string): PriorFinding[] {
     return fs.readdirSync(findingsDir).filter((name) => /^RF-\d{3}-/.test(name) && name.endsWith('.md')).map((name) => {
       const text = fs.readFileSync(path.join(findingsDir, name), 'utf8');
       const dateMatch = name.match(/RF-\d{3}-(\d{4}-\d{2}-\d{2})-/) ?? text.match(/(\d{4}-\d{2}-\d{2})/);
-      const decision = text.match(/^Decision supported:\s*(.+)$/im)?.[1] ?? text.match(/^# RF-\d+[^\n]*\n\n([^\n]+)/m)?.[1] ?? '';
+      const lines = text.split(/\r?\n/);
+      const decisionLine = lines.find((line) => line.startsWith('Decision supported:'));
+      const decision = decisionLine ? decisionLine.slice('Decision supported:'.length).trim() : (lines[2] ?? '');
       const urls = [...text.matchAll(/https:\/\/[^\s)\]]+/g)].map((match) => match[0]);
       return { id: name.slice(0, 6), decision, date: dateMatch?.[1] ?? '', urls };
     });
   } catch {
     return [];
   }
+}
+
+export function isTicketPath(file: string, root: string): boolean {
+  const resolved = path.resolve(file);
+  const allowed = ['docs/agent-roles/queue', 'agents/shared'].map((dir) => path.resolve(path.join(root, dir)));
+  return path.extname(resolved) === '.md' && allowed.some((dir) => resolved.startsWith(dir + path.sep));
 }
 
 const invokedDirectly = process.argv[1] ? import.meta.url === new URL(`file:///${process.argv[1].replace(/\\/g, '/')}`).href : false;
@@ -118,10 +126,16 @@ if (invokedDirectly) {
     process.exitCode = 2;
   } else {
     const root = fileURLToPath(new URL('../../../', import.meta.url));
-    const ticket = parseTicket(fs.readFileSync(file, 'utf8'));
-    const prior = readPrior(path.join(root, 'agents/shared/findings'));
-    const verdict = decideResearch(ticket, { prior });
-    console.log(JSON.stringify({ file, ticket, priorFindings: prior.length, ...verdict }, null, 2));
-    process.exitCode = verdict.verdict === 'run' ? 0 : verdict.verdict === 'skip' ? 1 : 2;
+    const resolved = path.resolve(file);
+    if (!isTicketPath(file, root)) {
+      console.error('a ticket must be a .md file inside docs/agent-roles/queue or agents/shared');
+      process.exitCode = 2;
+    } else {
+      const ticket = parseTicket(fs.readFileSync(resolved, 'utf8'));
+      const prior = readPrior(path.join(root, 'agents/shared/findings'));
+      const verdict = decideResearch(ticket, { prior });
+      console.log(JSON.stringify({ file: resolved, ticket, priorFindings: prior.length, ...verdict }, null, 2));
+      process.exitCode = verdict.verdict === 'run' ? 0 : verdict.verdict === 'skip' ? 1 : 2;
+    }
   }
 }

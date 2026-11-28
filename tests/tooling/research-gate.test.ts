@@ -5,7 +5,8 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { decideResearch, type ResearchTicket, type PriorFinding } from '../../scripts/dev/agent-fleet/research-gate.ts';
+import path from 'node:path';
+import { decideResearch, isTicketPath, type ResearchTicket, type PriorFinding } from '../../scripts/dev/agent-fleet/research-gate.ts';
 
 const now = Date.parse('2026-11-28T00:00:00Z');
 const ticket: ResearchTicket = {
@@ -65,4 +66,13 @@ test('a result outside the numbered findings folder has no place to land', () =>
   const verdict = decideResearch({ ...ticket, resultPath: 'notes/idea.md' }, { prior, now });
   assert.equal(verdict.verdict, 'needs-human');
   assert.match(verdict.reasons.join(' '), /RF-/);
+});
+
+test('the CLI reads only markdown tickets inside the two ticket folders', () => {
+  const root = path.resolve(new URL('../../', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
+  assert.equal(isTicketPath(path.join(root, 'docs/agent-roles/queue/operator-to-researcher-20261128.md'), root), true);
+  assert.equal(isTicketPath(path.join(root, 'agents/shared/research/ticket.md'), root), true);
+  assert.equal(isTicketPath(path.join(root, 'docs/economy.json'), root), false);
+  assert.equal(isTicketPath(path.join(root, 'docs/agent-roles/queue/ticket.txt'), root), false);
+  assert.equal(isTicketPath(path.join(root, '..', 'outside.md'), root), false);
 });
