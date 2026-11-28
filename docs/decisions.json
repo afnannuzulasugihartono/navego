@@ -1788,6 +1788,16 @@
         "kind": "user",
         "ref": "user 2026-11-28: 'kerjakan juga langkah yang tadi hasilnya sudah kita bahas' - the one-answer-page step"
       }
+    },
+    {
+      "id": "agents-autonomy-01",
+      "scope": "agents/operator",
+      "file": "agents/operator/runbook.md",
+      "decision": "The operator selects its next action from live state and documented outcomes using money > customer-visible defect > lane unblock > quality judgment. The owner sets outcomes and boundaries once; the operator does not ask permission for the next obvious action. Irreversible actions, payments, account reviews and owner-only paths stay outside automatic selection.",
+      "source": {
+        "kind": "user",
+        "ref": "user 2026-11-28: 'supaya autonomous research mendalam ... sejauh ini masih aku arahkan semua pekerjaanya'"
+      }
     }
   ]
 }

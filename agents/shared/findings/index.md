@@ -13,5 +13,6 @@ Every lane writes dated findings here. A finding is evidence for a decision, not
 | RF-007 | RF-007-2026-11-27-agent-risks.md | risk register and review guardrails | 6 public URLs |
 | RF-008 | RF-008-2026-11-28-checkout-ux.md | buy-click classification and pay-first ticket | 3 public URLs + live DB |
 | RF-009 | RF-009-2026-11-28-review-delivery.md | read-back, wake and retry in the review loop | measured live API semantics |
+| RF-010 | RF-010-2026-11-28-autonomous-operator.md | how the operator chooses work without owner direction | 8 public sources |
 
 Rules: a URL must open; a claim must be quoted or measured; no personal contact data; no outreach from a finding. Long-running evidence stays in docs/proof and docs/research; these files are the shared summary for every lane.
